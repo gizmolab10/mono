@@ -1,23 +1,30 @@
 <script lang='ts'>
+	import { w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
+	import { T_Bundle } from '../../ts/types/Guide';
 	import { guides } from '../../ts/managers/Guides';
-	import Separator from './Separator.svelte';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import type { Writable } from 'svelte/store';
+	import Separator from './Separator.svelte';
 
 	// The three filters, across the top of the content box: one kind at a time, any
-	// number of tags, and words to look for. The frame owns the stores so they can be
-	// remembered; this only shows them.
-	let { w_kind, w_tags, w_words }: {
-		w_kind  : Writable<string>;
-		w_tags  : Writable<string[]>;
-		w_words : Writable<string>;
-	} = $props();
+	// number of tags, and words to look for. They are kept with the rest of the filters,
+	// where the hierarchy can read them; this only shows them.
 
 	// The files are read at launch, so what kinds and tags exist isn't known until that
 	// finishes. Both lists fill themselves in the moment it does.
 	const w_ready = guides.w_ready;
 	let kinds = $derived($w_ready ? guides.kinds_present() : []);
 	let tags  = $derived($w_ready ? guides.tags_present()  : []);
+
+	// The collections, in the order they were swept. One with no guides folder yet holds
+	// no files, so its segment is shown but dead — picking it could only ever empty the
+	// list. It wakes up on its own the day that collection gains a guide.
+	const projects = Object.values(T_Bundle);
+	let counts = $derived($w_ready ? new Map(projects.map((p) => [p, guides.files_in(p)])) : new Map());
+
+	function choose_project(project: string) {
+		if ((counts.get(project) ?? 0) === 0) { return; }
+		w_project.set($w_project === project ? '' : project);
+	}
 
 	function choose_kind(kind: string) {
 		w_kind.set($w_kind === kind ? '' : kind);
@@ -36,6 +43,18 @@
 
 <div class='filters'>
 
+	<div class='kinds' use:tip={'show one project\'s guides at a time'}>
+		<button class='segment' class:current={$w_project === ''} onclick={() => w_project.set('')}>all</button>
+		{#each projects as project}
+			{@const held = counts.get(project) ?? 0}
+			<button class='segment' class:current={$w_project === project} class:empty={held === 0}
+				use:tip={held === 0 ? `${project} has no guides yet` : false}
+				onclick={() => choose_project(project)}>{project}</button>
+		{/each}
+	</div>
+
+	<Separator title='choose a project from above'/>
+
 	<div class='kinds' use:tip={'show one kind of guide at a time'}>
 		<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
 		{#each kinds as kind}
@@ -43,7 +62,7 @@
 		{/each}
 	</div>
 
-	<Separator title='choose kinds from above'/>
+	<Separator title='choose a kind from above'/>
 
 	<div class='tags'>
 		<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>any tag</button>
@@ -105,8 +124,14 @@
 		cursor     : default;
 	}
 
-	.segment:not(.current):hover {
+	.segment:not(.current):not(.empty):hover {
 		background : var(--hover);
+	}
+
+	/* A collection with no guides yet: grayed and dead to the touch. */
+	.segment.empty {
+		color  : var(--lightgray);
+		cursor : default;
 	}
 
 	/* Twenty-two tags won't sit in one row, so they wrap. Any number can be on at once. */

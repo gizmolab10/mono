@@ -29,7 +29,7 @@ Left out: an **owner** label, saying who decides what a file says. In a two-pers
 
 ## Tags (closed list)
 
-Twenty-two. The first sixteen came from the shared guides — the folder-by-folder rundown in [synopsis of our guides](../../../../notes/guides/synopsis%20of%20our%20guides.md) is where each one came from. The last six came from the project guides, which are a different animal: they describe apps rather than tell me how to work.
+Twenty-two. The first sixteen came from the shared guides — the folder-by-folder rundown in [synopsis of our guides](../../../notes/guides/synopsis%20of%20our%20guides.md) is where each one came from. The last six came from the project guides, which are a different animal: they describe apps rather than tell me how to work.
 
 The folder a file sits in is not a tag. A tag says what the file is *about*, so two files in different folders about the same thing find each other.
 
@@ -114,7 +114,7 @@ So: one folder shape, used in all four. A folder that a bundle has nothing to sa
 
 ### A map page per bundle, built from the labels
 
-Every file's title and description, listed on one page, grouped by kind. That page is the big picture, and it is not hand-written — it is assembled from what the labels already say, so it cannot drift out of step with the files the way a hand-kept summary does. Today's hand-kept summary is [synopsis of our guides](../../../../notes/guides/synopsis%20of%20our%20guides.md); it is thorough and it is stale the moment a file changes.
+Every file's title and description, listed on one page, grouped by kind. That page is the big picture, and it is not hand-written — it is assembled from what the labels already say, so it cannot drift out of step with the files the way a hand-kept summary does. Today's hand-kept summary is [synopsis of our guides](../../../notes/guides/synopsis%20of%20our%20guides.md); it is thorough and it is stale the moment a file changes.
 
 One map per bundle, plus one that stitches the four together. Reading the stitched one is the whole corpus in a few minutes.
 
@@ -128,7 +128,7 @@ Every one of the 134 files carries a valid label block. No file covers two conce
 
 ## ov — the map page, made live
 
-The map page above is the part of this that can't be hand-written without going stale. So it isn't a page — it's an app. `ov`, short for overview, is a small web app whose whole job is to be the picture of these four collections. Its proposal is [ov](./ov.md); the summary is here because this is the plan it serves.
+The map page above is the part of this that can't be hand-written without going stale. So it isn't a page — it's an app. `ov`, short for overview, is a small web app whose whole job is to be the picture of these four collections. Its proposal is [ov](../../../ji/notes/work/proposals/ov.md); the summary is here because this is the plan it serves.
 
 It reaches outside its own folder on purpose: the guides are the thing it shows. What travels with it is only their addresses. At launch it reads each file once, keeps the five labels off the top, and lets the rest go — so the picture cannot drift from the files, because it *is* the files, read fresh every time.
 
@@ -142,3 +142,15 @@ Both of this proposal's goals fall out of that:
 What it found on its first run, which is the check on this whole plan: 165 files across four collections, 31 of them index files (left out, since the folders do that job now), leaving 134 — every one carrying a full label block, none missing. All five kinds turn up. All 22 tags turn up, across 241 placements.
 
 That last count is the argument for closing the tag list: overview shows the tags as a row of pills, and a list that drifts into synonyms becomes a row nobody can read.
+
+## Encapsulate for opensourcing
+
+Everything this proposal defines — the five kinds, the twenty-two tags, the short names of the collections, and the handling that goes with them — is spread across overview's files today. The idea is to gather it into one file of its own, at `ov/src/lib/ts/common/okf`, so that the format has a single home in the code.
+
+**Pro.** Every rule of the format lands in one place: the kinds, the tags, the collection names, reading the labels off a file's top, and throwing out a tag that isn't on the list. What a guide *is* — its shape as a thing the app holds — stays separate from what the format *allows*. Adding a tag or a collection becomes a one-file change. And when the format goes out into the world, the file that defines it is the file you hand over.
+
+**Con.** The sweeps that find the files can't follow. The build reads each collection's folder path literally and cannot follow a name, so either a collection's short name and where its files live end up in two different files, or the new file takes on finding files as well as defining the format.
+
+Evidence: `ov/src/lib/ts/managers/Guides.ts`, the note above the sweeps — "These patterns must be written out in full — the build reads them literally and cannot follow a name."
+
+Nothing else breaks: the filters, the list and the reading view already read the kinds and the tags from one place.

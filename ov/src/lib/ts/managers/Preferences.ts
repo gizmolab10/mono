@@ -25,12 +25,15 @@ export enum T_Preference {
 	color_text      = 'color_text',
 
 	// Filters on the guide list
+	filter_project  = 'filter_project',
 	filter_kind     = 'filter_kind',
 	filter_tags     = 'filter_tags',
 	filter_text     = 'filter_text',
 
 	// The guide list itself
 	folders_shut    = 'folders_shut',
+	show_folders    = 'show_folders',
+	sorts           = 'sorts',
 	scroll_files_to = 'scroll_files_to',
 	view_guide      = 'view_guide',
 	current_op      = 'current_op',

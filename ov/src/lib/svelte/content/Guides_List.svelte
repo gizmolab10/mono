@@ -1,14 +1,15 @@
 <script lang='ts'>
+	import { w_shut, w_show_folders, w_project, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { w_viewable_run, open_view } from '../../ts/managers/Operations';
+	import { open_view } from '../../ts/managers/Operations';
+	import type { Listed_Guide } from '../../ts/types/Guide';
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Guides';
 	import { Direction } from '../../ts/types/Angle';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import type { Writable } from 'svelte/store';
 	import { get } from 'svelte/store';
 
 	// The guide list: every folder and file, folders leading their contents, each row
@@ -16,20 +17,9 @@
 	// behaviour, same way a filter pulls a matched file's folders back on screen, same
 	// remembered scroll place. What ji's version does with tag editing, deleting and
 	// dropping is gone: nothing here is editable.
-	let { w_kind, w_tags, w_words }: {
-		w_kind  : Writable<string>;
-		w_tags  : Writable<string[]>;
-		w_words : Writable<string>;
-	} = $props();
-
-	const w_ready = guides.w_ready;
-
-	// --- the rows -------------------------------------------------------------
-
-	// Which folders are shut, remembered across visits. Saved by where a folder sits
-	// rather than by the number it happens to get this launch, since those numbers are
-	// made fresh every time and would not line up again.
-	const w_shut = preferences.persistent<string[]>(T_Preference.folders_shut, []);
+	//
+	// The narrowing is not done here: the hierarchy works out what shows, and this draws it.
+	const w_showing = guides.w_showing;
 
 	// The open/shut triangle: pointing down when the folder is open, right when shut.
 	const TRIANGLE = k.size.svg;
@@ -48,80 +38,31 @@
 		});
 	}
 
-	// Walk parent-first, child-next so folders lead their contents. Each row carries how
-	// deep it sits (for the indent) and the folder chain above it (so a matched file can
-	// keep its folders on screen).
-	const rows = $derived.by(() => {
-		if (!$w_ready) { return []; }
-		const walked = guides.hierarchy.list_guides();
-		const key_byID = new Map(walked.map((l) => [l.guide.id, `${l.guide.bundle}/${l.guide.path}`]));
-		return walked.map((listed) => {
-			const guide = listed.guide;
-			return {
-				id            : guide.id,
-				key           : `${guide.bundle}/${guide.path}`,
-				address       : guide.address,
-				name          : guide.name,
-				title         : guide.title,
-				description   : guide.description,
-				kind          : guide.kind,
-				is_folder     : guide.is_folder,
-				depth         : listed.depth,
-				ancestor_keys : listed.ancestor_ids.map((id) => key_byID.get(id) ?? ''),
-				has_children  : listed.has_children,
-				tag_names     : listed.tag_names.join(', '),
-				tags          : listed.tag_names,
-			};
-		});
-	});
-
-	// Everything not sitting under a shut folder.
-	const open_rows = $derived.by(() => {
-		const shut = new Set($w_shut);
-		return rows.filter((r) => !r.ancestor_keys.some((a) => shut.has(a)));
-	});
-
-	// One row against the three filters. Folders never match on their own — they come
-	// back only by holding something that did.
-	function matches(row: (typeof rows)[number]): boolean {
-		if (row.is_folder) { return false; }
-		if ($w_kind !== '' && row.kind !== $w_kind) { return false; }
-		if ($w_tags.length > 0 && !$w_tags.some((tag) => row.tags.includes(tag))) { return false; }
-		const looking_for = $w_words.trim().toLowerCase();
-		if (looking_for !== '' && !`${row.title} ${row.description}`.toLowerCase().includes(looking_for)) { return false; }
-		return true;
+	// The whole row answers, not just the name: a file opens for reading, a folder opens or
+	// shuts. The triangle keeps its own click, and stops it from reaching the row, so hitting
+	// the triangle on a folder doesn't toggle it twice.
+	function click_row(row: Listed_Guide) {
+		if (row.guide.is_folder) {
+			debug.log(`Row clicked: the folder "${row.guide.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
+			toggle_folder(row.key, row.guide.name);
+		} else {
+			debug.log(`Row clicked: the file "${row.guide.name}" — opening it for reading.`);
+			open_view(row.key);
+		}
 	}
 
-	// A filter looks through the WHOLE list, so a match inside a shut folder is found —
-	// but the display still honors the folds: a shut folder shows as the way to its
-	// matches, while its matched files stay hidden until it is opened. With no filter on,
-	// only the open rows show.
-	const shown = $derived.by(() => {
-		const filtering = $w_kind !== '' || $w_tags.length > 0 || $w_words.trim() !== '';
-		// Always look through the WHOLE list, so a match inside a shut folder is still found
-		// and every folder on the way to it is kept. Matching over only the open rows would
-		// make a shut folder vanish along with its contents — shutting a folder hides what is
-		// inside it, never the folder itself.
-		const matched = rows.filter(matches);
-		const keep = new Set(matched.map((r) => r.key));
-		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }
-		const display = open_rows.filter((r) => keep.has(r.key));
-		debug.log(`List: ${filtering ? 'filter on' : 'no filter'} — looked through all ${rows.length} row(s); ${matched.length} match(es); showing ${display.length} row(s), of which ${display.filter((r) => r.is_folder).length} are folders (a shut folder stays on screen; only what is inside it is hidden).`);
-		return display;
-	});
+	// What the hint over a row says, which depends on what clicking it would do.
+	function row_hint(row: Listed_Guide): string {
+		if (!row.guide.is_folder) { return `open "${row.guide.name}"`; }
+		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.guide.name}"`;
+	}
 
-	// How many files under each folder match — the ones on screen plus the ones a shut
-	// folder is hiding. Counted over the whole walk, so a shut folder still shows its
-	// full tally. Only files count; the folders between are the structure holding them.
-	const folder_count = $derived.by(() => {
-		const matched = rows.filter(matches);
-		const map = new Map<string, number>();
-		for (const r of matched) {
-			for (const a of r.ancestor_keys) { map.set(a, (map.get(a) ?? 0) + 1); }
-		}
-		debug.log(`Folder counts: ${map.size} folder(s) hold at least one matching file; ${matched.length} file(s) of ${rows.length} row(s) match.`);
-		return map;
-	});
+	// The rows on screen, worked out by the hierarchy: the filters and the folds already
+	// applied, in the order shown, folders included.
+	const shown = $derived($w_showing);
+
+	// How many matching files sit under each folder — worked out alongside the rows.
+	const folder_count = $derived.by(() => { $w_showing; return guides.hierarchy.folder_counts; });
 
 	// --- remembering where the list was scrolled ------------------------------
 
@@ -191,23 +132,73 @@
 		if (!restored && shown.length > 0) { restore_top(); restored = true; }
 	});
 
-	// The three columns, in order. A folder's first cell shows how many matching files it
-	// holds; a file's shows its kind.
-	const columns = [
-		{ label: 'kind', width: '90px' },
-		{ label: 'name', width: '55%'  },
-		{ label: 'tags', width: 'auto' },
-	];
+	// The columns, in order. A folder's first cell shows how many matching files it holds;
+	// a file's shows its kind.
+	//
+	// Which collection a file belongs to is normally plain from the folder it sits under.
+	// With the folders hidden that's gone, so a project column steps in — but only while no
+	// project is picked, since with one picked every row would read the same.
+	const shows_project = $derived(!$w_show_folders && $w_project === '');
+	const columns = $derived(shows_project
+		? [
+			{ label: 'kind',    width: '90px',  sort: T_Sort.kind },
+			{ label: 'project', width: '85px',  sort: T_Sort.project },
+			{ label: 'name',    width: 'auto',  sort: T_Sort.name },
+			{ label: 'tags',    width: '170px', sort: T_Sort.tags },
+		]
+		: [
+			{ label: 'kind', width: '90px',  sort: T_Sort.kind },
+			{ label: 'name', width: 'auto',  sort: T_Sort.name },
+			{ label: 'tags', width: '170px', sort: T_Sort.tags },
+		]);
+
+	// A column that isn't on screen must not go on quietly ordering the list, so when the
+	// project column leaves, it stops sorting too.
+	$effect(() => {
+		if (shows_project) { return; }
+		if ($w_sorts.some((s) => s.by === T_Sort.project)) {
+			debug.log(`The project column is off screen, so it stopped sorting.`);
+			w_sorts.update((sorts) => sorts.filter((s) => s.by !== T_Sort.project));
+		}
+	});
+
+	// A title is only worth clicking while the folders are hidden — with them shown the
+	// list is folders leading their contents, which nothing can sort. One file alone can't
+	// be sorted either, so the titles go quiet there too; what was picked is kept, and
+	// comes back the moment a second file does.
+	const can_sort = $derived(!$w_show_folders && shown.filter((r) => !r.guide.is_folder).length > 1);
+
+
+	// Where each sorted column sits in the order, so a title can say whether it decides or
+	// only breaks a tie. Nothing when that column isn't sorting.
+	const place_of = $derived(new Map($w_sorts.map((s, at) => [s.by, { at: at + 1, up: s.up }])));
+
+	/**
+	 * Click a title three times to walk it through: sorting smallest first, then largest
+	 * first, then not sorting at all. Columns apply in the order they were picked — the
+	 * first decides, each one after it only breaks a tie in the ones before.
+	 */
+	function sort_by_column(which: string) {
+		if (!can_sort) { return; }
+		w_sorts.update((sorts) => {
+			const at = sorts.findIndex((s) => s.by === which);
+			if (at < 0) {
+				const next = [...sorts, { by: which, up: true }];
+				debug.log(`Sorting by ${which}, smallest first — it is now number ${next.length} of ${next.length} in the order.`);
+				return next;
+			}
+			if (sorts[at].up) {
+				const next = sorts.map((s, i) => i === at ? { by: s.by, up: false } : s);
+				debug.log(`Sorting by ${which} turned around — now largest first, still number ${at + 1} of ${next.length}.`);
+				return next;
+			}
+			const next = sorts.filter((s) => s.by !== which);
+			debug.log(`Stopped sorting by ${which} — ${next.length} column(s) still sorting.`);
+			return next;
+		});
+	}
 
 	let hovered_row = $state<string | null>(null);
-
-	// The run to step through while reading: the files on screen, in list order. Folders
-	// are not stops. Left where the reading view can find it, since that lives outside
-	// this list but steps through what this list shows.
-	$effect(() => {
-		const run = shown.filter((r) => !r.is_folder).map((r) => ({ key: r.key, name: r.name, address: r.address }));
-		w_viewable_run.set(run);
-	});
 
 	// Is there actually a scrollbar right now? Only then is room held back for it, and only
 	// then does a gap sit between the rows and it. Worked out by measuring — the rows'
@@ -240,29 +231,28 @@
 </script>
 
 <!-- The three cells of a row: kind, name (with the open/shut triangle), and tags. -->
-{#snippet guide_row(row: (typeof rows)[number])}
-	<td class='kind'><span>{row.is_folder ? (folder_count.get(row.key) ?? 0) : (row.kind || '—')}</span></td>
-	<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-	<td class='name' class:viewable={!row.is_folder}
-		style:padding-left='{row.depth * 5}px'
-		use:tip={row.is_folder ? false : `open "${row.name}"`}
-		onclick={() => { if (!row.is_folder) { open_view({ key: row.key, name: row.name, address: row.address }); } }}>
+{#snippet guide_row(row: Listed_Guide)}
+	<td class='kind'><span>{row.guide.is_folder ? (folder_count.get(row.key) ?? 0) : (row.guide.kind || '—')}</span></td>
+	{#if shows_project}
+		<td class='project'><span>{row.guide.bundle}</span></td>
+	{/if}
+	<td class='name' style:padding-left='{row.depth * 5}px'>
 		<span class='name-line'>
 			<span class='tri-slot' style:width='{TRIANGLE}px'>
 				{#if row.has_children}
 					{@const open = !$w_shut.includes(row.key)}
 					{@const b = triangle_bounds(open)}
 					{@const prefix = open ? 'shut' : 'open'}
-					<button class='tri' aria-label={`${prefix} folder`} use:tip={`${prefix} "${row.name}"`} onclick={(e) => { e.stopPropagation(); toggle_folder(row.key, row.name); }}>
+					<button class='tri' aria-label={`${prefix} folder`} use:tip={`${prefix} "${row.guide.name}"`} onclick={(e) => { e.stopPropagation(); toggle_folder(row.key, row.guide.name); }}>
 						<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
 							<path d={triangle_path(open)} />
 						</svg>
 					</button>
 				{/if}
-			</span><span class='name-text'>{row.name}</span>
+			</span><span class='name-text'>{row.guide.name}</span>
 		</span>
 	</td>
-	<td class='tags-cell'><span class='tag-names'>{row.tag_names}</span></td>
+	<td class='tags-cell'><span class='tag-names'>{row.tag_names.join(', ')}</span></td>
 {/snippet}
 
 <div class='list'>
@@ -277,7 +267,15 @@
 				<thead>
 					<tr class='head'>
 						{#each columns as col}
-							<th><span class='head-label'>{col.label}</span></th>
+							{@const place = can_sort ? place_of.get(col.sort) : undefined}
+							<th>
+								<button
+									class='head-label'
+									class:sortable={can_sort}
+									class:sorted={!!place}
+									use:tip={can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `also sort by ${col.label}`) : false}
+									onclick={() => sort_by_column(col.sort)}>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</button>
+							</th>
 						{/each}
 					</tr>
 				</thead>
@@ -288,9 +286,11 @@
 				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<tbody>
 					{#each shown as row, row_number (row.key)}
-						<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.is_folder}
-							data-key={row.key} data-n={row_number} data-name={row.name}
+						<!-- svelte-ignore a11y_mouse_events_have_key_events a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
+						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.guide.is_folder}
+							data-key={row.key} data-n={row_number} data-name={row.guide.name}
+							use:tip={row_hint(row)}
+							onclick={() => click_row(row)}
 							onmouseenter={() => hovered_row = row.key}
 							onmouseleave={() => { if (hovered_row === row.key) { hovered_row = null; } }}>
 							{@render guide_row(row)}
@@ -394,11 +394,40 @@
 	/* The page-colored background is what breaks the line, so the title reads as a word
 	   sitting on it rather than crossed out by it. */
 	.head-label {
-		background : var(--bg);
-		font-size  : var(--font-label);
-		color      : var(--text);
-		opacity    : var(--opacity-header);
-		padding    : 0 var(--gap);
+		border      : 0.5px solid transparent;   /* held, so the hover edge adds no shift */
+		background  : var(--bg);
+		font-size   : var(--font-label);
+		color       : var(--text);
+		opacity     : var(--opacity-header);
+		padding     : 0 var(--gap);
+		font-family : inherit;
+		white-space : nowrap;   /* the title, its arrow and its number stay on one line */
+		cursor      : default;
+	}
+
+	/* While the folders are hidden the titles are buttons — the one in use reads solid. */
+	.head-label.sortable {
+		border-radius : var(--radius-pill);
+		cursor        : pointer;
+	}
+
+	.head-label.sortable:hover,
+	.head-label.sorted {
+		opacity : 1;
+	}
+
+	/* Under the cursor a title fills as an outlined pill, so it reads as the button it is. */
+	.head-label.sortable:hover {
+		border-color : var(--black);
+		background   : var(--hover);
+	}
+
+	/* With more than one column sorting, a small number says where this one comes in the
+	   order — 1 decides, the rest only break ties. */
+	.order {
+		font-size     : var(--font-credit);
+		vertical-align: super;
+		margin-left   : 1px;
 	}
 
 	/* A faint accent line under each row. */
@@ -406,13 +435,12 @@
 		border-bottom : var(--thickness-faint) solid var(--accent);
 	}
 
-	/* ...but not under the last row, nor under the first column. */
-	.guides-table .file:last-child td,
-	.guides-table .file td.kind {
+	/* ...but not under the last row. */
+	.guides-table .file:last-child td {
 		border-bottom-color : transparent;
 	}
 
-	.kind, .name, .tags-cell {
+	.kind, .project, .name, .tags-cell {
 		padding        : calc(var(--gap-tight) - 1.5px) 0;
 		font-size      : var(--font-base);
 		color          : var(--text);
@@ -428,8 +456,17 @@
 
 	/* Dim only the text, not the whole cell — otherwise the row's hover light is dimmed
 	   with it and this column looks like it never lit. */
-	.kind span {
+	.kind span,
+	.project span {
 		opacity : var(--opacity-label);
+	}
+
+	/* Which collection the file belongs to — shown only while the folders are hidden and
+	   no project is picked. */
+	.project {
+		padding-right : var(--gap-fat);
+		text-align    : right;
+		width         : 99px;
 	}
 
 	/* The name row: a fixed triangle slot, then the name. The slot is always there, even
@@ -478,8 +515,8 @@
 		text-overflow : ellipsis;
 	}
 
-	/* A file's name opens it. */
-	.name.viewable {
+	/* The whole row answers to a click — a file opens, a folder opens or shuts. */
+	.guides-table .file {
 		cursor : pointer;
 	}
 

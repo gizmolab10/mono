@@ -1,6 +1,7 @@
-import { T_Bundle, ALL_TAGS, type Guide, type Labels } from '../types/Guide';
+import { T_Bundle, ALL_TAGS, type Guide, type Labels, type Listed_Guide } from '../types/Guide';
+import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
-import { writable } from 'svelte/store';
 import { debug } from '../common/Debug';
 
 /**
@@ -21,6 +22,7 @@ const addresses: Record<T_Bundle, Record<string, string>> = {
 	[T_Bundle.di]:     import.meta.glob('../../../../../di/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
 	[T_Bundle.ws]:     import.meta.glob('../../../../../ws/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
 	[T_Bundle.ji]:     import.meta.glob('../../../../../ji/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
+	[T_Bundle.ov]:     import.meta.glob('../../../../../ov/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
 };
 
 // Pull one label's value off a line, with the surrounding quotes taken off if it has them.
@@ -78,6 +80,25 @@ class Guides {
 	// this, since at first launch there is nothing yet to show.
 	w_ready = writable(false);
 
+	// What the filters and the folds leave, in the order shown. The hierarchy keeps it;
+	// this hands out the very same rows, and only exists so that anything showing them
+	// hears about a change. Re-worked out whenever any filter or any fold moves.
+	w_showing = writable<Listed_Guide[]>([]);
+
+	constructor() {
+		// Any of the four moves, the list is worked out again — once, here, rather than
+		// in each of the places that shows it.
+		for (const w of [w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts]) {
+			w.subscribe(() => this.renarrow());
+		}
+	}
+
+	/** Work the list out again from what the filters say right now. */
+	renarrow(): void {
+		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts));
+		this.w_showing.set(this.hierarchy.filtered_guides);
+	}
+
 	/** Every file, folders left out. */
 	get files(): Guide[] {
 		return this.hierarchy.guides.filter((g) => !g.is_folder);
@@ -92,8 +113,15 @@ class Guides {
 		const marker = '/notes/guides/';
 		let read = 0, failed = 0, unlabeled = 0, bytes = 0, skipped = 0;
 
+		// The shared collection's folder is the repo itself, and every project's folder sits
+		// directly inside it — so the shared one is the single top and the other four hang
+		// under it. Going up one folder is then the same as stepping up this chain, which is
+		// what a link between two collections needs in order to be followed.
+		const shared_top = this.hierarchy.folder_at(T_Bundle.mono, '', T_Bundle.mono);
+
 		for (const bundle of Object.values(T_Bundle)) {
 			const top = this.hierarchy.folder_at(bundle, '', bundle);
+			if (bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
 			for (const [whole_path, address] of Object.entries(addresses[bundle])) {
 				const at = whole_path.indexOf(marker);
 				const path = at < 0 ? whole_path : whole_path.slice(at + marker.length);
@@ -143,43 +171,27 @@ class Guides {
 
 		this.hierarchy.reindex();
 		this.say_what_was_found(read, failed, unlabeled, bytes, skipped);
+		this.renarrow();
 		this.w_ready.set(true);
 	}
 
-	/** Every kind that actually turns up in the files, in the order the files gave them. */
+	/** How many files one collection holds. Zero means it has no guides folder yet. */
+	files_in(bundle: string): number {
+		return this.files.filter((g) => g.bundle === bundle).length;
+	}
+
+	/** Every kind that actually turns up in the files, in alphabetical order. */
 	kinds_present(): string[] {
 		const seen: string[] = [];
 		for (const guide of this.files) {
 			if (guide.kind && !seen.includes(guide.kind)) { seen.push(guide.kind); }
 		}
-		return seen;
+		return seen.sort();
 	}
 
-	/** Every tag that actually turns up, kept in the closed list's order. */
+	/** Every tag that actually turns up, in alphabetical order. */
 	tags_present(): string[] {
-		return ALL_TAGS.filter((tag) => this.hierarchy.tags.some((t) => t.name === tag));
-	}
-
-	/**
-	 * Narrow the files by the three filters. A chosen kind must match. Chosen tags widen
-	 * rather than narrow — a file matches if it carries any one of them, since a file
-	 * usually carries only one or two and asking for all of three would find nothing.
-	 * The words are looked for in the title and the description, ignoring case.
-	 */
-	filtered(kind: string, tags: string[], words: string): Guide[] {
-		const looking_for = words.trim().toLowerCase();
-		return this.files.filter((guide) => {
-			if (kind !== '' && guide.kind !== kind) { return false; }
-			if (tags.length > 0) {
-				const worn = this.hierarchy.tag_names_of(guide.id);
-				if (!tags.some((tag) => worn.includes(tag))) { return false; }
-			}
-			if (looking_for !== '') {
-				const haystack = `${guide.title} ${guide.description}`.toLowerCase();
-				if (!haystack.includes(looking_for)) { return false; }
-			}
-			return true;
-		});
+		return ALL_TAGS.filter((tag) => this.hierarchy.tags.some((t) => t.name === tag)).sort();
 	}
 
 	/** Say what the reading turned up, with the counts behind every claim. */
@@ -188,6 +200,9 @@ class Guides {
 			.map((bundle) => `${bundle} ${this.files.filter((g) => g.bundle === bundle).length}`)
 			.join(', ');
 		const folders = this.hierarchy.guides.filter((g) => g.is_folder).length;
+		const roots = this.hierarchy.indexes.roots_among(this.hierarchy.guides.map((g) => g.id));
+		const root_names = roots.map((id) => this.hierarchy.guide_byID(id)?.name ?? id).join(', ');
+		debug.log(`Shape: ${roots.length} top folder(s) — ${root_names}. One means the four project folders hang under the shared one, so going up from a guide can reach another project.`);
 		debug.log(`Guides read: ${read} files (${per_bundle}), ${skipped} index files left out, ${failed} could not be read, hung under ${folders} folders. ${unlabeled} carry no labels at all. Kinds found: ${this.kinds_present().join(', ') || 'none'}. Tags found: ${this.tags_present().length} of the ${ALL_TAGS.length} on the closed list, across ${this.hierarchy.taggings.length} tag placements. ${bytes} characters of text passed through and none of it was kept.`);
 	}
 

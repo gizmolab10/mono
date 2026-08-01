@@ -22,6 +22,34 @@
             }
           },
           {
+            "id": "3478257fe0a25546",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ov/notes/work/work journal.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "work journal"
+            }
+          },
+          {
+            "id": "65d83fe2e8490834",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ov/notes/work/handoff.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "handoff"
+            }
+          },
+          {
             "id": "e216bb712ce3f9d7",
             "type": "leaf",
             "state": {
@@ -35,7 +63,8 @@
               "title": "ov"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -170,13 +199,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -208,44 +237,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "125ebc5befb23845",
+  "active": "65d83fe2e8490834",
   "lastOpenFiles": [
-    "ws/node_modules/vite/node_modules",
-    "node_modules/sveld/node_modules/rollup-plugin-svelte/node_modules",
-    "node_modules/source-map-explorer/node_modules/open/node_modules",
-    "ji/node_modules/svelte-check/node_modules",
-    "node_modules/fancy-log/node_modules",
-    "node_modules/autoprefixer/node_modules",
-    "node_modules/@sveltejs/vite-plugin-svelte/node_modules/svelte/node_modules",
-    "node_modules/@babel/template/node_modules",
-    "node_modules/@babel/generator/node_modules",
-    "ov/dist/assets/index-CIdwiRNv.js",
-    "ov/dist/assets/index-C2DDEm8Q.css",
-    "ov/dist/assets/Controls-Cdk-S9tG.md",
+    "ov/notes/work/code debt.md",
+    "ov/notes/work/file layout.md",
+    "ov/notes/work/working features.md",
+    "ov/dist/assets/index-Dr8NLyzN.js",
+    "ov/dist/assets/index-BtsmFM0b.css",
+    "ov/dist/assets/map-D8Yxwkk3.md",
     "ov/dist/assets/3D.primer-CCdmSrYH.md",
-    "ov/dist/assets/Hits_3D-BDzA-q20.md",
     "ov/dist/assets/Details-RzHNKNLy.md",
+    "ov/dist/assets/Controls-Cdk-S9tG.md",
+    "ov/src/lib/ts/managers/Operations.ts.tmp.49972.8b147078f777",
+    "ov/notes/work/handoff.md",
+    "ov/notes/work/okf.md.tmp.49972.dceb0224ad98",
+    "ov/notes/work/okf.md",
+    "ov/notes/guides/map.md",
+    "ov/dist/assets/index-B3vlPWs1.js",
+    "ov/dist/assets/index-PNVDFvNn.css",
+    "ov/dist/assets/Hits_3D-BDzA-q20.md",
     "ov/dist/assets/aesthetics-BravjmBg.md",
+    "ov/dist/assets/index-Z9c3Cfpq.js",
+    "ov/dist/assets/always--9TnwVIc.md",
+    "ov/dist/assets/index-BKBm4Wvl.css",
+    "ov/dist/assets/algebra-M-QT8y5M.md",
+    "ov/dist/assets/index-CggtPgiV.js",
+    "ov/dist/assets/index-DQSHt7n4.css",
+    "ov/notes/guides/pre-flight/banned words.md",
+    "ov/notes/work/work journal.md",
+    "ov/notes/work/index copy.md",
     "ji/notes/work/proposals/ov.md",
     "ji/src/lib/md/manual/index.md",
     "ji/notes/work/handoff.md",
     "notes/guides/synopsis of our guides.md",
     "ji/notes/work/proposals/OKF.md",
-    "ov/notes/work/code debt.md",
-    "ov/dist/assets/algebra-M-QT8y5M.md",
     "ov/src/lib/md/builds.md",
     "ji/notes/work/code debt.md",
     "ov/notes/code debt.md",
     "ov/dist/assets/debugging-Cm24N4DE.md",
-    "ov/dist/assets/svelte.5-DMOHAOSq.md",
-    "ov/dist/assets/hierarchy spec-bPXoGLIt.md",
-    "ov/dist/assets/breadcrumbs-CDedEpEY.md",
-    "ov/dist/assets/gotchas-DhsnoxdX.md",
-    "ov/dist/assets/search-C58qkdkG.md",
-    "ov/dist/assets/vitepress-DxAdCTQ9.md",
-    "ov/dist/assets/db spec-CP0KCGZ1.md",
-    "ov/dist/assets/manually install AnythingLLM-DDZCVXOT.md",
-    "ov/dist/assets/roadmap-LnBm4G1O.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

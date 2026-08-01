@@ -22,10 +22,11 @@ export const ALL_TAGS: string[] = [
 // The four collections the guides live in, each named for the folder that holds it.
 // The shared guides sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
-	mono = 'mono',
+	mono = 'mo',
 	di   = 'di',
 	ws   = 'ws',
 	ji   = 'ji',
+	ov   = 'ov',
 }
 
 // The labels off a file's top. A folder carries none of them.
@@ -47,11 +48,18 @@ export type Guide = Labels & {
 };
 
 // A guide paired with the tags on it — what a listing hands back. A folder appears
-// too, so the shape of the folders shows.
+// too, so the shape of the folders shows. The tags are gathered once, here, so nothing
+// that shows a row ever has to go looking them up.
 export interface Listed_Guide {
-	guide        : Guide;
-	tag_names    : string[];
-	depth        : number;     // how many folders deep it sits (a root is 0)
-	ancestor_ids : string[];   // the folder chain above it, root-first
-	has_children : boolean;    // holds anything nested under it, so it can open and shut
+	guide         : Guide;
+	key           : string;     // where it sits: its collection and its path, together
+	tag_names     : string[];
+	depth         : number;     // how many folders deep it sits (a root is 0)
+	ancestor_keys : string[];   // the folder chain above it, root-first
+	has_children  : boolean;    // holds anything nested under it, so it can open and shut
+}
+
+/** Where a guide sits — its collection and its path — which names it for good. */
+export function key_of(guide: Guide): string {
+	return `${guide.bundle}/${guide.path}`;
 }
