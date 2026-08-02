@@ -198,4 +198,4 @@ Can be overridden per cluster based on cluster size or user preference.
 - `src/lib/ts/geometry/G_Pages.ts`
 - `src/lib/ts/geometry/G_Cluster_Pager.ts`
 - `src/lib/ts/managers/Radial.ts`
-- `src/lib/svelte/radial/Cluster_Pager.svelte`
+- `src/lib/svelte/radial/Radial_Cluster.svelte` — the pager is drawn here now; there is no separate pager component

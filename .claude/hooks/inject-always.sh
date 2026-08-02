@@ -13,9 +13,16 @@ BANNED_SHARED="$REPO/notes/guides/pre-flight/banned words.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
 BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
 
-if [ -f "$ALWAYS_FILE" ]; then
-  cat "$ALWAYS_FILE"
-fi
+# The standing rules live in three files now: always names the other two, replying
+# governs how a reply is written, working governs how the work is done. All three go
+# in, since a rule that isn't in front of the model isn't a rule.
+PRE_FLIGHT="$REPO/notes/guides/pre-flight"
+for RULES in "$ALWAYS_FILE" "$PRE_FLIGHT/replying.md" "$PRE_FLIGHT/working.md"; do
+  if [ -f "$RULES" ]; then
+    cat "$RULES"
+    echo ""
+  fi
+done
 
 BANNED_FILES=()
 [ -f "$BANNED_SHARED" ] && BANNED_FILES+=("$BANNED_SHARED")

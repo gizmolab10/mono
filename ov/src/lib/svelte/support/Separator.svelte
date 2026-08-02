@@ -12,20 +12,20 @@
 		reach     = 'var(--gap)',
 		onclick   = undefined,
 		vertical  = false,
+		hovered   = false,
 		spacer    = false,
 		title     = null,
-		hovered   = false,
 		z_layer,
 	}: {
 		vertical?  : boolean;          // runs top-to-bottom instead of left-to-right
 		spacer?    : boolean;          // no bar — just a growing gap (vertical only)
+		hovered?   : boolean;          // force the title-button's hover look on, even when the cursor isn't on it (a surrounding area can light it)
+		z_layer?   : number;           // optional stacking layer
 		thickness? : number;           // the bar's width/height in px
 		radius?    : number;           // the fillet radius in px
 		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default
 		title?     : string | null;    // when set, a label sits centered on the bar, its --bg mask breaking the line
 		onclick?   : ((event: MouseEvent) => void) | undefined;   // when set, the title is a button that runs this (given the click, so it can stop it bubbling)
-		hovered?   : boolean;          // force the title-button's hover look on, even when the cursor isn't on it (a surrounding area can light it)
-		z_layer?   : number;           // optional stacking layer
 	} = $props();
 
 	const r         = $derived(radius);
@@ -122,7 +122,6 @@
 		font-family : inherit;
 		white-space : nowrap;
 		border      : none;
-		top         : 50%;
 		left        : 50%;
 	}
 
@@ -134,8 +133,8 @@
 
 	.title.clickable:hover,
 	.title.clickable.forced {
-		background : var(--hover);
 		border     : 0.5px solid var(--darkgray);
+		background : var(--hover);
 	}
 
 	/* A clear strip of the page color running along both sides of the line, one --gap
@@ -143,13 +142,13 @@
 	   with the line, so the line and its flares sit in their own clean channel instead
 	   of touching whatever they run through. */
 	.horizontal {
-		border-top    : var(--gap-small) solid var(--bg);
-		border-bottom : var(--gap-small) solid var(--bg);
+		border-top    : 0 solid var(--bg);
+		border-bottom : 0 solid var(--bg);
 	}
 
 	.vertical {
-		border-left   : var(--gap-small) solid var(--bg);
-		border-right  : var(--gap-small) solid var(--bg);
+		border-left   : 0 solid var(--bg);
+		border-right  : 0 solid var(--bg);
 		align-self    : stretch;
 	}
 

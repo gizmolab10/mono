@@ -128,7 +128,7 @@ Every one of the 134 files carries a valid label block. No file covers two conce
 
 ## ov — the map page, made live
 
-The map page above is the part of this that can't be hand-written without going stale. So it isn't a page — it's an app. `ov`, short for overview, is a small web app whose whole job is to be the picture of these four collections. Its proposal is [ov](../../../ji/notes/work/proposals/ov.md); the summary is here because this is the plan it serves.
+The map page above is the part of this that can't be hand-written without going stale. So it isn't a page — it's an app. `ov`, short for overview, is a small web app whose whole job is to be the picture of these four collections. Its proposal is [ov](ov.md); the summary is here because this is the plan it serves.
 
 It reaches outside its own folder on purpose: the guides are the thing it shows. What travels with it is only their addresses. At launch it reads each file once, keeps the five labels off the top, and lets the rest go — so the picture cannot drift from the files, because it *is* the files, read fresh every time.
 

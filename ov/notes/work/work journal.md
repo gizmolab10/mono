@@ -2,6 +2,20 @@
 
 What's been finished, newest first.
 
+## 2026-08-01 — the filters fold away
+
+A toggle at the far left of the top row hides the three picking rows — tags, kinds, projects — and their dividers, giving the list that height. The words looked for stay: the search field moved up beside the toggle and shows either way, since it is the one filter worth keeping in reach while the list is long. The choice is remembered across visits.
+
+Two things settled while doing it: each divider now names the row *below* it rather than the one above, and the titles were cut to one word each — tags, kinds, projects.
+
+## 2026-08-01 — searching the guide on screen
+
+A second row under the reading view's top row holds one search field, the same pill as the list's, with the browser's own clear cross. Every keystroke lights the first place those words turn up and moves there; nothing lit is answer enough for a miss, so nothing flashes while the words are still being typed. What is typed is taken exactly as typed — a space counts like any other character, so two words are looked for together. The field belongs to the guide it was typed in, and empties when another guide opens.
+
+**Two things came out of it.** Links now carry their own hover words, so pointing at one reads "follow this link" while the rest of the page still reads "back to the list". And the reader's habit of guessing at web addresses was turned off: it read the bare words "CLAUDE.md" as a site in Moldova, whose ending is the same two letters markdown files use, and clicking it left the app. Now only text that says outright it is a web address becomes a link.
+
+**Left undone on purpose.** A link pointing outside the guides folders — a work note, a code file — still finds nothing. What it should do instead never came clear, so it sits in code debt rather than being half-built.
+
 ## 2026-08-01 — the links inside a guide came alive
 
 A guide is full of links to other guides, and until now a click on one both shut the reading view and sent the browser off to the raw file. Counted across all five collections, the guides hold 505 links to a heading in the same guide, 222 to another guide, 183 to a code file or a note outside the guides, and 22 to the web. Each now does its own thing: move down the page, open that guide here, say plainly it isn't part of the picture, or open a new tab.

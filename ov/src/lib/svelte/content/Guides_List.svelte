@@ -1,9 +1,17 @@
+<script module lang='ts'>
+	import { writable } from 'svelte/store';
+
+	// Whether the rows have a scrollbar right now. The count row above reads it so its own
+	// right edge lines up with the column titles, which hold back room for the bar.
+	export const w_scrollbar_showing = writable(false);
+</script>
+
 <script lang='ts'>
-	import { w_shut, w_show_folders, w_project, w_sorts, T_Sort } from '../../ts/managers/Filters';
+	import { w_shut, w_show_folders, w_project, w_kind, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { open_view } from '../../ts/managers/Operations';
-	import type { Listed_Guide } from '../../ts/types/Guide';
+	import type { Filtered_Guide } from '../../ts/types/Guide';
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Guides';
 	import { Direction } from '../../ts/types/Angle';
@@ -41,7 +49,7 @@
 	// The whole row answers, not just the name: a file opens for reading, a folder opens or
 	// shuts. The triangle keeps its own click, and stops it from reaching the row, so hitting
 	// the triangle on a folder doesn't toggle it twice.
-	function click_row(row: Listed_Guide) {
+	function click_row(row: Filtered_Guide) {
 		if (row.guide.is_folder) {
 			debug.log(`Row clicked: the folder "${row.guide.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
 			toggle_folder(row.key, row.guide.name);
@@ -52,7 +60,7 @@
 	}
 
 	// What the hint over a row says, which depends on what clicking it would do.
-	function row_hint(row: Listed_Guide): string {
+	function row_hint(row: Filtered_Guide): string {
 		if (!row.guide.is_folder) { return `open "${row.guide.name}"`; }
 		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.guide.name}"`;
 	}
@@ -139,26 +147,32 @@
 	// With the folders hidden that's gone, so a project column steps in — but only while no
 	// project is picked, since with one picked every row would read the same.
 	const shows_project = $derived(!$w_show_folders && $w_project === '');
-	const columns = $derived(shows_project
-		? [
-			{ label: 'kind',    width: '90px',  sort: T_Sort.kind },
-			{ label: 'project', width: '85px',  sort: T_Sort.project },
-			{ label: 'name',    width: 'auto',  sort: T_Sort.name },
-			{ label: 'tags',    width: '170px', sort: T_Sort.tags },
-		]
-		: [
-			{ label: 'kind', width: '90px',  sort: T_Sort.kind },
-			{ label: 'name', width: 'auto',  sort: T_Sort.name },
-			{ label: 'tags', width: '170px', sort: T_Sort.tags },
-		]);
+	// With the folders hidden and one kind picked, every row would read the same kind, so
+	// that column goes too — the count row above says which kind was picked.
+	const shows_kind = $derived($w_show_folders || $w_kind === '');
+	const columns = $derived([
+		// With a kind picked, this column holds only the folder counts, so it narrows to fit them.
+		...(shows_kind    ? [{ label: 'kind',    width: $w_kind === '' ? '90px' : '30px', sort: T_Sort.kind }] : []),
+		...(shows_project ? [{ label: 'project', width: '85px',  sort: T_Sort.project }] : []),
+		{ label: 'name', width: 'auto',  sort: T_Sort.name },
+		{ label: 'tags', width: '170px', sort: T_Sort.tags },
+	]);
 
-	// A column that isn't on screen must not go on quietly ordering the list, so when the
-	// project column leaves, it stops sorting too.
+	// A column that isn't on screen must not go on quietly ordering the list, so when either
+	// the project or the kind column leaves, it stops sorting too.
 	$effect(() => {
 		if (shows_project) { return; }
 		if ($w_sorts.some((s) => s.by === T_Sort.project)) {
 			debug.log(`The project column is off screen, so it stopped sorting.`);
 			w_sorts.update((sorts) => sorts.filter((s) => s.by !== T_Sort.project));
+		}
+	});
+
+	$effect(() => {
+		if (shows_kind) { return; }
+		if ($w_sorts.some((s) => s.by === T_Sort.kind)) {
+			debug.log(`The kind column is off screen, so it stopped sorting.`);
+			w_sorts.update((sorts) => sorts.filter((s) => s.by !== T_Sort.kind));
 		}
 	});
 
@@ -213,6 +227,7 @@
 		const showing = all > seen + 1;
 		if (showing === scrollbar_showing && said_bar) { return; }
 		scrollbar_showing = showing;
+		w_scrollbar_showing.set(showing);       // the count row above holds back the same room
 		said_bar = true;
 		debug.log(`List scrollbar: the rows are ${Math.round(all)} tall and ${Math.round(seen)} is on screen — ${showing ? 'a scrollbar is showing, so room and a gap are held back for it' : 'everything fits, so no room is held back'}.`);
 	}
@@ -231,8 +246,12 @@
 </script>
 
 <!-- The three cells of a row: kind, name (with the open/shut triangle), and tags. -->
-{#snippet guide_row(row: Listed_Guide)}
-	<td class='kind'><span>{row.guide.is_folder ? (folder_count.get(row.key) ?? 0) : (row.guide.kind || '—')}</span></td>
+{#snippet guide_row(row: Filtered_Guide)}
+	{#if shows_kind}
+		<!-- A folder shows how many matching files it holds. A file shows its kind, unless one
+		     kind is picked — then every file would read the same, so the cell stays blank. -->
+		<td class='kind'><span>{row.guide.is_folder ? (folder_count.get(row.key) ?? 0) : ($w_kind !== '' ? '' : (row.guide.kind || '—'))}</span></td>
+	{/if}
 	{#if shows_project}
 		<td class='project'><span>{row.guide.bundle}</span></td>
 	{/if}
@@ -268,13 +287,13 @@
 					<tr class='head'>
 						{#each columns as col}
 							{@const place = can_sort ? place_of.get(col.sort) : undefined}
-							<th>
+							<th class:name-head={col.label === 'name'} class:kind-head={col.label === 'kind'} class:project-head={col.label === 'project'}>
 								<button
 									class='head-label'
 									class:sortable={can_sort}
 									class:sorted={!!place}
 									use:tip={can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `also sort by ${col.label}`) : false}
-									onclick={() => sort_by_column(col.sort)}>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</button>
+									onclick={() => sort_by_column(col.sort)}><span class='head-words'>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</span></button>
 							</th>
 						{/each}
 					</tr>
@@ -288,6 +307,7 @@
 					{#each shown as row, row_number (row.key)}
 						<!-- svelte-ignore a11y_mouse_events_have_key_events a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
 						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.guide.is_folder}
+							class:opened={row.guide.is_folder && row.has_children && !$w_shut.includes(row.key)}
 							data-key={row.key} data-n={row_number} data-name={row.guide.name}
 							use:tip={row_hint(row)}
 							onclick={() => click_row(row)}
@@ -345,18 +365,23 @@
 
 	/* Only the rows scroll; they fill the space under the header. The scrollbar's room is
 	   always held back, even with few rows, so the header's inset always matches. */
+	/* A hairline exactly where the rows begin to disappear under the header. It is always
+	   there, so nothing shifts; it simply turns see-through when everything fits and there
+	   is no cut to draw. */
 	.table-scroll {
+		border-top : 0.1px solid transparent;
+		box-sizing : border-box;
 		flex       : 1 1 auto;
 		overflow-y : auto;
-		box-sizing : border-box;
 		width      : 100%;
 		min-height : 0;
 	}
 
 	/* A gap between the rows and the scrollbar — only when there is a scrollbar. */
 	.table-scroll.has-bar {
-		scrollbar-gutter : stable;
+		border-top-color : var(--accent);
 		padding-right    : var(--gap);
+		scrollbar-gutter : stable;
 	}
 
 	.table-scroll::-webkit-scrollbar {
@@ -382,27 +407,61 @@
 	/* Each cell is see-through so the line behind shows; only the title itself masks it. */
 	.head th {
 		background : transparent;
-		padding    : 0;
 		text-align : center;
+		padding    : 0;
 	}
 
-	/* The tags title hugs the right, matching the tags in the cells below. */
+	/* Each title is a button carrying a gap of space inside it, which is what breaks the line
+	   behind the words. So the cell is nudged by that same gap, and the words land exactly
+	   where the column's own words do. */
+	.head th.kind-head,
+	.head th.project-head {
+		padding-right : var(--gap-fat);
+		text-align    : right;
+	}
+
+	/* The name title starts where the names themselves start — past the triangle slot and
+	   the space after it. */
+	.head th.name-head {
+		padding-left : calc(var(--size-svg) + var(--gap));
+		text-align   : left;
+	}
+
+
+	/* The tags title hugs the right, matching the tags in the cells below — pulled out by the
+	   gap the button carries inside it, so the words end where the tags end. */
 	.head th:last-child {
-		text-align : right;
+		margin-right : 0;
+		padding-right: 0;
+		text-align   : right;
+	}
+
+	.head th:last-child .head-label {
+		margin-right : calc(0px - var(--gap));
+	}
+
+	.head th.kind-head .head-label,
+	.head th.project-head .head-label {
+		margin-right : calc(0px - var(--gap));
+	}
+
+	.head th.name-head .head-label {
+		margin-left : calc(0px - var(--gap));
 	}
 
 	/* The page-colored background is what breaks the line, so the title reads as a word
 	   sitting on it rather than crossed out by it. */
+	/* The background stays solid so the divider behind is fully broken; only the words are
+	   faded, which is why the fading sits on the words rather than the whole title. */
 	.head-label {
 		border      : 0.5px solid transparent;   /* held, so the hover edge adds no shift */
-		background  : var(--bg);
 		font-size   : var(--font-label);
-		color       : var(--text);
-		opacity     : var(--opacity-header);
 		padding     : 0 var(--gap);
+		color       : var(--text);
+		background  : var(--bg);
 		font-family : inherit;
-		white-space : nowrap;   /* the title, its arrow and its number stay on one line */
 		cursor      : default;
+		white-space : nowrap;   /* the title, its arrow and its number stay on one line */
 	}
 
 	/* While the folders are hidden the titles are buttons — the one in use reads solid. */
@@ -411,8 +470,12 @@
 		cursor        : pointer;
 	}
 
-	.head-label.sortable:hover,
-	.head-label.sorted {
+	.head-words {
+		opacity : var(--opacity-header);
+	}
+
+	.head-label.sortable:hover .head-words,
+	.head-label.sorted .head-words {
 		opacity : 1;
 	}
 
@@ -448,10 +511,10 @@
 		text-align     : left;
 	}
 
+	/* The column's own width decides this cell; the styling only says how its words sit. */
 	.kind {
 		padding-right : var(--gap-fat);
 		text-align    : right;
-		width         : 90px;
 	}
 
 	/* Dim only the text, not the whole cell — otherwise the row's hover light is dimmed
@@ -501,7 +564,7 @@
 	}
 
 	.tri:hover path {
-		fill : var(--hover);
+		fill : var(--white);
 	}
 
 	/* The name is capped by its column. Clipping lives on this inner block, not the cell
@@ -523,6 +586,12 @@
 	/* A folder's name reads heavier than the files under it. */
 	.guides-table .file.folder .name-text {
 		font-weight : var(--fw-banner);
+	}
+
+	/* A folder standing open reads gray — its contents are on screen, so the folder itself
+	   is no longer the thing to look at. */
+	.guides-table .file.folder.opened .name-text {
+		color : var(--lightgray);
 	}
 
 	.tags-cell {

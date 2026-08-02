@@ -2,6 +2,8 @@
 
 | # | Feature |
 | --- | --- |
+| 14 | A toggle at the top left folds the three picking rows away, leaving the list their height; the search field stays beside the toggle either way, and the choice is remembered |
+| 13 | A search row under the reading view's top row: every keystroke lights the first place those words turn up and moves there, the words taken exactly as typed, spaces and all. The field belongs to the guide it was typed in |
 | 12 | The links inside a guide are live: a heading moves down the page, another guide opens right here, a code file or a work note says plainly it isn't part of the picture, and the web opens a new tab. A link is answered by climbing the folders above the guide and taking the first guide of that name found under any of them, so a link from one project reaches another |
 | 11 | Reading off the list keeps its own way back: each link followed goes on a stack, back walks one down and forward one up, the forward triangle is simply absent at the top, and backing out past the bottom hands the triangles back to the list. No guide is ever on the stack twice |
 | 10 | A guide the filters hide still opens when a link names it — the reading view finds a guide among all of them, while the list's own count never moves because a link was followed |

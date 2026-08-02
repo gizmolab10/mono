@@ -65,7 +65,7 @@ export default class Constants {
 	gap = {
 		huge         : common_gap * 4,
 		fat	         : common_gap * 2.1,
-		small		 : common_gap / 1.5,
+		small		 : common_gap / 1.8,
 		tight		 : common_gap / 2,
 		details		 : common_gap / 4,
 		default      : common_gap,

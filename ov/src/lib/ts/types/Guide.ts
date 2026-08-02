@@ -50,7 +50,7 @@ export type Guide = Labels & {
 // A guide paired with the tags on it — what a listing hands back. A folder appears
 // too, so the shape of the folders shows. The tags are gathered once, here, so nothing
 // that shows a row ever has to go looking them up.
-export interface Listed_Guide {
+export interface Filtered_Guide {
 	guide         : Guide;
 	key           : string;     // where it sits: its collection and its path, together
 	tag_names     : string[];

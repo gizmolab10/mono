@@ -178,7 +178,7 @@ Centralized color management system driven by the Hits manager and hit targets. 
 
 **Implemented Architecture:**
 
-Created `Styles` utility class (`src/lib/ts/utilities/Styles.ts`) with static methods:
+Created `Styles` utility class (`src/lib/ts/managers/Styles.ts`) with static methods:
 - Takes inputs: `S_Snapshot` state object, base colors
 - Returns computed color values based on schema
 - Encapsulates all conditional logic in one place
@@ -590,13 +590,13 @@ Managers are singleton classes exported from `Global_Imports`:
 
 Used **static utility class** approach:
 - `export default class Styles { static computeWidgetColors(...), static computeDotColors(...), static computeButtonColors(...) }`
-- Located in `src/lib/ts/utilities/Styles.ts`
+- Located in `src/lib/ts/managers/Styles.ts`
 - Pure computation functions - no instance state needed
 - Easy to test and reason about
 - Clear separation: `Styles` computes colors, `Colors` manager handles schemes/stores
 
 **File Structure:**
-- `src/lib/ts/utilities/Styles.ts` - Color computation logic
+- `src/lib/ts/managers/Styles.ts` - Color computation logic
 - `src/lib/ts/state/S_Snapshot.ts` - State object for passing to Styles
 - `src/lib/ts/state/S_Element.ts` - Uses Styles for dot/button colors
 - `src/lib/ts/state/S_Widget.ts` - Uses Styles for widget colors

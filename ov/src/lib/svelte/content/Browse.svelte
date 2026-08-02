@@ -1,18 +1,23 @@
 <script lang='ts'>
-	import { w_show_folders, w_sorts } from '../../ts/managers/Filters';
-	import Guides_List from './Guides_List.svelte';
-	import Separator from '../support/Separator.svelte';
-	import Filters from '../support/Filters.svelte';
+	import { w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
+	import Filters from '../support/Filters.svelte';
+	import Guides_List, { w_scrollbar_showing } from './Guides_List.svelte';
 	import { debug } from '../../ts/common/Debug';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
+
+	// How wide the drawn bar runs — the same size the folder triangles use.
+	const MARK = k.size.svg;
 
 	// Looking through the guides: the three filters across the top, how many they leave,
 	// and the list itself. The narrowing happens in the hierarchy; this only shows it.
 	const w_showing = guides.w_showing;
 
-	let matching = $derived($w_showing.filter((r) => !r.guide.is_folder).length);
+	// How many guides the filters leave — counted before the folds, so shutting a folder
+	// hides its files from the list without changing what the count says.
+	let matching = $derived.by(() => { $w_showing; return guides.hierarchy.matched_count; });
 	let total    = $derived(guides.files.length);
 
 	// The unsorted button only means something while the folders are hidden, at least one
@@ -39,21 +44,40 @@
 </script>
 
 <Filters />
-<Separator thickness={k.separator.huge}/>
 <div class='count-row'>
 	<!-- With nothing left after the filters there are no folders to show or hide, so the
 	     button has nothing to act on. -->
 	{#if matching > 0}
-		<button class='folders-button' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
-			{$w_show_folders ? 'hide folders' : 'show folders'}
+		<!-- A drawn bar while the folders show; a folder while they are hidden. -->
+		<button class='folders-button eye' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
+			{#if $w_show_folders}
+				<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
+					<path d={svg_paths.closed(MARK)} fill-rule='nonzero' />
+				</svg>
+			{:else}
+				📁
+			{/if}
 		</button>
 	{/if}
+	<!-- What was picked, beside the folder button: the project's short name, then the kind,
+	     each held well clear of its neighbors. -->
+	{#if $w_project !== ''}
+		<span class='chosen-project'>{$w_project}</span>
+	{/if}
+	{#if $w_kind !== ''}
+		<span class='chosen-kind'>{$w_kind}</span>
+	{/if}
+	<span class='count'>{matching} guides (of {total})</span>
+	<!-- The unsorted button and the picked tags hug the far right, the folders button the
+	     far left, and the count keeps the middle of the whole row. -->
 	{#if sorting}
-		<button class='folders-button' onclick={stop_sorting} use:tip={'back to the order the guides sit in'}>
+		<button class='folders-button unsorted' onclick={stop_sorting} use:tip={'back to the order the guides sit in'}>
 			unsorted
 		</button>
 	{/if}
-	<span class='count'>{matching} guides (of {total})</span>
+	{#if $w_tags.length > 0}
+		<span class='chosen-tags' class:after-unsorted={sorting} class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
+	{/if}
 </div>
 <Guides_List />
 
@@ -61,37 +85,104 @@
 	/* The button hugs the far left; the count is placed at the middle of the whole row
 	   rather than centered in what the button leaves over, so it never drifts.
 	   Pulled 2px closer to the dividers above and below, so the row takes less height. */
+	/* The row holds one height whether or not the buttons are in it, so the count and the
+	   list below never shift when a button has nothing to act on and leaves. */
 	.count-row {
-		align-items : center;
-		position    : relative;
-		display     : flex;
+		min-height  : var(--height-control);
 		gap         : var(--gap-tight);
-		margin      : -2px 0;
+		position    : relative;
+		align-items : center;
+		margin      : calc(var(--gap-small) - 6px) 0 -6px 0;
+		display     : flex;
 	}
 
 	.count {
-		transform   : translateX(-50%);
 		opacity     : var(--opacity-header);
 		font-size   : var(--font-label);
-		white-space : nowrap;
+		transform   : translateX(-50%);
 		position    : absolute;
+		white-space : nowrap;
 		left        : 50%;
+	}
+
+	.unsorted {
+		margin-left : auto;
+	}
+
+	/* The drawn bar takes the text color, like every other drawn mark. */
+	.shut-mark {
+		width   : var(--size-svg);
+		height  : var(--size-svg);
+		display : block;
+		fill    : var(--text);
+	}
+
+	/* The picked project and kind, reading like the count rather than like buttons. The
+	   project stands well clear of the button on its left and the kind on its right. */
+	.chosen-project,
+	.chosen-tags,
+	.chosen-kind {
+		opacity     : var(--opacity-header);
+		font-size   : var(--font-label);
+		color       : var(--text);
+		white-space : nowrap;
+	}
+
+	.chosen-project {
+		margin : 0 var(--gap) 0 calc(var(--gap) - var(--gap-tight));
+	}
+
+	/* The tags hug the far right. With the unsorted button beside them they simply follow it;
+	   without it they take the far right themselves. */
+	.chosen-tags {
+		margin-left : auto;
+	}
+
+	.chosen-tags.after-unsorted {
+		margin-left : var(--gap);
+	}
+
+	/* With a scrollbar beside the rows, the tags title holds back room for it — so these
+	   words hold back the same, and the two end on the same edge. */
+	.chosen-tags.has-bar {
+		margin-right : calc(20px + var(--gap));
 	}
 
 	.folders-button {
 		border        : var(--thickness-normal) solid var(--black);
-		border-radius : var(--radius-pill);
 		height        : var(--height-control);
+		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
 		font-size     : var(--font-label);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
-		white-space   : nowrap;
 		cursor        : pointer;
+		white-space   : nowrap;
 	}
 
 	.folders-button:hover {
 		background : var(--hover);
 	}
+
+	/* The eye is one mark, so its pill is as narrow as it can be while staying round. At
+	   rest it wears no edge and sits on the page color; the edge and the fill appear only
+	   under the cursor, and the edge is held see-through so nothing shifts. */
+	.folders-button.eye {
+		border          : 0.5px solid transparent;   /* held, so the hover edge adds no shift */
+		background      : transparent;
+		position        : relative;
+		top             : 2px;
+		width           : var(--height-control);
+		justify-content : center;
+		align-items     : center;
+		display         : flex;
+		padding         : 0;
+	}
+
+	.folders-button.eye:hover {
+		border-color : var(--black);
+		background   : var(--hover);
+	}
+
 </style>

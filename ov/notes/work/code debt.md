@@ -1,23 +1,43 @@
 # Code debt
 
-do not write a proposal for the first unchecked item to the top of handoff.
+write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] add search to view guides, a new second row
-- [ ] add a toggle button top left hide/show filters
-- [ ] encapsulate in in ts//common/okf.md
-    - [ ] ALL the kinds, tags, project 2-char names
-    - [ ] and associated logic
+- [x] steps to annotate for okf a file when adding it to the guides
+- [ ] checkbox in details preferences to turn tt off
+- [ ] bring okf up to date
+- [ ] work on murky
+- [ ] click and hold on a header opens the filters. does nothing if they are open
+- [ ] new prop for separator gap -> whitespace on each side of line
+
+## done
+
+- [x] mark each listed guide regarding
+    - [x] match of: name or content
+    - [x] on click of the matched-content
+        - [x] copy search to view's search
+        - [x] on return to browse, clear the view's search
+- [x] count all the .md files
 
 ## postpone
 
-- [ ] when a link's target is an anchor, add the anchor to the fifo
 - [ ] incorporate work files, hooks and CLAUDE
+    - [ ] each file gets okf at the top
+    - [ ] decide on kinds and tags
+- [ ] follow a link that points outside the guides folders (a work note, a code file) — abandoned for now, the shape of it was never clear
+- [ ] encapsulate in a new file ts/common/okf.md
+    - [ ] for open source
+    - [ ] ALL the kinds, tags, project 2-char names
+    - [ ] and associated logic
+
+- [ ] when a link's target is an anchor, add the anchor to the fifo
 - [ ] add editing ability
 
 ## done
 
+- [x] add a toggle button top left hide/show filters
+- [x] add search to view guides, a new second row
 - [x] bring internal hyperlinks to life
 - [x] translate md -> html, and display the html in the view document
 - [x] delay showing the app until hierarchy is loaded

@@ -1,6 +1,6 @@
 # Pre Flight
 
-**Every response:** read `always.md`, then scan `keywords.md`. If any keyword matches, read the listed guide(s).
+**Every response:** read `always.md` and the two it names — `replying.md` and `working.md` — then scan `keywords.md`. If any keyword matches, read the listed guide(s).
 At session start, also read:
 - [Shorthand](./shorthand.md) — parse commands and abbreviations
 - [Kinds of Tasks](./kinds.of.tasks.md) — classify task type, note conflicts
@@ -14,5 +14,7 @@ At session start, also read:
 - [Keywords](./keywords.md)
 - [Kinds.of.tasks](./kinds.of.tasks.md)
 - [Pitfalls](./pitfalls.md)
+- [Replying](./replying.md)
 - [Shorthand](./shorthand.md)
+- [Working](./working.md)
 

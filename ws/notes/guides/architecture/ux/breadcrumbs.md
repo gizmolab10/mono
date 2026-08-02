@@ -340,7 +340,7 @@ These phases can be implemented incrementally, but in order, with each phase lea
      - [x] Test that `w_ancestry_focus` updates correctly after navigation
      - [x] Test that grabs are restored from history entry
      - [x] Test that all grabbed ancestries are made visible
-   - **Status**: ✅ Implemented. Removed direct `s.w_ancestry_focus.set()` call, added early-return for empty recents, added null checks. Tests created in `src/lib/ts/tests/UX_ancestry_next_focusOn.test.ts`.
+   - **Status**: ✅ Implemented. Removed direct `s.w_ancestry_focus.set()` call, added early-return for empty recents, added null checks. Tests for it now live in `src/lib/ts/tests/UX_becomeFocus.test.ts` and `src/lib/ts/tests/UX_direct_setters.test.ts`.
 
 ###### 4. **Find and update all direct setters**:
    - Search for all `s.w_ancestry_focus.set()` calls
@@ -483,7 +483,7 @@ Move `w_ancestry_focus` from `Stores` into `UX` as a writable focus store owned 
 - **notes/docs**:
   - [ ] `breadcrumbs.md`
   - [ ] `styles-manager.md`
-  - [x] `slim/SlimStores.ts`
+  - [x] `slim/SlimStores.ts` (gone — the file no longer exists anywhere in ws)
   - [ ] `stores.md`
   - [ ] `hover.widget.md`
   - [ ] `Resize_Optimization_AI.md`

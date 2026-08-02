@@ -31,6 +31,40 @@ export class SVG_Paths {
 		return `M ${start} ${start} L ${end} ${end} M ${start} ${end} L ${end} ${start}`;
 	}
 
+	/**
+	 * The shut mark: two upright strokes of the given height, standing side by side with the
+	 * given space between them, the pair centered across the same width it is tall. Drawn as
+	 * filled bars rather than stroked lines, so the thickness is exact at any size.
+	 */
+	closed(size: number, thickness: number = 1.5, gap: number = 4): string {
+		// One flat bar, centered top to bottom, held in from each end by the gap, with a small
+		// round dot of the gap's own size sitting at its left end.
+		const top = (size - thickness) / 2;
+		const middle = size / 2;
+		const left = gap;
+		const right = size - gap;
+		const n = (v: number) => +v.toFixed(2);
+		const bar = `M ${n(left)} ${n(top)} H ${n(right)} V ${n(top + thickness)} H ${n(left)} Z`;
+		// A three-sided mark of the gap's size, turned so one corner rests on the line's left
+		// end. It is wound the same way round as the bar, so where the two overlap the color
+		// stays whole instead of cancelling out.
+		const side = gap * 2;
+		const height = side * Math.sqrt(3) / 2;
+		const tip = left - 2;                     // nudged 2 left of the line's end
+		const triangle = ` M ${n(tip)} ${n(middle)}`
+			+ ` L ${n(tip + height)} ${n(middle - side / 2)}`
+			+ ` L ${n(tip + height)} ${n(middle + side / 2)} Z`;
+		return bar + triangle;
+
+		// The two upright bars, standing side by side with the given space between them:
+		// const top = 0;
+		// const bottom = size;
+		// const left = (size - (gap + thickness * 2)) / 2;             // the pair, centered
+		// const right = left + thickness + gap;
+		// const bar = (x: number) => `M ${+x.toFixed(2)} ${top} H ${+(x + thickness).toFixed(2)} V ${bottom} H ${+x.toFixed(2)} Z `;
+		// return bar(left) + bar(right);
+	}
+
 	// A trash bin, drawn as a stroked outline: the lid line, the handle, the tapered body, and
 	// two slots down the front. Laid out on a 24-unit grid and scaled to `size`; render with
 	// fill='none' and a stroke.
@@ -100,7 +134,7 @@ export class SVG_Paths {
 	private soft_pointer_points(size: number, direction: number): Point[] {
 		const offset = Point.square(size / 2);
 		const radius = Point.x(size / 2);
-		const half   = (90 * Math.PI / 180) / 1.75;   // half the 90° gap between the two back corners
+		const half   = (90 * Math.PI / 180) / 2.25;   // half the 90° gap between the two back corners
 		const point  = direction + Math.PI;        // the tip points opposite the given direction
 		const angles = [point, point + Math.PI - half, point + Math.PI + half];
 		return angles.map(a => this.rotated(radius, a).offsetBy(offset));

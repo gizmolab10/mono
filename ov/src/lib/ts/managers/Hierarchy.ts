@@ -1,5 +1,5 @@
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
-import type { Guide, Labels, Listed_Guide } from '../types/Guide';
+import type { Guide, Labels, Filtered_Guide } from '../types/Guide';
 import type { Sort } from './Filters';
 import { Indexes } from '../database/Indexes';
 import { T_Bundle, key_of } from '../types/Guide';
@@ -24,7 +24,7 @@ export class Hierarchy {
 	// carries its guide together with the tags on it, how deep it sits, and the folder
 	// chain above it — so the tag lookup is done once, as the row is built, and never
 	// again by whoever shows it.
-	filtered_guides: Listed_Guide[] = [];
+	filtered_guides: Filtered_Guide[] = [];
 
 	// How many matching files sit under each folder, by where that folder sits. Counted
 	// over everything, so a shut folder still shows its full tally.
@@ -32,7 +32,11 @@ export class Hierarchy {
 
 	// Every guide, filters or no filters, by where it sits. A guide reached by following
 	// a link may be one the filters hide, and the reading view has to show it all the same.
-	all_guides: Map<string, Listed_Guide> = new Map();
+	all_guides: Map<string, Filtered_Guide> = new Map();
+
+	// How many files the filters leave, counted before the folds have their say — so a shut
+	// folder hides files from the list without changing what the count says.
+	matched_count: number = 0;
 
 	relationships:   Relationship[] = [];
 	predicates:      Predicate[]    = [];
@@ -154,10 +158,10 @@ export class Hierarchy {
 	 * chain above it. The one thing the walk must never do is follow a node back into
 	 * itself, so the guard is "already on the chain I'm walking now" — a real loop.
 	 */
-	list_guides(): Listed_Guide[] {
+	list_guides(): Filtered_Guide[] {
 		const by_id = new Map(this.tags.map((t) => [t.id, t.name]));
 		const roots = this.indexes.roots_among(this.guides.map((g) => g.id));
-		const listed: Listed_Guide[] = [];
+		const listed: Filtered_Guide[] = [];
 
 		const walk = (id: string, depth: number, ancestors: string[]): void => {
 			if (ancestors.includes(id)) {
@@ -256,7 +260,7 @@ export class Hierarchy {
 	 * Does one row survive the three filters? Folders never match on their own — they
 	 * come back only by holding something that did.
 	 */
-	private matches(row: Listed_Guide, project: string, kind: string, tags: string[], words: string): boolean {
+	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string): boolean {
 		if (row.guide.is_folder) { return false; }
 		if (project !== '' && row.guide.bundle !== project) { return false; }
 		if (kind !== '' && row.guide.kind !== kind) { return false; }
@@ -277,7 +281,7 @@ export class Hierarchy {
 	 * What one row reads as, for the column being sorted by. An empty value sorts last
 	 * whichever way the sort runs, so blanks never scatter through the list.
 	 */
-	private sort_key(row: Listed_Guide, by: string): string {
+	private sort_key(row: Filtered_Guide, by: string): string {
 		if (by === 'kind')    { return row.guide.kind; }
 		if (by === 'project') { return row.guide.bundle; }
 		if (by === 'name')    { return row.guide.name; }
@@ -296,6 +300,7 @@ export class Hierarchy {
 			: all;
 
 		const matched = all.filter((r) => this.matches(r, project, kind, tags, words));
+		this.matched_count = matched.length;
 		const keep = new Set(matched.map((r) => r.key));
 		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }
 

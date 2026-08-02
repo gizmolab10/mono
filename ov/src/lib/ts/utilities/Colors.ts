@@ -23,9 +23,10 @@ import { get } from 'svelte/store';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export class Colors {
-	gray			  = '#888';
 	darkgray          = '#666';
-	lightgray         = '#ccc';
+	gray			  = '#888';
+	lightgray         = '#aaa';
+	faintgray         = '#ddd';				// same as lightgray for now, to be tuned on its own
 	offwhite          = '#eee';
 	white			  = '#fff';
 	banner			  = '#f8f8f8';

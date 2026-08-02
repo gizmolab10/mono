@@ -8,6 +8,7 @@
 	import { follow_link } from '../../ts/managers/Operations';
 	import { guides } from '../../ts/managers/Guides';
 	import { key_of, type Guide } from '../../ts/types/Guide';
+	import Separator from '../support/Separator.svelte';
 
 	// Show one guide's words. Ported from ji's document viewer, trimmed to the one kind
 	// overview holds: every guide is words, so the picture, page, clip and sound branches
@@ -297,6 +298,7 @@
 			bind:value={looking_for}
 			oninput={find_first} />
 	</div>
+	<Separator thickness={k.separator.huge}/>
 	{#if !loaded}
 		<div class='view-note'>reading…</div>
 	{:else if failed !== ''}
@@ -342,14 +344,16 @@
 	}
 
 	/* All three sit 3px higher than the triangles and the close button, so the words line
-	   up with the middle of those rather than their tops. */
+	   up with the middle of those rather than their tops. The name takes whatever room the
+	   kind and the tags leave and centers itself in that. */
 	.view-name {
-		transform   : translateX(-50%);
 		font-size   : var(--font-label);
 		color       : var(--text);
 		white-space : nowrap;
-		position    : absolute;
-		left        : 50%;
+		text-align  : center;
+		position    : relative;
+		flex        : 1 1 auto;
+		min-width   : 0;
 		top         : 3px;
 	}
 

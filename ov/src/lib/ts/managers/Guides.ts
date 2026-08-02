@@ -1,4 +1,4 @@
-import { T_Bundle, ALL_TAGS, type Guide, type Labels, type Listed_Guide } from '../types/Guide';
+import { T_Bundle, ALL_TAGS, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
 import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
@@ -83,7 +83,7 @@ class Guides {
 	// What the filters and the folds leave, in the order shown. The hierarchy keeps it;
 	// this hands out the very same rows, and only exists so that anything showing them
 	// hears about a change. Re-worked out whenever any filter or any fold moves.
-	w_showing = writable<Listed_Guide[]>([]);
+	w_showing = writable<Filtered_Guide[]>([]);
 
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than

@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from './Preferences';
-import type { Listed_Guide } from '../types/Guide';
+import type { Filtered_Guide } from '../types/Guide';
 import { derived, get, writable } from 'svelte/store';
 import { guides } from './Guides';
 import { debug } from '../common/Debug';
@@ -164,4 +164,4 @@ export function close_view(): void {
 	if (get(w_operation) === T_Operation.view) { w_operation.set(T_Operation.browse); }
 }
 
-export type { Listed_Guide };
+export type { Filtered_Guide };

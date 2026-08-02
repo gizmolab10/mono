@@ -93,6 +93,7 @@ class Configuration {
 		root.setProperty('--offwhite',   colors.offwhite);
 		root.setProperty('--darkgray',   colors.darkgray);
 		root.setProperty('--lightgray',  colors.lightgray);
+		root.setProperty('--faintgray',  colors.faintgray);
 	}
 
 	/**
