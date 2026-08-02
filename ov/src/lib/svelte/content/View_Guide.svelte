@@ -1,14 +1,17 @@
 <script lang='ts'>
+	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Blocks';
+	import { ALL_TAGS, T_Kind, key_of, type Guide } from '../../ts/types/Guide';
+	import { follow_link, w_editing } from '../../ts/managers/Operations';
+	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
+	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import MarkdownIt from 'markdown-it';
+	import Separator from '../support/Separator.svelte';
+	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import { follow_link } from '../../ts/managers/Operations';
-	import { guides } from '../../ts/managers/Guides';
-	import { key_of, type Guide } from '../../ts/types/Guide';
-	import Separator from '../support/Separator.svelte';
+	import MarkdownIt from 'markdown-it';
 
 	// Show one guide's words. Ported from ji's document viewer, trimmed to the one kind
 	// overview holds: every guide is words, so the picture, page, clip and sound branches
@@ -34,34 +37,9 @@
 	// name stays a name, and "http://..." or "https://..." still becomes a link.
 	reader.linkify.set({ fuzzyLink: false });
 
-	// The reader leaves headings unnamed, so a link ending in "#naming" would have nothing
-	// to land on. Each heading is given a name made from its own words — lowercased, with
-	// anything that isn't a letter or a number becoming a dash — which is how the writing
-	// tools make them, so the links already in the guides line up.
-	function name_the_headings(html: string): string {
-		return html.replace(/<h([1-6])>([\s\S]*?)<\/h\1>/g, (whole, level, inside) => {
-			const words = inside.replace(/<[^>]*>/g, '');
-			const named = words.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-			return named === '' ? whole : `<h${level} id="${named}">${inside}</h${level}>`;
-		});
-	}
-
-	// Every link carries its own hover words, so pointing at one says "follow this link"
-	// rather than the whole page's "back to the list" — the hint watcher always takes the
-	// nearest words under the cursor.
-	function mark_the_links(html: string): string {
-		return html.replace(/<a\s/g, '<a data-tip="follow this link" ');
-	}
-
-	// The five labels at the top of every guide are already what the list's columns show,
-	// so they are taken off before reading — otherwise they would show as a stray line of
-	// "kind: rule" text above the words.
-	function without_labels(text: string): string {
-		const lines = text.split('\n');
-		if (lines[0]?.trim() !== '---') { return text; }
-		const ends_at = lines.findIndex((line, i) => i > 0 && line.trim() === '---');
-		return ends_at > 0 ? lines.slice(ends_at + 1).join('\n') : text;
-	}
+	// Turning a guide's text into the page on screen — labels off the top, every piece
+	// stamped with the lines it came from, headings named, links marked — all lives in one
+	// place, so drawing again after a change is the same call on the changed text.
 
 	// The step triangles: the same fat mark as ji's, pointing left and right.
 	const STEP_TRIANGLE = k.size.cross * 1.1;
@@ -132,10 +110,12 @@
 	}
 
 	/**
-	 * A click anywhere on the words. Landing on a link decides what to do by what it names;
-	 * landing anywhere else goes back to the list, as it always has.
+	 * A click anywhere on the words. With editing on, a click opens the piece it landed on
+	 * and nothing closes the guide. Otherwise, landing on a link decides what to do by what
+	 * it names, and landing anywhere else goes back to the list, as it always has.
 	 */
 	function on_page_click(event: MouseEvent) {
+		if ($editing) { on_edit_click(event); return; }
 		const anchor = (event.target as HTMLElement | null)?.closest?.('a') as HTMLAnchorElement | null;
 		if (!anchor) { onclose(); return; }
 		event.preventDefault();
@@ -156,6 +136,171 @@
 		}
 		if (found.why === 'a heading inside this same guide') { move_to_heading(found.heading); return; }
 		say(`"${link}" is ${found.why}`);
+	}
+
+	// --- editing one piece of the guide ---------------------------------------
+
+	// Every outermost piece of the page carries the lines it came from. With editing on, a
+	// click opens that piece in a plain box holding the file's own words for those lines —
+	// hashes, dashes and all — rather than anything worked back out of what's on screen.
+	//
+	// Nothing is written yet: leaving the box says to the log what it would have saved.
+	// Kept outside this view, so the list can open a guide already editing — holding the
+	// command key while clicking a file does that.
+	const editing = w_editing;
+	let text_of_file = '';                          // the whole file, held only while on screen
+	let box: HTMLTextAreaElement | null = null;     // the open box, if there is one
+	let stood_in_for: HTMLElement | null = null;    // the piece it is standing in front of
+	let opened_with = '';                           // what the box held when it opened
+
+	/** Grow the box to hold everything typed into it. */
+	function fit_box() {
+		if (!box) { return; }
+		box.style.height = 'auto';
+		box.style.height = `${box.scrollHeight}px`;
+	}
+
+	/** Open one piece of the page for editing, in place. */
+	function open_box(block: HTMLElement) {
+		close_box(true);
+		const from = Number(block.dataset.from);
+		const to   = Number(block.dataset.to);
+		if (!Number.isFinite(from) || !Number.isFinite(to)) { return; }
+		opened_with  = lines_between(text_of_file, from, to);
+		stood_in_for = block;
+		box = document.createElement('textarea');
+		box.className = 'edit-box';
+		box.value     = opened_with;
+		box.addEventListener('input', fit_box);
+		box.addEventListener('blur', () => close_box(true));
+		box.addEventListener('keydown', (e: KeyboardEvent) => {
+			e.stopPropagation();                     // the guide's own keys stay out of the box
+			if (e.key === 'Escape') { close_box(false); }
+		});
+		block.parentNode?.insertBefore(box, block);
+		block.style.display = 'none';
+		fit_box();
+		box.focus();
+		debug.log(`Editing "${name}": opened lines ${from} through ${to - 1} — ${opened_with.length} character(s) of the file's own words.`);
+	}
+
+	/** Put the piece back. Leaving the box keeps what was typed; Escape throws it away. */
+	function close_box(keep: boolean) {
+		if (!box || !stood_in_for) { return; }
+		const typed = box.value;
+		const from  = Number(stood_in_for.dataset.from);
+		const to    = Number(stood_in_for.dataset.to);
+		box.remove();
+		stood_in_for.style.display = '';
+		box = null;
+		stood_in_for = null;
+		if (!keep)                  { debug.log(`Editing "${name}": dropped the change to lines ${from} through ${to - 1}.`); return; }
+		if (typed === opened_with)  { debug.log(`Editing "${name}": lines ${from} through ${to - 1} closed unchanged.`); return; }
+		// The lines have to still say what they said when the box opened, or the numbers are
+		// stale and putting words back would land them somewhere else in the file.
+		if (!still_reads(text_of_file, from, to, opened_with)) {
+			say('the guide changed underneath — nothing saved');
+			debug.log(`Editing "${name}": refused to save lines ${from} through ${to - 1} — they no longer read as they did when the box opened.`);
+			return;
+		}
+		const whole = with_lines_replaced(text_of_file, from, to, typed);
+		const was   = text_of_file;
+		const where = file_path_of(guide.bundle, guide.path);
+		debug.log(`Editing "${name}": lines ${from} through ${to - 1} changed — ${opened_with.length} character(s) becoming ${typed.length}, the whole file going from ${was.length} to ${whole.length}. Writing it to ${where}.`);
+		// Drawn again at once, so the words on screen are the words being written. If the
+		// write is refused, the old text goes back up and the page says why.
+		redraw(whole);
+		save_guide(where, whole, was).then((answer) => {
+			if (answer.ok) { debug.log(`Editing "${name}": ${where} written.`); return; }
+			say(`not saved — ${answer.why}`);
+			debug.log(`Editing "${name}": ${where} was NOT written — ${answer.why}. Putting the words back the way the file has them.`);
+			redraw(was);
+		});
+	}
+
+	/**
+	 * Draw the guide again from its changed text. The whole page is built afresh rather than
+	 * the one piece patched, so every piece below the change gets the lines it now sits on —
+	 * a change that adds or removes lines moves everything under it. The place on screen is
+	 * put back, so the words don't jump under the cursor.
+	 */
+	function redraw(whole: string) {
+		const was_at = page?.scrollTop ?? 0;
+		text_of_file = whole;
+		words = page_of(reader, whole);
+		unmark();                                  // anything lit belongs to the old drawing
+		requestAnimationFrame(() => { if (page) { page.scrollTop = was_at; } });
+		debug.log(`Editing "${name}": drew the guide again from its changed words — back at ${Math.round(was_at)} down the page.`);
+	}
+
+	/** A click on the words while editing is on. */
+	function on_edit_click(event: MouseEvent) {
+		event.preventDefault();
+		event.stopPropagation();
+		const block = (event.target as HTMLElement | null)?.closest?.('[data-from]') as HTMLElement | null;
+		if (!block) { return; }
+		if (block === stood_in_for) { return; }      // already open
+		open_box(block);
+	}
+
+	// --- the five labels at the top -------------------------------------------
+
+	// The labels are never on the page — they are taken off before the words are drawn —
+	// so editing them has its own small form, shown only while editing is on. Nothing here
+	// is typed as free text where it matters: the kind and the tags are picked from the
+	// only lists the app accepts.
+	let form_kind        = $state('');
+	let form_title       = $state('');
+	let form_description = $state('');
+	let form_date        = $state('');
+	let form_tags        = $state<string[]>([]);
+	const KINDS = Object.values(T_Kind);
+
+	// Whenever another guide comes on screen, the form starts from what that guide says.
+	$effect(() => {
+		form_kind        = guide.kind;
+		form_title       = guide.title;
+		form_description = guide.description;
+		form_date        = guide.date;
+		form_tags        = [...tags];
+	});
+
+	/** Write the five labels back, if any of them changed. */
+	function save_labels() {
+		if (text_of_file === '') { return; }
+		const labels = { kind: form_kind, title: form_title, description: form_description, date: form_date, labeled: true };
+		const whole  = with_labels_replaced(text_of_file, labels, form_tags);
+		if (whole === text_of_file) { return; }
+		const was   = text_of_file;
+		const where = file_path_of(guide.bundle, guide.path);
+		debug.log(`Editing "${name}": the labels changed — writing them to ${where}.`);
+		text_of_file = whole;                 // the words below are untouched, so no redraw
+		save_guide(where, whole, was).then((answer) => {
+			if (!answer.ok) {
+				text_of_file = was;
+				say(`not saved — ${answer.why}`);
+				debug.log(`Editing "${name}": the labels were NOT written to ${where} — ${answer.why}.`);
+				return;
+			}
+			// The list shows the title and the tags, so it is told at once rather than
+			// waiting for every file to be read again.
+			guides.relabel(guide, labels, form_tags);
+			debug.log(`Editing "${name}": labels written — kind "${labels.kind}", ${form_tags.length} tag(s).`);
+		});
+	}
+
+	/** Put a tag on this guide or take it off, and write it. */
+	function toggle_tag(tag: string) {
+		form_tags = form_tags.includes(tag) ? form_tags.filter((t) => t !== tag) : [...form_tags, tag].sort();
+		save_labels();
+	}
+
+	/** Turn editing on or off. Turning it off puts away any box still open. */
+	function toggle_editing() {
+		const now = !$editing;
+		editing.set(now);
+		if (!now) { close_box(true); }
+		debug.log(`Editing "${name}" is now ${now ? 'on — a click opens the piece it lands on' : 'off — clicks follow links again'}.`);
 	}
 
 	// --- looking through the guide on screen ----------------------------------
@@ -228,10 +373,10 @@
 				return answer.text();
 			})
 			.then((text) => {
-				const body = without_labels(text);
-				words  = mark_the_links(name_the_headings(reader.render(body)));
+				text_of_file = text;                 // what an edit slices its own words out of
+				words  = page_of(reader, text);
 				loaded = true;
-				debug.log(`Viewer: read ${text.length} character(s) for "${name}", ${text.length - body.length} of them the labels at the top; turned the remaining ${body.length} into a ${words.length}-character page.`);
+				debug.log(`Viewer: read ${text.length} character(s) for "${name}" and turned them into a ${words.length}-character page, every piece carrying the lines it came from.`);
 				// A link can name a heading in the guide it opens; the words have to be drawn
 				// before there is anything to move down to.
 				if (wanted_heading !== '') {
@@ -245,12 +390,23 @@
 				loaded = true;
 				debug.log(`Viewer: could not read "${name}" from ${where} — ${failed}.`);
 			});
-		return () => { words = null; };   // let the words go the moment this one is off screen
+		// Let it all go the moment this one is off screen, box included.
+		return () => { close_box(false); words = null; text_of_file = ''; };
 	});
 </script>
 
 <div class='viewer'>
 	<div class='view-head'>
+		<!-- Getting out, and turning editing on: the two together at the far left, before
+		     the triangles. -->
+		<button class='view-close' aria-label='close' use:tip={'back to the list'} onclick={onclose}>
+			<svg class='view-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
+				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+			</svg>
+		</button>
+		<!-- With this on, a click on the words opens that piece for editing instead of
+		     going back to the list. -->
+		<button class='view-edit' class:on={$editing} use:tip={$editing ? 'stop editing' : 'edit this guide'} onclick={toggle_editing}>edit</button>
 		<!-- Only worth showing the step triangles when there is more than one guide on
 		     screen to step between. -->
 		{#if can_back || can_forward}
@@ -275,18 +431,12 @@
 		{:else}
 			<span></span>
 		{/if}
-		<!-- What kind of guidance this is, at the far left beside the triangles. -->
-		<span class='view-kind'>{kind}</span>
-		<!-- The name holds the middle of the whole row, so the two labels can be any
-		     length without moving it. -->
+		<!-- The name, at the left just after the triangles. -->
 		<span class='view-name'>{name}</span>
-		<!-- What it's about, at the far right beside the close button. -->
+		<!-- What kind of guidance this is, and what it's about: the pair at the far right. -->
+		<span class='view-kind'>{kind}</span>
+		<span class='view-bar'>|</span>
 		<span class='view-tags'>{tags.join(', ')}</span>
-		<button class='view-close' aria-label='close' use:tip={'back to the list'} onclick={onclose}>
-			<svg class='view-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
-			</svg>
-		</button>
 	</div>
 	<!-- Looking through the guide on screen. Its type is "search", so the browser draws its
 	     own clear cross at the right end once there is text. -->
@@ -299,6 +449,35 @@
 			oninput={find_first} />
 	</div>
 	<Separator thickness={k.separator.huge}/>
+	<!-- The five labels, shown only while editing. They never appear among the words, so
+	     this is the only way at them. -->
+	{#if $editing}
+		<div class='label-form'>
+			<div class='label-row'>
+				<span class='label-word'>kind</span>
+				{#each KINDS as one (one)}
+					<button class='label-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_labels(); }}>{one}</button>
+				{/each}
+			</div>
+			<div class='label-row'>
+				<span class='label-word'>title</span>
+				<input class='label-field' bind:value={form_title} onblur={save_labels} />
+				<span class='label-word'>date</span>
+				<input class='label-field date' bind:value={form_date} onblur={save_labels} />
+			</div>
+			<div class='label-row'>
+				<span class='label-word'>says</span>
+				<input class='label-field' bind:value={form_description} onblur={save_labels} />
+			</div>
+			<div class='label-sep'><Separator thickness={k.separator.big} title={'tags'}/></div>
+			<div class='label-row wrapping'>
+				{#each ALL_TAGS as tag (tag)}
+					<button class='label-pick' class:on={form_tags.includes(tag)} onclick={() => toggle_tag(tag)}>{tag}</button>
+				{/each}
+			</div>
+		</div>
+		<Separator thickness={k.separator.big}/>
+	{/if}
 	{#if !loaded}
 		<div class='view-note'>reading…</div>
 	{:else if failed !== ''}
@@ -313,7 +492,7 @@
 			bind:this={page}
 			class='view-page'
 			onkeyup={() => {}}
-			use:tip={'go back'}
+			use:tip={$editing ? 'click a paragraph to edit it' : 'go back'}
 			onclick={on_page_click}>{@html words}</div>
 	{/if}
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->
@@ -335,17 +514,19 @@
 	   far right. The name is placed at the middle of the whole row rather than centered
 	   in whatever space its neighbors leave over, so a long tag list moves nothing. */
 	.view-head {
-		align-items : start;
-		padding     : 0 calc(var(--height-control) + var(--gap)) var(--gap) 0;
-		position    : relative;
-		display     : flex;
-		gap         : var(--gap);
-		min-height  : var(--height-control);
+		align-items    : start;
+		padding-bottom : var(--gap);
+		position       : relative;
+		display        : flex;
+		gap            : var(--gap);
+		min-height     : var(--height-control);
 	}
 
 	/* All three sit 3px higher than the triangles and the close button, so the words line
 	   up with the middle of those rather than their tops. The name takes whatever room the
 	   kind and the tags leave and centers itself in that. */
+	/* The name takes everything left between the triangles and the kind, and centers itself
+	   in it — so it sits in the middle of that run rather than of the whole row. */
 	.view-name {
 		font-size   : var(--font-label);
 		color       : var(--text);
@@ -357,7 +538,7 @@
 		top         : 3px;
 	}
 
-	/* The kind, at the far left after the triangles. */
+	/* The kind, at the far right just before the tags. */
 	.view-kind {
 		font-size : var(--font-label);
 		color     : var(--text);
@@ -368,12 +549,21 @@
 	}
 
 	/* The tags, hugging the far right. A long list wraps rather than shoving anything. */
+	/* The upright stroke keeping the kind apart from the tags. */
+	.view-bar {
+		font-size : var(--font-label);
+		color     : var(--text);
+		opacity   : var(--opacity-header);
+		position  : relative;
+		top       : 3px;
+		flex      : 0 0 auto;
+	}
+
 	.view-tags {
 		font-size  : var(--font-label);
 		color      : var(--text);
 		opacity    : var(--opacity-header);
 		text-align : right;
-		margin-left: auto;
 		position   : relative;
 		top        : 3px;
 		flex       : 0 1 auto;
@@ -409,6 +599,125 @@
 		fill : var(--hover);
 	}
 
+	/* The five labels while editing: a line each for the kind, the name and date, what it
+	   says, and the tags. The pickers read like the filters' own, so the closed lists look
+	   the same wherever they turn up. */
+	.label-form {
+		flex-direction : column;
+		margin         : var(--gap) 0;
+		display        : flex;
+		gap            : var(--gap-tight);
+	}
+
+	.label-row {
+		align-items : center;
+		display     : flex;
+		gap         : var(--gap-tight);
+	}
+
+	/* The sep before the tags stands clear of the row above it and the pickers below. */
+	.label-sep {
+		margin : var(--gap-small) 0;
+	}
+
+	.label-row.wrapping {
+		justify-content : center;
+		flex-wrap       : wrap;
+	}
+
+	.label-word {
+		font-size  : var(--font-label);
+		color      : var(--text);
+		opacity    : var(--opacity-header);
+		text-align : right;
+		flex       : 0 0 auto;
+		width      : 45px;
+	}
+
+	.label-field {
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		height        : var(--height-control);
+		padding       : var(--pad-control);
+		font-size     : var(--font-label);
+		font-family   : inherit;
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		min-width     : 0;
+		flex          : 1 1 auto;
+	}
+
+	.label-field.date {
+		flex  : 0 0 auto;
+		width : 110px;
+	}
+
+	.label-pick {
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		height        : var(--height-control);
+		padding       : var(--pad-control);
+		font-size     : var(--font-label);
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		white-space   : nowrap;
+		cursor        : pointer;
+		flex          : 0 0 auto;
+	}
+
+	.label-pick:hover {
+		background : var(--hover);
+	}
+
+	.label-pick.on {
+		background : var(--accent);
+	}
+
+	/* The edit toggle, beside the close button. It reads like the other small controls, and
+	   fills with the accent while it is on so there is never a doubt which way it sits. */
+	.view-edit {
+		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
+		height        : var(--height-control);
+		padding       : var(--pad-control);
+		font-size     : var(--font-label);
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		white-space   : nowrap;
+		cursor        : pointer;
+		flex          : 0 0 auto;
+	}
+
+	.view-edit:hover {
+		background : var(--hover);
+	}
+
+	.view-edit.on {
+		background : var(--accent);
+	}
+
+	/* The box standing in for one piece of the guide. It is put on the page by hand rather
+	   than drawn from here, so it is named as reaching outside this component. */
+	:global(.edit-box) {
+		border        : var(--thickness-normal) solid var(--accent);
+		border-radius : var(--radius-small);
+		font-family   : inherit;
+		font-size     : inherit;
+		line-height   : inherit;
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		padding       : var(--gap-tight);
+		white-space   : pre-wrap;
+		overflow      : hidden;
+		resize        : none;
+		display       : block;
+		width         : 100%;
+	}
+
 	.view-close {
 		border          : var(--thickness-normal) solid var(--black);
 		border-radius   : var(--radius-percent);
@@ -419,11 +728,9 @@
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
-		position        : absolute;   /* pinned to the top right, never moves */
 		display         : flex;
+		flex            : 0 0 auto;
 		padding         : 0;
-		right           : 0;
-		top             : 0;
 	}
 
 	.view-close:hover {
@@ -441,12 +748,19 @@
 	}
 
 	.view-page {
+		margin-top : var(--gap);      /* the words and the bar beside them both start here */
 		font-size  : var(--font-base);
 		color      : var(--text);
 		word-break : break-word;
 		overflow-y : auto;
 		cursor     : pointer;
 		flex       : 1;
+	}
+
+	/* The first thing on the page keeps no room above it, so the words begin exactly where
+	   the scrollbar beside them does. Everything after it keeps its own spacing. */
+	.view-page :global(> :first-child) {
+		margin-top : 0;
 	}
 
 	/* The guide's own headings, lists, code and tables. Styled here because the markup is

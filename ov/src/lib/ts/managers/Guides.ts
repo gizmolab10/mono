@@ -1,4 +1,4 @@
-import { T_Bundle, ALL_TAGS, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
+import { T_Bundle, ALL_TAGS, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
 import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
@@ -97,6 +97,17 @@ class Guides {
 	renarrow(): void {
 		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts));
 		this.w_showing.set(this.hierarchy.filtered_guides);
+	}
+
+	/**
+	 * One guide's labels and tags have changed on disk. Put them on the record and work the
+	 * list out again, so what's on screen agrees with the file without every file being read
+	 * a second time.
+	 */
+	relabel(guide: Guide, labels: Labels, tag_names: string[]): void {
+		this.hierarchy.relabel(guide, labels, tag_names);
+		this.renarrow();
+		debug.log(`Guide "${key_of(guide)}" relabeled: kind "${labels.kind}", title "${labels.title}", ${tag_names.length} tag(s) — the list was worked out again.`);
 	}
 
 	/** Every file, folders left out. */

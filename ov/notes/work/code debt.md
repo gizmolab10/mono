@@ -4,7 +4,8 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [x] steps to annotate for okf a file when adding it to the guides
+- [ ] convert the two fat triangles in the view guide -> Steppers.svelte component
+- [ ] for each tag the user choses, remove it from every row's tag column cell
 - [ ] checkbox in details preferences to show/hide tooltips
 - [ ] bring okf up to date
 - [ ] work on murky
@@ -13,6 +14,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] steps to annotate for okf a file when adding it to the guides
 - [x] mark each listed guide regarding
     - [x] match of: name or content
     - [x] on click of the matched-content
@@ -32,10 +34,16 @@ write a proposal for the first unchecked item to the top of handoff.
     - [ ] and associated logic
 
 - [ ] when a link's target is an anchor, add the anchor to the fifo
-- [ ] add editing ability
 
 ## done
 
+- [x] add editing ability
+    - [x] stamp each piece with the lines it came from
+    - [x] click a piece to edit it, in the file's own words
+    - [x] swap those lines, leaving every other line untouched
+    - [x] draw the guide again from the changed text
+    - [x] a route that accepts writes, with two refusals
+    - [x] the five labels edited through their own form
 - [x] add a toggle button top left hide/show filters
 - [x] add search to view guides, a new second row
 - [x] bring internal hyperlinks to life

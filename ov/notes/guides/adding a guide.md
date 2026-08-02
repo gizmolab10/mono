@@ -10,7 +10,7 @@ date: 2026-08-02
 
 A new guide only reaches overview if it sits in the right place and carries the five labels. Here is the whole of it.
 
-eventually MOVE THIS FILE -> mono
+Eventually MOVE THIS FILE -> mono
 
 ## 1. Put it in a guides folder
 

@@ -7,12 +7,14 @@ ov/
 ├── index.html                    # the page the app mounts into
 ├── package.json                  # two dependencies: the color math, the markdown reader
 ├── vite.config.ts                # dev server (port 5185) and build; reaches outside this folder
+├── vitest.config.ts              # the test runner: anything ending in .test.ts under src
 ├── svelte.config.js
 ├── tsconfig.json
 ├── CLAUDE.md
 ├── notes/
 │   ├── guides/
 │   │   ├── map.md                # what every source file does
+│   │   ├── adding a guide.md     # what a new guide needs to show up in the app
 │   │   └── pre-flight/
 │   │       └── banned words.md
 │   └── work/
@@ -22,6 +24,9 @@ ov/
 │       ├── work journal.md       # what is finished, newest first
 │       ├── working features.md   # what the app can do
 │       ├── file layout.md        # this file
+│       ├── editing.md            # changing a guide from inside the app
+│       ├── stale - maps, always.md
+│       ├── organize.md
 │       └── okf.md                # the guide format, and how it sits in the code
 └── src/
     ├── vite-env.d.ts
@@ -62,6 +67,11 @@ ov/
             │   └── Preferences.ts
             ├── database/
             │   └── Indexes.ts
+            ├── tests/
+            │   ├── runner.test.ts
+            │   ├── blocks.test.ts   # the lines each piece claims, and putting words back
+            │   ├── saving.test.ts   # where a guide sits in the repo
+            │   └── labels.test.ts   # writing the five labels back
             ├── types/
             │   ├── Guide.ts      # kinds, tags, collections, labels
             │   ├── App.ts
@@ -71,6 +81,9 @@ ov/
             │   ├── Coordinates.ts
             │   └── Types.ts
             └── utilities/
+                ├── Blocks.ts     # a guide's text into a page, and a change back into the text
+                ├── Labels.ts     # writing the five labels back to the top of a file
+                ├── Saving.ts     # handing a changed guide to the local write server
                 ├── Colors.ts
                 ├── SVG_Paths.ts
                 └── Tooltip.ts

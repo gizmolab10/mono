@@ -2,6 +2,9 @@
 
 | # | Feature |
 | --- | --- |
+| 17 | Command-clicking a file in the list opens it already editing, and the hover words say "edit" rather than "open" for as long as the key is held |
+| 16 | The five labels are edited through their own small form — kind and tags picked from the app's own closed lists, never typed — and a successful write tells the list at once, so a new title or tag shows there without every file being read again |
+| 15 | A guide can be edited where it is read: with editing on, a click opens that piece of the page in a box holding the file's own words for those lines, and leaving the box writes just those lines back, every other line untouched. Two guards refuse rather than risk — the file must be a guide, and must still read as it did when opened |
 | 14 | A toggle at the top left folds the three picking rows away, leaving the list their height; the search field stays beside the toggle either way, and the choice is remembered |
 | 13 | A search row under the reading view's top row: every keystroke lights the first place those words turn up and moves there, the words taken exactly as typed, spaces and all. The field belongs to the guide it was typed in |
 | 12 | The links inside a guide are live: a heading moves down the page, another guide opens right here, a code file or a work note says plainly it isn't part of the picture, and the web opens a new tab. A link is answered by climbing the folders above the guide and taking the first guide of that name found under any of them, so a link from one project reaches another |

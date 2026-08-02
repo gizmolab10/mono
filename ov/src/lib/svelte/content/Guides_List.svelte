@@ -10,7 +10,7 @@
 	import { w_shut, w_show_folders, w_project, w_kind, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { open_view } from '../../ts/managers/Operations';
+	import { open_view, w_command_down } from '../../ts/managers/Operations';
 	import type { Filtered_Guide } from '../../ts/types/Guide';
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Guides';
@@ -49,19 +49,19 @@
 	// The whole row answers, not just the name: a file opens for reading, a folder opens or
 	// shuts. The triangle keeps its own click, and stops it from reaching the row, so hitting
 	// the triangle on a folder doesn't toggle it twice.
-	function click_row(row: Filtered_Guide) {
+	function click_row(row: Filtered_Guide, holding_command = false) {
 		if (row.guide.is_folder) {
 			debug.log(`Row clicked: the folder "${row.guide.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
 			toggle_folder(row.key, row.guide.name);
 		} else {
-			debug.log(`Row clicked: the file "${row.guide.name}" — opening it for reading.`);
-			open_view(row.key);
+			debug.log(`Row clicked: the file "${row.guide.name}" — opening it ${holding_command ? 'for editing, since the command key was held' : 'for reading'}.`);
+			open_view(row.key, holding_command);
 		}
 	}
 
 	// What the hint over a row says, which depends on what clicking it would do.
-	function row_hint(row: Filtered_Guide): string {
-		if (!row.guide.is_folder) { return `open "${row.guide.name}"`; }
+	function row_hint(row: Filtered_Guide, holding_command: boolean): string {
+		if (!row.guide.is_folder) { return `${holding_command ? 'edit' : 'open'} "${row.guide.name}"`; }
 		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.guide.name}"`;
 	}
 
@@ -309,8 +309,8 @@
 						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.guide.is_folder}
 							class:opened={row.guide.is_folder && row.has_children && !$w_shut.includes(row.key)}
 							data-key={row.key} data-n={row_number} data-name={row.guide.name}
-							use:tip={row_hint(row)}
-							onclick={() => click_row(row)}
+							use:tip={row_hint(row, $w_command_down)}
+							onclick={(e) => click_row(row, e.metaKey)}
 							onmouseenter={() => hovered_row = row.key}
 							onmouseleave={() => { if (hovered_row === row.key) { hovered_row = null; } }}>
 							{@render guide_row(row)}

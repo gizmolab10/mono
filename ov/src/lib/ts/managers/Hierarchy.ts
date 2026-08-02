@@ -138,6 +138,21 @@ export class Hierarchy {
 		return tagging;
 	}
 
+	/**
+	 * Put new labels and tags on one guide, in place. Called after its file is written, so
+	 * the list shows the new title and tags without every file being read again.
+	 */
+	relabel(guide: Guide, labels: Labels, tag_names: string[]): void {
+		guide.kind        = labels.kind;
+		guide.title       = labels.title || guide.name;
+		guide.description = labels.description;
+		guide.date        = labels.date;
+		guide.labeled     = true;
+		this.taggings = this.taggings.filter((t) => t.guide_id !== guide.id);
+		for (const name of tag_names) { this.add_tagging(this.add_tag(name).id, guide.id); }
+		this.reindex();
+	}
+
 	/** Rebuild the lookups from the current tag links and folder links. */
 	reindex(): void {
 		this.indexes.rebuild(this.taggings, this.relationships);

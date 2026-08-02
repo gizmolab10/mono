@@ -582,6 +582,50 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif urllib.parse.urlparse(self.path).path == '/save-guide':
+            # Write a changed guide back to its own file, for the overview app.
+            # /save-guide?where=<path from the top of the repo>. The body is JSON:
+            # {"text": <the whole new file>, "as_opened": <the file as the app last read it>}.
+            #
+            # Two refusals guard it, and both answer 409 rather than writing:
+            #   - the path must end in .md and sit inside a "notes/guides" folder, and must
+            #     resolve inside the repo (no climbing out with "..", no symlinks out)
+            #   - the file on disk must still read exactly as the app last saw it
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                where = params.get('where', [''])[0]
+                if not where:
+                    self._send_response(400, {'success': False, 'error': 'no file named'})
+                    return
+                if not where.endswith('.md') or 'notes/guides/' not in where:
+                    self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
+                    return
+                full = os.path.realpath(os.path.join(GITHUB_DIR, where))
+                root = os.path.realpath(GITHUB_DIR)
+                if not full.startswith(root + os.sep):
+                    self._send_response(409, {'success': False, 'error': 'outside the repo'})
+                    return
+                if not os.path.isfile(full):
+                    self._send_response(409, {'success': False, 'error': 'no such file'})
+                    return
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode())
+                text = sent.get('text')
+                as_opened = sent.get('as_opened')
+                if not isinstance(text, str) or not isinstance(as_opened, str):
+                    self._send_response(400, {'success': False, 'error': 'text and as_opened must both be sent'})
+                    return
+                with open(full, 'r') as f:
+                    on_disk = f.read()
+                if on_disk != as_opened:
+                    self._send_response(409, {'success': False, 'error': 'the file changed since it was opened'})
+                    return
+                with open(full, 'w') as f:
+                    f.write(text)
+                self._send_response(200, {'success': True, 'path': full, 'wrote': len(text)})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/restart-dispatcher' or self.path == '/restart-api':  # /restart-api for backwards compat
             log_file = os.path.join(GITHUB_DIR, 'logs', 'dispatcher-restart.log')
             os.makedirs(os.path.dirname(log_file), exist_ok=True)

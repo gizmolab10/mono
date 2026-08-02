@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
+	import { w_command_down } from '../../ts/managers/Operations';
 	import { colors } from '../../ts/utilities/Colors';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
@@ -29,6 +30,22 @@
 	// The one hover-hint watcher for the whole app: an element carrying its own words
 	// (marked with the hint action) shows them, drawn by the hint at the bottom of this file.
 	$effect(() => start_tips());
+
+	// Whether the command key is held, watched in one place. Holding it changes what a click
+	// on a guide does, so anything that says what a click would do can read it.
+	$effect(() => {
+		const said = (event: KeyboardEvent) => w_command_down.set(event.metaKey);
+		const let_go = () => w_command_down.set(false);
+		window.addEventListener('keydown', said);
+		window.addEventListener('keyup', said);
+		window.addEventListener('blur', let_go);      // the key can be let go while away
+		return () => {
+			window.removeEventListener('keydown', said);
+			window.removeEventListener('keyup', said);
+			window.removeEventListener('blur', let_go);
+			let_go();
+		};
+	});
 
 	// One number for the margin at the window's four edges and for the space between
 	// the two regions, so the drawing and the arithmetic can never disagree.

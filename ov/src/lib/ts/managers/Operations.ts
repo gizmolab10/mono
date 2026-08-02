@@ -61,18 +61,28 @@ export const w_can_forward = derived([guides.w_showing, w_link_stack, w_stack_at
 		? at < stack.length - 1
 		: rows.filter((r) => !r.guide.is_folder).length > 1);
 
+// Is the guide on screen open for editing? Kept out here rather than inside the reading
+// view, so the list can open a guide straight into editing — holding the command key while
+// clicking a file does exactly that.
+export const w_editing = writable(false);
+
+// Is the command key held down right now? Watched at the app root. Clicking a guide with it
+// held opens that guide already editing, so the hover words say so while it is down.
+export const w_command_down = writable(false);
+
 /** Open one guide by where it sits. Opening from the list starts a fresh, empty stack. */
-export function open_view(key: string): void {
+export function open_view(key: string, for_editing = false): void {
 	const rows = get(guides.w_showing);
 	const row = rows.find((r) => r.key === key);
 	if (!row || row.guide.is_folder) { debug.log(`Reading: nothing to open at "${key}".`); return; }
+	w_editing.set(for_editing);
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
 	w_anchor.set(key);
 	w_view_guide.set(key);
 	w_operation.set(T_Operation.view);
 	const files = rows.filter((r) => !r.guide.is_folder).length;
-	debug.log(`Reading "${row.guide.name}" — ${files} guide(s) on screen to step through, among ${rows.length} rows. The link stack starts empty.`);
+	debug.log(`Reading "${row.guide.name}"${for_editing ? ', straight into editing' : ''} — ${files} guide(s) on screen to step through, among ${rows.length} rows. The link stack starts empty.`);
 }
 
 /**
@@ -158,6 +168,7 @@ function step_list(by: number): void {
 
 /** Close the reading view, back to the list. The stack ends with the reading. */
 export function close_view(): void {
+	w_editing.set(false);          // editing belongs to the guide that was open, not the next one
 	w_view_guide.set(null);
 	w_link_stack.set([]);
 	w_stack_at.set(-1);

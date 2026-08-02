@@ -8,26 +8,24 @@ The count under the filters was changed to say how many guides the filters leave
 
 Worth a look on screen: with a folder shut, the list can show fewer files than the count says, and those two buttons now answer to the count rather than to what is visible.
 
-## Next — say why each row matched, and carry the search into the guide
+## Next — the two step triangles become one piece
 
-In browse, search matches agains titles OR descriptions. Mark this in each listed guide. Clicking the words-mark opens that guide with the search already filled in, first place highlighted.
+The reading view draws its two fat triangles by hand: two buttons, two drawn shapes, the hold-to-keep-stepping timers, and the arrow keys, all sitting in the middle of a file that is mostly about reading a guide. Nothing else uses them yet, and something will.
 
-TBD: when to clear the search.
+### The shape of it
 
-### Settle first
-
-**App keeps no content** — read once at launch, labels kept, the rest let go: 956,884 characters passed through on the last run, none of it stayed.
-
-Searching inside the guides needs ws's word finder ported. It builds a letter-by-letter map as the files are read, so a search walks one letter at a time to the guides holding that word rather than looking through any text. What is held is the map, not the guides.
-
-Source: `ws/src/lib/ts/types/Search_Node.ts` and `ws/src/lib/ts/managers/Search.ts`.
+One piece that takes: whether back is possible, whether forward is possible, and what to do for each. It draws the two triangles, handles the click, and keeps the hold-to-repeat patter. The arrow keys stay where they are — they belong to the guide on screen, not to the triangles.
 
 ### Success
 
-1. A guide matched only by its words is included, marked .words.
-2. A guide matched only by its name is marked .name.
-3. Clicking looks at the mark. For .words the view opens it with (a) the search filled in and (b) the first search match highlighted.
-4. The count shown matches the number of marked rows.
+1. The reading view is shorter by the whole of the triangle drawing and the hold timers.
+2. Stepping behaves exactly as it does now: click, hold to repeat after a pause, the forward triangle simply absent at the top of a link stack.
+3. Nothing about the arrow keys changes.
+4. The type check and the tests run clean.
+
+### Then, in order
+
+Taking a chosen tag out of every row's tag cell, and a checkbox in preferences for turning the hover hints off.
 
 ## Context
 
@@ -40,6 +38,10 @@ Source: `ws/src/lib/ts/types/Search_Node.ts` and `ws/src/lib/ts/managers/Search.
 **Links inside a guide are live.** A heading moves down the page, another guide opens here, the web opens a new tab, and anything else says plainly it isn't part of the picture. While off the list the two triangles walk the stack of guides reached by links, and the missing forward triangle is the sign of being off it. The list's own run is untouched, and the count under the filters never moves because a link was followed.
 
 **Only text that says outright it is a web address becomes a link.** The reader's guessing is off, because it read the bare words "CLAUDE.md" as a site in Moldova, whose ending is the same two letters markdown files use.
+
+**A guide can be changed from inside the app.** Each outermost piece of a drawn guide carries the lines of the file it came from; with editing on, a click opens that piece in a box holding the file's own words, and leaving the box writes just those lines back. The five labels have their own form, with kind and tags picked from the app's own closed lists. Writing goes through the small local server — the one the log lines go to — which refuses anything that isn't a guide, and refuses again if the file no longer reads as the app last saw it. Command-clicking a file in the list opens it already editing.
+
+**There is a test runner now.** `yarn test:run` for one pass, `yarn test` to watch; anything ending in `.test.ts` under the source folder is picked up. 53 tests as of this writing. New work is stubbed and tested before the code, and a step isn't done until both the tests and the type check are clean.
 
 **A search row sits under the reading view's top row.** Every keystroke lights the first place those words turn up and moves there; the words are taken exactly as typed, spaces and all.
 

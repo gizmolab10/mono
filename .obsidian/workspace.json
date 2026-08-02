@@ -13,7 +13,35 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/editing.md",
+                "file": "ov/notes/guides/editing.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "editing"
+            }
+          },
+          {
+            "id": "14b6ec19895b3d59",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ov/notes/work/code debt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "code debt"
+            }
+          },
+          {
+            "id": "b21725f8707c6521",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ov/notes/guides/editing.md",
                 "mode": "source",
                 "source": false
               },
@@ -63,7 +91,8 @@
               "title": "organize"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -198,13 +227,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/editing.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of editing"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -236,15 +265,24 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "706a56713dfe72a1",
+  "active": "14b6ec19895b3d59",
   "lastOpenFiles": [
-    "ov/notes/guides/adding a guide.md",
-    "ov/notes/work/editing.md",
-    "notes/guides/pre-flight/shorthand.md",
+    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.b3f46578d6d6",
+    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.c5aa81f44c2f",
+    "ov/notes/guides/editing.md",
+    "ov/src/lib/ts/utilities/Tooltip.ts.tmp.49972.a0e4d4694c29",
+    "ov/src/lib/svelte/content/Guides_List.svelte.tmp.49972.ad08e498d86d",
+    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.70a9f4679f3b",
+    "ov/src/lib/ts/tests/labels.test.ts",
+    "ov/src/lib/ts/utilities/Labels.ts",
+    "ws/vite.config.js.timestamp-1785703007263-e64f68320cdf5.mjs",
     "ov/notes/work/code debt.md",
+    "ov/src/lib/ts/tests/saving.test.ts",
+    "ov/src/lib/ts/utilities/Saving.ts",
+    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.734a2ab0287c",
+    "ov/notes/guides/adding a guide.md",
+    "notes/guides/pre-flight/shorthand.md",
     "ov/notes/work/okf.md",
-    "ov/src/lib/svelte/content/Browse.svelte.tmp.49972.9d808eed4ac9",
-    "ov/src/lib/svelte/content/Guides_List.svelte.tmp.49972.397cb67179c9",
     "ov/notes/work/adding a guide.md",
     "ov/notes/guides/pre-flight/banned words.md",
     "ov/notes/work/organize.md",
@@ -260,20 +298,11 @@
     "ov/notes/work/stale - maps, always.md",
     "ov/notes/work/handoff.md",
     "notes/archives/voice archive.md",
-    "ov/src/lib/svelte/content/Guides_List.svelte.tmp.49972.7dd6ccaeffdf",
-    "ov/src/lib/svelte/content/Guides_List.svelte.tmp.49972.998ca5764fe4",
-    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.b039dafe5167",
     "notes/guides/pre-flight/working.md",
-    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.10d9517a18a7",
     "ov/notes/work/file layout.md",
     "ov/notes/work/working features.md",
-    "ov/dist/assets/index-Dr8NLyzN.js",
-    "ov/dist/assets/index-BtsmFM0b.css",
     "ov/dist/assets/map-D8Yxwkk3.md",
     "ov/dist/assets/3D.primer-CCdmSrYH.md",
-    "ov/dist/assets/Details-RzHNKNLy.md",
-    "ov/src/lib/ts/managers/Operations.ts.tmp.49972.8b147078f777",
-    "ov/notes/work/okf.md.tmp.49972.dceb0224ad98",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

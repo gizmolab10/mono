@@ -29,6 +29,7 @@ export function tip(node: HTMLElement, message?: string | null | false) {
 export function start_tips(): () => void {
 	let current: HTMLElement | null = null;   // the hinted element the cursor is over right now
 	let appearance = 0;                        // bumps each time that element changes, to restart the pause
+	let at_x = 0, at_y = 0;                    // where the cursor was last seen
 	function on_move(event: MouseEvent) {
 		const target = event.target as HTMLElement | null;
 		const el = target?.closest?.('[data-tip]') as HTMLElement | null;
@@ -36,8 +37,25 @@ export function start_tips(): () => void {
 			current = el;
 			appearance++;
 		}
+		at_x = event.clientX;
+		at_y = event.clientY;
 		const message = el?.dataset.tip ?? null;
-		w_tip.set({ message, x: event.clientX, y: event.clientY, appearance });
+		w_tip.set({ message, x: at_x, y: at_y, appearance });
+	}
+
+	// Some hints say something different while a key is held — hovering a guide with the
+	// command key down offers to edit it rather than open it. The words on the element have
+	// already changed by then, but nothing would show them until the mouse moved, so the
+	// hint is said again on its own.
+	// Waits one drawing beat first: the words on the element are changed by the same key
+	// press, and that change lands after the press is handled, so reading them any sooner
+	// would show what they said a moment ago.
+	function on_key() {
+		if (!current) { return; }
+		requestAnimationFrame(() => {
+			if (!current) { return; }
+			w_tip.set({ message: current.dataset.tip ?? null, x: at_x, y: at_y, appearance });
+		});
 	}
 	function clear() { current = null; w_tip.set({ message: null, x: 0, y: 0, appearance }); }
 	function clear_on_click() {
@@ -47,10 +65,14 @@ export function start_tips(): () => void {
 	document.addEventListener('mousemove', on_move);
 	document.addEventListener('mouseleave', clear);        // cursor left the window
 	document.addEventListener('mousedown', clear_on_click);   // a click hides the hint (it comes back on the next move)
+	window.addEventListener('keydown', on_key);            // a held key can change what a hint says
+	window.addEventListener('keyup', on_key);
 	return () => {
 		document.removeEventListener('mousemove', on_move);
 		document.removeEventListener('mouseleave', clear);
 		document.removeEventListener('mousedown', clear_on_click);
+		window.removeEventListener('keydown', on_key);
+		window.removeEventListener('keyup', on_key);
 		clear();
 	};
 }

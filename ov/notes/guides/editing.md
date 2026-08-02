@@ -1,3 +1,11 @@
+---
+kind: architecture
+title: "Editing a Guide"
+description: "How this app lets you change a guide from inside the app, one piece at a time, without rewriting the file."
+tags: [architecture, notes]
+date: 2026-08-02
+---
+
 # Editing
 
 Editing a guide from inside overview: you change what's on the page, and the file on disk changes with it.
@@ -24,8 +32,19 @@ So: don't convert the page. Convert one block.
 4. **Re-draw from the new text.** The changed block is read again and redrawn, so what's on screen is always what the file says — never a guess about what the file now says.
 5. **Writing needs a route that accepts writes.** The app already talks to a small local server — the diagnostic lines it posts get written to a file on this machine. A second route beside it, taking a path and a body, is the smallest addition. It refuses any path that isn't a markdown file inside a guides folder.
 6. **The OKF label block is edited as one thing**, through its own small form (kind, title, description, tags, date), since those five labels are what the app itself reads. Changing a title or tags means the app's own list of guides needs those two facts updated in place.
+7. **Mark pieces sitting inside other pieces.** ...
 
 You type markdown, not rich text. That's the trade: a fast editor rather than a word processor, with no conversion library, no round-trip fidelity problem, and no way to mangle a file you didn't mean to touch.
+
+## How each step is built
+
+Same three beats every time, in this order:
+
+1. **Stub and test first** — write the empty function with its name and what goes in and out, then write the tests that say what it must do, including the ugly cases. They fail; that's the point.
+2. **Then the code** — the least that turns those tests green.
+3. **Then run them** — and the type check. A step isn't done until both are clean.
+
+The test runner is in place — `yarn test:run` for one pass, `yarn test` to watch. Anything ending in `.test.ts` under the source folder is picked up.
 
 ## Risk
 

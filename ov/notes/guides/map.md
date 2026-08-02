@@ -15,6 +15,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `vite.config.ts` — the dev server (port 5185, read from the hub's ports file) and the build. It also lets the server reach outside this folder, which is what makes the guides in the other collections readable at all.
 - `package.json` — two dependencies only: the color math and the markdown reader.
 - `svelte.config.js`, `tsconfig.json` — the compiler and type-check settings.
+- `vitest.config.ts` — the test runner: anything ending in `.test.ts` under the source folder.
 - `index.html` — the page the app mounts into.
 - `CLAUDE.md` — the project entry point.
 
@@ -58,9 +59,19 @@ Overview's files. Update this when files are added, moved, or removed.
 - `types/Details.ts` — the sections inside the details column, by name.
 - `types/DB_Records.ts` — the record shapes the hierarchy keeps: tags, tag placements, folder links, and link meanings. **⟵ji**
 - `types/Angle.ts`, `types/Coordinates.ts`, `types/Types.ts` — angle math, points and rectangles, shared types. **⟵ji**
+- `utilities/Blocks.ts` — turning a guide's text into the page on screen, and putting a change back into that text. Takes the five labels off the top, gives every outermost piece two numbers — the line it starts on and one past the line it ends on, counted from zero against the whole file — names the headings, and marks the links. Also hands one piece's own words back out of the file, swaps a run of lines for what was typed leaving every other line untouched, and answers whether those lines still read as they did when the piece was opened. Pieces sitting inside other pieces are left unmarked for now.
+- `utilities/Labels.ts` — writing the five labels back to the top of a guide's file: the block itself, and swapping it into the file with every word below left alone. A file carrying no labels gets one put at the very top.
+- `utilities/Saving.ts` — writing a changed guide back to its own file. Works out where a guide sits counting from the top of the repo, and hands the small local server the whole new text along with the text as it was when the guide was opened — which that server checks against the file before writing anything.
 - `utilities/Colors.ts` — the color math, the four theme colors, and the fixed design colors including the ink black (never pure black). **⟵ji**
 - `utilities/SVG_Paths.ts` — the drawn shapes: the hamburger, the close cross, the fat step triangles, and the soft pointer used for the folder marks. **⟵ji**
 - `utilities/Tooltip.ts` — the plumbing behind the hover hint: the action any element uses to name its words, a store holding what's pointed at, and one watcher that follows the cursor and finds the nearest hinted thing under it. **⟵ji**
+
+## src/lib/ts/tests/ — the tests
+
+- `runner.test.ts` — proves the runner is wired up.
+- `blocks.test.ts` — the line numbers each piece of a drawn guide claims, taking the labels off the top, putting typed words back in place of a run of lines, and drawing a whole guide again after a change.
+- `saving.test.ts` — working out where a guide sits, counting from the top of the repo.
+- `labels.test.ts` — writing the five labels back to the top of a file.
 
 ## src/lib/ — styles and data
 

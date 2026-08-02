@@ -2,6 +2,20 @@
 
 What's been finished, newest first.
 
+## 2026-08-02 — a guide can be changed from inside the app
+
+Overview could only read. Now a guide can be edited where it is read, and the file on disk changes with it — one piece at a time, never a wholesale rewrite.
+
+**The trap avoided.** Making the whole page typeable and turning it back into markdown on save would rewrite the entire file: every blank line, link style and indent becomes whatever the converter prefers, so a one-word fix lands as a rewritten file. Instead the page is never converted. Each outermost piece — paragraph, heading, list, quote, fenced code — is stamped as it is drawn with the lines of the file it came from, and a click opens that piece in a plain box holding the file's own words for those lines, hashes and dashes and all. Saving swaps just those lines. Every other line stays character for character what it was.
+
+**Two guards on every write, and both refuse rather than risk.** The path must end in .md and sit inside a guides folder, and the file on disk must still read exactly as the app last saw it. Proved against the write route directly: a real write goes through leaving the file identical, a write claiming the wrong "before" text is refused, and a path outside the guides folders is refused.
+
+**The five labels are edited as one thing**, through a small form — kind and tags picked from the app's own closed lists, never typed. After a successful write the list is told at once, so a new title or tag shows there without every file being read again.
+
+**Getting in.** An edit toggle sits at the far left of the reading view, beside the close cross; holding the command key while clicking a file in the list opens it already editing, and the hover words say "edit" rather than "open" the moment the key goes down.
+
+**Method.** Built in six steps, each stubbed and tested before any code: 53 tests now, covering the line numbers each piece claims, taking the labels off the top, putting typed words back in place of a run of lines, drawing a whole guide again after a change adds or removes lines, working out where a guide sits in the repo, and writing the labels back. Overview had no test runner before this; it has one now.
+
 ## 2026-08-01 — the filters fold away
 
 A toggle at the far left of the top row hides the three picking rows — tags, kinds, projects — and their dividers, giving the list that height. The words looked for stay: the search field moved up beside the toggle and shows either way, since it is the one filter worth keeping in reach while the list is long. The choice is remembered across visits.
