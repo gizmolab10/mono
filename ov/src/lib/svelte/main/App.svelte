@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
-	import { w_command_down } from '../../ts/managers/Operations';
+	import { w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { colors } from '../../ts/utilities/Colors';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
@@ -34,8 +34,8 @@
 	// Whether the command key is held, watched in one place. Holding it changes what a click
 	// on a guide does, so anything that says what a click would do can read it.
 	$effect(() => {
-		const said = (event: KeyboardEvent) => w_command_down.set(event.metaKey);
-		const let_go = () => w_command_down.set(false);
+		const said = (event: KeyboardEvent) => { w_command_down.set(event.metaKey); w_option_down.set(event.altKey); };
+		const let_go = () => { w_command_down.set(false); w_option_down.set(false); };
 		window.addEventListener('keydown', said);
 		window.addEventListener('keyup', said);
 		window.addEventListener('blur', let_go);      // the key can be let go while away

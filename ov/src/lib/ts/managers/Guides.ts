@@ -2,6 +2,7 @@ import { T_Bundle, ALL_TAGS, key_of, type Guide, type Labels, type Filtered_Guid
 import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
+import { file_path_of, move_guide, moved_into } from '../utilities/Saving';
 import { debug } from '../common/Debug';
 
 /**
@@ -108,6 +109,27 @@ class Guides {
 		this.hierarchy.relabel(guide, labels, tag_names);
 		this.renarrow();
 		debug.log(`Guide "${key_of(guide)}" relabeled: kind "${labels.kind}", title "${labels.title}", ${tag_names.length} tag(s) — the list was worked out again.`);
+	}
+
+	/**
+	 * Move one guide's file into another folder. The file moves on disk first; only if that
+	 * works is the app's own picture changed, so what's on screen can never claim a move that
+	 * didn't happen. Its words are read from where it now is, which the dev server will hand
+	 * over by full path — so no restart is needed to read it again.
+	 */
+	async move(guide: Guide, folder: Guide): Promise<void> {
+		const name = guide.path.split('/').pop() ?? guide.name;
+		const to_path = moved_into(folder.path, name);
+		const from = file_path_of(guide.bundle, guide.path);
+		const to   = file_path_of(folder.bundle, to_path);
+		const answer = await move_guide(from, to);
+		if (!answer.ok) {
+			debug.log(`Moving "${guide.name}" from ${from} to ${to} was refused — ${answer.why}. Nothing changed.`);
+			return;
+		}
+		this.hierarchy.rehang(guide, folder, to_path, `/@fs${answer.full_path}`);
+		this.renarrow();
+		debug.log(`Moved "${guide.name}" from ${from} to ${to}. It now hangs under "${folder.name}", and its words are read from ${answer.full_path}.`);
 	}
 
 	/** Every file, folders left out. */

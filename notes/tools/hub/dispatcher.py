@@ -626,6 +626,52 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif urllib.parse.urlparse(self.path).path == '/move-guide':
+            # Move a guide's file from one place in the repo to another, for the overview app.
+            # /move-guide?from=<path from the top of the repo>&to=<the same>
+            #
+            # Every refusal answers 409 and moves nothing:
+            #   - either path is not a .md file inside a "notes/guides" folder
+            #   - either path resolves outside the repo
+            #   - the file to move isn't there, or something is already at the new place
+            #   - the folder it would land in doesn't exist (folders are never made here)
+            #
+            # On success it answers with the file's full place on this machine, so the app can
+            # read it again without waiting for a restart.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                where_from = params.get('from', [''])[0]
+                where_to = params.get('to', [''])[0]
+                root = os.path.realpath(GITHUB_DIR)
+
+                def guide_path(where):
+                    if not where or not where.endswith('.md') or 'notes/guides/' not in where:
+                        return None
+                    full = os.path.realpath(os.path.join(GITHUB_DIR, where))
+                    return full if full.startswith(root + os.sep) else None
+
+                full_from = guide_path(where_from)
+                full_to = guide_path(where_to)
+                if not full_from or not full_to:
+                    self._send_response(409, {'success': False, 'error': 'not a guide, or outside the repo'})
+                    return
+                if full_from == full_to:
+                    self._send_response(409, {'success': False, 'error': 'already there'})
+                    return
+                if not os.path.isfile(full_from):
+                    self._send_response(409, {'success': False, 'error': 'no such file'})
+                    return
+                if os.path.exists(full_to):
+                    self._send_response(409, {'success': False, 'error': 'a file of that name is already there'})
+                    return
+                if not os.path.isdir(os.path.dirname(full_to)):
+                    self._send_response(409, {'success': False, 'error': 'no such folder'})
+                    return
+                os.rename(full_from, full_to)
+                self._send_response(200, {'success': True, 'path': full_to})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/restart-dispatcher' or self.path == '/restart-api':  # /restart-api for backwards compat
             log_file = os.path.join(GITHUB_DIR, 'logs', 'dispatcher-restart.log')
             os.makedirs(os.path.dirname(log_file), exist_ok=True)

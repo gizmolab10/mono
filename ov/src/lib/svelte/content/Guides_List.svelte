@@ -10,7 +10,8 @@
 	import { w_shut, w_show_folders, w_project, w_kind, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { open_view, w_command_down } from '../../ts/managers/Operations';
+	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
+	import { VAULT, file_path_of, obsidian_link } from '../../ts/utilities/Saving';
 	import type { Filtered_Guide } from '../../ts/types/Guide';
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Guides';
@@ -49,19 +50,81 @@
 	// The whole row answers, not just the name: a file opens for reading, a folder opens or
 	// shuts. The triangle keeps its own click, and stops it from reaching the row, so hitting
 	// the triangle on a folder doesn't toggle it twice.
-	function click_row(row: Filtered_Guide, holding_command = false) {
+	function click_row(row: Filtered_Guide, holding_command = false, holding_option = false) {
 		if (row.guide.is_folder) {
 			debug.log(`Row clicked: the folder "${row.guide.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
 			toggle_folder(row.key, row.guide.name);
-		} else {
-			debug.log(`Row clicked: the file "${row.guide.name}" — opening it ${holding_command ? 'for editing, since the command key was held' : 'for reading'}.`);
-			open_view(row.key, holding_command);
+			return;
 		}
+		// The command key alone hands the file to Obsidian; with the option key too, it opens
+		// here for editing instead.
+		if (holding_command && !holding_option) {
+			const where = file_path_of(row.guide.bundle, row.guide.path);
+			const link  = obsidian_link(VAULT, where);
+			window.open(link, '_self');
+			debug.log(`Row clicked with the command key: handing "${where}" to Obsidian, in the "${VAULT}" vault. This app stays where it is.`);
+			return;
+		}
+		const for_editing = holding_command && holding_option;
+		debug.log(`Row clicked: the file "${row.guide.name}" — opening it ${for_editing ? 'for editing, since both the command and option keys were held' : 'for reading'}.`);
+		open_view(row.key, for_editing);
+	}
+
+	// --- dragging a file into another folder ----------------------------------
+	//
+	// Only while the folders are on screen: with them hidden there is nothing to drop onto.
+	// A file is picked up, a folder lights up as the cursor crosses it, and letting go moves
+	// the file on disk. The app's own picture is put right straight after, so the list agrees
+	// with the disk without every file being read again.
+
+	let dragging   = $state<Filtered_Guide | null>(null);   // the file being carried
+	let landing_on = $state<string | null>(null);           // the folder lit under the cursor
+
+	function start_drag(event: DragEvent, row: Filtered_Guide) {
+		if (!$w_show_folders || row.guide.is_folder) { return; }
+		dragging = row;
+		event.dataTransfer?.setData('text/plain', row.key);
+		if (event.dataTransfer) { event.dataTransfer.effectAllowed = 'move'; }
+		debug.log(`Picked up "${row.guide.name}" from ${row.key}. Drop it on a folder to move it there.`);
+	}
+
+	function end_drag() {
+		dragging = null;
+		landing_on = null;
+	}
+
+	/** Can this file land here? Only on a folder, and not the one it already sits in. */
+	function can_land(row: Filtered_Guide): boolean {
+		if (!dragging || !row.guide.is_folder) { return false; }
+		const holding = dragging.ancestor_keys[dragging.ancestor_keys.length - 1];
+		return row.key !== holding;
+	}
+
+	function drag_over(event: DragEvent, row: Filtered_Guide) {
+		if (!can_land(row)) { return; }
+		event.preventDefault();                       // says "yes, it can land here"
+		if (event.dataTransfer) { event.dataTransfer.dropEffect = 'move'; }
+		landing_on = row.key;
+	}
+
+	function drop_on(event: DragEvent, row: Filtered_Guide) {
+		event.preventDefault();
+		const carried = dragging;
+		const allowed = can_land(row);          // asked while the file is still being carried
+		end_drag();
+		if (!carried || !allowed) {
+			debug.log(`Dropped on "${row.guide.name}" but nothing moved — ${!carried ? 'nothing was being carried' : 'it cannot land there'}.`);
+			return;
+		}
+		guides.move(carried.guide, row.guide);
 	}
 
 	// What the hint over a row says, which depends on what clicking it would do.
-	function row_hint(row: Filtered_Guide, holding_command: boolean): string {
-		if (!row.guide.is_folder) { return `${holding_command ? 'edit' : 'open'} "${row.guide.name}"`; }
+	function row_hint(row: Filtered_Guide, holding_command: boolean, holding_option: boolean): string {
+		if (!row.guide.is_folder) {
+			const what = !holding_command ? 'open' : holding_option ? 'edit' : 'open in obsidian';
+			return `${what} "${row.guide.name}"`;
+		}
 		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.guide.name}"`;
 	}
 
@@ -308,9 +371,16 @@
 						<!-- svelte-ignore a11y_mouse_events_have_key_events a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
 						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.guide.is_folder}
 							class:opened={row.guide.is_folder && row.has_children && !$w_shut.includes(row.key)}
+							class:landing={landing_on === row.key}
 							data-key={row.key} data-n={row_number} data-name={row.guide.name}
-							use:tip={row_hint(row, $w_command_down)}
-							onclick={(e) => click_row(row, e.metaKey)}
+							draggable={$w_show_folders && !row.guide.is_folder}
+							use:tip={row_hint(row, $w_command_down, $w_option_down)}
+							onclick={(e) => click_row(row, e.metaKey, e.altKey)}
+							ondragstart={(e) => start_drag(e, row)}
+							ondragend={end_drag}
+							ondragover={(e) => drag_over(e, row)}
+							ondragleave={() => { if (landing_on === row.key) { landing_on = null; } }}
+							ondrop={(e) => drop_on(e, row)}
 							onmouseenter={() => hovered_row = row.key}
 							onmouseleave={() => { if (hovered_row === row.key) { hovered_row = null; } }}>
 							{@render guide_row(row)}
@@ -626,6 +696,24 @@
 	}
 
 	.guides-table .file.hovered td:last-child {
+		border-top-right-radius    : var(--radius-pill);
+		border-bottom-right-radius : var(--radius-pill);
+	}
+
+	/* The folder a carried file would land in, lit on the accent so there is no doubt where
+	   letting go would put it. */
+	.guides-table .file.landing td {
+		background          : var(--accent);
+		color               : var(--text-on-accent);
+		border-bottom-color : transparent;
+	}
+
+	.guides-table .file.landing td:first-child {
+		border-top-left-radius    : var(--radius-pill);
+		border-bottom-left-radius : var(--radius-pill);
+	}
+
+	.guides-table .file.landing td:last-child {
 		border-top-right-radius    : var(--radius-pill);
 		border-bottom-right-radius : var(--radius-pill);
 	}

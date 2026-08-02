@@ -70,6 +70,10 @@ export const w_editing = writable(false);
 // held opens that guide already editing, so the hover words say so while it is down.
 export const w_command_down = writable(false);
 
+// Is the option key held down too? Command with option hands a guide to Obsidian rather than
+// opening it here, so the hover words have to know about both.
+export const w_option_down = writable(false);
+
 /** Open one guide by where it sits. Opening from the list starts a fresh, empty stack. */
 export function open_view(key: string, for_editing = false): void {
 	const rows = get(guides.w_showing);

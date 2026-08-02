@@ -4,6 +4,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] when folders are visible, implement drag and drop to move files from one folder to another
 - [ ] convert the two fat triangles in the view guide -> Steppers.svelte component
 - [ ] for each tag the user choses, remove it from every row's tag column cell
 - [ ] checkbox in details preferences to show/hide tooltips
@@ -37,6 +38,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## done
 
+- [x] while holding both command and option keys down, click on a file name opens it in obsidian
 - [x] add editing ability
     - [x] stamp each piece with the lines it came from
     - [x] click a piece to edit it, in the file's own words

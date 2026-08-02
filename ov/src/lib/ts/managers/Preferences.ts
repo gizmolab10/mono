@@ -38,6 +38,9 @@ export enum T_Preference {
 	scroll_files_to = 'scroll_files_to',
 	view_guide      = 'view_guide',
 	current_op      = 'current_op',
+
+	// Reading one guide
+	show_labels     = 'show_labels',
 }
 
 // Every saved name of ours starts with this.

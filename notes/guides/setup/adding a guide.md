@@ -5,20 +5,11 @@ description: "Put a new guide where overview will find it, label it, and prove i
 tags: [notes, setup]
 date: 2026-08-02
 ---
-
 # Adding a guide
 
-A new guide only reaches overview if it sits in the right place and carries the five labels. Here is the whole of it.
+A new guide only reaches overview if it sits in the right place and carries the five labels. These are the steps to do so. The first two steps prepare it for OKF, the rest puts it where this app will include it.
 
-Eventually MOVE THIS FILE -> mono
-
-## 1. Put it in a guides folder
-
-`<project>/notes/guides/...` — any depth of folders under that. The shared guides live at `notes/guides/...` at the top of the repo. Nothing outside those folders is swept, so a file in a work folder will never be listed.
-
-Do not name it `index` — those are left out on purpose, since the folders do that job.
-
-## 2. Give it the label block
+## 1. Give it the label block
 
 Five labels, this order, fenced by three dashes above and below, at the very top:
 
@@ -38,11 +29,17 @@ date: 2026-08-02
 - **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.
 - **date** — the last real change, as year-month-day. A change of meaning, not a typo.
 
-## 3. Use only these tags
+## 2. Use only these tags
 
 collaboration, prose, session-start, code-style, visual-design, refactoring, migration, testing, debugging, build, deploy, setup, tools, philosophy, porting, notes, architecture, data, geometry, user-interface, platform, research.
 
 Adding a new one means adding it to the app's own list first — the closed list is the whole point.
+
+## 3. Put it in a guides folder
+
+`<project>/notes/guides/...` — any depth of folders under that. The shared guides live at `notes/guides/...` at the top of the repo. Nothing outside those folders is swept, so a file in a work folder will never be listed.
+
+Do not name it `index` — those are left out on purpose, since the folders do that job.
 
 ## 4. Restart ov's server
 

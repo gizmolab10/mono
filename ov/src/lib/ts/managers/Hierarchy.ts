@@ -153,6 +153,21 @@ export class Hierarchy {
 		this.reindex();
 	}
 
+	/**
+	 * One guide's file has moved on disk. Hang it under its new folder, and tell it where it
+	 * now sits and where its words can be read from. The link to its old folder goes, so it
+	 * is never under two.
+	 */
+	rehang(guide: Guide, folder: Guide, path: string, address: string): void {
+		const contains = this.predicate_for(CONTAINS).id;
+		this.relationships = this.relationships.filter((r) => !(r.predicate_id === contains && r.child_id === guide.id));
+		guide.bundle  = folder.bundle;
+		guide.path    = path;
+		guide.address = address;
+		this.add_relationship(folder.id, guide.id);
+		this.reindex();
+	}
+
 	/** Rebuild the lookups from the current tag links and folder links. */
 	reindex(): void {
 		this.indexes.rebuild(this.taggings, this.relationships);

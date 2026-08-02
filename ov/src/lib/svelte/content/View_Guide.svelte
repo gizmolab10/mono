@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Blocks';
 	import { ALL_TAGS, T_Kind, key_of, type Guide } from '../../ts/types/Guide';
-	import { follow_link, w_editing } from '../../ts/managers/Operations';
-	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
+	import { follow_link, w_command_down, w_editing } from '../../ts/managers/Operations';
+	import { VAULT, file_path_of, obsidian_link, save_guide } from '../../ts/utilities/Saving';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Separator from '../support/Separator.svelte';
@@ -256,6 +257,10 @@
 	let form_tags        = $state<string[]>([]);
 	const KINDS = Object.values(T_Kind);
 
+	// Whether the label form is on screen while editing. Remembered across visits, since it
+	// is a way of working rather than something about one guide.
+	const w_show_labels = preferences.persistent<boolean>(T_Preference.show_labels, true);
+
 	// Whenever another guide comes on screen, the form starts from what that guide says.
 	$effect(() => {
 		form_kind        = guide.kind;
@@ -295,8 +300,17 @@
 		save_labels();
 	}
 
-	/** Turn editing on or off. Turning it off puts away any box still open. */
-	function toggle_editing() {
+	/**
+	 * Turn editing on or off. Turning it off puts away any box still open. With the command
+	 * key held, the file goes to Obsidian instead and nothing here changes.
+	 */
+	function toggle_editing(event: MouseEvent) {
+		if (event.metaKey) {
+			const where = file_path_of(guide.bundle, guide.path);
+			window.open(obsidian_link(VAULT, where), '_self');
+			debug.log(`Edit clicked with the command key: handing "${where}" to Obsidian, in the "${VAULT}" vault. This app stays where it is.`);
+			return;
+		}
 		const now = !$editing;
 		editing.set(now);
 		if (!now) { close_box(true); }
@@ -406,7 +420,14 @@
 		</button>
 		<!-- With this on, a click on the words opens that piece for editing instead of
 		     going back to the list. -->
-		<button class='view-edit' class:on={$editing} use:tip={$editing ? 'stop editing' : 'edit this guide'} onclick={toggle_editing}>edit</button>
+		<button class='view-edit' class:on={$editing} onclick={toggle_editing}
+			use:tip={$w_command_down ? 'edit this guide in obsidian' : $editing ? 'stop editing' : 'edit this guide'}>edit</button>
+		<!-- The five labels have their own form; this folds it away without leaving editing. -->
+		{#if $editing}
+			<button class='view-edit' class:on={$w_show_labels}
+				use:tip={`${$w_show_labels ? 'hide' : 'edit'} the labels`}
+				onclick={() => { w_show_labels.set(!$w_show_labels); debug.log(`Editing "${name}": the label form is now ${!$w_show_labels ? 'hidden' : 'shown'}.`); }}>labels</button>
+		{/if}
 		<!-- Only worth showing the step triangles when there is more than one guide on
 		     screen to step between. -->
 		{#if can_back || can_forward}
@@ -451,7 +472,7 @@
 	<Separator thickness={k.separator.huge}/>
 	<!-- The five labels, shown only while editing. They never appear among the words, so
 	     this is the only way at them. -->
-	{#if $editing}
+	{#if $editing && $w_show_labels}
 		<div class='label-form'>
 			<div class='label-row'>
 				<span class='label-word'>kind</span>
