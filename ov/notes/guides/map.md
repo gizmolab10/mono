@@ -82,5 +82,6 @@ Overview's files. Update this when files are added, moved, or removed.
 - `work/handoff.md` — where to pick up, and the context the code doesn't say.
 - `work/code debt.md` — everything still owed, and what's done.
 - `work/work journal.md` — what's been finished, newest first.
+- `work/editing.md` — the plan for changing a guide from inside the app.
 
 The proposal that started this project lives in ji, at `ji/notes/work/proposals/ov.md`.

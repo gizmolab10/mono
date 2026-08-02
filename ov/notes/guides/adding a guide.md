@@ -10,6 +10,8 @@ date: 2026-08-02
 
 A new guide only reaches overview if it sits in the right place and carries the five labels. Here is the whole of it.
 
+eventually MOVE THIS FILE -> mono
+
 ## 1. Put it in a guides folder
 
 `<project>/notes/guides/...` — any depth of folders under that. The shared guides live at `notes/guides/...` at the top of the repo. Nothing outside those folders is swept, so a file in a work folder will never be listed.

@@ -135,7 +135,8 @@
 	/* The tags hug the far right. With the unsorted button beside them they simply follow it;
 	   without it they take the far right themselves. */
 	.chosen-tags {
-		margin-left : auto;
+		margin-right : var(--gap-fat);
+		margin-left  : auto;
 	}
 
 	.chosen-tags.after-unsorted {

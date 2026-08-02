@@ -5,11 +5,11 @@ write a proposal for the first unchecked item to the top of handoff.
 ## work
 
 - [x] steps to annotate for okf a file when adding it to the guides
-- [ ] checkbox in details preferences to turn tt off
+- [ ] checkbox in details preferences to show/hide tooltips
 - [ ] bring okf up to date
 - [ ] work on murky
 - [ ] click and hold on a header opens the filters. does nothing if they are open
-- [ ] new prop for separator gap -> whitespace on each side of line
+- [ ] new prop for separator gap -> whitespace around line (strips parallel to it)
 
 ## done
 

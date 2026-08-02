@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/work/editing.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code debt"
+              "title": "editing"
             }
           },
           {
@@ -95,7 +95,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "brief",
+                "query": "file:short",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -198,13 +198,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/work/editing.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of editing"
             }
           },
           {
@@ -238,12 +238,14 @@
   },
   "active": "706a56713dfe72a1",
   "lastOpenFiles": [
+    "ov/notes/guides/adding a guide.md",
+    "ov/notes/work/editing.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "ov/notes/work/code debt.md",
     "ov/notes/work/okf.md",
     "ov/src/lib/svelte/content/Browse.svelte.tmp.49972.9d808eed4ac9",
     "ov/src/lib/svelte/content/Guides_List.svelte.tmp.49972.397cb67179c9",
     "ov/notes/work/adding a guide.md",
-    "ov/notes/guides/adding a guide.md",
-    "ov/notes/work/code debt.md",
     "ov/notes/guides/pre-flight/banned words.md",
     "ov/notes/work/organize.md",
     "ji/notes/work/code debt.md",
@@ -270,7 +272,6 @@
     "ov/dist/assets/map-D8Yxwkk3.md",
     "ov/dist/assets/3D.primer-CCdmSrYH.md",
     "ov/dist/assets/Details-RzHNKNLy.md",
-    "ov/dist/assets/Controls-Cdk-S9tG.md",
     "ov/src/lib/ts/managers/Operations.ts.tmp.49972.8b147078f777",
     "ov/notes/work/okf.md.tmp.49972.dceb0224ad98",
     "ji/src/assets/icon.png",

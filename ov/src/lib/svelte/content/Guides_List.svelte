@@ -347,6 +347,13 @@
 		padding-right : calc(20px + var(--gap));
 	}
 
+	/* With no scrollbar, both the titles and the rows keep the same fat gap at the right,
+	   so nothing runs against the edge of the box. */
+	.table-head:not(.has-bar),
+	.table-scroll:not(.has-bar) {
+		padding-right : var(--gap);
+	}
+
 	/* The divider, running behind the titles, a touch below their center. It runs the
 	   full width — the scrollbar only exists beside the rows, which begin below it, so
 	   there is nothing up here for it to stop short of. */

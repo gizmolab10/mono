@@ -12,4 +12,5 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Stale](stale%20-%20maps,%20always.md) — the ten guides furthest out of date, worst first.
 - [Organize](organize.md) — what is actually in the repo, counted.
 - [OKF](okf.md) — the guide format itself, and how it sits in overview's code.
+- [Editing](editing.md) — changing a guide from inside the app, and what that costs.
 - [Adding a guide](../guides/adding%20a%20guide.md) — what a new guide needs to show up in the app.
