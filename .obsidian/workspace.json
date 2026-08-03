@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/guides/editing.md",
+                "file": "ji/notes/guides/map.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "editing"
+              "title": "map"
             }
           },
           {
@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/setup/adding a guide.md",
+                "file": "ov/notes/work/code debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "adding a guide"
+              "title": "code debt"
             }
           },
           {
@@ -62,37 +62,8 @@
               "icon": "lucide-file",
               "title": "okf"
             }
-          },
-          {
-            "id": "65d83fe2e8490834",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ov/notes/work/handoff.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "handoff"
-            }
-          },
-          {
-            "id": "5cae5300611f4ae0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ov/notes/work/organize.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "organize"
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -124,7 +95,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:short",
+                "query": "Dimensions.latest.spec",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -227,13 +198,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/setup/adding a guide.md",
+                "file": "ji/notes/guides/map.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of adding a guide"
+              "title": "Outline of map"
             }
           },
           {
@@ -265,44 +236,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "14b6ec19895b3d59",
+  "active": "706a56713dfe72a1",
   "lastOpenFiles": [
-    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.953657b9acaa",
+    "ji/notes/work/proposals/persistables proposal.md",
+    "ji/notes/guides/map.md",
+    "ov/notes/work/tags.hierarchy.md",
     "ov/notes/work/code debt.md",
-    "notes/guides/setup/adding a guide.md",
-    "ov/notes/guides/pre-flight/zz-move-test.md",
-    "ov/src/lib/ts/managers/Guides.ts.tmp.49972.99dd07a2ac8e",
-    "ov/notes/guides/adding a guide.md",
-    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.b3f46578d6d6",
-    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.c5aa81f44c2f",
+    "ov/src/lib/ts/types/Guide.ts.tmp.49972.fc4a75049ef1",
+    "ws/vite.config.js.timestamp-1785777592620-72f59e1b6d8d9.mjs",
+    "di/notes/guides/project/philosophy/update guides.md",
+    "notes/guides/develop/keep shop.md",
+    "notes/guides/develop/create a proposal.md",
+    "notes/guides/develop/create a design.md",
+    "di/notes/guides/development/rules/dimensionals.md",
+    "di/notes/work/milestones/done/34.dimensionals/dimensions.latest.spec.md",
+    "ov/src/lib/svelte/content/D_Repair.svelte.tmp.49972.806d409bb0e6",
+    "notes/guides/develop/creating a design.md",
+    "ov/src/lib/svelte/content/Report.svelte",
+    "ov/src/lib/svelte/content/D_Repair.svelte.tmp.49972.976746400bc0",
+    "ov/notes/guides/pre-flight/index.md",
+    "ov/notes/guides/index.md",
+    "ji/notes/guides/specifications/index.md",
+    "ji/notes/guides/pre-flight/index.md",
+    "ji/notes/guides/index.md",
+    "ov/src/lib/svelte/main/Details.svelte.tmp.49972.7beadfd5f4cd",
+    "ov/src/lib/svelte/content/D_Repair.svelte",
+    "ov/src/lib/svelte/content/D_Tools.svelte",
+    "notes/guides/setup/add a guide.md",
+    "notes/guides/develop/add a guide.md",
+    "ws/vite.config.js.timestamp-1785722584947-e10bc2563f7e2.mjs",
+    "notes/guides/develop/shop keeping.md",
+    "notes/guides/develop/creating a proposal.md",
+    "ov/src/lib/ts/tests/index_files.test.ts",
     "ov/notes/guides/editing.md",
-    "ov/src/lib/ts/utilities/Tooltip.ts.tmp.49972.a0e4d4694c29",
-    "ov/src/lib/svelte/content/Guides_List.svelte.tmp.49972.ad08e498d86d",
-    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.70a9f4679f3b",
-    "ov/src/lib/ts/tests/labels.test.ts",
-    "ov/src/lib/ts/utilities/Labels.ts",
-    "ws/vite.config.js.timestamp-1785703007263-e64f68320cdf5.mjs",
-    "ov/src/lib/ts/tests/saving.test.ts",
-    "notes/guides/pre-flight/shorthand.md",
     "ov/notes/work/okf.md",
-    "ov/notes/work/adding a guide.md",
-    "ov/notes/guides/pre-flight/banned words.md",
-    "ov/notes/work/organize.md",
-    "ji/notes/work/code debt.md",
-    "di/notes/guides/guides.layout.md",
-    "ov/notes/work/ov.md",
-    "sparcity.md",
-    "ws/notes/guides/collaborate/composition.md",
-    "di/notes/work/done/chat.md",
-    "notes/guides/collaborate/voice.md",
-    "ji/notes/work/proposals/sparse replies.md",
-    "notes/guides/pre-flight/replying.md",
-    "ov/notes/work/stale - maps, always.md",
-    "ov/notes/work/handoff.md",
-    "notes/archives/voice archive.md",
-    "notes/guides/pre-flight/working.md",
-    "ov/notes/work/file layout.md",
-    "ov/notes/work/working features.md",
+    "notes/guides/pre-flight/index.md",
+    "ws/notes/guides/architecture/ux/index.md",
+    "di/notes/guides/architecture/index.md",
+    "notes/guides/philosophy/limitations.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

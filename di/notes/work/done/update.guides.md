@@ -142,5 +142,5 @@ Largest payoff per page first. All ten are done.
 6. ~~The two-dimensional hit manager — verify completeness, fill in the timing detail if missing.~~ Done.
 7. ~~The drawing-area editors group page (new).~~ Done.
 8. ~~Move key paths into `architecture/ui/`.~~ Done.
-9. ~~Distill this file into a useful set of instructions for the next time we update the guides.~~ Done — the distilled instructions live at `project/overview/updating guides.md`.
+9. ~~Distill this file into a useful set of instructions for the next time we update the guides.~~ Done — the distilled instructions live at `project/overview/update guides.md`.
 10. ~~The user manual filled out feature by feature.~~ Done. Eight new pages under `project/user manual/`: selection, re-parenting, formulas, library, build notes, undo and redo, units, save and load. Every claim has a code citation; the existing repeaters page was left as-is.

@@ -2,6 +2,18 @@
 
 What's been finished, newest first.
 
+## 2026-08-02 — guides can be moved, and handed to Obsidian
+
+**Dragging a file into another folder.** With the folders on screen, a file can be picked up and dropped on any folder — the folder lights on the accent as the cursor crosses it, and its own folder never lights. The file moves on disk first; only if that works is the picture on screen changed, so nothing here can claim a move that didn't happen. A move can cross collections, since the four project folders hang under the shared one. Reading a moved guide needs no restart: its words come from wherever it now sits.
+
+Four refusals, proved against the write server directly: a name already taken in the new folder, a folder that isn't there, a file that isn't there, and any path outside the guides folders.
+
+**One bug worth remembering.** The drop did nothing at first: it let go of the file being carried before asking whether the file could land, so the answer was always no. Ask first, then let go.
+
+**Handing a guide to Obsidian.** The repo is itself a vault, so a guide's place counting from the top of the repo is also its place in the vault. Command-clicking a file in the list opens it there; command with option opens it here for editing instead. Command-clicking the edit button in the reading view does the same. The hover words follow every case as the keys go down and up.
+
+**Small things.** A "labels" toggle beside edit folds the label form away without leaving editing, and is remembered. The file that turns a guide's text into a page is now named for the markdown blocks it works with, so the word "block" means one thing in the code and another nowhere.
+
 ## 2026-08-02 — a guide can be changed from inside the app
 
 Overview could only read. Now a guide can be edited where it is read, and the file on disk changes with it — one piece at a time, never a wholesale rewrite.

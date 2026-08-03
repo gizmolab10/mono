@@ -69,7 +69,7 @@ ov/
             │   └── Indexes.ts
             ├── tests/
             │   ├── runner.test.ts
-            │   ├── blocks.test.ts   # the lines each piece claims, and putting words back
+            │   ├── markdown_blocks.test.ts   # the lines each piece claims, and putting words back
             │   ├── saving.test.ts   # where a guide sits in the repo
             │   └── labels.test.ts   # writing the five labels back
             ├── types/
@@ -81,7 +81,7 @@ ov/
             │   ├── Coordinates.ts
             │   └── Types.ts
             └── utilities/
-                ├── Blocks.ts     # a guide's text into a page, and a change back into the text
+                ├── Markdown_Blocks.ts   # a guide's text into a page, and a change back into the text
                 ├── Labels.ts     # writing the five labels back to the top of a file
                 ├── Saving.ts     # handing a changed guide to the local write server
                 ├── Colors.ts

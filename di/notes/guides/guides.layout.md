@@ -69,7 +69,7 @@ guides/
     │   ├── logic driven design.md ....... logic-driven design notes
     │   ├── stipulations.md .............. load-bearing rules catalog
     │   ├── testing.md ................... test index per rule
-    │   └── updating guides.md ........... instructions for guide updates
+    │   └── update guides.md ........... instructions for guide updates
     ├── overview/
     │   ├── index.md ..................... overview table of contents
     │   ├── file layout.md ............... every folder and file listed

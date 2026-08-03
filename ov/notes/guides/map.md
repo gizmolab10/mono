@@ -25,6 +25,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `Controls.svelte` — the row across the top, on the accent: the hamburger that shows or hides details, then the build-number button, then a spacer that takes up the rest so those two stay together at the left.
 - `Details.svelte` — the collapsible column at the left, holding one section (preferences). Which sections are open is saved as a list of their names; all shut saves an empty list, and nothing saved at all means all open.
 - `Operation.svelte` — the content box beside details. It shows exactly one of two things: reading a guide, or looking through them. A guide the list no longer shows closes itself rather than showing nothing.
+- `Status_Line.svelte` — one line of words along the bottom of the window: what just happened, or what went wrong. It is there only while there is something to say, clears itself after a few seconds, and a small cross takes it away at once.
 - `BuildNotes.svelte` — the build-history popup: a paged table read from the build-notes file, with close and up/down arrows.
 
 ## src/lib/svelte/content/ — what the content box shows
@@ -52,6 +53,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `managers/Hierarchy.ts` — the folders, the files, and the tags on them, made fresh each launch out of the addresses. Holds the walk that turns the folder shape into a list with a depth on every row, and the narrowing: which rows survive the filters, which folders are kept because something inside them matched, how many matching files sit under each folder, and the sort. It also answers a link written inside a guide, by climbing the folders above that guide and taking the first guide of that name found beneath any of them. **⟵ji**, with the storage left behind.
 - `managers/Filters.ts` — all the filters in one place, so the hierarchy can read them without reaching into anything that draws: the project, the kind, the tags, the words, which folders are shut, whether folders show at all, and which columns sort and which way.
 - `managers/Operations.ts` — which of the two things the content box is doing, which guide is being read, and the stepping between guides. Off the list it walks the stack of guides reached by links — one down, one up, emptied by backing out of the bottom; on the list it walks the filtered run, past folders and wrapping at both ends. **⟵ji**, trimmed from seven modes to two.
+- `managers/Status.ts` — whether there is anything to say along the bottom, and what. One call says a line and starts the few seconds after which it clears itself.
 - `managers/Preferences.ts` — what the browser remembers between visits. Every name reads `ov_` then the parts joined by underscores, and the name in the code is the name in the browser. None of ji's renaming and sweeping code came over: overview has no old names to bring forward.
 - `database/Indexes.ts` — the instant lookups (tags by file, files by tag, children by folder, parents by file), rebuilt whenever the records change. **⟵ji**
 - `types/Guide.ts` — what a guide is: the five kinds, the closed list of twenty-two tags, the five collections, the five labels off a file's top, and a listed row — a guide together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything.
@@ -59,7 +61,8 @@ Overview's files. Update this when files are added, moved, or removed.
 - `types/Details.ts` — the sections inside the details column, by name.
 - `types/DB_Records.ts` — the record shapes the hierarchy keeps: tags, tag placements, folder links, and link meanings. **⟵ji**
 - `types/Angle.ts`, `types/Coordinates.ts`, `types/Types.ts` — angle math, points and rectangles, shared types. **⟵ji**
-- `utilities/Blocks.ts` — turning a guide's text into the page on screen, and putting a change back into that text. Takes the five labels off the top, gives every outermost piece two numbers — the line it starts on and one past the line it ends on, counted from zero against the whole file — names the headings, and marks the links. Also hands one piece's own words back out of the file, swaps a run of lines for what was typed leaving every other line untouched, and answers whether those lines still read as they did when the piece was opened. Pieces sitting inside other pieces are left unmarked for now.
+- `utilities/Markdown_Blocks.ts` — turning a guide's text into the page on screen, and putting a change back into that text. Takes the five labels off the top, gives every outermost piece two numbers — the line it starts on and one past the line it ends on, counted from zero against the whole file — names the headings, and marks the links. Also hands one piece's own words back out of the file, swaps a run of lines for what was typed leaving every other line untouched, and answers whether those lines still read as they did when the piece was opened. Pieces sitting inside other pieces are left unmarked for now.
+- `utilities/Index_Files.ts` — mending the two index files a move leaves lying: reading which file a bulleted link names, taking that line out of one index, and putting it into another in its alphabetical place. An index that lists files in more than one place gets a "More" heading, since nothing in it says which list the arrival belongs to.
 - `utilities/Labels.ts` — writing the five labels back to the top of a guide's file: the block itself, and swapping it into the file with every word below left alone. A file carrying no labels gets one put at the very top.
 - `utilities/Saving.ts` — writing a changed guide back to its own file. Works out where a guide sits counting from the top of the repo, and hands the small local server the whole new text along with the text as it was when the guide was opened — which that server checks against the file before writing anything.
 - `utilities/Colors.ts` — the color math, the four theme colors, and the fixed design colors including the ink black (never pure black). **⟵ji**
@@ -69,9 +72,10 @@ Overview's files. Update this when files are added, moved, or removed.
 ## src/lib/ts/tests/ — the tests
 
 - `runner.test.ts` — proves the runner is wired up.
-- `blocks.test.ts` — the line numbers each piece of a drawn guide claims, taking the labels off the top, putting typed words back in place of a run of lines, and drawing a whole guide again after a change.
+- `markdown_blocks.test.ts` — the line numbers each piece of a drawn guide claims, taking the labels off the top, putting typed words back in place of a run of lines, and drawing a whole guide again after a change.
 - `saving.test.ts` — working out where a guide sits, counting from the top of the repo.
 - `labels.test.ts` — writing the five labels back to the top of a file.
+- `index_files.test.ts` — mending the index files a move leaves lying.
 
 ## src/lib/ — styles and data
 

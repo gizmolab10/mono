@@ -18,6 +18,27 @@ export function file_path_of(bundle: T_Bundle, path: string): string {
 	return bundle === T_Bundle.mono ? under : `${bundle}/${under}`;
 }
 
+// The folder a guide sits in, counting from the top of the repo. A collection's own top
+// folder has no place inside it, so the guides folder itself is the answer.
+export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
+	const guides = bundle === T_Bundle.mono ? 'notes/guides' : `${bundle}/notes/guides`;
+	return folder_path === '' ? guides : `${guides}/${folder_path}`;
+}
+
+// Show one folder in the Finder. Only the small local server can do it, since a page served
+// over the web cannot open anything on this machine itself.
+export async function show_folder(where: string): Promise<Saved> {
+	const url = `http://localhost:5171/show-folder?where=${encodeURIComponent(where)}`;
+	try {
+		const answer = await fetch(url, { method: 'POST' });
+		const said = await answer.json().catch(() => ({}));
+		if (answer.ok && said.success) { return { ok: true, why: '' }; }
+		return { ok: false, why: said.error ?? `the server answered ${answer.status}` };
+	} catch (e) {
+		return { ok: false, why: e instanceof Error ? e.message : String(e) };
+	}
+}
+
 // Where a guide would sit if it were dropped into this folder: the folder's own place inside
 // its collection, with the file's name after it. A folder at the top of a collection has no
 // place of its own, so the name stands alone.

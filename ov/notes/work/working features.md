@@ -2,7 +2,9 @@
 
 | # | Feature |
 | --- | --- |
-| 17 | Command-clicking a file in the list opens it already editing, and the hover words say "edit" rather than "open" for as long as the key is held |
+| 19 | With the folders on screen, a file can be dragged onto any folder — the folder lights while the cursor is over it, and letting go moves the file on disk before anything on screen changes. Moves can cross collections, and a moved guide is readable at once |
+| 18 | A "labels" toggle beside edit folds the label form away without leaving editing, and is remembered across visits |
+| 17 | Command-clicking a file in the list, or the edit button while reading, hands that guide to Obsidian; command with option opens it here for editing. The hover words follow all three cases as the keys go down and up |
 | 16 | The five labels are edited through their own small form — kind and tags picked from the app's own closed lists, never typed — and a successful write tells the list at once, so a new title or tag shows there without every file being read again |
 | 15 | A guide can be edited where it is read: with editing on, a click opens that piece of the page in a box holding the file's own words for those lines, and leaving the box writes just those lines back, every other line untouched. Two guards refuse rather than risk — the file must be a guide, and must still read as it did when opened |
 | 14 | A toggle at the top left folds the three picking rows away, leaving the list their height; the search field stays beside the toggle either way, and the choice is remembered |

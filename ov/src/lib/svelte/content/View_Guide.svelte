@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Blocks';
-	import { ALL_TAGS, T_Kind, key_of, type Guide } from '../../ts/types/Guide';
-	import { follow_link, w_command_down, w_editing } from '../../ts/managers/Operations';
+	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Markdown_Blocks';
+	import { ALL_TAGS, T_Bundle, T_Kind, key_of, type Guide } from '../../ts/types/Guide';
+	import { follow_link, w_command_down, w_editing, w_search_for } from '../../ts/managers/Operations';
+	import { get } from 'svelte/store';
 	import { VAULT, file_path_of, obsidian_link, save_guide } from '../../ts/utilities/Saving';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
@@ -26,6 +27,15 @@
 		{ name: string; address: string; kind: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: () => void; onnext?: () => void } = $props();
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+
+	// The title says where the guide sits as well as what it is called: the folders above it,
+	// with its collection in front — except the shared one, whose guides simply begin at their
+	// own folder.
+	const sits_at = $derived.by(() => {
+		const folders = guide.path.split('/').slice(0, -1);
+		const chain = guide.bundle === T_Bundle.mono ? folders : [guide.bundle, ...folders];
+		return [...chain, name].join(' / ');
+	});
 
 	// The guides are written in markdown, so they are turned into a real page before being
 	// shown. Any markup written into a guide is left as plain characters rather than acted
@@ -333,39 +343,66 @@
 		marked = null;
 	}
 
+	// How many places the words turn up, and which of them is lit right now (counting from
+	// zero). The triangles beside the field walk that run, wrapping at both ends.
+	let hits_found = $state(0);
+	let hit_at     = $state(0);
+
 	/**
-	 * Light the first place these words turn up in the guide, and move to it. The words
-	 * are looked for a run at a time, ignoring capitals; anything lit before goes back to
-	 * plain first, so only ever one place is lit.
+	 * Light one place these words turn up in the guide, and move to it. The words are looked
+	 * for a run at a time, ignoring capitals; anything lit before goes back to plain first,
+	 * so only ever one place is lit. Which place is asked for by number, wrapping around.
 	 */
-	function find_first() {
+	function light_hit(which: number) {
 		if (!page) { return; }
 		unmark();
 		// Taken exactly as typed — a space is a character to look for like any other, so
 		// "the end" finds those two words together rather than just "the".
 		const wanted = looking_for.toLowerCase();
-		if (wanted === '') { debug.log(`Search in "${name}": the field is empty, so nothing to look for.`); return; }
+		if (wanted === '') { hits_found = 0; hit_at = 0; debug.log(`Search in "${name}": the field is empty, so nothing to look for.`); return; }
+
+		// Every place the words sit, gathered first, so the count can be shown and the
+		// triangles can walk them.
+		const places: Array<{ run: Text; at: number }> = [];
 		const runs = document.createTreeWalker(page, NodeFilter.SHOW_TEXT);
-		let looked = 0;
 		while (runs.nextNode()) {
 			const run = runs.currentNode as Text;
-			looked += 1;
-			const at = run.data.toLowerCase().indexOf(wanted);
-			if (at < 0) { continue; }
-			const rest = run.splitText(at);
-			rest.splitText(wanted.length);
-			const lit = document.createElement('mark');
-			lit.className = 'hit';
-			lit.textContent = rest.data;
-			rest.parentNode?.replaceChild(lit, rest);
-			marked = lit;
-			lit.scrollIntoView({ block: 'center' });
-			debug.log(`Search in "${name}" for "${looking_for}": found it in run of words number ${looked}, ${at} character(s) in — lit it and moved there.`);
+			const words_here = run.data.toLowerCase();
+			let from = words_here.indexOf(wanted);
+			while (from >= 0) {
+				places.push({ run, at: from });
+				from = words_here.indexOf(wanted, from + wanted.length);
+			}
+		}
+		hits_found = places.length;
+		if (places.length === 0) {
+			hit_at = 0;
+			// Nothing lit is answer enough while the words are still being typed, so this
+			// stays quiet on screen and says it only to the log.
+			debug.log(`Search in "${name}" for "${looking_for}": not there.`);
 			return;
 		}
-		// Nothing lit is answer enough while the words are still being typed, so this stays
-		// quiet on screen and says it only to the log.
-		debug.log(`Search in "${name}" for "${looking_for}": not there, after looking through ${looked} run(s) of words.`);
+		hit_at = ((which % places.length) + places.length) % places.length;    // wraps at both ends
+		const { run, at } = places[hit_at];
+		const rest = run.splitText(at);
+		rest.splitText(wanted.length);
+		const lit = document.createElement('mark');
+		lit.className = 'hit';
+		lit.textContent = rest.data;
+		rest.parentNode?.replaceChild(lit, rest);
+		marked = lit;
+		lit.scrollIntoView({ block: 'center' });
+		debug.log(`Search in "${name}" for "${looking_for}": showing ${hit_at + 1} of ${places.length}.`);
+	}
+
+	/** Every keystroke starts again from the first place the words turn up. */
+	function find_first() {
+		light_hit(0);
+	}
+
+	/** The place before or after the one lit now. */
+	function step_hit(by: number) {
+		light_hit(hit_at + by);
 	}
 
 	// Read this guide's words, and read again when another guide is stepped to. Held only
@@ -391,6 +428,13 @@
 				words  = page_of(reader, text);
 				loaded = true;
 				debug.log(`Viewer: read ${text.length} character(s) for "${name}" and turned them into a ${words.length}-character page, every piece carrying the lines it came from.`);
+				// A dead link picked out of a report asks for its own words to be lit here.
+				const wanted = get(w_search_for);
+				if (wanted !== '') {
+					w_search_for.set('');
+					looking_for = wanted;
+					requestAnimationFrame(find_first);
+				}
 				// A link can name a heading in the guide it opens; the words have to be drawn
 				// before there is anything to move down to.
 				if (wanted_heading !== '') {
@@ -452,8 +496,8 @@
 		{:else}
 			<span></span>
 		{/if}
-		<!-- The name, at the left just after the triangles. -->
-		<span class='view-name'>{name}</span>
+		<!-- Where it sits and what it is called, at the left just after the triangles. -->
+		<span class='view-name'>{sits_at}</span>
 		<!-- What kind of guidance this is, and what it's about: the pair at the far right. -->
 		<span class='view-kind'>{kind}</span>
 		<span class='view-bar'>|</span>
@@ -462,6 +506,19 @@
 	<!-- Looking through the guide on screen. Its type is "search", so the browser draws its
 	     own clear cross at the right end once there is text. -->
 	<div class='view-search'>
+		<!-- With something typed, two triangles walk the places those words turn up, and the
+		     count says which of them is lit. -->
+		{#if looking_for !== ''}
+			<div class='view-steps hits'>
+				<button class='step' aria-label='place before' use:tip={'the place before'} onclick={() => step_hit(-1)}>
+					<svg overflow='visible' width={prev_bounds.width} height={prev_bounds.height} viewBox='{prev_bounds.minX} {prev_bounds.minY} {prev_bounds.width} {prev_bounds.height}'><path d={prev_path} /></svg>
+				</button>
+				<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
+				<button class='step' aria-label='place after' use:tip={'the place after'} onclick={() => step_hit(1)}>
+					<svg overflow='visible' width={next_bounds.width} height={next_bounds.height} viewBox='{next_bounds.minX} {next_bounds.minY} {next_bounds.width} {next_bounds.height}'><path d={next_path} /></svg>
+				</button>
+			</div>
+		{/if}
 		<input
 			class='search'
 			type='search'
@@ -860,11 +917,27 @@
 		margin     : var(--gap-fat) 0;
 	}
 
-	/* The search row, under the top row: one field across the whole width. */
+	/* The search row, under the top row: the walking triangles, then the field. */
 	.view-search {
 		padding-bottom : var(--gap);
+		align-items    : center;
 		flex           : 0 0 auto;
 		display        : flex;
+		gap            : var(--gap);
+	}
+
+	/* The triangles that walk the places the words turn up, and the count between them. */
+	.view-steps.hits {
+		flex : 0 0 auto;
+	}
+
+	.hit-count {
+		font-size   : var(--font-label);
+		color       : var(--text);
+		opacity     : var(--opacity-header);
+		text-align  : center;
+		white-space : nowrap;
+		min-width   : 60px;
 	}
 
 	.search {

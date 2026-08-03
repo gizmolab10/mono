@@ -13,10 +13,28 @@ export enum T_Kind {
 
 // The closed tag list — twenty-two, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
-	'collaboration', 'prose', 'session-start', 'code-style', 'visual-design',
-	'refactoring', 'migration', 'testing', 'debugging', 'build', 'deploy',
-	'setup', 'tools', 'philosophy', 'porting', 'notes',
-	'architecture', 'data', 'geometry', 'user-interface', 'platform', 'research',
+	'architecture',
+	'build',
+	'code-style',
+	'collaboration',
+	'data',
+	'debugging',
+	'deploy',
+	'geometry',
+	'migration',
+	'notes',
+	'philosophy',
+	'platform',
+	'porting',
+	'prose',
+	'refactoring',
+	'research',
+	'session-start',
+	'setup',
+	'testing',
+	'tools',
+	'user-interface',
+	'visual-design',
 ];
 
 // The four collections the guides live in, each named for the folder that holds it.

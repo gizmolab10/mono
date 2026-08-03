@@ -11,7 +11,8 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
-	import { VAULT, file_path_of, obsidian_link } from '../../ts/utilities/Saving';
+	import { VAULT, file_path_of, folder_path_of, obsidian_link, show_folder } from '../../ts/utilities/Saving';
+	import { show_status } from '../../ts/managers/Status';
 	import type { Filtered_Guide } from '../../ts/types/Guide';
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Guides';
@@ -52,6 +53,16 @@
 	// the triangle on a folder doesn't toggle it twice.
 	function click_row(row: Filtered_Guide, holding_command = false, holding_option = false) {
 		if (row.guide.is_folder) {
+			// The command key shows the folder itself, on this machine, rather than opening it here.
+			if (holding_command) {
+				const where = folder_path_of(row.guide.bundle, row.guide.path);
+				show_folder(where).then((answer) => {
+					if (answer.ok) { debug.log(`Row clicked with the command key: showing the folder ${where} in the Finder.`); return; }
+					show_status(`could not show ${where} — ${answer.why}`);
+					debug.log(`Row clicked with the command key, but the folder ${where} was not shown — ${answer.why}.`);
+				});
+				return;
+			}
 			debug.log(`Row clicked: the folder "${row.guide.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
 			toggle_folder(row.key, row.guide.name);
 			return;
@@ -125,6 +136,7 @@
 			const what = !holding_command ? 'open' : holding_option ? 'edit' : 'open in obsidian';
 			return `${what} "${row.guide.name}"`;
 		}
+		if (holding_command) { return `show "${row.guide.name}" in the finder`; }
 		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.guide.name}"`;
 	}
 

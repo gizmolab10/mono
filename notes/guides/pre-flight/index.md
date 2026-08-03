@@ -1,20 +1,22 @@
 # Pre Flight
 
-**Every response:** read `always.md` and the two it names — `replying.md` and `working.md` — then scan `keywords.md`. If any keyword matches, read the listed guide(s).
-At session start, also read:
+These guides are intended to help co contribute with excellence to the collaborative process.
+
+## At session start, read these:
+
 - [Shorthand](./shorthand.md) — parse commands and abbreviations
 - [Kinds of Tasks](./kinds.of.tasks.md) — classify task type, note conflicts
 - [Gates](./gates.md) — check for STOP/SEARCH/LIST/WAIT
 
-## Contents
+## Every response, read these
 
 - [Always](./always.md)
-- [Gates](./gates.md)
 - [Gotchas](./gotchas.md)
 - [Keywords](./keywords.md)
-- [Kinds.of.tasks](./kinds.of.tasks.md)
 - [Pitfalls](./pitfalls.md)
 - [Replying](./replying.md)
-- [Shorthand](./shorthand.md)
 - [Working](./working.md)
 
+## More
+
+- [Banned words](./banned%20words.md)

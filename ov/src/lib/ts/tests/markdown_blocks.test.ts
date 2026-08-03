@@ -1,4 +1,4 @@
-import { body_of, lines_between, page_of, stamp_blocks, still_reads, with_lines_replaced } from '../utilities/Blocks';
+import { body_of, lines_between, links_in, page_of, stamp_blocks, still_reads, with_lines_replaced } from '../utilities/Markdown_Blocks';
 import { describe, expect, it } from 'vitest';
 import MarkdownIt from 'markdown-it';
 
@@ -60,6 +60,30 @@ describe('drawing a whole guide', () => {
 
 	it('draws nothing at all for an empty guide', () => {
 		expect(page_of(reader, '')).toBe('');
+	});
+});
+
+describe('the addresses a guide links to', () => {
+	it('finds one in a sentence and one in a list', () => {
+		expect(links_in('see [that](./that.md) for more\n\n- [other](../other/other.md)'))
+			.toEqual(['./that.md', '../other/other.md']);
+	});
+
+	it('keeps a link to a heading in the same guide', () => {
+		expect(links_in('jump to [naming](#naming)')).toEqual(['#naming']);
+	});
+
+	it('leaves out anything that says outright it is on the web', () => {
+		expect(links_in('[here](https://example.com) and [there](./there.md)')).toEqual(['./there.md']);
+	});
+
+	it('leaves out what a fenced chunk of code is showing', () => {
+		const text = 'real [one](./one.md)\n\n```\nshown [two](./two.md)\n```\n\nreal [three](./three.md)';
+		expect(links_in(text)).toEqual(['./one.md', './three.md']);
+	});
+
+	it('finds nothing in a guide with no links', () => {
+		expect(links_in('# just words\n\nnothing to follow')).toEqual([]);
 	});
 });
 

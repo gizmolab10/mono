@@ -34,12 +34,12 @@ The split is: 25 settled, 10 partial, 4 thin. Plus ten structural gaps the corpu
 ### PARTIAL files (substance present but obvious first-use gaps):
 
 - collaborate/chat.md — the working contract is there. Missing: how to recover when an approach unravels mid-session, what to do if the assistant proposes something unsafe, how to frame disagreement without stalling.
-- collaborate/creating a design.md — the rules and completeness check are there, then the file is cut at a "STOP WRITING DOCUMENT" marker at line 76; phases 6 onward are listed in the table of contents with no implementation. Missing: the phases past the cut.
-- collaborate/shop keeping.md — the new file I just wrote. Heavy on the uniface case study, light on systematic rules. Missing: when is clutter clutter versus useful history, how to know a file is ready to archive, a trigger list for when to do shop keeping.
+- collaborate/create a design.md — the rules and completeness check are there, then the file is cut at a "STOP WRITING DOCUMENT" marker at line 76; phases 6 onward are listed in the table of contents with no implementation. Missing: the phases past the cut.
+- collaborate/keep shop.md — the new file I just wrote. Heavy on the uniface case study, light on systematic rules. Missing: when is clutter clutter versus useful history, how to know a file is ready to archive, a trigger list for when to do keep shop.
 - develop/build notes.md — the maintenance process is clear. Missing: sample commit-to-build-note transformations, decision criteria for borderline commits, a worked example of filtering a real two-week window.
 - develop/build.md — factual reference present. Missing: why each gotcha matters, recovery steps when each surfaces, criteria for cache-clear versus leave-stale.
 - develop/migration.md — structure is comprehensive but the file is cut at the same "STOP WRITING DOCUMENT" marker at line 76; phases 6 to 9 are listed without implementation. Missing: the phases past the cut, plus a real-world example of a completed migration with its work-performed sections filled in.
-- setup/creating a proposal.md — the proposal-versus-journal split is documented. Missing: how to pull deferred items back when priorities shift, when a proposal is too long, how to split it.
+- setup/create a proposal.md — the proposal-versus-journal split is documented. Missing: how to pull deferred items back when priorities shift, when a proposal is too long, how to split it.
 - test/testing.md — quick reference present. Missing: organisation at scale, patterns for cross-component integration tests, when mocking is necessary versus when it couples tests to implementation.
 - collaborate/hooks.md — mechanism, the full live hook suite (all 18 wired-up hooks), and the doubled-reply / warn-only design are documented. Missing: guidance on when a hook is the right tool versus a guide versus a settings entry.
 - philosophy/motive.md — foundational philosophy is laid out. Missing: how the approach scales with team size, failure modes when the discipline slips, what to do if context compaction loses something critical.
@@ -59,7 +59,7 @@ The split is: 25 settled, 10 partial, 4 thin. Plus ten structural gaps the corpu
 
 ### Priority view, if you want to act on this list:
 
-- The two cut-off-mid-draft files (creating a design and migration) are partial in a literal sense — picking up where the STOP marker sits would close them fastest.
+- The two cut-off-mid-draft files (create a design and migration) are partial in a literal sense — picking up where the STOP marker sits would close them fastest.
 - The four THIN files are short and could each become PARTIAL with a single focused session.
 - The most-load-bearing structural gap, given the recent uniface debugging crisis, is the "session handoff" plus "context-compaction protocol" pair — both directly affect whether the next session arrives able to continue safely.
 
@@ -87,9 +87,9 @@ The PostCompact hook re-injects refresh.md, which lists the lexicon and the unif
 
 proposal
 
-#### **shop keeping will lapse.**
+#### **keep shop will lapse.**
 
-The shop keeping guide describes the practice but does not trigger it. The handoff was just cleared today; without "do shop keeping when X" criteria, it will fill again. The handoff carries the cost on every read of every session, so the bloat compounds until the next big cleanup.
+The keep shop guide describes the practice but does not trigger it. The handoff was just cleared today; without "do keep shop when X" criteria, it will fill again. The handoff carries the cost on every read of every session, so the bloat compounds until the next big cleanup.
 
 **Direct evidence:** the handoff carried twenty-plus completed proposals plus many unnumbered bug-fix sections before today, and nothing in the guides flagged that as a problem during the weeks it grew.
 
@@ -132,12 +132,12 @@ Eight folders, each holding one kind of guidance.
 how Jonathan and the assistant work together. Sets the working contract.
 
 - chat — the division of labour: Jonathan frames and decides; the assistant researches, proposes, builds only on explicit go.
-- creating a design — process for writing design documents jointly: core idea from Jonathan, structure from the assistant, simplify together. Has rules and a completeness check.
+- create a design — process for writing design documents jointly: core idea from Jonathan, structure from the assistant, simplify together. Has rules and a completeness check.
 - exclude — the folders the project-map builder must skip.
 - expectations — how to get the assistant's best work: force thinking before coding, use design sessions, know when to stop.
 - framing filters — names a known failure: unconsciously excluding adjacent information that does not fit the current task frame.
 - journals — formatting rules for the running journal (reverse chronological, bold dates, no headings).
-- shop keeping — the practice of maintaining note infrastructure so it keeps guiding future sessions.
+- keep shop — the practice of maintaining note infrastructure so it keeps guiding future sessions.
 - voice — keeps the prose crisp, lighthearted, and grounded in the joy of being human.
 - workflow — turn-taking cadence and the propose-first discipline.
 
@@ -184,7 +184,7 @@ what to read or do before acting.
 onboarding and deployment configuration.
 
 - access — Claude Desktop filesystem access setup.
-- creating a proposal — how to write proposals from scratch, with a worked example.
+- create a proposal — how to write proposals from scratch, with a worked example.
 - netlify — Netlify deployment reference (five deployable sites across three projects).
 - onboarding — developer machine setup (Node, Yarn, Git, VSCode).
 - vitepress — VitePress configuration for the monorepo docs sites.

@@ -68,7 +68,7 @@ The living work of a project sits in its work area — `notes/work/` for a light
 - **`work journal.md`** — chronological log of finished proposals.
 - **`working features.md`** — running list of what currently works.
 
-When to move things between these — done work to the journal, the active surface kept short — is [shop keeping](shop%20keeping.md)'s job.
+When to move things between these — done work to the journal, the active surface kept short — is [keep shop](keep%20shop.md)'s job.
 
 Two more are reference, kept in the project's `guides/` (`guides/` for a light project, `guides/project/overview/` for a larger one):
 
@@ -134,4 +134,4 @@ See the diagnostic-logging rule in the always files — always.md item 7.
 
 ## Writing design documents
 
-See [design.md](creating%20a%20design.md).
+See [design.md](create%20a%20design.md).

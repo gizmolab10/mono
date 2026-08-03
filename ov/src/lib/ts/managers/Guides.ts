@@ -2,7 +2,10 @@ import { T_Bundle, ALL_TAGS, key_of, type Guide, type Labels, type Filtered_Guid
 import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
-import { file_path_of, move_guide, moved_into } from '../utilities/Saving';
+import { fresh_index, line_for, relative_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
+import { file_path_of, folder_path_of, move_guide, moved_into, save_guide } from '../utilities/Saving';
+import { links_in } from '../utilities/Markdown_Blocks';
+import { show_status, w_includes_work, type Finding } from './Status';
 import { debug } from '../common/Debug';
 
 /**
@@ -124,12 +127,209 @@ class Guides {
 		const to   = file_path_of(folder.bundle, to_path);
 		const answer = await move_guide(from, to);
 		if (!answer.ok) {
+			show_status(`"${guide.name}" was not moved — ${answer.why}`);
 			debug.log(`Moving "${guide.name}" from ${from} to ${to} was refused — ${answer.why}. Nothing changed.`);
 			return;
 		}
 		this.hierarchy.rehang(guide, folder, to_path, `/@fs${answer.full_path}`);
 		this.renarrow();
 		debug.log(`Moved "${guide.name}" from ${from} to ${to}. It now hangs under "${folder.name}", and its words are read from ${answer.full_path}.`);
+		// Where the repo begins on this machine, worked out from the one full place the server
+		// gave back — everything else is named from the top of the repo.
+		const root = answer.full_path.slice(0, answer.full_path.length - to.length);
+		await this.mend_indexes(root, from, to, name);
+	}
+
+	/**
+	 * Where the repo begins on this machine, read off any guide's own address. The addresses
+	 * are settled when the app's code is prepared and name the file in full, so taking the
+	 * guide's place in the repo off the end leaves the top of the repo.
+	 */
+	private get repo_root(): string {
+		const file = this.files.find((g) => g.address !== '');
+		if (!file) { return ''; }
+		const full = decodeURIComponent(file.address.replace(/^\/@fs/, '').split('?')[0]);
+		const where = file_path_of(file.bundle, file.path);
+		return full.endsWith(where) ? full.slice(0, full.length - where.length) : '';
+	}
+
+	/**
+	 * Put every index file right: mend the links that point at nothing, list the files that
+	 * are beside them and unnamed, and make one for any folder that has none. Nothing is
+	 * written unless it would change, and every change is said in the log.
+	 */
+	async repair_indexes(): Promise<void> {
+		const root = this.repo_root;
+		if (root === '') { show_status('cannot repair — the guides have no addresses to read'); return; }
+
+		const folders = this.hierarchy.guides.filter((g) => g.is_folder);
+		const files   = this.files;
+		let made = 0, mended = 0, untouched = 0, refused = 0;
+		let rewritten_total = 0, removed_total = 0, added_total = 0;
+		const odd: string[] = [];      // anything worth saying at the end
+
+		for (const folder of folders) {
+			const where  = folder_path_of(folder.bundle, folder.path);
+			show_status(`repairing ${where}/index.md`);
+			const beside = files
+				.filter((f) => f.bundle === folder.bundle && f.path.split('/').slice(0, -1).join('/') === folder.path)
+				.map((f) => f.path.split('/').pop() ?? '');
+			const known  = new Map<string, string>();
+			for (const f of files) {
+				const name = f.path.split('/').pop() ?? '';
+				if (beside.includes(name) || known.has(name)) { continue; }
+				known.set(name, relative_address(where, file_path_of(f.bundle, f.path)));
+			}
+
+			// A folder holding only other folders is ordinary. One holding nothing at all is not.
+			if (beside.length === 0 && this.hierarchy.indexes.children_of(folder.id).length === 0) {
+				odd.push(`${where} holds nothing at all`);
+			}
+
+			const index_at = `${where}/index.md`;
+			const text = await this.read_file(`${root}${index_at}`);
+			if (text === null) {
+				const fresh = fresh_index(folder.name, beside);
+				const wrote = await save_guide(index_at, fresh, '');
+				if (!wrote.ok) { refused += 1; odd.push(`${index_at} could not be made — ${wrote.why}`); debug.log(`Repair: ${index_at} could not be made — ${wrote.why}.`); continue; }
+				made += 1;
+				debug.log(`Repair: made ${index_at}, naming ${beside.length} file(s).`);
+				continue;
+			}
+
+			const put_right = repaired_index(text, beside, known);
+			if (put_right.text === text) { untouched += 1; continue; }
+			const wrote = await save_guide(index_at, put_right.text, text);
+			if (!wrote.ok) { refused += 1; odd.push(`${index_at} was not written — ${wrote.why}`); debug.log(`Repair: ${index_at} was NOT written — ${wrote.why}.`); continue; }
+			mended += 1;
+			for (const line of put_right.removed) { odd.push(`${index_at} named something that is nowhere: ${line.trim()}`); }
+			rewritten_total += put_right.rewritten.length;
+			removed_total   += put_right.removed.length;
+			added_total     += put_right.added.length;
+			debug.log(`Repair: ${index_at} — ${put_right.rewritten.length} link(s) sent to where the file really is${put_right.rewritten.length > 0 ? ` (${put_right.rewritten.join(', ')})` : ''}, ${put_right.removed.length} taken out${put_right.removed.length > 0 ? ` (${put_right.removed.join(' | ')})` : ''}, ${put_right.added.length} added${put_right.added.length > 0 ? ` (${put_right.added.join(', ')})` : ''}.`);
+		}
+
+		const parts = [
+			`${folders.length} folder(s) looked at`,
+			`${untouched} already right`,
+			`${mended} mended`,
+			`${made} index file(s) made`,
+		];
+		if (refused > 0) { parts.push(`${refused} refused`); }
+		// Anything odd is said on the way out, each on its own line — several lines are read
+		// as a report rather than squeezed along the bottom.
+		show_status(`index files: ${parts.join(', ')}${odd.length > 0 ? `\n\nworth knowing:\n${odd.join('\n')}` : ''}`);
+		debug.log(`Repair finished: ${parts.join(', ')} — ${rewritten_total} link(s) put right, ${removed_total} taken out, ${added_total} added.${odd.length > 0 ? ` ${odd.length} thing(s) worth knowing: ${odd.join(' | ')}` : ''}`);
+	}
+
+	/**
+	 * Look through every guide's own words for links that lead nowhere. Nothing is changed —
+	 * this only says what it found, the first few on screen and all of them in the log. A link
+	 * to the web is left alone, since nothing here can judge it.
+	 */
+	async find_dead_links(): Promise<void> {
+		const files = this.files;
+		const with_work = get(w_includes_work);
+		const dead: Finding[] = [];
+		let looked = 0, followed = 0, unreadable = 0;
+
+		for (const guide of files) {
+			const where = file_path_of(guide.bundle, guide.path);
+			show_status(`looking through ${where}`);
+			const text = await this.read_file(guide.address.replace(/^\/@fs/, '').split('?')[0]);
+			if (text === null) { unreadable += 1; debug.log(`Dead links: could not read ${where}.`); continue; }
+			looked += 1;
+			for (const link of links_in(text)) {
+				// Only links to guides are judged. A link to a source file or to a folder is
+				// perfectly good — the app simply never lists those, so it cannot follow them.
+				const named = link.split('#')[0];
+				if (named.endsWith('/')) { continue; }
+				// Work notes are a different country: unless they are asked for, a link into
+				// one is passed over whether it leads anywhere or not.
+				if (!with_work && /(^|\/)work(\/|$)/.test(named)) { continue; }
+				const ending = named.split('/').pop()?.split('.').slice(1).pop() ?? '';
+				if (ending !== '' && ending.toLowerCase() !== 'md') { continue; }
+				followed += 1;
+				const answer = this.hierarchy.explore(guide, link);
+				if (answer.guide) { continue; }
+				if (answer.why === 'a heading inside this same guide') { continue; }
+				dead.push({ words: `${where} → ${link} (${answer.why})`, key: key_of(guide), link });
+			}
+		}
+
+		const counted = `${looked} guide(s) read, ${followed} link(s) followed, ${dead.length} leading nowhere${unreadable > 0 ? `, ${unreadable} guide(s) unreadable` : ''}${with_work ? '' : ', links into work notes passed over'}`;
+		// Every one of them, each its own row in the report, so any can be opened where it sits.
+		show_status(`dead links: ${counted}`, dead);
+		debug.log(`Dead links: ${counted}.${dead.length > 0 ? ` They are: ${dead.map((d) => d.words).join(' | ')}` : ''}`);
+	}
+
+	/**
+	 * Read one file straight off this machine, or nothing if it isn't there. Asked for a file
+	 * that doesn't exist, the server hands back the app's own page rather than saying no — so
+	 * anything that comes back as a web page counts as not there.
+	 */
+	private async read_file(full_path: string): Promise<string | null> {
+		try {
+			const answer = await fetch(`/@fs${full_path}`);
+			if (!answer.ok) { return null; }
+			if ((answer.headers.get('content-type') ?? '').includes('text/html')) { return null; }
+			return await answer.text();
+		} catch {
+			return null;
+		}
+	}
+
+	/**
+	 * A moved file leaves two index files lying: the folder it left still names it, and the
+	 * folder it arrived in doesn't. Both are put right here — the whole line travels, so any
+	 * description written by hand travels with it. A folder with no index file is left exactly
+	 * as it was, and anything that can't be mended is said plainly rather than half-written.
+	 */
+	private async mend_indexes(root: string, from: string, to: string, file_name: string): Promise<void> {
+		const index_beside = (where: string) => `${where.split('/').slice(0, -1).join('/')}/index.md`;
+		const from_index = index_beside(from);
+		const to_index   = index_beside(to);
+		const from_text  = await this.read_file(`${root}${from_index}`);
+		const to_text    = await this.read_file(`${root}${to_index}`);
+		if (from_text === null && to_text === null) {
+			debug.log(`Index files: neither ${from_index} nor ${to_index} exists, so there is nothing to mend.`);
+			return;
+		}
+
+		// The line that travels: the one the old index had, or a fresh one when it had none.
+		let line = '';
+		let from_without = '';
+		if (from_text !== null) {
+			const taken = without_line_for(from_text, file_name);
+			line = taken.line;
+			from_without = taken.text;
+			if (line === '') { debug.log(`Index files: ${from_index} never named "${file_name}", so nothing was taken out of it.`); }
+		}
+		if (line === '') { line = line_for(file_name); }
+
+		if (to_text !== null) {
+			const { text, into_more } = with_line_added(to_text, line);
+			const wrote = await save_guide(to_index, text, to_text);
+			if (!wrote.ok) {
+				show_status(`"${file_name}" moved, but ${to_index} was not mended — ${wrote.why}`);
+				debug.log(`Index files: ${to_index} was NOT written — ${wrote.why}. It still does not name "${file_name}".`);
+				return;
+			}
+			debug.log(`Index files: ${to_index} now names "${file_name}"${into_more ? ', under a "More" heading, since it lists files in more than one place' : ''}.`);
+			if (into_more) { show_status(`"${file_name}" was listed under "More" in ${to_index}`); }
+		} else {
+			debug.log(`Index files: ${to_index} does not exist, so nothing was added there.`);
+		}
+
+		if (from_text !== null && from_without !== from_text) {
+			const wrote = await save_guide(from_index, from_without, from_text);
+			if (!wrote.ok) {
+				show_status(`"${file_name}" moved, but ${from_index} still names it — ${wrote.why}`);
+				debug.log(`Index files: ${from_index} was NOT written — ${wrote.why}. It still names "${file_name}".`);
+				return;
+			}
+			debug.log(`Index files: ${from_index} no longer names "${file_name}".`);
+		}
 	}
 
 	/** Every file, folders left out. */

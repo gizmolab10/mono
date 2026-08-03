@@ -10,6 +10,15 @@ date: 2026-06-03
 
 Known failure modes. Not excuses — just patterns to watch for.
 
+## It can only do what the world already knows how to do
+
+This has come up several times:
+
+1. painting facets
+2. placing dimensionals
+
+When it does, collaboration spins in circles struggling and failing to resolve an unending series of bugs and wrong guesses.
+
 ## Diagnosis Without Prescription
 
 Co can trace code paths, identify bugs, and explain why they fail. But when the fix requires **restructuring logic** (not just patching a value), co often punts:

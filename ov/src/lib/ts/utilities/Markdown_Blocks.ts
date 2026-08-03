@@ -86,6 +86,24 @@ export function mark_the_links(html: string): string {
 	return html.replace(/<a\s/g, '<a data-tip="follow this link" ');
 }
 
+// Every address a guide's own words link to, in the order they are written. Addresses that
+// say outright they are on the web are left out, since nothing here can judge them, as are
+// the ones written inside a fenced chunk of code, which are being shown rather than followed.
+export function links_in(text: string): string[] {
+	const found: string[] = [];
+	let fenced = false;
+	for (const line of text.split('\n')) {
+		if (/^\s*(```|~~~)/.test(line)) { fenced = !fenced; continue; }
+		if (fenced) { continue; }
+		for (const hit of line.matchAll(/\[[^\]]*\]\(([^)\s]+)[^)]*\)/g)) {
+			const address = hit[1];
+			if (/^[a-z][a-z0-9+.-]*:/i.test(address)) { continue; }   // says outright it is elsewhere
+			found.push(address);
+		}
+	}
+	return found;
+}
+
 // The whole page for one guide, built out of the file's own text: labels taken off the top,
 // every outermost piece stamped with the lines it came from, headings named, links marked.
 //

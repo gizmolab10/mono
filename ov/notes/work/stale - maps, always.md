@@ -16,7 +16,7 @@ A guide's own date was not used to rank — old is not the same as wrong. Where 
 
 5. **`di/notes/guides/project/philosophy/logic driven design.md`** — names a checking tool (`notes/tools/validate-adherence.mjs`) and a manager (`managers/Versions.ts`) that aren't there.
 
-6. **`di/notes/guides/project/philosophy/updating guides.md`** — the guide about keeping guides current names two files that are gone: di's own map at `project/overview/map.md` and `work/now/update.guides.md`.
+6. **`di/notes/guides/project/philosophy/update guides.md`** — the guide about keeping guides current names two files that are gone: di's own map at `project/overview/map.md` and `work/now/update.guides.md`.
 
 7. **`ji/notes/guides/specifications/db spec.md`** — names `persistable/Persistable.ts` and `state/S_Persistence.ts`, neither of which exists; ji's storage was reshaped after this was written.
 

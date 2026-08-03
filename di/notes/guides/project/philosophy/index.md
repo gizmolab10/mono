@@ -8,5 +8,5 @@ The thinking behind how the project is built and tested.
 - [Logic Driven Design](./logic driven design.md)
 - [Specification Driven Development](./specification driven development.md)
 - [Testing](./testing.md)
-- [Updating Guides](./updating guides.md)
+- [Update Guides](./update guides.md)
 

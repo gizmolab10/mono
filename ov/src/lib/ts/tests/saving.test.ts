@@ -1,4 +1,4 @@
-import { file_path_of, moved_into, obsidian_link } from '../utilities/Saving';
+import { file_path_of, folder_path_of, moved_into, obsidian_link } from '../utilities/Saving';
 import { describe, expect, it } from 'vitest';
 import { T_Bundle } from '../types/Guide';
 
@@ -22,6 +22,18 @@ describe('working out where a guide sits', () => {
 
 	it('adds the ending when the path has none', () => {
 		expect(file_path_of(T_Bundle.ji, 'roadmap')).toBe('ji/notes/guides/roadmap.md');
+	});
+});
+
+describe('working out where a folder sits', () => {
+	it('answers with a collection\'s own guides folder when the folder has no place inside it', () => {
+		expect(folder_path_of(T_Bundle.mono, '')).toBe('notes/guides');
+		expect(folder_path_of(T_Bundle.di, '')).toBe('di/notes/guides');
+	});
+
+	it('adds the folder\'s place inside its collection', () => {
+		expect(folder_path_of(T_Bundle.di, 'architecture/core')).toBe('di/notes/guides/architecture/core');
+		expect(folder_path_of(T_Bundle.mono, 'pre-flight')).toBe('notes/guides/pre-flight');
 	});
 });
 

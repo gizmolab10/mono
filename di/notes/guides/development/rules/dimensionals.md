@@ -1,6 +1,12 @@
-<!-- markdownlint-disable MD060 -->
+---
+kind: architecture
+title: "Dimensionals"
+description: "How a dimension label finds its place on every redraw: eligibility, candidates, filtering, scoring, persistence and drawing."
+tags: [architecture, geometry, user-interface]
+date: 2026-08-03
+---
 
-# Dimensions placement latest spec
+# Dimensionals
 
 This spec describes what the dimensions code does every time the canvas redraws. The spine is the per-render data pipeline. Each chapter is one stage of that pipeline; chapter one shows the whole flow, chapters two through eight walk it stage by stage, chapter nine covers the log, and chapter ten lists the constants.
 
@@ -55,11 +61,11 @@ A placement is one (edge, face, witness-index) choice. Each eligible part has th
 
 Each part has six faces. Dimensionals are drawn in the plane of a face that contains the edge being measured. For each axis, the candidate faces are those whose outward normal is perpendicular to that axis (see table). Each axis can contain 0, 1 or 2 dimensionals, out of a possible 8.
 
-| Axis (label)     | Candidate faces             |
-| ---------------- | --------------------------- |
-| x  (width)       | FRONT, BACK, TOP, BOTTOM    |
-| y  (depth)       | LEFT, RIGHT, TOP, BOTTOM    |
-| z  (height)      | LEFT, RIGHT, FRONT, BACK    |
+| Axis (label) | Candidate faces          |
+| ------------ | ------------------------ |
+| x  (width)   | FRONT, BACK, TOP, BOTTOM |
+| y  (depth)   | LEFT, RIGHT, TOP, BOTTOM |
+| z  (height)  | LEFT, RIGHT, FRONT, BACK |
 
 ### 2.2 Face exclusion
 
@@ -82,14 +88,14 @@ An edge of a part is excluded (not measured) when any stretch of it is hidden be
 
 ### 2.5 Repeater filter
 
-| Part is...                                            | Eligible? | Axes              |
-| ----------------------------------------------------- | --------- | ----------------- |
-| No parent, or parent is not a repeater                | yes       | x, y, z           |
-| First child of a repeater (the "template")            | yes       | x, y, z           |
-| Non-template child of a non-firewall repeater (clone) | no        | —                 |
-| Inside a firewall repeater, matches template length   | no (clone)| —                 |
-| Inside a firewall repeater, first/last fireblock      | yes       | repeat axis only  |
-| Inside a firewall repeater, middle fireblock          | no (clone)| —                 |
+| Part is...                                            | Eligible?  | Axes             |
+| ----------------------------------------------------- | ---------- | ---------------- |
+| No parent, or parent is not a repeater                | yes        | x, y, z          |
+| First child of a repeater (the "template")            | yes        | x, y, z          |
+| Non-template child of a non-firewall repeater (clone) | no         | —                |
+| Inside a firewall repeater, matches template length   | no (clone) | —                |
+| Inside a firewall repeater, first/last fireblock      | yes        | repeat axis only |
+| Inside a firewall repeater, middle fireblock          | no (clone) | —                |
 
 ---
 
@@ -106,13 +112,13 @@ When zero parts qualify (heavy zoom), the box collapses to a single point at the
 Six nested boxes, each one face-by-face offset from the silhouette box. Offset distances are PROJECTED SCREEN PIXELS, fifteen pixels per witness-index level:
 
 | Witness index | Screen pixels past the silhouette |
-| ------------- | ---------------------------------- |
-| 1             | 15                                 |
-| 2             | 30                                 |
-| 3             | 45                                 |
-| 4             | 60                                 |
-| 5             | 75                                 |
-| 6             | 90                                 |
+| ------------- | --------------------------------- |
+| 1             | 15                                |
+| 2             | 30                                |
+| 3             | 45                                |
+| 4             | 60                                |
+| 5             | 75                                |
+| 6             | 90                                |
 
 Each box has six faces (LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM). Per face, the millimeter shift is computed once by projecting the face center and one world-unit-along-the-outward-normal, then scaling.
 
@@ -173,17 +179,17 @@ Run once per placement (edge / face / witness-index).
 
 These are run once per label position.
 
-| Filter                   | What it checks                                                                 | Threshold |
-| ------------------------ | ------------------------------------------------------------------------------ | --------- |
-| `silhouette`             | Label rectangle crosses INSIDE the silhouette polygon.                         | 0 px      |
-| `label-vs-label`         | Label rectangle clears every already-placed label rectangle.                   | 5 px      |
-| `label-vs-placed-anchor` | Label rectangle clears every already-placed witness anchor.                    | 5 px      |
-| `label-vs-placed-dim`    | Label rectangle clears every already-placed dim line.                          | 5 px      |
-| `label-vs-placed-witness`| Label rectangle clears every already-placed witness line.                      | 5 px      |
-| `label-vs-anchor-zone`   | Label rectangle does not overlap a 20 px zone past any anchor (own or placed). | 20 px     |
-| `own-anchor-vs-placed`   | This placement's own two anchors clear every already-placed label rectangle.   | 5 px      |
-| `own-dim-vs-placed`      | This placement's own dim line clears every already-placed label rectangle.     | 5 px      |
-| `own-witness-vs-placed`  | This placement's own witness lines clear every already-placed label rectangle. | 5 px      |
+| Filter                    | What it checks                                                                 | Threshold |
+| ------------------------- | ------------------------------------------------------------------------------ | --------- |
+| `silhouette`              | Label rectangle crosses INSIDE the silhouette polygon.                         | 0 px      |
+| `label-vs-label`          | Label rectangle clears every already-placed label rectangle.                   | 5 px      |
+| `label-vs-placed-anchor`  | Label rectangle clears every already-placed witness anchor.                    | 5 px      |
+| `label-vs-placed-dim`     | Label rectangle clears every already-placed dim line.                          | 5 px      |
+| `label-vs-placed-witness` | Label rectangle clears every already-placed witness line.                      | 5 px      |
+| `label-vs-anchor-zone`    | Label rectangle does not overlap a 20 px zone past any anchor (own or placed). | 20 px     |
+| `own-anchor-vs-placed`    | This placement's own two anchors clear every already-placed label rectangle.   | 5 px      |
+| `own-dim-vs-placed`       | This placement's own dim line clears every already-placed label rectangle.     | 5 px      |
+| `own-witness-vs-placed`   | This placement's own witness lines clear every already-placed label rectangle. | 5 px      |
 
 ### 5.4 Slide-and-retry
 
@@ -284,12 +290,12 @@ PER-SIDE EXTERIOR (only when there is no overhang): each side decides on its own
 
 DIM LINE SEGMENTS:
 
-| Case                                          | Segments                                                                                  |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| OVERHANG                                      | outside-extension overhang past each witness anchor + connector from the overhung witness anchor's overhang outer end to the label's near edge. |
-| BOTH SIDES IN THE WITNESS INTERIOR            | one straight line, witness anchor to witness anchor.                                       |
-| ONE SIDE IN WITNESS INTERIOR, ONE SIDE OUT    | half-line from the interior witness anchor to the label's near edge on that side, plus outside-extension overhang past the exterior witness anchor. |
-| BOTH SIDES IN THE WITNESS EXTERIOR            | two outside-extension overhangs, one past each witness anchor; label sits between with no line through it. |
+| Case                                       | Segments                                                                                                                                            |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OVERHANG                                   | outside-extension overhang past each witness anchor + connector from the overhung witness anchor's overhang outer end to the label's near edge.     |
+| BOTH SIDES IN THE WITNESS INTERIOR         | one straight line, witness anchor to witness anchor.                                                                                                |
+| ONE SIDE IN WITNESS INTERIOR, ONE SIDE OUT | half-line from the interior witness anchor to the label's near edge on that side, plus outside-extension overhang past the exterior witness anchor. |
+| BOTH SIDES IN THE WITNESS EXTERIOR         | two outside-extension overhangs, one past each witness anchor; label sits between with no line through it.                                          |
 
 ### 8.3 Hit-testing
 

@@ -493,7 +493,7 @@ Phase 2 of the uniface transition advanced through several pieces, with two real
 
 ---
 
-## Session — 2026-06-02 — shop keeping, guide-corpus audit, and three new working rules
+## Session — 2026-06-02 — keep shop, guide-corpus audit, and three new working rules
 
 A session devoted to keeping the active-work notes in shape and stepping back to look at the corpus of guides as a whole.
 
@@ -501,7 +501,7 @@ A session devoted to keeping the active-work notes in shape and stepping back to
 
 **Salvaged content into the right homes.** The negative-zero canonicalization gotcha from the duplicate-text drop work moved into the project lessons file. The Playwright run prerequisites moved into a new note under the development guides folder. Three other handoff-only items (the cold-run-branch known-shortcut history, the implementation file-line references, the seventeen-constants list) were assessed as findable from the code itself and accepted as losses.
 
-**Shop keeping practice written down.** A new file at notes/guides/collaborate/shop keeping.md describes the practice in the abstract — what shop keeping does, when it matters, why notes are infrastructure — with the day's work on the uniface rules and the uniface proposal as the running case study.
+**Keep shop practice written down.** A new file at notes/guides/collaborate/keep shop.md describes the practice in the abstract — what keep shop does, when it matters, why notes are infrastructure — with the day's work on the uniface rules and the uniface proposal as the running case study.
 
 **Three new rules in the design-creation guide.** Rules added: quote the architect's compound terms intact (do not paraphrase to the bare head word); emotional reactions from the architect are problem reports, not redesign authority; any plan whose acceptance criterion is human visual inspection must state a rejection branch. All three came directly out of the trust crisis on 2026-06-01.
 
@@ -512,8 +512,8 @@ Files touched:
 - The handoff file — trimmed to header plus current-focus line.
 - The work journal — three consolidated session-window entries inserted between 2026-05-29 and 2026-05-19, plus this entry at top.
 - The open-items file — four new entries added before the mothballed ones.
-- New notes/guides/collaborate/shop keeping.md (moved from di/notes/work/now/ to the project-wide guides folder).
-- The design-creation guide at notes/guides/collaborate/creating a design.md — three new rules added.
+- New notes/guides/collaborate/keep shop.md (moved from di/notes/work/now/ to the project-wide guides folder).
+- The design-creation guide at notes/guides/collaborate/create a design.md — three new rules added.
 - The project lessons file at di/notes/guides/development/learn/lessons.md — negative-zero pitfall appended.
 - New di/notes/guides/development/running e2e tests.md — Playwright run prerequisites.
 

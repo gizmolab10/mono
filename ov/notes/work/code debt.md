@@ -4,17 +4,28 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
-- [ ] when folders are visible, implement drag and drop to move files from one folder to another
 - [ ] convert the two fat triangles in the view guide -> Steppers.svelte component
-- [ ] for each tag the user choses, remove it from every row's tag column cell
+    - [ ] prop isVertical, alwaysShowBoth
+- [ ] svg
+    - [ ] circle slash -> the opposite of whatever it overlays
+    - [ ] filter -> several horizontal lines of decreasing length
+- [ ] separator
+    - [ ] new prop for gap -> whitespace around line (strips parallel to it)
+    - [ ] where do reach and spacer get used?
 - [ ] checkbox in details preferences to show/hide tooltips
+
+- [ ] hierarchy of tags
 - [ ] bring okf up to date
+    - [ ] revise okf.md to read like a guide file
+- [ ] do all the guide files read like a guide file?
+    - [ ] propose to remove material that is no longer relevant
 - [ ] work on murky
 - [ ] click and hold on a header opens the filters. does nothing if they are open
-- [ ] new prop for separator gap -> whitespace around line (strips parallel to it)
 
 ## done
 
+- [x] drag and drop -> update both index files
+- [x] when folders are visible, implement drag and drop to move files from one folder to another
 - [x] steps to annotate for okf a file when adding it to the guides
 - [x] mark each listed guide regarding
     - [x] match of: name or content
@@ -25,10 +36,11 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## postpone
 
-- [ ] incorporate work files, hooks and CLAUDE
-    - [ ] each file gets okf at the top
-    - [ ] decide on kinds and tags
-- [ ] follow a link that points outside the guides folders (a work note, a code file) — abandoned for now, the shape of it was never clear
+- [ ] incorporate work, source code, hooks and CLAUDE
+    - [ ] can each file get okf labels at the top?
+    - [ ] add more kinds and tags?
+- [ ] follow a link that points outside the guides folders (a work note, a code file)
+    - [ ] abandoned for now, the shape of it was never clear
 - [ ] encapsulate in a new file ts/common/okf.md
     - [ ] for open source
     - [ ] ALL the kinds, tags, project 2-char names

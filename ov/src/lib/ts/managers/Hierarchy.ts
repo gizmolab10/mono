@@ -281,7 +281,7 @@ export class Hierarchy {
 			}
 		}
 		debug.log(`Link from "${from.name}" to "${wanted_path}": no guide named "${name}" under any of the ${chain.length} folders above it — nothing opens.`);
-		return { guide: null, heading, why: 'not part of the picture' };
+		return { guide: null, heading, why: 'external link' };
 	}
 
 	// --- narrowing ------------------------------------------------------------

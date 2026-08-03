@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
-	import { w_command_down, w_option_down } from '../../ts/managers/Operations';
+	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
 	import { colors } from '../../ts/utilities/Colors';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
@@ -9,6 +9,8 @@
 	import buildsRaw from '../../md/builds.md?raw';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
+	import { w_show_status } from '../../ts/managers/Status';
+	import Status_Line from './Status_Line.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Operation from './Operation.svelte';
 	import Controls from './Controls.svelte';
@@ -128,6 +130,11 @@
 			<Operation width={content_width} />
 		{/if}
 	</div>
+	<!-- Along the bottom, as wide as the window, and only while there is something to say
+	     that fits there — too much to say is read as a report in the content box instead. -->
+	{#if $w_show_status && $w_operation !== T_Operation.report}
+		<Status_Line />
+	{/if}
 </div>
 
 <!-- The one hover hint for the whole app; each element opts in by carrying its own words. -->

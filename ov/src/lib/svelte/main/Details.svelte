@@ -3,6 +3,7 @@
 	import type { Writable } from 'svelte/store';
 	import { T_Details } from '../../ts/types/Details';
 	import D_Preferences from '../content/D_Preferences.svelte';
+	import D_Repair from '../content/D_Repair.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import Hideable from '../support/Hideable.svelte';
 
@@ -31,6 +32,7 @@
 	}
 
 	const w_preferences_open = open_store(T_Details.preferences);
+	const w_repair_open       = open_store(T_Details.repair);
 
 	$effect(() => {
 		const open = $w_details_open;
@@ -41,6 +43,9 @@
 <div class='region details' style:width='{width}px'>
 	<Hideable title='preferences' bind:open={$w_preferences_open}>
 		<D_Preferences />
+	</Hideable>
+	<Hideable title='repair' bind:open={$w_repair_open}>
+		<D_Repair />
 	</Hideable>
 </div>
 

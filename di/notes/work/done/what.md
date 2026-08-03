@@ -20,7 +20,7 @@
 
 **Collaboration guides** (how co should behave — read every session):
 
-- `notes/guides/collaborate/` — chat.md, voice.md, workflow.md, expectations.md, framing filters.md, creating a design.md
+- `notes/guides/collaborate/` — chat.md, voice.md, workflow.md, expectations.md, framing filters.md, create a design.md
 - `notes/guides/pre-flight/` — always.md, keywords.md, shorthand.md, gates.md, pitfalls.md, kinds.of.tasks.md
 
 **Meta-collaboration** (thinking about how to work with co):

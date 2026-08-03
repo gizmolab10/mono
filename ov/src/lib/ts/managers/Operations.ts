@@ -15,6 +15,7 @@ import { debug } from '../common/Debug';
 export enum T_Operation {
 	browse = 'browse the guides',
 	view   = 'read one guide',
+	report = 'read a long report',
 }
 
 export const w_operation = preferences.persistent<T_Operation>(T_Preference.current_op, T_Operation.browse);
@@ -74,10 +75,16 @@ export const w_command_down = writable(false);
 // opening it here, so the hover words have to know about both.
 export const w_option_down = writable(false);
 
+// Words to look for the moment a guide opens, so a dead link picked out of a report is lit
+// as soon as its guide is drawn. Emptied by the guide that uses it.
+export const w_search_for = writable('');
+
 /** Open one guide by where it sits. Opening from the list starts a fresh, empty stack. */
 export function open_view(key: string, for_editing = false): void {
 	const rows = get(guides.w_showing);
-	const row = rows.find((r) => r.key === key);
+	// Off the list first; failing that, among all of them — a guide the filters hide can still
+	// be opened when something else names it, such as a report of dead links.
+	const row = rows.find((r) => r.key === key) ?? guides.hierarchy.all_guides.get(key) ?? null;
 	if (!row || row.guide.is_folder) { debug.log(`Reading: nothing to open at "${key}".`); return; }
 	w_editing.set(for_editing);
 	w_link_stack.set([]);

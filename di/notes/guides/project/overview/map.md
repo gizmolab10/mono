@@ -359,7 +359,7 @@ date: 2026-06-25
 - di/notes/guides/project/development/logic driven design.md
 - di/notes/guides/project/development/stipulations.md
 - di/notes/guides/project/development/testing.md
-- di/notes/guides/project/development/updating guides.md
+- di/notes/guides/project/development/update guides.md
 - di/notes/guides/development/learn/lexicon.md
 - di/notes/guides/project/overview/index.md
 - di/notes/guides/project/overview/file layout.md

@@ -41,6 +41,13 @@ export enum T_Preference {
 
 	// Reading one guide
 	show_labels     = 'show_labels',
+
+	// Putting things right
+	includes_work   = 'includes_work',
+
+	// The line along the bottom
+	show_status     = 'show_status',
+	status_words    = 'status_words',
 }
 
 // Every saved name of ours starts with this.

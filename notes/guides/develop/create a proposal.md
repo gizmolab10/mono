@@ -1,6 +1,6 @@
 ---
 kind: procedure
-title: "Creating a Proposal"
+title: "Create a Proposal"
 description: "A worked example of writing a proposal from scratch in short cycles."
 tags: [collaboration, prose]
 date: 2026-05-29

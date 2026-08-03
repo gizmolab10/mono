@@ -2,10 +2,10 @@
 kind: procedure
 title: "Adding a Guide"
 description: "Put a new guide where overview will find it, label it, and prove it arrived."
-tags: [notes, setup]
+tags: [notes, setup, tools]
 date: 2026-08-02
 ---
-# Adding a guide
+# How to add a guide
 
 A new guide only reaches overview if it sits in the right place and carries the five labels. These are the steps to do so. The first two steps prepare it for OKF, the rest puts it where this app will include it.
 

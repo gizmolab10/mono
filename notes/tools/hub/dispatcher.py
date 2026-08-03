@@ -605,9 +605,6 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not full.startswith(root + os.sep):
                     self._send_response(409, {'success': False, 'error': 'outside the repo'})
                     return
-                if not os.path.isfile(full):
-                    self._send_response(409, {'success': False, 'error': 'no such file'})
-                    return
                 content_length = int(self.headers.get('Content-Length', 0))
                 sent = json.loads(self.rfile.read(content_length).decode())
                 text = sent.get('text')
@@ -615,14 +612,45 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not isinstance(text, str) or not isinstance(as_opened, str):
                     self._send_response(400, {'success': False, 'error': 'text and as_opened must both be sent'})
                     return
-                with open(full, 'r') as f:
-                    on_disk = f.read()
-                if on_disk != as_opened:
-                    self._send_response(409, {'success': False, 'error': 'the file changed since it was opened'})
-                    return
+                # A file that isn't there yet can be made, but only when the app says it saw
+                # nothing there. Otherwise the file has to still read as the app last saw it.
+                if not os.path.isfile(full):
+                    if as_opened != '':
+                        self._send_response(409, {'success': False, 'error': 'no such file'})
+                        return
+                    if not os.path.isdir(os.path.dirname(full)):
+                        self._send_response(409, {'success': False, 'error': 'no such folder'})
+                        return
+                else:
+                    with open(full, 'r') as f:
+                        on_disk = f.read()
+                    if on_disk != as_opened:
+                        self._send_response(409, {'success': False, 'error': 'the file changed since it was opened'})
+                        return
                 with open(full, 'w') as f:
                     f.write(text)
                 self._send_response(200, {'success': True, 'path': full, 'wrote': len(text)})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/show-folder':
+            # Show one guides folder in the Finder, for the overview app.
+            # /show-folder?where=<path from the top of the repo>
+            #
+            # It refuses, answering 409, anything that isn't a folder inside the repo's guides.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                where = params.get('where', [''])[0]
+                root = os.path.realpath(GITHUB_DIR)
+                full = os.path.realpath(os.path.join(GITHUB_DIR, where)) if where else ''
+                if not where or 'notes/guides' not in where or not full.startswith(root + os.sep):
+                    self._send_response(409, {'success': False, 'error': f'not a guides folder: {where!r}'})
+                    return
+                if not os.path.isdir(full):
+                    self._send_response(409, {'success': False, 'error': 'no such folder'})
+                    return
+                subprocess.Popen(['open', full])
+                self._send_response(200, {'success': True, 'path': full})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
