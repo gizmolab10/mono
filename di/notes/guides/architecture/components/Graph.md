@@ -2,7 +2,7 @@
 kind: wiring
 title: "Graph (di)"
 description: "The drawing area: the canvas and everything floating over it."
-tags: [wiring, user-interface]
+tags: [wiring, UX]
 date: 2026-05-10
 ---
 

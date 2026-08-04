@@ -55,13 +55,13 @@ From the project guides:
 17. **wiring** — how the parts of an app fit together, and what each part is responsible for
 18. **data** — what gets stored, where it lives, and how it survives a reload
 19. **geometry** — shapes, positions, angles, and the math that places things in space
-20. **user-interface** — the parts a person sees and touches: controls, layout, selection, navigation
+20. **UX** — the parts a person sees and touches: controls, layout, selection, navigation
 21. **platform** — what a particular host or framework demands of us
 22. **research** — a subject studied before deciding, not a decision already made
 23. **stale** — this one has fallen behind what it describes, and wants a rewrite
 24. **think** — something here is unsettled and wants working out before it is acted on
 
-Where the last six land, so the list can be checked against real files rather than taken on faith: **wiring** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **user-interface** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
+Where the last six land, so the list can be checked against real files rather than taken on faith: **wiring** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **UX** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
 
 New tags are not forbidden forever, but adding one means adding it here first. That's the whole point of closing the list.
 

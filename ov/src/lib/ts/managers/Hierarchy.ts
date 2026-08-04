@@ -2,7 +2,7 @@ import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records'
 import type { Guide, Labels, Filtered_Guide } from '../types/Guide';
 import type { Sort } from './Filters';
 import { Indexes } from '../database/Indexes';
-import { T_Bundle, T_Purpose, key_of } from '../types/Guide';
+import { T_Bundle, T_Purpose, in_order, key_of } from '../types/Guide';
 import { debug } from '../common/Debug';
 
 /**
@@ -205,7 +205,7 @@ export class Hierarchy {
 				listed.push({
 					guide,
 					key: key_of(guide),
-					tag_names: this.indexes.tags_of(id).map((t) => by_id.get(t) ?? '').filter((n) => n !== '').sort(),
+					tag_names: this.indexes.tags_of(id).map((t) => by_id.get(t) ?? '').filter((n) => n !== '').sort(in_order),
 					depth,
 					ancestor_keys: ancestors.map((a) => { const up = this.guide_byID(a); return up ? key_of(up) : ''; }),
 					has_children: children.length > 0,
@@ -371,7 +371,7 @@ export class Hierarchy {
 					if (one === two) { continue; }                 // a tie — on to the next column
 					if (one === '') { return 1; }                  // blanks last, both ways
 					if (two === '') { return -1; }
-					return sort.up ? one.localeCompare(two) : two.localeCompare(one);
+					return sort.up ? in_order(one, two) : in_order(two, one);
 				}
 				return 0;
 			});

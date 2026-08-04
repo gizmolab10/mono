@@ -2,7 +2,7 @@
 kind: wiring
 title: "Editors (di)"
 description: "The four small modules that handle typing and dragging directly on the drawing area."
-tags: [wiring, user-interface]
+tags: [wiring, UX]
 date: 2026-05-20
 ---
 

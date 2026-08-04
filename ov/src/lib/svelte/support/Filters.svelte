@@ -5,7 +5,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { ALL_TAGS, T_Bundle, T_Kind, T_Purpose } from '../../ts/types/Guide';
+	import { ALL_TAGS, T_Bundle, T_Kind, T_Purpose, in_order } from '../../ts/types/Guide';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import Separator from './Separator.svelte';
@@ -62,8 +62,8 @@
 	// from under the cursor.
 	let shown_kinds = $derived(test === 'a' ? Object.values(T_Kind)
 		: Object.values(T_Kind).filter((kind) => kinds.includes(kind) || $w_kind === kind));
-	let shown_tags = $derived(test === 'a' ? [...ALL_TAGS].sort()
-		: [...ALL_TAGS].sort().filter((tag) => tags_in_use.includes(tag) || $w_tags.includes(tag)));
+	let shown_tags = $derived(test === 'a' ? [...ALL_TAGS].sort(in_order)
+		: [...ALL_TAGS].sort(in_order).filter((tag) => tags_in_use.includes(tag) || $w_tags.includes(tag)));
 	let shown_projects = $derived(test === 'a' ? projects
 		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_project === p));
 

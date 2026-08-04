@@ -2,7 +2,7 @@
 kind: wiring
 title: "Timers (ws)"
 description: "Mouse timing held by the hits manager, so it survives a redraw."
-tags: [wiring, user-interface]
+tags: [wiring, UX]
 date: 2026-01-12
 ---
 

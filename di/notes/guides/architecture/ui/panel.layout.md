@@ -2,7 +2,7 @@
 kind: wiring
 title: "Layout Regions (di)"
 description: "The full-window container and the four regions inside it."
-tags: [wiring, user-interface]
+tags: [wiring, UX]
 date: 2026-06-19
 ---
 

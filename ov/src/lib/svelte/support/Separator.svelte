@@ -8,7 +8,7 @@
 
 	let {
 		radius    = k.radius.corner.banner,
-		thickness = k.separator.big,
+		thickness = k.separator.normal,
 		reach     = 'var(--gap)',
 		onclick   = undefined,
 		vertical  = false,

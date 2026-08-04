@@ -31,7 +31,7 @@ date: 2026-08-02
 
 ## 2. Use only these tags
 
-build, code-style, collaboration, data, debugging, deploy, geometry, migration, notes, philosophy, platform, porting, prose, refactoring, research, session-start, setup, stale, testing, think, tools, user-interface, visual-design, wiring.
+build, code-style, collaboration, data, debugging, deploy, geometry, migration, notes, philosophy, platform, porting, prose, refactoring, research, session-start, setup, stale, testing, think, tools, UX, visual-design, wiring.
 
 Adding a new one means adding it to the app's own list first — the closed list is the whole point.
 

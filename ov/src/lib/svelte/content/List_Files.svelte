@@ -231,10 +231,11 @@
 		// count row above already says which kind was picked.
 		// The one column says two things: a file's kind, and how many matching files a folder
 		// holds — so its title names both.
-		...(shows_kind    ? [{ label: $w_kind === '' ? 'kind/children' : 'children', width: $w_kind === '' ? '110px' : '70px', sort: T_Sort.kind }] : []),
-		...(shows_project ? [{ label: 'project', width: '85px',  sort: T_Sort.project }] : []),
-		{ label: 'name', width: 'auto',  sort: T_Sort.name },
-		{ label: 'tags', width: '170px', sort: T_Sort.tags },
+		...(shows_kind    ? [{ label: $w_kind === '' ? 'kind/children' : 'children', width: $w_kind === '' ? '100px' : '60px', sort: T_Sort.kind }] : []),
+		...(shows_project ? [{ label: 'project', width: '65px',  sort: T_Sort.project }] : []),
+		// Both are left open, so whatever the fixed columns leave is split evenly between them.
+		{ label: 'name', width: 'auto', sort: T_Sort.name },
+		{ label: 'tags', width: 'auto', sort: T_Sort.tags },
 	]);
 
 	// A column that isn't on screen must not go on quietly ordering the list, so when either
@@ -334,9 +335,11 @@
 	{#if shows_project}
 		<td class='project'><span>{row.guide.bundle}</span></td>
 	{/if}
-	<td class='name' style:padding-left='{row.depth * 5}px'>
+	<!-- With the folders hidden the rows are a flat run, so nothing is stepped in and no room
+	     is held back for a triangle that cannot appear. -->
+	<td class='name' style:padding-left='{$w_show_folders ? row.depth * 5 : 0}px'>
 		<span class='name-line'>
-			<span class='tri-slot' style:width='{TRIANGLE}px'>
+			<span class='tri-slot' style:width='{$w_show_folders ? TRIANGLE : 0}px'>
 				{#if row.has_children}
 					{@const open = !$w_shut.includes(row.key)}
 					{@const b = triangle_bounds(open)}
@@ -367,7 +370,7 @@
 					<tr class='head'>
 						{#each columns as col}
 							{@const place = can_sort ? place_of.get(col.sort) : undefined}
-							<th class:name-head={col.label === 'name'} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'}>
+							<th class:name-head={col.label === 'name'} class:flat={!$w_show_folders} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'}>
 								<!-- A column with no title of its own draws nothing here, so the line
 								     behind runs unbroken. -->
 								{#if col.label !== '' || place}
@@ -527,6 +530,12 @@
 	.head th.name-head {
 		padding-left : calc(var(--size-svg) + var(--gap));
 		text-align   : left;
+	}
+
+	/* With the folders hidden the names start at the column's edge, so the title does too —
+	   plus enough to clear the gap the button carries inside it. */
+	.head th.name-head.flat {
+		padding-left : 8px;
 	}
 
 

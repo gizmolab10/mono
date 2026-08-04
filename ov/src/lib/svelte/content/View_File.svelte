@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Markdown_Blocks';
-	import { ALL_TAGS, T_Bundle, T_Kind, key_of, type Guide } from '../../ts/types/Guide';
+	import { ALL_TAGS, T_Bundle, T_Kind, in_order, key_of, type Guide } from '../../ts/types/Guide';
 	import { follow_link, w_command_down, w_editing, w_search_for } from '../../ts/managers/Operations';
 	import { get } from 'svelte/store';
 	import { VAULT, file_path_of, obsidian_link, save_guide } from '../../ts/utilities/Saving';
@@ -339,7 +339,7 @@
 
 	/** Put a tag on this guide or take it off, and write it. */
 	function toggle_tag(tag: string) {
-		form_tags = form_tags.includes(tag) ? form_tags.filter((t) => t !== tag) : [...form_tags, tag].sort();
+		form_tags = form_tags.includes(tag) ? form_tags.filter((t) => t !== tag) : [...form_tags, tag].sort(in_order);
 		save_labels();
 	}
 
@@ -603,14 +603,14 @@
 				<span class='label-word'>says</span>
 				<input class='label-field' bind:value={form_description} onblur={save_labels} />
 			</div>
-			<div class='label-sep'><Separator thickness={k.separator.big} title={'tags'}/></div>
+			<div class='label-sep'><Separator thickness={k.separator.normal} title={'tags'}/></div>
 			<div class='label-row wrapping'>
 				{#each ALL_TAGS as tag (tag)}
 					<button class='label-pick' class:on={form_tags.includes(tag)} onclick={() => toggle_tag(tag)}>{tag}</button>
 				{/each}
 			</div>
 		</div>
-		<Separator thickness={k.separator.big}/>
+		<Separator thickness={k.separator.normal}/>
 	{/if}
 	<!-- Nothing is said while the words are being read: the wait is too short to see, and a
 	     line that flashes and goes reads as a fault. -->

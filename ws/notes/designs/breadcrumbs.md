@@ -2,7 +2,7 @@
 kind: wiring
 title: "Breadcrumbs (ws)"
 description: "Three parts working together to show either ancestry or browsing history."
-tags: [wiring, user-interface]
+tags: [wiring, UX]
 date: 2026-01-12
 ---
 

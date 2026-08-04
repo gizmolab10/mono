@@ -2,7 +2,7 @@
 kind: wiring
 title: "Components (ws)"
 description: "The two layers of the component system and the eleven folders they sit in."
-tags: [wiring, user-interface]
+tags: [wiring, UX]
 date: 2026-01-28
 ---
 

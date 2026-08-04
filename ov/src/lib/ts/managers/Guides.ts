@@ -1,4 +1,4 @@
-import { T_Bundle, T_Purpose, ALL_TAGS, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
+import { T_Bundle, T_Purpose, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
 import { w_purposes, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
@@ -549,7 +549,7 @@ class Guides {
 		for (const guide of this.within_reach('kind')) {
 			if (guide.kind && !seen.includes(guide.kind)) { seen.push(guide.kind); }
 		}
-		return seen.sort();
+		return seen.sort(in_order);
 	}
 
 	/** Every tag still within reach of the other filters, in alphabetical order. */
@@ -558,7 +558,7 @@ class Guides {
 		for (const guide of this.within_reach('tags')) {
 			for (const tag of this.hierarchy.tag_names_of(guide.id)) { worn.add(tag); }
 		}
-		return ALL_TAGS.filter((tag) => worn.has(tag)).sort();
+		return ALL_TAGS.filter((tag) => worn.has(tag)).sort(in_order);
 	}
 
 	/** Say what the reading turned up, with the counts behind every claim. */

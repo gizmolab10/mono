@@ -5,6 +5,8 @@
 // These files are left out of the app's own list on purpose, so nothing on screen would ever
 // show the damage. That is exactly why it has to be put right at the moment of the move.
 
+import { in_order } from '../types/Guide';
+
 // A bulleted link, however far it is indented and whatever follows it.
 const LINK = /^\s*- \[[^\]]*\]\(([^)]+)\)/;
 
@@ -88,7 +90,7 @@ export function fresh_index(folder_name: string, names_beside: string[]): string
 	const shown = folder_name.charAt(0).toUpperCase() + folder_name.slice(1);
 	const head = `# ${shown}\n\n## Contents\n`;
 	if (names_beside.length === 0) { return head; }
-	const lines = [...names_beside].sort((a, b) => a.localeCompare(b)).map(line_for);
+	const lines = [...names_beside].sort(in_order).map(line_for);
 	return `${head}\n${lines.join('\n')}\n`;
 }
 
@@ -140,7 +142,7 @@ export function repaired_index(
 	}
 
 	let out = kept.join('\n');
-	for (const name of [...beside].filter((n) => !seen.has(n)).sort((a, b) => a.localeCompare(b))) {
+	for (const name of [...beside].filter((n) => !seen.has(n)).sort(in_order)) {
 		out = with_line_added(out, line_for(name)).text;
 		added.push(name);
 	}
@@ -169,7 +171,7 @@ function runs_in(lines: string[]): Array<[number, number]> {
 function place_in_run(lines: string[], run: [number, number], file_name: string): number {
 	for (let n = run[0]; n <= run[1]; n++) {
 		const named = file_named_by(lines[n]);
-		if (named !== '' && named.localeCompare(file_name) > 0) { return n; }
+		if (named !== '' && in_order(named, file_name) > 0) { return n; }
 	}
 	return run[1] + 1;
 }

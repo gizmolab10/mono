@@ -34,10 +34,19 @@ export const ALL_TAGS: string[] = [
 	'testing',
 	'think',
 	'tools',
-	'user-interface',
+	'UX',
 	'visual-design',
 	'wiring',
 ];
+
+/**
+ * Putting words in alphabetical order the way a reader expects: capital letters count the
+ * same as small ones, so "UX" sits between "tools" and "visual-design" rather than ahead of
+ * everything. Every list of words shown on screen is ordered with this.
+ */
+export function in_order(one: string, two: string): number {
+	return one.localeCompare(two, undefined, { sensitivity: 'base' });
+}
 
 // The four collections the guides live in, each named for the folder that holds it.
 // The shared guides sit at the top of the repo, so their root is the repo's own folder.

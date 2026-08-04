@@ -4,6 +4,7 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] implement [[tags hierarchy]]
 - [ ] add an anything llm button to the hub, top row, far left "LLM"
 - [ ] convert the two fat triangles in the view guide -> Steppers.svelte component
     - [ ] prop isVertical, alwaysShowBoth

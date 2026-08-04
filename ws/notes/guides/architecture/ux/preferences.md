@@ -2,7 +2,7 @@
 kind: wiring
 title: "Preferences Flow (ws)"
 description: "One setting followed all the way from the click to storage and back."
-tags: [wiring, data, user-interface]
+tags: [wiring, data, UX]
 date: 2026-01-12
 ---
 

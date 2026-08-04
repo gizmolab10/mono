@@ -2,7 +2,7 @@
 kind: lookup
 title: "Key Paths (di)"
 description: "Every key and modifier, what it does, grouped by the context it is read in."
-tags: [user-interface]
+tags: [UX]
 date: 2026-05-10
 ---
 
