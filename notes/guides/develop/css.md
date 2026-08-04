@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "CSS Lessons"
 description: "Styling patterns and gotchas learned from real work; static markup, dynamic appearance."
 tags: [code-style, visual-design]

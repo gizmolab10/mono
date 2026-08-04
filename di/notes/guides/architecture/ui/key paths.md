@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Key Paths (di)"
 description: "Every key and modifier, what it does, grouped by the context it is read in."
 tags: [user-interface]

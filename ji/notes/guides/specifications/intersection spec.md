@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Intersection Rules"
 description: "The rules the intersection app follows, starting with one source of truth for every color."
-tags: [architecture, visual-design]
+tags: [wiring, visual-design]
 date: 2026-07-24
 ---
 

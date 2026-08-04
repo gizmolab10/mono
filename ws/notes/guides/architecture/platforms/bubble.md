@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Bubble Integration"
 description: "Webseriously runs inside a frame and keeps in step with Bubble by passing messages."
-tags: [architecture, platform]
+tags: [wiring, platform]
 date: 2026-01-22
 ---
 

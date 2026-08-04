@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Color Management"
 description: "One place that works out every color from the current state."
-tags: [architecture, stale, visual-design]
+tags: [wiring, stale, visual-design]
 date: 2026-01-12
 ---
 

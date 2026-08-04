@@ -13,7 +13,7 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Organize](organize.md) — what is actually in the repo, counted.
 - [OKF](okf.md) — the guide format itself, and how it sits in overview's code.
 - [Editing](editing.md) — changing a guide from inside the app, and what that costs.
-- [Tags hierarchy](tags.hierarchy.md) — empty so far.
+- [Tags hierarchy](tags%20hierarchy.md) — empty so far.
 - [Repair staleness](repair%20staleness.md) — what the app should do about guides that have fallen behind.
 - [Rewritten guides](rewritten%20guides.md) — every stale guide, and what I'd do to it.
 - [Adding a guide](../guides/adding%20a%20guide.md) — what a new guide needs to show up in the app.

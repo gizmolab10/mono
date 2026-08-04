@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { w_purposes, w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { T_Purpose } from '../../ts/types/Guide';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import Filters from '../support/Filters.svelte';
@@ -18,7 +19,10 @@
 	// How many guides the filters leave — counted before the folds, so shutting a folder
 	// hides its files from the list without changing what the count says.
 	let matching = $derived.by(() => { $w_showing; return guides.hierarchy.matched_count; });
-	let total    = $derived(guides.files.length);
+	// How many there are to be had at all — counted within the purposes picked, since a total
+	// that includes what you have chosen not to show would only puzzle.
+	let total = $derived($w_purposes.length === 0 ? 0 : guides.files.filter((g) =>
+		$w_purposes.includes(g.is_design ? T_Purpose.designs : T_Purpose.guides)).length);
 
 	// The unsorted button only means something while the folders are hidden, at least one
 	// column is sorting, and there is more than one file to put in an order. That is exactly

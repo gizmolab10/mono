@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Search (ws)"
 description: "Matches appear as each letter is typed, in very little screen space."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-01-12
 ---
 

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Smart Objects"
 description: "The data shape of one part: its name, three directions, formulas, repeater settings, and visibility."
-tags: [architecture, data]
+tags: [wiring, data]
 date: 2026-05-10
 ---
 

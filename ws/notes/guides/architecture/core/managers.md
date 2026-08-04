@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Managers (ws)"
 description: "Sixteen shared instances, each owning one area of the app."
-tags: [architecture]
+tags: [wiring]
 date: 2026-01-28
 ---
 

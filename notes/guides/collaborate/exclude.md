@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Excluded Folders"
 description: "The folders to skip when building a map file; ordinary searching is unaffected."
 tags: [notes, tools]

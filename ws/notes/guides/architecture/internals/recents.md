@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Recents (ws)"
 description: "A fresh start on remembering the places recently visited."
-tags: [architecture, data]
+tags: [wiring, data]
 date: 2026-01-22
 ---
 

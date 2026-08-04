@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Rendering Types"
 description: "The two shapes a vertex takes once the projection pipeline is done with it."
-tags: [architecture, geometry]
+tags: [wiring, geometry]
 date: 2026-05-10
 ---
 

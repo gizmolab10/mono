@@ -33,6 +33,7 @@ export enum T_Preference {
 
 	// The guide list itself
 	show_filters    = 'show_filters',
+	filters_folded  = 'filters_folded',
 	folders_shut    = 'folders_shut',
 	show_folders    = 'show_folders',
 	sorts           = 'sorts',

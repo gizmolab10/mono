@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Aesthetics"
 description: "Visual constants and patterns, arrived at by small perturbations rather than formulas."
 tags: [visual-design]

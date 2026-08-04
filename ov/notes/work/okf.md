@@ -52,15 +52,16 @@ The folder a file sits in is not a tag. A tag says what the file is *about*, so 
 
 From the project guides:
 
-17. **architecture** — how the parts of an app fit together, and what each part is responsible for
+17. **wiring** — how the parts of an app fit together, and what each part is responsible for
 18. **data** — what gets stored, where it lives, and how it survives a reload
 19. **geometry** — shapes, positions, angles, and the math that places things in space
 20. **user-interface** — the parts a person sees and touches: controls, layout, selection, navigation
 21. **platform** — what a particular host or framework demands of us
 22. **research** — a subject studied before deciding, not a decision already made
 23. **stale** — this one has fallen behind what it describes, and wants a rewrite
+24. **think** — something here is unsettled and wants working out before it is acted on
 
-Where the last six land, so the list can be checked against real files rather than taken on faith: **architecture** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **user-interface** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
+Where the last six land, so the list can be checked against real files rather than taken on faith: **wiring** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **user-interface** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
 
 New tags are not forbidden forever, but adding one means adding it here first. That's the whole point of closing the list.
 
@@ -71,19 +72,19 @@ Five. The test each one has to pass: knowing the kind changes what I do with the
 | Kind | What it means | What I do with it |
 | --- | --- | --- |
 | rule | A standing instruction. Breaking it is a mistake. | Obey it, every time, without being asked. |
-| procedure | Steps for a task, when that task comes up. | Follow it start to finish while doing that task. |
-| reference | Facts, commands, names, quirks. | Look things up in it. Never obey it. |
-| architecture | How one part of an app actually works. | Read it before touching that part. |
-| philosophy | Why the work is shaped this way. | Read it to judge a call the other kinds don't cover. |
+| howto | Steps for a task, when that task comes up. | Follow it start to finish while doing that task. |
+| lookup | Facts, commands, names, quirks. | Look things up in it. Never obey it. |
+| wiring | How one part of an app actually works. | Read it before touching that part. |
+| why | Why the work is shaped this way. | Read it to judge a call the other kinds don't cover. |
 
 ### Why these five and not more
 
-The obey/follow/look-up divide is the whole point — those three cover most of the shared guides and they are genuinely different acts. **architecture** earns its place on volume alone: 70 of the 165 files sit under an architecture folder, and none of the first three fit them. **philosophy** earns its place because those files answer a question the others can't — what to do when no rule applies.
+The obey/follow/look-up divide is the whole point — those three cover most of the shared guides and they are genuinely different acts. **wiring** earns its place on volume alone: 70 of the 165 files sit under an architecture folder, and none of the first three fit them. **why** earns its place because those files answer a question the others can't — what to do when no rule applies.
 
 Everything else I considered folded in:
 
 1. A **record** kind for the running logs of past mistakes. It folds into rule: the whole reason those files are read at session start is "never do this again", which is an instruction, not history.
-2. A **specification** kind for ji's three spec files. It folds into architecture: a spec says how a part works, written before the part exists instead of after.
+2. A **specification** kind for ji's three spec files. It folds into wiring: a spec says how a part works, written before the part exists instead of after.
 3. A **map** kind for the index files. Held until step 5 decides whether index files survive at all.
 
 ### How the kind is chosen
@@ -91,10 +92,10 @@ Everything else I considered folded in:
 One question at a time, first yes wins:
 
 1. Does it tell me what to do at all times? → **rule**
-2. Does it tell me how to carry out one task? → **procedure**
-3. Does it describe a part of an app? → **architecture**
-4. Does it explain why rather than what? → **philosophy**
-5. Otherwise → **reference**
+2. Does it tell me how to carry out one task? → **howto**
+3. Does it describe a part of an app? → **wiring**
+4. Does it explain why rather than what? → **why**
+5. Otherwise → **lookup**
 
 Order matters because files straddle. The debugging guide is two principles plus some technique — the first question catches it as a rule, which is right, because those principles apply whether or not I am debugging.
 
@@ -146,7 +147,7 @@ That last count is the argument for closing the tag list: overview shows the tag
 
 ## Encapsulate for opensourcing
 
-Everything this proposal defines — the five kinds, the twenty-three tags, the short names of the collections, and the handling that goes with them — is spread across overview's files today. The idea is to gather it into one file of its own, at `ov/src/lib/ts/common/okf`, so that the format has a single home in the code.
+Everything this proposal defines — the five kinds, the twenty-four tags, the short names of the collections, and the handling that goes with them — is spread across overview's files today. The idea is to gather it into one file of its own, at `ov/src/lib/ts/common/okf`, so that the format has a single home in the code.
 
 **Pro.** Every rule of the format lands in one place: the kinds, the tags, the collection names, reading the labels off a file's top, and throwing out a tag that isn't on the list. What a guide *is* — its shape as a thing the app holds — stays separate from what the format *allows*. Adding a tag or a collection becomes a one-file change. And when the format goes out into the world, the file that defines it is the file you hand over.
 

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Errors (di)"
 description: "Turning a formula failure into something the user can act on: a red mark and a plain message."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-05-10
 ---
 

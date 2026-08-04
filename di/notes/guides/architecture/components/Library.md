@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Library (di)"
 description: "Where a saved arrangement is kept, reopened, or dropped inside the current one."
-tags: [architecture, user-interface, data]
+tags: [wiring, user-interface, data]
 date: 2026-05-10
 ---
 

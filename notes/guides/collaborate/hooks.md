@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Hooks"
 description: "What hooks are, how they differ from memory, and which ones are live."
 tags: [tools, collaboration]

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Editors (di)"
 description: "The four small modules that handle typing and dragging directly on the drawing area."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-05-20
 ---
 

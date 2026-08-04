@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Rotation (di)"
 description: "Rotating a child part is visual only; the stored bounds do not change."
-tags: [architecture, geometry]
+tags: [wiring, geometry]
 date: 2026-05-10
 ---
 

@@ -6,7 +6,7 @@ import type { Labels } from '../types/Guide';
 // has to come out exactly as a guide's top is written by hand.
 
 const five: Labels = {
-	kind        : 'procedure',
+	kind        : 'howto',
 	title       : 'Adding a Guide',
 	description : 'What a new guide needs.',
 	date        : '2026-08-02',
@@ -17,7 +17,7 @@ describe('writing the five labels', () => {
 	it('writes them in their settled order, fenced above and below', () => {
 		expect(label_block(five, ['notes', 'setup'])).toBe([
 			'---',
-			'kind: procedure',
+			'kind: howto',
 			'title: "Adding a Guide"',
 			'description: "What a new guide needs."',
 			'tags: [notes, setup]',
@@ -48,7 +48,7 @@ describe('putting the labels back into a file', () => {
 	it('gives a file with no labels a block at the very top', () => {
 		const bare = '# Just words\n\nhere';
 		const after = with_labels_replaced(bare, five, ['notes']);
-		expect(after.startsWith('---\nkind: procedure')).toBe(true);
+		expect(after.startsWith('---\nkind: howto')).toBe(true);
 		expect(after.endsWith('\n# Just words\n\nhere')).toBe(true);
 	});
 
@@ -56,7 +56,7 @@ describe('putting the labels back into a file', () => {
 		const odd = '---\nkind: rule\nno closing fence';
 		const after = with_labels_replaced(odd, five, []);
 		expect(after).toContain('no closing fence');
-		expect(after.startsWith('---\nkind: procedure')).toBe(true);
+		expect(after.startsWith('---\nkind: howto')).toBe(true);
 	});
 
 	it('changes nothing but the block when the labels are the same', () => {

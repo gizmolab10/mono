@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Hierarchy Spec (ji)"
 description: "What ji's arrangement of documents and tags should become, read against what ws already does."
-tags: [architecture, data]
+tags: [wiring, data]
 date: 2026-07-24
 ---
 

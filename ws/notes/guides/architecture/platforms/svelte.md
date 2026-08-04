@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Svelte 5 Migration Roadmap"
 description: "The plan for the Svelte 5 upgrade and where it currently stands."
 tags: [platform, migration]

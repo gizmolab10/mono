@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Radial Paging"
 description: "Showing one page at a time when the widgets around the ring do not all fit."
-tags: [architecture, user-interface, geometry]
+tags: [wiring, user-interface, geometry]
 date: 2026-01-12
 ---
 

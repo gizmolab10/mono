@@ -1,8 +1,8 @@
 ---
-kind: reference
+kind: lookup
 title: "File Layout (di)"
 description: "Where everything lives in the di source."
-tags: [notes, architecture]
+tags: [notes, wiring]
 date: 2026-06-25
 ---
 

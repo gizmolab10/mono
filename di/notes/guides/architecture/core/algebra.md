@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Algebra Aliases"
 description: "Nine plain names for a part's position and length, so nobody has to type the raw bound names."
-tags: [architecture, geometry]
+tags: [wiring, geometry]
 date: 2026-05-10
 ---
 

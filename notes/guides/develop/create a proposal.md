@@ -1,5 +1,5 @@
 ---
-kind: procedure
+kind: howto
 title: "Create a Proposal"
 description: "A worked example of writing a proposal from scratch in short cycles."
 tags: [collaboration, prose]

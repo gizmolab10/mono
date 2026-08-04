@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Intersection Lines"
 description: "Drawing the line where two parts' faces cross each other."
-tags: [architecture, geometry]
+tags: [wiring, geometry]
 date: 2026-05-10
 ---
 

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Timers (ws)"
 description: "Mouse timing held by the hits manager, so it survives a redraw."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-01-12
 ---
 

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "State (ws)"
 description: "State objects that outlive a component rebuild, paired with stores for reactivity."
-tags: [architecture, data]
+tags: [wiring, data]
 date: 2026-01-28
 ---
 

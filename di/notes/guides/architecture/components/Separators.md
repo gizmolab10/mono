@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Separators (di)"
 description: "The small divider drawn between sections, horizontal or vertical."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-05-10
 ---
 

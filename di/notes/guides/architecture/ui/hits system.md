@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Hits System (di)"
 description: "One spatial index decides which single element the mouse is talking to."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-05-20
 ---
 

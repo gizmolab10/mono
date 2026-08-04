@@ -1,5 +1,5 @@
 ---
-kind: philosophy
+kind: why
 title: "Logic Driven Design"
 description: "Rules, tests, and code kept in lock-step, so any drift is caught by the build."
 tags: [philosophy, testing]

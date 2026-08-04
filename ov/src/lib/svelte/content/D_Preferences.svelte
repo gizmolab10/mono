@@ -1,27 +1,11 @@
 <script lang='ts'>
 	// The accent color picker. Choosing an accent drives Colors' subscribers, which
 	// re-push the page color, the hover color and the text color onto the page.
-	import { w_purposes, toggle_purpose } from '../../ts/managers/Filters';
-	import Separator from '../support/Separator.svelte';
-	import { show_status } from '../../ts/managers/Status';
 	import { colors } from '../../ts/utilities/Colors';
-	import { T_Purpose } from '../../ts/types/Guide';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
-	import { get } from 'svelte/store';
 
 	const { w_accent_color } = colors;
-
-	// The two purposes: how to work, and how a thing was built.
-	const PURPOSES = Object.values(T_Purpose);
-
-	function choose_purpose(which: T_Purpose) {
-		const done = toggle_purpose(which);
-		debug.log(done
-			? `Showing: "${which}" was turned ${get(w_purposes).includes(which) ? 'on' : 'off'}.`
-			: `Showing: "${which}" is the only one left on, so it stays.`);
-		if (!done) { show_status(`${which} is the only one showing — at least one must stay on`); }
-	}
 
 	// True while the native color picker is open, so its hover hint is hushed until it closes. There's
 	// no "picker open" event, so track it: it opens on the swatch's click and closes on change or blur.
@@ -51,25 +35,8 @@
 	</div>
 </div>
 
-<div class='divide'><Separator title={'show'}/></div>
-
-<!-- Which purposes the list shows. Both can be on at once; the last one on cannot be turned
-     off, since a list that can go blank for no visible reason is a trap. -->
-<div class='color-row'>
-	<div class='color-group'>
-		<div class='purposes'>
-			{#each PURPOSES as one}
-				{@const asleep = one === T_Purpose.work}
-				<button class='segment' class:current={$w_purposes.includes(one)} class:asleep
-					use:tip={asleep ? 'work notes are not swept yet' : $w_purposes.includes(one) ? `stop showing ${one}` : `also show ${one}`}
-					onclick={() => { if (!asleep) { choose_purpose(one); } }}>{one}</button>
-			{/each}
-		</div>
-	</div>
-</div>
-
 <style>
-	/* Both rows sit in the middle of the details column. */
+	/* The row sits in the middle of the details column. */
 	.color-row {
 		justify-content : center;
 		align-items     : center;
@@ -86,53 +53,6 @@
 	.label {
 		font-size : var(--font-label);
 		opacity   : var(--opacity-label);
-	}
-
-	/* The titled line between the color and the purposes. */
-	.divide {
-		margin : var(--gap) 0;
-	}
-
-	/* One pill with a segment per purpose; every one that is on fills with the accent. */
-	.purposes {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
-		border-radius : var(--radius-pill);
-		font-size     : var(--font-label);
-		background    : var(--white);
-		box-sizing    : border-box;
-		align-self    : center;
-		overflow      : hidden;
-		display       : flex;
-		flex-shrink   : 0;
-	}
-
-	.segment {
-		padding     : var(--pad-control);
-		background  : transparent;
-		color       : var(--text);
-		cursor      : pointer;
-		white-space : nowrap;
-		border      : none;
-	}
-
-	.segment:not(:last-child) {
-		border-right : var(--thickness-normal) solid var(--black);
-	}
-
-	.segment.current {
-		color      : var(--text-on-accent);
-		background : var(--accent);
-	}
-
-	.segment:not(.current):not(.asleep):hover {
-		background : var(--hover);
-	}
-
-	/* Nothing sweeps the work notes yet, so this one is shown but dead to the touch. */
-	.segment.asleep {
-		color  : var(--gray);
-		cursor : default;
 	}
 
 	/* The visible button is this circle — we own its color fully. */

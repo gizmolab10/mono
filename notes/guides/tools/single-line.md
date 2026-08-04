@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Single-Line Progress"
 description: "A build script that reports progress on one line that updates in place."
 tags: [tools]

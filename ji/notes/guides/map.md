@@ -1,8 +1,8 @@
 ---
-kind: reference
+kind: lookup
 title: "Map (ji)"
 description: "Every source file in ji, updated whenever files are added, moved, or removed."
-tags: [notes, architecture]
+tags: [notes, wiring]
 date: 2026-07-29
 ---
 

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Details (ws)"
 description: "The folding sections that show whatever is selected or in focus."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-01-28
 ---
 

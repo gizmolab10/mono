@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Persistable"
 description: "The shared base every stored record extends, for saving, loading, and identity."
-tags: [architecture, data]
+tags: [wiring, data]
 date: 2026-01-28
 ---
 

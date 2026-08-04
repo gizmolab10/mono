@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Build and Deploy"
 description: "Netlify, VitePress, and related tooling, with the gotchas that bite."
 tags: [build, deploy, setup]

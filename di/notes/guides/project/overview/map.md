@@ -1,8 +1,8 @@
 ---
-kind: reference
+kind: lookup
 title: "Map (di)"
 description: "Every source file in di, grouped by what it belongs to."
-tags: [notes, architecture]
+tags: [notes, wiring]
 date: 2026-06-25
 ---
 

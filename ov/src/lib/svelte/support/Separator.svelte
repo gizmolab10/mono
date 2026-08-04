@@ -24,9 +24,13 @@
 		thickness? : number;           // the bar's width/height in px
 		radius?    : number;           // the fillet radius in px
 		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default
-		title?     : string | null;    // when set, a label sits centered on the bar, its --bg mask breaking the line
-		onclick?   : ((event: MouseEvent) => void) | undefined;   // when set, the title is a button that runs this (given the click, so it can stop it bubbling)
+		title?     : string | string[] | null;    // when set, a label sits on the bar, its --bg mask breaking the line; several labels spread evenly, each centered over its own share of the bar
+		onclick?   : ((event: MouseEvent, which: number) => void) | undefined;   // when set, each label is a button that runs this — given the click so it can stop it bubbling, and which label was pressed
 	} = $props();
+
+	// One word or several. Several are spread evenly along the bar — with two, they land at
+	// the quarter and three-quarter marks, which is the middle of each half of the row below.
+	const words = $derived(title === null ? [] : Array.isArray(title) ? title : [title]);
 
 	const r         = $derived(radius);
 	const fillet_tr = $derived(`M ${r} 0 A ${r} ${r} 0 0 0 0 ${r} L 0 0 Z`);
@@ -35,13 +39,18 @@
 	const fillet_bl = $derived(`M ${-r} 0 A ${r} ${r} 0 0 0 0 ${-r} L 0 0 Z`);
 </script>
 
-<!-- The centered label: a button when a click handler is given, else plain text. -->
-{#snippet title_tag()}
-	{#if onclick}
-		<button type='button' class='title clickable' class:forced={hovered} {onclick}>{title}</button>
-	{:else}
-		<span class='title'>{title}</span>
-	{/if}
+<!-- The labels, each placed at the middle of its own share of the bar: a button when a click
+     handler is given, else plain text. -->
+{#snippet title_tags()}
+	{#each words as word, i}
+		{@const at = `${((i + 0.5) / words.length) * 100}%`}
+		{#if onclick}
+			<button type='button' class='title clickable' class:forced={hovered} style:left={at}
+				onclick={(event) => onclick(event, i)}>{word}</button>
+		{:else}
+			<span class='title' style:left={at}>{word}</span>
+		{/if}
+	{/each}
 {/snippet}
 
 {#if vertical}
@@ -68,7 +77,7 @@
 			style='position:absolute; left:100%; bottom:0; pointer-events:none'>
 			<path d={fillet_br} />
 		</svg>
-		{#if title !== null && !spacer}{@render title_tag()}{/if}
+		{#if !spacer}{@render title_tags()}{/if}
 	</div>
 {:else}
 	<div
@@ -93,7 +102,7 @@
 			style='position:absolute; right:0; bottom:{-r}px; pointer-events:none'>
 			<path d={fillet_tl} />
 		</svg>
-		{#if title !== null}{@render title_tag()}{/if}
+		{@render title_tags()}
 	</div>
 {/if}
 
@@ -110,8 +119,9 @@
 		fill : var(--accent);
 	}
 
-	/* A label sitting centered on the bar; its page-colored background masks the line so the
-	   title reads as text breaking the divider. */
+	/* A label sitting on the bar; its page-colored background masks the line so the title reads
+	   as text breaking the divider. How far along the bar it sits is set above, since that
+	   depends on how many labels there are. */
 	.title {
 		transform   : translate(-50%, -50%);
 		font-size   : var(--font-label);
@@ -122,7 +132,6 @@
 		font-family : inherit;
 		white-space : nowrap;
 		border      : none;
-		left        : 50%;
 	}
 
 	/* When a click handler is given, the title is a button — it takes the cursor and lights on hover. */

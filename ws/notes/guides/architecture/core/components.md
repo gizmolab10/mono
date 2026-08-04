@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Components (ws)"
 description: "The two layers of the component system and the eleven folders they sit in."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-01-28
 ---
 

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Hits (ws)"
 description: "One spatial index decides which single element reacts to the mouse."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-01-12
 ---
 

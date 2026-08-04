@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Details (di)"
 description: "The right-side area: four folding sections for preferences, library, parts, and one part."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-05-10
 ---
 

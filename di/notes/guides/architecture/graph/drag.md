@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Drag Fixes"
 description: "Three stacked bugs in stretching an edge or corner, and what each fix was."
-tags: [architecture, geometry, debugging]
+tags: [wiring, geometry, debugging]
 date: 2026-05-10
 ---
 

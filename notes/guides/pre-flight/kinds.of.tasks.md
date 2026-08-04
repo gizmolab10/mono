@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Kinds of Tasks"
 description: "Task types, the guides each one needs, and the conflicts between those guides."
 tags: [session-start]

@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "How Jonathan Guides"
 description: "The phrases Jonathan uses to steer a debugging session and what each one is asking for."
 tags: [collaboration, debugging]

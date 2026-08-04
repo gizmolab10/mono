@@ -1,5 +1,5 @@
 ---
-kind: procedure
+kind: howto
 title: "Adding a Guide"
 description: "Put a new guide where overview will find it, label it, and prove it arrived."
 tags: [notes, setup, tools]
@@ -15,7 +15,7 @@ Five labels, this order, fenced by three dashes above and below, at the very top
 
 ```
 ---
-kind: procedure
+kind: howto
 title: "Adding a Guide"
 description: "One sentence saying what this file tells you to do."
 tags: [notes, setup]
@@ -23,7 +23,7 @@ date: 2026-08-02
 ---
 ```
 
-- **kind** — one of: rule, procedure, reference, architecture, philosophy. Pick by the first question that answers yes: does it tell me what to do at all times → rule; how to carry out one task → procedure; how a part of an app works → architecture; why rather than what → philosophy; otherwise reference.
+- **kind** — one of: rule, howto, lookup, wiring, why. Pick by the first question that answers yes: does it tell me what to do at all times → rule; how to carry out one task → howto; how a part of an app works → wiring; why rather than what → why; otherwise lookup.
 - **title** — the human name, unique across every guide.
 - **description** — one sentence that stands alone in a search result.
 - **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.
@@ -31,7 +31,7 @@ date: 2026-08-02
 
 ## 2. Use only these tags
 
-architecture, build, code-style, collaboration, data, debugging, deploy, geometry, migration, notes, philosophy, platform, porting, prose, refactoring, research, session-start, setup, stale, testing, tools, user-interface, visual-design.
+build, code-style, collaboration, data, debugging, deploy, geometry, migration, notes, philosophy, platform, porting, prose, refactoring, research, session-start, setup, stale, testing, think, tools, user-interface, visual-design, wiring.
 
 Adding a new one means adding it to the app's own list first — the closed list is the whole point.
 

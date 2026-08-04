@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Component Salvage (ws)"
 description: "Which of the forty-odd components are worth keeping and which need rebuilding."
-tags: [architecture, refactoring]
+tags: [wiring, refactoring]
 date: 2026-02-03
 ---
 

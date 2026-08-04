@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from './Preferences';
-import { T_Purpose } from '../types/Guide';
+import { ALL_TAGS, T_Kind, T_Purpose } from '../types/Guide';
 import { get } from 'svelte/store';
 
 /**
@@ -33,6 +33,16 @@ export const w_kind = preferences.persistent<string>(T_Preference.filter_kind, '
 // matches if it wears any one of them — since a file usually wears only one or two and
 // asking for all of three would find nothing.
 export const w_tags = preferences.persistent<string[]>(T_Preference.filter_tags, []);
+
+// A word that was picked last visit and has since been renamed or dropped would narrow the
+// list to nothing while no longer showing anywhere — nothing to click to undo it. So anything
+// remembered that is no longer on either closed list is let go at launch.
+{
+	const remembered_tags = get(w_tags);
+	const still_real = remembered_tags.filter((tag) => ALL_TAGS.includes(tag));
+	if (still_real.length !== remembered_tags.length) { w_tags.set(still_real); }
+	if (get(w_kind) !== '' && !Object.values(T_Kind).includes(get(w_kind) as T_Kind)) { w_kind.set(''); }
+}
 
 // Words looked for in a guide's title and description, ignoring case.
 export const w_words = preferences.persistent<string>(T_Preference.filter_text, '');

@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Library Versioning"
 description: "What happens to already-placed instances when the saved original changes."
 tags: [research, data]

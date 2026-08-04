@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Spatial Acceleration"
 description: "Ways to speed up working out what hides what."
 tags: [research, geometry]

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Scenes (di)"
 description: "What happens between app launch and a populated 3D canvas."
-tags: [architecture, geometry]
+tags: [wiring, geometry]
 date: 2026-05-10
 ---
 

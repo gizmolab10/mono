@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Testing"
 description: "The test commands and the patterns to write tests with."
 tags: [testing]

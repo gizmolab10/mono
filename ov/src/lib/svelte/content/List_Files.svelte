@@ -484,8 +484,10 @@
 		scrollbar-gutter : stable;
 	}
 
+	/* The sideways bar is given the same thickness as the one down the side, so the two match. */
 	.table-scroll::-webkit-scrollbar {
-		width : 20px;
+		height : 20px;
+		width  : 20px;
 	}
 
 	.table-scroll::-webkit-scrollbar-thumb {

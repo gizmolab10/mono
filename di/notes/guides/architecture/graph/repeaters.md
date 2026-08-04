@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Repeaters"
 description: "Generating duplicates of a template part along an axis: studs, joists, stairs, ramps."
-tags: [architecture, geometry]
+tags: [wiring, geometry]
 date: 2026-05-10
 ---
 

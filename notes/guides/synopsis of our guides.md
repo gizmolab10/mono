@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Synopsis of the Shared Guides"
 description: "A hand-kept rundown of every shared guide, what is thin, and what is missing."
 tags: [notes]

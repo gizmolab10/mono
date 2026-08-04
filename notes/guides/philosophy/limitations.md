@@ -1,5 +1,5 @@
 ---
-kind: philosophy
+kind: why
 title: "Collaborator Limitations"
 description: "The failure modes the collaborator falls into, named so they can be spotted early."
 tags: [philosophy, collaboration]

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Managers (di)"
 description: "One manager per concern, each a single shared instance."
-tags: [architecture]
+tags: [wiring]
 date: 2026-05-10
 ---
 

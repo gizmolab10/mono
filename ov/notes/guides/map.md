@@ -1,8 +1,8 @@
 ---
-kind: reference
+kind: lookup
 title: "Map (ov)"
 description: "Every source file in overview, updated whenever files are added, moved, or removed."
-tags: [notes, architecture]
+tags: [notes, wiring]
 date: 2026-07-31
 ---
 
@@ -37,7 +37,7 @@ Overview's files. Update this when files are added, moved, or removed.
 
 ## src/lib/svelte/support/ — the pieces the rest lean on
 
-- `Filters.svelte` — the four filters across the top: words looked for in titles and descriptions, then any number of tags, one kind at a time, and one project at a time. A toggle at the far left of the top row folds the last three away, leaving the search field; the choice is remembered. What kinds and tags exist isn't known until the files are read, so both lists fill themselves the moment that finishes. A collection with no guides folder yet is shown but dead to the touch.
+- `Filters.svelte` — the five filters across the top: words looked for in titles and descriptions, then any number of tags, one kind at a time, one project at a time, and which purposes show — guides, designs, or both. The purposes and the projects share one row, each half the width, with its own word centered above it; the last purpose left on cannot be turned off. A toggle at the far left of the top row folds all the picking rows away, leaving the search field; the choice is remembered. What kinds and tags exist isn't known until the files are read, so both lists fill themselves the moment that finishes.
 - `Separator.svelte` — a colored divider with little rounded flares at its ends, and an optional word sitting on it. **⟵ji**
 - `Hideable.svelte` — a collapsible titled banner. **⟵ji**
 - `ToolTip.svelte` — the hover hint, drawn ourselves because the browser's own waits a second and can't be hurried. One is mounted at the app root. **⟵ji**
@@ -56,7 +56,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `managers/Status.ts` — whether there is anything to say along the bottom, and what. One call says a line and starts the few seconds after which it clears itself.
 - `managers/Preferences.ts` — what the browser remembers between visits. Every name reads `ov_` then the parts joined by underscores, and the name in the code is the name in the browser. None of ji's renaming and sweeping code came over: overview has no old names to bring forward.
 - `database/Indexes.ts` — the instant lookups (tags by file, files by tag, children by folder, parents by file), rebuilt whenever the records change. **⟵ji**
-- `types/Guide.ts` — what a guide is: the five kinds, the closed list of twenty-three tags, the five collections, the five labels off a file's top, and a listed row — a guide together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything.
+- `types/Guide.ts` — what a guide is: the five kinds, the closed list of twenty-four tags, the five collections, the five labels off a file's top, and a listed row — a guide together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything.
 - `types/App.ts` — the two states the app can be in: setting up, and ready.
 - `types/Details.ts` — the sections inside the details column, by name.
 - `types/DB_Records.ts` — the record shapes the hierarchy keeps: tags, tag placements, folder links, and link meanings. **⟵ji**

@@ -29,12 +29,12 @@
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
 
 	// The title says where the guide sits as well as what it is called: every folder above it,
-	// from the repo down. The repo is named in full rather than by its two letters, and a
-	// guide belonging to a project has that project after it.
+	// from the top down. A guide in a project starts with that project; one belonging to no
+	// project starts with the repo's own name instead.
 	const sits_at = $derived.by(() => {
 		const folders = guide.path.split('/').slice(0, -1);
-		const project = guide.bundle === T_Bundle.mono ? [] : [guide.bundle];
-		return ['mono', ...project, ...folders, name].join(' / ');
+		const top = guide.bundle === T_Bundle.mono ? ['mono'] : [guide.bundle];
+		return [...top, ...folders, name].join(' / ');
 	});
 
 	// The guides are written in markdown, so they are turned into a real page before being
@@ -538,7 +538,17 @@
 				{renaming ? 'cancel' : 'rename'}
 			</button>
 		{/if}
-		<!-- Where it sits and what it is called — or, while renaming, the name being typed. -->
+		<!-- Nothing between the buttons and the pair at the right, so those two keep their
+		     own ends of the row. -->
+		<span class='view-spacer'></span>
+		<!-- What kind of guidance this is, and what it's about: the pair at the far right. -->
+		<span class='view-kind'>{kind}</span>
+		<span class='view-bar'>|</span>
+		<span class='view-tags'>{tags.join(', ')}</span>
+	</div>
+	<!-- Where it sits and what it is called, on a row of its own — or, while renaming, the
+	     name being typed. -->
+	<div class='view-title'>
 		{#if renaming}
 			<input
 				use:take_the_cursor
@@ -548,10 +558,6 @@
 		{:else}
 			<span class='view-name'>{sits_at}</span>
 		{/if}
-		<!-- What kind of guidance this is, and what it's about: the pair at the far right. -->
-		<span class='view-kind'>{kind}</span>
-		<span class='view-bar'>|</span>
-		<span class='view-tags'>{tags.join(', ')}</span>
 	</div>
 	<!-- Looking through the guide on screen. Its type is "search", so the browser draws its
 	     own clear cross at the right end once there is text. -->
@@ -647,31 +653,40 @@
 	   in whatever space its neighbors leave over, so a long tag list moves nothing. */
 	.view-head {
 		align-items    : start;
-		padding-bottom : var(--gap);
+		padding-bottom : calc(var(--gap) - 6px);
 		position       : relative;
 		display        : flex;
 		gap            : var(--gap);
 		min-height     : var(--height-control);
 	}
 
-	/* All three sit 3px higher than the triangles and the close button, so the words line
-	   up with the middle of those rather than their tops. The name takes whatever room the
-	   kind and the tags leave and centers itself in that. */
-	/* The name takes everything left between the triangles and the kind, and centers itself
-	   in it — so it sits in the middle of that run rather than of the whole row. */
+	/* The empty run that holds the buttons at the left apart from the kind and tags at the
+	   right, now that nothing sits between them. */
+	.view-spacer {
+		flex : 1 1 auto;
+	}
+
+	/* A row of its own for where the guide sits, held in the middle of the whole width. */
+	.view-title {
+		justify-content : center;
+		align-items     : center;
+		padding-bottom  : calc(var(--gap) - 2px);
+		display         : flex;
+		min-height      : var(--height-control);
+	}
+
+	/* The kind and the tags sit 3px higher than the triangles and the close button, so the
+	   words line up with the middle of those rather than their tops. */
 	.view-name {
 		font-size   : var(--font-label);
 		color       : var(--text);
 		white-space : nowrap;
 		text-align  : center;
-		position    : relative;
-		flex        : 1 1 auto;
 		min-width   : 0;
-		top         : 3px;
 	}
 
-	/* While renaming, the field stands where the guide's place normally reads, running from
-	   the buttons to a wide gap before the kind and the tags. */
+	/* While renaming, the field stands where the guide's place normally reads, taking the
+	   width of that row. */
 	.rename-field {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
@@ -965,6 +980,22 @@
 		overflow-x    : auto;
 	}
 
+	/* The sideways bar under a wide code block is drawn the same way as the list's own bar
+	   beside the rows: the same thickness, an accent thumb, and no track behind it. */
+	.view-page :global(pre::-webkit-scrollbar) {
+		height : 20px;
+		width  : 20px;
+	}
+
+	.view-page :global(pre::-webkit-scrollbar-thumb) {
+		background    : var(--accent);
+		border-radius : var(--radius-pill);
+	}
+
+	.view-page :global(pre::-webkit-scrollbar-track) {
+		background : transparent;
+	}
+
 	.view-page :global(pre code) {
 		background : none;
 		padding    : 0;
@@ -998,7 +1029,7 @@
 
 	/* The search row, under the top row: the walking triangles, then the field. */
 	.view-search {
-		padding-bottom : var(--gap);
+		padding-bottom : calc(var(--gap) + 4px);
 		align-items    : center;
 		flex           : 0 0 auto;
 		display        : flex;

@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Breadcrumbs (ws)"
 description: "Three parts working together to show either ancestry or browsing history."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-01-12
 ---
 

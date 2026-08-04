@@ -1,5 +1,5 @@
 ---
-kind: procedure
+kind: howto
 title: "Updating the Guides (di)"
 description: "Keeping the guide pages in step with the code as the project changes."
 tags: [notes]

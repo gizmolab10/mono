@@ -1,5 +1,5 @@
 ---
-kind: reference
+kind: lookup
 title: "Svelte Gotchas (ws)"
 description: "Cryptic Svelte failures and what actually caused each one."
 tags: [platform, debugging]

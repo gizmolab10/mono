@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "File Format Migration (di)"
 description: "How an old saved file is brought up to the current scene format."
-tags: [architecture, data, migration]
+tags: [wiring, data, migration]
 date: 2026-05-10
 ---
 

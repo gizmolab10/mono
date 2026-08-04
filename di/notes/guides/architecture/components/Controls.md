@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Controls (di)"
 description: "The strip of commands at the top and bottom of the screen, reachable without opening anything."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-05-20
 ---
 

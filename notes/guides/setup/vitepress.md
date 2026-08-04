@@ -1,5 +1,5 @@
 ---
-kind: procedure
+kind: howto
 title: "VitePress Configuration"
 description: "How the monorepo's documentation sites are configured."
 tags: [build, deploy, setup]

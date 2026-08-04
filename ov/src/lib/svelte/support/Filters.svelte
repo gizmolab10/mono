@@ -1,9 +1,11 @@
 <script lang='ts'>
-	import { w_purposes, w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
+	import { w_purposes, toggle_purpose, w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
+	import { show_status } from '../../ts/managers/Status';
+	import { get } from 'svelte/store';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { ALL_TAGS, T_Bundle, T_Kind } from '../../ts/types/Guide';
+	import { ALL_TAGS, T_Bundle, T_Kind, T_Purpose } from '../../ts/types/Guide';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import Separator from './Separator.svelte';
@@ -22,28 +24,48 @@
 	// number of tags, and words to look for. They are kept with the rest of the filters,
 	// where the hierarchy can read them; this only shows them.
 
+	// The three purposes: how to work, how a thing was built, and the work notes.
+	const PURPOSES = Object.values(T_Purpose);
+
+	function choose_purpose(which: T_Purpose) {
+		const done = toggle_purpose(which);
+		debug.log(done
+			? `Showing: "${which}" was turned ${get(w_purposes).includes(which) ? 'on' : 'off'}.`
+			: `Showing: "${which}" is the only one left on, so it stays.`);
+		if (!done) { show_status(`${which} is the only one showing — at least one must stay on`); }
+	}
+
+	// TWO WAYS TO SHOW A WORD THAT WOULD LEAVE NOTHING. Change this one letter and reload.
+	//
+	//   'a' — every word always shows; the ones with nothing behind them read gray and are
+	//         dead to the touch. The rows never change shape.
+	//   'b' — only words with something behind them show at all. Nothing is ever dead, but
+	//         the rows shrink and grow as the filters move.
+	const test: string = 'b';
+
 	// The files are read at launch, so what kinds and tags exist isn't known until that
 	// finishes. Both lists fill themselves in the moment it does.
-	// What each row offers is worked out against every other filter, so a word that would
-	// leave nothing reads gray. Every filter is named here so the rows are worked out again
-	// whenever any of them moves.
+	// What each row offers is worked out against every other filter — no row judges itself,
+	// so picking a kind never grays out the other kinds. Every filter is named below so the
+	// rows are worked out again whenever any of them moves.
 	const w_ready = guides.w_ready;
-	// All five kinds always show, so the row never changes shape; the ones left with nothing
-	// read gray.
-	const all_kinds = Object.values(T_Kind);
 	let kinds = $derived.by(() => { $w_purposes; $w_project; $w_tags; $w_words; return $w_ready ? guides.kinds_present() : []; });
-	// Every tag on the closed list, so the row never changes shape. One with nothing left
-	// within reach reads gray and is dead to the touch.
-	const tags = [...ALL_TAGS].sort();
 	let tags_in_use = $derived.by(() => { $w_purposes; $w_project; $w_kind; $w_words; return $w_ready ? guides.tags_present() : []; });
-
-	// The collections, in the order they were swept. One holding nothing within reach of the
-	// other filters is shown but dead — picking it could only ever empty the list.
 	const projects = Object.values(T_Bundle);
 	let counts = $derived.by(() => {
 		$w_purposes; $w_kind; $w_tags; $w_words;
 		return $w_ready ? new Map(projects.map((p) => [p, guides.files_in(p)])) : new Map();
 	});
+
+	// What each row actually draws: everything on the closed lists one way, only what is
+	// within reach the other. A word already picked always shows, so a choice never vanishes
+	// from under the cursor.
+	let shown_kinds = $derived(test === 'a' ? Object.values(T_Kind)
+		: Object.values(T_Kind).filter((kind) => kinds.includes(kind) || $w_kind === kind));
+	let shown_tags = $derived(test === 'a' ? [...ALL_TAGS].sort()
+		: [...ALL_TAGS].sort().filter((tag) => tags_in_use.includes(tag) || $w_tags.includes(tag)));
+	let shown_projects = $derived(test === 'a' ? projects
+		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_project === p));
 
 	function choose_project(project: string) {
 		w_project.set($w_project === project ? '' : project);
@@ -62,9 +84,81 @@
 	function clear_tags() {
 		w_tags.set([]);
 	}
+
+	// Side by side while there is room for both, stacked when there isn't. The room wanted is
+	// the two pickers' own widths plus the three equal spaces around them. Each picker is only
+	// ever as wide as its own words, stacked or not, so the answer cannot flip back and forth.
+	const ROOM_AROUND = k.gap.fat * 3;
+	let box_width = $state(0);
+	let purpose_box: HTMLElement | undefined = $state();
+	let projects_box: HTMLElement | undefined = $state();
+	let both_widths = $state(0);
+
+	$effect(() => {
+		shown_projects;                                  // measure again when the words change
+		const purpose = purpose_box?.offsetWidth ?? 0;
+		const projects = projects_box?.offsetWidth ?? 0;
+		if (purpose > 0 && projects > 0) { both_widths = purpose + projects; }
+	});
+
+	let stacked = $derived(box_width > 0 && both_widths > 0 && both_widths + ROOM_AROUND > box_width);
+
+	// Each row can be folded away by pressing the word above it. Folded, that word says how to
+	// get the row back and what is picked, so nothing is hidden without a way out. With either
+	// of the top two folded they take separate bars, since one word over two halves would
+	// point at the wrong place. Which rows are folded is remembered between visits, named
+	// rather than numbered so adding a row later cannot shift the meaning of what was saved.
+	const w_folded = preferences.persistent<string[]>(T_Preference.filters_folded, []);
+
+	let show_purposes = $derived(!$w_folded.includes('purpose'));
+	let show_projects = $derived(!$w_folded.includes('projects'));
+	let show_kinds = $derived(!$w_folded.includes('kinds'));
+	let show_tags = $derived(!$w_folded.includes('tags'));
+
+	let purposes_word = $derived($w_purposes.join(', '));
+	let project_word = $derived($w_project === '' ? 'all' : $w_project);
+	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
+	let tags_word = $derived($w_tags.length === 0 ? 'any tag' : $w_tags.join(', '));
+
+	// What the word on the bar says: just the name while the row is there, the name and what
+	// is picked while it is folded away.
+	function heading(name: string, shown: boolean, picked: string): string {
+		return shown ? name : `${name} ➜ ${picked}`;
+	}
+
+	function fold(name: string, away: boolean) {
+		w_folded.update((names) => away ? [...names, name] : names.filter((one) => one !== name));
+		debug.log(`Filters: the ${name} row is now ${away ? 'folded away' : 'shown'}.`);
+	}
 </script>
 
-<div class='filters'>
+<!-- The two pickers, written once and placed either way. -->
+{#snippet purpose_picker()}
+	<!-- Which corpora show. Both can be on; the last one on cannot be turned off, since
+	     a list that can go blank for no visible reason is a trap. -->
+	<div class='kinds' bind:this={purpose_box} use:tip={'show files, designs, or both'}>
+		{#each PURPOSES as one}
+			{@const asleep = one === T_Purpose.work}
+			<button class='segment' class:current={$w_purposes.includes(one)} class:empty={asleep}
+				use:tip={asleep ? 'work notes are not swept yet' : $w_purposes.includes(one) ? `stop showing ${one}` : `also show ${one}`}
+				onclick={() => { if (!asleep) { choose_purpose(one); } }}>{one}</button>
+		{/each}
+	</div>
+{/snippet}
+
+{#snippet projects_picker()}
+	<div class='kinds' bind:this={projects_box} use:tip={'show just one project\'s guides'}>
+		<button class='segment' class:current={$w_project === ''} onclick={() => w_project.set('')}>all</button>
+		{#each shown_projects as project}
+			{@const held = counts.get(project) ?? 0}
+			<button class='segment' class:current={$w_project === project} class:empty={held === 0}
+				use:tip={held === 0 ? `nothing in ${project} is left by the other filters` : false}
+				onclick={() => { if (held > 0) { choose_project(project); } }}>{project}</button>
+		{/each}
+	</div>
+{/snippet}
+
+<div class='filters' bind:clientWidth={box_width}>
 
 	<!-- The toggle hugs the far left of this row; the search field takes the rest, so the
 	     words looked for stay in reach whether or not the picking rows show.
@@ -83,43 +177,67 @@
 	</div>
 
 	{#if $w_show_filters}
-		<!-- Each sep names what sits under it, so the words read as a heading for the
-		     row that follows. -->
-		<Separator title='projects'/>
+		<!-- Each sep names what sits under it, so the words read as a heading for the row
+		     that follows. With room for both, one bar carries two words, each landing over
+		     its own picker; without it, each picker gets its own bar and its own word,
+		     purpose above projects. -->
+		{#if stacked || !show_purposes || !show_projects}
+			<div class:folded={!show_purposes}>
+				<Separator title={heading('purpose', show_purposes, purposes_word)}
+					onclick={() => fold('purpose', show_purposes)}/>
+			</div>
+			{#if show_purposes}
+				<div class='paired-rows'>{@render purpose_picker()}</div>
+			{/if}
+			<div class:folded={!show_projects}>
+				<Separator title={heading('projects', show_projects, project_word)}
+					onclick={() => fold('projects', show_projects)}/>
+			</div>
+			{#if show_projects}
+				<div class='paired-rows'>{@render projects_picker()}</div>
+			{/if}
+		{:else}
+			<Separator title={['purpose', 'projects']}
+				onclick={(_event, which) => fold(which === 0 ? 'purpose' : 'projects', true)}/>
+			<div class='paired-rows'>
+				{@render purpose_picker()}
+				{@render projects_picker()}
+			</div>
+		{/if}
 
-		<div class='kinds' use:tip={'show just one project\'s guides'}>
-			<button class='segment' class:current={$w_project === ''} onclick={() => w_project.set('')}>all</button>
-			{#each projects as project}
-				{@const held = counts.get(project) ?? 0}
-				<button class='segment' class:current={$w_project === project} class:empty={held === 0}
-					use:tip={held === 0 ? `nothing in ${project} is left by the other filters` : false}
-					onclick={() => { if (held > 0) { choose_project(project); } }}>{project}</button>
-			{/each}
+		<div class:folded={!show_kinds}>
+			<Separator title={heading('kinds', show_kinds, kind_word)}
+				onclick={() => fold('kinds', show_kinds)}/>
 		</div>
 
-		<Separator title='kinds'/>
+		{#if show_kinds}
+			<div class='kinds' use:tip={'show particular kinds of guide'}>
+				<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
+				{#each shown_kinds as kind}
+					{@const in_reach = kinds.includes(kind)}
+					<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
+						use:tip={in_reach ? false : `nothing of that kind is left by the other filters`}
+						onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
+				{/each}
+			</div>
+		{/if}
 
-		<div class='kinds' use:tip={'show particular kinds of guide'}>
-			<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
-			{#each all_kinds as kind}
-				{@const in_reach = kinds.includes(kind)}
-				<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
-					use:tip={in_reach ? false : `nothing of that kind is left by the other filters`}
-					onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
-			{/each}
+		<div class:folded={!show_tags}>
+			<Separator title={heading('tags', show_tags, tags_word)}
+				onclick={() => fold('tags', show_tags)}/>
 		</div>
 
-		<Separator title='tags'/>
-
-		<div class='tags'>
-			<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>any tag</button>
-			{#each tags as tag}
-				{@const worn = tags_in_use.includes(tag)}
-				<button class='tag' class:current={$w_tags.includes(tag)} class:empty={!worn}
-					use:tip={worn ? `show guides tagged "${tag}"` : `nothing tagged "${tag}" is left by the other filters`}
-					onclick={() => { if (worn) { toggle_tag(tag); } }}>{tag}</button>
-			{/each}
-		</div>
+		{#if show_tags}
+			<div class='tags'>
+				<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>any tag</button>
+				{#each shown_tags as tag}
+					{@const worn = tags_in_use.includes(tag)}
+					<button class='tag' class:current={$w_tags.includes(tag)} class:empty={!worn}
+						use:tip={worn ? `show files tagged "${tag}"` : `nothing tagged "${tag}" is left by the other filters`}
+						onclick={() => { if (worn) { toggle_tag(tag); } }}>{tag}</button>
+				{/each}
+			</div>
+		{/if}
 	{/if}
 </div>
 <Separator thickness={k.separator.huge}/>
@@ -154,6 +272,20 @@
 
 	.filters-button:hover {
 		background : var(--hover);
+	}
+
+	/* With its row folded away, a bar has nothing below it but the next bar — so it holds a
+	   gap of its own, or the words on the two would crowd. */
+	.folded {
+		margin-bottom : var(--gap);
+	}
+
+	/* The purposes and the projects share one row: the space before the first, between the
+	   two, and after the second are all the same. */
+	.paired-rows {
+		justify-content : space-evenly;
+		align-items     : center;
+		display         : flex;
 	}
 
 	/* One pill with a segment per kind; the chosen one fills with the accent. */

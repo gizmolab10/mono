@@ -4,16 +4,15 @@
 
 // The five kinds, in the order the OKF proposal picks them.
 export enum T_Kind {
-	rule         = 'rule',
-	procedure    = 'procedure',
-	architecture = 'architecture',
-	philosophy   = 'philosophy',
-	reference    = 'reference',
+	rule       = 'rule',
+	howto      = 'howto',
+	wiring     = 'wiring',
+	why        = 'why',
+	lookup     = 'lookup',
 }
 
-// The closed tag list — twenty-three, nothing invented on the spot.
+// The closed tag list — twenty-four, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
-	'architecture',
 	'build',
 	'code-style',
 	'collaboration',
@@ -33,17 +32,19 @@ export const ALL_TAGS: string[] = [
 	'setup',
 	'stale',
 	'testing',
+	'think',
 	'tools',
 	'user-interface',
 	'visual-design',
+	'wiring',
 ];
 
 // The four collections the guides live in, each named for the folder that holds it.
 // The shared guides sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
 	mono = 'mo',
-	di   = 'di',
 	ws   = 'ws',
+	di   = 'di',
 	ji   = 'ji',
 	ov   = 'ov',
 }

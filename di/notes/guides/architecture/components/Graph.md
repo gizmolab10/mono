@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Graph (di)"
 description: "The drawing area: the canvas and everything floating over it."
-tags: [architecture, user-interface]
+tags: [wiring, user-interface]
 date: 2026-05-10
 ---
 

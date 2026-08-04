@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Layout Code"
 description: "A map of the tangled code that decides where each part of the graph gets drawn."
-tags: [architecture, refactoring]
+tags: [wiring, refactoring]
 date: 2026-01-12
 ---
 

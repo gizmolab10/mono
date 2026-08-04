@@ -1,8 +1,8 @@
 ---
-kind: architecture
+kind: wiring
 title: "Preferences Flow (ws)"
 description: "One setting followed all the way from the click to storage and back."
-tags: [architecture, data, user-interface]
+tags: [wiring, data, user-interface]
 date: 2026-01-12
 ---
 
