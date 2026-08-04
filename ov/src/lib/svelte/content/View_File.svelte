@@ -28,13 +28,13 @@
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
 
-	// The title says where the guide sits as well as what it is called: the folders above it,
-	// with its collection in front — except the shared one, whose guides simply begin at their
-	// own folder.
+	// The title says where the guide sits as well as what it is called: every folder above it,
+	// from the repo down. The repo is named in full rather than by its two letters, and a
+	// guide belonging to a project has that project after it.
 	const sits_at = $derived.by(() => {
 		const folders = guide.path.split('/').slice(0, -1);
-		const chain = guide.bundle === T_Bundle.mono ? folders : [guide.bundle, ...folders];
-		return [...chain, name].join(' / ');
+		const project = guide.bundle === T_Bundle.mono ? [] : [guide.bundle];
+		return ['mono', ...project, ...folders, name].join(' / ');
 	});
 
 	// The guides are written in markdown, so they are turned into a real page before being
@@ -126,6 +126,9 @@
 	 * it names, and landing anywhere else goes back to the list, as it always has.
 	 */
 	function on_page_click(event: MouseEvent) {
+		// Holding the option key turns the words into something to pick up rather than
+		// something to click: dragging selects them, and nothing here answers.
+		if ($w_command_down) { return; }
 		if ($editing) { on_edit_click(event); return; }
 		const anchor = (event.target as HTMLElement | null)?.closest?.('a') as HTMLAnchorElement | null;
 		if (!anchor) { onclose(); return; }
@@ -304,6 +307,36 @@
 		});
 	}
 
+	// Renaming happens in the top row itself: the place where the guide sits gives way to a
+	// field holding its name, and the button that opened it becomes the way out.
+	let renaming = $state(false);
+	let typed_name = $state('');
+
+	/** Open the field, or shut it again with nothing changed. */
+	function handle_show_rename() {
+		renaming = !renaming;
+		typed_name = renaming ? name : '';
+		debug.log(`Editing "${name}": the rename field is now ${renaming ? 'open' : 'shut, with nothing changed'}.`);
+	}
+
+	/** The cursor goes to the end of the name, so a word can be added without aiming. */
+	function take_the_cursor(field: HTMLInputElement) {
+		field.focus();
+		field.setSelectionRange(field.value.length, field.value.length);
+	}
+
+	/**
+	 * Give the file itself a different name: the file, every link naming it, and the index
+	 * beside it are put right together.
+	 */
+	function handle_rename() {
+		const said = typed_name;
+		renaming = false;
+		typed_name = '';
+		debug.log(`Editing "${name}": renaming it to "${said}".`);
+		guides.rename(guide, said);
+	}
+
 	/** Put a tag on this guide or take it off, and write it. */
 	function toggle_tag(tag: string) {
 		form_tags = form_tags.includes(tag) ? form_tags.filter((t) => t !== tag) : [...form_tags, tag].sort();
@@ -412,8 +445,8 @@
 	let failed = $state('');
 	$effect(() => {
 		const where = address;
-		words       = null;
-		loaded      = false;
+		// The words already on screen stay there until the next one's are ready. Blanking them
+		// first put an empty box on screen for an instant, which read as a flash.
 		failed      = '';
 		note        = '';
 		looking_for = '';        // a search belongs to the guide it was typed in
@@ -462,16 +495,6 @@
 				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 			</svg>
 		</button>
-		<!-- With this on, a click on the words opens that piece for editing instead of
-		     going back to the list. -->
-		<button class='view-edit' class:on={$editing} onclick={toggle_editing}
-			use:tip={$w_command_down ? 'edit this guide in obsidian' : $editing ? 'stop editing' : 'edit this guide'}>edit</button>
-		<!-- The five labels have their own form; this folds it away without leaving editing. -->
-		{#if $editing}
-			<button class='view-edit' class:on={$w_show_labels}
-				use:tip={`${$w_show_labels ? 'hide' : 'edit'} the labels`}
-				onclick={() => { w_show_labels.set(!$w_show_labels); debug.log(`Editing "${name}": the label form is now ${!$w_show_labels ? 'hidden' : 'shown'}.`); }}>labels</button>
-		{/if}
 		<!-- Only worth showing the step triangles when there is more than one guide on
 		     screen to step between. -->
 		{#if can_back || can_forward}
@@ -496,8 +519,35 @@
 		{:else}
 			<span></span>
 		{/if}
-		<!-- Where it sits and what it is called, at the left just after the triangles. -->
-		<span class='view-name'>{sits_at}</span>
+		<!-- With this on, a click on the words opens that piece for editing instead of
+		     going back to the list. -->
+		<button class='view-edit' class:on={$editing} onclick={toggle_editing}
+			use:tip={$w_command_down ? 'edit this guide in obsidian' : $editing ? 'stop editing' : 'edit this guide'}>edit</button>
+		<!-- The five labels have their own form; this folds it away without leaving editing. -->
+		{#if $editing}
+			<button class='view-edit' class:on={$w_show_labels}
+				use:tip={`${$w_show_labels ? 'hide' : 'edit'} the labels`}
+				onclick={() => { w_show_labels.set(!$w_show_labels); debug.log(`Editing "${name}": the label form is now ${!$w_show_labels ? 'hidden' : 'shown'}.`); }}>labels</button>
+			<!-- Giving the file itself a different name. While the field is open, this is the
+			     way back out with nothing changed. -->
+			<button
+				class='view-edit'
+				class:on={renaming}
+				onclick={handle_show_rename}
+				use:tip={renaming ? 'leave the name as it was' : 'give this guide a different name'}>
+				{renaming ? 'cancel' : 'rename'}
+			</button>
+		{/if}
+		<!-- Where it sits and what it is called — or, while renaming, the name being typed. -->
+		{#if renaming}
+			<input
+				use:take_the_cursor
+				class='rename-field'
+				bind:value={typed_name}
+				onkeydown={(e) => { if (e.key === 'Enter') { handle_rename(); } }} />
+		{:else}
+			<span class='view-name'>{sits_at}</span>
+		{/if}
 		<!-- What kind of guidance this is, and what it's about: the pair at the far right. -->
 		<span class='view-kind'>{kind}</span>
 		<span class='view-bar'>|</span>
@@ -556,21 +606,25 @@
 		</div>
 		<Separator thickness={k.separator.big}/>
 	{/if}
+	<!-- Nothing is said while the words are being read: the wait is too short to see, and a
+	     line that flashes and goes reads as a fault. -->
 	{#if !loaded}
-		<div class='view-note'>reading…</div>
+		<div class='view-page'></div>
 	{:else if failed !== ''}
 		<div class='view-note'>file is unreadable — cannot view it</div>
 	{:else}
 		<!-- A click on a link follows it; a click anywhere else on the words goes back to
 		     the list, the same as the close button — so getting out never means aiming at
-		     the small circle. -->
+		     the small circle. Holding the command key suspends all of that, so the words can
+		     be dragged over and picked up instead. -->
 		<div
 			role='button'
 			tabindex='-1'
 			bind:this={page}
 			class='view-page'
 			onkeyup={() => {}}
-			use:tip={$editing ? 'click a paragraph to edit it' : 'go back'}
+			class:selecting={$w_command_down}
+			use:tip={$w_command_down ? 'drag to pick up these words' : $editing ? 'click a paragraph to edit it' : 'go back'}
 			onclick={on_page_click}>{@html words}</div>
 	{/if}
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->
@@ -614,6 +668,23 @@
 		flex        : 1 1 auto;
 		min-width   : 0;
 		top         : 3px;
+	}
+
+	/* While renaming, the field stands where the guide's place normally reads, running from
+	   the buttons to a wide gap before the kind and the tags. */
+	.rename-field {
+		border        : var(--thickness-normal) solid var(--black);
+		height        : var(--height-control);
+		padding       : var(--pad-control);
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-label);
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		margin-right  : var(--gap);
+		flex          : 1 1 auto;
+		font-family   : inherit;
+		min-width     : 0;
 	}
 
 	/* The kind, at the far right just before the tags. */
@@ -833,6 +904,14 @@
 		overflow-y : auto;
 		cursor     : pointer;
 		flex       : 1;
+	}
+
+	/* With the option key held, the words can be dragged over and picked up. The whole app
+	   otherwise refuses that, so it is turned back on here and on everything inside. */
+	.view-page.selecting,
+	.view-page.selecting :global(*) {
+		user-select : text;
+		cursor      : text;
 	}
 
 	/* The first thing on the page keeps no room above it, so the words begin exactly where

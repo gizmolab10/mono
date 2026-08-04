@@ -245,7 +245,7 @@ See [debugging.md](../test/debugging.md) for the full guide.
 
 ### Refactoring Discipline
 
-See [refactoring.md](../develop/refactoring.md) for the full guide with examples.
+See [refactoring.md](../develop/refactor.md) for the full guide with examples.
 
 **MANDATORY.** Before ANY change that removes, renames, or changes the signature of functions, properties, stores, imports, or type definitions:
 

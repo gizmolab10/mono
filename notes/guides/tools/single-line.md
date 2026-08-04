@@ -2,7 +2,7 @@
 kind: reference
 title: "Single-Line Progress"
 description: "A build script that reports progress on one line that updates in place."
-tags: [tools, build]
+tags: [tools]
 date: 2026-05-10
 ---
 

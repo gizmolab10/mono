@@ -8,10 +8,6 @@ import { get, writable } from 'svelte/store';
 // there until it is dismissed, so nothing said is ever missed by looking away. Whether it is
 // showing, and what it says, are both remembered across visits.
 
-// Whether putting things right reaches into the work notes. Off, a link into one is passed
-// over whether it leads anywhere or not — those notes come and go, and are not guides.
-export const w_includes_work = preferences.persistent<boolean>(T_Preference.includes_work, false);
-
 export const w_show_status = preferences.persistent<boolean>(T_Preference.show_status, true);
 export const w_status      = preferences.persistent<string>(T_Preference.status_words, '');
 

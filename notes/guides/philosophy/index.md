@@ -3,5 +3,5 @@
 ## Contents
 
 - [Limitations](./limitations.md)
-- [Motive](./motive.md)
+- [Motive](./use%20ai.md)
 

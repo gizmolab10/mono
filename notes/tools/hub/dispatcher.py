@@ -72,6 +72,31 @@ for _key, _val in PORTS.items():
             _doc_key = 'mono-docs' if _key == 'mono' else f'{_key}-docs'
             NETLIFY_SITES[_doc_key] = _netlify_name(_val['docsNetlify'])
 
+def _settings_beside_this_file():
+    """Read the .env sitting next to this file, so keys are found however the hub is started.
+
+    Anything already in the environment wins; this only fills in what is missing. Lines are
+    NAME=value, with # starting a comment and surrounding quotes taken off.
+    """
+    beside = os.path.join(SCRIPT_DIR, '.env')
+    if not os.path.isfile(beside):
+        return
+    try:
+        with open(beside) as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#') or '=' not in line:
+                    continue
+                name, _, value = line.partition('=')
+                name = name.strip()
+                value = value.strip().strip('"').strip("'")
+                if name and name not in os.environ:
+                    os.environ[name] = value
+    except Exception:
+        pass        # a settings file that cannot be read simply leaves the environment as it was
+
+_settings_beside_this_file()
+
 NETLIFY_TOKEN = os.environ.get('NETLIFY_ACCESS_TOKEN', '')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 
@@ -588,7 +613,7 @@ class APIHandler(BaseHTTPRequestHandler):
             # {"text": <the whole new file>, "as_opened": <the file as the app last read it>}.
             #
             # Two refusals guard it, and both answer 409 rather than writing:
-            #   - the path must end in .md and sit inside a "notes/guides" folder, and must
+            #   - the path must end in .md and sit inside a "notes/guides" or "notes/designs" folder, and must
             #     resolve inside the repo (no climbing out with "..", no symlinks out)
             #   - the file on disk must still read exactly as the app last saw it
             try:
@@ -597,7 +622,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not where:
                     self._send_response(400, {'success': False, 'error': 'no file named'})
                     return
-                if not where.endswith('.md') or 'notes/guides/' not in where:
+                if not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 full = os.path.realpath(os.path.join(GITHUB_DIR, where))
@@ -633,6 +658,25 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif urllib.parse.urlparse(self.path).path == '/restart-server':
+            # Restart one dev server, for the overview app: /restart-server?which=ov
+            #
+            # Overview settles its list of guide files when its code is prepared, so a file
+            # that moved or was renamed only shows in its new place once the server has been
+            # restarted. The name must be plain letters, so nothing else can be run.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                which = params.get('which', [''])[0]
+                if not which or not which.isalnum():
+                    self._send_response(400, {'success': False, 'error': f'bad server name: {which!r}'})
+                    return
+                if not os.access(DEV_SERVERS, os.X_OK):
+                    os.chmod(DEV_SERVERS, 0o755)
+                subprocess.Popen([DEV_SERVERS, which], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                self._send_response(200, {'success': True, 'which': which})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif urllib.parse.urlparse(self.path).path == '/show-folder':
             # Show one guides folder in the Finder, for the overview app.
             # /show-folder?where=<path from the top of the repo>
@@ -643,7 +687,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 where = params.get('where', [''])[0]
                 root = os.path.realpath(GITHUB_DIR)
                 full = os.path.realpath(os.path.join(GITHUB_DIR, where)) if where else ''
-                if not where or 'notes/guides' not in where or not full.startswith(root + os.sep):
+                if not where or not any(part in where for part in ('notes/guides', 'notes/designs')) or not full.startswith(root + os.sep):
                     self._send_response(409, {'success': False, 'error': f'not a guides folder: {where!r}'})
                     return
                 if not os.path.isdir(full):
@@ -659,7 +703,7 @@ class APIHandler(BaseHTTPRequestHandler):
             # /move-guide?from=<path from the top of the repo>&to=<the same>
             #
             # Every refusal answers 409 and moves nothing:
-            #   - either path is not a .md file inside a "notes/guides" folder
+            #   - either path is not a .md file inside a "notes/guides" or "notes/designs" folder
             #   - either path resolves outside the repo
             #   - the file to move isn't there, or something is already at the new place
             #   - the folder it would land in doesn't exist (folders are never made here)
@@ -673,7 +717,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 root = os.path.realpath(GITHUB_DIR)
 
                 def guide_path(where):
-                    if not where or not where.endswith('.md') or 'notes/guides/' not in where:
+                    if not where or not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
                         return None
                     full = os.path.realpath(os.path.join(GITHUB_DIR, where))
                     return full if full.startswith(root + os.sep) else None

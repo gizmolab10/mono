@@ -10,7 +10,7 @@ How collaborator works with Jonathan and maintains shared context.
 - [Expectations](./expectations.md)
 - [Framing Filters](./framing filters.md)
 - [Hooks](./hooks.md)
-- [Journals](./journals.md)
 - [Voice](./voice.md)
 - [Workflow](./workflow.md)
+- [Journals](./write%20a%20journal.md)
 

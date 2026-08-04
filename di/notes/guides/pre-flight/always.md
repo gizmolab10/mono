@@ -14,9 +14,9 @@ Rules specific to the di project. Read alongside the global always file at `~/Gi
 
 1. **Lexicon enforcement** — replies are checked automatically when they finish, by the Stop hooks (banned words, conciseness, required disclaimer, diagnostic citation). There is no manual precheck step; if a Stop hook rejects a reply, rewrite it and it re-checks. Word choice has two sources of truth, both live: `notes/guides/pre-flight/banned words.md` at the repo root holds the words banned in every project, and `di/notes/guides/pre-flight/banned words.md` holds di's own vocabulary (smart objects, unifaces, placement, measurements). `di/notes/guides/pre-flight/lexicon.md` covers the rest.
 2. **Yarn, never npx** — every package binary call uses yarn.
-3. **Snap hook for reverts** — `di/.claude/hooks/snap.sh` handles file reverts; never restore files manually.
+3. **Snap hook for reverts** — `di/.claude/hooks/snap` handles file reverts; never restore files manually.
 4. **Read on load** — these four `di` files
-    - [ ] `notes/work/now/learn.md`
+    - [ ] `notes/work/ai/learn.md`
     - [ ] `notes/guides/pre-flight/lexicon.md`
     - [ ] `notes/work/now/handoff.md`
     - [ ] `CLAUDE.md`.

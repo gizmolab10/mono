@@ -3,7 +3,7 @@
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import Filters from '../support/Filters.svelte';
-	import Guides_List, { w_scrollbar_showing } from './Guides_List.svelte';
+	import List_Files, { w_scrollbar_showing } from './List_Files.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
@@ -64,22 +64,23 @@
 	{#if $w_project !== ''}
 		<span class='chosen-project'>{$w_project}</span>
 	{/if}
+	<!-- Stopping the sorting, beside the picked project at the left. -->
+	{#if sorting}
+		<button class='folders-button unsorted' onclick={stop_sorting} use:tip={'back to the order the guides sit in'}>
+			remove sorting
+		</button>
+	{/if}
 	{#if $w_kind !== ''}
 		<span class='chosen-kind'>{$w_kind}</span>
 	{/if}
-	<span class='count'>{matching} guides (of {total})</span>
-	<!-- The unsorted button and the picked tags hug the far right, the folders button the
-	     far left, and the count keeps the middle of the whole row. -->
-	{#if sorting}
-		<button class='folders-button unsorted' onclick={stop_sorting} use:tip={'back to the order the guides sit in'}>
-			unsorted
-		</button>
-	{/if}
+	<span class='count'>{matching} files (of {total})</span>
+	<!-- The picked tags hug the far right, the folders button the far left, and the count
+	     keeps the middle of the whole row. -->
 	{#if $w_tags.length > 0}
-		<span class='chosen-tags' class:after-unsorted={sorting} class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
+		<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
 	{/if}
 </div>
-<Guides_List />
+<List_Files />
 
 <style>
 	/* The button hugs the far left; the count is placed at the middle of the whole row
@@ -105,8 +106,9 @@
 		left        : 50%;
 	}
 
+	/* Beside the picked project, at the left rather than the far right. */
 	.unsorted {
-		margin-left : auto;
+		margin-right : var(--gap);
 	}
 
 	/* The drawn bar takes the text color, like every other drawn mark. */
@@ -137,10 +139,6 @@
 	.chosen-tags {
 		margin-right : var(--gap-fat);
 		margin-left  : auto;
-	}
-
-	.chosen-tags.after-unsorted {
-		margin-left : var(--gap);
 	}
 
 	/* With a scrollbar beside the rows, the tags title holds back room for it — so these

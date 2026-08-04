@@ -42,7 +42,7 @@ export class Indexes {
 	}
 
 	// The guide ids wearing one tag.
-	guides_withTag(tag_id: string): string[] {
+	files_withTag(tag_id: string): string[] {
 		return this.tagging_by_tag.get(tag_id) ?? [];
 	}
 

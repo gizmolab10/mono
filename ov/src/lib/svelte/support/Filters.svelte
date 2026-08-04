@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
+	import { w_purposes, w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { T_Bundle } from '../../ts/types/Guide';
+	import { ALL_TAGS, T_Bundle, T_Kind } from '../../ts/types/Guide';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import Separator from './Separator.svelte';
@@ -24,18 +24,28 @@
 
 	// The files are read at launch, so what kinds and tags exist isn't known until that
 	// finishes. Both lists fill themselves in the moment it does.
+	// What each row offers is worked out against every other filter, so a word that would
+	// leave nothing reads gray. Every filter is named here so the rows are worked out again
+	// whenever any of them moves.
 	const w_ready = guides.w_ready;
-	let kinds = $derived($w_ready ? guides.kinds_present() : []);
-	let tags  = $derived($w_ready ? guides.tags_present()  : []);
+	// All five kinds always show, so the row never changes shape; the ones left with nothing
+	// read gray.
+	const all_kinds = Object.values(T_Kind);
+	let kinds = $derived.by(() => { $w_purposes; $w_project; $w_tags; $w_words; return $w_ready ? guides.kinds_present() : []; });
+	// Every tag on the closed list, so the row never changes shape. One with nothing left
+	// within reach reads gray and is dead to the touch.
+	const tags = [...ALL_TAGS].sort();
+	let tags_in_use = $derived.by(() => { $w_purposes; $w_project; $w_kind; $w_words; return $w_ready ? guides.tags_present() : []; });
 
-	// The collections, in the order they were swept. One with no guides folder yet holds
-	// no files, so its segment is shown but dead — picking it could only ever empty the
-	// list. It wakes up on its own the day that collection gains a guide.
+	// The collections, in the order they were swept. One holding nothing within reach of the
+	// other filters is shown but dead — picking it could only ever empty the list.
 	const projects = Object.values(T_Bundle);
-	let counts = $derived($w_ready ? new Map(projects.map((p) => [p, guides.files_in(p)])) : new Map());
+	let counts = $derived.by(() => {
+		$w_purposes; $w_kind; $w_tags; $w_words;
+		return $w_ready ? new Map(projects.map((p) => [p, guides.files_in(p)])) : new Map();
+	});
 
 	function choose_project(project: string) {
-		if ((counts.get(project) ?? 0) === 0) { return; }
 		w_project.set($w_project === project ? '' : project);
 	}
 
@@ -82,8 +92,8 @@
 			{#each projects as project}
 				{@const held = counts.get(project) ?? 0}
 				<button class='segment' class:current={$w_project === project} class:empty={held === 0}
-					use:tip={held === 0 ? `${project} has no guides yet` : false}
-					onclick={() => choose_project(project)}>{project}</button>
+					use:tip={held === 0 ? `nothing in ${project} is left by the other filters` : false}
+					onclick={() => { if (held > 0) { choose_project(project); } }}>{project}</button>
 			{/each}
 		</div>
 
@@ -91,8 +101,11 @@
 
 		<div class='kinds' use:tip={'show particular kinds of guide'}>
 			<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
-			{#each kinds as kind}
-				<button class='segment' class:current={$w_kind === kind} onclick={() => choose_kind(kind)}>{kind}</button>
+			{#each all_kinds as kind}
+				{@const in_reach = kinds.includes(kind)}
+				<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
+					use:tip={in_reach ? false : `nothing of that kind is left by the other filters`}
+					onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
 			{/each}
 		</div>
 
@@ -101,7 +114,10 @@
 		<div class='tags'>
 			<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>any tag</button>
 			{#each tags as tag}
-				<button class='tag' class:current={$w_tags.includes(tag)} onclick={() => toggle_tag(tag)} use:tip={`show guides tagged "${tag}"`}>{tag}</button>
+				{@const worn = tags_in_use.includes(tag)}
+				<button class='tag' class:current={$w_tags.includes(tag)} class:empty={!worn}
+					use:tip={worn ? `show guides tagged "${tag}"` : `nothing tagged "${tag}" is left by the other filters`}
+					onclick={() => { if (worn) { toggle_tag(tag); } }}>{tag}</button>
 			{/each}
 		</div>
 	{/if}
@@ -208,8 +224,16 @@
 		color      : var(--text-on-accent);
 	}
 
-	.tag:not(.current):hover {
+	.tag:not(.current):not(.empty):hover {
 		background : var(--hover);
+	}
+
+	/* A tag with nothing left within reach: gray and dead to the touch, since picking it
+	   could only ever empty the list. */
+	.tag.empty {
+		color        : var(--gray);
+		border-color : var(--gray);
+		cursor       : default;
 	}
 
 	.search {

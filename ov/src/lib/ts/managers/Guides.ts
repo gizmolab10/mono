@@ -1,11 +1,11 @@
-import { T_Bundle, ALL_TAGS, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
-import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { T_Bundle, T_Purpose, ALL_TAGS, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
+import { w_purposes, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
-import { fresh_index, line_for, relative_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { file_path_of, folder_path_of, move_guide, moved_into, save_guide } from '../utilities/Saving';
+import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
+import { file_path_of, folder_path_of, move_guide, moved_into, restart_and_reload, save_guide } from '../utilities/Saving';
 import { links_in } from '../utilities/Markdown_Blocks';
-import { show_status, w_includes_work, type Finding } from './Status';
+import { show_status, type Finding } from './Status';
 import { debug } from '../common/Debug';
 
 /**
@@ -27,6 +27,16 @@ const addresses: Record<T_Bundle, Record<string, string>> = {
 	[T_Bundle.ws]:     import.meta.glob('../../../../../ws/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
 	[T_Bundle.ji]:     import.meta.glob('../../../../../ji/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
 	[T_Bundle.ov]:     import.meta.glob('../../../../../ov/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
+};
+
+// The same again for designs — how a thing was built, rather than how to work. They sit in
+// their own folder beside the guides, and the app shows them only when asked to.
+const design_addresses: Record<T_Bundle, Record<string, string>> = {
+	[T_Bundle.mono]:   import.meta.glob('../../../../../notes/designs/**/*.md',    { query: '?url', import: 'default', eager: true }),
+	[T_Bundle.di]:     import.meta.glob('../../../../../di/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
+	[T_Bundle.ws]:     import.meta.glob('../../../../../ws/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
+	[T_Bundle.ji]:     import.meta.glob('../../../../../ji/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
+	[T_Bundle.ov]:     import.meta.glob('../../../../../ov/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
 };
 
 // Pull one label's value off a line, with the surrounding quotes taken off if it has them.
@@ -92,14 +102,14 @@ class Guides {
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than
 		// in each of the places that shows it.
-		for (const w of [w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts]) {
+		for (const w of [w_purposes, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts]) {
 			w.subscribe(() => this.renarrow());
 		}
 	}
 
 	/** Work the list out again from what the filters say right now. */
 	renarrow(): void {
-		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts));
+		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts), get(w_purposes));
 		this.w_showing.set(this.hierarchy.filtered_guides);
 	}
 
@@ -138,6 +148,10 @@ class Guides {
 		// gave back — everything else is named from the top of the repo.
 		const root = answer.full_path.slice(0, answer.full_path.length - to.length);
 		await this.mend_indexes(root, from, to, name);
+		// The list of which files exist is settled when this app's code is prepared, so the
+		// new place only survives a reload once the server has been started again.
+		show_status(`"${guide.name}" moved into "${folder.name}". Starting again so the new place sticks…`);
+		restart_and_reload();
 	}
 
 	/**
@@ -223,13 +237,90 @@ class Guides {
 	}
 
 	/**
+	 * Give one guide's file a different name, and mend every link that named the old one.
+	 *
+	 * The links are gathered first, while the old name still answers, so nothing has to be
+	 * guessed afterwards. Then the file moves; only if that works are the links written and
+	 * the app's own picture changed — so a refused rename leaves everything as it was.
+	 */
+	async rename(guide: Guide, new_name: string): Promise<void> {
+		const named = new_name.trim().replace(/\.md$/i, '');
+		const was_name = guide.name;
+		if (named === '' || named === was_name) { return; }
+
+		const folder = this.hierarchy.folder_holding(guide);
+		if (!folder) { show_status(`"${was_name}" hangs under no folder, so it cannot be renamed`); return; }
+		const from = file_path_of(guide.bundle, guide.path);
+		const to_path = moved_into(folder.path, `${named}.md`);
+		const to = file_path_of(folder.bundle, to_path);
+
+		// Every place another guide names this one, found while the old name still answers.
+		const mends: Array<{ where: string; address: string; text: string; changed: string; how_many: number }> = [];
+		for (const other of this.files) {
+			const at = other.address.replace(/^\/@fs/, '').split('?')[0];
+			const text = await this.read_file(at);
+			if (text === null) { continue; }
+			let changed = text;
+			let how_many = 0;
+			for (const link of new Set(links_in(text))) {
+				const found = this.hierarchy.explore(other, link);
+				if (!found.guide || found.guide.id !== guide.id) { continue; }
+				const whole_old = `](${link})`;
+				if (!changed.includes(whole_old)) { continue; }
+				const whole_new = `](${renamed_address(link, named)})`;
+				how_many += changed.split(whole_old).length - 1;
+				changed = changed.split(whole_old).join(whole_new);
+			}
+			if (how_many > 0) { mends.push({ where: file_path_of(other.bundle, other.path), address: at, text, changed, how_many }); }
+		}
+
+		const answer = await move_guide(from, to);
+		if (!answer.ok) {
+			show_status(`"${was_name}" was not renamed — ${answer.why}`);
+			debug.log(`Renaming "${was_name}" to "${named}" was refused — ${answer.why}. Nothing changed.`);
+			return;
+		}
+
+		this.hierarchy.rehang(guide, folder, to_path, `/@fs${answer.full_path}`);
+		guide.name = named;
+		this.renarrow();
+
+		let mended = 0, refused = 0;
+		for (const mend of mends) {
+			const wrote = await save_guide(mend.where, mend.changed, mend.text);
+			if (wrote.ok) { mended += 1; debug.log(`Renaming: ${mend.where} now names "${named}" in ${mend.how_many} link(s).`); }
+			else { refused += 1; debug.log(`Renaming: ${mend.where} was NOT written — ${wrote.why}. It still names "${was_name}".`); }
+		}
+		// The index beside it names the old file. The whole line travels, with only the file it
+		// points at changed, so any description written by hand stays.
+		const root = answer.full_path.slice(0, answer.full_path.length - to.length);
+		const index_at = `${to.split('/').slice(0, -1).join('/')}/index.md`;
+		const index_text = await this.read_file(`${root}${index_at}`);
+		if (index_text !== null) {
+			const taken = without_line_for(index_text, `${was_name}.md`);
+			if (taken.line === '') {
+				debug.log(`Renaming: ${index_at} never named "${was_name}", so nothing was changed there.`);
+			} else {
+				const line = taken.line.replace(/\(([^)]+)\)/, (_whole, address: string) => `(${renamed_address(address, named)})`);
+				const put_back = with_line_added(taken.text, line);
+				const wrote = await save_guide(index_at, put_back.text, index_text);
+				if (wrote.ok) { debug.log(`Renaming: ${index_at} now names "${named}".`); }
+				else { debug.log(`Renaming: ${index_at} was NOT written — ${wrote.why}. It still names "${was_name}".`); }
+			}
+		}
+		show_status(`"${was_name}" is now "${named}" — ${mended} guide(s) mended${refused > 0 ? `, ${refused} refused` : ''}. Starting again so the new name sticks…`);
+		debug.log(`Renamed "${was_name}" to "${named}": the file moved from ${from} to ${to}, ${mended} guide(s) had links mended${refused > 0 ? `, ${refused} refused` : ''}. Now restarting this app's server, since its list of files is settled when its code is prepared.`);
+		restart_and_reload();
+	}
+
+	/**
 	 * Look through every guide's own words for links that lead nowhere. Nothing is changed —
 	 * this only says what it found, the first few on screen and all of them in the log. A link
 	 * to the web is left alone, since nothing here can judge it.
 	 */
 	async find_dead_links(): Promise<void> {
 		const files = this.files;
-		const with_work = get(w_includes_work);
+		const with_work = get(w_purposes).includes(T_Purpose.work);
 		const dead: Finding[] = [];
 		let looked = 0, followed = 0, unreadable = 0;
 
@@ -343,7 +434,6 @@ class Guides {
 	 * folders comes out of the addresses rather than being written down anywhere.
 	 */
 	async load(): Promise<void> {
-		const marker = '/notes/guides/';
 		let read = 0, failed = 0, unlabeled = 0, bytes = 0, skipped = 0;
 
 		// The shared collection's folder is the repo itself, and every project's folder sits
@@ -352,13 +442,28 @@ class Guides {
 		// what a link between two collections needs in order to be followed.
 		const shared_top = this.hierarchy.folder_at(T_Bundle.mono, '', T_Bundle.mono);
 
+		// Both purposes are swept the same way. A design's place inside its collection begins
+		// with "designs", so it can never collide with a guide of the same name, and the folder
+		// it hangs under says which purpose it belongs to at a glance.
+		const sweeps = [
+			{ marker: '/notes/guides/',  found: addresses,        is_design: false, under: '' },
+			{ marker: '/notes/designs/', found: design_addresses, is_design: true,  under: 'designs' },
+		];
+
 		for (const bundle of Object.values(T_Bundle)) {
 			const top = this.hierarchy.folder_at(bundle, '', bundle);
 			if (bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
-			for (const [whole_path, address] of Object.entries(addresses[bundle])) {
-				const at = whole_path.indexOf(marker);
-				const path = at < 0 ? whole_path : whole_path.slice(at + marker.length);
-				const parts = path.split('/');
+			for (const sweep of sweeps) {
+			// A collection with no designs of its own grows no folder for them.
+			const roof = sweep.under === '' ? top : this.hierarchy.folder_at(bundle, sweep.under, sweep.under);
+			if (sweep.under !== '' && Object.keys(sweep.found[bundle]).length > 0) {
+				this.hierarchy.add_relationship(top.id, roof.id);
+			}
+			for (const [whole_path, address] of Object.entries(sweep.found[bundle])) {
+				const at = whole_path.indexOf(sweep.marker);
+				const inside = at < 0 ? whole_path : whole_path.slice(at + sweep.marker.length);
+				const path = sweep.under === '' ? inside : `${sweep.under}/${inside}`;
+				const parts = inside.split('/');
 				const name = parts[parts.length - 1].replace(/\.md$/, '');
 
 				// An index file only lists what sits beside it — the folders here do that job,
@@ -367,9 +472,9 @@ class Guides {
 				if (name === 'index') { skipped += 1; continue; }
 
 				// Walk down the folders in the path, making each the first time it's met.
-				let parent = top;
+				let parent = roof;
 				for (let i = 0; i < parts.length - 1; i++) {
-					const so_far = parts.slice(0, i + 1).join('/');
+					const so_far = sweep.under === '' ? parts.slice(0, i + 1).join('/') : `${sweep.under}/${parts.slice(0, i + 1).join('/')}`;
 					const folder = this.hierarchy.folder_at(bundle, so_far, parts[i]);
 					this.hierarchy.add_relationship(parent.id, folder.id);
 					parent = folder;
@@ -392,13 +497,14 @@ class Guides {
 				const guide = this.hierarchy.add_guide(bundle, path, name, address, {
 					...labels,
 					title: labels.title || name,
-				});
+				}, sweep.is_design);
 				this.hierarchy.add_relationship(parent.id, guide.id);
 				for (const tag of tags) {
 					this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, guide.id);
 				}
 				read += 1;
 				// text goes out of scope here — nothing keeps it
+			}
 			}
 		}
 
@@ -408,23 +514,51 @@ class Guides {
 		this.w_ready.set(true);
 	}
 
-	/** How many files one collection holds. Zero means it has no guides folder yet. */
-	files_in(bundle: string): number {
-		return this.files.filter((g) => g.bundle === bundle).length;
+	/**
+	 * Which files are still within reach, with one filter set aside.
+	 *
+	 * A picking row grays out what would leave nothing — but it must not judge itself: with a
+	 * kind picked, every other kind would look empty if its own choice were counted. So each
+	 * row asks this question with its own filter left out, and the answer says which of its
+	 * words would still find something.
+	 */
+	private within_reach(without: 'project' | 'kind' | 'tags'): Guide[] {
+		const purposes = get(w_purposes);
+		const project  = get(w_project);
+		const kind     = get(w_kind);
+		const tags     = get(w_tags);
+		const words    = get(w_words).trim().toLowerCase();
+		return this.files.filter((guide) => {
+			if (!purposes.includes(guide.is_design ? T_Purpose.designs : T_Purpose.guides)) { return false; }
+			if (without !== 'project' && project !== '' && guide.bundle !== project) { return false; }
+			if (without !== 'kind' && kind !== '' && guide.kind !== kind) { return false; }
+			if (without !== 'tags' && tags.length > 0 && !tags.some((tag) => this.hierarchy.tag_names_of(guide.id).includes(tag))) { return false; }
+			if (words !== '' && !`${guide.title} ${guide.description}`.toLowerCase().includes(words)) { return false; }
+			return true;
+		});
 	}
 
-	/** Every kind that actually turns up in the files, in alphabetical order. */
+	/** How many files one collection still has within reach of the other filters. */
+	files_in(bundle: string): number {
+		return this.within_reach('project').filter((g) => g.bundle === bundle).length;
+	}
+
+	/** Every kind still within reach of the other filters, in alphabetical order. */
 	kinds_present(): string[] {
 		const seen: string[] = [];
-		for (const guide of this.files) {
+		for (const guide of this.within_reach('kind')) {
 			if (guide.kind && !seen.includes(guide.kind)) { seen.push(guide.kind); }
 		}
 		return seen.sort();
 	}
 
-	/** Every tag that actually turns up, in alphabetical order. */
+	/** Every tag still within reach of the other filters, in alphabetical order. */
 	tags_present(): string[] {
-		return ALL_TAGS.filter((tag) => this.hierarchy.tags.some((t) => t.name === tag)).sort();
+		const worn = new Set<string>();
+		for (const guide of this.within_reach('tags')) {
+			for (const tag of this.hierarchy.tag_names_of(guide.id)) { worn.add(tag); }
+		}
+		return ALL_TAGS.filter((tag) => worn.has(tag)).sort();
 	}
 
 	/** Say what the reading turned up, with the counts behind every claim. */

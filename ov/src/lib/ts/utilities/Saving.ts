@@ -10,19 +10,48 @@ import { T_Bundle } from '../types/Guide';
 
 export type Saved = { ok: boolean; why: string };
 
-// Where a guide sits, counting from the top of the repo. The shared collection is the repo
-// itself, so its guides have no project folder above them; every other collection does.
-export function file_path_of(bundle: T_Bundle, path: string): string {
-	const ending = path.endsWith('.md') ? path : `${path}.md`;
-	const under  = `notes/guides/${ending}`;
-	return bundle === T_Bundle.mono ? under : `${bundle}/${under}`;
+// A collection's notes folder, counting from the top of the repo. The shared collection is
+// the repo itself, so its notes have no project folder above them; every other one does.
+function notes_of(bundle: T_Bundle): string {
+	return bundle === T_Bundle.mono ? 'notes' : `${bundle}/notes`;
 }
 
-// The folder a guide sits in, counting from the top of the repo. A collection's own top
-// folder has no place inside it, so the guides folder itself is the answer.
+// Where a file sits, counting from the top of the repo. A design's place already begins with
+// "designs", so it hangs straight off the notes folder; everything else is under guides.
+export function file_path_of(bundle: T_Bundle, path: string): string {
+	const ending = path.endsWith('.md') ? path : `${path}.md`;
+	const inside = ending.startsWith('designs/') ? ending : `guides/${ending}`;
+	return `${notes_of(bundle)}/${inside}`;
+}
+
+// The folder a file sits in, counting from the top of the repo. A collection's own top folder
+// has no place inside it, so the guides folder itself is the answer.
 export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
-	const guides = bundle === T_Bundle.mono ? 'notes/guides' : `${bundle}/notes/guides`;
-	return folder_path === '' ? guides : `${guides}/${folder_path}`;
+	const notes = notes_of(bundle);
+	if (folder_path === '') { return `${notes}/guides`; }
+	return folder_path.startsWith('designs') ? `${notes}/${folder_path}` : `${notes}/guides/${folder_path}`;
+}
+
+// Ask for this app's own server to be restarted, and reload the page once it is answering
+// again. Overview settles its list of guide files when its code is prepared, so a file that
+// moved or was renamed only shows in its new place after this.
+export async function restart_and_reload(): Promise<void> {
+	try {
+		await fetch('http://localhost:5171/restart-server?which=ov', { method: 'POST' });
+	} catch {
+		// The restart itself may cut the answer short; the waiting below decides.
+	}
+	// Wait for the server to answer again, then come back to the same page.
+	for (let tries = 0; tries < 40; tries++) {
+		await new Promise((then) => setTimeout(then, 500));
+		try {
+			const answer = await fetch(`${location.origin}/?awake=${tries}`, { cache: 'no-store' });
+			if (answer.ok) { location.reload(); return; }
+		} catch {
+			// not up yet
+		}
+	}
+	location.reload();      // give up waiting and try anyway
 }
 
 // Show one folder in the Finder. Only the small local server can do it, since a page served

@@ -11,7 +11,7 @@ export enum T_Kind {
 	reference    = 'reference',
 }
 
-// The closed tag list — twenty-two, nothing invented on the spot.
+// The closed tag list — twenty-three, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
 	'architecture',
 	'build',
@@ -31,6 +31,7 @@ export const ALL_TAGS: string[] = [
 	'research',
 	'session-start',
 	'setup',
+	'stale',
 	'testing',
 	'tools',
 	'user-interface',
@@ -63,7 +64,16 @@ export type Guide = Labels & {
 	path      : string;      // where it sits inside that collection, folders and all
 	address   : string;      // where its text can be read from, if ever wanted
 	is_folder : boolean;
+	is_design : boolean;     // a design says how a thing was built, a guide says how to work
 };
+
+// The two purposes the app can show: how to work, and how a thing was built. At least one is
+// always picked, and both may be.
+export enum T_Purpose {
+	guides  = 'guides',
+	designs = 'designs',
+	work    = 'work',
+}
 
 // A guide paired with the tags on it — what a listing hands back. A folder appears
 // too, so the shape of the folders shows. The tags are gathered once, here, so nothing

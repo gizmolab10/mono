@@ -23,6 +23,11 @@ describe('working out where a guide sits', () => {
 	it('adds the ending when the path has none', () => {
 		expect(file_path_of(T_Bundle.ji, 'roadmap')).toBe('ji/notes/guides/roadmap.md');
 	});
+
+	it('puts a design in the designs folder, not under guides', () => {
+		expect(file_path_of(T_Bundle.ws, 'designs/styles.md')).toBe('ws/notes/designs/styles.md');
+		expect(file_path_of(T_Bundle.mono, 'designs/a plan.md')).toBe('notes/designs/a plan.md');
+	});
 });
 
 describe('working out where a folder sits', () => {
@@ -34,6 +39,11 @@ describe('working out where a folder sits', () => {
 	it('adds the folder\'s place inside its collection', () => {
 		expect(folder_path_of(T_Bundle.di, 'architecture/core')).toBe('di/notes/guides/architecture/core');
 		expect(folder_path_of(T_Bundle.mono, 'pre-flight')).toBe('notes/guides/pre-flight');
+	});
+
+	it('puts the designs folder beside guides rather than inside it', () => {
+		expect(folder_path_of(T_Bundle.ws, 'designs')).toBe('ws/notes/designs');
+		expect(folder_path_of(T_Bundle.ji, 'designs/older')).toBe('ji/notes/designs/older');
 	});
 });
 

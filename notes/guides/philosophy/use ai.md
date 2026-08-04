@@ -6,7 +6,15 @@ tags: [philosophy, notes]
 date: 2026-05-10
 ---
 
-# Motive
+# How we use AI
+
+## How It Started
+
+My first uses for AI were one-off: gee, how do you do such-and-such? I'd take the advice, often asking for more. Over time, I noticed I was asking the same things repeatedly because I wouldn't remember the answers. So I started asking AI to write concise descriptions of what we did together, in markdown.
+
+The pile grew unmanageable. I asked AI to help: find redundancies, tighten the writing, make it easy to use. What I have now: clean separation of purpose.
+
+Then I asked if these markdown files could be published as a static website. BOOM — up-to-date documentation, something I have NEVER before encountered. And more: a shared context that lets AI pick up exactly where we left off.
 
 ## The Philosophy Underneath
 
@@ -18,7 +26,7 @@ Work files are just that — things we need to know and things we did. Guides ar
 
 ### Dual purpose
 
-Documentation has two audiences: me, a lot later and rather forgetful, and AI the amnesiac.
+Documentation has two audiences: me and AI the amnesiac.
 
 Work tracking is the other side of the coin. Focus, details, decisions. Later, read the file, know exactly where we are. My brain feels better just saying this.
 
@@ -31,14 +39,6 @@ Files stay focused. It might be a class, it might be a concern. When something g
 We describe our process, too. Like, "ugh, this thing is badly broken." Pause and scratch noggin. Often enough something cool settles into play.
 
 Patterns come from pain — why else remember them?
-
-## How It Started
-
-My first uses for AI were one-off: gee, how do you do such-and-such? I'd take the advice, often asking for more. Over time, I noticed I was asking the same things repeatedly because I wouldn't remember the answers. So I started asking AI to write concise descriptions of what we did together, in markdown.
-
-The pile grew unmanageable. I asked AI to help: find redundancies, tighten the writing, make it easy to use. What I have now: clean separation of purpose.
-
-Then I asked if these markdown files could be published as a static website. BOOM — up-to-date documentation, something I have NEVER before encountered. And more: a shared context that lets AI pick up exactly where we left off.
 
 ## Why This Works
 

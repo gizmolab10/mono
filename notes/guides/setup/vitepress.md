@@ -1,8 +1,8 @@
 ---
-kind: reference
+kind: procedure
 title: "VitePress Configuration"
 description: "How the monorepo's documentation sites are configured."
-tags: [build, deploy]
+tags: [build, deploy, setup]
 date: 2026-05-10
 ---
 

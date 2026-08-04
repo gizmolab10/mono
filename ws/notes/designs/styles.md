@@ -2,7 +2,7 @@
 kind: architecture
 title: "Color Management"
 description: "One place that works out every color from the current state."
-tags: [architecture, visual-design]
+tags: [architecture, stale, visual-design]
 date: 2026-01-12
 ---
 

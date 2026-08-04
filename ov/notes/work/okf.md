@@ -58,6 +58,7 @@ From the project guides:
 20. **user-interface** — the parts a person sees and touches: controls, layout, selection, navigation
 21. **platform** — what a particular host or framework demands of us
 22. **research** — a subject studied before deciding, not a decision already made
+23. **stale** — this one has fallen behind what it describes, and wants a rewrite
 
 Where the last six land, so the list can be checked against real files rather than taken on faith: **architecture** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **user-interface** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
 
@@ -116,7 +117,7 @@ So: one folder shape, used in all four. A folder that a bundle has nothing to sa
 
 Every file's title and description, listed on one page, grouped by kind. That page is the big picture, and it is not hand-written — it is assembled from what the labels already say, so it cannot drift out of step with the files the way a hand-kept summary does. Today's hand-kept summary is [synopsis of our guides](../../../notes/guides/synopsis%20of%20our%20guides.md); it is thorough and it is stale the moment a file changes.
 
-One map per bundle, plus one that stitches the four together. Reading the stitched one is the whole corpus in a few minutes.
+One map per bundle, plus one that stitches the four together. Reading the stitched one is every guide in a few minutes.
 
 ### Tags are the way in to a specific issue
 
@@ -145,7 +146,7 @@ That last count is the argument for closing the tag list: overview shows the tag
 
 ## Encapsulate for opensourcing
 
-Everything this proposal defines — the five kinds, the twenty-two tags, the short names of the collections, and the handling that goes with them — is spread across overview's files today. The idea is to gather it into one file of its own, at `ov/src/lib/ts/common/okf`, so that the format has a single home in the code.
+Everything this proposal defines — the five kinds, the twenty-three tags, the short names of the collections, and the handling that goes with them — is spread across overview's files today. The idea is to gather it into one file of its own, at `ov/src/lib/ts/common/okf`, so that the format has a single home in the code.
 
 **Pro.** Every rule of the format lands in one place: the kinds, the tags, the collection names, reading the labels off a file's top, and throwing out a tag that isn't on the list. What a guide *is* — its shape as a thing the app holds — stays separate from what the format *allows*. Adding a tag or a collection becomes a one-file change. And when the format goes out into the world, the file that defines it is the file you hand over.
 

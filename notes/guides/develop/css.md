@@ -2,7 +2,7 @@
 kind: reference
 title: "CSS Lessons"
 description: "Styling patterns and gotchas learned from real work; static markup, dynamic appearance."
-tags: [visual-design, code-style]
+tags: [code-style, visual-design]
 date: 2026-05-10
 ---
 

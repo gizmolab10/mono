@@ -8,20 +8,6 @@
         "type": "tabs",
         "children": [
           {
-            "id": "706a56713dfe72a1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ji/notes/guides/map.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "map"
-            }
-          },
-          {
             "id": "14b6ec19895b3d59",
             "type": "leaf",
             "state": {
@@ -36,17 +22,17 @@
             }
           },
           {
-            "id": "b21725f8707c6521",
+            "id": "d6406fdbad190382",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/guides/editing.md",
+                "file": "ov/notes/work/repair staleness.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "editing"
+              "title": "repair staleness"
             }
           },
           {
@@ -63,7 +49,8 @@
               "title": "okf"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -95,7 +82,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "Dimensions.latest.spec",
+                "query": "file:port",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -198,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ji/notes/guides/map.md",
+                "file": "ov/notes/work/repair staleness.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of map"
+              "title": "Outline of repair staleness"
             }
           },
           {
@@ -236,44 +223,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "706a56713dfe72a1",
+  "active": "d6406fdbad190382",
   "lastOpenFiles": [
-    "ji/notes/work/proposals/persistables proposal.md",
-    "ji/notes/guides/map.md",
-    "ov/notes/work/tags.hierarchy.md",
-    "ov/notes/work/code debt.md",
-    "ov/src/lib/ts/types/Guide.ts.tmp.49972.fc4a75049ef1",
-    "ws/vite.config.js.timestamp-1785777592620-72f59e1b6d8d9.mjs",
-    "di/notes/guides/project/philosophy/update guides.md",
-    "notes/guides/develop/keep shop.md",
-    "notes/guides/develop/create a proposal.md",
-    "notes/guides/develop/create a design.md",
-    "di/notes/guides/development/rules/dimensionals.md",
-    "di/notes/work/milestones/done/34.dimensionals/dimensions.latest.spec.md",
-    "ov/src/lib/svelte/content/D_Repair.svelte.tmp.49972.806d409bb0e6",
-    "notes/guides/develop/creating a design.md",
-    "ov/src/lib/svelte/content/Report.svelte",
-    "ov/src/lib/svelte/content/D_Repair.svelte.tmp.49972.976746400bc0",
-    "ov/notes/guides/pre-flight/index.md",
-    "ov/notes/guides/index.md",
-    "ji/notes/guides/specifications/index.md",
-    "ji/notes/guides/pre-flight/index.md",
-    "ji/notes/guides/index.md",
-    "ov/src/lib/svelte/main/Details.svelte.tmp.49972.7beadfd5f4cd",
-    "ov/src/lib/svelte/content/D_Repair.svelte",
-    "ov/src/lib/svelte/content/D_Tools.svelte",
-    "notes/guides/setup/add a guide.md",
-    "notes/guides/develop/add a guide.md",
-    "ws/vite.config.js.timestamp-1785722584947-e10bc2563f7e2.mjs",
-    "notes/guides/develop/shop keeping.md",
-    "notes/guides/develop/creating a proposal.md",
-    "ov/src/lib/ts/tests/index_files.test.ts",
-    "ov/notes/guides/editing.md",
+    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.07eebe40daa8",
+    "ov/src/lib/svelte/content/List_Files.svelte",
+    "ov/src/lib/svelte/content/View_File.svelte",
+    "ov/src/lib/svelte/content/List_Guides.svelte.tmp.49972.3ceda0a53c8c",
+    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.40ce9b8ce66c",
     "ov/notes/work/okf.md",
-    "notes/guides/pre-flight/index.md",
-    "ws/notes/guides/architecture/ux/index.md",
-    "di/notes/guides/architecture/index.md",
+    "ov/notes/guides/editing.md",
+    "ov/notes/work/code debt.md",
+    "ov/notes/work/repair staleness.md",
+    "ji/notes/designs/hierarchy spec.md",
+    "ji/notes/designs/db spec.md",
+    "ws/notes/designs/paging.md",
+    "ws/notes/designs/styles.md",
+    "ws/notes/designs/breadcrumbs.md",
+    "ji/notes/designs",
+    "ws/notes/designs",
+    "ov/notes/work/rewritten guides.md",
+    "notes/guides/pre-flight/always.md",
+    "ov/notes/work/stale guides.md",
+    "ov/src/lib/svelte/content/List_Guides.svelte",
+    "ov/src/lib/svelte/content/View_Guide.svelte.tmp.49972.39bd137128e4",
     "notes/guides/philosophy/limitations.md",
+    "notes/guides/philosophy/motive.md",
+    "notes/guides/philosophy/use ai.md",
+    "notes/guides/develop/port.md",
+    "notes/guides/collaborate/write a journal.md",
+    "notes/guides/develop/specification driven development.md",
+    "notes/guides/develop/style guide.md",
+    "notes/guides/develop/refactor.md",
+    "notes/guides/develop/markdown structure.md",
+    "ws/vite.config.js.timestamp-1785783665819-13d7770856f61.mjs",
+    "ov/notes/work/tags.hierarchy.md",
+    "notes/guides/hub/index.md",
+    "notes/guides/develop/migrate.md",
+    "ji/notes/guides/map.md",
+    "ov/src/lib/ts/types/Guide.ts.tmp.49972.fc4a75049ef1",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

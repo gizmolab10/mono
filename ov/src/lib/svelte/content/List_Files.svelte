@@ -227,7 +227,11 @@
 	const shows_kind = $derived($w_show_folders || $w_kind === '');
 	const columns = $derived([
 		// With a kind picked, this column holds only the folder counts, so it narrows to fit them.
-		...(shows_kind    ? [{ label: 'kind',    width: $w_kind === '' ? '90px' : '30px', sort: T_Sort.kind }] : []),
+		// With a kind picked, this column holds only the folder counts, so its title goes: the
+		// count row above already says which kind was picked.
+		// The one column says two things: a file's kind, and how many matching files a folder
+		// holds — so its title names both.
+		...(shows_kind    ? [{ label: $w_kind === '' ? 'kind/children' : 'children', width: $w_kind === '' ? '110px' : '70px', sort: T_Sort.kind }] : []),
 		...(shows_project ? [{ label: 'project', width: '85px',  sort: T_Sort.project }] : []),
 		{ label: 'name', width: 'auto',  sort: T_Sort.name },
 		{ label: 'tags', width: '170px', sort: T_Sort.tags },
@@ -350,6 +354,7 @@
 {/snippet}
 
 <div class='list'>
+	{#if shown.length !== 0}
 		<!-- The header is its own table, sitting still above the scrolled rows, so the
 		     scrollbar runs only beside the rows and not past the titles. The divider runs
 		     behind it, centered on the row, and each title's page-colored background breaks
@@ -362,13 +367,17 @@
 					<tr class='head'>
 						{#each columns as col}
 							{@const place = can_sort ? place_of.get(col.sort) : undefined}
-							<th class:name-head={col.label === 'name'} class:kind-head={col.label === 'kind'} class:project-head={col.label === 'project'}>
-								<button
-									class='head-label'
-									class:sortable={can_sort}
-									class:sorted={!!place}
-									use:tip={can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `also sort by ${col.label}`) : false}
-									onclick={() => sort_by_column(col.sort)}><span class='head-words'>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</span></button>
+							<th class:name-head={col.label === 'name'} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'}>
+								<!-- A column with no title of its own draws nothing here, so the line
+								     behind runs unbroken. -->
+								{#if col.label !== '' || place}
+									<button
+										class='head-label'
+										class:sortable={can_sort}
+										class:sorted={!!place}
+										use:tip={can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `also sort by ${col.label}`) : false}
+										onclick={() => sort_by_column(col.sort)}><span class='head-words'>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</span></button>
+								{/if}
 							</th>
 						{/each}
 					</tr>
@@ -401,9 +410,11 @@
 				</tbody>
 			</table>
 		</div>
+	{/if}
 </div>
 
 <style>
+
 	.list {
 		flex           : 1 1 auto;
 		flex-direction : column;

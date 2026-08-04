@@ -40,6 +40,36 @@ export function without_line_for(text: string, file_name: string): { text: strin
 	return { text: lines.join('\n'), line };
 }
 
+// One guide's words with a section put in at the top, under its own heading if it has one,
+// otherwise before everything. A guide that already carries this section is left alone, so
+// pressing the button twice changes nothing the second time.
+export function with_section_at_top(text: string, heading: string, words: string): { text: string; added: boolean } {
+	if (text.includes(heading)) { return { text, added: false }; }
+	const lines = text.split('\n');
+	// Past the labels, if it carries any, then past its own first heading.
+	let at = 0;
+	if (lines[0]?.trim() === '---') {
+		const ends = lines.findIndex((line, n) => n > 0 && line.trim() === '---');
+		if (ends > 0) { at = ends + 1; }
+	}
+	while (at < lines.length && lines[at].trim() === '') { at += 1; }
+	if (lines[at]?.startsWith('#')) { at += 1; }
+	while (at < lines.length && lines[at].trim() === '') { at += 1; }
+	const put = [heading, '', words, ''];
+	return { text: [...lines.slice(0, at), ...put, ...lines.slice(at)].join('\n'), added: true };
+}
+
+// The same address, with the file it names given a different name. The folders before it,
+// the heading after it, and whether the ending was written at all are all left as they were.
+export function renamed_address(address: string, new_name: string): string {
+	const [before, ...rest] = address.split('#');
+	const heading = rest.length > 0 ? `#${rest.join('#')}` : '';
+	const parts = before.split('/');
+	const had_ending = /\.md$/i.test(parts[parts.length - 1]);
+	parts[parts.length - 1] = encodeURIComponent(new_name) + (had_ending ? '.md' : '');
+	return `${parts.join('/')}${heading}`;
+}
+
 // How one file is named from inside a folder: "./" and down for something below, "../" for
 // each folder that has to be climbed first. Both places are named from the top of the repo.
 export function relative_address(from_folder: string, to_file: string): string {

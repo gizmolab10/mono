@@ -2,7 +2,7 @@ import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records'
 import type { Guide, Labels, Filtered_Guide } from '../types/Guide';
 import type { Sort } from './Filters';
 import { Indexes } from '../database/Indexes';
-import { T_Bundle, key_of } from '../types/Guide';
+import { T_Bundle, T_Purpose, key_of } from '../types/Guide';
 import { debug } from '../common/Debug';
 
 /**
@@ -49,7 +49,7 @@ export class Hierarchy {
 	// One instant lookup per kind of question: a node by its id, and a folder by the
 	// place it sits, so building the structure never scans the whole list.
 	private folders_byPath = new Map<string, Guide>();
-	private guides_byID    = new Map<string, Guide>();
+	private files_byID    = new Map<string, Guide>();
 
 	// --- making nodes ---------------------------------------------------------
 
@@ -62,22 +62,22 @@ export class Hierarchy {
 
 	private register(guide: Guide): Guide {
 		this.guides.push(guide);
-		this.guides_byID.set(guide.id, guide);
+		this.files_byID.set(guide.id, guide);
 		return guide;
 	}
 
 	/** A folder: a do-nothing node whose contents are linked under it. */
 	add_folder(bundle: T_Bundle, path: string, name: string): Guide {
 		return this.register({
-			id: this.fresh_id(), name, bundle, path, address: '', is_folder: true,
+			id: this.fresh_id(), name, bundle, path, address: '', is_folder: true, is_design: false,
 			kind: '', title: name, description: '', date: '', labeled: false,
 		});
 	}
 
 	/** A file, carrying whatever labels were read off its top. */
-	add_guide(bundle: T_Bundle, path: string, name: string, address: string, labels: Labels): Guide {
+	add_guide(bundle: T_Bundle, path: string, name: string, address: string, labels: Labels, is_design = false): Guide {
 		return this.register({
-			id: this.fresh_id(), name, bundle, path, address, is_folder: false, ...labels,
+			id: this.fresh_id(), name, bundle, path, address, is_folder: false, is_design, ...labels,
 		});
 	}
 
@@ -175,7 +175,7 @@ export class Hierarchy {
 
 	// --- the reads ------------------------------------------------------------
 
-	guide_byID(id: string): Guide | null { return this.guides_byID.get(id) ?? null; }
+	guide_byID(id: string): Guide | null { return this.files_byID.get(id) ?? null; }
 
 	/** The name of every tag on one guide. */
 	tag_names_of(guide_id: string): string[] {
@@ -221,6 +221,13 @@ export class Hierarchy {
 	// --- following a link out of a guide --------------------------------------
 
 	/** The folders above one guide, nearest first, up to the top. */
+	/** The folder one guide hangs under, or nothing for a root. */
+	folder_holding(guide: Guide): Guide | null {
+		const up = this.indexes.relationships_by_child.get(guide.id);
+		if (!up || up.length === 0) { return null; }
+		return this.guide_byID(up[0].parent_id);
+	}
+
 	private ancestry_of(id: string): string[] {
 		const chain: string[] = [];
 		let at = id;
@@ -290,8 +297,10 @@ export class Hierarchy {
 	 * Does one row survive the three filters? Folders never match on their own — they
 	 * come back only by holding something that did.
 	 */
-	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string): boolean {
+	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string, purposes: T_Purpose[]): boolean {
 		if (row.guide.is_folder) { return false; }
+		// How to work, how a thing was built, or both — at least one is always picked.
+		if (!purposes.includes(row.guide.is_design ? T_Purpose.designs : T_Purpose.guides)) { return false; }
 		if (project !== '' && row.guide.bundle !== project) { return false; }
 		if (kind !== '' && row.guide.kind !== kind) { return false; }
 		if (tags.length > 0 && !tags.some((tag) => row.tag_names.includes(tag))) { return false; }
@@ -318,7 +327,7 @@ export class Hierarchy {
 		return row.tag_names.join(', ');
 	}
 
-	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = []): void {
+	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], purposes: T_Purpose[] = [T_Purpose.guides]): void {
 		const all = this.list_guides();
 		this.all_guides = new Map(all.map((r) => [r.key, r]));
 		const closed = new Set(shut);
@@ -329,7 +338,7 @@ export class Hierarchy {
 			? all.filter((r) => !r.ancestor_keys.some((a) => closed.has(a)))
 			: all;
 
-		const matched = all.filter((r) => this.matches(r, project, kind, tags, words));
+		const matched = all.filter((r) => this.matches(r, project, kind, tags, words, purposes));
 		this.matched_count = matched.length;
 		const keep = new Set(matched.map((r) => r.key));
 		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }
@@ -377,7 +386,7 @@ export class Hierarchy {
 
 	/** The guides wearing one tag. */
 	filter_by_tag(tag_id: string): Guide[] {
-		const wanted = new Set(this.indexes.guides_withTag(tag_id));
+		const wanted = new Set(this.indexes.files_withTag(tag_id));
 		return this.guides.filter((g) => wanted.has(g.id));
 	}
 

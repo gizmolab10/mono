@@ -2,7 +2,7 @@
 kind: procedure
 title: "VitePress (ws)"
 description: "Installing, configuring, and running the documentation site."
-tags: [platform, build]
+tags: [build, platform, setup]
 date: 2026-01-12
 ---
 

@@ -179,7 +179,7 @@ When a new rule is added — from feature work or from an audit sprint that expo
 4. **Add a `test:` pointer line** under the rule prose. The extractor checks the file resolves.
 5. **Add a `code:` pointer line** under the rule prose. The line range is the smallest span that proves the rule.
 6. **Add a `stipulation:` back-pointer** on the test entry in the test index.
-7. **Audit the area when fully covered.** Count its load-bearing modules and update `areas.json`. The dashboard switches that area from "not yet audited" to a real coverage figure.
+7. **Audit the area when fully covered.** Count its load-bearing modules and update the areas file the extractor reads, at `notes/guides/project/development/areas.json`. That file is not there today, so the dashboard has no coverage figures to show until it is written.
 8. **Run `yarn adherence`.** Confirm the rule appears in the matched count with zero uncovered, orphan, or malformed.
 
 A rule that mixes the old and new shape is flagged malformed; the extractor's exit code fails the build, so it never goes through silently. The fixture validator at `node notes/tools/validate-adherence.mjs` re-runs on demand and confirms the parser still behaves correctly.

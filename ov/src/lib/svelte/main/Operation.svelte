@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_operation, w_viewed, w_can_back, w_can_forward, T_Operation, step_view, close_view } from '../../ts/managers/Operations';
-	import View_Guide from '../content/View_Guide.svelte';
+	import View_File from '../content/View_File.svelte';
 	import Report from '../content/Report.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import Browse from '../content/Browse.svelte';
@@ -23,7 +23,7 @@
 	{#if $w_operation === T_Operation.report}
 		<Report />
 	{:else if $w_operation === T_Operation.view && $w_viewed}
-		<View_Guide
+		<View_File
 			name={$w_viewed.guide.name}
 			address={$w_viewed.guide.address}
 			kind={$w_viewed.guide.kind}

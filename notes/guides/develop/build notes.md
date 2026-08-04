@@ -2,7 +2,7 @@
 kind: procedure
 title: "Build Notes"
 description: "How to hand-distill the build-notes table from the change history."
-tags: [notes, build]
+tags: [build, notes, tools]
 date: 2026-05-10
 ---
 

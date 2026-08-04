@@ -1,4 +1,4 @@
-import { file_named_by, fresh_index, line_for, relative_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
+import { file_named_by, fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, with_section_at_top, without_line_for } from '../utilities/Index_Files';
 import { describe, expect, it } from 'vitest';
 
 // Mending the two index files a move leaves lying. Nothing on screen shows these files, so
@@ -140,6 +140,50 @@ describe('putting a line into an index', () => {
 		expect(into_more).toBe(false);
 		expect(text).toContain('- [First](./first.md)');
 		expect(text.startsWith('# Empty')).toBe(true);
+	});
+});
+
+describe('putting a section in at the top', () => {
+	const labelled = '---\nkind: rule\n---\n\n# A Guide\n\nsome words\n\n## Later\n\nmore\n';
+
+	it('goes under the guide\'s own heading, before everything else', () => {
+		const { text, added } = with_section_at_top(labelled, '## Proposed rewrite', 'say it shorter');
+		expect(added).toBe(true);
+		expect(text).toBe('---\nkind: rule\n---\n\n# A Guide\n\n## Proposed rewrite\n\nsay it shorter\n\nsome words\n\n## Later\n\nmore\n');
+	});
+
+	it('goes at the very top of a guide with no heading of its own', () => {
+		const { text } = with_section_at_top('just words\n', '## Proposed rewrite', 'say it shorter');
+		expect(text).toBe('## Proposed rewrite\n\nsay it shorter\n\njust words\n');
+	});
+
+	it('leaves a guide that already carries the section exactly as it is', () => {
+		const once = with_section_at_top(labelled, '## Proposed rewrite', 'say it shorter').text;
+		const twice = with_section_at_top(once, '## Proposed rewrite', 'say it differently');
+		expect(twice.added).toBe(false);
+		expect(twice.text).toBe(once);
+	});
+});
+
+describe('giving the file an address names a different name', () => {
+	it('keeps the folders before it', () => {
+		expect(renamed_address('./core/units.md', 'measures')).toBe('./core/measures.md');
+	});
+
+	it('keeps a heading after it', () => {
+		expect(renamed_address('../other/old.md#naming', 'new')).toBe('../other/new.md#naming');
+	});
+
+	it('leaves the ending off when the address had none', () => {
+		expect(renamed_address('./old', 'new')).toBe('./new');
+	});
+
+	it('spells out a space in the new name', () => {
+		expect(renamed_address('./old.md', 'add a guide')).toBe('./add%20a%20guide.md');
+	});
+
+	it('handles an address with no folders at all', () => {
+		expect(renamed_address('old.md', 'new')).toBe('new.md');
 	});
 });
 

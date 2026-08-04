@@ -106,7 +106,7 @@
 <svelte:window onresize={handleResize} />
 
 {#if $w_app === S_App.launch}
-	<div class='launch'>setting up the guides browser...</div>
+	<div class='launch'>setting up the overview browser...</div>
 {:else}
 
 {#if showBuildNotes}
