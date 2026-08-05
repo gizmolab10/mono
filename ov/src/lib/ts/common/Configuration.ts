@@ -25,11 +25,13 @@ class Configuration {
 	 */
 	configure_metrics(): void {
 		const root = document.documentElement.style;
+		root.setProperty('--gap-huge',           `${k.gap.huge}px`);
 		root.setProperty('--gap-fat',            `${k.gap.fat}px`);
 		root.setProperty('--gap-small',          `${k.gap.small}px`);
 		root.setProperty('--gap-tight',          `${k.gap.tight}px`);
 		root.setProperty('--gap',                `${k.gap.default}px`);
 		root.setProperty('--gap-details',        `${k.gap.details}px`);
+		root.setProperty('--gap-micro',          `${k.gap.micro}px`);
 		root.setProperty('--radius',             `${k.radius.corner.main}px`);
 		root.setProperty('--radius-banner',      `${k.radius.corner.banner}px`);
 		root.setProperty('--radius-build',       `${k.radius.corner.build}px`);

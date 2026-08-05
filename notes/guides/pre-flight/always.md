@@ -2,7 +2,7 @@
 kind: rule
 title: "Always"
 description: "The two standing rule sets — how to reply and how to work — and the few rules that belong to neither."
-tags: [session-start, collaboration]
+tags: [session, team]
 date: 2026-08-01
 ---
 

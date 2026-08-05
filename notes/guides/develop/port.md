@@ -2,7 +2,7 @@
 kind: howto
 title: "Porting Code"
 description: "How to move a capability from one project to another: read the source, describe it, write a spec at the destination."
-tags: [porting]
+tags: [port]
 date: 2026-05-10
 ---
 

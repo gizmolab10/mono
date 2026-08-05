@@ -2,7 +2,7 @@
 kind: wiring
 title: "State (ws)"
 description: "State objects that outlive a component rebuild, paired with stores for reactivity."
-tags: [wiring, data]
+tags: [wire, data]
 date: 2026-01-28
 ---
 

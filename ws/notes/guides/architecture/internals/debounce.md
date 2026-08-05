@@ -2,7 +2,7 @@
 kind: wiring
 title: "Debounce and Timing"
 description: "Ten scattered timing patterns, and the proposal to bring them into one place."
-tags: [wiring, refactoring]
+tags: [wire, refactor]
 date: 2026-01-20
 ---
 

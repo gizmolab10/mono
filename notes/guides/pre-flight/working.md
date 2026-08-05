@@ -2,7 +2,7 @@
 kind: rule
 title: "Working"
 description: "How the work itself is done: what to touch, what to prove, and what never to change unasked."
-tags: [session-start, collaboration, code-style]
+tags: [session, team, style]
 date: 2026-08-01
 ---
 

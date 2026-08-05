@@ -2,7 +2,7 @@
 kind: lookup
 title: "Map (ov)"
 description: "Every source file in overview, updated whenever files are added, moved, or removed."
-tags: [notes, wiring]
+tags: [notes, wire]
 date: 2026-07-31
 ---
 
@@ -38,7 +38,8 @@ Overview's files. Update this when files are added, moved, or removed.
 ## src/lib/svelte/support/ — the pieces the rest lean on
 
 - `Filters.svelte` — the five filters across the top: words looked for in titles and descriptions, then any number of tags, one kind at a time, one project at a time, and which purposes show — guides, designs, or both. The purposes and the projects share one row, each half the width, with its own word centered above it; the last purpose left on cannot be turned off. A toggle at the far left of the top row folds all the picking rows away, leaving the search field; the choice is remembered. What kinds and tags exist isn't known until the files are read, so both lists fill themselves the moment that finishes.
-- `Separator.svelte` — a colored divider with little rounded flares at its ends, and an optional word sitting on it. **⟵ji**
+- `Big_Pill.svelte` — one area of tags standing as a single pill. Shut it is one word — the area's own name, or the names of whatever inside it is picked. Open it holds a cross at the left and its tags as one unbroken run of segments at the right, both inside a second border drawn within the first. Opening one leaves the others as they are, and picking a tag leaves it open. A tag nothing is left wearing goes; with one left the area steps aside and that tag stands as a plain pill; with none left the area is gone.
+- `Separator.svelte` — a colored divider with little rounded flares at its ends, and one or more words sitting on it, spread evenly along its length. A word can be a button. **⟵ji**
 - `Hideable.svelte` — a collapsible titled banner. **⟵ji**
 - `ToolTip.svelte` — the hover hint, drawn ourselves because the browser's own waits a second and can't be hurried. One is mounted at the app root. **⟵ji**
 
@@ -57,6 +58,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `managers/Preferences.ts` — what the browser remembers between visits. Every name reads `ov_` then the parts joined by underscores, and the name in the code is the name in the browser. None of ji's renaming and sweeping code came over: overview has no old names to bring forward.
 - `database/Indexes.ts` — the instant lookups (tags by file, files by tag, children by folder, parents by file), rebuilt whenever the records change. **⟵ji**
 - `types/Guide.ts` — what a guide is: the five kinds, the closed list of twenty-four tags, the five collections, the five labels off a file's top, and a listed row — a guide together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything.
+- `types/Tag_Areas.ts` — the tags gathered into six areas, so twenty-four words can be read a handful at a time. The areas are only a way of reading the list, not a second thing to filter by: every tag belongs to exactly one, and the tests prove the two lists agree. Also answers which of an area's tags are still worth showing, and what a shut area reads.
 - `types/App.ts` — the two states the app can be in: setting up, and ready.
 - `types/Details.ts` — the sections inside the details column, by name.
 - `types/DB_Records.ts` — the record shapes the hierarchy keeps: tags, tag placements, folder links, and link meanings. **⟵ji**
@@ -76,6 +78,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `saving.test.ts` — working out where a guide sits, counting from the top of the repo.
 - `labels.test.ts` — writing the five labels back to the top of a file.
 - `index_files.test.ts` — mending the index files a move leaves lying.
+- `tag_areas.test.ts` — that the six areas and the closed tag list agree exactly, what an area offers, and what a shut one reads.
 
 ## src/lib/ — styles and data
 

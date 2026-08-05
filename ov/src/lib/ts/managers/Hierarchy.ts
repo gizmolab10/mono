@@ -190,8 +190,18 @@ export class Hierarchy {
 	 */
 	list_guides(): Filtered_Guide[] {
 		const by_id = new Map(this.tags.map((t) => [t.id, t.name]));
-		const roots = this.indexes.roots_among(this.guides.map((g) => g.id));
 		const listed: Filtered_Guide[] = [];
+
+		// Every collection stands at the top of the list in its own right. On disk each project
+		// sits inside the shared one, and that chain is kept so a link written in one project
+		// can be answered in another — but on screen shutting the shared folder must not take
+		// the projects with it, so the walk starts at all five and the shared one does not
+		// lead them.
+		const tops = this.guides.filter((g) => g.is_folder && g.path === '');
+		const top_ids = new Set(tops.map((g) => g.id));
+		const roots = tops.length > 0
+			? tops.map((g) => g.id)
+			: this.indexes.roots_among(this.guides.map((g) => g.id));
 
 		const walk = (id: string, depth: number, ancestors: string[]): void => {
 			if (ancestors.includes(id)) {
@@ -211,7 +221,11 @@ export class Hierarchy {
 					has_children: children.length > 0,
 				});
 			}
-			for (const edge of children) { walk(edge.child_id, depth + 1, [...ancestors, id]); }
+			// A collection never leads another, even though it holds it on disk.
+			for (const edge of children) {
+				if (top_ids.has(edge.child_id)) { continue; }
+				walk(edge.child_id, depth + 1, [...ancestors, id]);
+			}
 		};
 		for (const root of roots) { walk(root, 0, []); }
 

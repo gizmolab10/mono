@@ -2,7 +2,7 @@
 kind: rule
 title: "Style (ws)"
 description: "The ws conventions that differ from the shared ones."
-tags: [code-style]
+tags: [style]
 date: 2026-02-02
 ---
 

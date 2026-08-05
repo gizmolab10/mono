@@ -2,7 +2,7 @@
 kind: rule
 title: "Lessons (di)"
 description: "Patterns distilled from finished milestones that would mislead a successor on any feature."
-tags: [session-start, debugging]
+tags: [session, debug]
 date: 2026-06-22
 ---
 

@@ -2,7 +2,7 @@
 kind: wiring
 title: "Preferences (di)"
 description: "Named values that survive a reload, kept in the browser's own storage."
-tags: [wiring, data]
+tags: [wire, data]
 date: 2026-05-10
 ---
 

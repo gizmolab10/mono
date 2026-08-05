@@ -2,7 +2,7 @@
 kind: wiring
 title: "Intersection Lines"
 description: "Drawing the line where two parts' faces cross each other."
-tags: [wiring, geometry]
+tags: [wire, geometry]
 date: 2026-05-10
 ---
 

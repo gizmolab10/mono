@@ -21,6 +21,27 @@
    z-index: var(--z-frontmost);
 }
 
+/* Every scrollbar in the app, anywhere, drawn the same way: one thickness both
+   directions, an accent thumb, and no track behind it. The browser's own is far
+   heavier and greys the whole strip, which reads as a fixture rather than a mark. */
+
+/* Plain numbers on purpose: a scrollbar's own styling cannot read the sizes pushed
+   onto the page, so a name here silently falls back to the browser's own fat bar. */
+
+::-webkit-scrollbar {
+   height: 6px;
+   width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+   background: var(--accent);
+   border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+   background: transparent;
+}
+
 /* Everything below is a catalogue, not code — what a component style can read,
    and where each name comes from.
 

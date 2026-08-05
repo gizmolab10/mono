@@ -375,6 +375,7 @@
     }
 
     /* Side-A/Side-B swap support */
+    .title-box .side-a,
     .side-b {
       display: flex;
       gap: var(--button-gap);
@@ -440,7 +441,10 @@
   <div class="container">
     <div class="title-row">
       <div class="title-box">
-        <button class="action side-a" id="btn-dns">DNS<span class="badge">D</span></button>
+        <div class="side-a">
+          <button class="action" id="btn-ai" data-tooltip="open AnythingLLM">ai<span class="badge">A</span></button>
+          <button class="action" id="btn-dns">DNS<span class="badge">D</span></button>
+        </div>
         <div class="title-wrapper">
           <h1 class="middle"><span class="title-text"><span class="status-dot" id="status-dot"></span>Mono</span>
           </h1>
@@ -483,7 +487,7 @@
       </div>
       <button class="feedback-btn" id="btn-destination" style="flex: 1;"></button>
       <div class="mode-group side-b">
-        <button class="project active" data-mode="app">App<span class="badge">A</span></button>
+        <button class="project active" data-mode="app">App</button>
         <button class="project" data-mode="docs">Docs<span class="badge">X</span></button>
       </div>
     </div>
@@ -523,6 +527,7 @@
     let previewProject = null;
 
     const DNS_URL = 'https://www.dynadot.com/account/domain/name/list.html';
+    const AI_URL = 'http://localhost:3001';        // AnythingLLM, running in its own container
 
     // === DOM Elements ===
     const projectButtons = document.querySelectorAll('.project[data-project]');
@@ -545,6 +550,7 @@
     const btnDocs = document.getElementById('btn-docs');
     const btnRepo = document.getElementById('btn-repo');
     const btnDns = document.getElementById('btn-dns');
+    const btnAi = document.getElementById('btn-ai');
 
     // === Config Initialization ===
     function initConfig() {
@@ -851,6 +857,10 @@
 
     function doDns() {
       window.open(DNS_URL, '_blank');
+    }
+
+    function doAi() {
+      window.open(AI_URL, '_blank');
     }
 
     function doBubble() {
@@ -1357,6 +1367,7 @@
         return cfg?.bubble || null;
       },
       'btn-dns': () => DNS_URL,
+      'btn-ai': () => AI_URL,
       'btn-revisit': () => {
         const revisitPaths = {
           di: 'di/notes/work/revisit.di.md',
@@ -1463,6 +1474,7 @@
     btnRepo.addEventListener('click', doRepo);
     btnDocs.addEventListener('click', doDocs);
     btnDns.addEventListener('click', doDns);
+    btnAi.addEventListener('click', doAi);
 
     document.addEventListener('keydown', (e) => {
       // Blur any focused button so keyboard works
@@ -1481,7 +1493,6 @@
 
       const key = e.key.toLowerCase();
       switch (key) {
-        case 'a': previewMode = 'app'; highlightModeButton('app'); highlightProjectButton(getDisplayProject()); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'x': previewMode = 'docs'; highlightModeButton('docs'); highlightProjectButton(getDisplayProject()); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'w': previewProject = 'ws'; highlightProjectButton('ws'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
         case 'i': previewProject = 'di'; highlightProjectButton('di'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); break;
@@ -1501,6 +1512,7 @@
         case 'l': hoveredActionId = 'btn-local'; hoveredAction = actionButtons['btn-local'](); highlightActionButton('btn-local'); prePublishFeedbackRow(); break;
         case 'g': hoveredActionId = 'btn-repo'; hoveredAction = actionButtons['btn-repo'](); highlightActionButton('btn-repo'); prePublishFeedbackRow(); break;
         case 'd': hoveredActionId = 'btn-dns'; hoveredAction = actionButtons['btn-dns'](); highlightActionButton('btn-dns'); prePublishFeedbackRow(); break;
+        case 'a': hoveredActionId = 'btn-ai'; hoveredAction = actionButtons['btn-ai'](); highlightActionButton('btn-ai'); prePublishFeedbackRow(); break;
         case 'c': { if (e.metaKey && hoveredAction) { e.preventDefault(); navigator.clipboard.writeText(hoveredAction); } } break;
         case 'e': doErrors(); break;
         case '`': doDispatcher(); break;

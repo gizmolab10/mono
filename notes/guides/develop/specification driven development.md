@@ -2,7 +2,7 @@
 kind: lookup
 title: "Features (di)"
 description: "The checklist of what di is meant to do, from a drawing to a lumber list."
-tags: [notes, philosophy]
+tags: [notes, vision]
 date: 2026-05-11
 ---
 

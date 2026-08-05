@@ -2,7 +2,7 @@
 kind: wiring
 title: "Preferences (ws)"
 description: "Checking stored settings, so a stale saved value cannot break the display."
-tags: [wiring, data]
+tags: [wire, data]
 date: 2026-01-12
 ---
 

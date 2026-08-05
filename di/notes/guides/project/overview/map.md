@@ -2,7 +2,7 @@
 kind: lookup
 title: "Map (di)"
 description: "Every source file in di, grouped by what it belongs to."
-tags: [notes, wiring]
+tags: [notes, wire]
 date: 2026-06-25
 ---
 

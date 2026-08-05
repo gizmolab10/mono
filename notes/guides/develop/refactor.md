@@ -2,7 +2,7 @@
 kind: rule
 title: "Refactoring"
 description: "The guardrails for letting the collaborator refactor a temperamental codebase."
-tags: [refactoring]
+tags: [refactor]
 date: 2026-05-10
 ---
 

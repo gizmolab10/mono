@@ -2,7 +2,7 @@
 kind: wiring
 title: "Details (ws)"
 description: "The folding sections that show whatever is selected or in focus."
-tags: [wiring, UX]
+tags: [wire, UX]
 date: 2026-01-28
 ---
 

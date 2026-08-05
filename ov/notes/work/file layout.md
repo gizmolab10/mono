@@ -13,9 +13,11 @@ ov/
 ├── CLAUDE.md
 ├── notes/
 │   ├── guides/
+│   │   ├── index.md
 │   │   ├── map.md                # what every source file does
-│   │   ├── adding a guide.md     # what a new guide needs to show up in the app
+│   │   ├── editing.md            # changing a guide from inside the app
 │   │   └── pre-flight/
+│   │       ├── index.md
 │   │       └── banned words.md
 │   └── work/
 │       ├── index.md
@@ -24,9 +26,12 @@ ov/
 │       ├── work journal.md       # what is finished, newest first
 │       ├── working features.md   # what the app can do
 │       ├── file layout.md        # this file
-│       ├── editing.md            # changing a guide from inside the app
-│       ├── stale - maps, always.md
+│       ├── tags hierarchy.md     # the six areas, and the pill that folds them away
+│       ├── repair staleness.md   # the repair buttons, and what they mend
+│       ├── rewritten guides.md   # the guides that had fallen behind, and what each wants
+│       ├── stale guides.md
 │       ├── organize.md
+│       ├── ov.md
 │       └── okf.md                # the guide format, and how it sits in the code
 └── src/
     ├── vite-env.d.ts
@@ -48,6 +53,7 @@ ov/
         │   │   └── D_Preferences.svelte
         │   └── support/          # the pieces the rest lean on
         │       ├── Filters.svelte
+        │       ├── Big_Pill.svelte   # one area of tags, folding away behind its own name
         │       ├── Separator.svelte
         │       ├── Hideable.svelte
         │       └── ToolTip.svelte
@@ -71,9 +77,12 @@ ov/
             │   ├── runner.test.ts
             │   ├── markdown_blocks.test.ts   # the lines each piece claims, and putting words back
             │   ├── saving.test.ts   # where a guide sits in the repo
-            │   └── labels.test.ts   # writing the five labels back
+            │   ├── labels.test.ts   # writing the five labels back
+            │   ├── index_files.test.ts   # mending the index files a move leaves lying
+            │   └── tag_areas.test.ts     # the areas and the closed tag list agree exactly
             ├── types/
             │   ├── Guide.ts      # kinds, tags, collections, labels
+            │   ├── Tag_Areas.ts  # the six areas the tags are gathered into
             │   ├── App.ts
             │   ├── Details.ts
             │   ├── DB_Records.ts
@@ -82,6 +91,7 @@ ov/
             │   └── Types.ts
             └── utilities/
                 ├── Markdown_Blocks.ts   # a guide's text into a page, and a change back into the text
+                ├── Index_Files.ts   # mending the two index files a move leaves lying
                 ├── Labels.ts     # writing the five labels back to the top of a file
                 ├── Saving.ts     # handing a changed guide to the local write server
                 ├── Colors.ts

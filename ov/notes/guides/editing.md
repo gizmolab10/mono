@@ -2,7 +2,7 @@
 kind: wiring
 title: "Editing a Guide"
 description: "How this app lets you change a guide from inside the app, one piece at a time, without rewriting the file."
-tags: [wiring, notes]
+tags: [wire, notes]
 date: 2026-08-02
 ---
 
@@ -10,11 +10,11 @@ date: 2026-08-02
 
 Editing a guide from inside overview: you change what's on the page, and the file on disk changes with it.
 
-Nothing here is built yet. This is the plan, the risks, and what it costs.
+This has all been built. This is the plan we followed, the risks, and what it costs.
 
 ## The trap to avoid
 
-The obvious version is to make the whole page typeable and, on save, turn the page back into markdown. Don't. That rewrites the entire file — every blank line, every link style, every indent becomes whatever the converter prefers — so a one-word fix lands as a rewritten file. It also has to invent an answer for things markdown has and a page does not: reference-style links, raw HTML, the label block.
+Despite the obvious appeal  whole page typeable and, on save, turn the page back into markdown. Don't. That rewrites the entire file — every blank line, every link style, every indent becomes whatever the converter prefers — so a one-word fix lands as a rewritten file. It also has to invent an answer for things markdown has and a page does not: reference-style links, raw HTML, the label block.
 
 So: don't convert the page. Convert one block.
 

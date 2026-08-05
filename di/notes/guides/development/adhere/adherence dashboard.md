@@ -2,7 +2,7 @@
 kind: lookup
 title: "Adherence Dashboard"
 description: "The generated report of how well the code matches its rules. Never edited by hand."
-tags: [notes, testing]
+tags: [notes, test]
 date: 2026-05-10
 ---
 

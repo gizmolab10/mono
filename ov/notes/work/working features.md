@@ -2,6 +2,9 @@
 
 | # | Feature |
 | --- | --- |
+| 22 | The tags sit in six areas, each a single pill that folds its tags away behind its own name. Shut, it reads the area's name or what is picked inside it, with the ring between its two borders filled while a filter is on; open, a cross takes the left end and the tags run as one row of segments at the right. Which are open is remembered, and shared with the label form |
+| 21 | Every filter row folds away behind the word on the bar above it, which then reads what is picked — `purpose ➜ designs`. Pointing anywhere along a bar lights its word and clicking anywhere presses it, and the folds are remembered |
+| 20 | The purposes and the projects share one row while there is room for both, under one bar carrying both their words; when there isn't, each takes its own bar and its own row |
 | 19 | With the folders on screen, a file can be dragged onto any folder — the folder lights while the cursor is over it, and letting go moves the file on disk before anything on screen changes. Moves can cross collections, and a moved guide is readable at once |
 | 18 | A "labels" toggle beside edit folds the label form away without leaving editing, and is remembered across visits |
 | 17 | Command-clicking a file in the list, or the edit button while reading, hands that guide to Obsidian; command with option opens it here for editing. The hover words follow all three cases as the keys go down and up |

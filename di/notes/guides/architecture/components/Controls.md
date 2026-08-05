@@ -2,7 +2,7 @@
 kind: wiring
 title: "Controls (di)"
 description: "The strip of commands at the top and bottom of the screen, reachable without opening anything."
-tags: [wiring, UX]
+tags: [wire, UX]
 date: 2026-05-20
 ---
 

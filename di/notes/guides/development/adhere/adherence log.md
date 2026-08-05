@@ -2,7 +2,7 @@
 kind: lookup
 title: "Adherence Log"
 description: "The hand-written companion to the dashboard, holding what the extractor cannot read on its own."
-tags: [notes, testing]
+tags: [notes, test]
 date: 2026-05-19
 ---
 

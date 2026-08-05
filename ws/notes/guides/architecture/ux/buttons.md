@@ -2,7 +2,7 @@
 kind: wiring
 title: "Buttons (ws)"
 description: "The button components that grew ad-hoc, gathered up for a sanity check."
-tags: [wiring, UX]
+tags: [wire, UX]
 date: 2026-01-12
 ---
 

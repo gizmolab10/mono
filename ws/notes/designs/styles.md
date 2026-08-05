@@ -2,7 +2,7 @@
 kind: wiring
 title: "Color Management"
 description: "One place that works out every color from the current state."
-tags: [wiring, stale, visual-design]
+tags: [wire, stale, visual-design]
 date: 2026-01-12
 ---
 

@@ -2,7 +2,7 @@
 kind: lookup
 title: "Reading the Adherence Dashboard"
 description: "What each line of the generated report means."
-tags: [notes, testing]
+tags: [notes, test]
 date: 2026-05-19
 ---
 

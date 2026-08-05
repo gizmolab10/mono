@@ -2,7 +2,7 @@
 kind: wiring
 title: "UX Manager (ws)"
 description: "What is focused, what is grabbed, what is being edited, and what the details show."
-tags: [wiring, UX]
+tags: [wire, UX]
 date: 2026-01-12
 ---
 

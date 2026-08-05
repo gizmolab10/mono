@@ -2,6 +2,16 @@
 
 What's been finished, newest first.
 
+## 2026-08-04 — the tags gathered into areas, and every name shortened
+
+Twenty-four tags in one flat row was more than an eye could scan. They now sit in six areas — ai, code, fix, harness, other, ux — each standing as a single pill that folds its tags away behind its own name. Shut, a pill reads its area's name, or the names of whatever inside it is picked, so a filter on is never invisible; a picked tag also fills the thin ring between the pill's two borders. Open, a cross takes the left end and the tags run as one unbroken row of segments at the right, with the area's name straddling the top edge over the cross. Opening one leaves the others as they are, picking a tag leaves it open, and which are open is remembered — the filters and the label form share one memory, so an area left open in one is open in the other. A tag nothing is left wearing simply goes; with one left the area steps aside and that tag stands as a plain pill; with none left the area is gone.
+
+**Every word cut to its shortest true form.** The five kinds are now rule, howto, wiring, why and lookup. Fourteen tags were renamed — architecture became wire, collaboration became team, philosophy became vision, and testing, debugging, migration, refactoring, porting, code-style and session-start all lost their endings. Alphabetical order everywhere now ignores capitals, so UX sits between tools and vision rather than ahead of everything.
+
+**One trap this sprung.** A tag picked last visit and since renamed narrows the list to nothing while no longer showing anywhere — nothing left to click to undo it. Anything remembered that is no longer on either closed list is now let go at launch.
+
+**The separators earned their keep.** One bar can carry several words, spread evenly along it or held to its two ends; a word can be a button, and since a bar is two pixels tall a clear strip the height of an ordinary control lies along it so pointing anywhere lights the word and clicking anywhere presses it. Every filter row now folds away behind its own word, which then reads what is picked — `purpose ➜ designs` — and those folds are remembered.
+
 ## 2026-08-02 — guides can be moved, and handed to Obsidian
 
 **Dragging a file into another folder.** With the folders on screen, a file can be picked up and dropped on any folder — the folder lights on the accent as the cursor crosses it, and its own folder never lights. The file moves on disk first; only if that works is the picture on screen changed, so nothing here can claim a move that didn't happen. A move can cross collections, since the four project folders hang under the shared one. Reading a moved guide needs no restart: its words come from wherever it now sits.

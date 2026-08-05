@@ -4,7 +4,7 @@ Code style, patterns, and development practices.
 
 ## Contents
 
-- [Adding a guide](add%20a%20guide.md)
+- [Adding a guide](add%20a%20file.md)
 - [Aesthetics](./aesthetics.md)
 - [Build Notes](./build notes.md)
 - [Build](./build.md)

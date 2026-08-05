@@ -2,7 +2,7 @@
 kind: why
 title: "Motive"
 description: "Why the work is shaped this way: let structure emerge, keep work files raw, distill guides out of them."
-tags: [philosophy, notes]
+tags: [vision, notes]
 date: 2026-05-10
 ---
 

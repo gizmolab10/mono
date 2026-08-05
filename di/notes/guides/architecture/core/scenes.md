@@ -2,7 +2,7 @@
 kind: wiring
 title: "Scenes (di)"
 description: "What happens between app launch and a populated 3D canvas."
-tags: [wiring, geometry]
+tags: [wire, geometry]
 date: 2026-05-10
 ---
 

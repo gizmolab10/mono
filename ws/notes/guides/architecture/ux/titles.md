@@ -2,7 +2,7 @@
 kind: wiring
 title: "Editable Titles (ws)"
 description: "What the editable title component did, captured before it was replaced."
-tags: [wiring, UX]
+tags: [wire, UX]
 date: 2026-01-12
 ---
 

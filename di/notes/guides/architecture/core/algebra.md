@@ -2,7 +2,7 @@
 kind: wiring
 title: "Algebra Aliases"
 description: "Nine plain names for a part's position and length, so nobody has to type the raw bound names."
-tags: [wiring, geometry]
+tags: [wire, geometry]
 date: 2026-05-10
 ---
 

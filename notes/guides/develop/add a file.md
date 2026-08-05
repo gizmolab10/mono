@@ -5,9 +5,9 @@ description: "Put a new guide where overview will find it, label it, and prove i
 tags: [notes, setup, tools]
 date: 2026-08-02
 ---
-# How to add a guide
+# How to add a file
 
-A new guide only reaches overview if it sits in the right place and carries the five labels. These are the steps to do so. The first two steps prepare it for OKF, the rest puts it where this app will include it.
+A new file must be where overview can find it and carry the five labels. Several steps. The first two prepare it for OKF, the rest puts it in the right spot.
 
 ## 1. Give it the label block
 
@@ -16,7 +16,7 @@ Five labels, this order, fenced by three dashes above and below, at the very top
 ```
 ---
 kind: howto
-title: "Adding a Guide"
+title: "Adding a File"
 description: "One sentence saying what this file tells you to do."
 tags: [notes, setup]
 date: 2026-08-02
@@ -31,7 +31,7 @@ date: 2026-08-02
 
 ## 2. Use only these tags
 
-build, code-style, collaboration, data, debugging, deploy, geometry, migration, notes, philosophy, platform, porting, prose, refactoring, research, session-start, setup, stale, testing, think, tools, UX, visual-design, wiring.
+build, data, debug, deploy, geometry, migrate, notes, platform, port, prose, refactor, research, session, setup, stale, style, team, test, think, tools, UX, vision, visual-design, wire.
 
 Adding a new one means adding it to the app's own list first — the closed list is the whole point.
 

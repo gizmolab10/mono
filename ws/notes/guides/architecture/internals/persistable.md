@@ -2,7 +2,7 @@
 kind: wiring
 title: "Persistable"
 description: "The shared base every stored record extends, for saving, loading, and identity."
-tags: [wiring, data]
+tags: [wire, data]
 date: 2026-01-28
 ---
 

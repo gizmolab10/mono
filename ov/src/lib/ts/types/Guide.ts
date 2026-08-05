@@ -11,32 +11,32 @@ export enum T_Kind {
 	lookup     = 'lookup',
 }
 
-// The closed tag list — twenty-four, nothing invented on the spot.
+// The closed tag list — twenty-four, alphabetized, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
 	'build',
-	'code-style',
-	'collaboration',
 	'data',
-	'debugging',
+	'debug',
 	'deploy',
 	'geometry',
-	'migration',
+	'migrate',
 	'notes',
-	'philosophy',
 	'platform',
-	'porting',
+	'port',
 	'prose',
-	'refactoring',
+	'refactor',
 	'research',
-	'session-start',
+	'session',
 	'setup',
 	'stale',
-	'testing',
+	'style',
+	'team',
+	'test',
 	'think',
 	'tools',
 	'UX',
+	'vision',
 	'visual-design',
-	'wiring',
+	'wire',
 ];
 
 /**

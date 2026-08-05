@@ -2,7 +2,7 @@
 kind: rule
 title: "Gates"
 description: "Which guide must be read before which kind of task."
-tags: [session-start]
+tags: [session]
 date: 2026-05-10
 ---
 

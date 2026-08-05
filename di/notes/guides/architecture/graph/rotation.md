@@ -2,7 +2,7 @@
 kind: wiring
 title: "Rotation (di)"
 description: "Rotating a child part is visual only; the stored bounds do not change."
-tags: [wiring, geometry]
+tags: [wire, geometry]
 date: 2026-05-10
 ---
 

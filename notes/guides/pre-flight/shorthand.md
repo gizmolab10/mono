@@ -2,7 +2,7 @@
 kind: lookup
 title: "Shorthand"
 description: "The short commands and abbreviations Jonathan types, and what each one does."
-tags: [session-start, collaboration]
+tags: [session, team]
 date: 2026-07-29
 ---
 

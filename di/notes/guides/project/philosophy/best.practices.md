@@ -2,7 +2,7 @@
 kind: rule
 title: "Best Practices (di)"
 description: "The Svelte patterns di uses, and the rule about which reactive tool to reach for."
-tags: [code-style, platform]
+tags: [style, platform]
 date: 2026-05-10
 ---
 

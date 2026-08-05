@@ -2,7 +2,7 @@
 kind: rule
 title: "Workflow"
 description: "The turn-taking cadence and the propose-before-acting discipline."
-tags: [collaboration, session-start]
+tags: [team, session]
 date: 2026-07-07
 ---
 

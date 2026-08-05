@@ -2,7 +2,7 @@
 kind: wiring
 title: "Units (di)"
 description: "Every length held in millimetres, then translated into whatever the user wants to read."
-tags: [wiring, data]
+tags: [wire, data]
 date: 2026-05-10
 ---
 

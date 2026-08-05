@@ -2,7 +2,7 @@
 kind: rule
 title: "Component Composition (ws)"
 description: "Props down, events up, slots for flexible content, compound components for the complicated parts."
-tags: [code-style, platform]
+tags: [style, platform]
 date: 2026-01-12
 ---
 

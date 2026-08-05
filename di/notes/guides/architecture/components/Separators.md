@@ -2,7 +2,7 @@
 kind: wiring
 title: "Separators (di)"
 description: "The small divider drawn between sections, horizontal or vertical."
-tags: [wiring, UX]
+tags: [wire, UX]
 date: 2026-05-10
 ---
 

@@ -55,6 +55,21 @@ export const w_shut = preferences.persistent<string[]>(T_Preference.folders_shut
 // folders still decide what a shut fold hides, they just aren't drawn.
 export const w_show_folders = preferences.persistent<boolean>(T_Preference.show_folders, true);
 
+// Which areas of tags are open, named rather than numbered so renaming or adding one cannot
+// shift the meaning of what was saved. Both the filters and the label form read the same list,
+// so an area left open in one is open in the other.
+export const w_areas_open = preferences.persistent<string[]>(T_Preference.areas_open, []);
+
+/** Open or shut one area of tags. */
+export function toggle_area(name: string): void {
+	w_areas_open.update((open) => open.includes(name) ? open.filter((one) => one !== name) : [...open, name]);
+}
+
+/** Shut every area at once — what a click on the bare space beside the pills means. */
+export function shut_all_areas(): void {
+	w_areas_open.set([]);
+}
+
 // Which columns the list is sorted by, and which way each runs. Sorting is offered only
 // while the folders are hidden — with them on, the list is folders leading their contents,
 // and a sort would have to either scramble them or sort inside each one.

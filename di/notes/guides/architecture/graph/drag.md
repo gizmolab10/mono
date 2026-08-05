@@ -2,7 +2,7 @@
 kind: wiring
 title: "Drag Fixes"
 description: "Three stacked bugs in stretching an edge or corner, and what each fix was."
-tags: [wiring, geometry, debugging]
+tags: [wire, geometry, debug]
 date: 2026-05-10
 ---
 

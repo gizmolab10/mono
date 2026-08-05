@@ -2,7 +2,7 @@
 kind: rule
 title: "Replying"
 description: "How every reply is written: how short, how plain, and what must be proved before it is sent."
-tags: [session-start, collaboration, prose]
+tags: [session, team, prose]
 date: 2026-08-01
 ---
 

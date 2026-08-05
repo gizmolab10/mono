@@ -2,7 +2,7 @@
 kind: wiring
 title: "Hierarchy Spec (ji)"
 description: "What ji's arrangement of documents and tags should become, read against what ws already does."
-tags: [wiring, data]
+tags: [wire, data]
 date: 2026-07-24
 ---
 

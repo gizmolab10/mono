@@ -63,10 +63,12 @@ export default class Constants {
 	};
 
 	gap = {
+		huge		 : common_gap * 4,		// how far a bar's word is held off the left end
 		fat	         : common_gap * 2.1,
 		small		 : common_gap / 1.8,
 		tight		 : common_gap / 2,
 		details		 : common_gap / 4,
+		micro		 : common_gap / 6,		// the hairline between a double border's two edges
 		default      : common_gap,
 	}
 

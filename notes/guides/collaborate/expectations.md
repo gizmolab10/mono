@@ -2,7 +2,7 @@
 kind: rule
 title: "Expectations"
 description: "How to get the collaborator's best work and avoid its worst."
-tags: [collaboration]
+tags: [team]
 date: 2026-05-10
 ---
 

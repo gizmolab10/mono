@@ -2,7 +2,7 @@
 kind: wiring
 title: "Hit Testing in 3D"
 description: "Working out which corner, edge, or face of a part the mouse is over."
-tags: [wiring, geometry, UX]
+tags: [wire, geometry, UX]
 date: 2026-05-10
 ---
 

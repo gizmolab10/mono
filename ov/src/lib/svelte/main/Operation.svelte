@@ -26,7 +26,6 @@
 		<View_File
 			name={$w_viewed.guide.name}
 			address={$w_viewed.guide.address}
-			kind={$w_viewed.guide.kind}
 			tags={$w_viewed.tag_names}
 			guide={$w_viewed.guide}
 			can_back={$w_can_back}

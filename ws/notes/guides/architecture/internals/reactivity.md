@@ -2,7 +2,7 @@
 kind: lookup
 title: "Reactivity in Svelte 4"
 description: "When Svelte actually tracks a change, and when a component redraws."
-tags: [platform, code-style]
+tags: [platform, style]
 date: 2026-01-12
 ---
 

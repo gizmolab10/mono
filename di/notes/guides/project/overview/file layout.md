@@ -2,7 +2,7 @@
 kind: lookup
 title: "File Layout (di)"
 description: "Where everything lives in the di source."
-tags: [notes, wiring]
+tags: [notes, wire]
 date: 2026-06-25
 ---
 

@@ -2,7 +2,7 @@
 kind: wiring
 title: "How Rendering Works"
 description: "The nine stages every frame runs through, always in the same order."
-tags: [wiring, geometry]
+tags: [wire, geometry]
 date: 2026-05-10
 ---
 

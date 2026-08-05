@@ -2,7 +2,7 @@
 kind: lookup
 title: "Hooks"
 description: "What hooks are, how they differ from memory, and which ones are live."
-tags: [tools, collaboration]
+tags: [tools, team]
 date: 2026-07-08
 ---
 

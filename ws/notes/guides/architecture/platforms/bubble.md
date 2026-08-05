@@ -2,7 +2,7 @@
 kind: wiring
 title: "Bubble Integration"
 description: "Webseriously runs inside a frame and keeps in step with Bubble by passing messages."
-tags: [wiring, platform]
+tags: [wire, platform]
 date: 2026-01-22
 ---
 

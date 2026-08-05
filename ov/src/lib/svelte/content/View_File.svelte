@@ -7,7 +7,9 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Separator from '../support/Separator.svelte';
+	import Big_Pill from '../support/Big_Pill.svelte';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { Direction } from '../../ts/types/Angle';
@@ -23,8 +25,8 @@
 	// Two triangles step to the guide before or after in the on-screen list, wrapping at
 	// both ends; the arrow keys do the same. The stepping itself lives with the list, which
 	// knows the run and the place in it; here we only draw the controls and call back.
-	let { name, address, kind, tags, guide, onclose, can_back = false, can_forward = false, onprev = () => {}, onnext = () => {} }:
-		{ name: string; address: string; kind: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: () => void; onnext?: () => void } = $props();
+	let { name, address, tags, guide, onclose, can_back = false, can_forward = false, onprev = () => {}, onnext = () => {} }:
+		{ name: string; address: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: () => void; onnext?: () => void } = $props();
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
 
@@ -34,13 +36,16 @@
 	const sits_at = $derived.by(() => {
 		const folders = guide.path.split('/').slice(0, -1);
 		const top = guide.bundle === T_Bundle.mono ? ['mono'] : [guide.bundle];
-		return [...top, ...folders, name].join(' / ');
+		return [...top, ...folders].join(' / ');
 	});
 
 	// The guides are written in markdown, so they are turned into a real page before being
 	// shown. Any markup written into a guide is left as plain characters rather than acted
 	// on, so a guide can never reach into the app.
-	const reader = new MarkdownIt({ html: false, linkify: true, typographer: true });
+	// Punctuation is left exactly as the file writes it — no curling quotes, no turning two
+	// dashes into one long one. What is read is what is edited, so a piece never looks one way
+	// on the page and another in the box.
+	const reader = new MarkdownIt({ html: false, linkify: true, typographer: false });
 
 	// Only text that says outright it is a web address becomes one. Left to itself the
 	// reader guesses, and a guide full of file names loses: "CLAUDE.md" reads to it as a
@@ -97,6 +102,21 @@
 	// --- the links inside a guide ---------------------------------------------
 
 	let page = $state<HTMLElement | null>(null);
+
+	// Whether the words are taller than the room they have — the one thing a stylesheet cannot
+	// ask. Only then does the right margin come off, so the bar can sit against the box's edge;
+	// with everything on screen the words keep their margin on both sides.
+	let page_has_bar = $state(false);
+
+	$effect(() => {
+		const box = page;
+		if (!box) { page_has_bar = false; return; }
+		const measure = () => { page_has_bar = box.scrollHeight > box.clientHeight + 1; };
+		measure();
+		const watcher = new ResizeObserver(measure);
+		watcher.observe(box);
+		return () => watcher.disconnect();
+	});
 	let note = $state('');                     // what a dead link has to say, briefly
 	let note_wait: ReturnType<typeof setTimeout> | null = null;
 	let wanted_heading = $state('');           // a heading to move to once the words are drawn
@@ -274,6 +294,17 @@
 	// is a way of working rather than something about one guide.
 	const w_show_labels = preferences.persistent<boolean>(T_Preference.show_labels, true);
 
+	// The tag areas take four rows of their own, so the word above them folds them away — and
+	// says what the guide wears while they are gone, as the filters' own lines do.
+	let show_form_tags = $state(true);
+	let form_tags_word = $derived(show_form_tags ? 'tags'
+		: `tags ➜ ${form_tags.length === 0 ? 'none' : [...form_tags].sort(in_order).join(', ')}`);
+
+	// The word on the line above the form folds the whole form away. It says what the file is
+	// labeled either way — open or shut — so the line always reads the same.
+	let label_rows_word = $derived(`okf ➜ ${[form_kind, ...[...form_tags].sort(in_order)]
+		.filter((one) => one !== '').join(', ') || 'none'}`);
+
 	// Whenever another guide comes on screen, the form starts from what that guide says.
 	$effect(() => {
 		form_kind        = guide.kind;
@@ -363,6 +394,7 @@
 	// --- looking through the guide on screen ----------------------------------
 
 	let looking_for = $state('');
+
 	let marked: HTMLElement | null = null;      // the run of words lit right now, if any
 
 	/** Put the lit words back the way they were. */
@@ -495,12 +527,35 @@
 				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
 			</svg>
 		</button>
-		<!-- Only worth showing the step triangles when there is more than one guide on
-		     screen to step between. -->
+		<!-- With this on, a click on the words opens that piece for editing instead of
+		     going back to the list. -->
+		<button class='view-edit' class:on={$editing} onclick={toggle_editing}
+			use:tip={$w_command_down ? 'edit this file in obsidian' : $editing ? 'stop editing' : 'edit this file'}>edit</button>
+		<!-- The five labels have their own form, folded away by the word on the line above it. -->
+		{#if $editing}
+			<!-- Giving the file itself a different name. While the field is open, this is the
+			     way back out with nothing changed. -->
+			<button
+				class='view-edit'
+				class:on={renaming}
+				onclick={handle_show_rename}
+				use:tip={renaming ? 'restore the name as it was' : 'rename this file'}>
+				{renaming ? 'cancel' : 'rename'}
+			</button>
+		{/if}
+		<!-- The folders above the file hug the far right; what the file is labeled is said on
+		     the line below the search row, where it is also editable. -->
+		<span class='view-spacer'></span>
+		<span class='view-ancestry'>{sits_at}</span>
+	</div>
+	<!-- What the file is called, on a row of its own, with the step triangles at its far left —
+	     or, while renaming, the name being typed. Only worth showing the triangles when there
+	     is more than one file on screen to step between. -->
+	<div class='view-title'>
 		{#if can_back || can_forward}
 			<div class='view-steps'>
 				{#if can_back}
-					<button class='step' aria-label='previous guide' use:tip={'previous guide'}
+					<button class='step' aria-label='previous file' use:tip={'previous file'}
 						onmousedown={(e) => { e.stopPropagation(); start_hold(onprev); }}
 						onmouseup={stop_hold} onmouseleave={stop_hold}
 						onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onprev(); } }}>
@@ -508,7 +563,7 @@
 					</button>
 				{/if}
 				{#if can_forward}
-					<button class='step' aria-label='next guide' use:tip={'next guide'}
+					<button class='step' aria-label='next file' use:tip={'next file'}
 						onmousedown={(e) => { e.stopPropagation(); start_hold(onnext); }}
 						onmouseup={stop_hold} onmouseleave={stop_hold}
 						onclick={(e) => { e.stopPropagation(); if (e.detail === 0) { onnext(); } }}>
@@ -516,39 +571,7 @@
 					</button>
 				{/if}
 			</div>
-		{:else}
-			<span></span>
 		{/if}
-		<!-- With this on, a click on the words opens that piece for editing instead of
-		     going back to the list. -->
-		<button class='view-edit' class:on={$editing} onclick={toggle_editing}
-			use:tip={$w_command_down ? 'edit this guide in obsidian' : $editing ? 'stop editing' : 'edit this guide'}>edit</button>
-		<!-- The five labels have their own form; this folds it away without leaving editing. -->
-		{#if $editing}
-			<button class='view-edit' class:on={$w_show_labels}
-				use:tip={`${$w_show_labels ? 'hide' : 'edit'} the labels`}
-				onclick={() => { w_show_labels.set(!$w_show_labels); debug.log(`Editing "${name}": the label form is now ${!$w_show_labels ? 'hidden' : 'shown'}.`); }}>labels</button>
-			<!-- Giving the file itself a different name. While the field is open, this is the
-			     way back out with nothing changed. -->
-			<button
-				class='view-edit'
-				class:on={renaming}
-				onclick={handle_show_rename}
-				use:tip={renaming ? 'leave the name as it was' : 'give this guide a different name'}>
-				{renaming ? 'cancel' : 'rename'}
-			</button>
-		{/if}
-		<!-- Nothing between the buttons and the pair at the right, so those two keep their
-		     own ends of the row. -->
-		<span class='view-spacer'></span>
-		<!-- What kind of guidance this is, and what it's about: the pair at the far right. -->
-		<span class='view-kind'>{kind}</span>
-		<span class='view-bar'>|</span>
-		<span class='view-tags'>{tags.join(', ')}</span>
-	</div>
-	<!-- Where it sits and what it is called, on a row of its own — or, while renaming, the
-	     name being typed. -->
-	<div class='view-title'>
 		{#if renaming}
 			<input
 				use:take_the_cursor
@@ -556,10 +579,10 @@
 				bind:value={typed_name}
 				onkeydown={(e) => { if (e.key === 'Enter') { handle_rename(); } }} />
 		{:else}
-			<span class='view-name'>{sits_at}</span>
+			<span class='view-name'>{name}</span>
 		{/if}
 	</div>
-	<!-- Looking through the guide on screen. Its type is "search", so the browser draws its
+	<!-- Looking through the file on screen. Its type is "search", so the browser draws its
 	     own clear cross at the right end once there is text. -->
 	<div class='view-search'>
 		<!-- With something typed, two triangles walk the places those words turn up, and the
@@ -582,7 +605,14 @@
 			bind:value={looking_for}
 			oninput={find_first} />
 	</div>
-	<Separator thickness={k.separator.huge}/>
+	<!-- While the labels are open the heavy line moves below them, so the form reads as part of
+	     the top rather than as words of the file. Its word folds away only what sits between it
+	     and the next line — the kind, title, date and description — leaving the tags below. -->
+	<Separator
+		at_left
+		thickness={k.gap.default}
+		title={$editing ? label_rows_word : null}
+		onclick={$editing ? (() => { w_show_labels.set(!$w_show_labels); debug.log(`Editing "${name}": the label form is now ${!$w_show_labels ? 'hidden' : 'shown'}.`); }) : undefined}/>
 	<!-- The five labels, shown only while editing. They never appear among the words, so
 	     this is the only way at them. -->
 	{#if $editing && $w_show_labels}
@@ -603,14 +633,21 @@
 				<span class='label-word'>says</span>
 				<input class='label-field' bind:value={form_description} onblur={save_labels} />
 			</div>
-			<div class='label-sep'><Separator thickness={k.separator.normal} title={'tags'}/></div>
-			<div class='label-row wrapping'>
-				{#each ALL_TAGS as tag (tag)}
-					<button class='label-pick' class:on={form_tags.includes(tag)} onclick={() => toggle_tag(tag)}>{tag}</button>
-				{/each}
+			<div class='label-sep'>
+				<Separator at_left thickness={k.separator.normal} title={form_tags_word}
+					onclick={() => { show_form_tags = !show_form_tags; debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'shown' : 'folded away'}.`); }}/>
 			</div>
+			<!-- The same six areas the filters use. Every tag is within reach here, since this
+			     is where a file's own tags are set rather than where files are narrowed. -->
+			{#if show_form_tags}
+				<div class='label-row wrapping'>
+					{#each TAG_AREAS as area (area.name)}
+						<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
+					{/each}
+				</div>
+			{/if}
 		</div>
-		<Separator thickness={k.separator.normal}/>
+		<Separator thickness={k.separator.huge}/>
 	{/if}
 	<!-- Nothing is said while the words are being read: the wait is too short to see, and a
 	     line that flashes and goes reads as a fault. -->
@@ -629,6 +666,7 @@
 			bind:this={page}
 			class='view-page'
 			onkeyup={() => {}}
+			class:has-bar={page_has_bar}
 			class:selecting={$w_command_down}
 			use:tip={$w_command_down ? 'drag to pick up these words' : $editing ? 'click a paragraph to edit it' : 'go back'}
 			onclick={on_page_click}>{@html words}</div>
@@ -666,26 +704,48 @@
 		flex : 1 1 auto;
 	}
 
-	/* A row of its own for where the guide sits, held in the middle of the whole width. */
+	/* The folders above the file, near the far right of the button row and held clear of it. */
+	.view-ancestry {
+		margin-right : var(--gap-fat);
+		font-size   : var(--font-label);
+		opacity     : var(--opacity-header);
+		color       : var(--text);
+		white-space : nowrap;
+		position    : relative;
+		flex        : 0 1 auto;
+		min-width   : 0;
+		overflow    : hidden;
+		top         : 3px;
+	}
+
+	/* A row of its own for where the file sits, held in the middle of the whole width. */
+	/* The triangles hug the far left; the name keeps the middle of the whole row, so a step
+	   forward or back never shifts it. */
 	.view-title {
+		padding-bottom  : calc(var(--gap) - 2px);
+		min-height      : var(--height-control);
 		justify-content : center;
 		align-items     : center;
-		padding-bottom  : calc(var(--gap) - 2px);
+		position        : relative;
 		display         : flex;
-		min-height      : var(--height-control);
+	}
+
+	.view-title .view-steps {
+		position : absolute;
+		left     : 0;
 	}
 
 	/* The kind and the tags sit 3px higher than the triangles and the close button, so the
 	   words line up with the middle of those rather than their tops. */
 	.view-name {
-		font-size   : var(--font-label);
+		font-size   : var(--font-large);
 		color       : var(--text);
 		white-space : nowrap;
 		text-align  : center;
 		min-width   : 0;
 	}
 
-	/* While renaming, the field stands where the guide's place normally reads, taking the
+	/* While renaming, the field stands where the file's place normally reads, taking the
 	   width of that row. */
 	.rename-field {
 		border        : var(--thickness-normal) solid var(--black);
@@ -702,35 +762,10 @@
 		min-width     : 0;
 	}
 
-	/* The kind, at the far right just before the tags. */
-	.view-kind {
-		font-size : var(--font-label);
-		color     : var(--text);
-		opacity   : var(--opacity-header);
-		position  : relative;
-		top       : 3px;
-		flex      : 0 0 auto;
-	}
-
-	/* The tags, hugging the far right. A long list wraps rather than shoving anything. */
-	/* The upright stroke keeping the kind apart from the tags. */
-	.view-bar {
-		font-size : var(--font-label);
-		color     : var(--text);
-		opacity   : var(--opacity-header);
-		position  : relative;
-		top       : 3px;
-		flex      : 0 0 auto;
-	}
-
-	.view-tags {
-		font-size  : var(--font-label);
-		color      : var(--text);
-		opacity    : var(--opacity-header);
-		text-align : right;
-		position   : relative;
-		top        : 3px;
-		flex       : 0 1 auto;
+	/* The two triangles sit over the left end of this row, so the field starts clear of them:
+	   both of their widths plus a gap on either side. */
+	.view-title .rename-field {
+		margin-left : calc(2.2 * var(--size-cross) + 2 * var(--gap));
 	}
 
 	/* The two step triangles, pinned together at the top far left. */
@@ -850,9 +885,9 @@
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
-		white-space   : nowrap;
-		cursor        : pointer;
 		flex          : 0 0 auto;
+		cursor        : pointer;
+		white-space   : nowrap;
 	}
 
 	.view-edit:hover {
@@ -863,23 +898,30 @@
 		background : var(--accent);
 	}
 
-	/* The box standing in for one piece of the guide. It is put on the page by hand rather
+	/* The box standing in for one piece of the file. It is put on the page by hand rather
 	   than drawn from here, so it is named as reaching outside this component. */
 	:global(.edit-box) {
-		border        : var(--thickness-normal) solid var(--accent);
-		border-radius : var(--radius-small);
-		font-family   : inherit;
-		font-size     : inherit;
-		line-height   : inherit;
+		/* No edge at all, and no room taken for one, so opening and leaving a piece never moves
+		   the words by a pixel. */
+		border-radius  : var(--radius-small);
+		outline        : none;
+		border         : none;
+		padding        : 0;
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
-		padding       : var(--gap-tight);
 		white-space   : pre-wrap;
+		font-family   : inherit;
 		overflow      : hidden;
-		resize        : none;
 		display       : block;
+		resize        : none;
 		width         : 100%;
+		/* The same size, leading, spacing and step-in a paragraph reads at, so opening a piece
+		   for editing doesn't reflow the words around it. */
+		font-size     : var(--font-base);
+		line-height   : 1.5;
+		margin        : var(--gap) 0;
+		text-indent   : 10px;
 	}
 
 	.view-close {
@@ -887,8 +929,8 @@
 		border-radius   : var(--radius-percent);
 		height          : var(--height-control);
 		width           : var(--height-control);
-		box-sizing      : border-box;
 		background      : var(--white);
+		box-sizing      : border-box;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
@@ -912,13 +954,52 @@
 	}
 
 	.view-page {
-		margin-top : var(--gap);      /* the words and the bar beside them both start here */
 		font-size  : var(--font-base);
+		margin     : var(--gap) var(--gap-fat);      /* the words held clear on all four sides */
 		color      : var(--text);
 		word-break : break-word;
-		overflow-y : auto;
 		cursor     : pointer;
+		overflow-y : auto;
 		flex       : 1;
+	}
+
+	/* The bar beside the words, and the one under a wide code block. Plain numbers on purpose:
+	   a scrollbar's own styling cannot read the sizes pushed onto the page, and a name here
+	   falls back to the browser's fat bar. */
+	/* With a bar beside the words the right margin comes off, so the bar sits against the box's
+	   edge rather than floating in from it — and a gap is held inside instead, so the words
+	   never run up against the bar. */
+	.view-page.has-bar {
+		padding-right : var(--gap);
+		margin-right  : 0;
+	}
+
+	.view-page::-webkit-scrollbar {
+		height : var(--gap-fat);
+		width  : var(--gap-fat);
+	}
+
+	.view-page::-webkit-scrollbar-thumb {
+		background    : var(--accent);
+		border-radius : 999px;
+	}
+
+	.view-page::-webkit-scrollbar-track {
+		background : transparent;
+	}
+
+	.view-page :global(pre::-webkit-scrollbar) {
+		height : var(--gap-fat);
+		width  : var(--gap-fat);
+	}
+
+	.view-page :global(pre::-webkit-scrollbar-thumb) {
+		background    : var(--accent);
+		border-radius : 999px;
+	}
+
+	.view-page :global(pre::-webkit-scrollbar-track) {
+		background : transparent;
 	}
 
 	/* With the option key held, the words can be dragged over and picked up. The whole app
@@ -940,7 +1021,9 @@
 	.view-page :global(h1),
 	.view-page :global(h2),
 	.view-page :global(h3),
-	.view-page :global(h4) {
+	.view-page :global(h4),
+	.view-page :global(h5),
+	.view-page :global(h6) {
 		margin-bottom : var(--gap-tight);
 		margin-top    : var(--gap-fat);
 		line-height   : 1.25;
@@ -949,13 +1032,39 @@
 	.view-page :global(h1) { font-size : var(--font-large); }
 	.view-page :global(h2) { font-size : var(--font-banner); }
 	.view-page :global(h3),
-	.view-page :global(h4) { font-size : var(--font-base); }
+	.view-page :global(h4),
+	.view-page :global(h5),
+	.view-page :global(h6) { font-size : var(--font-base); }
+
+	/* The six heading colors Obsidian ships with in its light theme, so a guide reads here the
+	   way it reads there. */
+	.view-page :global(h1) { color : #4a9ad4; }
+
+	/* A line under the top heading, the way Obsidian draws one. */
+	.view-page :global(h1) {
+		border-bottom  : 0.5px solid var(--gray);
+		padding-bottom : var(--gap-tight);
+		margin-bottom  : var(--gap-fat);
+	}
+
+	.view-page :global(h2) { color : #48b57e; }
+	.view-page :global(h3) { color : #c4a747; }
+	.view-page :global(h4) { color : #c98a5e; }
+	.view-page :global(h5) { color : #bf6a6a; }
+	.view-page :global(h6) { color : #a97ec4; }
 
 	.view-page :global(p),
 	.view-page :global(ul),
 	.view-page :global(ol) {
 		margin      : var(--gap-tight) 0;
 		line-height : 1.5;
+	}
+
+	/* Every paragraph steps in a little, the way a printed page does, and stands clear of the
+	   one before it. */
+	.view-page :global(p) {
+		margin      : var(--gap) 0;
+		text-indent : 10px;
 	}
 
 	.view-page :global(li) {
@@ -978,22 +1087,6 @@
 		background    : var(--offwhite);
 		padding       : var(--gap);
 		overflow-x    : auto;
-	}
-
-	/* The sideways bar under a wide code block is drawn the same way as the list's own bar
-	   beside the rows: the same thickness, an accent thumb, and no track behind it. */
-	.view-page :global(pre::-webkit-scrollbar) {
-		height : 20px;
-		width  : 20px;
-	}
-
-	.view-page :global(pre::-webkit-scrollbar-thumb) {
-		background    : var(--accent);
-		border-radius : var(--radius-pill);
-	}
-
-	.view-page :global(pre::-webkit-scrollbar-track) {
-		background : transparent;
 	}
 
 	.view-page :global(pre code) {

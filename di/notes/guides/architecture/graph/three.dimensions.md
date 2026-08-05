@@ -2,7 +2,7 @@
 kind: wiring
 title: "Three Dimensions on a Flat Screen"
 description: "How depth gets squashed onto a flat canvas, and how the app works out what is in front."
-tags: [wiring, geometry]
+tags: [wire, geometry]
 date: 2026-05-10
 ---
 

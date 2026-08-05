@@ -2,7 +2,7 @@
 kind: rule
 title: "Code Style"
 description: "Naming, formatting, and organization patterns to follow strictly across projects."
-tags: [code-style]
+tags: [style]
 date: 2026-07-13
 ---
 

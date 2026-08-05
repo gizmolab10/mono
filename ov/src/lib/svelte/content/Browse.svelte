@@ -148,7 +148,7 @@
 	/* With a scrollbar beside the rows, the tags title holds back room for it — so these
 	   words hold back the same, and the two end on the same edge. */
 	.chosen-tags.has-bar {
-		margin-right : calc(20px + var(--gap));
+		margin-right : calc(var(--thickness-fat) + var(--gap));
 	}
 
 	.folders-button {

@@ -2,7 +2,7 @@
 kind: rule
 title: "Lexicon (ji)"
 description: "The exact words ji uses in prose, comments, log lines, and test names."
-tags: [prose, session-start]
+tags: [prose, session]
 date: 2026-07-30
 ---
 

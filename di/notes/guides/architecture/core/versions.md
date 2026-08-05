@@ -2,7 +2,7 @@
 kind: wiring
 title: "File Format Migration (di)"
 description: "How an old saved file is brought up to the current scene format."
-tags: [wiring, data, migration]
+tags: [wire, data, migrate]
 date: 2026-05-10
 ---
 

@@ -2,7 +2,7 @@
 kind: wiring
 title: "Architecture Overview (ws)"
 description: "Start here: how the pieces of Webseriously fit together."
-tags: [wiring]
+tags: [wire]
 date: 2026-02-22
 ---
 

@@ -33,26 +33,26 @@ Twenty-two. The first sixteen came from the shared guides — the folder-by-fold
 
 The folder a file sits in is not a tag. A tag says what the file is *about*, so two files in different folders about the same thing find each other.
 
-1. **collaboration** — who does what, turn-taking, proposals, designs
+1. **team** — who does what, turn-taking, proposals, designs
 2. **prose** — voice, journals, how writing should read
-3. **session-start** — what to read or do before acting
-4. **code-style** — naming, formatting, how code is organized
+3. **session** — what to read or do before acting
+4. **style** — naming, formatting, how code is organized
 5. **visual-design** — look and feel, spacing, styling
-6. **refactoring** — reshaping code that already works
-7. **migration** — moving a component to a new shape
-8. **testing** — writing and running tests
-9. **debugging** — finding out why something is wrong
+6. **refactor** — reshaping code that already works
+7. **migrate** — moving a component to a new shape
+8. **test** — writing and running tests
+9. **debug** — finding out why something is wrong
 10. **build** — the tools that turn source into a site
 11. **deploy** — getting a built site online
 12. **setup** — getting a machine or an account ready
 13. **tools** — a single tool's own quirks
-14. **philosophy** — why the work is shaped this way
-15. **porting** — moving work between projects
+14. **vision** — why the work is shaped this way
+15. **port** — moving work between projects
 16. **notes** — keeping the note files themselves in order
 
 From the project guides:
 
-17. **wiring** — how the parts of an app fit together, and what each part is responsible for
+17. **wire** — how the parts of an app fit together, and what each part is responsible for
 18. **data** — what gets stored, where it lives, and how it survives a reload
 19. **geometry** — shapes, positions, angles, and the math that places things in space
 20. **UX** — the parts a person sees and touches: controls, layout, selection, navigation
@@ -61,7 +61,7 @@ From the project guides:
 23. **stale** — this one has fallen behind what it describes, and wants a rewrite
 24. **think** — something here is unsettled and wants working out before it is acted on
 
-Where the last six land, so the list can be checked against real files rather than taken on faith: **wiring** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **UX** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
+Where the last six land, so the list can be checked against real files rather than taken on faith: **wire** on the top-level overviews and ji's three specs; **data** on what ws calls databases, state, preferences, and recents; **geometry** on di's algebra, axes, rotation, faces, and both dimension files; **UX** on di's components and ws's ux files; **platform** on ws's five platforms files; **research** on di's four study files.
 
 New tags are not forbidden forever, but adding one means adding it here first. That's the whole point of closing the list.
 
@@ -126,7 +126,7 @@ Once every file is labeled, a specific issue starts as a tag, not as a guess abo
 
 ## Success
 
-Every one of the 134 files carries a valid label block. No file covers two concepts, except the always file, whose rules carry their own tags. Asking for "everything tagged testing" returns the right set by reading the labels alone.
+Every one of the 134 files carries a valid label block. No file covers two concepts, except the always file, whose rules carry their own tags. Asking for "everything tagged test" returns the right set by reading the labels alone.
 
 ## ov — the map page, made live
 

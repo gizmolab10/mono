@@ -2,7 +2,7 @@
 kind: rule
 title: "Stipulations"
 description: "The load-bearing rules the app is built on, each one pinned by a test."
-tags: [session-start, testing]
+tags: [session, test]
 date: 2026-05-20
 ---
 

@@ -5,10 +5,13 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { ALL_TAGS, T_Bundle, T_Kind, T_Purpose, in_order } from '../../ts/types/Guide';
+	import { T_Bundle, T_Kind, T_Purpose } from '../../ts/types/Guide';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
+	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
+	import { shut_all_areas } from '../../ts/managers/Filters';
 	import Separator from './Separator.svelte';
+	import Big_Pill from './Big_Pill.svelte';
 
 	// Whether the three picking rows show at all. The words looked for stay either way —
 	// they are the one filter worth keeping in reach while the list has the height.
@@ -62,8 +65,6 @@
 	// from under the cursor.
 	let shown_kinds = $derived(test === 'a' ? Object.values(T_Kind)
 		: Object.values(T_Kind).filter((kind) => kinds.includes(kind) || $w_kind === kind));
-	let shown_tags = $derived(test === 'a' ? [...ALL_TAGS].sort(in_order)
-		: [...ALL_TAGS].sort(in_order).filter((tag) => tags_in_use.includes(tag) || $w_tags.includes(tag)));
 	let shown_projects = $derived(test === 'a' ? projects
 		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_project === p));
 
@@ -118,7 +119,7 @@
 	let purposes_word = $derived($w_purposes.join(', '));
 	let project_word = $derived($w_project === '' ? 'all' : $w_project);
 	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
-	let tags_word = $derived($w_tags.length === 0 ? 'any tag' : $w_tags.join(', '));
+	let tags_word = $derived($w_tags.length === 0 ? 'all' : $w_tags.join(', '));
 
 	// What the word on the bar says: just the name while the row is there, the name and what
 	// is picked while it is folded away.
@@ -183,21 +184,21 @@
 		     purpose above projects. -->
 		{#if stacked || !show_purposes || !show_projects}
 			<div class:folded={!show_purposes}>
-				<Separator title={heading('purpose', show_purposes, purposes_word)}
+				<Separator at_left title={heading('purpose', show_purposes, purposes_word)}
 					onclick={() => fold('purpose', show_purposes)}/>
 			</div>
 			{#if show_purposes}
 				<div class='paired-rows'>{@render purpose_picker()}</div>
 			{/if}
 			<div class:folded={!show_projects}>
-				<Separator title={heading('projects', show_projects, project_word)}
+				<Separator at_left title={heading('projects', show_projects, project_word)}
 					onclick={() => fold('projects', show_projects)}/>
 			</div>
 			{#if show_projects}
 				<div class='paired-rows'>{@render projects_picker()}</div>
 			{/if}
 		{:else}
-			<Separator title={['purpose', 'projects']}
+			<Separator at_left title={['purpose', 'projects']}
 				onclick={(_event, which) => fold(which === 0 ? 'purpose' : 'projects', true)}/>
 			<div class='paired-rows'>
 				{@render purpose_picker()}
@@ -206,7 +207,7 @@
 		{/if}
 
 		<div class:folded={!show_kinds}>
-			<Separator title={heading('kinds', show_kinds, kind_word)}
+			<Separator at_left title={heading('kinds', show_kinds, kind_word)}
 				onclick={() => fold('kinds', show_kinds)}/>
 		</div>
 
@@ -223,18 +224,20 @@
 		{/if}
 
 		<div class:folded={!show_tags}>
-			<Separator title={heading('tags', show_tags, tags_word)}
+			<Separator at_left title={heading('tags', show_tags, tags_word)}
 				onclick={() => fold('tags', show_tags)}/>
 		</div>
 
 		{#if show_tags}
-			<div class='tags'>
-				<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>any tag</button>
-				{#each shown_tags as tag}
-					{@const worn = tags_in_use.includes(tag)}
-					<button class='tag' class:current={$w_tags.includes(tag)} class:empty={!worn}
-						use:tip={worn ? `show files tagged "${tag}"` : `nothing tagged "${tag}" is left by the other filters`}
-						onclick={() => { if (worn) { toggle_tag(tag); } }}>{tag}</button>
+			<!-- Twenty-four words in one row is more than an eye can scan, so the tags are
+			     gathered into six areas, each folding away behind its own name. Stopping
+			     filtering by tag keeps its own plain pill at the front. -->
+			<!-- A click on the bare space beside the pills shuts every area at once, so getting
+			     back to six words never means pressing six crosses. -->
+			<div class='tags' role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
+				<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>all</button>
+				{#each TAG_AREAS as area (area.name)}
+					<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
 				{/each}
 			</div>
 		{/if}
@@ -333,10 +336,10 @@
 
 	/* Twenty-two tags won't sit in one row, so they wrap. Any number can be on at once. */
 	.tags {
+		gap             : var(--gap);
 		justify-content : center;
 		display         : flex;
 		flex-wrap       : wrap;
-		gap             : var(--gap-tight);
 	}
 
 	.tag {
@@ -356,16 +359,8 @@
 		color      : var(--text-on-accent);
 	}
 
-	.tag:not(.current):not(.empty):hover {
+	.tag:not(.current):hover {
 		background : var(--hover);
-	}
-
-	/* A tag with nothing left within reach: gray and dead to the touch, since picking it
-	   could only ever empty the list. */
-	.tag.empty {
-		color        : var(--gray);
-		border-color : var(--gray);
-		cursor       : default;
 	}
 
 	.search {

@@ -2,7 +2,7 @@
 kind: lookup
 title: "Map (ji)"
 description: "Every source file in ji, updated whenever files are added, moved, or removed."
-tags: [notes, wiring]
+tags: [notes, wire]
 date: 2026-07-29
 ---
 

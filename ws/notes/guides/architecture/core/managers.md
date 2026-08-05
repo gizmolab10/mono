@@ -2,7 +2,7 @@
 kind: wiring
 title: "Managers (ws)"
 description: "Sixteen shared instances, each owning one area of the app."
-tags: [wiring]
+tags: [wire]
 date: 2026-01-28
 ---
 

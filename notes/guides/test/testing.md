@@ -2,7 +2,7 @@
 kind: lookup
 title: "Testing"
 description: "The test commands and the patterns to write tests with."
-tags: [testing]
+tags: [test]
 date: 2026-05-10
 ---
 

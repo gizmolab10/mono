@@ -2,7 +2,7 @@
 kind: rule
 title: "Pitfalls"
 description: "Edge cases that have caused mistakes, mostly failures to read before acting."
-tags: [session-start, debugging]
+tags: [session, debug]
 date: 2026-05-10
 ---
 

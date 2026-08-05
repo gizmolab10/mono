@@ -2,12 +2,12 @@
 
 In the filters, the linear list is currently quite lengthy (22), challenging to scan by eye. would be easier if some can be encapsulated, and thus hidden. These are the six areas and their tags.
 
-**code:** porting, migration, refactoring, wiring, data
-**ai:** session-start, collaboration, code-style, prose
-**notes:** notes, philosophy, research, stale, think
+**code:** port, migrate, refactor, wire, data
+**ai:** session, team, style, prose
+**other:** notes, vision, research, stale, think
 **harness:** platform, setup, deploy, tools, build
 **ux:** visual-design, UX, geometry
-**rules:** testing, debugging
+**fix:** test, debug
 
 ## thoughts
 

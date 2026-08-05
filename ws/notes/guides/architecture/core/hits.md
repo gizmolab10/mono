@@ -2,7 +2,7 @@
 kind: wiring
 title: "Hits (ws)"
 description: "One spatial index decides which single element reacts to the mouse."
-tags: [wiring, UX]
+tags: [wire, UX]
 date: 2026-01-12
 ---
 

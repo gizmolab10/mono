@@ -427,7 +427,7 @@
 		min-height     : 0;
 	}
 
-	/* The header table sits still above the rows. It holds back the same 20px on the
+	/* The header table sits still above the rows. It holds back the same width on the
 	   right that the scrolled area gives its scrollbar, so the two line up. */
 	.table-head {
 		box-sizing    : border-box;
@@ -440,7 +440,7 @@
 	/* With a scrollbar showing, the titles hold back its width plus the gap, so they stay
 	   lined up with the columns below. With none, they use the whole width. */
 	.table-head.has-bar {
-		padding-right : calc(20px + var(--gap));
+		padding-right : calc(var(--thickness-fat) + var(--gap));
 	}
 
 	/* With no scrollbar, both the titles and the rows keep the same fat gap at the right,
@@ -481,25 +481,25 @@
 	}
 
 	/* A gap between the rows and the scrollbar — only when there is a scrollbar. */
-	.table-scroll.has-bar {
-		border-top-color : var(--accent);
-		padding-right    : var(--gap);
-		scrollbar-gutter : stable;
-	}
-
-	/* The sideways bar is given the same thickness as the one down the side, so the two match. */
+	/* The bar beside the rows. Plain numbers on purpose: a scrollbar's own styling cannot read
+	   the sizes pushed onto the page, and a name here falls back to the browser's fat bar. */
 	.table-scroll::-webkit-scrollbar {
-		height : 20px;
-		width  : 20px;
+		height : 6px;
+		width  : 6px;
 	}
 
 	.table-scroll::-webkit-scrollbar-thumb {
 		background    : var(--accent);
-		border-radius : var(--radius-pill);
+		border-radius : 999px;
 	}
 
 	.table-scroll::-webkit-scrollbar-track {
 		background : transparent;
+	}
+
+	.table-scroll.has-bar {
+		border-top-color : var(--accent);
+		padding-right    : var(--gap);
 	}
 
 	.guides-table {

@@ -14,11 +14,13 @@
 		vertical  = false,
 		hovered   = false,
 		spacer    = false,
+		at_left   = false,
 		title     = null,
 		z_layer,
 	}: {
 		vertical?  : boolean;          // runs top-to-bottom instead of left-to-right
 		spacer?    : boolean;          // no bar — just a growing gap (vertical only)
+		at_left?   : boolean;          // labels run from the left end rather than spreading along the bar
 		hovered?   : boolean;          // force the title-button's hover look on, even when the cursor isn't on it (a surrounding area can light it)
 		z_layer?   : number;           // optional stacking layer
 		thickness? : number;           // the bar's width/height in px
@@ -32,6 +34,12 @@
 	// the quarter and three-quarter marks, which is the middle of each half of the row below.
 	const words = $derived(title === null ? [] : Array.isArray(title) ? title : [title]);
 
+	// A bar is a couple of pixels tall, so with one word to press the whole length of it takes
+	// the cursor instead: a clear strip the height of an ordinary control, lying over the bar,
+	// which lights the word and answers a click anywhere along it. With more than one word
+	// there is no saying which was meant, so those keep their own separate presses.
+	const whole_bar = $derived(onclick !== undefined && words.length === 1);
+
 	const r         = $derived(radius);
 	const fillet_tr = $derived(`M ${r} 0 A ${r} ${r} 0 0 0 0 ${r} L 0 0 Z`);
 	const fillet_tl = $derived(`M ${-r} 0 A ${r} ${r} 0 0 1 0 ${r} L 0 0 Z`);
@@ -39,18 +47,32 @@
 	const fillet_bl = $derived(`M ${-r} 0 A ${r} ${r} 0 0 0 0 ${-r} L 0 0 Z`);
 </script>
 
-<!-- The labels, each placed at the middle of its own share of the bar: a button when a click
-     handler is given, else plain text. -->
+<!-- The labels: a button when a click handler is given, else plain text. Spread along the bar,
+     each at the middle of its own share of it — or, held to the left, run together from one
+     wide inset off the left end. -->
 {#snippet title_tags()}
-	{#each words as word, i}
-		{@const at = `${((i + 0.5) / words.length) * 100}%`}
-		{#if onclick}
-			<button type='button' class='title clickable' class:forced={hovered} style:left={at}
-				onclick={(event) => onclick(event, i)}>{word}</button>
-		{:else}
-			<span class='title' style:left={at}>{word}</span>
-		{/if}
-	{/each}
+	{#if at_left}
+		<span class='at-left'>
+			{#each words as word, i}
+				{#if onclick}
+					<button type='button' class='title clickable' class:forced={hovered}
+						onclick={(event) => onclick(event, i)}>{word}</button>
+				{:else}
+					<span class='title'>{word}</span>
+				{/if}
+			{/each}
+		</span>
+	{:else}
+		{#each words as word, i}
+			{@const at = `${((i + 0.5) / words.length) * 100}%`}
+			{#if onclick}
+				<button type='button' class='title clickable' class:forced={hovered} style:left={at}
+					onclick={(event) => onclick(event, i)}>{word}</button>
+			{:else}
+				<span class='title' style:left={at}>{word}</span>
+			{/if}
+		{/each}
+	{/if}
 {/snippet}
 
 {#if vertical}
@@ -82,6 +104,7 @@
 {:else}
 	<div
 		class='separator horizontal'
+		class:reachable={whole_bar}
 		style:z-index={z_layer}
 		style:height='{thickness}px'
 		style:margin='0 calc(-1 * {reach})'
@@ -102,6 +125,9 @@
 			style='position:absolute; right:0; bottom:{-r}px; pointer-events:none'>
 			<path d={fillet_tl} />
 		</svg>
+		{#if whole_bar && onclick}
+			<button type='button' class='reach' aria-label={words[0]} onclick={(event) => onclick(event, 0)}></button>
+		{/if}
 		{@render title_tags()}
 	</div>
 {/if}
@@ -124,7 +150,7 @@
 	   depends on how many labels there are. */
 	.title {
 		transform   : translate(-50%, -50%);
-		font-size   : var(--font-label);
+		font-size   : var(--font-credit);
 		color       : var(--darkgray);
 		padding     : 0 var(--gap);
 		background  : var(--bg);
@@ -134,6 +160,32 @@
 		border      : none;
 	}
 
+	/* Held to the ends: one word sits at the left inset, and a second takes the right at the
+	   same inset. Nothing here is placed by a share of the width. */
+	.at-left {
+		transform       : translateY(-50%);
+		justify-content : space-between;
+		gap             : var(--gap-fat);
+		position        : absolute;
+		align-items     : center;
+		display         : flex;
+		right           : var(--gap);
+		left            : var(--gap);
+		top             : 50%;
+	}
+
+	/* The row holding them runs the whole length, so it would swallow every click that lands
+	   between the words. It lets the cursor through; only the words themselves take it. */
+	.at-left {
+		pointer-events : none;
+	}
+
+	.at-left .title {
+		pointer-events : auto;
+		position       : static;
+		transform      : none;
+	}
+
 	/* When a click handler is given, the title is a button — it takes the cursor and lights on hover. */
 	.title.clickable {
 		border-radius : var(--radius-pill);
@@ -141,9 +193,25 @@
 	}
 
 	.title.clickable:hover,
-	.title.clickable.forced {
+	.title.clickable.forced,
+	.reachable:hover .title.clickable {
 		border     : 0.5px solid var(--darkgray);
 		background : var(--hover);
+	}
+
+	/* The clear strip that makes a two-pixel bar worth aiming at: as tall as any other control,
+	   the full length of the bar, lying centered on it and showing nothing of itself. */
+	.reach {
+		transform  : translateY(-50%);
+		height     : var(--height-control);
+		background : transparent;
+		position   : absolute;
+		cursor     : pointer;
+		border     : none;
+		padding    : 0;
+		width      : 100%;
+		left       : 0;
+		top        : 50%;
 	}
 
 	/* A clear strip of the page color running along both sides of the line, one --gap

@@ -35,8 +35,7 @@
               "title": "tags hierarchy"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -172,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/tags hierarchy.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of tags hierarchy"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -211,34 +210,35 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "2fea9608ec27c32f",
+  "active": "14b6ec19895b3d59",
   "lastOpenFiles": [
+    "notes/guides/develop/add a file.md",
+    "notes/guides/philosophy/limitations.md",
     "ov/notes/work/code debt.md",
+    "ov/src/lib/svelte/content/View_File.svelte.tmp.92984.313108c7637d",
+    "ov/src/lib/svelte/content/View_File.svelte.tmp.92984.9f8df5882707",
+    "ov/src/lib/svelte/content/View_File.svelte.tmp.92984.a76ee54635fd",
+    "ws/vite.config.js.timestamp-1785883189650-bd7aa11b27276.mjs",
+    "ov/notes/work/file layout.md.tmp.92984.001b3677b05d",
+    "notes/guides/develop/add a guide.md.tmp.92984.ff3a962e07ec",
+    "ov/notes/work/okf.md.tmp.92984.dd585fe894ee",
+    "ov/src/lib/ts/types/Tag_Areas.ts.tmp.92984.2b7c95de93ba",
+    "ov/src/lib/svelte/content/View_File.svelte.tmp.92984.50dfa8532e48",
+    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.274251c68d55",
     "ov/notes/work/tags hierarchy.md",
-    "ov/src/lib/ts/managers/Hierarchy.ts.tmp.49972.a8e56a5b0333",
     "ov/notes/work/okf.md",
-    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.f1b8f3f8ea6b",
     "di/notes/guides/project/philosophy/logic driven design.md",
     "ov/notes/work/repair staleness.md",
-    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.71e3c87a32d2",
     "notes/guides/tools/try both.md",
-    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.07eebe40daa8",
-    "ov/src/lib/svelte/content/List_Files.svelte",
-    "ov/src/lib/svelte/content/View_File.svelte",
-    "ov/src/lib/svelte/content/List_Guides.svelte.tmp.49972.3ceda0a53c8c",
-    "ov/src/lib/svelte/support/Filters.svelte.tmp.49972.40ce9b8ce66c",
     "ov/notes/guides/editing.md",
     "ji/notes/designs/hierarchy spec.md",
     "ji/notes/designs/db spec.md",
     "ws/notes/designs/paging.md",
     "ws/notes/designs/styles.md",
     "ws/notes/designs/breadcrumbs.md",
-    "ji/notes/designs",
-    "ws/notes/designs",
     "ov/notes/work/rewritten guides.md",
     "notes/guides/pre-flight/always.md",
     "ov/notes/work/stale guides.md",
-    "notes/guides/philosophy/limitations.md",
     "notes/guides/philosophy/motive.md",
     "notes/guides/philosophy/use ai.md",
     "notes/guides/develop/port.md",
