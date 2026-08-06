@@ -8,11 +8,12 @@ Everything still owed is in [code debt](code%20debt.md). The [work journal](work
 
 ### Success
 
-1. The clear mark is a circle with a slash, drawn, and it reads against whatever sits under it.
-2. Takes the drawn size and the text color (default --black) like every other path, and it is tested.
-3. The tests and the type check run clean.
+1. The clear path is a circle with a slash, stroke is color prop, fill is transparent.
+2. ~~The filter path is four horizontal lines, each shorter than the one above~~.
+3. props are: drawn size and the text color, like every other path, and both are tested.
+4. The tests and the type check run clean.
 
 ### The shape of it
 
-one more svg path, worked out from its size prop, stroke drawn with its color prop, fill is transparent
+~~Two~~ One more path beside the others, worked out from one size. The clear mark overlays where a letter is used now~~; the filter mark is new~~.
 

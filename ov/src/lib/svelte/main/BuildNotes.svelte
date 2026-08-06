@@ -6,11 +6,11 @@
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
-	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+	const crossPath = svg_paths.x_cross(k.size.control, k.size.control / 6);
 
 	// The newer/older steppers: the same fat triangle mark the viewer uses to step files, pointing up
 	// (newer) and down (older), at the same size.
-	const STEP_TRIANGLE = k.size.cross * 1.1;
+	const STEP_TRIANGLE = k.size.control * 1.1;
 	const up_path     = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.up);
 	const up_bounds   = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.up);
 	const down_path   = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.down);
@@ -127,8 +127,8 @@
 		</button>
 	</div>
 	<button class='close' aria-label='close' use:tip={'close'} onclick={onclose}>
-		<svg class='cross' width={k.svg.cross} height={k.svg.cross} viewBox='0 0 {k.size.cross} {k.size.cross}'>
-			<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+		<svg class='cross' width={k.svg.cross} height={k.svg.cross} viewBox='0 0 {k.size.control} {k.size.control}'>
+			<path d={crossPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' />
 		</svg>
 	</button>
 	<div class='header'>
@@ -216,8 +216,8 @@
 	.close {
 		border			: var(--thickness-normal) solid var(--black);
 		border-radius	: var(--radius-percent);
-		width			: var(--size-cross);
-		height			: var(--size-cross);
+		width			: var(--size-control);
+		height			: var(--size-control);
 		background		: var(--white);
 		box-sizing		: border-box;
 		justify-content	: center;

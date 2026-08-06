@@ -1,17 +1,17 @@
 <script lang='ts'>
-	import { w_purposes, toggle_purpose, w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
-	import { show_status } from '../../ts/managers/Status';
-	import { get } from 'svelte/store';
+	import { w_purposes, w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
+	import { toggle_purpose, shut_all_areas } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { T_Bundle, T_Kind, T_Purpose } from '../../ts/types/Guide';
+	import { show_status } from '../../ts/managers/Status';
+	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import { guides } from '../../ts/managers/Guides';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { T_Bundle, T_Kind, T_Purpose } from '../../ts/types/Guide';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
-	import { shut_all_areas } from '../../ts/managers/Filters';
 	import Separator from './Separator.svelte';
 	import Big_Pill from './Big_Pill.svelte';
+	import { get } from 'svelte/store';
 
 	// Whether the three picking rows show at all. The words looked for stay either way —
 	// they are the one filter worth keeping in reach while the list has the height.
@@ -137,8 +137,8 @@
 	// Pressing it folds the whole set away or brings it back.
 	let all_picked = $derived([purposes_word, project_word, kind_word, tags_word]
 		.filter((one) => one !== 'all').join(', '));
-	let all_word = $derived($w_show_filters ? 'filters'
-		: `filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
+	let all_word = $derived($w_show_filters ? '✂ filters'
+		: `✂ filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
 </script>
 
 <!-- The two pickers, written once and placed either way. -->

@@ -8,8 +8,7 @@ date: 2026-07-24
 
 # Intersection Project Roadmap
 
-Hello Jonathan  
-Below is an overview of the project scope.  I have been struggling with moving from the idea to the actualization.  MAinly because it's so far out of my core competencies.  I want to reach out to the scholars to see if I can get interest in the project but obviously we would have to deliver.  Are we ready to get started?  What are your thoughts?  
+Intersection project's scope.  I have been struggling with moving from the idea to the actualization.  Mainly because it's so far out of my core competencies.  I want to reach out to the scholars to see if I can get interest in the project but obviously we would have to deliver.  Are we ready to get started?  What are your thoughts?
   
 **Intersection Project Roadmap**  
   

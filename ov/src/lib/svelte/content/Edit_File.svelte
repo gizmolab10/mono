@@ -1,16 +1,16 @@
 <script lang='ts'>
 	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Markdown_Blocks';
-	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
+	import { follow_link, w_command_down, w_file_place, w_search_at, w_search_for } from '../../ts/managers/Operations';
 	import { ALL_TAGS, T_Bundle, T_Kind, in_order, key_of, type Guide } from '../../ts/types/Guide';
-	import { follow_link, w_command_down, w_search_at, w_search_for } from '../../ts/managers/Operations';
+	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { landed_on_a_control, names_up_to } from '../../ts/utilities/Leaving';
-	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
-	import { w_words } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
+	import { w_words } from '../../ts/managers/Filters';
 	import Separator from '../support/Separator.svelte';
 	import Steppers from '../support/Steppers.svelte';
 	import Big_Pill from '../support/Big_Pill.svelte';
@@ -75,7 +75,7 @@
 	// name stays a name, and "http://..." or "https://..." still becomes a link.
 	reader.linkify.set({ fuzzyLink: false });
 
-	// Turning a guide's text into the page on screen — labels off the top, every piece
+	// Turning a guide's text into the page on screen — filters off the top, every piece
 	// stamped with the lines it came from, headings named, links marked — all lives in one
 	// place, so drawing again after a change is the same call on the changed text.
 
@@ -318,9 +318,9 @@
 		open_box(block);
 	}
 
-	// --- the five labels at the top -------------------------------------------
+	// --- the five filters at the top -------------------------------------------
 
-	// The labels are never on the page — they are taken off before the words are drawn —
+	// The filters are never on the page — they are taken off before the words are drawn —
 	// so editing them has its own small form, shown only while editing is on. Nothing here
 	// is typed as free text where it matters: the kind and the tags are picked from the
 	// only lists the app accepts.
@@ -331,9 +331,9 @@
 	let form_tags        = $state<string[]>([]);
 	const KINDS = Object.values(T_Kind);
 
-	// Whether the label form is on screen while editing. Remembered across visits, since it
+	// Whether the filter form is on screen while editing. Remembered across visits, since it
 	// is a way of working rather than something about one guide.
-	const w_show_labels = preferences.persistent<boolean>(T_Preference.show_labels, true);
+	const w_show_filters = preferences.persistent<boolean>(T_Preference.show_filters, true);
 
 	// The tag areas take four rows of their own, so the word above them folds them away — and
 	// says what the guide wears while they are gone, as the filters' own lines do.
@@ -341,10 +341,12 @@
 	let form_tags_word = $derived(show_form_tags ? 'tags'
 		: `tags ➜ ${form_tags.length === 0 ? 'none' : [...form_tags].sort(in_order).join(', ')}`);
 
-	// The word on the line above the form folds the whole form away. It says what the file is
-	// labeled either way — open or shut — so the line always reads the same.
-	let label_rows_word = $derived(`filters ➜ ${[form_kind, ...[...form_tags].sort(in_order)]
-		.filter((one) => one !== '').join(', ') || 'none'}`);
+	// The word on the line above the form folds the whole form away. With the form on screen it
+	// is just the one word; folded, it says what the file is filtered, since that is the only
+	// place left to read it.
+	let filter_rows_word = $derived($w_show_filters ? '✂ filters'
+		: `✂ filters ➜ ${[form_kind, ...[...form_tags].sort(in_order)]
+			.filter((one) => one !== '').join(', ') || 'none'}`);
 
 	// Whenever another guide comes on screen, the form starts from what that guide says.
 	$effect(() => {
@@ -355,27 +357,27 @@
 		form_tags        = [...tags];
 	});
 
-	/** Write the five labels back, if any of them changed. */
-	function save_labels() {
+	/** Write the five filters back, if any of them changed. */
+	function save_filters() {
 		if (text_of_file === '') { return; }
-		const labels = { kind: form_kind, title: form_title, description: form_description, date: form_date, labeled: true };
-		const whole  = with_labels_replaced(text_of_file, labels, form_tags);
+		const filters = { kind: form_kind, title: form_title, description: form_description, date: form_date, labeled: true };
+		const whole  = with_labels_replaced(text_of_file, filters, form_tags);
 		if (whole === text_of_file) { return; }
 		const was   = text_of_file;
 		const where = file_path_of(guide.bundle, guide.path);
-		debug.log(`Editing "${name}": the labels changed — writing them to ${where}.`);
+		debug.log(`Editing "${name}": the filters changed — writing them to ${where}.`);
 		text_of_file = whole;                 // the words below are untouched, so no redraw
 		save_guide(where, whole, was).then((answer) => {
 			if (!answer.ok) {
 				text_of_file = was;
 				say(`not saved — ${answer.why}`);
-				debug.log(`Editing "${name}": the labels were NOT written to ${where} — ${answer.why}.`);
+				debug.log(`Editing "${name}": the filters were NOT written to ${where} — ${answer.why}.`);
 				return;
 			}
 			// The list shows the title and the tags, so it is told at once rather than
 			// waiting for every file to be read again.
-			guides.relabel(guide, labels, form_tags);
-			debug.log(`Editing "${name}": labels written — kind "${labels.kind}", ${form_tags.length} tag(s).`);
+			guides.relabel(guide, filters, form_tags);
+			debug.log(`Editing "${name}": filters written — kind "${filters.kind}", ${form_tags.length} tag(s).`);
 		});
 	}
 
@@ -417,7 +419,7 @@
 	/** Put a tag on this guide or take it off, and write it. */
 	function toggle_tag(tag: string) {
 		form_tags = form_tags.includes(tag) ? form_tags.filter((t) => t !== tag) : [...form_tags, tag].sort(in_order);
-		save_labels();
+		save_filters();
 	}
 
 	// --- looking through the guide on screen ----------------------------------
@@ -744,22 +746,26 @@
 		<!-- With something typed, two triangles walk the places those words turn up, and the
 		     count says which of them is lit. -->
 		{#if $w_words !== ''}
-			<!-- The count sits between the two marks, so each is asked for on its own. -->
+			<!-- The count reads first, then the two marks that walk from one place to the next. -->
 			<div class='view-steps hits'>
-				<Steppers can_back onprev={() => step_hit(-1)} back_says='the place before' />
 				<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
-				<Steppers can_forward onnext={() => step_hit(1)} forward_says='the place after' />
+				<Steppers can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
 			</div>
 		{/if}
 		<input
-			class='search'
 			type='search'
+			class='search'
 			placeholder='search'
-			use:tip={'look through this file'}
+			oninput={find_first}
 			bind:value={$w_words}
-			oninput={find_first} />
+			use:tip={'search this file'} />
 	</div>
 	<div class='view-head'>
+		<!-- Which of the files the filters leave is being read, and how many there are. Nothing
+		     while reading off the list, on a run of guides reached by links. -->
+		{#if $w_file_place}
+			<span class='file-count'>{$w_file_place.at} of {$w_file_place.of}</span>
+		{/if}
 		<Steppers {can_back} {can_forward} {onprev} {onnext}
 			back_says='previous file' forward_says='next file' />
 		<!-- The folders above the file follow the steppers at the left. -->
@@ -779,42 +785,42 @@
 		<span class='view-spacer'></span>
 	</div>
 	</div>
-	<!-- While the labels are open the heavy line moves below them, so the form reads as part of
+	<!-- While the filters are open the heavy line moves below them, so the form reads as part of
 	     the top rather than as words of the file. Its word folds away only what sits between it
 	     and the next line — the kind, title, date and description — leaving the tags below. -->
 	<Separator
 		at_left
+		title={filter_rows_word}
 		thickness={k.gap.default}
-		title={label_rows_word}
-		onclick={() => { w_show_labels.set(!$w_show_labels); debug.log(`Editing "${name}": the label form is now ${!$w_show_labels ? 'hidden' : 'shown'}.`); }}/>
-	<!-- The five labels, shown only while editing. They never appear among the words, so
+		onclick={() => { w_show_filters.set(!$w_show_filters); debug.log(`Editing "${name}": the filter form is now ${!$w_show_filters ? 'hidden' : 'shown'}.`); }}/>
+	<!-- The five filters, shown only while editing. They never appear among the words, so
 	     this is the only way at them. -->
-	{#if $w_show_labels}
-		<div class='label-form'>
-			<div class='label-row'>
-				<span class='label-word'>kind</span>
+	{#if $w_show_filters}
+		<div class='filter-form'>
+			<div class='filter-row'>
+				<span class='filter-word'>kind</span>
 				{#each KINDS as one (one)}
-					<button class='label-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_labels(); }}>{one}</button>
+					<button class='filter-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_filters(); }}>{one}</button>
 				{/each}
 			</div>
-			<div class='label-row'>
-				<span class='label-word'>title</span>
-				<input class='label-field' bind:value={form_title} onblur={save_labels} />
-				<span class='label-word'>date</span>
-				<input class='label-field date' bind:value={form_date} onblur={save_labels} />
+			<div class='filter-row'>
+				<span class='filter-word'>title</span>
+				<input class='filter-field' bind:value={form_title} onblur={save_filters} />
+				<span class='filter-word'>date</span>
+				<input class='filter-field date' bind:value={form_date} onblur={save_filters} />
 			</div>
-			<div class='label-row'>
-				<span class='label-word'>says</span>
-				<input class='label-field' bind:value={form_description} onblur={save_labels} />
+			<div class='filter-row'>
+				<span class='filter-word'>says</span>
+				<input class='filter-field' bind:value={form_description} onblur={save_filters} />
 			</div>
-			<div class='label-sep'>
+			<div class='filter-sep'>
 				<Separator at_left thickness={k.separator.normal} title={form_tags_word}
 					onclick={() => { show_form_tags = !show_form_tags; debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'shown' : 'folded away'}.`); }}/>
 			</div>
 			<!-- The same six areas the filters use. Every tag is within reach here, since this
 			     is where a file's own tags are set rather than where files are narrowed. -->
 			{#if show_form_tags}
-				<div class='label-row wrapping'>
+				<div class='filter-row wrapping'>
 					{#each TAG_AREAS as area (area.name)}
 						<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
 					{/each}
@@ -888,11 +894,19 @@
 
 	.view-head {
 		padding-bottom : var(--gap);
-		min-height     : var(--height-control);
+		height         : var(--height-control);
 		gap            : var(--gap);
 		position       : relative;
-		align-items    : start;
+		align-items    : center;
 		display        : flex;
+		box-sizing     : content-box;
+	}
+
+	/* The step marks are drawn a touch taller than a control. Held to the row's own height
+	   they still show whole — they are allowed to spill — and the row keeps one height
+	   whether they are there or not. */
+	.view-head :global(.steppers) {
+		height : var(--height-control);
 	}
 
 	/* The empty run that holds the buttons at the left apart from the kind and tags at the
@@ -902,6 +916,15 @@
 	}
 
 	/* The folders above the file, just right of the steppers at the left of the button row. */
+	/* Which file of the run is on screen, reading like the folders beside it. */
+	.file-count {
+		opacity     : var(--opacity-header);
+		font-size   : var(--font-label);
+		color       : var(--text);
+		white-space : nowrap;
+		flex        : 0 0 auto;
+	}
+
 	.view-ancestry {
 		opacity      : var(--opacity-header);
 		font-size    : var(--font-label);
@@ -909,9 +932,8 @@
 		color        : var(--text);
 		position     : relative;
 		flex         : 0 1 auto;
-		white-space  : nowrap;
 		overflow     : hidden;
-		top          : 4px;
+		white-space  : nowrap;
 		min-width    : 0;
 	}
 
@@ -949,33 +971,33 @@
 		display      : flex;
 	}
 
-	/* The five labels while editing: a line each for the kind, the name and date, what it
+	/* The five filters while editing: a line each for the kind, the name and date, what it
 	   says, and the tags. The pickers read like the filters' own, so the closed lists look
 	   the same wherever they turn up. */
-	.label-form {
+	.filter-form {
 		gap            : var(--gap-tight);
 		margin         : var(--gap) 0;
 		flex-direction : column;
 		display        : flex;
 	}
 
-	.label-row {
+	.filter-row {
 		gap         : var(--gap-tight);
 		align-items : center;
 		display     : flex;
 	}
 
 	/* The sep before the tags stands clear of the row above it and the pickers below. */
-	.label-sep {
+	.filter-sep {
 		margin : var(--gap-small) 0;
 	}
 
-	.label-row.wrapping {
+	.filter-row.wrapping {
 		justify-content : center;
 		flex-wrap       : wrap;
 	}
 
-	.label-word {
+	.filter-word {
 		opacity    : var(--opacity-header);
 		font-size  : var(--font-label);
 		color      : var(--text);
@@ -984,7 +1006,7 @@
 		width      : 45px;
 	}
 
-	.label-field {
+	.filter-field {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
 		padding       : var(--pad-control);
@@ -998,12 +1020,12 @@
 		min-width     : 0;
 	}
 
-	.label-field.date {
+	.filter-field.date {
 		flex  : 0 0 auto;
 		width : 110px;
 	}
 
-	.label-pick {
+	.filter-pick {
 		border        : var(--thickness-normal) solid var(--black);
 		height        : var(--height-control);
 		border-radius : var(--radius-pill);
@@ -1017,11 +1039,11 @@
 		white-space   : nowrap;
 	}
 
-	.label-pick:hover {
+	.filter-pick:hover {
 		background : var(--hover);
 	}
 
-	.label-pick.on {
+	.filter-pick.on {
 		background : var(--accent);
 	}
 
@@ -1316,12 +1338,10 @@
 	}
 
 	.hit-count {
+		opacity     : var(--opacity-header);
 		font-size   : var(--font-label);
 		color       : var(--text);
-		opacity     : var(--opacity-header);
-		text-align  : center;
 		white-space : nowrap;
-		min-width   : 60px;
 	}
 
 	.search {
@@ -1343,7 +1363,21 @@
 		color         : var(--text-on-accent);
 		background    : var(--accent);
 		border-radius : 0;
+		position      : relative;
 		padding       : 0;
+	}
+
+	/* A hairline pill drawn around that block, a full gap clear of it on every side, so the
+	   lit words catch the eye on a crowded page. Nothing inside it, so the words still read;
+	   it takes no room, so nothing around it moves. */
+	.view-page :global(mark.hit::before) {
+		border         : 2px solid var(--accent);
+		inset          : calc(var(--gap) * -1);
+		border-radius  : var(--radius-pill);
+		background     : transparent;
+		position       : absolute;
+		pointer-events : none;
+		content        : '';
 	}
 
 	/* The line a dead link leaves behind, along the bottom of the reading area. */

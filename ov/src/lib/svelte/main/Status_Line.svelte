@@ -7,7 +7,7 @@
 
 	// One line of words along the bottom of the window: what just happened, or what went
 	// wrong. It stays until the cross at its top right corner takes it away.
-	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+	const crossPath = svg_paths.x_cross(k.size.control, k.size.control / 6);
 
 	// Some things have too much to say for the bottom of a window. How much is too much can
 	// only be known once the words are drawn and wrapped, so it is measured rather than
@@ -34,8 +34,8 @@
 <div class='status'>
 	<span class='status-words' bind:this={words_element}>{$w_status}</span>
 	<button class='status-close' aria-label='dismiss' use:tip={'dismiss this'} onclick={hide_status}>
-		<svg class='status-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-			<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+		<svg class='status-cross' viewBox='0 0 {k.size.control} {k.size.control}'>
+			<path d={crossPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' />
 		</svg>
 	</button>
 </div>

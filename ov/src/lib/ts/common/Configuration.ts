@@ -40,8 +40,8 @@ class Configuration {
 		root.setProperty('--height-hideable',    `${k.height.hideable}px`);
 		root.setProperty('--height-control',     `${k.height.control}px`);
 		root.setProperty('--height-banner',      `${k.height.banner}px`);
+		root.setProperty('--size-control',       `${k.size.control}px`);
 		root.setProperty('--size-button',        `${k.size.button}px`);
-		root.setProperty('--size-cross',         `${k.size.cross}px`);
 		root.setProperty('--size-svg',           `${k.size.svg}px`);
 		root.setProperty('--font-control',       `${k.font.control}px`);
 		root.setProperty('--font-credit',        `${k.font.credit}px`);

@@ -8,7 +8,7 @@
 
 	// Words too many for the one line along the bottom are read here instead, in the whole
 	// content box, with room to scroll. The cross at the top left takes them away.
-	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
+	const crossPath = svg_paths.x_cross(k.size.control, k.size.control / 6);
 
 	/**
 	 * A dead link picked out of the report: its guide opens with the link's own words lit
@@ -25,8 +25,8 @@
 <div class='report'>
 	<div class='report-head'>
 		<button class='report-close' aria-label='dismiss' use:tip={'dismiss this report'} onclick={hide_status}>
-			<svg class='report-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+			<svg class='report-cross' viewBox='0 0 {k.size.control} {k.size.control}'>
+				<path d={crossPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' />
 			</svg>
 		</button>
 		<span class='report-title'>report</span>

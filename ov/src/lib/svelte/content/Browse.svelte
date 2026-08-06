@@ -1,16 +1,16 @@
 <script lang='ts'>
 	import { w_purposes, w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
-	import { T_Purpose } from '../../ts/types/Guide';
+	import List_Files, { w_scrollbar_showing } from './List_Files.svelte';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { guides } from '../../ts/managers/Guides';
+	import { T_Purpose } from '../../ts/types/Guide';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import Filters from '../support/Filters.svelte';
-	import List_Files, { w_scrollbar_showing } from './List_Files.svelte';
 	import { debug } from '../../ts/common/Debug';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
-	const MARK = k.size.svg;
+	const MARK = k.size.control;
 
 	// Looking through the guides: the three filters across the top, how many they leave,
 	// and the list itself. The narrowing happens in the hierarchy; this only shows it.
@@ -45,12 +45,11 @@
 	{#if matching > 0}
 		<!-- A drawn bar while the folders show; a folder while they are hidden. -->
 		<button class='folders-button eye' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
-			{#if $w_show_folders}
+			📁
+			{#if !$w_show_folders}
 				<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
-					<path d={svg_paths.closed(MARK)} fill-rule='nonzero' />
+					<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
 				</svg>
-			{:else}
-				📁
 			{/if}
 		</button>
 	{/if}
@@ -95,17 +94,14 @@
 		left        : 50%;
 	}
 
-	/* Beside the picked project, at the left rather than the far right. */
-	.unsorted {
-		margin-right : var(--gap);
-	}
-
 	/* The drawn bar takes the text color, like every other drawn mark. */
 	.shut-mark {
-		width   : var(--size-svg);
-		height  : var(--size-svg);
-		fill    : var(--text);
-		display : block;
+		width    : var(--size-control);
+		height   : var(--size-control);
+		stroke   : var(--black);
+		fill     : transparent;
+		position : absolute;
+		display  : block;
 	}
 
 	/* The picked project and kind, reading like the count rather than like buttons. The
@@ -138,7 +134,7 @@
 
 	.folders-button {
 		border        : var(--thickness-faint) solid var(--black);
-		height        : var(--height-control);
+		height        : var(--size-control);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
 		font-size     : var(-font-label);
@@ -157,8 +153,7 @@
 	   rest it wears no edge and sits on the page color; the edge and the fill appear only
 	   under the cursor, and the edge is held see-through so nothing shifts. */
 	.folders-button.eye {
-		width           : var(--height-control);
-		background      : transparent;
+		width           : var(--size-control);
 		position        : relative;
 		justify-content : center;
 		align-items     : center;

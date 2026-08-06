@@ -25,6 +25,23 @@ export class SVG_Paths {
 		return this.circle(center, diameter / 2);
 	}
 
+	/**
+	 * The clear mark: a circle with one slash across it, meaning the opposite of whatever it
+	 * is laid over. Drawn as a stroked outline — nothing filled — so what it covers still
+	 * shows through. It fills a `size` box, the slash running from the lower left of the
+	 * circle to its upper right, and the stroke stops short of the edge by half its own
+	 * width so nothing is clipped.
+	 */
+	circle_slash(size: number = 22, thickness: number = 1.5): string {
+		const c = size / 2;
+		const r = c - thickness / 2;
+		const n = (v: number) => +v.toFixed(2);
+		const reach = r * Math.SQRT1_2;                 // the slash meets the circle at 45°
+		const ring = `M ${n(c - r)} ${n(c)} a ${n(r)} ${n(r)} 0 1 0 ${n(r * 2)} 0 a ${n(r)} ${n(r)} 0 1 0 ${n(-r * 2)} 0`;
+		const slash = ` M ${n(c - reach)} ${n(c + reach)} L ${n(c + reach)} ${n(c - reach)}`;
+		return ring + slash;
+	}
+
 	x_cross(diameter: number, margin: number): string {
 		const start = margin + 2;
 		const end = diameter - start;

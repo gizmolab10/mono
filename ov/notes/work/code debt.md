@@ -4,9 +4,10 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] svg
-    - [ ] circle slash -> the opposite of whatever it overlays
-    - [ ] filter unichar -> several horizontal lines of decreasing length
+- [ ] rename list files -> files, edit file -> edit
+- [x] svg
+    - [x] circle slash -> the opposite of whatever it overlays
+    - [x] filter unichar -> several horizontal lines of decreasing length
 - [ ] whitespace around almond in header's thin line --gap-tight
 - [ ] OKF
     - [ ] the title label is not the file name, why?
@@ -26,6 +27,7 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [ ] navigation and name and ancestry
     - [ ] filters
     - [ ] content
+- [ ] add replace in edit
 
 ## done
 

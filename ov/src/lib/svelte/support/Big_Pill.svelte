@@ -20,7 +20,7 @@
 	// open among the filters is open in the label form too.
 	let open = $derived($w_areas_open.includes(area.name));
 
-	const CROSS = k.size.cross * 0.7;
+	const CROSS = k.size.control * 0.7;
 	const cross_path = svg_paths.x_cross(CROSS, CROSS / 6);
 
 	// Only tags something is left wearing, plus whatever is already picked.

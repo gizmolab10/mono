@@ -81,6 +81,17 @@ export const w_search_for = writable('');
 // back to the same place.
 export const w_search_at = preferences.persistent<number>(T_Preference.search_at, 0);
 
+/**
+ * Which of the files on screen is being read, and how many there are — counting only files,
+ * since the stepping walks past folders. Nothing while the guide being read is not among them,
+ * as happens off the list, on a stack of links.
+ */
+export const w_file_place = derived([guides.w_showing, w_view_guide], ([rows, key]) => {
+	const files = rows.filter((r) => !r.guide.is_folder);
+	const at = files.findIndex((r) => r.key === key);
+	return at < 0 ? null : { at: at + 1, of: files.length };
+});
+
 /** Open one guide by where it sits. Opening from the list starts a fresh, empty stack. */
 export function open_view(key: string): void {
 	const rows = get(guides.w_showing);
