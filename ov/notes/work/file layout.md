@@ -49,11 +49,12 @@ ov/
         │   ├── content/          # what the content box shows
         │   │   ├── Browse.svelte
         │   │   ├── List_Files.svelte
-        │   │   ├── View_File.svelte
+        │   │   ├── Edit_File.svelte
         │   │   └── D_Preferences.svelte
         │   └── support/          # the pieces the rest lean on
         │       ├── Filters.svelte
         │       ├── Big_Pill.svelte   # one area of tags, folding away behind its own name
+        │       ├── Steppers.svelte   # the two marks that step from one thing to the next
         │       ├── Separator.svelte
         │       ├── Hideable.svelte
         │       └── ToolTip.svelte
@@ -79,7 +80,9 @@ ov/
             │   ├── saving.test.ts   # where a guide sits in the repo
             │   ├── labels.test.ts   # writing the five labels back
             │   ├── index_files.test.ts   # mending the index files a move leaves lying
-            │   └── tag_areas.test.ts     # the areas and the closed tag list agree exactly
+            │   ├── tag_areas.test.ts     # the areas and the closed tag list agree exactly
+            │   ├── stepping.test.ts      # the step marks, and the holding that repeats a step
+            │   └── sections.test.ts      # what a heading owns, and what folding hides
             ├── types/
             │   ├── Guide.ts      # kinds, tags, collections, labels
             │   ├── Tag_Areas.ts  # the six areas the tags are gathered into
@@ -92,6 +95,8 @@ ov/
             └── utilities/
                 ├── Markdown_Blocks.ts   # a guide's text into a page, and a change back into the text
                 ├── Index_Files.ts   # mending the two index files a move leaves lying
+                ├── Sections.ts   # what each heading owns, and what a fold hides
+                ├── Stepping.ts   # which way each step mark points, and the repeating hold
                 ├── Labels.ts     # writing the five labels back to the top of a file
                 ├── Saving.ts     # handing a changed guide to the local write server
                 ├── Colors.ts

@@ -61,10 +61,10 @@
 <style>
 
 	.tooltip {
-		z-index        : calc(var(--z-frontmost) + 1);   /* above everything, including the pinned frame */
 		padding        : calc(var(--gap-tight) - 2.5px) var(--gap);   /* 5px shorter overall */
-		box-shadow     : var(--shadow-modal);
+		z-index        : calc(var(--z-frontmost) + 1);   /* above everything, including the pinned frame */
 		border         : 0.5px solid var(--accent);
+		box-shadow     : var(--shadow-modal);
 		font-size      : var(--font-credit);
 		background     : var(--offwhite);
 		color          : var(--black);
@@ -78,8 +78,8 @@
 	}
 
 	@keyframes tip-fade {
-		from { opacity : 0; }
 		to   { opacity : 1; }
+		from { opacity : 0; }
 	}
 
 </style>

@@ -103,7 +103,7 @@
 
 	.count {
 		opacity     : var(--opacity-header);
-		font-size   : var(--font-label);
+		font-size   : var(-font-control);
 		transform   : translateX(-50%);
 		position    : absolute;
 		white-space : nowrap;
@@ -129,7 +129,7 @@
 	.chosen-tags,
 	.chosen-kind {
 		opacity     : var(--opacity-header);
-		font-size   : var(--font-label);
+		font-size   : var(-font-control);
 		color       : var(--text);
 		white-space : nowrap;
 	}
@@ -156,7 +156,7 @@
 		height        : var(--height-control);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font-label);
+		font-size     : var(-font-control);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;

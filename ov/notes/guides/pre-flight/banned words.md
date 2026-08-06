@@ -6,7 +6,7 @@ tags: [prose, session]
 date: 2026-07-31
 ---
 
-# Substitutions for banned words — overview
+# Substitutions for banned words
 
 These are the \[to be banned\] words that have caused friction in overview. Use the left column, never the right. Plural, past-tense and gerund forms of the words in the right column are also banned, and should be substituted using the same form.
 

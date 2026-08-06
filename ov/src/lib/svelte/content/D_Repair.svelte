@@ -37,7 +37,7 @@
 		height          : var(--height-control);
 		padding         : var(--pad-control);
 		border-radius   : var(--radius-pill);
-		font-size       : var(--font-label);
+		font-size       : var(-font-control);
 		background      : var(--white);
 		color           : var(--text);
 		box-sizing      : border-box;

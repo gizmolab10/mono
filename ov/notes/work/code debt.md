@@ -1,9 +1,20 @@
 # Code debt
 
-write a proposal for the first unchecked item to the top of handoff.
+write a proposal for the first unchecked item to the top of handoff. success first.
 
 ## work
 
+- [ ] remove close button from edit
+    - [ ] click anywhere in the two rows
+    - [ ] other than the controls and the file name
+    - [ ] goes to the list
+- [ ] scrollbars in list are too thin
+- [ ] put success at the top of the proposal
+- [ ] new unified look
+    - [ ] search, n of m steppers
+    - [ ] navigation and name and ancestry
+    - [ ] filters
+    - [ ] content
 - [ ] OKF
     - [ ] the title label is not the file name, why?
     - [ ] what is 'says' label for?
@@ -16,9 +27,37 @@ write a proposal for the first unchecked item to the top of handoff.
         - [ ] click closes that section
         - [ ] hover lights up the clickable sep title
         - [ ] tags area is different
+- [ ] svg
+    - [ ] circle slash -> the opposite of whatever it overlays
+    - [ ] filter unichar -> several horizontal lines of decreasing length
 
 ## done
 
+- [x] one search for both list and edit
+    - [x] same words, same lit place, surviving the walk between them and a reload
+- [x] a section's own soft pointer works while the title is folded
+- [x] edit file
+    - [x] search row above, controls row below
+    - [x] ancestry beside the steppers
+    - [x] same row height as the list, so nothing shifts on the way in and out
+    - [x] move close button to far right, adjusting other buttons
+    - [x] H1 soft pointer should also open/fold its own para content
+    - [x] remove the rename button, leave its handler as is
+- [x] rename view file -> edit file
+    - [x] remove the edit button and the is editing state
+    - [x] rewrite the code to remove executed when 'is editing' == false
+- [x] add show/hide soft_pointer for H2 - 6
+    - [x] in left-side margin, as with obsidian
+    - [x] H1 -> toggles all
+- [x] in list files, move show/hide filter button into **sep** below search box (clickable and hoverable)
+    - [x] clickable title says 'filters', unicode bold arrow, and comma separated list:
+        - [x] purposes, projects, kind, tags
+    - [x] when showing filters, keep both **seps**
+        - [x] this new one
+        - [x] the current unlabeled below the filters
+- [x] convert the two fat triangles in the view guide -> Steppers.svelte component
+    - [x] prop isVertical, alwaysShowBoth
+- [x] hover on seg -> make border around title pill border-box
 - [x] editing an md block
     - [x] make the font and linespacing same as while just viewing
 - [x] add an anything llm button to the hub, top row, far left "LLM"
@@ -62,11 +101,6 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## soon
 
-- [ ] svg
-    - [ ] circle slash -> the opposite of whatever it overlays
-    - [ ] filter -> several horizontal lines of decreasing length
-    - [ ] convert the two fat triangles in the view guide -> Steppers.svelte component
-        - [ ] prop isVertical, alwaysShowBoth
 - [ ] separator
     - [ ] new prop for gap -> whitespace around line (strips parallel to it)
     - [ ] where do reach and spacer get used?
@@ -95,6 +129,5 @@ write a proposal for the first unchecked item to the top of handoff.
     - [ ] for open source
     - [ ] ALL the kinds, tags, project 2-char names
     - [ ] and associated logic
-
 - [ ] when a link's target is an anchor, add the anchor to the fifo
 

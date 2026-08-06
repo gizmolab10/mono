@@ -2,6 +2,48 @@
 
 What's been finished, newest first.
 
+## 2026-08-05 — reading a file became editing a file
+
+The reading view had a button that turned editing on and off, and a good half of it only ran while that was on. Editing is what the view is for, so the switch is gone: every file opens ready to change, a click on any piece opens that piece, the label form is always there, and the piece is named for what it now does. The way back is the close cross and the Escape key — a click on the words can no longer throw away what is being typed. The rename button went too, though the handler behind it stayed for whatever asks next.
+
+**The top rows were rearranged, twice.** The search takes the first row now, with the count and its two step marks appearing beside the field once there is something to look for. The row below carries the way out at its far left, then the step marks, then the folders above the file, with the file's name pinned to the middle of the whole width so nothing beside it can shift the name. The file's own name row is gone.
+
+**One pixel of drift.** Going from the list to a file and back moved everything a pixel. The search row was one pixel taller than the list's own top row, having been padded to stop it growing when the step marks arrive. The marks are now held to the row's height — they still show whole, since they are allowed to spill — and both rows are the same height again.
+
+## 2026-08-05 — one search, wherever you are
+
+The words looked for in the list and the words looked for inside a file were two separate fields, each forgotten on the way to the other. They are one value now, with which place is lit held beside it. Words typed in the list are already in the field when a file opens, and the first place they turn up is lit; stepping to the next file carries them along; and both come back after a reload. The consequence is deliberate and worth knowing: typing while reading also narrows the list behind it.
+
+**Folding a section stopped fighting the title.** Folding the top heading used to force every section below it folded, which meant a section's own soft pointer could be pressed and nothing would happen. A file now follows the shared title fold until the reader presses one of its own section pointers; from that press the file keeps its own folds, so a single section can be opened while the title stays folded. Stepping to the next file still finds everything folded.
+
+## 2026-08-05 — a file's own sections fold
+
+Every heading below the first now carries a small soft pointer out in the left margin, the way Obsidian draws one: turned down while its section shows, sideways while folded. Pressing it hides everything that heading owns — up to the next heading of its own level or higher, so folding an outer one takes the inner ones with it. The top heading carries one too, folding every section at once, and it reads as open while any single one is still open. The folds belong to the file being read, so opening another starts with everything shown.
+
+**Where the marks had to live.** They were being made from the start — the log said nine of them — but nothing showed, because a box that scrolls clips whatever sits outside it and each mark is placed left of its heading. The left inset moved from outside the box to inside it, and the marks now sit in that lane; the words did not move.
+
+**The lesson, again.** Two rounds of guessing were wasted before one logged line said how many pieces were seen and how many marks were made. That answered it at once. Where the screen is the only witness, log the numbers rather than reason about the source.
+
+## 2026-08-05 — the filters fold behind a word, like everything else
+
+The button that hid the picking rows sat beside the search field, the last thing in the app still working that way. It is gone; the search field takes the whole row, and a heavy line under it carries one word that folds the whole set at a press anywhere along it. Shown, the word is just `filters`; folded, it says what every row holds — `filters ➜ designs, di, rule` — leaving out any row narrowing nothing, since "all" is not worth the room. The plain heavy line below the rows, and the gap under the word, are there only while the rows are.
+
+## 2026-08-05 — the step marks became a piece of their own
+
+The two fat triangles that walk from one file to the next were written out inside the reading view — shapes, sizes, the repeating hold, and the markup. They are now one piece anywhere can use, taking whether it can go back or forward, what to do for each, whether it runs up-and-down, whether both show even when one leads nowhere, and the hover words. The reading view uses it twice: once between the close cross and the edit button, and once either side of the search count. Seven tests cover which way each mark points, when it is drawn, when it answers, and the hold — one step at the press, a patter after the pause, never two beats at once, safe to release when nothing is held.
+
+**Two small things while editing.** A piece's own words end with the blank line that separates it from the next; that line is now kept out of the box and put back on saving, so the file is unchanged either way, and the box no longer opens two lines tall for one line of words. And pressing the bar beside the words used to take the cursor off the box, which closed it — so scrolling threw you out of the piece. A press in the bar's lane is now noted and the box takes the cursor straight back.
+
+## 2026-08-05 — the reading view reads like a page
+
+**The words look like a page now.** Paragraphs step in and stand a gap apart, the six heading levels wear the colors Obsidian gives them, and a hairline runs under the top heading with room below it. Punctuation is left exactly as the file writes it — no curling quotes — so a piece never looks one way on the page and another in the box that edits it. That box now matches a paragraph's size, leading, spacing and step-in, and draws no edge at all, so opening and leaving a piece moves nothing.
+
+**The top of the view was rearranged.** The button row keeps the close cross and the edit and rename buttons at its left, and the folders above the file at its right. The row below carries the file's name alone, twice the ordinary size, with the two step triangles at its far left. What the file is labeled — its kind and tags — moved to the line under the search row, which reads `okf ➜ rule, session, team` whether the label form is open or shut, and folds that form away when pressed; the OKF button is gone.
+
+**Every scrollbar is 6px with an accent thumb and no track.** This took far too long, and the lesson is worth keeping: a scrollbar's own styling cannot read the sizes pushed onto the page — a name there silently falls back to the browser's fat bar — and the universal form of the rule never matched at all. Both bars are now styled by naming their own element, with plain numbers. Two places were also holding back a hardcoded 20px for a bar that no longer needs it.
+
+**The collections stand on their own.** Each project used to hang under the shared folder on screen as well as on disk, so shutting mono took all four with it. The walk now starts at all five; the chain on disk is kept, since following a link from one project into another climbs it.
+
 ## 2026-08-04 — the tags gathered into areas, and every name shortened
 
 Twenty-four tags in one flat row was more than an eye could scan. They now sit in six areas — ai, code, fix, harness, other, ux — each standing as a single pill that folds its tags away behind its own name. Shut, a pill reads its area's name, or the names of whatever inside it is picked, so a filter on is never invisible; a picked tag also fills the thin ring between the pill's two borders. Open, a cross takes the left end and the tags run as one unbroken row of segments at the right, with the area's name straddling the top edge over the cross. Opening one leaves the others as they are, picking a tag leaves it open, and which are open is remembered — the filters and the label form share one memory, so an area left open in one is open in the other. A tag nothing is left wearing simply goes; with one left the area steps aside and that tag stands as a plain pill; with none left the area is gone.

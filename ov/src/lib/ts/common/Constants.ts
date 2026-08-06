@@ -3,6 +3,7 @@
 const bold = 550;
 const common_size = 35;						// minimum fingertip touch size
 const common_gap = common_size / 4.5;		// 7.8
+const common_font = common_size / 2.7;		// 13
 const common_thickness = common_gap / 7;	// 5
 const common_separator = common_gap / 7;	// 5
 const control_height = common_size / 1.6;	// 21.875
@@ -11,12 +12,13 @@ const control_height = common_size / 1.6;	// 21.875
 
 export default class Constants {
 	font = {
-		credit		 : common_size * 0.25,		// 8.75
-		label		 : common_size * 0.35,		// 12.25
-		base		 : common_size * 0.375,		// 13.13
-		banner		 : common_size * 0.4,		// 14
-		large		 : common_size * 0.5,		// 17.5
-		huge         : common_size * 0.63,		// 24.5
+		credit		 : common_font * 0.7,		// 8.75
+		label		 : common_font * 0.8,		// 10.4
+		control		 : common_font * 0.9,		// 11.7
+		base		 : common_font,				// 13
+		banner		 : common_font * 1.1,		// 14
+		large		 : common_font * 1.4,		// 17.5
+		huge         : common_font * 1.9,		// 24.5
 		em           : {
 			tracking : 0.03,			// em — the banner letter-spacing
 			small	 : 1.4,
@@ -51,8 +53,8 @@ export default class Constants {
 	width = {
 		modal	 	 : common_size * 17.3,
 		details		 : common_size * 7,
-		window		 : 350,
-		content      : 300,			// the smallest useful width for the region beside details
+		window		 : 300,
+		content      : 350,			// the smallest useful width for the region beside details
 	};
 
 	layer = {

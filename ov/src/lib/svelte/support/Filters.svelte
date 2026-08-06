@@ -131,6 +131,14 @@
 		w_folded.update((names) => away ? [...names, name] : names.filter((one) => one !== name));
 		debug.log(`Filters: the ${name} row is now ${away ? 'folded away' : 'shown'}.`);
 	}
+
+	// One word above them all, saying what every picking row holds — in the order they appear,
+	// and leaving out any row narrowing nothing, since "all" says nothing worth the room.
+	// Pressing it folds the whole set away or brings it back.
+	let all_picked = $derived([purposes_word, project_word, kind_word, tags_word]
+		.filter((one) => one !== 'all').join(', '));
+	let all_word = $derived($w_show_filters ? 'filters'
+		: `filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
 </script>
 
 <!-- The two pickers, written once and placed either way. -->
@@ -161,20 +169,22 @@
 
 <div class='filters' bind:clientWidth={box_width}>
 
-	<!-- The toggle hugs the far left of this row; the search field takes the rest, so the
-	     words looked for stay in reach whether or not the picking rows show.
-	     Its type is "search", so the browser draws its own clear cross at the right end
-	     once there is text — the same as ji's file search. -->
+	<!-- The search field takes the whole row, so the words looked for stay in reach whether or
+	     not the picking rows show. Its type is "search", so the browser draws its own clear
+	     cross at the right end once there is text — the same as ji's file search. -->
 	<div class='top-row'>
-		<button class='filters-button' onclick={toggle_filters}>
-			{`${$w_show_filters ? 'hide' : 'show'} filters`}
-		</button>
 		<input
 			type='search'
 			class='search'
 			bind:value={$w_words}
 			placeholder='search titles and descriptions'
 			use:tip={'type a word to look for'} />
+	</div>
+
+	<!-- One word over the whole set, saying what every row holds and folding them all at a
+	     press anywhere along the line. -->
+	<div class:folded={$w_show_filters}>
+		<Separator at_left thickness={k.separator.huge} title={all_word} onclick={toggle_filters}/>
 	</div>
 
 	{#if $w_show_filters}
@@ -243,7 +253,11 @@
 		{/if}
 	{/if}
 </div>
-<Separator thickness={k.separator.huge}/>
+<!-- The plain heavy line closing the picking rows off from the list. With the rows folded
+     away there is nothing for it to close, so it goes. -->
+{#if $w_show_filters}
+	<Separator thickness={k.separator.huge}/>
+{/if}
 
 <style>
 	.filters {
@@ -258,23 +272,6 @@
 		gap         : var(--gap);
 		align-items : center;
 		display     : flex;
-	}
-
-	.filters-button {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
-		border-radius : var(--radius-pill);
-		padding       : var(--pad-control);
-		font-size     : var(--font-label);
-		background    : var(--white);
-		color         : var(--text);
-		box-sizing    : border-box;
-		cursor        : pointer;
-		white-space   : nowrap;
-	}
-
-	.filters-button:hover {
-		background : var(--hover);
 	}
 
 	/* With its row folded away, a bar has nothing below it but the next bar — so it holds a

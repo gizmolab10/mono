@@ -7,13 +7,13 @@
 </script>
 
 <script lang='ts'>
-	import { w_shut, w_show_folders, w_project, w_kind, w_sorts, T_Sort } from '../../ts/managers/Filters';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { VAULT, file_path_of, folder_path_of, obsidian_link, show_folder } from '../../ts/utilities/Saving';
-	import { show_status } from '../../ts/managers/Status';
+	import { w_shut, w_show_folders, w_project, w_kind, w_sorts, T_Sort } from '../../ts/managers/Filters';
+	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type { Filtered_Guide } from '../../ts/types/Guide';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { show_status } from '../../ts/managers/Status';
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Guides';
 	import { Direction } from '../../ts/types/Angle';
@@ -39,6 +39,23 @@
 	function triangle_bounds(open: boolean): { minX: number; minY: number; width: number; height: number } {
 		return svg_paths.soft_pointer_bounds(TRIANGLE, open ? Direction.down : Direction.right);
 	}
+	// The mark in the name column's header points down while any collection is open, and a
+	// press on it shuts every folder or opens every folder — the same either-or the top
+	// heading's mark has while reading a file.
+	let tops_open = $derived($w_showing.some((row) => row.guide.is_folder && row.depth === 0 && !$w_shut.includes(row.key)));
+
+	function toggle_all_folders() {
+		if (tops_open) {
+			const every_folder = [...guides.hierarchy.all_guides.values()]
+				.filter((row) => row.guide.is_folder).map((row) => row.key);
+			w_shut.set(every_folder);
+			debug.log(`Every folder shut — ${every_folder.length} of them.`);
+			return;
+		}
+		w_shut.set([]);
+		debug.log('Every folder opened.');
+	}
+
 	function toggle_folder(key: string, name: string) {
 		w_shut.update((shut) => {
 			const was = shut.includes(key);
@@ -67,8 +84,7 @@
 			toggle_folder(row.key, row.guide.name);
 			return;
 		}
-		// The command key alone hands the file to Obsidian; with the option key too, it opens
-		// here for editing instead.
+		// The command key alone hands the file to Obsidian; anything else opens it here.
 		if (holding_command && !holding_option) {
 			const where = file_path_of(row.guide.bundle, row.guide.path);
 			const link  = obsidian_link(VAULT, where);
@@ -76,9 +92,8 @@
 			debug.log(`Row clicked with the command key: handing "${where}" to Obsidian, in the "${VAULT}" vault. This app stays where it is.`);
 			return;
 		}
-		const for_editing = holding_command && holding_option;
-		debug.log(`Row clicked: the file "${row.guide.name}" — opening it ${for_editing ? 'for editing, since both the command and option keys were held' : 'for reading'}.`);
-		open_view(row.key, for_editing);
+		debug.log(`Row clicked: opening the file "${row.guide.name}".`);
+		open_view(row.key);
 	}
 
 	// --- dragging a file into another folder ----------------------------------
@@ -133,7 +148,7 @@
 	// What the hint over a row says, which depends on what clicking it would do.
 	function row_hint(row: Filtered_Guide, holding_command: boolean, holding_option: boolean): string {
 		if (!row.guide.is_folder) {
-			const what = !holding_command ? 'open' : holding_option ? 'edit' : 'open in obsidian';
+			const what = !holding_command ? 'edit' : holding_option ? 'edit' : 'edit in obsidian';
 			return `${what} "${row.guide.name}"`;
 		}
 		if (holding_command) { return `show "${row.guide.name}" in the finder`; }
@@ -371,6 +386,18 @@
 						{#each columns as col}
 							{@const place = can_sort ? place_of.get(col.sort) : undefined}
 							<th class:name-head={col.label === 'name'} class:flat={!$w_show_folders} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'}>
+								<!-- A mark in the name column's own lane while the folders show, its
+								     right edge 20px clear of the word. -->
+								{#if col.label === 'name' && $w_show_folders}
+									{@const b = triangle_bounds(tops_open)}
+									<button class='head-mark' aria-label={tops_open ? 'shut every folder' : 'open every folder'}
+										use:tip={tops_open ? 'shut every folder' : 'open every folder'}
+										onclick={(e) => { e.stopPropagation(); toggle_all_folders(); }}>
+										<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
+											<path d={triangle_path(tops_open)} />
+										</svg>
+									</button>
+								{/if}
 								<!-- A column with no title of its own draws nothing here, so the line
 								     behind runs unbroken. -->
 								{#if col.label !== '' || place}
@@ -529,7 +556,33 @@
 	   the space after it. */
 	.head th.name-head {
 		padding-left : calc(var(--size-svg) + var(--gap));
+		position     : relative;
 		text-align   : left;
+	}
+
+	/* The mark in that lane, its right edge held 20px clear of the word. */
+	.head-mark {
+		width           : calc(var(--size-svg) + var(--gap) - 14px);
+		background      : var(--bg);
+		position        : absolute;
+		cursor          : pointer;
+		justify-content : center;
+		align-items     : center;
+		display         : flex;
+		border          : none;
+		top             : 39%;
+		left            : 3px;
+		padding         : 0;
+	}
+
+	.head-mark path {
+		stroke       : var(--accent);
+		fill         : var(--white);
+		stroke-width : 1;
+	}
+
+	.head-mark:hover path {
+		fill : var(--hover);
 	}
 
 	/* With the folders hidden the names start at the column's edge, so the title does too —
@@ -668,14 +721,16 @@
 		padding         : 0;
 	}
 
+	/* White inside an accent outline whichever way it points, filling to the hover color under
+	   the cursor — the same look every drawn mark wears. */
 	.tri path {
-		fill         : var(--accent);
-		stroke       : var(--black);
-		stroke-width : 0.6;
+		stroke       : var(--accent);
+		fill         : var(--white);
+		stroke-width : 1;
 	}
 
 	.tri:hover path {
-		fill : var(--white);
+		fill : var(--hover);
 	}
 
 	/* The name is capped by its column. Clipping lives on this inner block, not the cell

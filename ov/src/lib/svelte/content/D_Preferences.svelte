@@ -51,7 +51,7 @@
 	}
 
 	.label {
-		font-size : var(--font-label);
+		font-size : var(-font-control);
 		opacity   : var(--opacity-label);
 	}
 

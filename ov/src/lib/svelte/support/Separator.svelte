@@ -164,13 +164,12 @@
 	   same inset. Nothing here is placed by a share of the width. */
 	.at-left {
 		transform       : translateY(-50%);
+		left            : var(--gap-fat);
 		justify-content : space-between;
-		gap             : var(--gap-fat);
+		right           : var(--gap);
 		position        : absolute;
 		align-items     : center;
 		display         : flex;
-		right           : var(--gap);
-		left            : var(--gap);
 		top             : 50%;
 	}
 
@@ -186,17 +185,21 @@
 		transform      : none;
 	}
 
-	/* When a click handler is given, the title is a button — it takes the cursor and lights on hover. */
+	/* When a click handler is given, the title is a button — it takes the cursor and lights on
+	   hover. The edge is held see-through and counted inside the word's own room, so the hover
+	   edge adds no width and the word never shifts. */
 	.title.clickable {
+		border        : 0.5px solid transparent;
 		border-radius : var(--radius-pill);
+		box-sizing    : border-box;
 		cursor        : pointer;
 	}
 
 	.title.clickable:hover,
 	.title.clickable.forced,
 	.reachable:hover .title.clickable {
-		border     : 0.5px solid var(--darkgray);
-		background : var(--hover);
+		border-color : var(--darkgray);
+		background   : var(--hover);
 	}
 
 	/* The clear strip that makes a two-pixel bar worth aiming at: as tall as any other control,

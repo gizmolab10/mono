@@ -11,14 +11,14 @@
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
 
 	/**
-	 * A dead link picked out of the report: its guide opens for editing, with the link's own
-	 * words lit where they sit, so the fix can be typed on the spot.
+	 * A dead link picked out of the report: its guide opens with the link's own words lit
+	 * where they sit, so the fix can be typed on the spot.
 	 */
 	function handleDeadLink(found: Finding) {
 		if (!found.key || !found.link) { return; }
 		w_search_for.set(found.link);
-		open_view(found.key, true);
-		debug.log(`Report: opening "${found.key}" for editing, with "${found.link}" lit.`);
+		open_view(found.key);
+		debug.log(`Report: opening "${found.key}", with "${found.link}" lit.`);
 	}
 </script>
 
