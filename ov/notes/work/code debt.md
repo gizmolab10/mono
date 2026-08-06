@@ -4,17 +4,8 @@ write a proposal for the first unchecked item to the top of handoff. success fir
 
 ## work
 
-- [ ] remove close button from edit
-    - [ ] click anywhere in the two rows
-    - [ ] other than the controls and the file name
-    - [ ] goes to the list
 - [ ] scrollbars in list are too thin
-- [ ] put success at the top of the proposal
-- [ ] new unified look
-    - [ ] search, n of m steppers
-    - [ ] navigation and name and ancestry
-    - [ ] filters
-    - [ ] content
+- [ ] whitespace around almond in header's thin line --gap-tight
 - [ ] OKF
     - [ ] the title label is not the file name, why?
     - [ ] what is 'says' label for?
@@ -31,8 +22,20 @@ write a proposal for the first unchecked item to the top of handoff. success fir
     - [ ] circle slash -> the opposite of whatever it overlays
     - [ ] filter unichar -> several horizontal lines of decreasing length
 
+- [ ] new unified look
+    - [ ] search, n of m steppers
+    - [ ] navigation and name and ancestry
+    - [ ] filters
+    - [ ] content
+
 ## done
 
+- [x] put success at the top of the proposal
+- [x] remove close button from edit
+    - [x] click anywhere in the two rows
+    - [x] other than the controls and the file name
+    - [x] goes to the list
+    - [x] hovering the empty part lights the whole area, out to the box's edges
 - [x] one search for both list and edit
     - [x] same words, same lit place, surviving the walk between them and a reload
 - [x] a section's own soft pointer works while the title is folded

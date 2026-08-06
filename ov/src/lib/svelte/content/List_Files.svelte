@@ -467,7 +467,7 @@
 	/* With a scrollbar showing, the titles hold back its width plus the gap, so they stay
 	   lined up with the columns below. With none, they use the whole width. */
 	.table-head.has-bar {
-		padding-right : calc(var(--thickness-fat) + var(--gap));
+		padding-right : calc(var(--width-bar) + var(--gap));
 	}
 
 	/* With no scrollbar, both the titles and the rows keep the same fat gap at the right,
@@ -507,12 +507,11 @@
 		min-height : 0;
 	}
 
-	/* A gap between the rows and the scrollbar — only when there is a scrollbar. */
-	/* The bar beside the rows. Plain numbers on purpose: a scrollbar's own styling cannot read
-	   the sizes pushed onto the page, and a name here falls back to the browser's fat bar. */
+	/* The bar beside the rows. Every scrolling box has to name itself like this — the
+	   app-wide form of the rule matches nothing at all. */
 	.table-scroll::-webkit-scrollbar {
-		height : 6px;
-		width  : 6px;
+		height : var(--width-bar);
+		width  : var(--width-bar);
 	}
 
 	.table-scroll::-webkit-scrollbar-thumb {

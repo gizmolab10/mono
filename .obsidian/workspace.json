@@ -35,7 +35,8 @@
               "title": "handoff"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -171,13 +172,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -210,22 +211,21 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "14b6ec19895b3d59",
+  "active": "7bf503989ea6fce8",
   "lastOpenFiles": [
+    "ov/notes/work/code debt.md",
+    "ov/notes/work/handoff.md",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.29187.5d5f85e2677a",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.29187.13053b4f0826",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.29187.3a82cb4a0036",
     "ov/src/lib/ts/tests/leaving.test.ts",
     "ov/src/lib/ts/utilities/Leaving.ts",
-    "ov/notes/work/handoff.md",
     "ov/notes/work/handoff.md.tmp.29187.b07abcf1119c",
     "ov/notes/work/context.md",
-    "ov/notes/work/code debt.md",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.92984.a5c3d5fe6ab2",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.92984.b9bb343f9590",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.92984.b1f0e9e5413b",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.92984.7d0a6409bbe2",
-    "ov/src/lib/ts/tests/sections.test.ts.tmp.92984.bac7d7f5d146",
     "notes/guides/develop/add a file.md",
     "notes/guides/philosophy/limitations.md",
     "ov/notes/work/tags hierarchy.md",

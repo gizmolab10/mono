@@ -1095,9 +1095,6 @@
 		flex         : 1;
 	}
 
-	/* The bar beside the words, and the one under a wide code block. Plain numbers on purpose:
-	   a scrollbar's own styling cannot read the sizes pushed onto the page, and a name here
-	   falls back to the browser's fat bar. */
 	/* With a bar beside the words the right margin comes off, so the bar sits against the box's
 	   edge rather than floating in from it — and a gap is held inside instead, so the words
 	   never run up against the bar. */
@@ -1106,9 +1103,11 @@
 		margin-right  : 0;
 	}
 
+	/* The bar beside the words, and the one under a wide code block. Every scrolling box has
+	   to name itself like this — the app-wide form of the rule matches nothing at all. */
 	.view-page::-webkit-scrollbar {
-		height : var(--gap-fat);
-		width  : var(--gap-fat);
+		height : var(--width-bar);
+		width  : var(--width-bar);
 	}
 
 	.view-page::-webkit-scrollbar-thumb {
@@ -1121,8 +1120,8 @@
 	}
 
 	.view-page :global(pre::-webkit-scrollbar) {
-		height : var(--gap-fat);
-		width  : var(--gap-fat);
+		height : var(--width-bar);
+		width  : var(--width-bar);
 	}
 
 	.view-page :global(pre::-webkit-scrollbar-thumb) {
@@ -1133,6 +1132,7 @@
 	.view-page :global(pre::-webkit-scrollbar-track) {
 		background : transparent;
 	}
+
 
 	/* With the option key held, the words can be dragged over and picked up. The whole app
 	   otherwise refuses that, so it is turned back on here and on everything inside. */

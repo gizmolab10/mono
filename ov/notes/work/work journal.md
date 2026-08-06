@@ -2,6 +2,14 @@
 
 What's been finished, newest first.
 
+## 2026-08-06 — the way out is the whole top of the view
+
+The way back to the list was a small circle at the far left — a lot of aim to demand for the commonest move in the app. It is gone. The two rows above the heavy line are one block now, and a press anywhere in it that isn't on something answering for itself goes back to the list. The things that answer are the step marks, the search field, the count between its marks, and the file's name. Escape still does the same, and the words themselves are left alone so nothing typed is lost by a stray press.
+
+**The rule is proved without a page.** Walking up from the thing pressed to the block it sits in, every tag name and class name met along the way is gathered, and any one of them being a control settles it. That list of names is what the eight new tests exercise — the empty space leads back, each control does not, capitals read the same as small letters.
+
+**Lighting only the empty part.** A block lights on its own whenever the cursor is anywhere inside it, controls included, which would have promised a way out where there wasn't one. So the same rule that decides a press also decides the light: the cursor is followed, and the block lights only while it is over empty space. The lit color reaches the box's left, right and top edges, since the space a box holds around its contents is part of the area being offered.
+
 ## 2026-08-05 — reading a file became editing a file
 
 The reading view had a button that turned editing on and off, and a good half of it only ran while that was on. Editing is what the view is for, so the switch is gone: every file opens ready to change, a click on any piece opens that piece, the label form is always there, and the piece is named for what it now does. The way back is the close cross and the Escape key — a click on the words can no longer throw away what is being typed. The rename button went too, though the handler behind it stayed for whatever asks next.

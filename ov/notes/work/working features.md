@@ -2,7 +2,8 @@
 
 | # | Feature |
 | --- | --- |
-| 30 | Every file opens ready to change — there is no reading mode and no edit button. The search takes the top row; the row below carries the way out, the step marks and the folders above the file, with the file's name pinned to the middle of the whole width |
+| 31 | The way out of a file is the whole top of the view: a press anywhere above the heavy line that isn't on a control goes back to the list, and that whole area lights while the cursor is over an empty part of it. Escape does the same |
+| 30 | Every file opens ready to change — there is no reading mode and no edit button. The search takes the top row; the row below carries the step marks and the folders above the file, with the file's name pinned to the middle of the whole width |
 | 29 | One search serves the list and the file being read: words typed in the list are already in the field when a file opens, with the first place they turn up lit. Which place is lit is remembered, and both survive stepping to another file and a reload |
 | 28 | Every heading below the first carries a soft pointer in the left margin that folds its section away — everything up to the next heading of its own level or higher — and the top heading's folds them all at once, hiding only its own words so the headings below stay on screen. A file follows that shared fold until one of its own pointers is pressed, after which it keeps its own folds |
 | 27 | One word on the line under the search folds every picking row at a press: `filters` while they show, and what each holds while they don't — `filters ➜ designs, di, rule` — leaving out any row narrowing nothing |
@@ -27,7 +28,7 @@
 | 8 | A project column appears between kind and name, but only while the folders are hidden and no project is picked — and it stops sorting the moment it leaves |
 | 7 | Four ways to narrow: one project, one kind, any number of tags, and words looked for in titles and descriptions. All four survive a reload, and the count under them says how many guides are left of how many there are |
 | 6 | Folders open and shut and remember which they were; a shut folder hides what it holds and shows how many matching files are under it. With the folders hidden the list flattens to every file that survives the filters, and which folders were shut is set aside rather than applied |
-| 5 | Reading one guide: its words turned from markdown into a page, its kind at the far left, its tags at the far right, its name pinned to the middle. A click anywhere else on the words, the close cross, or the Escape key goes back to the list |
+| 5 | Reading one guide: its words turned from markdown into a page, its kind at the far left, its tags at the far right, its name pinned to the middle |
 | 4 | Two fat triangles step through the guides on screen, wrapping at both ends; the arrow keys do the same, and holding a triangle down keeps stepping |
 | 3 | The whole of a row answers to a click and carries the hover hint — a file opens for reading, a folder opens or shuts — and the list remembers where it was scrolled |
 | 2 | The guides come from outside this folder on purpose: at launch every file under each collection's guides folder is read once, its five labels kept and its text let go. Nothing about a guide's contents is held or saved, and the app shows nothing but "setting up the overview browser..." until that finishes |
