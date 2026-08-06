@@ -12,6 +12,7 @@
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import type { Filtered_Guide } from '../../ts/types/Guide';
+	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { show_status } from '../../ts/managers/Status';
 	import Separator from '../support/Separator.svelte';
@@ -195,6 +196,7 @@
 	}
 
 	function on_scroll() {
+		measure_thumb();
 		if (save_wait !== null) { clearTimeout(save_wait); }
 		save_wait = setTimeout(remember_top, 150);       // save once the scrolling settles
 	}
@@ -332,12 +334,24 @@
 		shown.length;                                  // re-run when the rows change
 		if (!scroller) { return; }
 		measure_scrollbar();
-		const watcher = new ResizeObserver(() => measure_scrollbar());
+		measure_thumb();
+		const watcher = new ResizeObserver(() => { measure_scrollbar(); measure_thumb(); });
 		watcher.observe(scroller);
 		const table = scroller.querySelector('table');
 		if (table) { watcher.observe(table); }
 		return () => watcher.disconnect();
 	});
+
+	// The thumb is never shorter than a fifth of its lane. Where the browser would have put
+	// it, left alone, is drawn as a thin strip over the real one — so the two can be seen at
+	// once. The strip is placed against the whole list, whose top is the header's, so the
+	// header's height is handed along.
+	let free = $state<Free_Thumb>({ top: 0, length: 0, shows: false });
+
+	function measure_thumb() {
+		if (!scroller) { free = { top: 0, length: 0, shows: false }; return; }
+		free = free_thumb(scroller.clientHeight, scroller.scrollHeight, scroller.scrollTop, scroller.offsetTop);
+	}
 </script>
 
 <!-- The three cells of a row: kind, name (with the open/shut triangle), and tags. -->
@@ -414,6 +428,11 @@
 				</thead>
 			</table>
 		</div>
+		<!-- Where the browser would have put the thumb with no floor under it, drawn over the
+		     real one so both can be seen at once. Nothing to catch — it is only a marker. -->
+		{#if free.shows}
+			<div class='free-thumb' style:top='{free.top}px' style:height='{free.length}px'></div>
+		{/if}
 		<div class='table-scroll' class:has-bar={scrollbar_showing} bind:this={scroller} onscroll={on_scroll}>
 			<table class='guides-table'>
 				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
@@ -514,9 +533,25 @@
 		width  : var(--width-bar);
 	}
 
+	/* The marker showing where the browser alone would have put the thumb: half the lane's
+	   width, in the dark accent, sitting on top of the real thumb and answering to nothing. */
+	.free-thumb {
+		width          : calc(var(--width-bar) / 2);
+		right          : calc(var(--width-bar) / 4);
+		background     : var(--accent-dark);
+		border-radius  : 999px;
+		pointer-events : none;
+		position       : absolute;
+		z-index        : 1;
+	}
+
+	/* The browser sets the thumb's length from how much of the rows fit on screen. A very
+	   long list would shrink it to a speck, so it never goes below a fifth of the lane. */
 	.table-scroll::-webkit-scrollbar-thumb {
 		background    : var(--accent);
 		border-radius : 999px;
+		min-height    : 20%;
+		min-width     : 20%;
 	}
 
 	.table-scroll::-webkit-scrollbar-track {
@@ -691,6 +726,7 @@
 	   no project is picked. */
 	.project {
 		padding-right : var(--gap-fat);
+		font-size     : var(--font-label);
 		text-align    : right;
 		width         : 99px;
 	}

@@ -2,6 +2,16 @@
 
 What's been finished, newest first.
 
+## 2026-08-06 — the bars are catchable, and the thumb never a speck
+
+Every bar was six pixels — chosen against the browser's heavy grey strip and overshot, so a bar was hard to catch and its thumb was a thread. They are fifteen now, and how thick they are is said once and read everywhere.
+
+**What the earlier round got wrong.** The app-wide form of a bar's rule matches nothing at all, so deleting each box's own rule handed every bar back to the browser at its full default width. Each scrolling box has to name itself. A name inside those rules does work, though — that was the untested half of the old lesson — so all four bars read the one published thickness instead of a number typed out four times.
+
+**A floor under the thumb.** The browser sets a thumb's length from how much of the contents fit on screen, so a long file shrank it to a speck. It is now never shorter than a fifth of its lane.
+
+**Both thumbs at once.** To see whether that floor does anything, the list and the file both draw a thin marker where the browser alone would have put the thumb, laid over the real one — and only while the two differ. The arithmetic is one tested piece both views share. One bug fell out of it: folding a section changes how tall the words are but not the box holding them, so nothing told the marker to look again; folding now says so itself.
+
 ## 2026-08-06 — the way out is the whole top of the view
 
 The way back to the list was a small circle at the far left — a lot of aim to demand for the commonest move in the app. It is gone. The two rows above the heavy line are one block now, and a press anywhere in it that isn't on something answering for itself goes back to the list. The things that answer are the step marks, the search field, the count between its marks, and the file's name. Escape still does the same, and the words themselves are left alone so nothing typed is lost by a stray press.

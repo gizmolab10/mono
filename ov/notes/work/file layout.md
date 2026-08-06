@@ -83,7 +83,8 @@ ov/
             │   ├── tag_areas.test.ts     # the areas and the closed tag list agree exactly
             │   ├── stepping.test.ts      # the step marks, and the holding that repeats a step
             │   ├── sections.test.ts      # what a heading owns, and what folding hides
-            │   └── leaving.test.ts       # which presses go back to the list
+            │   ├── leaving.test.ts       # which presses go back to the list
+            │   └── thumb.test.ts         # the thumb's floor, and the marker over it
             ├── types/
             │   ├── Guide.ts      # kinds, tags, collections, labels
             │   ├── Tag_Areas.ts  # the six areas the tags are gathered into
@@ -99,6 +100,7 @@ ov/
                 ├── Sections.ts   # what each heading owns, and what a fold hides
                 ├── Stepping.ts   # which way each step mark points, and the repeating hold
                 ├── Leaving.ts    # which presses on the top of a file's view go back to the list
+                ├── Thumb.ts      # a floor under the scrollbar thumb, and the marker showing it
                 ├── Labels.ts     # writing the five labels back to the top of a file
                 ├── Saving.ts     # handing a changed guide to the local write server
                 ├── Colors.ts

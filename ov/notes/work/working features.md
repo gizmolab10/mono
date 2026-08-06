@@ -2,6 +2,7 @@
 
 | # | Feature |
 | --- | --- |
+| 32 | Every scrollbar is one thickness, said in one place and read by each scrolling box, with an accent thumb and no track. The thumb is never shorter than a fifth of its lane, and a thin marker over it shows where the browser alone would have put it — drawn only while the two differ |
 | 31 | The way out of a file is the whole top of the view: a press anywhere above the heavy line that isn't on a control goes back to the list, and that whole area lights while the cursor is over an empty part of it. Escape does the same |
 | 30 | Every file opens ready to change — there is no reading mode and no edit button. The search takes the top row; the row below carries the step marks and the folders above the file, with the file's name pinned to the middle of the whole width |
 | 29 | One search serves the list and the file being read: words typed in the list are already in the field when a file opens, with the first place they turn up lit. Which place is lit is remembered, and both survive stepping to another file and a reload |

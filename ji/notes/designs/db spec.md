@@ -6,7 +6,7 @@ tags: [wire, data]
 date: 2026-07-24
 ---
 
-# WS DB Engine — spec
+# Database — spec
 
 Intersection stores documents. They are hierarchal and tagged. Support for firestore and local storage and file system. hierarchy is to be injected in phase 2.
 
@@ -51,7 +51,9 @@ Each storage is a tiny subclass that mostly just sets its persistence kind:
 - **firebase** (`DB_Firebase.ts`) — kind `remote`. Stores in **Firestore (cloud)**; per-record create/update/delete and live snapshots. Pulls in the whole Firebase SDK — `DB_Firebase.ts:2, 13, 35-37`.
 - **local** (`DB_Local.ts`) — kind `local`. use **browser localStorage** for records and the browser's **File System Access API**  for storing blobs, and `showDirectoryPicker`) to scan a chosen folder into the blobs read-only, and can preview/download/copy-path the real files — `DB_Filesystem.ts:56-58, 93-101, 279-311`.
 
-## Per-record bookkeeping (`persistable/Persistable.ts`, `state/S_Persistence.ts`)
+## Per-record bookkeeping
+
+`persistable/Persistable.ts`, `state/S_Persistence.ts`
 
 - Every stored record extends **`Persistable`**, which owns an **`S_Persistence`** — a small object holding `isDirty`, `already_persisted`, a last-modify date, and the record's id — `S_Persistence.ts:6-26`.
 - `Persistable.persist()` runs the subclass's create-or-update behind a gate that skips records that are not dirty — `Persistable.ts:32-36`, `S_Persistence.ts:37-46`.

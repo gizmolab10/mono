@@ -1,10 +1,12 @@
 # Code debt
 
-write a proposal for the first unchecked item to the top of handoff. success first.
+write a proposal for JUST the first unchecked item (ignore sll the others)  to the top of handoff. success first.
 
 ## work
 
-- [ ] scrollbars in list are too thin
+- [ ] svg
+    - [ ] circle slash -> the opposite of whatever it overlays
+    - [ ] filter unichar -> several horizontal lines of decreasing length
 - [ ] whitespace around almond in header's thin line --gap-tight
 - [ ] OKF
     - [ ] the title label is not the file name, why?
@@ -18,9 +20,6 @@ write a proposal for the first unchecked item to the top of handoff. success fir
         - [ ] click closes that section
         - [ ] hover lights up the clickable sep title
         - [ ] tags area is different
-- [ ] svg
-    - [ ] circle slash -> the opposite of whatever it overlays
-    - [ ] filter unichar -> several horizontal lines of decreasing length
 
 - [ ] new unified look
     - [ ] search, n of m steppers
@@ -30,6 +29,13 @@ write a proposal for the first unchecked item to the top of handoff. success fir
 
 ## done
 
+- [x] scrollbars in list are too thin
+    - [x] one place says how thick, every scrolling box reads it
+    - [x] a thumb never shorter than a fifth of its lane
+    - [x] both thumbs drawn at once — the floored one, and a marker where the browser would have put it
+- [x] wider hover&click area around every sep = thickness
+- [x] edit — the file name centered in what the folders leave over
+- [x] list — the project column and the count read at the label size
 - [x] put success at the top of the proposal
 - [x] remove close button from edit
     - [x] click anywhere in the two rows

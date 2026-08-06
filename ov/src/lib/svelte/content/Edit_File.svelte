@@ -4,6 +4,7 @@
 	import { ALL_TAGS, T_Bundle, T_Kind, in_order, key_of, type Guide } from '../../ts/types/Guide';
 	import { follow_link, w_command_down, w_search_at, w_search_for } from '../../ts/managers/Operations';
 	import { landed_on_a_control, names_up_to } from '../../ts/utilities/Leaving';
+	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { w_words } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
@@ -105,14 +106,26 @@
 	// with everything on screen the words keep their margin on both sides.
 	let page_has_bar = $state(false);
 
+	// The thumb is never shorter than a fifth of its lane. Where the browser would have put it,
+	// left alone, is drawn as a thin strip over the real one, so both can be seen at once.
+	let free = $state<Free_Thumb>({ top: 0, length: 0, shows: false });
+
+	/** Look again at how tall the words are, and at both thumbs. */
+	function measure_page() {
+		const box = page;
+		if (!box) { page_has_bar = false; free = { top: 0, length: 0, shows: false }; return; }
+		page_has_bar = box.scrollHeight > box.clientHeight + 1;
+		free = free_thumb(box.clientHeight, box.scrollHeight, box.scrollTop, box.offsetTop);
+	}
+
 	$effect(() => {
 		const box = page;
-		if (!box) { page_has_bar = false; return; }
-		const measure = () => { page_has_bar = box.scrollHeight > box.clientHeight + 1; };
-		measure();
-		const watcher = new ResizeObserver(measure);
+		if (!box) { measure_page(); return; }
+		measure_page();
+		const watcher = new ResizeObserver(measure_page);
 		watcher.observe(box);
-		return () => watcher.disconnect();
+		box.addEventListener('scroll', measure_page);
+		return () => { watcher.disconnect(); box.removeEventListener('scroll', measure_page); };
 	});
 	let note = $state('');                     // what a dead link has to say, briefly
 	let note_wait: ReturnType<typeof setTimeout> | null = null;
@@ -593,6 +606,9 @@
 			return;
 		}
 		debug.log(`Folding "${name}": ${made} mark(s) drawn.`);
+		// Folding changes how tall the words are but not the box holding them, so nothing else
+		// would tell the bar and its marker to look again.
+		measure_page();
 	}
 
 	/** One mark, ready to be put beside a heading. */
@@ -748,8 +764,9 @@
 			back_says='previous file' forward_says='next file' />
 		<!-- The folders above the file follow the steppers at the left. -->
 		<span class='view-ancestry'>{sits_at}</span>
-		<!-- The file's name keeps the middle of the whole row, so nothing beside it moves the
-		     name — or, while renaming, the name being typed. -->
+		<!-- An empty run on either side, so the name sits at the middle of whatever the folders
+		     leave over rather than at the middle of the whole row. -->
+		<span class='view-spacer'></span>
 		{#if renaming}
 			<input
 				use:take_the_cursor
@@ -813,6 +830,11 @@
 	{:else if failed !== ''}
 		<div class='view-note'>file is unreadable — cannot view it</div>
 	{:else}
+		<!-- Where the browser would have put the thumb with no floor under it, drawn over the
+		     real one so both can be seen at once. Nothing to catch — it is only a marker. -->
+		{#if free.shows}
+			<div class='free-thumb' style:top='{free.top}px' style:height='{free.length}px'></div>
+		{/if}
 		<!-- A click on a link follows it; a click anywhere else on the words goes back to
 		     the list, the same as the close button — so getting out never means aiming at
 		     the small circle. Holding the command key suspends all of that, so the words can
@@ -893,19 +915,13 @@
 		min-width    : 0;
 	}
 
-	/* A row of its own for the file's name, held in the middle of the whole width. */
-	/* The file's name is placed at the middle of the whole row rather than centered in what its
-	   neighbors leave over, so nothing beside it can move the name. */
+	/* The file's name at the far right of the row, the empty run before it holding it there. */
 	.view-name {
-		transform   : translateX(-50%);
 		font-size   : var(--font-large);
 		color       : var(--text);
 		white-space : nowrap;
-		position    : absolute;
-		text-align  : center;
+		flex        : 0 0 auto;
 		min-width   : 0;
-		left        : 50%;
-		top         : 0;
 	}
 
 	/* While renaming, the field stands where the file's place normally reads, taking the
@@ -919,8 +935,7 @@
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
-		margin-right  : var(--gap);
-		flex          : 1 1 auto;
+		flex          : 0 1 auto;
 		font-family   : inherit;
 		min-width     : 0;
 	}
@@ -1103,6 +1118,18 @@
 		margin-right  : 0;
 	}
 
+	/* The marker showing where the browser alone would have put the thumb: half the lane's
+	   width, in the dark accent, sitting on top of the real thumb and answering to nothing. */
+	.free-thumb {
+		width          : calc(var(--width-bar) / 2);
+		right          : calc(var(--width-bar) / 4);
+		background     : var(--accent-dark);
+		border-radius  : 999px;
+		pointer-events : none;
+		position       : absolute;
+		z-index        : 1;
+	}
+
 	/* The bar beside the words, and the one under a wide code block. Every scrolling box has
 	   to name itself like this — the app-wide form of the rule matches nothing at all. */
 	.view-page::-webkit-scrollbar {
@@ -1110,9 +1137,13 @@
 		width  : var(--width-bar);
 	}
 
+	/* The browser sets the thumb's length from how much of the file fits on screen. A long
+	   file would shrink it to a speck, so it never goes below a fifth of the lane. */
 	.view-page::-webkit-scrollbar-thumb {
 		background    : var(--accent);
 		border-radius : 999px;
+		min-height    : 20%;
+		min-width     : 20%;
 	}
 
 	.view-page::-webkit-scrollbar-track {
@@ -1127,6 +1158,8 @@
 	.view-page :global(pre::-webkit-scrollbar-thumb) {
 		background    : var(--accent);
 		border-radius : 999px;
+		min-height    : 20%;
+		min-width     : 20%;
 	}
 
 	.view-page :global(pre::-webkit-scrollbar-track) {

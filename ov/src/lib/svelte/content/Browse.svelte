@@ -24,11 +24,6 @@
 	let total = $derived($w_purposes.length === 0 ? 0 : guides.files.filter((g) =>
 		$w_purposes.includes(g.is_design ? T_Purpose.designs : T_Purpose.guides)).length);
 
-	// The unsorted button only means something while the folders are hidden, at least one
-	// column is sorting, and there is more than one file to put in an order. That is exactly
-	// when it shows.
-	let sorting = $derived(!$w_show_folders && $w_sorts.length > 0 && matching > 1);
-
 	function toggle_folders() {
 		const next = !$w_show_folders;
 		w_show_folders.set(next);
@@ -41,10 +36,6 @@
 		debug.log(`Folders are now ${next ? 'shown' : 'hidden'} in the list.`);
 	}
 
-	function stop_sorting() {
-		debug.log(`Sorting stopped — ${$w_sorts.length} column(s) dropped, back to the walk's own order.`);
-		w_sorts.set([]);
-	}
 </script>
 
 <Filters />
@@ -68,12 +59,6 @@
 	{#if $w_project !== ''}
 		<span class='chosen-project'>{$w_project}</span>
 	{/if}
-	<!-- Stopping the sorting, beside the picked project at the left. -->
-	{#if sorting}
-		<button class='folders-button unsorted' onclick={stop_sorting} use:tip={'back to the order the guides sit in'}>
-			remove sorting
-		</button>
-	{/if}
 	{#if $w_kind !== ''}
 		<span class='chosen-kind'>{$w_kind}</span>
 	{/if}
@@ -93,17 +78,17 @@
 	/* The row holds one height whether or not the buttons are in it, so the count and the
 	   list below never shift when a button has nothing to act on and leaves. */
 	.count-row {
+		margin      : calc(var(--gap-small) - 6px) 0 -6px 0;
 		min-height  : var(--height-control);
 		gap         : var(--gap-tight);
 		position    : relative;
 		align-items : center;
-		margin      : calc(var(--gap-small) - 6px) 0 -6px 0;
 		display     : flex;
 	}
 
 	.count {
 		opacity     : var(--opacity-header);
-		font-size   : var(-font-control);
+		font-size   : var(--font-label);
 		transform   : translateX(-50%);
 		position    : absolute;
 		white-space : nowrap;
@@ -119,8 +104,8 @@
 	.shut-mark {
 		width   : var(--size-svg);
 		height  : var(--size-svg);
-		display : block;
 		fill    : var(--text);
+		display : block;
 	}
 
 	/* The picked project and kind, reading like the count rather than like buttons. The
@@ -129,7 +114,7 @@
 	.chosen-tags,
 	.chosen-kind {
 		opacity     : var(--opacity-header);
-		font-size   : var(-font-control);
+		font-size   : var(--font-label);
 		color       : var(--text);
 		white-space : nowrap;
 	}
@@ -152,11 +137,11 @@
 	}
 
 	.folders-button {
-		border        : var(--thickness-normal) solid var(--black);
+		border        : var(--thickness-faint) solid var(--black);
 		height        : var(--height-control);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(-font-control);
+		font-size     : var(-font-label);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -172,14 +157,13 @@
 	   rest it wears no edge and sits on the page color; the edge and the fill appear only
 	   under the cursor, and the edge is held see-through so nothing shifts. */
 	.folders-button.eye {
-		border          : 0.5px solid transparent;   /* held, so the hover edge adds no shift */
+		width           : var(--height-control);
 		background      : transparent;
 		position        : relative;
-		top             : 2px;
-		width           : var(--height-control);
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
+		top             : 2px;
 		padding         : 0;
 	}
 
