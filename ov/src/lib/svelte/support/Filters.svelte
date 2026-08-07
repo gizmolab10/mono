@@ -135,7 +135,7 @@
 	// One word above them all, saying what every picking row holds — in the order they appear,
 	// and leaving out any row narrowing nothing, since "all" says nothing worth the room.
 	// Pressing it folds the whole set away or brings it back.
-	let all_picked = $derived([purposes_word, project_word, kind_word, tags_word]
+	let all_picked = $derived([purposes_word]
 		.filter((one) => one !== 'all').join(', '));
 	let all_word = $derived($w_show_filters ? '✂ filters'
 		: `✂ filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
@@ -370,5 +370,15 @@
 		color         : var(--text);
 		box-sizing    : border-box;
 		width         : 100%;
+	}
+
+	/* With the cursor in it, the field's own edge thickens in the accent rather than the
+	   browser drawing a ring of its own — which sat outside the pill and followed neither its
+	   curve nor its width. The edge is drawn inside, so nothing moves. */
+	.search:focus,
+	.search:focus-visible {
+		border-color : var(--accent);
+		box-shadow   : inset 0 0 0 var(--thickness-normal) var(--accent);
+		outline      : none;
 	}
 </style>

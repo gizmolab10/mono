@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_purposes, w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
-	import List_Files, { w_scrollbar_showing } from './List_Files.svelte';
+	import Files, { w_scrollbar_showing } from './Files.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { guides } from '../../ts/managers/Guides';
 	import { T_Purpose } from '../../ts/types/Guide';
@@ -68,7 +68,7 @@
 		<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
 	{/if}
 </div>
-<List_Files />
+<Files />
 
 <style>
 	/* The button hugs the far left; the count is placed at the middle of the whole row

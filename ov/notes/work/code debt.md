@@ -4,10 +4,8 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] rename list files -> files, edit file -> edit
-- [x] svg
-    - [x] circle slash -> the opposite of whatever it overlays
-    - [x] filter unichar -> several horizontal lines of decreasing length
+- [ ] not need a relaunch of the server for adding a file
+- [ ] button to add a sibling to the current viewed file and open it for editing
 - [ ] whitespace around almond in header's thin line --gap-tight
 - [ ] OKF
     - [ ] the title label is not the file name, why?
@@ -27,10 +25,14 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [ ] navigation and name and ancestry
     - [ ] filters
     - [ ] content
-- [ ] add replace in edit
+- [ ] add (find and) replace in edit
 
 ## done
 
+- [x] rename list files -> files, edit file -> edit
+- [x] svg
+    - [x] circle slash -> the opposite of whatever it overlays
+    - [x] filter unichar -> several horizontal lines of decreasing length
 - [x] scrollbars in list are too thin
     - [x] one place says how thick, every scrolling box reads it
     - [x] a thumb never shorter than a fifth of its lane
@@ -117,8 +119,6 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [ ] where do reach and spacer get used?
 - [ ] work has different tags — propose, design, progress, vital — area 'work'
 - [ ] checkbox in details preferences to show/hide tooltips
-- [ ] button to add a sibling to the current viewed file and open it for editing
-    - [ ] not need a relaunch of the server for adding a file
 - [ ] click and hold on a header opens the filters. does nothing if they are open
 
 ### content

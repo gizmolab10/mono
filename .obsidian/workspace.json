@@ -212,6 +212,8 @@
   },
   "active": "14b6ec19895b3d59",
   "lastOpenFiles": [
+    "ov/src/lib/svelte/content/Editor.svelte",
+    "ov/src/lib/svelte/content/Files.svelte",
     "ov/notes/work/handoff.md",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.29187.599138bd8899",
     "ov/src/lib/ts/tests/svg_paths.test.ts",
@@ -223,7 +225,6 @@
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.29187.13053b4f0826",
     "ov/src/lib/svelte/content/Edit_File.svelte.tmp.29187.3a82cb4a0036",
     "ov/src/lib/ts/tests/leaving.test.ts",
-    "ov/src/lib/ts/utilities/Leaving.ts",
     "ov/notes/work/context.md",
     "notes/guides/develop/add a file.md",
     "notes/guides/philosophy/limitations.md",

@@ -760,6 +760,8 @@
 			bind:value={$w_words}
 			use:tip={'search this file'} />
 	</div>
+	<!-- A plain line between the search and the row below it. -->
+	<Separator thickness={k.separator.normal}/>
 	<div class='view-head'>
 		<!-- Which of the files the filters leave is being read, and how many there are. Nothing
 		     while reading off the list, on a run of guides reached by links. -->
@@ -893,13 +895,14 @@
 	}
 
 	.view-head {
-		padding-bottom : var(--gap);
 		height         : var(--height-control);
+		margin-top     : var(--gap-tight);        /* held clear of the line above it */
+		padding-bottom : var(--gap-small);
+		box-sizing     : content-box;
 		gap            : var(--gap);
 		position       : relative;
 		align-items    : center;
 		display        : flex;
-		box-sizing     : content-box;
 	}
 
 	/* The step marks are drawn a touch taller than a control. Held to the row's own height
@@ -1354,6 +1357,16 @@
 		color         : var(--text);
 		box-sizing    : border-box;
 		width         : 100%;
+	}
+
+	/* With the cursor in it, the field's own edge thickens in the accent rather than the
+	   browser drawing a ring of its own — which sat outside the pill and followed neither its
+	   curve nor its width. The edge is drawn inside, so nothing moves. */
+	.search:focus,
+	.search:focus-visible {
+		border-color : var(--accent);
+		box-shadow   : inset 0 0 0 var(--thickness-normal) var(--accent);
+		outline      : none;
 	}
 
 	/* The one place found, lit in the accent. */

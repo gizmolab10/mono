@@ -48,8 +48,8 @@ ov/
         │   │   └── BuildNotes.svelte
         │   ├── content/          # what the content box shows
         │   │   ├── Browse.svelte
-        │   │   ├── List_Files.svelte
-        │   │   ├── Edit_File.svelte
+        │   │   ├── Files.svelte
+        │   │   ├── Editor.svelte
         │   │   └── D_Preferences.svelte
         │   └── support/          # the pieces the rest lean on
         │       ├── Filters.svelte
