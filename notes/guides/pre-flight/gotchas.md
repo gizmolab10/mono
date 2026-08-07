@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Tool Gotchas"
 description: "Where the collaborator's own tools misbehave, and the workaround for each."
 tags: [tools]

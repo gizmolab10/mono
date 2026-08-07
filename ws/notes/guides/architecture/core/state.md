@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "State (ws)"
 description: "State objects that outlive a component rebuild, paired with stores for reactivity."
 tags: [wire, data]

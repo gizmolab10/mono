@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Library (di)"
 description: "Where a saved arrangement is kept, reopened, or dropped inside the current one."
 tags: [wire, UX, data]

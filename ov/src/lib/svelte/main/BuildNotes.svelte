@@ -6,7 +6,6 @@
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
-	const crossPath = svg_paths.x_cross(k.size.control, k.size.control / 6);
 
 	// The newer/older steppers: the same fat triangle mark the viewer uses to step files, pointing up
 	// (newer) and down (older), at the same size.
@@ -126,11 +125,6 @@
 			<svg overflow='visible' width={down_bounds.width} height={down_bounds.height} viewBox='{down_bounds.minX} {down_bounds.minY} {down_bounds.width} {down_bounds.height}'><path d={down_path} /></svg>
 		</button>
 	</div>
-	<button class='close' aria-label='close' use:tip={'close'} onclick={onclose}>
-		<svg class='cross' width={k.svg.cross} height={k.svg.cross} viewBox='0 0 {k.size.control} {k.size.control}'>
-			<path d={crossPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' />
-		</svg>
-	</button>
 	<div class='header'>
 		<span class='title'>{title}</span>
 	</div>
@@ -179,13 +173,7 @@
 		display  		: flex;
 	}
 
-	.close {
-		top      		: var(--inset-popup-edge);
-		right    		: var(--inset-popup-side);
-		position 		: absolute;
-	}
-
-	.stepper, .close {
+	.stepper {
 		padding    		: var(--pad-stepper);
 		font-size  		: var(--font-large);
 		color      		: var(--black);
@@ -213,33 +201,6 @@
 		fill         : var(--hover);
 	}
 
-	.close {
-		border			: var(--thickness-normal) solid var(--black);
-		border-radius	: var(--radius-percent);
-		width			: var(--size-control);
-		height			: var(--size-control);
-		background		: var(--white);
-		box-sizing		: border-box;
-		justify-content	: center;
-		align-items		: center;
-		display			: flex;
-		padding			: 0;
-	}
-
-	.close:hover {
-		background		: var(--hover);
-	}
-
-	.cross {
-		width			: var(--size-svg);
-		height			: var(--size-svg);
-		display			: block;
-	}
-
-	.cross path {
-		stroke			: var(--black);
-		fill            : var(--white);
-	}
 
 	.header {
 		margin-bottom	: var(--margin-header);

@@ -65,6 +65,7 @@ class Configuration {
 		root.setProperty('--inset-credit-left',  `${k.inset.credit.left}px`);
 		root.setProperty('--thickness-normal',   `${k.thickness.normal}px`);
 		root.setProperty('--thickness-faint',    `${k.thickness.faint}px`);
+		root.setProperty('--thickness-mild',     `${k.thickness.mild}px`);
 		root.setProperty('--thickness-fat',      `${k.thickness.fat}px`);
 		root.setProperty('--tracking',           `${k.font.em.tracking}em`);
 		// Paddings pushed as ready-to-use shorthands (top/right/bottom/left where needed).

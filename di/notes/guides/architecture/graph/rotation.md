@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Rotation (di)"
 description: "Rotating a child part is visual only; the stored bounds do not change."
 tags: [wire, geometry]

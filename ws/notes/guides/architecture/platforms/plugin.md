@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "Bubble Plugin How-To"
 description: "Debugging, adding a state, and publishing a new version of the Bubble plugin."
 tags: [platform, deploy]

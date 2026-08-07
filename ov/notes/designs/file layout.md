@@ -1,3 +1,11 @@
+---
+kind: refer
+title: "File layout (ov)"
+description: "Where every file in overview lives, folder by folder."
+tags: [notes, wire]
+date: 2026-08-06
+---
+
 # File Layout
 
 Where everything lives. What each file does is in the [map](../guides/map.md).

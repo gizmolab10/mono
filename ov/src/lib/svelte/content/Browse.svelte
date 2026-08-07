@@ -58,6 +58,10 @@
 	{#if $w_project !== ''}
 		<span class='chosen-project'>{$w_project}</span>
 	{/if}
+	<!-- An upright line stands between them, but only while both are picked. -->
+	{#if $w_project !== '' && $w_kind !== ''}
+		<span class='chosen-between'>|</span>
+	{/if}
 	{#if $w_kind !== ''}
 		<span class='chosen-kind'>{$w_kind}</span>
 	{/if}
@@ -107,6 +111,7 @@
 	/* The picked project and kind, reading like the count rather than like buttons. The
 	   project stands well clear of the button on its left and the kind on its right. */
 	.chosen-project,
+	.chosen-between,
 	.chosen-tags,
 	.chosen-kind {
 		opacity     : var(--opacity-header);
@@ -116,7 +121,13 @@
 	}
 
 	.chosen-project {
-		margin : 0 var(--gap) 0 calc(var(--gap) - var(--gap-tight));
+		margin : 0 0 0 var(--gap-tight);
+	}
+
+	/* Nothing of its own either side, so the row's own spacing falls equally on both — the
+	   line then stands in the middle of the space between the two words. */
+	.chosen-between {
+		margin : var(--gap-tight);
 	}
 
 	/* The tags hug the far right. With the unsorted button beside them they simply follow it;
@@ -133,7 +144,7 @@
 	}
 
 	.folders-button {
-		border        : var(--thickness-faint) solid var(--black);
+		border        : var(--thickness-mild) solid var(--black);
 		height        : var(--size-control);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);

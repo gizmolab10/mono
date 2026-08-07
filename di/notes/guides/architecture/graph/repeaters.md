@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Repeaters"
 description: "Generating duplicates of a template part along an axis: studs, joists, stairs, ramps."
 tags: [wire, geometry]

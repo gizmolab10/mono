@@ -4,7 +4,21 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] not need a relaunch of the server for adding a file
+- [ ] Editor: button. label -> ⤴
+    - [ ] to the right of the trash can
+    - [ ] opens an email addressed to sand@gizmolab.com
+    - [ ] containing the file's content
+- [ ] filters
+    - [ ] animate their relayout on list files
+    - [ ] click in area below separator -> rules
+        - [ ] click closes that section
+        - [ ] hover lights up the clickable sep title
+        - [ ] tags area is different
+- [ ] add (find and) replace in edit
+- [ ] button to copy file into the paste buffer
+    - [ ] rtf?
+- [ ] work purpose -> support for check lists
+- [x] not need a relaunch of the server for adding a file
 - [ ] button to add a sibling to the current viewed file and open it for editing
 - [ ] whitespace around almond in header's thin line --gap-tight
 - [ ] OKF
@@ -13,19 +27,12 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
         - [ ] make 'says' multi-line, auto-adjust height
     - [ ] click file name -> edit in place
         - [ ] ie, centered -> typing is a bitch?
-- [ ] filters
-    - [ ] animate their relayout on list files
-    - [ ] click in area below separator -> rules
-        - [ ] click closes that section
-        - [ ] hover lights up the clickable sep title
-        - [ ] tags area is different
 
 - [ ] new unified look
     - [ ] search, n of m steppers
     - [ ] navigation and name and ancestry
     - [ ] filters
     - [ ] content
-- [ ] add (find and) replace in edit
 
 ## done
 

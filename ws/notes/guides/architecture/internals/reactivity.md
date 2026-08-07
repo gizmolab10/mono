@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Reactivity in Svelte 4"
 description: "When Svelte actually tracks a change, and when a component redraws."
 tags: [platform, style]

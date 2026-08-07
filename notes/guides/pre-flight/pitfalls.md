@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Pitfalls"
 description: "Edge cases that have caused mistakes, mostly failures to read before acting."
 tags: [session, debug]

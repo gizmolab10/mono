@@ -168,6 +168,19 @@ export class Hierarchy {
 		this.reindex();
 	}
 
+	/**
+	 * One guide's file is gone from disk, so it goes from the picture too: the guide itself, the
+	 * link to the folder holding it, and every tag it wore. Nothing else is touched — a folder
+	 * left holding nothing simply shows as empty.
+	 */
+	forget(guide: Guide): void {
+		this.guides = this.guides.filter((one) => one.id !== guide.id);
+		this.files_byID.delete(guide.id);
+		this.relationships = this.relationships.filter((r) => r.child_id !== guide.id && r.parent_id !== guide.id);
+		this.taggings = this.taggings.filter((t) => t.guide_id !== guide.id);
+		this.reindex();
+	}
+
 	/** Rebuild the lookups from the current tag links and folder links. */
 	reindex(): void {
 		this.indexes.rebuild(this.taggings, this.relationships);

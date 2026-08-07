@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Preferences (ws)"
 description: "Checking stored settings, so a stale saved value cannot break the display."
 tags: [wire, data]

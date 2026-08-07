@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Refactoring"
 description: "The guardrails for letting the collaborator refactor a temperamental codebase."
 tags: [refactor]

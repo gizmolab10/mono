@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "UX Manager (ws)"
 description: "What is focused, what is grabbed, what is being edited, and what the details show."
 tags: [wire, UX]

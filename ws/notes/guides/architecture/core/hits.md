@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Hits (ws)"
 description: "One spatial index decides which single element reacts to the mouse."
 tags: [wire, UX]

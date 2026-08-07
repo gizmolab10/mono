@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "VitePress (ws)"
 description: "Installing, configuring, and running the documentation site."
 tags: [build, platform, setup]

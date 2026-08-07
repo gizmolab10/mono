@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Working with Co"
 description: "Who does what between Jonathan and the collaborator, and what the collaborator must do to stay reliable."
 tags: [team, session]

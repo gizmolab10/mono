@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "Build Notes"
 description: "How to hand-distill the build-notes table from the change history."
 tags: [build, notes, tools]

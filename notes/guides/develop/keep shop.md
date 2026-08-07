@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "Keep Shop"
 description: "Keeping the note files in a shape that still guides the next session."
 tags: [notes]

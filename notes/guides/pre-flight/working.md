@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Working"
 description: "How the work itself is done: what to touch, what to prove, and what never to change unasked."
 tags: [session, team, style]

@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Managers (di)"
 description: "One manager per concern, each a single shared instance."
 tags: [wire]

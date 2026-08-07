@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Reading the Adherence Dashboard"
 description: "What each line of the generated report means."
 tags: [notes, test]

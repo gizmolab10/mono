@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Keywords"
 description: "The words in a request that require reading a guide before acting."
 tags: [session]

@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Editors (di)"
 description: "The four small modules that handle typing and dragging directly on the drawing area."
 tags: [wire, UX]

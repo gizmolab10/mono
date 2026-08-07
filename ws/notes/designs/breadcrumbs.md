@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Breadcrumbs (ws)"
 description: "Three parts working together to show either ancestry or browsing history."
 tags: [wire, UX]

@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Replying"
 description: "How every reply is written: how short, how plain, and what must be proved before it is sent."
 tags: [session, team, prose]

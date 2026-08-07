@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Style (ws)"
 description: "The ws conventions that differ from the shared ones."
 tags: [style]

@@ -1,8 +1,8 @@
 ---
-kind: lookup
+kind: step
 title: "Svelte 5 Migration Roadmap"
 description: "The plan for the Svelte 5 upgrade and where it currently stands."
-tags: [platform, migrate]
+tags: [migrate, platform]
 date: 2026-01-12
 ---
 

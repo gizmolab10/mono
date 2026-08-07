@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "History (di)"
 description: "Stepping backward and forward through recent changes without losing the scene on screen."
 tags: [wire, data]

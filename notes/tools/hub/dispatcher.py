@@ -424,6 +424,32 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif urllib.parse.urlparse(self.path).path == '/list-guides':
+            # Every guide and design on disk right now, for the overview app: /list-guides
+            #
+            # Overview settles its own list of files when its code is prepared, so a file added
+            # since then is invisible to it. Asking here instead means a new file shows up
+            # without the dev server being restarted. Each answer is a path counting from the
+            # top of the repo; index files are left in, since the app decides what to skip.
+            try:
+                root = os.path.realpath(GITHUB_DIR)
+                found = []
+                for collection in ('', 'di', 'ws', 'ji', 'ov'):
+                    for purpose in ('guides', 'designs'):
+                        inside = os.path.join(collection, 'notes', purpose) if collection else os.path.join('notes', purpose)
+                        start = os.path.join(root, inside)
+                        if not os.path.isdir(start):
+                            continue
+                        for here, folders, files in os.walk(start):
+                            folders[:] = [f for f in folders if not f.startswith('.')]
+                            for one in files:
+                                if one.endswith('.md'):
+                                    found.append(os.path.relpath(os.path.join(here, one), root))
+                found.sort()
+                self._send_response(200, {'success': True, 'paths': found})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/tests-status':
             try:
                 status = ''
@@ -741,6 +767,33 @@ class APIHandler(BaseHTTPRequestHandler):
                     return
                 os.rename(full_from, full_to)
                 self._send_response(200, {'success': True, 'path': full_to})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/delete-guide':
+            # Throw one guide's file away, for the overview app.
+            # /delete-guide?where=<path from the top of the repo>
+            #
+            # Every refusal answers 409 and throws nothing away:
+            #   - the path is not a .md file inside a "notes/guides" or "notes/designs" folder
+            #   - the path resolves outside the repo (no climbing out with "..", no symlinks out)
+            #   - the file isn't there
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                where = params.get('where', [''])[0]
+                root = os.path.realpath(GITHUB_DIR)
+                if not where or not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
+                    self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
+                    return
+                full = os.path.realpath(os.path.join(GITHUB_DIR, where))
+                if not full.startswith(root + os.sep):
+                    self._send_response(409, {'success': False, 'error': 'outside the repo'})
+                    return
+                if not os.path.isfile(full):
+                    self._send_response(409, {'success': False, 'error': 'no such file'})
+                    return
+                os.remove(full)
+                self._send_response(200, {'success': True, 'path': full})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

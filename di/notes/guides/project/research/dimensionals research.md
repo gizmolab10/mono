@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Dimensionals Research"
 description: "Whether any existing constraint library beats the custom search, inside the time budget."
 tags: [research, geometry]

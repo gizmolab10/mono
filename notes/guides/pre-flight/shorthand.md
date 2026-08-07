@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Shorthand"
 description: "The short commands and abbreviations Jonathan types, and what each one does."
 tags: [session, team]

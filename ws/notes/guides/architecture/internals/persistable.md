@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Persistable"
 description: "The shared base every stored record extends, for saving, loading, and identity."
 tags: [wire, data]

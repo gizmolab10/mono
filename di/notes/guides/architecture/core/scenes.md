@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Scenes (di)"
 description: "What happens between app launch and a populated 3D canvas."
 tags: [wire, geometry]

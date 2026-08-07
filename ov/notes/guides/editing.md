@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Editing a Guide"
 description: "How this app lets you change a guide from inside the app, one piece at a time, without rewriting the file."
 tags: [wire, notes]

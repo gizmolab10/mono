@@ -3,7 +3,8 @@ import { w_purposes, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders,
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { file_path_of, folder_path_of, move_guide, moved_into, restart_and_reload, save_guide } from '../utilities/Saving';
+import { delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, place_of_file, restart_and_reload, save_guide } from '../utilities/Saving';
+import { has_labels, today, with_labels_added } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
 import { debug } from '../common/Debug';
@@ -93,6 +94,12 @@ class Guides {
 	// Flips to true once every file has been read. Anything showing the guides watches
 	// this, since at first launch there is nothing yet to show.
 	w_ready = writable(false);
+
+	// Said whenever a guide moves from one place to another, with where it sat and where it now
+	// sits. Whatever keeps track of which guide is being read hands in its own answer here, so
+	// this file never has to know about the reading view — which would be a circle, since the
+	// reading view already knows about the guides.
+	moved_to: ((was: string, now: string) => void) | null = null;
 
 	// What the filters and the folds leave, in the order shown. The hierarchy keeps it;
 	// this hands out the very same rows, and only exists so that anything showing them
@@ -242,14 +249,18 @@ class Guides {
 	 * The links are gathered first, while the old name still answers, so nothing has to be
 	 * guessed afterwards. Then the file moves; only if that works are the links written and
 	 * the app's own picture changed — so a refused rename leaves everything as it was.
+	 *
+	 * Answers with where the guide now sits, since a guide is named by that and anything reading
+	 * it has to follow. Nothing changed answers with nothing.
 	 */
-	async rename(guide: Guide, new_name: string): Promise<void> {
+	async rename(guide: Guide, new_name: string): Promise<string> {
 		const named = new_name.trim().replace(/\.md$/i, '');
 		const was_name = guide.name;
-		if (named === '' || named === was_name) { return; }
+		const was_key  = key_of(guide);       // where it sat, so anything reading it can follow
+		if (named === '' || named === was_name) { return ''; }
 
 		const folder = this.hierarchy.folder_holding(guide);
-		if (!folder) { show_status(`"${was_name}" hangs under no folder, so it cannot be renamed`); return; }
+		if (!folder) { show_status(`"${was_name}" hangs under no folder, so it cannot be renamed`); return ''; }
 		const from = file_path_of(guide.bundle, guide.path);
 		const to_path = moved_into(folder.path, `${named}.md`);
 		const to = file_path_of(folder.bundle, to_path);
@@ -278,12 +289,18 @@ class Guides {
 		if (!answer.ok) {
 			show_status(`"${was_name}" was not renamed — ${answer.why}`);
 			debug.log(`Renaming "${was_name}" to "${named}" was refused — ${answer.why}. Nothing changed.`);
-			return;
+			return '';
 		}
 
 		this.hierarchy.rehang(guide, folder, to_path, `/@fs${answer.full_path}`);
 		guide.name = named;
 		this.renarrow();
+		// Said at once, before the slow work of mending links: a guide is named by where it
+		// sits, and anything reading this one is still asking for the old place. Waiting until
+		// the end would leave it asking for a full second, which is long enough for the reading
+		// view to give up and shut itself.
+		this.moved_to?.(was_key, key_of(guide));
+		debug.log(`Renaming: "${was_name}" sat at "${was_key}" and now sits at "${key_of(guide)}".`);
 
 		let mended = 0, refused = 0;
 		for (const mend of mends) {
@@ -308,9 +325,45 @@ class Guides {
 				else { debug.log(`Renaming: ${index_at} was NOT written — ${wrote.why}. It still names "${was_name}".`); }
 			}
 		}
-		show_status(`"${was_name}" is now "${named}" — ${mended} guide(s) mended${refused > 0 ? `, ${refused} refused` : ''}. Starting again so the new name sticks…`);
-		debug.log(`Renamed "${was_name}" to "${named}": the file moved from ${from} to ${to}, ${mended} guide(s) had links mended${refused > 0 ? `, ${refused} refused` : ''}. Now restarting this app's server, since its list of files is settled when its code is prepared.`);
-		restart_and_reload();
+		show_status(`"${was_name}" is now "${named}" — ${mended} guide(s) mended${refused > 0 ? `, ${refused} refused` : ''}.`);
+		debug.log(`Renamed "${was_name}" to "${named}": the file moved from ${from} to ${to}, ${mended} guide(s) had links mended${refused > 0 ? `, ${refused} refused` : ''}. Nothing is restarted — the moved file is read from where it now sits.`);
+		return key_of(guide);
+	}
+
+	/**
+	 * Throw one guide's file away, and take its line out of the index beside it. Only if the
+	 * file itself goes is the app's own picture changed, so a refusal leaves everything as it
+	 * was. Says whether it went.
+	 *
+	 * Links in other guides that named it are left alone: they now lead nowhere, and the dead
+	 * link report is what finds those.
+	 */
+	async delete_one(guide: Guide): Promise<boolean> {
+		const where = file_path_of(guide.bundle, guide.path);
+		const answer = await delete_guide(where);
+		if (!answer.ok) {
+			show_status(`"${guide.name}" was not thrown away — ${answer.why}`);
+			debug.log(`Deleting "${guide.name}" was refused — ${answer.why}. Nothing changed.`);
+			return false;
+		}
+		const root = this.repo_root;
+		const index_at = `${where.split('/').slice(0, -1).join('/')}/index.md`;
+		const index_text = root === '' ? null : await this.read_file(`${root}${index_at}`);
+		if (index_text !== null) {
+			const taken = without_line_for(index_text, `${guide.name}.md`);
+			if (taken.line === '') {
+				debug.log(`Deleting: ${index_at} never named "${guide.name}", so nothing was changed there.`);
+			} else {
+				const wrote = await save_guide(index_at, taken.text, index_text);
+				if (wrote.ok) { debug.log(`Deleting: ${index_at} no longer names "${guide.name}".`); }
+				else { debug.log(`Deleting: ${index_at} was NOT written — ${wrote.why}. It still names "${guide.name}".`); }
+			}
+		}
+		this.hierarchy.forget(guide);
+		this.renarrow();
+		show_status(`"${guide.name}" was thrown away.`);
+		debug.log(`Deleted "${guide.name}": ${where} is gone, and it is out of the list.`);
+		return true;
 	}
 
 	/**
@@ -508,10 +561,107 @@ class Guides {
 			}
 		}
 
+		// The list above is settled when the app's code is prepared, so a file added since then
+		// is not in it. The small local server is asked what is on disk right now, and anything
+		// it names that is not already here is read the same way — which is what lets a new file
+		// show up without the dev server being restarted.
+		const late = await this.read_files_added_since(shared_top);
+		read += late.read;
+		failed += late.failed;
+		unlabeled += late.unlabeled;
+		bytes += late.bytes;
+		skipped += late.skipped;
+
 		this.hierarchy.reindex();
 		this.say_what_was_found(read, failed, unlabeled, bytes, skipped);
 		this.renarrow();
 		this.w_ready.set(true);
+	}
+
+	/**
+	 * Ask the small local server what guides are on disk, and read any it names that the
+	 * prepared list did not. With the server not running, nothing is added and nothing is said
+	 * — the prepared list stands on its own, as it always did.
+	 */
+	private async read_files_added_since(shared_top: Guide): Promise<{ read: number; failed: number; unlabeled: number; bytes: number; skipped: number }> {
+		const tally = { read: 0, failed: 0, unlabeled: 0, bytes: 0, skipped: 0 };
+		const on_disk = await guides_on_disk();
+		if (on_disk.length === 0) { return tally; }
+		const root = this.repo_root;
+		if (root === '') { debug.log('Guides: nothing prepared has an address, so where the repo begins is unknown — the files on disk are left alone.'); return tally; }
+		const known = new Set(this.files.map((g) => file_path_of(g.bundle, g.path)));
+		let added = 0;
+		for (const where of on_disk) {
+			if (known.has(where)) { continue; }
+			const place = place_of_file(where);
+			if (!place) { continue; }
+			const name = where.split('/').pop()?.replace(/\.md$/, '') ?? '';
+			if (name === 'index') { tally.skipped += 1; continue; }
+			const top = this.hierarchy.folder_at(place.bundle, '', place.bundle);
+			if (place.bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
+			const done = await this.hang_one_file(place.bundle, place.path, `/@fs${root}${where}`, place.is_design, top);
+			tally.read += done.read;
+			tally.failed += done.failed;
+			tally.unlabeled += done.unlabeled;
+			tally.bytes += done.bytes;
+			added += done.read;
+		}
+		debug.log(`Guides: the server names ${on_disk.length} file(s) on disk; ${added} of them were added since this app's code was prepared and have just been read.`);
+		return tally;
+	}
+
+	/**
+	 * Read one file and hang it under the folders its path names, making each folder the first
+	 * time it is met. The path begins with "designs" for a design, so the two purposes can
+	 * never collide.
+	 */
+	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: Guide): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
+		const under = is_design ? 'designs' : '';
+		const inside = is_design ? path.slice('designs/'.length) : path;
+		const roof = is_design ? this.hierarchy.folder_at(bundle, under, under) : top;
+		if (is_design) { this.hierarchy.add_relationship(top.id, roof.id); }
+		const parts = inside.split('/');
+		const name = parts[parts.length - 1].replace(/\.md$/, '');
+		let parent = roof;
+		for (let i = 0; i < parts.length - 1; i++) {
+			const so_far = under === '' ? parts.slice(0, i + 1).join('/') : `${under}/${parts.slice(0, i + 1).join('/')}`;
+			const folder = this.hierarchy.folder_at(bundle, so_far, parts[i]);
+			this.hierarchy.add_relationship(parent.id, folder.id);
+			parent = folder;
+		}
+		let text = '';
+		try {
+			const answer = await fetch(address);
+			if (!answer.ok) { throw new Error(`the server answered ${answer.status}`); }
+			text = await answer.text();
+		} catch (e) {
+			debug.log(`Could not read the guide "${bundle}/${path}" from ${address}: ${e instanceof Error ? e.message : e}. It is left out.`);
+			return { read: 0, failed: 1, unlabeled: 0, bytes: 0 };
+		}
+		// A file added since the app's code was prepared has no labels at all, so it would show
+		// with no kind, no tags and its file name for a title. One is composed from the file's
+		// own words and written to it, marked "stale" so a person still looks at it.
+		if (!has_labels(text)) {
+			const with_block = with_labels_added(text, `${name}.md`, today());
+			const where = file_path_of(bundle, path);
+			const answer = await save_guide(where, with_block, text);
+			if (answer.ok) {
+				text = with_block;
+				debug.log(`Guides: "${bundle}/${path}" arrived with no labels, so a block was composed from its own words and written to ${where}. It is marked stale for a person to look at.`);
+			} else {
+				debug.log(`Guides: "${bundle}/${path}" has no labels and could not be given any — ${answer.why}. It is shown as it is.`);
+			}
+		}
+		const { labels, tags } = labels_from(text, `${bundle}/${path}`);
+		const guide = this.hierarchy.add_guide(bundle, path, name, address, {
+			...labels,
+			title: labels.title || name,
+		}, is_design);
+		this.hierarchy.add_relationship(parent.id, guide.id);
+		for (const tag of tags) {
+			this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, guide.id);
+		}
+		return { read: 1, failed: 0, unlabeled: labels.labeled ? 0 : 1, bytes: text.length };
 	}
 
 	/**

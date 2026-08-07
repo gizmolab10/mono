@@ -24,6 +24,26 @@ export function file_path_of(bundle: T_Bundle, path: string): string {
 	return `${notes_of(bundle)}/${inside}`;
 }
 
+/**
+ * The other way round: which collection a file belongs to, and where it sits inside that
+ * collection, read off its place in the repo. Anything that is not a guide or a design reads
+ * as nothing at all.
+ */
+export type Guide_Place = { bundle: T_Bundle; path: string; is_design: boolean };
+
+export function place_of_file(where: string): Guide_Place | null {
+	if (!where.endsWith('.md')) { return null; }
+	for (const bundle of Object.values(T_Bundle)) {
+		const notes = `${notes_of(bundle)}/`;
+		if (!where.startsWith(notes)) { continue; }
+		const inside = where.slice(notes.length);
+		if (inside.startsWith('guides/'))  { return { bundle, path: inside.slice('guides/'.length), is_design: false }; }
+		if (inside.startsWith('designs/')) { return { bundle, path: inside, is_design: true }; }
+		return null;
+	}
+	return null;
+}
+
 // The folder a file sits in, counting from the top of the repo. A collection's own top folder
 // has no place inside it, so the guides folder itself is the answer.
 export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
@@ -52,6 +72,22 @@ export async function restart_and_reload(): Promise<void> {
 		}
 	}
 	location.reload();      // give up waiting and try anyway
+}
+
+/**
+ * Every guide and design on disk right now, each named by its place counting from the top of
+ * the repo. The app's own list of files is settled when its code is prepared, so a file added
+ * since then is invisible to it; this is how it hears about one without a restart. An empty
+ * answer means the small local server is not running, and the prepared list stands alone.
+ */
+export async function guides_on_disk(): Promise<string[]> {
+	try {
+		const answer = await fetch('http://localhost:5171/list-guides');
+		const said = await answer.json().catch(() => ({}));
+		return (answer.ok && said.success && Array.isArray(said.paths)) ? said.paths as string[] : [];
+	} catch {
+		return [];
+	}
 }
 
 // Show one folder in the Finder. Only the small local server can do it, since a page served
@@ -91,6 +127,20 @@ export async function move_guide(from: string, to: string): Promise<Moved> {
 }
 
 export type Moved = { ok: boolean; why: string; full_path: string };
+
+// Throw one guide's file away. Says whether it went, and if not, why in plain words. The same
+// two guards as everything else: it must be a guide, and it must sit inside the repo.
+export async function delete_guide(where: string): Promise<Saved> {
+	const url = `http://localhost:5171/delete-guide?where=${encodeURIComponent(where)}`;
+	try {
+		const answer = await fetch(url, { method: 'POST' });
+		const said = await answer.json().catch(() => ({}));
+		if (answer.ok && said.success) { return { ok: true, why: '' }; }
+		return { ok: false, why: said.error ?? `the server answered ${answer.status}` };
+	} catch (e) {
+		return { ok: false, why: e instanceof Error ? e.message : String(e) };
+	}
+}
 
 // The repo is itself an Obsidian vault, named for the folder it sits in.
 export const VAULT = 'mono';

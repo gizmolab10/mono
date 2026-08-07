@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "Running the End-to-End Tests"
 description: "The two things that must already be running before any end-to-end test can pass."
 tags: [test]

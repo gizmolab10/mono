@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Workflow"
 description: "The turn-taking cadence and the propose-before-acting discipline."
 tags: [team, session]

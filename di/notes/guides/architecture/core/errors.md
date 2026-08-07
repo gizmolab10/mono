@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Errors (di)"
 description: "Turning a formula failure into something the user can act on: a red mark and a plain message."
 tags: [wire, UX]

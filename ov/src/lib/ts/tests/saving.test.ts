@@ -1,6 +1,40 @@
-import { file_path_of, folder_path_of, moved_into, obsidian_link } from '../utilities/Saving';
+import { file_path_of, folder_path_of, moved_into, obsidian_link, place_of_file } from '../utilities/Saving';
 import { describe, expect, it } from 'vitest';
 import { T_Bundle } from '../types/Guide';
+
+describe('reading a place in the repo back into a collection and a path', () => {
+	it('reads a shared guide', () => {
+		expect(place_of_file('notes/guides/pre-flight/always.md'))
+			.toEqual({ bundle: T_Bundle.mono, path: 'pre-flight/always.md', is_design: false });
+	});
+
+	it('reads a project\'s guide', () => {
+		expect(place_of_file('di/notes/guides/core/units.md'))
+			.toEqual({ bundle: T_Bundle.di, path: 'core/units.md', is_design: false });
+	});
+
+	it('keeps the designs folder in the path, so it can never collide with a guide', () => {
+		expect(place_of_file('ws/notes/designs/styles.md'))
+			.toEqual({ bundle: T_Bundle.ws, path: 'designs/styles.md', is_design: true });
+	});
+
+	it('is the other way round from working out where a guide sits', () => {
+		for (const [bundle, path] of [
+			[T_Bundle.mono, 'pre-flight/always.md'],
+			[T_Bundle.ji, 'roadmap.md'],
+			[T_Bundle.ov, 'designs/a plan.md'],
+		] as Array<[T_Bundle, string]>) {
+			expect(place_of_file(file_path_of(bundle, path))).toEqual({ bundle, path, is_design: path.startsWith('designs/') });
+		}
+	});
+
+	it('reads anything that is not a guide as nothing', () => {
+		expect(place_of_file('ov/notes/work/handoff.md')).toBe(null);
+		expect(place_of_file('ov/src/lib/main.css')).toBe(null);
+		expect(place_of_file('notes/guides/a folder')).toBe(null);
+		expect(place_of_file('')).toBe(null);
+	});
+});
 
 // Where a guide sits, counting from the top of the repo. This is the one thing the write
 // server is told, so it has to be exactly right — a wrong answer here writes to the wrong

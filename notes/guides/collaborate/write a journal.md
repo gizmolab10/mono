@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Journals"
 description: "The formatting rules for the running journal file."
 tags: [prose, notes]

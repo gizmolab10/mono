@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Expectations"
 description: "How to get the collaborator's best work and avoid its worst."
 tags: [team]

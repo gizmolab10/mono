@@ -5,12 +5,13 @@
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { landed_on_a_control, names_up_to } from '../../ts/utilities/Leaving';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
-	import { w_words } from '../../ts/managers/Filters';
+	import { shut_all_areas, w_words } from '../../ts/managers/Filters';
 	import Separator from '../support/Separator.svelte';
 	import Steppers from '../support/Steppers.svelte';
 	import Big_Pill from '../support/Big_Pill.svelte';
@@ -206,6 +207,22 @@
 		pressed_the_bar = event.clientX > edge;
 	}
 
+	/**
+	 * Make what is picked in the open box heavy or slanted, or plain again. The words and the
+	 * picking are worked out away from the screen; this only puts the answer back and leaves the
+	 * same run of words picked, so pressing again undoes it.
+	 */
+	function emphasize(mark: string) {
+		if (!box) { return; }
+		const the_box = box;
+		const done = toggle_emphasis(the_box.value, the_box.selectionStart, the_box.selectionEnd, mark);
+		the_box.value = done.text;
+		the_box.setSelectionRange(done.from, done.to);
+		fit_box();
+		const says = mark === HEAVY ? 'heavy' : mark === SLANTED ? 'slanted' : 'struck through';
+		debug.log(`Editing "${name}": ${says} was pressed on ${done.to - done.from} character(s).`);
+	}
+
 	/** Grow the box to hold everything typed into it. */
 	function fit_box() {
 		if (!box) { return; }
@@ -232,6 +249,9 @@
 		// A paragraph steps in; a bulleted list does not. The box matches whichever it holds,
 		// so opening a piece never shifts its first line.
 		if (opened_with.trimStart().startsWith('-')) { box.classList.add('flush'); }
+		// A chunk of code reads in the even-width letters it is written in, and lines are left
+		// exactly where they fall — so the box holding one is dressed to match.
+		if (block.tagName === 'PRE') { box.classList.add('code'); }
 		box.addEventListener('input', fit_box);
 		box.addEventListener('blur', () => {
 			if (pressed_the_bar) { pressed_the_bar = false; box?.focus(); return; }
@@ -239,7 +259,29 @@
 		});
 		box.addEventListener('keydown', (e: KeyboardEvent) => {
 			e.stopPropagation();                     // the guide's own keys stay out of the box
-			if (e.key === 'Escape') { close_box(false); }
+			if (e.key === 'Escape') { close_box(false); return; }
+			// Typing one of the marks that comes in a pair, with words picked, puts it before
+			// them and its partner after — rather than throwing the picked words away.
+			if (!e.metaKey && !e.ctrlKey && !e.altKey && partner_of(e.key) !== '') {
+				const the_box = box;
+				if (the_box && the_box.selectionStart !== the_box.selectionEnd) {
+					const done = surround(the_box.value, the_box.selectionStart, the_box.selectionEnd, e.key);
+					if (done) {
+						e.preventDefault();
+						the_box.value = done.text;
+						the_box.setSelectionRange(done.from, done.to);
+						fit_box();
+						debug.log(`Editing "${name}": put ${e.key}${partner_of(e.key)} around ${done.to - done.from} character(s).`);
+						return;
+					}
+				}
+			}
+			// Command with b, i or a hyphen puts marks around what is picked, or takes them off.
+			if (!(e.metaKey || e.ctrlKey) || e.altKey) { return; }
+			const mark = e.key === 'b' ? HEAVY : e.key === 'i' ? SLANTED : e.key === '-' ? STRUCK : '';
+			if (mark === '') { return; }
+			e.preventDefault();
+			emphasize(mark);
 		});
 		block.parentNode?.insertBefore(box, block);
 		block.style.display = 'none';
@@ -381,39 +423,44 @@
 		});
 	}
 
-	// Renaming happens in the top row itself: the place where the guide sits gives way to a
-	// field holding its name, and the button that opened it becomes the way out.
-	let renaming = $state(false);
+	// The file's name in the top row is a field that reads as plain words until the cursor is
+	// over it. Typing in it changes nothing until the field is left or Return is pressed; either
+	// gives the file itself the name typed.
 	let typed_name = $state('');
 
-	/**
-	 * Open the field, or shut it again with nothing changed. Nothing calls this at the moment —
-	 * the button that did is gone — but the field and its saving are kept, waiting for whatever
-	 * opens it next.
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	export function handle_show_rename() {
-		renaming = !renaming;
-		typed_name = renaming ? name : '';
-		debug.log(`Editing "${name}": the rename field is now ${renaming ? 'open' : 'shut, with nothing changed'}.`);
-	}
+	// Whenever another guide comes on screen, the field starts from that guide's own name.
+	$effect(() => { typed_name = name; });
 
-	/** The cursor goes to the end of the name, so a word can be added without aiming. */
-	function take_the_cursor(field: HTMLInputElement) {
-		field.focus();
-		field.setSelectionRange(field.value.length, field.value.length);
+	// Throwing this guide away is asked about first: the trash mark at the right of the row
+	// gives way to a cross, and the question stands over the words until it is answered.
+	let asking_to_delete = $state(false);
+	const crossPath = svg_paths.x_cross(k.size.control, k.size.control / 6);
+	const binPath   = svg_paths.trashcan(k.size.control);
+
+	// Stepping to another guide takes the question with it — it belonged to the one being left.
+	$effect(() => { address; asking_to_delete = false; });
+
+	/** Throw this guide away. Only if the file itself goes does the view go back to the list. */
+	function handle_delete() {
+		asking_to_delete = false;
+		debug.log(`Editing "${name}": throwing it away.`);
+		guides.delete_one(guide).then((gone) => { if (gone) { onclose(); } });
 	}
 
 	/**
 	 * Give the file itself a different name: the file, every link naming it, and the index
-	 * beside it are put right together.
+	 * beside it are put right together. A name unchanged, or emptied, does nothing.
 	 */
 	function handle_rename() {
-		const said = typed_name;
-		renaming = false;
-		typed_name = '';
+		const said = typed_name.trim();
+		if (said === '' || said === name) {
+			typed_name = name;
+			return;
+		}
 		debug.log(`Editing "${name}": renaming it to "${said}".`);
-		guides.rename(guide, said);
+		// The view follows the guide to its new place on its own; a rename that was refused puts
+		// the old name back in the field.
+		guides.rename(guide, said).then((now_at) => { if (now_at === '') { typed_name = name; } });
 	}
 
 	/** Put a tag on this guide or take it off, and write it. */
@@ -775,16 +822,44 @@
 		<!-- An empty run on either side, so the name sits at the middle of whatever the folders
 		     leave over rather than at the middle of the whole row. -->
 		<span class='view-spacer'></span>
-		{#if renaming}
-			<input
-				use:take_the_cursor
-				class='rename-field'
-				bind:value={typed_name}
-				onkeydown={(e) => { if (e.key === 'Enter') { handle_rename(); } }} />
-		{:else}
-			<span class='view-name'>{name}</span>
+		<!-- The name is a field that reads as plain words until the cursor is over it. Leaving
+		     it, or pressing Return, gives the file itself whatever was typed. While the
+		     question about throwing the guide away is up, the name steps aside — the question
+		     already says which file it means. -->
+		{#if !asking_to_delete}
+		<input
+			class='view-name'
+			size={Math.max(1, typed_name.length)}
+			bind:value={typed_name}
+			use:tip={'change the file\'s name'}
+			onclick={(e) => (e.currentTarget as HTMLInputElement).focus()}
+			onblur={handle_rename}
+			onkeydown={(e) => {
+				e.stopPropagation();
+				if (e.key === 'Enter') { (e.currentTarget as HTMLInputElement).blur(); }
+				if (e.key === 'Escape') { typed_name = name; (e.currentTarget as HTMLInputElement).blur(); }
+			}} />
 		{/if}
 		<span class='view-spacer'></span>
+		<!-- Asking in words rather than in a box of its own: the trash mark asks, and the
+		     question that takes its place is the thing that answers. -->
+		{#if asking_to_delete}
+			<button class='asking-yes' use:tip={'throw it away for good'}
+				onclick={(e) => { e.stopPropagation(); handle_delete(); }}>delete "{name}"</button>
+			<button class='row-button' aria-label='keep it' use:tip={'keep this guide'}
+				onclick={(e) => { e.stopPropagation(); asking_to_delete = false; }}>
+				<svg class='row-mark' viewBox='0 0 {k.size.control} {k.size.control}'>
+					<path d={crossPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' />
+				</svg>
+			</button>
+		{:else}
+			<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
+				onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
+				<svg class='row-mark' viewBox='0 0 {k.size.control} {k.size.control}'>
+					<path d={binPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' stroke-linejoin='round' />
+				</svg>
+			</button>
+		{/if}
 	</div>
 	</div>
 	<!-- While the filters are open the heavy line moves below them, so the form reads as part of
@@ -822,7 +897,10 @@
 			<!-- The same six areas the filters use. Every tag is within reach here, since this
 			     is where a file's own tags are set rather than where files are narrowed. -->
 			{#if show_form_tags}
-				<div class='filter-row wrapping'>
+				<!-- A press on the empty space among the areas shuts them all, the same as in
+				     the list. A press on an area itself is that area's own. -->
+				<div class='filter-row wrapping' role='presentation'
+					onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
 					{#each TAG_AREAS as area (area.name)}
 						<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
 					{/each}
@@ -940,29 +1018,86 @@
 		min-width    : 0;
 	}
 
-	/* The file's name at the far right of the row, the empty run before it holding it there. */
-	.view-name {
-		font-size   : var(--font-large);
-		color       : var(--text);
-		white-space : nowrap;
-		flex        : 0 0 auto;
-		min-width   : 0;
+	/* A round button at the end of the row: white inside a hairline edge, filling under the
+	   cursor — the same look every other small button in the app wears. */
+	.row-button {
+		border          : var(--thickness-mild) solid var(--black);
+		border-radius   : var(--radius-percent);
+		height          : var(--size-control);
+		width           : var(--size-control);
+		background      : var(--white);
+		box-sizing      : border-box;
+		justify-content : center;
+		align-items     : center;
+		display         : flex;
+		flex            : 0 0 auto;
+		cursor          : pointer;
+		padding         : 0;
 	}
 
-	/* While renaming, the field stands where the file's place normally reads, taking the
-	   width of that row. */
-	.rename-field {
+	.row-button:hover {
+		background : var(--hover);
+	}
+
+	.row-mark {
+		width   : var(--size-svg);
+		height  : var(--size-svg);
+		stroke  : var(--black);
+		fill    : none;
+		display : block;
+	}
+
+	/* The question itself is the button that answers it, standing where the row's other words
+	   stand and reading as an ordinary control. */
+	.asking-yes {
 		border        : var(--thickness-normal) solid var(--black);
+		border-radius : var(--radius-pill);
 		height        : var(--height-control);
 		padding       : var(--pad-control);
-		border-radius : var(--radius-pill);
-		font-size     : var(-font-control);
+		font-size     : var(--font-label);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
-		flex          : 0 1 auto;
 		font-family   : inherit;
+		white-space   : nowrap;
+		flex          : 0 0 auto;
+		cursor        : pointer;
+	}
+
+	.asking-yes:hover {
+		background : var(--hover);
+	}
+
+	/* The file's own name, in the middle of what the folders leave over. It is a field, but
+	   reads as plain words: no edge, no fill, and only as wide as the name itself. The edge is
+	   held see-through rather than absent, so nothing shifts when it appears. */
+	.view-name {
+		border        : var(--thickness-faint) solid transparent;
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-large);
+		font-family   : inherit;
+		background    : transparent;
+		color         : var(--text);
+		text-align    : center;
+		white-space   : nowrap;
+		box-sizing    : border-box;
+		flex          : 0 1 auto;
+		cursor        : text;
+		outline       : none;
 		min-width     : 0;
+		padding       : 0 var(--gap-tight);
+	}
+
+	/* Under the cursor it shows what it is; with the cursor in it, it reads as a field being
+	   typed in. */
+	.view-name:hover {
+		border-color : var(--black);
+		background   : var(--hover);
+	}
+
+	.view-name:focus {
+		border-color : var(--black);
+		background   : var(--white);
 	}
 
 
@@ -1118,6 +1253,18 @@
 	/* A piece that begins with a dash is a list, and a list starts at the edge. */
 	:global(.edit-box.flush) {
 		margin-left     : var(--gap-huge);
+	}
+
+	/* A chunk of code reads the same open or shut: even-width letters on the off-white block,
+	   no step-in, and every line left exactly where it falls. */
+	:global(.edit-box.code) {
+		font-family   : ui-monospace, SFMono-Regular, Menlo, monospace;
+		border-radius : var(--radius-banner);
+		background    : var(--offwhite);
+		padding       : var(--gap);
+		white-space   : pre;
+		text-indent   : 0;
+		overflow-x    : auto;
 	}
 
 
@@ -1310,6 +1457,18 @@
 		border  : var(--thickness-faint) solid var(--accent);
 		padding : var(--gap-tight) var(--gap);
 		text-align : left;
+	}
+
+	/* A table's first column is usually a number or a short word; it keeps to one line and
+	   takes only the room it needs, so the words beside it get the rest. */
+	.view-page :global(th:first-child) {
+		white-space : nowrap;
+		width       : 1%;
+	}
+
+	.view-page :global(td:first-child) {
+		white-space : nowrap;
+		width       : 1%;
 	}
 
 	.view-page :global(hr) {

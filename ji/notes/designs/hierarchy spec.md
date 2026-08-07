@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Hierarchy Spec (ji)"
 description: "What ji's arrangement of documents and tags should become, read against what ws already does."
 tags: [wire, data]

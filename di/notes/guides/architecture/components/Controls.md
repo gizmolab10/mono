@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Controls (di)"
 description: "The strip of commands at the top and bottom of the screen, reachable without opening anything."
 tags: [wire, UX]

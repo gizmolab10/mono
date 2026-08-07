@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Code Style"
 description: "Naming, formatting, and organization patterns to follow strictly across projects."
 tags: [style]

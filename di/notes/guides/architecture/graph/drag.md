@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Drag Fixes"
 description: "Three stacked bugs in stretching an edge or corner, and what each fix was."
 tags: [wire, geometry, debug]

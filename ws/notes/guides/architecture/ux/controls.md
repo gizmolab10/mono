@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Controls Layout (ws)"
 description: "How the running total of widths places every primary control, and how to reorder without breaking it."
 tags: [wire, UX]

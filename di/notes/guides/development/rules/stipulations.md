@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Stipulations"
 description: "The load-bearing rules the app is built on, each one pinned by a test."
 tags: [session, test]

@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "Migrating to Svelte 5"
 description: "How to move from Svelte 4 to 5, where reactivity works altogether differently."
 tags: [platform, migrate]

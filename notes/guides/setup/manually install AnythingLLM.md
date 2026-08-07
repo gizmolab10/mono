@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "Installing AnythingLLM by Hand"
 description: "The steps that get the AnythingLLM engine running on this machine."
 tags: [setup]

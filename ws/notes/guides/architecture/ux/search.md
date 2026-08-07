@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Search (ws)"
 description: "Matches appear as each letter is typed, in very little screen space."
 tags: [wire, UX]

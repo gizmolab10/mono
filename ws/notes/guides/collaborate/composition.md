@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Component Composition (ws)"
 description: "Props down, events up, slots for flexible content, compound components for the complicated parts."
 tags: [style, platform]

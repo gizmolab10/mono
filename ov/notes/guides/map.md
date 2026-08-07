@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Map (ov)"
 description: "Every source file in overview, updated whenever files are added, moved, or removed."
 tags: [notes, wire]

@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Always (di)"
 description: "The standing rules that apply only to di, read alongside the shared always file."
 tags: [session]

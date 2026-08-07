@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Map (ji)"
 description: "Every source file in ji, updated whenever files are added, moved, or removed."
 tags: [notes, wire]

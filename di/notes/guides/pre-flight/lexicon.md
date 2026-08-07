@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Lexicon (di)"
 description: "The exact words di uses; no synonyms, no near-synonyms."
 tags: [prose, session]

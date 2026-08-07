@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Managers (ws)"
 description: "Sixteen shared instances, each owning one area of the app."
 tags: [wire]

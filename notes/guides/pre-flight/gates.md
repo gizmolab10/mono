@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Gates"
 description: "Which guide must be read before which kind of task."
 tags: [session]

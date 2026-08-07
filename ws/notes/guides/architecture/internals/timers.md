@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Timers (ws)"
 description: "Mouse timing held by the hits manager, so it survives a redraw."
 tags: [wire, UX]

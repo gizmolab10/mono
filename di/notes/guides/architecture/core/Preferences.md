@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Preferences (di)"
 description: "Named values that survive a reload, kept in the browser's own storage."
 tags: [wire, data]

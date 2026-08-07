@@ -1,5 +1,5 @@
 ---
-kind: howto
+kind: step
 title: "Git Recipes"
 description: "How to undo common mistakes in the change history."
 tags: [tools]

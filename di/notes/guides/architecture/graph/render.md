@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "How Rendering Works"
 description: "The nine stages every frame runs through, always in the same order."
 tags: [wire, geometry]

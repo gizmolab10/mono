@@ -64,7 +64,18 @@ export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: numb
 		token.attrSet('data-from', String(token.map[0] + skipped));
 		token.attrSet('data-to',   String(token.map[1] + skipped));
 	}
-	return reader.renderer.render(tokens, reader.options, {});
+	return numbers_out_of_code(reader.renderer.render(tokens, reader.options, {}));
+}
+
+/**
+ * A fenced chunk of code is drawn as a box holding a code element, and the reader hangs the
+ * block's attributes on the inner one. That would leave a code block reachable only from
+ * inside its own words, and never as the one piece it is — so the lines it came from are
+ * moved out to the box around it.
+ */
+export function numbers_out_of_code(html: string): string {
+	return html.replace(/<pre><code([^>]*?)(data-from="\d+" data-to="\d+")([^>]*)>/g,
+		(_, before, numbers, after) => `<pre ${numbers}><code${before}${after}>`);
 }
 
 // The reader leaves headings unnamed, so a link ending in "#naming" would have nothing to

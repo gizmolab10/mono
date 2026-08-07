@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Preferences Flow (ws)"
 description: "One setting followed all the way from the click to storage and back."
 tags: [wire, data, UX]

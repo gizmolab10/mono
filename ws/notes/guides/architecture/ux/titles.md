@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Editable Titles (ws)"
 description: "What the editable title component did, captured before it was replaced."
 tags: [wire, UX]

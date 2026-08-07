@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Storage Spec (ji)"
 description: "What ji stores, where it can be stored, and what the first working version has to do."
 tags: [wire, data]

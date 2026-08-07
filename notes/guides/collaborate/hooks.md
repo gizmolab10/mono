@@ -1,8 +1,8 @@
 ---
-kind: lookup
+kind: refer
 title: "Hooks"
 description: "What hooks are, how they differ from memory, and which ones are live."
-tags: [tools, team]
+tags: [team, tools]
 date: 2026-07-08
 ---
 

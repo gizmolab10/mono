@@ -12,7 +12,7 @@
 	// A guide the list no longer shows (its file gone, or a filter now hiding it) closes
 	// itself rather than showing nothing at all.
 	$effect(() => {
-		if ($w_operation === T_Operation.view && $w_viewed === null) {
+		if ($w_operation === T_Operation.edit && $w_viewed === null) {
 			debug.log(`Reading: the guide being read is not in the list now — back to the guides.`);
 			close_view();
 		}
@@ -22,7 +22,7 @@
 <div class='region content' style:width='{width}px'>
 	{#if $w_operation === T_Operation.report}
 		<Report />
-	{:else if $w_operation === T_Operation.view && $w_viewed}
+	{:else if $w_operation === T_Operation.edit && $w_viewed}
 		<Editor
 			name={$w_viewed.guide.name}
 			address={$w_viewed.guide.address}

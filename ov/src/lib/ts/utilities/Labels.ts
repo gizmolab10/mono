@@ -1,4 +1,4 @@
-import type { Labels } from '../types/Guide';
+import { T_Kind, type Labels } from '../types/Guide';
 
 // The five labels at the top of every guide, written back into the file.
 //
@@ -23,6 +23,100 @@ export function label_block(labels: Labels, tags: string[]): string {
 		`date: ${labels.date}`,
 		'---',
 	].join('\n');
+}
+
+// --- labeling a file that has none ------------------------------------------
+//
+// A file added to the guides since the app last looked has no labels at all, so it would show
+// with no kind, no tags, and its file name for a title. Rather than leave it out in the cold,
+// one is composed from the file's own words — its first heading for a title, the first thing
+// it says for a description — and marked "stale", the one tag that means a person still has
+// to look at it. Nothing here judges what kind of guide it is; that is exactly what the mark
+// is for.
+
+/** The tag that says these labels were composed rather than written. */
+export const NEEDS_A_LOOK = 'stale';
+
+/** The kind a composed block starts at, until a person says otherwise. */
+export const KIND_UNTIL_TOLD = T_Kind.refer;
+
+/** Today, written the way every guide writes its date. */
+export function today(): string {
+	const now = new Date();
+	const two = (n: number) => String(n).padStart(2, '0');
+	return `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}`;
+}
+
+/** Does this file carry a label block at all? */
+export function has_labels(text: string): boolean {
+	const lines = text.split('\n');
+	if (lines[0]?.trim() !== '---') { return false; }
+	return lines.findIndex((line, i) => i > 0 && line.trim() === '---') > 0;
+}
+
+/** The words of the first heading, or nothing at all if the file opens without one. */
+function first_heading(text: string): string {
+	for (const line of text.split('\n')) {
+		const found = /^#{1,6}\s+(.*\S)\s*$/.exec(line);
+		if (found) { return found[1].replace(/[*_`]/g, '').trim(); }
+	}
+	return '';
+}
+
+/**
+ * The first thing the file actually says: the first paragraph that is not a heading, a rule,
+ * a list, a quote or a chunk of code, cut at its first full stop and held to a readable
+ * length. Nothing at all when the file opens with none.
+ */
+function first_words(text: string): string {
+	let fenced = false;
+	for (const line of text.split('\n')) {
+		const plain = line.trim();
+		if (/^(```|~~~)/.test(plain)) { fenced = !fenced; continue; }
+		if (fenced || plain === '') { continue; }
+		if (/^(#|-|\*|>|\||\d+\.)/.test(plain)) { continue; }
+		if (plain === '---') { continue; }
+		const said = plain.replace(/[*_`]/g, '').trim();
+		const stop = said.indexOf('. ');
+		const one = stop < 0 ? said.replace(/\.$/, '') : said.slice(0, stop);
+		return one.length > 160 ? `${one.slice(0, 157).trimEnd()}...` : one;
+	}
+	return '';
+}
+
+/** A title from the file's own name: dashes and underscores become spaces, first letter up. */
+function title_from_name(file_name: string): string {
+	const words = file_name.replace(/\.md$/, '').replace(/[-_]+/g, ' ').trim();
+	return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/**
+ * The labels to give a file that has none, read off the file's own words. `today` is handed in
+ * rather than asked for, so the same file always composes the same block in a test.
+ */
+export function labels_for(text: string, file_name: string, today: string): { labels: Labels; tags: string[] } {
+	const heading = first_heading(text);
+	const title = heading === '' ? title_from_name(file_name) : heading;
+	return {
+		labels: {
+			kind        : KIND_UNTIL_TOLD,
+			title,
+			description : first_words(text),
+			date        : today,
+			labeled     : true,
+		},
+		tags: [NEEDS_A_LOOK],
+	};
+}
+
+/**
+ * The whole file again with a composed label block at its top, its words left exactly as they
+ * are. A file that already carries labels is handed back untouched — this only ever adds.
+ */
+export function with_labels_added(text: string, file_name: string, today: string): string {
+	if (has_labels(text)) { return text; }
+	const { labels, tags } = labels_for(text, file_name, today);
+	return with_labels_replaced(text, labels, tags);
 }
 
 // The whole file again, with its label block swapped for this one. A file that carries no

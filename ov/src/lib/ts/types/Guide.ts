@@ -4,11 +4,11 @@
 
 // The five kinds, in the order the OKF proposal picks them.
 export enum T_Kind {
-	rule       = 'rule',
-	howto      = 'howto',
-	wiring     = 'wiring',
-	why        = 'why',
-	lookup     = 'lookup',
+	specify    = 'specify',
+	step       = 'step',
+	wire       = 'wire',
+	explain    = 'explain',
+	refer      = 'refer',
 }
 
 // The closed tag list — twenty-four, alphabetized, nothing invented on the spot.

@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Units (di)"
 description: "Every length held in millimetres, then translated into whatever the user wants to read."
 tags: [wire, data]

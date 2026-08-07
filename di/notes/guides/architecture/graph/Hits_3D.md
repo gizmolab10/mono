@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Hit Testing in 3D"
 description: "Working out which corner, edge, or face of a part the mouse is over."
 tags: [wire, geometry, UX]

@@ -11,8 +11,8 @@
 	import { w_shut, w_show_folders, w_project, w_kind, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import type { Filtered_Guide } from '../../ts/types/Guide';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
+	import type { Filtered_Guide } from '../../ts/types/Guide';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { show_status } from '../../ts/managers/Status';
 	import Separator from '../support/Separator.svelte';
@@ -247,8 +247,9 @@
 		// With a kind picked, this column holds only the folder counts, so its title goes: the
 		// count row above already says which kind was picked.
 		// The one column says two things: a file's kind, and how many matching files a folder
-		// holds — so its title names both.
-		...(shows_kind    ? [{ label: $w_kind === '' ? 'kind/children' : 'children', width: $w_kind === '' ? '100px' : '60px', sort: T_Sort.kind }] : []),
+		// holds — so while the folders show, its title names both. With them hidden there are
+		// no folder counts to name, so it is just the kind.
+		...(shows_kind    ? [{ label: $w_kind !== '' ? 'children' : $w_show_folders ? 'kind/children' : 'kind', width: $w_kind === '' ? '100px' : '60px', sort: T_Sort.kind }] : []),
 		...(shows_project ? [{ label: 'project', width: '65px',  sort: T_Sort.project }] : []),
 		// Both are left open, so whatever the fixed columns leave is split evenly between them.
 		{ label: 'name', width: 'auto', sort: T_Sort.name },
@@ -707,6 +708,7 @@
 		color          : var(--text);
 		vertical-align : middle;
 		text-align     : left;
+		position       : relative;      /* the lit pill's end strips hang off these */
 	}
 
 	/* The column's own width decides this cell; the styling only says how its words sit. */
@@ -819,9 +821,19 @@
 		border-bottom-left-radius : var(--radius-pill);
 	}
 
-	.guides-table .file.hovered td:last-child {
+	/* At the right the pill reaches a gap further, drawn as a strip hanging off the last cell.
+	   The rounding lives on the strip, so the two read as one pill and nothing inside the row
+	   moves. The left end is unchanged. */
+	.guides-table .file.hovered td:last-child::after {
 		border-top-right-radius    : var(--radius-pill);
 		border-bottom-right-radius : var(--radius-pill);
+		right                      : calc(var(--gap) * -1);
+		background                 : var(--hover);
+		position                   : absolute;
+		width                      : var(--gap);
+		bottom                     : 0;
+		content                    : '';
+		top                        : 0;
 	}
 
 	/* The folder a carried file would land in, lit on the accent so there is no doubt where

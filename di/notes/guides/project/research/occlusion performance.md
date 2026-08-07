@@ -1,12 +1,12 @@
 ---
-kind: lookup
+kind: refer
 title: "Spatial Acceleration"
 description: "Ways to speed up working out what hides what."
 tags: [research, geometry]
 date: 2026-05-10
 ---
 
-# Spatial Acceleration for Occlusion
+# Occlusion — Spatial Acceleration
 
 **Started:** 2026-02-08
 **Status:** Research

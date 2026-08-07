@@ -1,3 +1,11 @@
+---
+kind: refer
+title: "Design trade-offs (ji)"
+description: "What was weighed in choosing how ji stores and searches what it is given."
+tags: [data, research, stale]
+date: 2026-08-06
+---
+
 # design trade-offs
 
 

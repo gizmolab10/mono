@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Always"
 description: "The two standing rule sets — how to reply and how to work — and the few rules that belong to neither."
 tags: [session, team]

@@ -1,5 +1,5 @@
 ---
-kind: why
+kind: explain
 title: "Motive"
 description: "Why the work is shaped this way: let structure emerge, keep work files raw, distill guides out of them."
 tags: [vision, notes]

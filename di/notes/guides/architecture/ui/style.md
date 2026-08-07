@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Style (di interface)"
 description: "The look every interactive control shares, and the one exception for the active state."
 tags: [visual-design, style]

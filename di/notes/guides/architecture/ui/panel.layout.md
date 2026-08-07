@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Layout Regions (di)"
 description: "The full-window container and the four regions inside it."
 tags: [wire, UX]

@@ -14,7 +14,7 @@ import { debug } from '../common/Debug';
 
 export enum T_Operation {
 	browse = 'browse the guides',
-	view   = 'read one guide',
+	edit   = 'edit one guide',
 	report = 'read a long report',
 }
 
@@ -25,7 +25,7 @@ export const w_operation = preferences.persistent<T_Operation>(T_Preference.curr
 export const w_view_guide = preferences.persistent<string | null>(T_Preference.view_guide, null);
 
 // Leaving the reading view drops what it pointed at.
-w_operation.subscribe((op) => { if (op !== T_Operation.view) { w_view_guide.set(null); } });
+w_operation.subscribe((op) => { if (op !== T_Operation.edit) { w_view_guide.set(null); } });
 
 // --- stepping through the guides on screen ---------------------------------
 //
@@ -46,6 +46,16 @@ export const w_stack_at   = writable<number>(-1);
 // Where the reading began — the guide the list opened. Backing out of the bottom of the
 // stack lands here. A page refresh forgets it, along with the stack.
 export const w_anchor = writable<string | null>(null);
+
+// A guide is named by where it sits, so renaming or moving one leaves anything reading it
+// asking for a place that no longer holds anything — and the view shuts itself. Following the
+// move keeps it open on the very file it was already showing.
+guides.moved_to = (was, now) => {
+	if (get(w_view_guide) === was) { w_view_guide.set(now); }
+	if (get(w_anchor) === was)     { w_anchor.set(now); }
+	w_link_stack.update((stack) => stack.map((one) => (one === was ? now : one)));
+	debug.log(`Reading: the guide being read moved from "${was}" to "${now}", so the view followed it rather than shutting.`);
+};
 
 /** The row being read right now — from the list if it is there, otherwise from all of them. */
 export const w_viewed = derived([guides.w_showing, w_view_guide], ([rows, key]) =>
@@ -103,7 +113,7 @@ export function open_view(key: string): void {
 	w_stack_at.set(-1);
 	w_anchor.set(key);
 	w_view_guide.set(key);
-	w_operation.set(T_Operation.view);
+	w_operation.set(T_Operation.edit);
 	const files = rows.filter((r) => !r.guide.is_folder).length;
 	debug.log(`Opened "${row.guide.name}" — ${files} guide(s) on screen to step through, among ${rows.length} rows. The link stack starts empty.`);
 }
@@ -132,7 +142,7 @@ export function follow_link(key: string): void {
 		debug.log(`Following a link to "${row.guide.name}": pushed as number ${next.length} of ${next.length}${dropped > 0 ? `, dropping ${dropped} guide(s) that were ahead` : ''}.`);
 	}
 	w_view_guide.set(key);
-	w_operation.set(T_Operation.view);
+	w_operation.set(T_Operation.edit);
 }
 
 /**
@@ -194,7 +204,7 @@ export function close_view(): void {
 	w_view_guide.set(null);
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
-	if (get(w_operation) === T_Operation.view) { w_operation.set(T_Operation.browse); }
+	if (get(w_operation) === T_Operation.edit) { w_operation.set(T_Operation.browse); }
 }
 
 export type { Filtered_Guide };

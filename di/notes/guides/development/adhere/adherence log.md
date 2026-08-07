@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: refer
 title: "Adherence Log"
 description: "The hand-written companion to the dashboard, holding what the extractor cannot read on its own."
 tags: [notes, test]

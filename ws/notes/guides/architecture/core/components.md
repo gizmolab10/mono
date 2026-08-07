@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Components (ws)"
 description: "The two layers of the component system and the eleven folders they sit in."
 tags: [wire, UX]

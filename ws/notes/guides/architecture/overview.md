@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Architecture Overview (ws)"
 description: "Start here: how the pieces of Webseriously fit together."
 tags: [wire]

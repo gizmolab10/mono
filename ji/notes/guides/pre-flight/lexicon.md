@@ -1,5 +1,5 @@
 ---
-kind: rule
+kind: specify
 title: "Lexicon (ji)"
 description: "The exact words ji uses in prose, comments, log lines, and test names."
 tags: [prose, session]

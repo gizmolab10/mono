@@ -1,5 +1,5 @@
 ---
-kind: lookup
+kind: step
 title: "Netlify Deploys"
 description: "The seven published sites, where each one builds from, and how to add another."
 tags: [deploy]

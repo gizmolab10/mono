@@ -15,8 +15,11 @@
 	// `appearance` changes whenever the cursor lands on a different hinted thing; keying the tooltip
 	// on it remounts the hint so its opening pause and fade start over on each new one — even when
 	// neighbors share the same words.
-	let { message = null, anchor = null, mouseX = null, mouseY = null, delay = 1 / 3, appearance = 0 }:
-		{ message?: string | null; anchor?: HTMLElement | null; mouseX?: number | null; mouseY?: number | null; delay?: number; appearance?: number } = $props();
+	// `life` (seconds) is how long it stays once it is fully there; it then fades away over
+	// `gone` and does not come back while the cursor stays on the same thing. Pointing at
+	// something else, or away and back again, starts it over.
+	let { message = null, anchor = null, mouseX = null, mouseY = null, delay = 1 / 3, life = 2, gone = 0.4, appearance = 0 }:
+		{ message?: string | null; anchor?: HTMLElement | null; mouseX?: number | null; mouseY?: number | null; delay?: number; life?: number; gone?: number; appearance?: number } = $props();
 
 	let label = $state<HTMLElement | null>(null);
 	let left  = $state(0);
@@ -54,7 +57,8 @@
 
 {#if message != null && (anchor != null || has_mouse)}
 	{#key appearance}
-		<div class='tooltip' bind:this={label} style:left='{left}px' style:top='{top}px' style:--tip-time='{delay}s'>{message}</div>
+		<div class='tooltip' bind:this={label} style:left='{left}px' style:top='{top}px'
+			style:--tip-time='{delay}s' style:--tip-life='{life}s' style:--tip-gone='{gone}s'>{message}</div>
 	{/key}
 {/if}
 
@@ -72,14 +76,24 @@
 		position       : fixed;
 		pointer-events : none;                           /* never steals the hover from what it names */
 		border-radius  : 6px;
-		/* Hold clear for --tip-time, then fade to solid over half that span. Fill 'both' keeps it
-		   transparent through the opening pause and solid once the fade is done. */
-		animation      : tip-fade calc(var(--tip-time) / 2) ease var(--tip-time) both;
+		/* Three spans, one after another. Hold clear for --tip-time, fade to solid over half
+		   that, stand there for --tip-life, then fade away over --tip-gone and stay gone.
+		   The first fill is 'both' so it is clear through the opening pause and solid after;
+		   the second is 'forwards' only, so it does nothing until its own turn comes and does
+		   not fight the opening pause. Once it has faded, only pointing somewhere else brings
+		   a hint back — moving within the same thing draws this same one, already gone. */
+		animation      : tip-fade calc(var(--tip-time) / 2) ease var(--tip-time) both,
+		                 tip-gone var(--tip-gone) ease calc(var(--tip-time) * 1.5 + var(--tip-life)) forwards;
 	}
 
 	@keyframes tip-fade {
-		to   { opacity : 1; }
 		from { opacity : 0; }
+		to   { opacity : 1; }
+	}
+
+	@keyframes tip-gone {
+		from { opacity : 1; }
+		to   { opacity : 0; }
 	}
 
 </style>

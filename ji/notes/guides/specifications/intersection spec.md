@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Intersection Rules"
 description: "The rules the intersection app follows, starting with one source of truth for every color."
 tags: [wire, visual-design]

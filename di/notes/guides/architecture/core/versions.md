@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "File Format Migration (di)"
 description: "How an old saved file is brought up to the current scene format."
 tags: [wire, data, migrate]

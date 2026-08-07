@@ -1,8 +1,8 @@
 ---
-kind: why
+kind: explain
 title: "Collaborator Limitations"
 description: "The failure modes the collaborator falls into, named so they can be spotted early."
-tags: [vision, team]
+tags: [debug, team, vision]
 date: 2026-06-03
 ---
 

@@ -82,10 +82,11 @@ export default class Constants {
 	};
 
 	thickness = {
-		bold		 : common_thickness * 1.5,
-		fat			 : common_thickness * 2,
-		faint		 : common_thickness / 2,
 		normal		 : common_thickness,
+		fat			 : common_thickness * 2,
+		bold		 : common_thickness * 1.5,
+		mild         : common_thickness * 0.7,
+		faint		 : common_thickness * 0.5,
 	};
 
 	separator = {

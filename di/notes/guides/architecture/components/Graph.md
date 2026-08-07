@@ -1,5 +1,5 @@
 ---
-kind: wiring
+kind: wire
 title: "Graph (di)"
 description: "The drawing area: the canvas and everything floating over it."
 tags: [wire, UX]
