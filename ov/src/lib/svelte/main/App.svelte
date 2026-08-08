@@ -197,12 +197,14 @@
 	}
 
 	:global(:root) {
-		--font: system-ui, sans-serif;
+		/* The typeface. Not a step on any ladder, so it keeps a name of its own —
+		   --font is the middle size, and the two must not share a word. */
+		--family: system-ui, sans-serif;
 	}
 
 	:global(body) {
 		font-weight : var(--fw);
-		font-family : var(--font);
+		font-family : var(--family);
 		color       : var(--text);
 		user-select : none;
 		margin      : 0;
@@ -210,7 +212,7 @@
 
 	:global(button, input, select, textarea) {
 		font-weight : var(--fw);
-		font-family : var(--font);
+		font-family : var(--family);
 	}
 
 	:global(input:focus, textarea:focus) {

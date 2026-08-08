@@ -189,6 +189,7 @@
 	// all — rather than anything worked back out of what's on screen. Leaving the box writes
 	// just those lines back.
 	let text_of_file = '';                          // the whole file, held only while on screen
+	const TITLE_DROP = k.gap.small * 2;             // how far the title's box is drawn below where it stands
 	let box: HTMLTextAreaElement | null = null;     // the open box, if there is one
 	let stood_in_for: HTMLElement | null = null;    // the piece it is standing in front of
 	let opened_with = '';                           // what the box held when it opened
@@ -226,8 +227,39 @@
 	/** Grow the box to hold everything typed into it. */
 	function fit_box() {
 		if (!box) { return; }
+		// The title's box stands in a slot of its own, reaching down to the line across the page.
+		// It never grows, so the words after it never move.
+		if (box.classList.contains('title')) { return; }
 		box.style.height = 'auto';
 		box.style.height = `${box.scrollHeight}px`;
+	}
+
+	/** The first piece after this one that is actually on screen, skipping any put away by a fold. */
+	function next_one_showing(block: HTMLElement): HTMLElement | null {
+		let one = block.nextElementSibling as HTMLElement | null;
+		while (one && one.offsetParent === null) {
+			one = one.nextElementSibling as HTMLElement | null;
+		}
+		return one;
+	}
+
+	/**
+	 * Put the piece after the open box back where it was standing. The box is never quite the
+	 * height of the piece it stands in for — different spacing above, a hair of room held inside
+	 * it, whole-pixel rounding — and rather than trying to account for each of those, the room
+	 * below the box is simply set to whatever closes the gap. Measured twice, since the first
+	 * correction can itself shift things by a fraction.
+	 */
+	function hold_what_follows(after: HTMLElement | null, was_at: number) {
+		if (!box || !after) { return; }
+		const the_box = box;
+		for (let go = 0; go < 2; go += 1) {
+			const drift = after.getBoundingClientRect().top - was_at;
+			if (Math.abs(drift) < 0.01) { break; }
+			const room = parseFloat(getComputedStyle(the_box).marginBottom) || 0;
+			the_box.style.marginBottom = `${room - drift}px`;
+			debug.log(`Editing "${name}": the piece below sat ${drift.toFixed(2)}px off, so the room under the box went from ${room.toFixed(2)}px to ${(room - drift).toFixed(2)}px.`);
+		}
 	}
 
 	/** Open one piece of the page for editing, in place. */
@@ -252,6 +284,13 @@
 		// A chunk of code reads in the even-width letters it is written in, and lines are left
 		// exactly where they fall — so the box holding one is dressed to match.
 		if (block.tagName === 'PRE') { box.classList.add('code'); }
+		// A heading stands further clear of what comes before it than a paragraph does. The box
+		// takes that same standing-clear, so opening a heading doesn't jerk it upward.
+		if (/^H[1-6]$/.test(block.tagName)) { box.classList.add('heading'); }
+		// The title's box is drawn a few pixels lower so it sits square with the line across the
+		// page, and the words below come down with it.
+		const drop = block.tagName === 'H1' ? TITLE_DROP : 0;
+		if (drop > 0) { box.classList.add('title'); box.style.top = `${drop}px`; }
 		box.addEventListener('input', fit_box);
 		box.addEventListener('blur', () => {
 			if (pressed_the_bar) { pressed_the_bar = false; box?.focus(); return; }
@@ -283,9 +322,16 @@
 			e.preventDefault();
 			emphasize(mark);
 		});
+		// Where the piece after this one starts, noted before anything changes, so the box can be
+		// held to it afterwards. Under a folded heading the pieces that follow are put away, and a
+		// piece that is not on screen has no place to be held to — so the first one still showing
+		// is the one to watch.
+		const after = next_one_showing(block);
+		const was_at = after ? after.getBoundingClientRect().top : 0;
 		block.parentNode?.insertBefore(box, block);
 		block.style.display = 'none';
 		fit_box();
+		hold_what_follows(after, was_at);
 		box.focus();
 		debug.log(`Editing "${name}": opened lines ${from} through ${to - 1} — ${opened_with.length} character(s) of the file's own words.`);
 	}
@@ -905,6 +951,10 @@
 			bind:value={$w_words}
 			use:tip={'search this file'} />
 	</div>
+	{:else}
+		<!-- With the search folded away its line would sit right on top of the next one, so a gap
+		     stands in for the row that went. -->
+		<div class='sep-gap'></div>
 	{/if}
 	</div>
 	<!-- While the filters are open the heavy line moves below them, so the form reads as part of
@@ -966,21 +1016,30 @@
 		{#if free.shows}
 			<div class='free-thumb' style:top='{free.top}px' style:height='{free.length}px'></div>
 		{/if}
-		<!-- A click on a link follows it; a click anywhere else on the words goes back to
-		     the list, the same as the close button — so getting out never means aiming at
-		     the small circle. Holding the command key suspends all of that, so the words can
-		     be dragged over and picked up instead. -->
-		<div
-			role='button'
-			tabindex='-1'
-			bind:this={page}
-			class='view-page'
-			onkeyup={() => {}}
-			class:has-bar={page_has_bar}
-			class:selecting={$w_command_down}
-			use:tip={$w_command_down ? 'drag to pick up these words' : 'click a paragraph to change it'}
-			onmousedown={watch_for_bar_press}
-			onclick={on_page_click}>{@html words}</div>
+		<div class='view-body'>
+			<!-- The line under the title. It is a fixture of the page rather than an edge of the
+			     heading, so it stays put whether the title is shown, folded, or open for changing. -->
+			<div class='title-sep'>
+				<Separator thickness={k.thickness.normal}/>
+			</div>
+			<!-- A click on a link follows it; a click anywhere else on the words goes back to
+			     the list, the same as the close button — so getting out never means aiming at
+			     the small circle. Holding the command key suspends all of that, so the words can
+			     be dragged over and picked up instead. -->
+			<div
+				role='button'
+				tabindex='-1'
+				bind:this={page}
+				class='view-page'
+				onkeyup={() => {}}
+				onclick={on_page_click}
+				class:has-bar={page_has_bar}
+				class:selecting={$w_command_down}
+				onmousedown={watch_for_bar_press}
+				use:tip={$w_command_down ? 'drag to select' : 'click a paragraph to edit it'}>
+				{@html words}
+			</div>
+		</div>
 	{/if}
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->
 	{#if note !== ''}
@@ -1006,11 +1065,11 @@
 	   around its contents is part of this area, so the lit color has to cover it too. */
 	.view-top {
 		margin         : calc(var(--gap) * -1) calc(var(--gap) * -1) 0;
-		padding        : var(--gap) var(--gap) 0;
-		flex-direction : column;
-		cursor         : pointer;
-		display        : flex;
+		padding        : var(--gap-small) var(--gap) 0;
 		flex           : 0 0 auto;
+		cursor         : pointer;
+		flex-direction : column;
+		display        : flex;
 	}
 
 	.view-top.lit {
@@ -1018,8 +1077,8 @@
 	}
 
 	.view-head {
-		height         : var(--height);
 		padding-bottom : var(--gap-small);
+		height         : var(--height);
 		box-sizing     : content-box;
 		gap            : var(--gap);
 		position       : relative;
@@ -1046,8 +1105,8 @@
 		opacity     : var(--opacity-header);
 		font-size   : var(--font-tiny);
 		color       : var(--text);
-		white-space : nowrap;
 		flex        : 0 0 auto;
+		white-space : nowrap;
 	}
 
 	.view-ancestry {
@@ -1075,10 +1134,10 @@
 	.row-button {
 		border          : var(--thick-small) solid var(--black);
 		border-radius   : var(--radius-percent);
+		background      : var(--white);
 		height          : var(--size);
 		width           : var(--size);
 		font-size       : var(--font);
-		background      : var(--white);
 		color           : var(--text);
 		box-sizing      : border-box;
 		flex            : 0 0 auto;
@@ -1098,15 +1157,15 @@
 	/* A letter sits lower in its own line than a drawn mark does, so the letter is nudged up
 	   within its circle rather than the whole button being moved. */
 	.row-button.lifted {
-		padding-bottom : 4px;
+		padding-bottom : var(--gap-small);
 	}
 
 	.row-mark {
 		width   : var(--size-small);
 		height  : var(--size-small);
 		stroke  : var(--black);
-		fill    : none;
 		display : block;
+		fill    : none;
 	}
 
 	/* The question itself is the button that answers it, standing where the row's other words
@@ -1114,15 +1173,15 @@
 	.asking-yes {
 		border        : var(--thick) solid var(--black);
 		border-radius : var(--radius-pill);
-		height        : var(--height);
 		padding       : var(--pad-control);
 		font-size     : var(--font-tiny);
+		height        : var(--height);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
+		flex          : 0 0 auto;
 		font-family   : inherit;
 		white-space   : nowrap;
-		flex          : 0 0 auto;
 		cursor        : pointer;
 	}
 
@@ -1151,7 +1210,7 @@
 		/* Sits a touch above where the row would put it, so it lines up with the words
 		   beside it rather than with the buttons. */
 		position      : relative;
-		top           : -3px;
+		top           : -2px;
 	}
 
 	/* Under the cursor it shows what it is; with the cursor in it, it reads as a field being
@@ -1212,10 +1271,10 @@
 
 	.filter-field {
 		border        : var(--thick) solid var(--black);
-		height        : var(--height);
 		padding       : var(--pad-control);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-tiny);
+		height        : var(--height);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -1231,10 +1290,10 @@
 
 	.filter-pick {
 		border        : var(--thick) solid var(--black);
-		height        : var(--height);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
 		font-size     : var(--font-tiny);
+		height        : var(--height);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -1254,53 +1313,64 @@
 	/* The box standing in for one piece of the file. It is put on the page by hand rather
 	   than drawn from here, so it is named as reaching outside this component. */
 	:global(.edit-box) {
-		/* No edge at all, and no room taken for one, so opening and leaving a piece never moves
-		   the words by a pixel. */
-		border-radius   : var(--radius-small);
+		/* A ring of dashes in the accent, marking off the piece open for changing. It is drawn
+		   outside the box rather than as an edge of it, so it takes no room and the words stay
+		   exactly where they were. */
+		outline         : var(--thick-fat) dashed var(--accent);
 		/* The same size, leading, spacing and step-in a paragraph reads at, so opening a piece
 		   for editing doesn't reflow the words around it. */
-		font-size       : var(--font);
-		margin          : var(--gap) 0;
+		/* It reaches a gap further left than the words do, and holds that same gap inside itself,
+		   so the ring of dashes stands clear of the first letter without moving it. */
+		/* The room below is short by the hair the box holds inside itself, so the box reaches that
+		   much lower while the piece after it stays where it was. It has to be a pull rather than a
+		   smaller push: the piece below pushes back with a gap of its own, and the larger wins. */
+		margin          : var(--gap) 0 calc(var(--gap-faint) * -1) calc(var(--gap) * -1);
+		/* Stated on all four sides. Left to itself a typing field carries a pixel of its own
+		   above and below, which makes it taller than the piece it stands in for. */
+		padding         : 0 0 var(--gap-faint) var(--gap);
+		width           : calc(100% + var(--gap));
+		border-radius   : var(--radius-small);
 		background      : var(--white);
+		font-size       : var(--font);
 		color           : var(--text);
 		box-sizing      : border-box;
 		white-space     : pre-wrap;
 		font-family     : inherit;
 		overflow        : hidden;
 		display         : block;
-		outline         : none;
-		resize          : none;
 		border          : none;
-		width           : 100%;
+		resize          : none;
 		text-indent     : 10px;
 		line-height     : 1.5;
-		padding         : 0;
 	}
 
-	/* The mark beside a heading, sitting out in the left margin so the words never shift. It is
-	   put on the page by hand rather than drawn from here, so it is named as reaching outside
-	   this component. */
+	/* A heading is a row: its mark, then its words. The row itself holds the mark level with the
+	   words, so nothing has to say how far down the mark goes. */
 	.view-page :global(h1),
 	.view-page :global(h2),
 	.view-page :global(h3),
 	.view-page :global(h4),
 	.view-page :global(h5),
 	.view-page :global(h6) {
-		position : relative;
+		align-items : center;
+		display     : flex;
 	}
 
-	/* Centered in the lane the words are held off by, both ways. */
+	/* The mark stands in the lane the words are held off by. It is exactly as wide as that lane and
+	   gives all of that width back, so the words beside it start where they always did. It is put
+	   on the page by hand rather than drawn from here, so it is named as reaching outside this
+	   component. */
 	:global(.fold-mark) {
-		left            : calc(var(--gap-fat) / -1.7);
-		transform       : translate(-50%, -40%);
+		margin-left     : calc(var(--gap-big) * -1);
+		width           : var(--gap-big);
+		margin-right    : var(--gap);
 		background      : transparent;
-		position        : absolute;
+		flex            : 0 0 auto;
 		cursor          : pointer;
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
 		border          : none;
-		top             : 50%;
 		padding         : 0;
 	}
 
@@ -1316,32 +1386,84 @@
 		fill : var(--hover);
 	}
 
-	/* A piece that begins with a dash is a list, and a list starts at the edge. */
+	/* A piece that begins with a dash is a list, and a list starts at the edge. It reaches the
+	   same gap further left as any other piece, so its own step-in loses that much. */
 	:global(.edit-box.flush) {
-		margin-left     : var(--gap-huge);
+		margin-left   : calc(var(--gap-fat) - 0);
+	}
+
+	/* A heading holds more room above it than a paragraph does, and starts at the edge rather than
+	   stepping in, so the box standing in for one does both. */
+	:global(.edit-box.heading) {
+		margin-top      : var(--gap-fat);
+		text-indent     : 0;
+	}
+
+	/* A subheading's box is drawn a pixel above where it stands, so its words line up with the
+	   heading they replace. The title has its own nudge, the other way. */
+	:global(.edit-box.heading:not(.title)) {
+		position : relative;
+		top      : -1px;
+	}
+
+	/* The box holding the title takes the title's own slot, exactly — same height, same place — so
+	   the words after it begin where they always do. It is drawn a little lower than it stands, so
+	   it sits square with the line across the page; that is drawing only, and moves nothing. */
+	:global(.edit-box.title) {
+		/* The slot's leftover room is split evenly above and below, the way the title itself sits in
+		   the middle of that slot. The two halves plus the box come to the whole slot. */
+		margin      : calc((var(--gap-huge) - var(--height)) / 2) 0;
+		margin-left : calc(var(--gap) * -1);
+		height      : var(--height);
+		position    : relative;
 	}
 
 	/* A chunk of code reads the same open or shut: even-width letters on the off-white block,
 	   no step-in, and every line left exactly where it falls. */
 	:global(.edit-box.code) {
 		font-family   : ui-monospace, SFMono-Regular, Menlo, monospace;
+		padding       : var(--gap) var(--gap) var(--gap-big);
 		border-radius : var(--radius-tiny);
 		background    : var(--offwhite);
-		padding       : var(--gap);
+		overflow-x    : auto;
 		white-space   : pre;
 		text-indent   : 0;
-		overflow-x    : auto;
 	}
 
+	/* Stands in for the folded-away search row, so the two lines do not meet. */
+	.sep-gap {
+		height : var(--gap);
+		flex   : 0 0 auto;
+	}
+
+	/* Holds the words and the line that lies over them. */
+	.view-body {
+		position       : relative;
+		flex-direction : column;
+		display        : flex;
+		min-height     : 0;
+		flex           : 1;
+	}
+
+	/* The line sits a fixed way down from the top of the words and runs the full width, so its own
+	   reach carries it out to the box's edges the way every other separator does. It takes no room,
+	   so nothing the title does moves it. */
+	.title-sep {
+		z-index  : var(--z-controls);
+		top      : var(--gap-huge);
+		position : absolute;
+		left     : 0;
+		right    : 0;
+	}
 
 	.view-page {
 		/* The room it holds is padding rather than margin, so its own color fills the whole
 		   area below the heavy line instead of leaving a border of the page around it. The
 		   left inset has to be inside the box in any case: the marks beside the headings sit
 		   in it, and anything outside a box that scrolls is clipped away. */
-		padding      : var(--gap) var(--gap-fat);
+		padding      : 0 var(--gap-fat);
+		top          : var(--gap-fat);
 		font-size    : var(--font);
-		background   : var(--white);
 		color        : var(--text);
 		word-break   : break-word;
 		cursor       : pointer;
@@ -1352,7 +1474,7 @@
 	/* With a bar beside the words the right inset narrows, so the bar sits nearer the box's
 	   edge and the words still stand clear of it. */
 	.view-page.has-bar {
-		padding-right : var(--gap);
+		padding-right  : var(--gap);
 	}
 
 	/* The marker showing where the browser alone would have put the thumb: half the lane's
@@ -1361,18 +1483,18 @@
 		width          : calc(var(--width-bar) / 2);
 		right          : calc(var(--width-bar) / 4);
 		background     : var(--accent-dark);
+		position       : absolute;
 		border-radius  : 999px;
 		pointer-events : none;
-		position       : absolute;
 		z-index        : 1;
 	}
 
 	/* The bar beside the words, and the one under a wide code block. Every scrolling box has
 	   to name itself like this — the app-wide form of the rule matches nothing at all. */
 	.view-page::-webkit-scrollbar {
-		background : transparent;
 		height     : var(--width-bar);
 		width      : var(--width-bar);
+		background : transparent;
 	}
 
 	/* The browser sets the thumb's length from how much of the file fits on screen. A long
@@ -1389,9 +1511,9 @@
 	}
 
 	.view-page :global(pre::-webkit-scrollbar) {
-		background : transparent;
 		height     : var(--width-bar);
 		width      : var(--width-bar);
+		background : transparent;
 	}
 
 	.view-page :global(pre::-webkit-scrollbar-thumb) {
@@ -1429,7 +1551,7 @@
 	.view-page :global(h5),
 	.view-page :global(h6) {
 		margin-bottom : var(--gap-tiny);
-		margin-top    : var(--gap-fat);
+		margin-top    : var(--gap);
 		line-height   : 1.25;
 	}
 
@@ -1444,19 +1566,20 @@
 	   way it reads there. */
 	.view-page :global(h1) { color : #4a9ad4; }
 
-	/* A line under the top heading, the way Obsidian draws one. */
+	/* The title stands in a slot of its own, reaching exactly as far down as the line that lies
+	   across the page. Whatever the title does — shown, folded, long or short — everything after it
+	   starts at the same place. */
 	.view-page :global(h1) {
-		border-bottom  : 0.5px solid var(--gray);
-		padding-bottom : var(--gap-tiny);
-		margin-bottom  : var(--gap-fat);
+		height     : var(--gap-huge);
+		box-sizing : border-box;
+		margin     : 0;
+		padding    : 0;
 	}
 
-	/* With its own words folded away there is nothing below for the line to close off, so it
-	   goes and the heading sits tight against what follows. */
-	.view-page :global(h1.folded-away) {
-		border-bottom  : none;
-		padding-bottom : 0;
-		margin-bottom  : var(--gap);
+	/* The first piece after the title brings no room of its own, so the whole distance from the
+	   line to the words is the one gap the slot leaves below it. */
+	.view-page :global(h1 + *) {
+		margin-top : var(--gap);
 	}
 
 	.view-page :global(h2) { color : #48b57e; }
@@ -1489,8 +1612,8 @@
 
 	.view-page :global(code) {
 		border-radius : var(--radius-tiny);
-		background    : var(--offwhite);
 		font-size     : var(--font-tiny);
+		background    : var(--offwhite);
 		padding       : 0 4px;
 	}
 
@@ -1548,8 +1671,8 @@
 	/* One height whether or not anything is typed, so the words below never shift when the
 	   step triangles and the count arrive beside the field. */
 	.view-search {
-		min-height     : var(--height);
 		padding-bottom : calc(var(--gap));
+		min-height     : var(--height);
 		margin-top     : var(--gap);
 		gap            : var(--gap);
 		flex           : 0 0 auto;
@@ -1576,11 +1699,11 @@
 
 	.search {
 		border        : var(--thick) solid var(--black);
-		height        : var(--height);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font);
+		height        : var(--height);
 		background    : var(--white);
+		font-size     : var(--font);
 		color         : var(--text);
 		box-sizing    : border-box;
 		width         : 100%;
@@ -1621,11 +1744,14 @@
 	}
 
 	/* The line a dead link leaves behind, along the bottom of the reading area. */
+	/* Both stand in the same white area as the words themselves — everything under the heavy
+	   line is one field, whether it holds the file, a complaint, or a passing message. */
 	.view-note-line {
 		border-top : var(--thick-faint) solid var(--accent);
 		opacity    : var(--opacity-label);
 		font-size  : var(--font-tiny);
 		padding-top: var(--gap-tiny);
+		background : var(--white);
 		color      : var(--text);
 		flex       : 0 0 auto;
 		text-align : center;
@@ -1634,10 +1760,12 @@
 	.view-note {
 		opacity         : var(--opacity-label);
 		font-size       : var(--font);
+		background      : var(--white);
 		color           : var(--text);
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
 		flex            : 1;
 	}
+
 </style>

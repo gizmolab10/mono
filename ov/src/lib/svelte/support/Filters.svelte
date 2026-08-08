@@ -183,7 +183,7 @@
 
 	<!-- One word over the whole set, saying what every row holds and folding them all at a
 	     press anywhere along the line. -->
-	<div class:folded={$w_show_filters}>
+	<div>
 		<Separator at_left thickness={k.thickness.huge} title={all_word} onclick={toggle_filters}/>
 	</div>
 
@@ -193,14 +193,14 @@
 		     its own picker; without it, each picker gets its own bar and its own word,
 		     purpose above projects. -->
 		{#if stacked || !show_purposes || !show_projects}
-			<div class:folded={!show_purposes}>
+			<div>
 				<Separator at_left title={heading('purpose', show_purposes, purposes_word)}
 					onclick={() => fold('purpose', show_purposes)}/>
 			</div>
 			{#if show_purposes}
 				<div class='paired-rows'>{@render purpose_picker()}</div>
 			{/if}
-			<div class:folded={!show_projects}>
+			<div>
 				<Separator at_left title={heading('projects', show_projects, project_word)}
 					onclick={() => fold('projects', show_projects)}/>
 			</div>
@@ -216,7 +216,7 @@
 			</div>
 		{/if}
 
-		<div class:folded={!show_kinds}>
+		<div>
 			<Separator at_left title={heading('kinds', show_kinds, kind_word)}
 				onclick={() => fold('kinds', show_kinds)}/>
 		</div>
@@ -233,7 +233,7 @@
 			</div>
 		{/if}
 
-		<div class:folded={!show_tags}>
+		<div>
 			<Separator at_left title={heading('tags', show_tags, tags_word)}
 				onclick={() => fold('tags', show_tags)}/>
 		</div>
@@ -261,7 +261,7 @@
 
 <style>
 	.filters {
-		gap            : var(--gap);
+		gap            : var(--gap-big);
 		flex-direction : column;
 		display        : flex;
 	}
@@ -272,12 +272,6 @@
 		gap         : var(--gap);
 		align-items : center;
 		display     : flex;
-	}
-
-	/* With its row folded away, a bar has nothing below it but the next bar — so it holds a
-	   gap of its own, or the words on the two would crowd. */
-	.folded {
-		margin-bottom : var(--gap);
 	}
 
 	/* The purposes and the projects share one row: the space before the first, between the

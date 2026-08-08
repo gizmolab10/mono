@@ -76,8 +76,9 @@ export default class Constants {
 	};
 
 	gap = {
-		huge		 : common_gap * 4,			// 31.11 — how far a bar's word is held off the left end
+		huge		 : common_gap * 5,			// 38.89 — how far a bar's word is held off the left end
 		fat	         : common_gap * 2.1,		// 16.33
+		big			 : common_gap * 1.25,		// 9.72 — a normal gap and a faint one
 		normal       : common_gap,				// 7.78
 		small		 : common_gap / 1.8,		// 4.32
 		tiny		 : common_gap / 2,			// 3.89
