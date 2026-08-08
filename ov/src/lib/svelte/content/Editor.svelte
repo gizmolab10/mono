@@ -234,6 +234,21 @@
 		box.style.height = `${box.scrollHeight}px`;
 	}
 
+	/**
+	 * Slide the open box up or down until it starts where the piece it stands in for started, by
+	 * changing the room above it. Whatever set that room — the piece before, a fold, the title's
+	 * own slot — the words do not jump when the piece opens.
+	 */
+	function sit_where_it_stood(was_at: number) {
+		if (!box) { return; }
+		const the_box = box;
+		const drift = the_box.getBoundingClientRect().top - was_at;
+		if (Math.abs(drift) < 0.01) { return; }
+		const room = parseFloat(getComputedStyle(the_box).marginTop) || 0;
+		the_box.style.marginTop = `${room - drift}px`;
+		debug.log(`Editing "${name}": the box stood ${drift.toFixed(2)}px off, so the room above it went from ${room.toFixed(2)}px to ${(room - drift).toFixed(2)}px.`);
+	}
+
 	/** The first piece after this one that is actually on screen, skipping any put away by a fold. */
 	function next_one_showing(block: HTMLElement): HTMLElement | null {
 		let one = block.nextElementSibling as HTMLElement | null;
@@ -328,9 +343,13 @@
 		// is the one to watch.
 		const after = next_one_showing(block);
 		const was_at = after ? after.getBoundingClientRect().top : 0;
+		// Where a subheading itself was standing. The room above a subheading depends on what came
+		// before it, so rather than work that out, the box is slid onto the same place afterwards.
+		const held_to = drop === 0 && box.classList.contains('heading') ? block.getBoundingClientRect().top : null;
 		block.parentNode?.insertBefore(box, block);
 		block.style.display = 'none';
 		fit_box();
+		if (held_to !== null) { sit_where_it_stood(held_to); }
 		hold_what_follows(after, was_at);
 		box.focus();
 		debug.log(`Editing "${name}": opened lines ${from} through ${to - 1} — ${opened_with.length} character(s) of the file's own words.`);
