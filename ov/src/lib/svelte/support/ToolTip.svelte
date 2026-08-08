@@ -65,11 +65,11 @@
 <style>
 
 	.tooltip {
-		padding        : calc(var(--gap-tight) - 2.5px) var(--gap);   /* 5px shorter overall */
+		padding        : calc(var(--gap-tiny) - 2.5px) var(--gap);   /* 5px shorter overall */
 		z-index        : calc(var(--z-frontmost) + 1);   /* above everything, including the pinned frame */
 		border         : 0.5px solid var(--accent);
 		box-shadow     : var(--shadow-modal);
-		font-size      : var(--font-credit);
+		font-size      : var(--font-faint);
 		background     : var(--offwhite);
 		color          : var(--black);
 		white-space    : nowrap;

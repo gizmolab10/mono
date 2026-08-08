@@ -22,6 +22,20 @@ The names of subtypes of measurement types are completely inconsistent. They can
 | fat    |       | fat    | fat     | large   |        |          |        | modal   | banner   | button    |
 | huge   |       |        | huge    | huge    | title  |          |        |         |          |           |
 
+### the ladder — built 2026-08-08
+
+Both tables above are history now. Every type below uses the same words, and the styling names match: `--font-tiny`, `--gap-tiny`, `--thick-small`.
+
+| type➜  | thickness | gap   | font  | fw  | em  | corner | width | height | size |
+| ------ | --------- | ----- | ----- | --- | --- | ------ | ----- | ------ | ---- |
+| micro  |           | 1.3   |       |     |     |        |       |        |      |
+| faint  | 0.56      | 1.94  | 8.75  |     |     |        |       |        |      |
+| tiny   |           | 3.89  | 10.4  |     | .03 | 10     |       |        |      |
+| small  | 0.78      | 4.32  | 11.7  |     | 1.4 | 11.67  | 245   |        | 19.69|
+| normal | 1.11      | 7.78  | 13    | 550 | 2   | 17.5   | 300   | 21.88  | 21.88|
+| big    | 1.67      |       | 14    | 650 | 8   |        | 350   | 28.44  | 24.5 |
+| fat    | 2.22      | 16.33 | 17.5  |     |     |        | 605.5 | 42     | 28   |
+| huge   | 7.78      | 31.11 | 24.5  | 750 |     |        |       |        |      |
 
 ### proposal
 

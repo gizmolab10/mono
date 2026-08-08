@@ -33,7 +33,7 @@
 	const w_showing = guides.w_showing;
 
 	// The open/shut triangle: pointing down when the folder is open, right when shut.
-	const TRIANGLE = k.size.svg;
+	const TRIANGLE = k.size.small;
 	function triangle_path(open: boolean): string {
 		return svg_paths.soft_pointer(TRIANGLE, open ? Direction.down : Direction.right);
 	}
@@ -591,14 +591,14 @@
 	/* The name title starts where the names themselves start — past the triangle slot and
 	   the space after it. */
 	.head th.name-head {
-		padding-left : calc(var(--size-svg) + var(--gap));
+		padding-left : calc(var(--size-small) + var(--gap));
 		position     : relative;
 		text-align   : left;
 	}
 
 	/* The mark in that lane, its right edge held 20px clear of the word. */
 	.head-mark {
-		width           : calc(var(--size-svg) + var(--gap) - 14px);
+		width           : calc(var(--size-small) + var(--gap) - 14px);
 		background      : var(--bg);
 		position        : absolute;
 		cursor          : pointer;
@@ -655,7 +655,7 @@
 	   faded, which is why the fading sits on the words rather than the whole title. */
 	.head-label {
 		border      : 0.5px solid transparent;   /* held, so the hover edge adds no shift */
-		font-size   : var(--font-label);
+		font-size   : var(--font-tiny);
 		padding     : 0 var(--gap);
 		color       : var(--text);
 		background  : var(--bg);
@@ -688,14 +688,14 @@
 	/* With more than one column sorting, a small number says where this one comes in the
 	   order — 1 decides, the rest only break ties. */
 	.order {
-		font-size     : var(--font-credit);
+		font-size     : var(--font-faint);
 		vertical-align: super;
 		margin-left   : 1px;
 	}
 
 	/* A faint accent line under each row. */
 	.guides-table .file td {
-		border-bottom : var(--thickness-faint) solid var(--accent);
+		border-bottom : var(--thick-faint) solid var(--accent);
 	}
 
 	/* ...but not under the last row. */
@@ -704,8 +704,8 @@
 	}
 
 	.kind, .project, .name, .tags-cell {
-		padding        : calc(var(--gap-tight) - 1.5px) 0;
-		font-size      : var(--font-base);
+		padding        : calc(var(--gap-tiny) - 1.5px) 0;
+		font-size      : var(--font);
 		color          : var(--text);
 		vertical-align : middle;
 		text-align     : left;
@@ -729,7 +729,7 @@
 	   no project is picked. */
 	.project {
 		padding-right : var(--gap-fat);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		text-align    : right;
 		width         : 99px;
 	}
@@ -789,7 +789,7 @@
 
 	/* A folder's name reads heavier than the files under it. */
 	.guides-table .file.folder .name-text {
-		font-weight : var(--fw-banner);
+		font-weight : var(--fw-big);
 	}
 
 	/* A folder standing open reads gray — its contents are on screen, so the folder itself
@@ -804,7 +804,7 @@
 
 	.tag-names {
 		opacity       : var(--opacity-label);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		white-space   : nowrap;
 		overflow      : hidden;
 		text-overflow : ellipsis;

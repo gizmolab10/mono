@@ -53,13 +53,13 @@
 
 	// One number for the margin at the window's four edges and for the space between
 	// the two regions, so the drawing and the arithmetic can never disagree.
-	const gap = k.gap.default;
+	const gap = k.gap.normal;
 
-	let width  = $state(Math.max(k.width.window, window.innerWidth));
+	let width  = $state(Math.max(k.width.normal, window.innerWidth));
 	let height = $state(window.innerHeight);
 
 	function handleResize() {
-		width  = Math.max(k.width.window, window.innerWidth);
+		width  = Math.max(k.width.normal, window.innerWidth);
 		height = window.innerHeight;
 	}
 
@@ -76,10 +76,10 @@
 	// Is there room for both the details column (its fixed width) and the content region
 	// beside it (its own smallest useful width), with the two outer margins and the one
 	// between? Measured from the real window width, so it tracks resize and browser zoom.
-	let room_for_both = $derived(width - gap * 3 >= k.width.details + k.width.content);
+	let room_for_both = $derived(width - gap * 3 >= k.width.small + k.width.big);
 	// Too narrow for both: the content region is dropped and details fill the width.
 	let details_only = $derived($w_show_details && !room_for_both);
-	let details_width = $derived(details_only ? width - gap * 2 : k.width.details - gap * 2);
+	let details_width = $derived(details_only ? width - gap * 2 : k.width.small - gap * 2);
 	// With details hidden, content has the whole width to itself.
 	let content_width = $derived($w_show_details ? width - details_width - gap * 3 : width - gap * 2);
 
@@ -96,8 +96,8 @@
 		const line = `showing details: ${$w_show_details}, both fit: ${room_for_both}`;
 		if (line === said_last) { return; }
 		said_last = line;
-		const needed = k.width.details + k.width.content + gap * 3;
-		debug.log(`Layout: the window is ${width} wide and ${Math.round(needed)} is needed for both (details column ${k.width.details} + content ${k.width.content} + three gaps of ${Math.round(gap)}) — ${!$w_show_details
+		const needed = k.width.small + k.width.big + gap * 3;
+		debug.log(`Layout: the window is ${width} wide and ${Math.round(needed)} is needed for both (details column ${k.width.small} + content ${k.width.big} + three gaps of ${Math.round(gap)}) — ${!$w_show_details
 			? `details are hidden, so content has the whole ${Math.round(content_width)}.`
 			: details_only
 				? `too narrow, so the content region is hidden and details fill ${Math.round(details_width)}.`
@@ -151,7 +151,7 @@
 <style>
 	/* While the guides are being read: nothing but these words, centered both ways. */
 	.launch {
-		font-size       : var(--font-launch);
+		font-size       : var(--em);
 		color           : var(--text);
 		padding         : var(--gap);
 		box-sizing      : border-box;
@@ -201,7 +201,7 @@
 	}
 
 	:global(body) {
-		font-weight : var(--fw-normal);
+		font-weight : var(--fw);
 		font-family : var(--font);
 		color       : var(--text);
 		user-select : none;
@@ -209,7 +209,7 @@
 	}
 
 	:global(button, input, select, textarea) {
-		font-weight : var(--fw-normal);
+		font-weight : var(--fw);
 		font-family : var(--font);
 	}
 

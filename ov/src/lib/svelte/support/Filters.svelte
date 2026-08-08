@@ -184,7 +184,7 @@
 	<!-- One word over the whole set, saying what every row holds and folding them all at a
 	     press anywhere along the line. -->
 	<div class:folded={$w_show_filters}>
-		<Separator at_left thickness={k.separator.huge} title={all_word} onclick={toggle_filters}/>
+		<Separator at_left thickness={k.thickness.huge} title={all_word} onclick={toggle_filters}/>
 	</div>
 
 	{#if $w_show_filters}
@@ -256,7 +256,7 @@
 <!-- The plain heavy line closing the picking rows off from the list. With the rows folded
      away there is nothing for it to close, so it goes. -->
 {#if $w_show_filters}
-	<Separator thickness={k.separator.huge}/>
+	<Separator thickness={k.thickness.huge}/>
 {/if}
 
 <style>
@@ -268,7 +268,7 @@
 
 	/* The toggle at the far left, the search field taking whatever is left. */
 	.top-row {
-		min-height  : var(--height-control);
+		min-height  : var(--height);
 		gap         : var(--gap);
 		align-items : center;
 		display     : flex;
@@ -290,10 +290,10 @@
 
 	/* One pill with a segment per kind; the chosen one fills with the accent. */
 	.kinds {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font-base);
+		font-size     : var(--font);
 		background    : var(--white);
 		box-sizing    : border-box;
 		align-self    : center;
@@ -312,7 +312,7 @@
 	}
 
 	.segment:not(:last-child) {
-		border-right : var(--thickness-normal) solid var(--black);
+		border-right : var(--thick) solid var(--black);
 	}
 
 	.segment.current {
@@ -340,10 +340,10 @@
 	}
 
 	.tag {
-		border        : var(--thickness-normal) solid var(--black);
+		border        : var(--thick) solid var(--black);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -361,11 +361,11 @@
 	}
 
 	.search {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font-base);
+		font-size     : var(--font);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -378,7 +378,7 @@
 	.search:focus,
 	.search:focus-visible {
 		border-color : var(--accent);
-		box-shadow   : inset 0 0 0 var(--thickness-normal) var(--accent);
+		box-shadow   : inset 0 0 0 var(--thick) var(--accent);
 		outline      : none;
 	}
 </style>

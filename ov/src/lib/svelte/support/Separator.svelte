@@ -7,8 +7,8 @@
 	// sizes from props (ji tokens as defaults), and the di layer/colors deps are gone.
 
 	let {
-		radius    = k.radius.corner.banner,
-		thickness = k.separator.normal,
+		radius    = k.radius.corner.tiny,
+		thickness = k.thickness.normal,
 		reach     = 'var(--gap)',
 		onclick   = undefined,
 		vertical  = false,
@@ -150,7 +150,7 @@
 	   depends on how many labels there are. */
 	.title {
 		transform   : translate(-50%, -50%);
-		font-size   : var(--font-credit);
+		font-size   : var(--font-faint);
 		color       : var(--darkgray);
 		padding     : 0 var(--gap);
 		background  : var(--bg);
@@ -206,7 +206,7 @@
 	   the full length of the bar, lying centered on it and showing nothing of itself. */
 	.reach {
 		transform  : translateY(-50%);
-		height     : var(--height-control);
+		height     : var(--height);
 		background : transparent;
 		position   : absolute;
 		cursor     : pointer;

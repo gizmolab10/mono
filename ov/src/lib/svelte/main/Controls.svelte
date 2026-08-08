@@ -8,7 +8,7 @@
 	let { onclick, detailsShown, buildNumber, onBuildOpen }:
 		{ onclick: () => void; detailsShown: boolean; buildNumber: number; onBuildOpen: () => void } = $props();
 
-	const size = k.size.hamburger;
+	const size = k.size.big;
 	const hamburgerPath = svg_paths.hamburger(size);
 </script>
 
@@ -39,7 +39,7 @@
 
 	.hamburger-button {
 		color         : var(--text-on-accent);
-		border-radius : var(--radius-banner);
+		border-radius : var(--radius-tiny);
 		background    : transparent;
 		position      : relative;
 		cursor        : pointer;
@@ -49,7 +49,7 @@
 	}
 
 	.hamburger-button .hamburger-icon path {
-		stroke-width : var(--thickness-faint);
+		stroke-width : var(--thick-faint);
 		stroke       : var(--black);
 		fill         : currentColor;
 	}
@@ -64,11 +64,11 @@
 	}
 
 	.build-button {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
 		padding       : var(--pad-control);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font-base);
+		font-size     : var(--font);
 		background    : var(--white);
 		color         : var(--gray);
 		box-sizing    : border-box;

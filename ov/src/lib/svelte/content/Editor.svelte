@@ -442,8 +442,8 @@
 	// Throwing this guide away is asked about first: the trash mark at the right of the row
 	// gives way to a cross, and the question stands over the words until it is answered.
 	let asking_to_delete = $state(false);
-	const crossPath = svg_paths.x_cross(k.size.control, k.size.control / 6);
-	const binPath   = svg_paths.trashcan(k.size.control);
+	const crossPath = svg_paths.x_cross(k.size.normal, k.size.normal / 6);
+	const binPath   = svg_paths.trashcan(k.size.normal);
 
 	// Stepping to another guide takes the question with it — it belonged to the one being left.
 	$effect(() => { address; asking_to_delete = false; });
@@ -620,7 +620,7 @@
 	// The top heading is the exception — whether a file's title has its own words folded away
 	// is one setting for the whole app, so every file opens the way the last one was left, and
 	// it is remembered between visits.
-	const FOLD_MARK = k.size.svg * 1.05;
+	const FOLD_MARK = k.size.small * 1.05;
 	const w_fold_titles = preferences.persistent<boolean>(T_Preference.fold_titles, false);
 	let folded_at = $state<number[]>([]);
 	let folds_for = '';                             // which file the folds above belong to
@@ -859,8 +859,8 @@
 				onclick={(e) => { e.stopPropagation(); handle_delete(); }}>delete "{name}"</button>
 			<button class='row-button' aria-label='keep it' use:tip={'keep this guide'}
 				onclick={(e) => { e.stopPropagation(); asking_to_delete = false; }}>
-				<svg class='row-mark' viewBox='0 0 {k.size.control} {k.size.control}'>
-					<path d={crossPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' />
+				<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
+					<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 				</svg>
 			</button>
 		{:else}
@@ -873,8 +873,8 @@
 					onclick={(e) => { e.stopPropagation(); handle_send(); }}>⤴</button>
 				<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
 					onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
-					<svg class='row-mark' viewBox='0 0 {k.size.control} {k.size.control}'>
-						<path d={binPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' stroke-linejoin='round' />
+					<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
+						<path d={binPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' stroke-linejoin='round' />
 					</svg>
 				</button>
 			</span>
@@ -882,7 +882,7 @@
 	</div>
 	<!-- The line above the search, carrying its own word. Pressing the word folds the search
 	     away, and the words below take its room; pressing it again brings it back. -->
-	<Separator at_left thickness={k.separator.huge} title={search_word}
+	<Separator at_left thickness={k.thickness.huge} title={search_word}
 		onclick={() => { w_show_search.set(!$w_show_search); debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`); }}/>
 	<!-- Looking through the file on screen. Its type is "search", so the browser draws its
 	     own clear cross at the right end once there is text. -->
@@ -913,7 +913,7 @@
 	<Separator
 		at_left
 		title={filter_rows_word}
-		thickness={k.gap.default}
+		thickness={k.gap.normal}
 		onclick={() => { w_show_filters.set(!$w_show_filters); debug.log(`Editing "${name}": the filter form is now ${!$w_show_filters ? 'hidden' : 'shown'}.`); }}/>
 	<!-- The five filters, shown only while editing. They never appear among the words, so
 	     this is the only way at them. -->
@@ -936,7 +936,7 @@
 				<input class='filter-field' bind:value={form_description} onblur={save_filters} />
 			</div>
 			<div class='filter-sep'>
-				<Separator at_left thickness={k.separator.normal} title={form_tags_word}
+				<Separator at_left thickness={k.thickness.normal} title={form_tags_word}
 					onclick={() => { show_form_tags = !show_form_tags; debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'shown' : 'folded away'}.`); }}/>
 			</div>
 			<!-- The same six areas the filters use. Every tag is within reach here, since this
@@ -952,7 +952,7 @@
 				</div>
 			{/if}
 		</div>
-		<Separator thickness={k.separator.huge}/>
+		<Separator thickness={k.thickness.huge}/>
 	{/if}
 	<!-- Nothing is said while the words are being read: the wait is too short to see, and a
 	     line that flashes and goes reads as a fault. -->
@@ -1018,7 +1018,7 @@
 	}
 
 	.view-head {
-		height         : var(--height-control);
+		height         : var(--height);
 		padding-bottom : var(--gap-small);
 		box-sizing     : content-box;
 		gap            : var(--gap);
@@ -1031,7 +1031,7 @@
 	   they still show whole — they are allowed to spill — and the row keeps one height
 	   whether they are there or not. */
 	.view-head :global(.steppers) {
-		height : var(--height-control);
+		height : var(--height);
 	}
 
 	/* The empty run that holds the buttons at the left apart from the kind and tags at the
@@ -1044,7 +1044,7 @@
 	/* Which file of the run is on screen, reading like the folders beside it. */
 	.file-count {
 		opacity     : var(--opacity-header);
-		font-size   : var(--font-label);
+		font-size   : var(--font-tiny);
 		color       : var(--text);
 		white-space : nowrap;
 		flex        : 0 0 auto;
@@ -1052,8 +1052,8 @@
 
 	.view-ancestry {
 		opacity      : var(--opacity-header);
-		font-size    : var(--font-label);
-		margin-left  : var(--gap-tight);
+		font-size    : var(--font-tiny);
+		margin-left  : var(--gap-tiny);
 		color        : var(--text);
 		position     : relative;
 		flex         : 0 1 auto;
@@ -1073,11 +1073,11 @@
 	}
 
 	.row-button {
-		border          : var(--thickness-mild) solid var(--black);
+		border          : var(--thick-small) solid var(--black);
 		border-radius   : var(--radius-percent);
-		height          : var(--size-control);
-		width           : var(--size-control);
-		font-size       : var(--font-base);
+		height          : var(--size);
+		width           : var(--size);
+		font-size       : var(--font);
 		background      : var(--white);
 		color           : var(--text);
 		box-sizing      : border-box;
@@ -1102,8 +1102,8 @@
 	}
 
 	.row-mark {
-		width   : var(--size-svg);
-		height  : var(--size-svg);
+		width   : var(--size-small);
+		height  : var(--size-small);
 		stroke  : var(--black);
 		fill    : none;
 		display : block;
@@ -1112,11 +1112,11 @@
 	/* The question itself is the button that answers it, standing where the row's other words
 	   stand and reading as an ordinary control. */
 	.asking-yes {
-		border        : var(--thickness-normal) solid var(--black);
+		border        : var(--thick) solid var(--black);
 		border-radius : var(--radius-pill);
-		height        : var(--height-control);
+		height        : var(--height);
 		padding       : var(--pad-control);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -1134,10 +1134,10 @@
 	   reads as plain words: no edge, no fill, and only as wide as the name itself. The edge is
 	   held see-through rather than absent, so nothing shifts when it appears. */
 	.view-name {
-		border        : var(--thickness-faint) solid transparent;
+		border        : var(--thick-faint) solid transparent;
 		border-radius : var(--radius-pill);
-		padding       : 0 var(--gap-tight);
-		font-size     : var(--font-large);
+		padding       : 0 var(--gap-tiny);
+		font-size     : var(--font-fat);
 		background    : transparent;
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -1148,6 +1148,10 @@
 		cursor        : text;
 		outline       : none;
 		min-width     : 0;
+		/* Sits a touch above where the row would put it, so it lines up with the words
+		   beside it rather than with the buttons. */
+		position      : relative;
+		top           : -3px;
 	}
 
 	/* Under the cursor it shows what it is; with the cursor in it, it reads as a field being
@@ -1175,14 +1179,14 @@
 	   says, and the tags. The pickers read like the filters' own, so the closed lists look
 	   the same wherever they turn up. */
 	.filter-form {
-		gap            : var(--gap-tight);
+		gap            : var(--gap-tiny);
 		margin         : var(--gap) 0;
 		flex-direction : column;
 		display        : flex;
 	}
 
 	.filter-row {
-		gap         : var(--gap-tight);
+		gap         : var(--gap-tiny);
 		align-items : center;
 		display     : flex;
 	}
@@ -1199,7 +1203,7 @@
 
 	.filter-word {
 		opacity    : var(--opacity-header);
-		font-size  : var(--font-label);
+		font-size  : var(--font-tiny);
 		color      : var(--text);
 		flex       : 0 0 auto;
 		text-align : right;
@@ -1207,11 +1211,11 @@
 	}
 
 	.filter-field {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
 		padding       : var(--pad-control);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -1226,11 +1230,11 @@
 	}
 
 	.filter-pick {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -1255,7 +1259,7 @@
 		border-radius   : var(--radius-small);
 		/* The same size, leading, spacing and step-in a paragraph reads at, so opening a piece
 		   for editing doesn't reflow the words around it. */
-		font-size       : var(--font-base);
+		font-size       : var(--font);
 		margin          : var(--gap) 0;
 		background      : var(--white);
 		color           : var(--text);
@@ -1321,7 +1325,7 @@
 	   no step-in, and every line left exactly where it falls. */
 	:global(.edit-box.code) {
 		font-family   : ui-monospace, SFMono-Regular, Menlo, monospace;
-		border-radius : var(--radius-banner);
+		border-radius : var(--radius-tiny);
 		background    : var(--offwhite);
 		padding       : var(--gap);
 		white-space   : pre;
@@ -1336,7 +1340,7 @@
 		   left inset has to be inside the box in any case: the marks beside the headings sit
 		   in it, and anything outside a box that scrolls is clipped away. */
 		padding      : var(--gap) var(--gap-fat);
-		font-size    : var(--font-base);
+		font-size    : var(--font);
 		background   : var(--white);
 		color        : var(--text);
 		word-break   : break-word;
@@ -1424,17 +1428,17 @@
 	.view-page :global(h4),
 	.view-page :global(h5),
 	.view-page :global(h6) {
-		margin-bottom : var(--gap-tight);
+		margin-bottom : var(--gap-tiny);
 		margin-top    : var(--gap-fat);
 		line-height   : 1.25;
 	}
 
-	.view-page :global(h1) { font-size : var(--font-large); }
-	.view-page :global(h2) { font-size : var(--font-banner); }
+	.view-page :global(h1) { font-size : var(--font-fat); }
+	.view-page :global(h2) { font-size : var(--font-big); }
 	.view-page :global(h3),
 	.view-page :global(h4),
 	.view-page :global(h5),
-	.view-page :global(h6) { font-size : var(--font-base); }
+	.view-page :global(h6) { font-size : var(--font); }
 
 	/* The six heading colors Obsidian ships with in its light theme, so a guide reads here the
 	   way it reads there. */
@@ -1443,7 +1447,7 @@
 	/* A line under the top heading, the way Obsidian draws one. */
 	.view-page :global(h1) {
 		border-bottom  : 0.5px solid var(--gray);
-		padding-bottom : var(--gap-tight);
+		padding-bottom : var(--gap-tiny);
 		margin-bottom  : var(--gap-fat);
 	}
 
@@ -1464,7 +1468,7 @@
 	.view-page :global(p),
 	.view-page :global(ul),
 	.view-page :global(ol) {
-		margin      : var(--gap-tight) 0;
+		margin      : var(--gap-tiny) 0;
 		line-height : 1.5;
 	}
 
@@ -1476,7 +1480,7 @@
 	}
 
 	.view-page :global(li) {
-		margin-bottom : var(--gap-tight);
+		margin-bottom : var(--gap-tiny);
 	}
 
 	.view-page :global(a) {
@@ -1484,14 +1488,14 @@
 	}
 
 	.view-page :global(code) {
-		border-radius : var(--radius-banner);
+		border-radius : var(--radius-tiny);
 		background    : var(--offwhite);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		padding       : 0 4px;
 	}
 
 	.view-page :global(pre) {
-		border-radius : var(--radius-banner);
+		border-radius : var(--radius-tiny);
 		background    : var(--offwhite);
 		padding       : var(--gap);
 		overflow-x    : auto;
@@ -1503,7 +1507,7 @@
 	}
 
 	.view-page :global(blockquote) {
-		border-left : var(--thickness-fat) solid var(--accent);
+		border-left : var(--thick-fat) solid var(--accent);
 		opacity     : var(--opacity-header);
 		padding-left: var(--gap);
 		margin-left : 0;
@@ -1511,14 +1515,14 @@
 
 	.view-page :global(table) {
 		border-collapse : collapse;
-		font-size       : var(--font-label);
+		font-size       : var(--font-tiny);
 		margin          : var(--gap) 0;
 	}
 
 	.view-page :global(th),
 	.view-page :global(td) {
-		border  : var(--thickness-faint) solid var(--accent);
-		padding : var(--gap-tight) var(--gap);
+		border  : var(--thick-faint) solid var(--accent);
+		padding : var(--gap-tiny) var(--gap);
 		text-align : left;
 	}
 
@@ -1535,7 +1539,7 @@
 	}
 
 	.view-page :global(hr) {
-		border-top : var(--thickness-faint) solid var(--accent);
+		border-top : var(--thick-faint) solid var(--accent);
 		margin     : var(--gap-fat) 0;
 		border     : none;
 	}
@@ -1544,7 +1548,7 @@
 	/* One height whether or not anything is typed, so the words below never shift when the
 	   step triangles and the count arrive beside the field. */
 	.view-search {
-		min-height     : var(--height-control);
+		min-height     : var(--height);
 		padding-bottom : calc(var(--gap));
 		margin-top     : var(--gap);
 		gap            : var(--gap);
@@ -1557,7 +1561,7 @@
 	   triangles are drawn a touch taller than a control; held to the row's own height they
 	   still show whole, and the row no longer grows the moment they arrive. */
 	.view-steps.hits {
-		height      : var(--height-control);
+		height      : var(--height);
 		flex        : 0 0 auto;
 		align-items : center;
 		display     : flex;
@@ -1565,17 +1569,17 @@
 
 	.hit-count {
 		opacity     : var(--opacity-header);
-		font-size   : var(--font-label);
+		font-size   : var(--font-tiny);
 		color       : var(--text);
 		white-space : nowrap;
 	}
 
 	.search {
-		border        : var(--thickness-normal) solid var(--black);
-		height        : var(--height-control);
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font-base);
+		font-size     : var(--font);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -1588,7 +1592,7 @@
 	.search:focus,
 	.search:focus-visible {
 		border-color : var(--accent);
-		box-shadow   : inset 0 0 0 var(--thickness-normal) var(--accent);
+		box-shadow   : inset 0 0 0 var(--thick) var(--accent);
 		outline      : none;
 	}
 
@@ -1618,10 +1622,10 @@
 
 	/* The line a dead link leaves behind, along the bottom of the reading area. */
 	.view-note-line {
-		border-top : var(--thickness-faint) solid var(--accent);
+		border-top : var(--thick-faint) solid var(--accent);
 		opacity    : var(--opacity-label);
-		font-size  : var(--font-label);
-		padding-top: var(--gap-tight);
+		font-size  : var(--font-tiny);
+		padding-top: var(--gap-tiny);
 		color      : var(--text);
 		flex       : 0 0 auto;
 		text-align : center;
@@ -1629,7 +1633,7 @@
 
 	.view-note {
 		opacity         : var(--opacity-label);
-		font-size       : var(--font-base);
+		font-size       : var(--font);
 		color           : var(--text);
 		align-items     : center;
 		justify-content : center;

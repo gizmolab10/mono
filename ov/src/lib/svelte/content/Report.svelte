@@ -8,7 +8,7 @@
 
 	// Words too many for the one line along the bottom are read here instead, in the whole
 	// content box, with room to scroll. The cross at the top left takes them away.
-	const crossPath = svg_paths.x_cross(k.size.control, k.size.control / 6);
+	const crossPath = svg_paths.x_cross(k.size.normal, k.size.normal / 6);
 
 	/**
 	 * A dead link picked out of the report: its guide opens with the link's own words lit
@@ -25,8 +25,8 @@
 <div class='report'>
 	<div class='report-head'>
 		<button class='report-close' aria-label='dismiss' use:tip={'dismiss this report'} onclick={hide_status}>
-			<svg class='report-cross' viewBox='0 0 {k.size.control} {k.size.control}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' />
+			<svg class='report-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
+				<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 			</svg>
 		</button>
 		<span class='report-title'>report</span>
@@ -65,7 +65,7 @@
 	}
 
 	.report-title {
-		font-size : var(--font-label);
+		font-size : var(--font-tiny);
 		color     : var(--text);
 		opacity   : var(--opacity-header);
 		position  : relative;
@@ -73,10 +73,10 @@
 	}
 
 	.report-close {
-		border          : var(--thickness-normal) solid var(--black);
+		border          : var(--thick) solid var(--black);
 		border-radius   : var(--radius-percent);
-		height          : var(--height-control);
-		width           : var(--height-control);
+		height          : var(--height);
+		width           : var(--height);
 		box-sizing      : border-box;
 		background      : var(--white);
 		cursor          : pointer;
@@ -92,8 +92,8 @@
 	}
 
 	.report-cross {
-		width   : var(--size-svg);
-		height  : var(--size-svg);
+		width   : var(--size-small);
+		height  : var(--size-small);
 		display : block;
 	}
 
@@ -107,13 +107,13 @@
 		flex-direction : column;
 		padding-top    : var(--gap);
 		display        : flex;
-		gap            : var(--gap-tight);
+		gap            : var(--gap-tiny);
 	}
 
 	.finding {
-		border-radius : var(--radius-banner);
-		padding       : var(--gap-tight) var(--gap);
-		font-size     : var(--font-label);
+		border-radius : var(--radius-tiny);
+		padding       : var(--gap-tiny) var(--gap);
+		font-size     : var(--font-tiny);
 		font-family   : inherit;
 		background    : transparent;
 		color         : var(--text);
@@ -138,7 +138,7 @@
 
 	/* The words themselves, wrapping and scrolling as far as they need. */
 	.report-words {
-		font-size   : var(--font-base);
+		font-size   : var(--font);
 		color       : var(--text);
 		white-space : pre-wrap;
 		word-break  : break-word;

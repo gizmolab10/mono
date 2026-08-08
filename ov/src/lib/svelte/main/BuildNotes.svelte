@@ -9,7 +9,7 @@
 
 	// The newer/older steppers: the same fat triangle mark the viewer uses to step files, pointing up
 	// (newer) and down (older), at the same size.
-	const STEP_TRIANGLE = k.size.control * 1.1;
+	const STEP_TRIANGLE = k.size.normal * 1.1;
 	const up_path     = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.up);
 	const up_bounds   = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.up);
 	const down_path   = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.down);
@@ -106,7 +106,7 @@
 	tabindex="-1"
 	onkeyup={() => {}}
 	bind:this={modal_el}
-	style:width={`min(${k.width.modal}px, calc(100vw - 2 * var(--gap)))`}
+	style:width={`min(${k.width.fat}px, calc(100vw - 2 * var(--gap)))`}
 	style:top={pageSize < k.paging.notes ? '20px' : '50%'}
 	style:left="50%"
 	style:transform={`translate(-50%, ${pageSize < k.paging.notes ? '0' : '-50%'})`}
@@ -154,9 +154,9 @@
 	   in from the left (when the window is too narrow to center the fixed width). Absolute so the
 	   backdrop's flex can't squeeze the rows, and so top/left land exactly. */
 	.modal {
-		border-radius	: var(--radius-build);
+		border-radius	: var(--radius-small);
 		box-shadow	 	: var(--shadow-modal);
-		font-size	 	: var(--font-banner);
+		font-size	 	: var(--font-big);
 		padding		 	: var(--pad-modal);
 		color		 	: var(--black);
 		box-sizing	 	: border-box;   /* the capped width includes the padding, so the --gap margins hold */
@@ -167,7 +167,7 @@
 	.steppers {
 		top      		: var(--inset-popup-edge);
 		left     		: var(--inset-popup-side);
-		gap      		: var(--gap-tight);
+		gap      		: var(--gap-tiny);
 		position 		: absolute;
 		flex-direction	: column;   /* newer above older */
 		display  		: flex;
@@ -175,7 +175,7 @@
 
 	.stepper {
 		padding    		: var(--pad-stepper);
-		font-size  		: var(--font-large);
+		font-size  		: var(--font-fat);
 		color      		: var(--black);
 		cursor     		: pointer;
 		background 		: none;
@@ -210,8 +210,8 @@
 	}
 
 	.title {
-		font-size		: var(--font-large);
-		font-weight		: var(--fw-title);
+		font-size		: var(--font-fat);
+		font-weight		: var(--fw-huge);
 	}
 
 	table {
@@ -222,7 +222,7 @@
 	}
 
 	th {
-		border-bottom	: var(--thickness-normal) solid currentColor;
+		border-bottom	: var(--thick) solid currentColor;
 		opacity			: var(--opacity-header);
 		padding			: var(--pad-cell);
 		text-align		: left;

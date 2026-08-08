@@ -24,7 +24,7 @@
 
 <style>
 	.repair-shop {
-		gap             : var(--gap-tight);
+		gap             : var(--gap-tiny);
 		justify-content : center;
 		align-items     : center;
 		flex-wrap       : wrap;
@@ -33,8 +33,8 @@
 	}
 
 	.repair {
-		border          : var(--thickness-normal) solid var(--black);
-		height          : var(--height-control);
+		border          : var(--thick) solid var(--black);
+		height          : var(--height);
 		padding         : var(--pad-control);
 		border-radius   : var(--radius-pill);
 		font-size       : var(-font-control);

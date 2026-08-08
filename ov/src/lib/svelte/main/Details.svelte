@@ -60,7 +60,7 @@
 		background     : var(--accent);
 		flex-direction : column;
 		display        : flex;
-		gap            : var(--gap-details);
+		gap            : var(--gap-faint);
 		flex-shrink    : 0;
 	}
 </style>

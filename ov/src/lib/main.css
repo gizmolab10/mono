@@ -41,33 +41,33 @@
 
    Layout sizes, pushed from Constants at startup (Configuration.configure_metrics):
      --gap                       the gap between regions, and the frame's own inset
-     --gap-fat / --gap-huge / --gap-small / --gap-tight / --gap-details
+     --gap-fat / --gap-huge / --gap-small / --gap-tiny / --gap-faint
                                  the other gaps, in the same family
      --radius                    the region corner radius
-     --radius-banner             the small (banner / button) corner radius
-     --radius-build              the card corner radius
+     --radius-tiny             the small (banner / button) corner radius
+     --radius-small              the card corner radius
      --radius-pill               the pill corner radius
      --radius-percent            the circle radius (50%)
-     --height-banner             the details banner height
-     --height-hideable           the collapsible banner button height
-     --height-control            the control-pill height
-     --size-button               the square button size
-     --size-control                the close-button size
-     --size-svg                  the shared drawn-cross size
-     --font-credit / --font-label / --font-base / --font-banner / --font-large /
+     --height-fat             the details banner height
+     --height-big           the collapsible banner button height
+     --height            the control-pill height
+     --size-fat               the square button size
+     --size                the close-button size
+     --size-small                  the shared drawn-cross size
+     --font-faint / --font-tiny / --font / --font-big / --font-fat /
        --font-huge               the pixel font sizes
-     --font-hero / --font-drop   the relative (em) font sizes
-     --fw-normal                 the base font weight (body + controls)
-     --fw-banner                 one step heavier — the collapsible banner
-     --fw-title                  two steps heavier — a popup title
-     --tracking                  the banner letter-spacing (em)
+     --em-big / --em-small   the relative (em) font sizes
+     --fw                 the base font weight (body + controls)
+     --fw-big                 one step heavier — the collapsible banner
+     --fw-huge                  two steps heavier — a popup title
+     --em-tiny                  the banner letter-spacing (em)
      --inset-cluster             the corner offset for a cluster of controls
      --inset-pill-top / --inset-pill-left          a pill's position
      --inset-popup-edge / --inset-popup-side       a popup's corner controls
      --inset-credit-bottom / --inset-credit-left   the bottom-left corner
-     --thickness-normal          the standard 1px border width
-     --thickness-faint           the hairline stroke width
-     --thickness-fat             the heavy border width
+     --thick          the standard 1px border width
+     --thick-faint           the hairline stroke width
+     --thick-fat             the heavy border width
      --pad-hamburger / --pad-control / --pad-modal / --pad-stepper /
        --pad-view / --pad-cell   ready-to-use padding shorthands
      --margin-header             a header's bottom margin

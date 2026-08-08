@@ -10,7 +10,7 @@
 	import { k } from '../../ts/common/Constants';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
-	const MARK = k.size.control;
+	const MARK = k.size.normal;
 
 	// Looking through the guides: the three filters across the top, how many they leave,
 	// and the list itself. The narrowing happens in the hierarchy; this only shows it.
@@ -82,8 +82,8 @@
 	   list below never shift when a button has nothing to act on and leaves. */
 	.count-row {
 		margin      : calc(var(--gap-small) - 6px) 0 -6px 0;
-		min-height  : var(--height-control);
-		gap         : var(--gap-tight);
+		min-height  : var(--height);
+		gap         : var(--gap-tiny);
 		position    : relative;
 		align-items : center;
 		display     : flex;
@@ -91,7 +91,7 @@
 
 	.count {
 		opacity     : var(--opacity-header);
-		font-size   : var(--font-label);
+		font-size   : var(--font-tiny);
 		transform   : translateX(-50%);
 		position    : absolute;
 		white-space : nowrap;
@@ -100,8 +100,8 @@
 
 	/* The drawn bar takes the text color, like every other drawn mark. */
 	.shut-mark {
-		width    : var(--size-control);
-		height   : var(--size-control);
+		width    : var(--size);
+		height   : var(--size);
 		stroke   : var(--black);
 		fill     : transparent;
 		position : absolute;
@@ -115,19 +115,19 @@
 	.chosen-tags,
 	.chosen-kind {
 		opacity     : var(--opacity-header);
-		font-size   : var(--font-label);
+		font-size   : var(--font-tiny);
 		color       : var(--text);
 		white-space : nowrap;
 	}
 
 	.chosen-project {
-		margin : 0 0 0 var(--gap-tight);
+		margin : 0 0 0 var(--gap-tiny);
 	}
 
 	/* Nothing of its own either side, so the row's own spacing falls equally on both — the
 	   line then stands in the middle of the space between the two words. */
 	.chosen-between {
-		margin : var(--gap-tight);
+		margin : var(--gap-tiny);
 	}
 
 	/* The tags hug the far right. With the unsorted button beside them they simply follow it;
@@ -140,12 +140,12 @@
 	/* With a scrollbar beside the rows, the tags title holds back room for it — so these
 	   words hold back the same, and the two end on the same edge. */
 	.chosen-tags.has-bar {
-		margin-right : calc(var(--thickness-fat) + var(--gap));
+		margin-right : calc(var(--thick-fat) + var(--gap));
 	}
 
 	.folders-button {
-		border        : var(--thickness-mild) solid var(--black);
-		height        : var(--size-control);
+		border        : var(--thick-small) solid var(--black);
+		height        : var(--size);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
 		font-size     : var(-font-label);
@@ -164,7 +164,7 @@
 	   rest it wears no edge and sits on the page color; the edge and the fill appear only
 	   under the cursor, and the edge is held see-through so nothing shifts. */
 	.folders-button.eye {
-		width           : var(--size-control);
+		width           : var(--size);
 		position        : relative;
 		justify-content : center;
 		align-items     : center;

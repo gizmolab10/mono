@@ -5,30 +5,32 @@ const common_size = 35;						    // minimum fingertip touch size
 const common_gap = common_size / 4.5;		    // 7.8
 const common_font = common_size / 2.7;		    // 13
 const common_thickness = common_gap / 7;	    // 5
-const common_separator = common_gap / 7;	    // 5
 const control_height = common_size / 1.6;	    // 21.875
 
 // missing: 50% circles
 
+// One ladder for every type: micro, faint, tiny, small, normal, big, fat, huge, pill.
+// A type simply leaves out any step it has no use for.
+
 export default class Constants {
 	font = {
-		credit		 : common_font * 0.7,		// 8.75
-		label		 : common_font * 0.8,		// 10.4
-		control		 : common_font * 0.9,		// 11.7
-		base		 : common_font,				// 13
-		banner		 : common_font * 1.1,		// 14
-		large		 : common_font * 1.4,		// 17.5
-		huge         : common_font * 1.9,		// 24.5
+		faint		 : common_font * 0.7,		// 8.75 — the credit line
+		tiny		 : common_font * 0.8,		// 10.4 — labels
+		small		 : common_font * 0.9,		// 11.7 — controls
+		normal		 : common_font,				// 13 — body
+		big			 : common_font * 1.1,		// 14 — the collapsible banner
+		fat			 : common_font * 1.4,		// 17.5
+		huge		 : common_font * 1.9,		// 24.5
 		em           : {
-			tracking : 0.03,					// em — the banner letter-spacing
+			tiny	 : 0.03,					// em — the banner letter-spacing
 			small	 : 1.4,
-			launch	 : 2,						// the setting-up words, shown before anything else
+			normal	 : 2,						// the setting-up words, shown before anything else
 			big		 : 8,
 		},
 		weight       : {
 			normal	 : bold,					// 550 — body + controls
-			banner	 : bold + 100,				// 650 — the collapsible banner
-			title	 : bold + 200,				// 750 — the popup title
+			big		 : bold + 100,				// 650 — the collapsible banner
+			huge	 : bold + 200,				// 750 — the popup title
 		},
 	};
 
@@ -50,9 +52,9 @@ export default class Constants {
 
 	radius = {
 		corner		 : {
-			banner	 : common_size / 3.5,		// 10
-			build	 : common_size / 3,			// 11.67
-			main	 : common_size / 2,			// 17.5 — also for Add drop box
+			tiny	 : common_size / 3.5,		// 10 — the collapsible banner
+			small	 : common_size / 3,			// 11.67 — the build notes
+			normal	 : common_size / 2,			// 17.5 — also for Add drop box
 			pill	 : 999,
 		},
 		percent		 : 50,
@@ -60,10 +62,10 @@ export default class Constants {
 
 	// Smallest first, so the list itself reads as a ladder.
 	width = {
-		details		 : common_size * 7,			// 245
-		window		 : 300,
-		content      : 350,						// the smallest useful width for the region beside details
-		modal	 	 : common_size * 17.3,		// 605.5
+		small		 : common_size * 7,			// 245 — the details column
+		normal		 : 300,						// the window
+		big			 : 350,						// the smallest useful width for the region beside details
+		fat			 : common_size * 17.3,		// 605.5 — the modal
 	};
 
 	layer = {
@@ -76,39 +78,35 @@ export default class Constants {
 	gap = {
 		huge		 : common_gap * 4,			// 31.11 — how far a bar's word is held off the left end
 		fat	         : common_gap * 2.1,		// 16.33
-		default      : common_gap,				// 7.78
+		normal       : common_gap,				// 7.78
 		small		 : common_gap / 1.8,		// 4.32
-		tight		 : common_gap / 2,			// 3.89
-		details		 : common_gap / 4,			// 1.94
+		tiny		 : common_gap / 2,			// 3.89
+		faint		 : common_gap / 4,			// 1.94
 		micro		 : common_gap / 6,			// 1.3 — the hairline between a double border's two edges
 	}
 
+	// Every drawn line, whether an edge or a separator.
 	thickness = {
+		huge		 : common_gap,				// 7.78 — the separator between sections
 		fat			 : common_thickness * 2,	// 2.22
-		bold		 : common_thickness * 1.5,	// 1.67
+		big			 : common_thickness * 1.5,	// 1.67
 		normal		 : common_thickness,		// 1.11
-		mild         : common_thickness * 0.7,	// 0.78
+		small        : common_thickness * 0.7,	// 0.78
 		faint		 : common_thickness * 0.5,	// 0.56
-	};
-
-	separator = {
-		normal : common_separator,				// 1.11
-		big    : common_separator * 1.5,		// 1.67
-		huge   : common_gap,					// 7.78
 	};
 
 	// Smallest first, the same as the widths.
 	height = {
-		control		 : control_height,			// 21.88
-		hideable	 : control_height * 1.3,	// 28.44
-		banner		 : common_size * 1.2,		// 42
+		normal		 : control_height,			// 21.88 — one control
+		big			 : control_height * 1.3,	// 28.44 — a row that can be hidden
+		fat			 : common_size * 1.2,		// 42 — the banner
 	};
 
 	size = {
-		svg			 : control_height * 0.9,	// 19.69 — the shared drawn-cross size
-		control		 : control_height,			// 21.88
-		hamburger	 : common_size * 0.7,		// 24.5
-		button		 : common_size / 1.25,		// 28
+		small		 : control_height * 0.9,	// 19.69 — the shared drawn-cross size
+		normal		 : control_height,			// 21.88 — one control
+		big			 : common_size * 0.7,		// 24.5 — the hamburger
+		fat			 : common_size / 1.25,		// 28 — a round button
 	};
 
 	margin = {

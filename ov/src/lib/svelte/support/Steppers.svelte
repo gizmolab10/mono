@@ -25,7 +25,7 @@
 		} = $props();
 
 	// The same fat mark as ji's, turned whichever way this pair runs.
-	const SIZE = k.size.control * 1.1;
+	const SIZE = k.size.normal * 1.1;
 	let back_path      = $derived(svg_paths.fat_polygon(SIZE, back_direction(vertical)));
 	let next_path      = $derived(svg_paths.fat_polygon(SIZE, forward_direction(vertical)));
 	let back_bounds    = $derived(svg_paths.fat_polygon_bounds(SIZE, back_direction(vertical)));
@@ -58,7 +58,7 @@
 
 <style>
 	.steppers {
-		gap         : var(--gap-tight);
+		gap         : var(--gap-tiny);
 		align-items : center;
 		display     : flex;
 		flex-shrink : 0;

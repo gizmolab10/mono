@@ -58,14 +58,14 @@
 	/* The visible button is this circle — we own its color fully. */
 	.picker {
 		border-radius : var(--radius-percent);
-		border        : var(--thickness-normal) solid var(--black);
+		border        : var(--thick) solid var(--black);
 		background    : var(--accent);
 		box-sizing    : border-box;
 		position      : relative;
 		cursor        : pointer;
 		overflow      : hidden;
-		width         : var(--height-control);
-		height        : var(--height-control);
+		width         : var(--height);
+		height        : var(--height);
 	}
 
 	/* No hover light while the picker is open. */

@@ -20,7 +20,7 @@
 	// open among the filters is open in the label form too.
 	let open = $derived($w_areas_open.includes(area.name));
 
-	const CROSS = k.size.control * 0.7;
+	const CROSS = k.size.normal * 0.7;
 	const cross_path = svg_paths.x_cross(CROSS, CROSS / 6);
 
 	// Only tags something is left wearing, plus whatever is already picked.
@@ -79,11 +79,11 @@
 	.big {
 		border        : 0.7px solid var(--black);
 		border-radius : var(--radius-pill);
-		height        : var(--height-control);
+		height        : var(--height);
 		padding       : var(--gap-micro);
 		background    : var(--white);
 		box-sizing    : border-box;
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		font-family   : inherit;
 		color         : var(--text);
 		display       : inline-flex;
@@ -141,7 +141,7 @@
 	.big.open {
 		align-items : center;
 		cursor      : default;
-		gap         : var(--gap-tight);
+		gap         : var(--gap-tiny);
 	}
 
 	/* Both states anchor the name that sits on their top edge. */
@@ -156,11 +156,11 @@
 	   pill's own thin padding, so its middle is half the pill's height in from the left. */
 	.area-name {
 		background     : color-mix(in srgb, var(--bg) 44%, transparent);
-		left           : calc(var(--height-control) / 2);
+		left           : calc(var(--height) / 2);
 		transform      : translate(-50%, -50%);
 		border-radius  : var(--radius-pill);
-		font-size      : var(--font-credit);
-		padding        : 0 var(--gap-tight);
+		font-size      : var(--font-faint);
+		padding        : 0 var(--gap-tiny);
 		color          : var(--gray);
 		position       : absolute;
 		white-space    : nowrap;
@@ -210,7 +210,7 @@
 	.segment {
 		padding     : 0 var(--gap);
 		background  : transparent;
-		font-size   : var(--font-label);
+		font-size   : var(--font-tiny);
 		font-family : inherit;
 		color       : var(--text);
 		white-space : nowrap;
@@ -236,10 +236,10 @@
 
 	/* The last tag standing in an area, drawn as the plain pill the other tags use. */
 	.tag {
-		border        : var(--thickness-normal) solid var(--black);
+		border        : var(--thick) solid var(--black);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font-label);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;

@@ -24,17 +24,17 @@
 
 <style>
 	.hideable {
-		gap            : var(--gap-details);
+		gap            : var(--gap-faint);
 		flex-direction : column;
 		display        : flex;
 	}
 
 	.banner {
-		height          : var(--height-hideable);
-		border-radius   : var(--radius-banner);
-		font-size       : var(--font-banner);
-		font-weight     : var(--fw-banner);
-		letter-spacing  : var(--tracking);
+		height          : var(--height-big);
+		border-radius   : var(--radius-tiny);
+		font-size       : var(--font-big);
+		font-weight     : var(--fw-big);
+		letter-spacing  : var(--em-tiny);
 		color           : var(--black);
 		background      : var(--bg);
 		text-transform  : lowercase;
@@ -66,7 +66,7 @@
 	}
 
 	.slot {
-		border-radius : var(--radius-banner);
+		border-radius : var(--radius-tiny);
 		padding       : var(--gap);
 		background    : var(--bg);
 		position      : relative;
