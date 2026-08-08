@@ -7,7 +7,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
-	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
+	import { VAULT, file_path_of, obsidian_link, save_guide } from '../../ts/utilities/Saving';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
@@ -377,6 +377,14 @@
 	// is a way of working rather than something about one guide.
 	const w_show_filters = preferences.persistent<boolean>(T_Preference.show_filters, true);
 
+	// Whether the search row is on screen at all. Folded away, the words below take its room,
+	// and the word on the line above brings it back. Remembered the same way.
+	const w_show_search = preferences.persistent<boolean>(T_Preference.show_search, true);
+
+	// Shown, the word is just "search". Folded away with something typed, it says what is being
+	// looked for, so a search left running is never invisible.
+	let search_word = $derived($w_show_search || $w_words === '' ? 'search' : `search ➜ ${$w_words}`);
+
 	// The tag areas take four rows of their own, so the word above them folds them away — and
 	// says what the guide wears while they are gone, as the filters' own lines do.
 	let show_form_tags = $state(true);
@@ -439,6 +447,31 @@
 
 	// Stepping to another guide takes the question with it — it belonged to the one being left.
 	$effect(() => { address; asking_to_delete = false; });
+
+	// Where a guide is sent when it is handed on.
+	const SENT_TO = 'sand@gizmolab.com';
+
+	/**
+	 * Hand this guide to Obsidian. The repo is itself a vault, so where the file sits counting
+	 * from the top of the repo is also where it sits in the vault.
+	 */
+	function handle_obsidian() {
+		const where = file_path_of(guide.bundle, guide.path);
+		debug.log(`Editing "${name}": handing it to Obsidian at ${where}.`);
+		window.location.href = obsidian_link(VAULT, where);
+	}
+
+	/**
+	 * Open a new message with this guide already in it: the file's name for a subject, its whole
+	 * words for the body. Nothing is written, moved or thrown away — the message is the reader's
+	 * to send or drop.
+	 */
+	function handle_send() {
+		const body = text_of_file;
+		const to = `mailto:${SENT_TO}?subject=${encodeURIComponent(name)}&body=${encodeURIComponent(body)}`;
+		debug.log(`Editing "${name}": handing it on to ${SENT_TO} — ${body.length} character(s) of words in the message.`);
+		window.location.href = to;
+	}
 
 	/** Throw this guide away. Only if the file itself goes does the view go back to the list. */
 	function handle_delete() {
@@ -787,28 +820,6 @@
 		onmousemove={(e) => { top_lit = over_empty(e); }}
 		onmouseleave={() => { top_lit = false; }}
 		use:tip={'back to the list'} onclick={leave_if_empty}>
-	<!-- Looking through the file on screen. Its type is "search", so the browser draws its
-	     own clear cross at the right end once there is text. -->
-	<div class='view-search'>
-		<!-- With something typed, two triangles walk the places those words turn up, and the
-		     count says which of them is lit. -->
-		{#if $w_words !== ''}
-			<!-- The count reads first, then the two marks that walk from one place to the next. -->
-			<div class='view-steps hits'>
-				<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
-				<Steppers can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
-			</div>
-		{/if}
-		<input
-			type='search'
-			class='search'
-			placeholder='search'
-			oninput={find_first}
-			bind:value={$w_words}
-			use:tip={'search this file'} />
-	</div>
-	<!-- A plain line between the search and the row below it. -->
-	<Separator thickness={k.separator.normal}/>
 	<div class='view-head'>
 		<!-- Which of the files the filters leave is being read, and how many there are. Nothing
 		     while reading off the list, on a run of guides reached by links. -->
@@ -853,14 +864,48 @@
 				</svg>
 			</button>
 		{:else}
-			<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
-				onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
-				<svg class='row-mark' viewBox='0 0 {k.size.control} {k.size.control}'>
-					<path d={binPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' stroke-linejoin='round' />
-				</svg>
-			</button>
+			<!-- The two stand together at the end of the row: hand this guide on, or throw it
+			     away. Handing it on comes first, since it is the one taken more often. -->
+			<span class='row-pair'>
+				<button class='row-button lifted' aria-label='obsidian' use:tip={'open this guide in Obsidian'}
+					onclick={(e) => { e.stopPropagation(); handle_obsidian(); }}>o</button>
+				<button class='row-button' aria-label='send' use:tip={'send this guide in a message'}
+					onclick={(e) => { e.stopPropagation(); handle_send(); }}>⤴</button>
+				<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
+					onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
+					<svg class='row-mark' viewBox='0 0 {k.size.control} {k.size.control}'>
+						<path d={binPath} fill='none' stroke-width={k.size.control / 12} stroke-linecap='round' stroke-linejoin='round' />
+					</svg>
+				</button>
+			</span>
 		{/if}
 	</div>
+	<!-- The line above the search, carrying its own word. Pressing the word folds the search
+	     away, and the words below take its room; pressing it again brings it back. -->
+	<Separator at_left thickness={k.separator.huge} title={search_word}
+		onclick={() => { w_show_search.set(!$w_show_search); debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`); }}/>
+	<!-- Looking through the file on screen. Its type is "search", so the browser draws its
+	     own clear cross at the right end once there is text. -->
+	{#if $w_show_search}
+	<div class='view-search'>
+		<!-- With something typed, two triangles walk the places those words turn up, and the
+		     count says which of them is lit. -->
+		{#if $w_words !== ''}
+			<!-- The count reads first, then the two marks that walk from one place to the next. -->
+			<div class='view-steps hits'>
+				<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
+				<Steppers can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
+			</div>
+		{/if}
+		<input
+			type='search'
+			class='search'
+			placeholder='search'
+			oninput={find_first}
+			bind:value={$w_words}
+			use:tip={'search this file'} />
+	</div>
+	{/if}
 	</div>
 	<!-- While the filters are open the heavy line moves below them, so the form reads as part of
 	     the top rather than as words of the file. Its word folds away only what sits between it
@@ -974,7 +1019,6 @@
 
 	.view-head {
 		height         : var(--height-control);
-		margin-top     : var(--gap-tight);        /* held clear of the line above it */
 		padding-bottom : var(--gap-small);
 		box-sizing     : content-box;
 		gap            : var(--gap);
@@ -1020,23 +1064,41 @@
 
 	/* A round button at the end of the row: white inside a hairline edge, filling under the
 	   cursor — the same look every other small button in the app wears. */
+	/* The three at the end of the row stand one gap apart. */
+	.row-pair {
+		gap         : var(--gap);
+		flex        : 0 0 auto;
+		align-items : center;
+		display     : flex;
+	}
+
 	.row-button {
 		border          : var(--thickness-mild) solid var(--black);
 		border-radius   : var(--radius-percent);
 		height          : var(--size-control);
 		width           : var(--size-control);
+		font-size       : var(--font-base);
 		background      : var(--white);
+		color           : var(--text);
 		box-sizing      : border-box;
+		flex            : 0 0 auto;
+		cursor          : pointer;
+		font-family     : inherit;
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
-		flex            : 0 0 auto;
-		cursor          : pointer;
 		padding         : 0;
+		line-height     : 1;
 	}
 
 	.row-button:hover {
 		background : var(--hover);
+	}
+
+	/* A letter sits lower in its own line than a drawn mark does, so the letter is nudged up
+	   within its circle rather than the whole button being moved. */
+	.row-button.lifted {
+		padding-bottom : 4px;
 	}
 
 	.row-mark {
@@ -1074,18 +1136,18 @@
 	.view-name {
 		border        : var(--thickness-faint) solid transparent;
 		border-radius : var(--radius-pill);
+		padding       : 0 var(--gap-tight);
 		font-size     : var(--font-large);
-		font-family   : inherit;
 		background    : transparent;
 		color         : var(--text);
-		text-align    : center;
-		white-space   : nowrap;
 		box-sizing    : border-box;
 		flex          : 0 1 auto;
+		font-family   : inherit;
+		text-align    : center;
+		white-space   : nowrap;
 		cursor        : text;
 		outline       : none;
 		min-width     : 0;
-		padding       : 0 var(--gap-tight);
 	}
 
 	/* Under the cursor it shows what it is; with the cursor in it, it reads as a field being
@@ -1269,12 +1331,13 @@
 
 
 	.view-page {
-		/* Held clear on all four sides — but the left inset is inside the box rather than
-		   outside it, so the marks beside the headings have somewhere to sit. Anything outside
-		   a box that scrolls is clipped away. */
-		margin       : var(--gap) var(--gap-fat) var(--gap) 0;
+		/* The room it holds is padding rather than margin, so its own color fills the whole
+		   area below the heavy line instead of leaving a border of the page around it. The
+		   left inset has to be inside the box in any case: the marks beside the headings sit
+		   in it, and anything outside a box that scrolls is clipped away. */
+		padding      : var(--gap) var(--gap-fat);
 		font-size    : var(--font-base);
-		padding-left : var(--gap-fat);
+		background   : var(--white);
 		color        : var(--text);
 		word-break   : break-word;
 		cursor       : pointer;
@@ -1282,12 +1345,10 @@
 		flex         : 1;
 	}
 
-	/* With a bar beside the words the right margin comes off, so the bar sits against the box's
-	   edge rather than floating in from it — and a gap is held inside instead, so the words
-	   never run up against the bar. */
+	/* With a bar beside the words the right inset narrows, so the bar sits nearer the box's
+	   edge and the words still stand clear of it. */
 	.view-page.has-bar {
 		padding-right : var(--gap);
-		margin-right  : 0;
 	}
 
 	/* The marker showing where the browser alone would have put the thumb: half the lane's
@@ -1305,8 +1366,9 @@
 	/* The bar beside the words, and the one under a wide code block. Every scrolling box has
 	   to name itself like this — the app-wide form of the rule matches nothing at all. */
 	.view-page::-webkit-scrollbar {
-		height : var(--width-bar);
-		width  : var(--width-bar);
+		background : transparent;
+		height     : var(--width-bar);
+		width      : var(--width-bar);
 	}
 
 	/* The browser sets the thumb's length from how much of the file fits on screen. A long
@@ -1323,8 +1385,9 @@
 	}
 
 	.view-page :global(pre::-webkit-scrollbar) {
-		height : var(--width-bar);
-		width  : var(--width-bar);
+		background : transparent;
+		height     : var(--width-bar);
+		width      : var(--width-bar);
 	}
 
 	.view-page :global(pre::-webkit-scrollbar-thumb) {
@@ -1441,9 +1504,9 @@
 
 	.view-page :global(blockquote) {
 		border-left : var(--thickness-fat) solid var(--accent);
+		opacity     : var(--opacity-header);
 		padding-left: var(--gap);
 		margin-left : 0;
-		opacity     : var(--opacity-header);
 	}
 
 	.view-page :global(table) {
@@ -1483,6 +1546,7 @@
 	.view-search {
 		min-height     : var(--height-control);
 		padding-bottom : calc(var(--gap));
+		margin-top     : var(--gap);
 		gap            : var(--gap);
 		flex           : 0 0 auto;
 		align-items    : center;
@@ -1534,8 +1598,8 @@
 	.view-page :global(mark.hit) {
 		color         : var(--text-on-accent);
 		background    : var(--accent);
-		border-radius : 0;
 		position      : relative;
+		border-radius : 0;
 		padding       : 0;
 	}
 
@@ -1559,8 +1623,8 @@
 		font-size  : var(--font-label);
 		padding-top: var(--gap-tight);
 		color      : var(--text);
-		text-align : center;
 		flex       : 0 0 auto;
+		text-align : center;
 	}
 
 	.view-note {

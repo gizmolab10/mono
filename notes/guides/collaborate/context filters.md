@@ -6,7 +6,7 @@ tags: [team]
 date: 2026-05-10
 ---
 
-# Framing Filters
+# Context Filters
 
 A framing filter is when I adopt a lens for the current task and then unconsciously exclude information that doesn't fit that lens — even when the excluded information is actionable, cheap to fix, and directly relevant.
 

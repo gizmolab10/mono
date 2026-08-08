@@ -446,7 +446,9 @@ class APIHandler(BaseHTTPRequestHandler):
                                 if one.endswith('.md'):
                                     found.append(os.path.relpath(os.path.join(here, one), root))
                 found.sort()
-                self._send_response(200, {'success': True, 'paths': found})
+                # The repo's own place on this machine goes back too, since the app reads each
+                # file by its full place and has nothing else to work it out from.
+                self._send_response(200, {'success': True, 'root': root, 'paths': found})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

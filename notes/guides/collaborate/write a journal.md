@@ -1,8 +1,8 @@
 ---
-kind: specify
+kind: step
 title: "Journals"
 description: "The formatting rules for the running journal file."
-tags: [prose, notes]
+tags: [notes, prose]
 date: 2026-05-10
 ---
 

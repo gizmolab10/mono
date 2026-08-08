@@ -71,7 +71,7 @@ renumbered — that alone says the file is not being maintained. Several entries
 by hooks and could go. The rest overlap heavily with the working rules; I'd merge the two and
 keep one file, since a reader told to read both will read neither carefully.
 
-### `notes/guides/pre-flight/working.md`
+### `notes/guides/pre-flight/agency.md`
 
 Sixteen standing rules on how the work is done.
 
@@ -80,7 +80,7 @@ rule 4 says to prefer certain file tools over shell commands, which the hooks no
 themselves, and rule 16 points at pitfalls, which I'd merge into this file. I'd take the tag off
 after those two.
 
-### `notes/guides/pre-flight/replying.md`
+### `notes/guides/pre-flight/response.md`
 
 How every reply is written: how short, how plain, what must be proved before sending.
 

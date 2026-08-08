@@ -10,8 +10,8 @@ date: 2026-08-01
 
 Two files hold the standing rules, and both apply to every session:
 
-- [replying](replying.md) — how every reply is written, and what must be proved before it is sent.
-- [working](working.md) — how the work itself is done.
+- [response](response.md) — how every reply is written, and what must be proved before it is sent.
+- [agency](agency.md) — how the work itself is done.
 
 The rest belongs to neither:
 

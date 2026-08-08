@@ -4,10 +4,10 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] Editor: button. label -> ⤴
-    - [ ] to the right of the trash can
-    - [ ] opens an email addressed to sand@gizmolab.com
-    - [ ] containing the file's content
+- [ ] unify the constant sub-names (eg kinds of gap and thickness)
+- [ ] mark 'stale' all guide files that contain completed tasks, phases, steps
+- [ ] eliminate purpose
+    - [ ] add design and work to kinds
 - [ ] filters
     - [ ] animate their relayout on list files
     - [ ] click in area below separator -> rules
@@ -15,10 +15,7 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
         - [ ] hover lights up the clickable sep title
         - [ ] tags area is different
 - [ ] add (find and) replace in edit
-- [ ] button to copy file into the paste buffer
-    - [ ] rtf?
-- [ ] work purpose -> support for check lists
-- [x] not need a relaunch of the server for adding a file
+- [ ] for work files -> support for check lists
 - [ ] button to add a sibling to the current viewed file and open it for editing
 - [ ] whitespace around almond in header's thin line --gap-tight
 - [ ] OKF
@@ -36,6 +33,25 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## done
 
+- [x] the dispatcher's list is the app's whole picture — no build-time scan of the guide folders
+    - [x] nothing reloads the page when a guide is written, renamed, moved or thrown away
+    - [x] with the dispatcher not answering, the screen says so rather than sitting empty
+- [x] editor: a ⤴ button right of the trash, opening a message with the guide's words
+- [x] moving a file no longer restarts the app
+- [x] mo/pre-flight — replying became response, working became agency
+- [x] ji — a ⤴ button left of help; the chat stays on screen while the AI is unreachable
+- [x] a file added to the guides shows without a relaunch
+    - [x] the dispatcher says what is on disk; the app reads anything its prepared list missed
+    - [x] a file with no labels gets a block composed from its own words, marked stale
+- [x] editor — the file name is a field that reads as plain words until pointed at
+    - [x] leaving it, or Return, renames the file; Escape puts the old name back
+    - [x] the view follows the file to its new place rather than shutting
+- [x] editor — a trash mark at the right of the second row
+    - [x] pressing it asks `delete "<name>"?` in the row itself, the name stepping aside
+    - [x] the dispatcher gained a delete route, with the same refusals as moving
+- [x] editor — code blocks can be edited, and command-b/i/hyphen mark up what is picked
+    - [x] typing a bracket or a quote with words picked wraps them, and again unwraps
+- [x] rename the five kinds — specify, step, wire, explain, refer
 - [x] rename list files -> files, edit file -> edit
 - [x] svg
     - [x] circle slash -> the opposite of whatever it overlays

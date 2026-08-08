@@ -17,3 +17,8 @@ User experience components and interaction patterns.
 
 - [UX Manager](../core/ux.md) - Overall UX coordination and state
 - [Components](./components.md)
+
+## More
+
+- [Breadcrumbs](./breadcrumbs.md)
+- [Paging](./paging.md)

@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: specify
 title: "Shorthand"
 description: "The short commands and abbreviations Jonathan types, and what each one does."
 tags: [session, team]
@@ -40,6 +40,7 @@ Short commands and abbreviations for working with collaborator. NB: ALL urls on 
 | `ex`         | Execute mode — skip proposals, just do it                                                                                                                                                                          |
 | `rs`         | Reserved mode — propose before file changes                                                                                                                                                                        |
 | `ni`         | No improvement, try something different                                                                                                                                                                            |
+| `loc ...`    | what is the line of code for determining ...                                                                                                                                                                       |
 | `pac`        | pros and cons. If there are no real cons, say "no cons found." Never pad with fabricated concerns.                                                                                                                 |
 | `cd`         | read code.debt.md                                                                                                                                                                                                  |
 | `up`         | update current handoff file, check if anything changed, update from the chat: the **Next** line and any relevant or new sections                                                                                   |

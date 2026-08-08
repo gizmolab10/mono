@@ -2,6 +2,36 @@
 
 What's been finished, newest first.
 
+## 2026-08-07 — the disk is the only source of files
+
+Overview used to learn which guides exist by scanning the five collections when its code was prepared. That scan is gone. The dispatcher — the small server on this machine that the log lines go to — is asked what is on disk, and that list is the whole picture: read in one pass, nothing settled in advance.
+
+**Why it had to go.** Scanning put every guide into the dev server's own watched set, so writing to one reloaded the page under you. Renaming did it, moving did it, even mending an index did it. Two of those had a deliberate restart in them as well, from the days when a moved file really was invisible until the app started again; both are gone, and with them the routine that did the restarting.
+
+**What it costs.** The dispatcher is required now. Without it there are no guides at all, so the screen says "the dispatcher is not answering — start it, then reload" rather than sitting empty. That is honest: the app could not save, move or delete anything without it either.
+
+**One bug this settled on the way.** While the old scan and the new list both existed, a file moved since the code was prepared showed twice — once at its old place with no labels, once at its new one. With one source there is nothing left to disagree.
+
+**A ⤴ button beside the trash.** It opens a new message addressed to Jonathan, the guide's name for a subject and its whole words in the body. Nothing is written, moved or thrown away by it. ji has one too, at the left of its help button, opening an empty message.
+
+**ji's chat stopped hiding itself.** While the AI was unreachable the chat was replaced by a note — which left nothing on screen that would call the AI, so nothing ever noticed it come back, and the note sat there forever. The chat is always there now, with the note above it saying to ask anyway; asking is itself what finds out. The every-few-seconds check that watches the connection also runs while the chat is showing, and is counted rather than switched, so leaving the chat no longer takes it away from the AI store.
+
+**Two of the standing rule files were renamed** — replying became response, working became agency — with every mention updated, the hook that loads them included.
+
+## 2026-08-07 — a guide can be named, thrown away, and marked up
+
+**The file's name is a field now.** It reads as plain words in the middle of the top row, takes a pill-shaped edge and the hover color when pointed at, and turns white while being typed in. Leaving it or pressing Return gives the file that name; Escape puts the old one back.
+
+**Renaming used to close the view, and no longer does.** A guide is named by where it sits, so renaming moves it — and the view, still asking for the old place, found nothing and shut. Two things were wrong: the rename ended by restarting the whole app, which is no longer needed now that the app asks the disk what files exist; and the app's picture changed a full second before anything said so, while links in other guides were being mended. The move is now announced the moment the file lands, and whatever is reading that guide follows it — the stack of guides reached by links too.
+
+**Throwing a guide away.** A trash mark sits at the right of the second row. Pressing it puts `delete "<name>"?` in the row itself, with a cross where the trash was to keep the guide; the name steps aside, since the question already says which file it means. Saying yes deletes the file, takes its line out of the index beside it, drops it from the list and goes back there. The dispatcher gained a delete route with the same refusals as moving: it must be a guide, inside the repo, and actually there.
+
+**A new file no longer needs a relaunch.** The app's list of files is settled when its code is prepared, so anything added since was invisible. The dispatcher now says what is on disk, and the app reads whatever its prepared list missed. A file arriving with no labels gets a block composed from its own words — its first heading for a title, the first thing it says for a description — written to the file and marked `stale`, since no machine can judge which of the five kinds it really is.
+
+**Editing gained a few hands.** A chunk of code is one piece now: the reader hung its line numbers on the words inside rather than the box around them, so only the words could be reached. Command with b, i or a hyphen makes what is picked heavy, slanted or struck through, and again undoes it — one star is slanted, two are heavy, three are both, so slanting heavy words adds to them rather than half-undoing them. Typing a bracket, brace or quote with words picked wraps them, and typing it again unwraps.
+
+**The five kinds were renamed** to specify, step, wire, explain and refer, across a hundred guide files, the app's own list, and the two notes that spell them out.
+
 ## 2026-08-06 — the bars are catchable, and the thumb never a speck
 
 Every bar was six pixels — chosen against the browser's heavy grey strip and overshot, so a bar was hard to catch and its thumb was a thread. They are fifteen now, and how thick they are is said once and read everywhere.

@@ -2,7 +2,7 @@ import { T_Bundle } from '../types/Guide';
 
 // Writing a changed guide back to the file it came from.
 //
-// The app can only read files; writing needs the small server already running on this
+// The app can only read files; writing needs the dispatcher already running on this
 // machine — the one the diagnostic lines go to. It is handed the file's place in the repo,
 // the whole new text, and the text as it was when the guide was opened. It re-reads the
 // file itself and refuses to write if it no longer matches, so a file changed by anything
@@ -52,45 +52,34 @@ export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
 	return folder_path.startsWith('designs') ? `${notes}/${folder_path}` : `${notes}/guides/${folder_path}`;
 }
 
-// Ask for this app's own server to be restarted, and reload the page once it is answering
-// again. Overview settles its list of guide files when its code is prepared, so a file that
-// moved or was renamed only shows in its new place after this.
-export async function restart_and_reload(): Promise<void> {
-	try {
-		await fetch('http://localhost:5171/restart-server?which=ov', { method: 'POST' });
-	} catch {
-		// The restart itself may cut the answer short; the waiting below decides.
-	}
-	// Wait for the server to answer again, then come back to the same page.
-	for (let tries = 0; tries < 40; tries++) {
-		await new Promise((then) => setTimeout(then, 500));
-		try {
-			const answer = await fetch(`${location.origin}/?awake=${tries}`, { cache: 'no-store' });
-			if (answer.ok) { location.reload(); return; }
-		} catch {
-			// not up yet
-		}
-	}
-	location.reload();      // give up waiting and try anyway
-}
+// Nothing restarts this app any more. Moving or renaming a guide used to, because the list of
+// which files exist was settled when the app's code was prepared; now the app asks the disk,
+// and a file that moved is read from where it now sits.
 
 /**
- * Every guide and design on disk right now, each named by its place counting from the top of
- * the repo. The app's own list of files is settled when its code is prepared, so a file added
- * since then is invisible to it; this is how it hears about one without a restart. An empty
- * answer means the small local server is not running, and the prepared list stands alone.
+ * Every guide and design on disk right now — the app's whole list of files, and the one place
+ * it comes from. Each is named by its place counting from the top of the repo, and the repo's
+ * own place on this machine comes with them, since the files are read by their full place.
+ *
+ * An empty answer means the dispatcher is not running, and the app has no guides to
+ * show at all. It says so rather than showing nothing and leaving you to wonder.
  */
-export async function guides_on_disk(): Promise<string[]> {
+export type On_Disk = { root: string; paths: string[] };
+
+export async function guides_on_disk(): Promise<On_Disk> {
 	try {
 		const answer = await fetch('http://localhost:5171/list-guides');
 		const said = await answer.json().catch(() => ({}));
-		return (answer.ok && said.success && Array.isArray(said.paths)) ? said.paths as string[] : [];
+		if (answer.ok && said.success && Array.isArray(said.paths) && typeof said.root === 'string') {
+			return { root: said.root.endsWith('/') ? said.root : `${said.root}/`, paths: said.paths as string[] };
+		}
+		return { root: '', paths: [] };
 	} catch {
-		return [];
+		return { root: '', paths: [] };
 	}
 }
 
-// Show one folder in the Finder. Only the small local server can do it, since a page served
+// Show one folder in the Finder. Only the dispatcher can do it, since a page served
 // over the web cannot open anything on this machine itself.
 export async function show_folder(where: string): Promise<Saved> {
 	const url = `http://localhost:5171/show-folder?where=${encodeURIComponent(where)}`;

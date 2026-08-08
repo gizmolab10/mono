@@ -13,8 +13,8 @@ These guides are intended to help co contribute with excellence to the collabora
 - [Gotchas](./gotchas.md)
 - [Keywords](./keywords.md)
 - [Pitfalls](./pitfalls.md)
-- [Replying](./replying.md)
-- [Working](./working.md)
+- [Response](./response.md)
+- [Agency](./agency.md)
 
 ## More
 

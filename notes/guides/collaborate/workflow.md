@@ -1,8 +1,8 @@
 ---
-kind: specify
+kind: step
 title: "Workflow"
 description: "The turn-taking cadence and the propose-before-acting discipline."
-tags: [team, session]
+tags: [session, team]
 date: 2026-07-07
 ---
 

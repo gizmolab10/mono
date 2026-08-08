@@ -3,7 +3,7 @@ import { w_purposes, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders,
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, place_of_file, restart_and_reload, save_guide } from '../utilities/Saving';
+import { delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, place_of_file, save_guide } from '../utilities/Saving';
 import { has_labels, today, with_labels_added } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
@@ -18,27 +18,10 @@ import { debug } from '../common/Debug';
  * kept, and everything else is let go — nothing is held on to and nothing is saved.
  */
 
-// One sweep per collection, so which collection a file belongs to is known without
-// having to read it out of the address. These patterns must be written out in full —
-// the build reads them literally and cannot follow a name. Asking for the address
-// rather than the text is what keeps the files themselves out of the app.
-const addresses: Record<T_Bundle, Record<string, string>> = {
-	[T_Bundle.mono]:   import.meta.glob('../../../../../notes/guides/**/*.md',    { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.di]:     import.meta.glob('../../../../../di/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.ws]:     import.meta.glob('../../../../../ws/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.ji]:     import.meta.glob('../../../../../ji/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.ov]:     import.meta.glob('../../../../../ov/notes/guides/**/*.md', { query: '?url', import: 'default', eager: true }),
-};
-
-// The same again for designs — how a thing was built, rather than how to work. They sit in
-// their own folder beside the guides, and the app shows them only when asked to.
-const design_addresses: Record<T_Bundle, Record<string, string>> = {
-	[T_Bundle.mono]:   import.meta.glob('../../../../../notes/designs/**/*.md',    { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.di]:     import.meta.glob('../../../../../di/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.ws]:     import.meta.glob('../../../../../ws/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.ji]:     import.meta.glob('../../../../../ji/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
-	[T_Bundle.ov]:     import.meta.glob('../../../../../ov/notes/designs/**/*.md', { query: '?url', import: 'default', eager: true }),
-};
+// Which files exist is asked of the dispatcher, never scanned at build time. Scanning
+// put every guide into the dev server's own watched set, so writing to one — a rename, a move,
+// even mending an index — reloaded the whole page under you. Nothing here is settled when the
+// app's code is prepared, so a file added, moved or thrown away shows straight away.
 
 // Pull one label's value off a line, with the surrounding quotes taken off if it has them.
 function value_after(line: string): string {
@@ -95,6 +78,11 @@ class Guides {
 	// this, since at first launch there is nothing yet to show.
 	w_ready = writable(false);
 
+	// True when the dispatcher did not answer at launch. It is the only thing that
+	// knows what is on disk, so without it there is nothing to show at all — and the screen
+	// says so rather than sitting empty.
+	w_no_server = writable(false);
+
 	// Said whenever a guide moves from one place to another, with where it sat and where it now
 	// sits. Whatever keeps track of which guide is being read hands in its own answer here, so
 	// this file never has to know about the reading view — which would be a circle, since the
@@ -148,17 +136,17 @@ class Guides {
 			debug.log(`Moving "${guide.name}" from ${from} to ${to} was refused — ${answer.why}. Nothing changed.`);
 			return;
 		}
+		const was_key = key_of(guide);
 		this.hierarchy.rehang(guide, folder, to_path, `/@fs${answer.full_path}`);
 		this.renarrow();
+		// A guide is named by where it sits, so anything reading this one has to follow it.
+		this.moved_to?.(was_key, key_of(guide));
 		debug.log(`Moved "${guide.name}" from ${from} to ${to}. It now hangs under "${folder.name}", and its words are read from ${answer.full_path}.`);
 		// Where the repo begins on this machine, worked out from the one full place the server
 		// gave back — everything else is named from the top of the repo.
 		const root = answer.full_path.slice(0, answer.full_path.length - to.length);
 		await this.mend_indexes(root, from, to, name);
-		// The list of which files exist is settled when this app's code is prepared, so the
-		// new place only survives a reload once the server has been started again.
-		show_status(`"${guide.name}" moved into "${folder.name}". Starting again so the new place sticks…`);
-		restart_and_reload();
+		show_status(`"${guide.name}" moved into "${folder.name}".`);
 	}
 
 	/**
@@ -482,9 +470,13 @@ class Guides {
 	}
 
 	/**
-	 * Read every file once, keep its labels, let its text go. Each file is hung under a
-	 * folder for its collection and one for each folder in its path, so the shape of the
-	 * folders comes out of the addresses rather than being written down anywhere.
+	 * Read every guide once, keep its labels, let its text go. The dispatcher says what
+	 * is on disk; that list is the whole truth, so nothing here is settled when the app's code
+	 * is prepared, and a file added, moved or thrown away shows straight away.
+	 *
+	 * Each file is hung under a folder for its collection and one for each folder in its path,
+	 * so the shape of the folders comes out of where the files sit rather than being written
+	 * down anywhere.
 	 */
 	async load(): Promise<void> {
 		let read = 0, failed = 0, unlabeled = 0, bytes = 0, skipped = 0;
@@ -495,82 +487,33 @@ class Guides {
 		// what a link between two collections needs in order to be followed.
 		const shared_top = this.hierarchy.folder_at(T_Bundle.mono, '', T_Bundle.mono);
 
-		// Both purposes are swept the same way. A design's place inside its collection begins
-		// with "designs", so it can never collide with a guide of the same name, and the folder
-		// it hangs under says which purpose it belongs to at a glance.
-		const sweeps = [
-			{ marker: '/notes/guides/',  found: addresses,        is_design: false, under: '' },
-			{ marker: '/notes/designs/', found: design_addresses, is_design: true,  under: 'designs' },
-		];
-
-		for (const bundle of Object.values(T_Bundle)) {
-			const top = this.hierarchy.folder_at(bundle, '', bundle);
-			if (bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
-			for (const sweep of sweeps) {
-			// A collection with no designs of its own grows no folder for them.
-			const roof = sweep.under === '' ? top : this.hierarchy.folder_at(bundle, sweep.under, sweep.under);
-			if (sweep.under !== '' && Object.keys(sweep.found[bundle]).length > 0) {
-				this.hierarchy.add_relationship(top.id, roof.id);
-			}
-			for (const [whole_path, address] of Object.entries(sweep.found[bundle])) {
-				const at = whole_path.indexOf(sweep.marker);
-				const inside = at < 0 ? whole_path : whole_path.slice(at + sweep.marker.length);
-				const path = sweep.under === '' ? inside : `${sweep.under}/${inside}`;
-				const parts = inside.split('/');
-				const name = parts[parts.length - 1].replace(/\.md$/, '');
-
-				// An index file only lists what sits beside it — the folders here do that job,
-				// so it would say nothing the list doesn't already show. Left out entirely, not
-				// merely hidden, so the counts never include one.
-				if (name === 'index') { skipped += 1; continue; }
-
-				// Walk down the folders in the path, making each the first time it's met.
-				let parent = roof;
-				for (let i = 0; i < parts.length - 1; i++) {
-					const so_far = sweep.under === '' ? parts.slice(0, i + 1).join('/') : `${sweep.under}/${parts.slice(0, i + 1).join('/')}`;
-					const folder = this.hierarchy.folder_at(bundle, so_far, parts[i]);
-					this.hierarchy.add_relationship(parent.id, folder.id);
-					parent = folder;
-				}
-
-				let text = '';
-				try {
-					const answer = await fetch(address);
-					if (!answer.ok) { throw new Error(`the server answered ${answer.status}`); }
-					text = await answer.text();
-				} catch (e) {
-					failed += 1;
-					debug.log(`Could not read the guide "${bundle}/${path}" from ${address}: ${e instanceof Error ? e.message : e}. It is left out.`);
-					continue;
-				}
-
-				bytes += text.length;
-				const { labels, tags } = labels_from(text, `${bundle}/${path}`);
-				if (!labels.labeled) { unlabeled += 1; }
-				const guide = this.hierarchy.add_guide(bundle, path, name, address, {
-					...labels,
-					title: labels.title || name,
-				}, sweep.is_design);
-				this.hierarchy.add_relationship(parent.id, guide.id);
-				for (const tag of tags) {
-					this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, guide.id);
-				}
-				read += 1;
-				// text goes out of scope here — nothing keeps it
-			}
-			}
+		const on_disk = await guides_on_disk();
+		if (on_disk.paths.length === 0) {
+			this.w_no_server.set(true);
+			debug.log('Guides: the dispatcher did not answer, so there are no guides to show — it is the only thing that knows what is on disk.');
+			this.w_ready.set(true);
+			return;
 		}
+		this.w_no_server.set(false);
 
-		// The list above is settled when the app's code is prepared, so a file added since then
-		// is not in it. The small local server is asked what is on disk right now, and anything
-		// it names that is not already here is read the same way — which is what lets a new file
-		// show up without the dev server being restarted.
-		const late = await this.read_files_added_since(shared_top);
-		read += late.read;
-		failed += late.failed;
-		unlabeled += late.unlabeled;
-		bytes += late.bytes;
-		skipped += late.skipped;
+		for (const where of on_disk.paths) {
+			const place = place_of_file(where);
+			if (!place) { continue; }
+			const name = where.split('/').pop()?.replace(/\.md$/, '') ?? '';
+
+			// An index file only lists what sits beside it — the folders here do that job, so it
+			// would say nothing the list doesn't already show. Left out entirely, not merely
+			// hidden, so the counts never include one.
+			if (name === 'index') { skipped += 1; continue; }
+
+			const top = this.hierarchy.folder_at(place.bundle, '', place.bundle);
+			if (place.bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
+			const done = await this.hang_one_file(place.bundle, place.path, `/@fs${on_disk.root}${where}`, place.is_design, top);
+			read      += done.read;
+			failed    += done.failed;
+			unlabeled += done.unlabeled;
+			bytes     += done.bytes;
+		}
 
 		this.hierarchy.reindex();
 		this.say_what_was_found(read, failed, unlabeled, bytes, skipped);
@@ -578,37 +521,6 @@ class Guides {
 		this.w_ready.set(true);
 	}
 
-	/**
-	 * Ask the small local server what guides are on disk, and read any it names that the
-	 * prepared list did not. With the server not running, nothing is added and nothing is said
-	 * — the prepared list stands on its own, as it always did.
-	 */
-	private async read_files_added_since(shared_top: Guide): Promise<{ read: number; failed: number; unlabeled: number; bytes: number; skipped: number }> {
-		const tally = { read: 0, failed: 0, unlabeled: 0, bytes: 0, skipped: 0 };
-		const on_disk = await guides_on_disk();
-		if (on_disk.length === 0) { return tally; }
-		const root = this.repo_root;
-		if (root === '') { debug.log('Guides: nothing prepared has an address, so where the repo begins is unknown — the files on disk are left alone.'); return tally; }
-		const known = new Set(this.files.map((g) => file_path_of(g.bundle, g.path)));
-		let added = 0;
-		for (const where of on_disk) {
-			if (known.has(where)) { continue; }
-			const place = place_of_file(where);
-			if (!place) { continue; }
-			const name = where.split('/').pop()?.replace(/\.md$/, '') ?? '';
-			if (name === 'index') { tally.skipped += 1; continue; }
-			const top = this.hierarchy.folder_at(place.bundle, '', place.bundle);
-			if (place.bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
-			const done = await this.hang_one_file(place.bundle, place.path, `/@fs${root}${where}`, place.is_design, top);
-			tally.read += done.read;
-			tally.failed += done.failed;
-			tally.unlabeled += done.unlabeled;
-			tally.bytes += done.bytes;
-			added += done.read;
-		}
-		debug.log(`Guides: the server names ${on_disk.length} file(s) on disk; ${added} of them were added since this app's code was prepared and have just been read.`);
-		return tally;
-	}
 
 	/**
 	 * Read one file and hang it under the folders its path names, making each folder the first

@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import { start_llm_heartbeat, stop_llm_heartbeat } from '../../ts/database/LLM_Docs';
 	import { anything_llm, w_llm_reachable } from '../../ts/database/AnythingLLM';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
@@ -56,6 +57,14 @@
 			debug.log(`Chat: applied saved "replies shown" = ${show} on launch — ${collapsed.size} collapsed.`);
 		}
 	}
+	// While this is on screen, the AI is asked for its documents every few seconds. That check
+	// is what notices the connection coming back — otherwise nothing here would call it until
+	// a question was asked, and the note would sit there whatever the AI was doing.
+	$effect(() => {
+		start_llm_heartbeat();
+		return () => stop_llm_heartbeat();
+	});
+
 	// Read the history on open, and again the moment the connection returns — so history that
 	// couldn't be read during an outage (or while the address was churning back) comes back
 	// on its own, instead of staying blank.
@@ -167,65 +176,68 @@
 </script>
 
 <div class='chat'>
+	<!-- The chat is always here, whether or not the AI is answering. It used to be replaced by
+	     a note while the connection was lost — which left nothing on screen that would call the
+	     AI, so nothing ever noticed it come back. Now the note sits above the chat, and asking
+	     a question is itself what finds out. -->
 	{#if !$w_llm_reachable}
 		<div class='starting'>
 			<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'>
 				<path d={gearPath} fill-rule='evenodd' />
 			</svg>
-			<span>starting the AI</span>
-		</div>
-	{:else}
-		<div class='ask-row'>
-			{#if asking}
-				<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'><path d={gearPath} fill-rule='evenodd' /></svg>
-			{:else}
-				<button class='ask-go' onclick={ask} disabled={!question.trim()} use:tip={question.trim() ? 'post my question' : false}>ask</button>
-			{/if}
-			<input class='ask-input' type='search' placeholder='enter a question'
-				bind:value={question} onkeydown={on_key} disabled={asking} />
-		</div>
-
-		{#if error}
-			<div class='chat-error'>{error}</div>
-		{:else if missing_model}
-			<!-- Stays up once a missing model is known: no ask can work until it is installed,
-			     so the note outlives the one failure that found it. -->
-			<div class='chat-error'>the model "{missing_model}" is not installed — no question can be answered until it is</div>
-		{/if}
-
-		{#if exchanges.length > 0}
-			<div class='replies-sep'><Separator title='{all_collapsed ? "show" : "hide"} all responses' onclick={toggle_all} /></div>
-		{/if}
-
-		<div class='conversation' class:flush-right={!overflowing} bind:this={convo_el}>
-			{#if pending}
-				<div class='exchange'>
-					<div class='question pending-question'><span class='q-text'>{pending.question}</span></div>
-					<div class='answer'>{pending.reply}</div>
-				</div>
-			{/if}
-			{#each exchanges as ex, i (i)}
-				<div class='exchange' class:collapsed={collapsed.has(ex.time)}>
-					<button class='question' onclick={() => toggle_one(ex.time)}
-						use:tip={collapsed.has(ex.time) ? 'show response' : 'hide answer'}>
-						<span class='q-text'>{ex.question}</span>
-						<span class='q-when'>{when(ex.time)}</span>
-					</button>
-					{#if !collapsed.has(ex.time)}
-						<div class='answer'>{ex.reply}</div>
-						{#if ex.sources.length > 0}
-							<div class='sources'>from: {ex.sources.join(', ')}</div>
-						{/if}
-					{/if}
-				</div>
-			{/each}
+			<span>waiting for the AI — ask anyway to try it</span>
 		</div>
 	{/if}
+	<div class='ask-row'>
+		{#if asking}
+			<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'><path d={gearPath} fill-rule='evenodd' /></svg>
+		{:else}
+			<button class='ask-go' onclick={ask} disabled={!question.trim()} use:tip={question.trim() ? 'post my question' : false}>ask</button>
+		{/if}
+		<input class='ask-input' type='search' placeholder='enter a question'
+			bind:value={question} onkeydown={on_key} disabled={asking} />
+	</div>
+
+	{#if error}
+		<div class='chat-error'>{error}</div>
+	{:else if missing_model}
+		<!-- Stays up once a missing model is known: no ask can work until it is installed,
+		     so the note outlives the one failure that found it. -->
+		<div class='chat-error'>the model "{missing_model}" is not installed — no question can be answered until it is</div>
+	{/if}
+
+	{#if exchanges.length > 0}
+		<div class='replies-sep'><Separator title='{all_collapsed ? "show" : "hide"} all responses' onclick={toggle_all} /></div>
+	{/if}
+
+	<div class='conversation' class:flush-right={!overflowing} bind:this={convo_el}>
+		{#if pending}
+			<div class='exchange'>
+				<div class='question pending-question'><span class='q-text'>{pending.question}</span></div>
+				<div class='answer'>{pending.reply}</div>
+			</div>
+		{/if}
+		{#each exchanges as ex, i (i)}
+			<div class='exchange' class:collapsed={collapsed.has(ex.time)}>
+				<button class='question' onclick={() => toggle_one(ex.time)}
+					use:tip={collapsed.has(ex.time) ? 'show response' : 'hide answer'}>
+					<span class='q-text'>{ex.question}</span>
+					<span class='q-when'>{when(ex.time)}</span>
+				</button>
+				{#if !collapsed.has(ex.time)}
+					<div class='answer'>{ex.reply}</div>
+					{#if ex.sources.length > 0}
+						<div class='sources'>from: {ex.sources.join(', ')}</div>
+					{/if}
+				{/if}
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style>
 	.chat {
-		box-sizing     : border-box;
+	box-sizing     : border-box;
 		padding        : var(--gap);
 		gap            : var(--gap);
 		flex-direction : column;

@@ -1,12 +1,12 @@
 ---
 kind: specify
-title: "Replying"
+title: "Response"
 description: "How every reply is written: how short, how plain, and what must be proved before it is sent."
 tags: [session, team, prose]
 date: 2026-08-01
 ---
 
-# Replying
+# Response
 
 > **BE BRIEF — FIRST PASS.** Lead with the answer. Max 3 sentences (or 3 short bullets) unless I explicitly ask you to expand. No preamble, no recap, no options list, no summary of what you just did. Shortest reply that fully answers. This governs every reply.
 >

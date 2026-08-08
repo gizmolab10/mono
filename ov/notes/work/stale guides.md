@@ -10,7 +10,7 @@ A guide's own date was not used to rank — old is not the same as wrong. Where 
 
 2. **`di/notes/guides/pre-flight/always.md`** — four of the paths it hands out are wrong, and they are the paths a session is told to follow first: the revert hook (`di/.claude/hooks/snap.sh` is now a folder called `snap`), di's own learn file (`notes/work/now/learn.md`, which di's own CLAUDE.md says lives at `notes/work/ai/learn.md`), and two more.
 
-3. **`notes/guides/pre-flight/*` — anything naming the old shared always file.** The standing rules were split into `replying.md` and `working.md` on 2026-08-01; the pre-flight index and the root CLAUDE.md were updated, nothing else was checked. Any guide still saying "the always file holds the rules" now half-answers.
+3. **`notes/guides/pre-flight/*` — anything naming the old shared always file.** The standing rules were split into `response.md` and `agency.md` on 2026-08-01; the pre-flight index and the root CLAUDE.md were updated, nothing else was checked. Any guide still saying "the always file holds the rules" now half-answers.
 
 4. **`notes/guides/synopsis of our guides.md`** — hand-kept, dated 2026-07-08, and it knows nothing of ov, replying, working, or the labels every guide now carries. The OKF proposal already says this file is stale the moment a guide changes, which is why overview exists.
 

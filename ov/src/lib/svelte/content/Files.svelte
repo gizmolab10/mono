@@ -530,8 +530,9 @@
 	/* The bar beside the rows. Every scrolling box has to name itself like this — the
 	   app-wide form of the rule matches nothing at all. */
 	.table-scroll::-webkit-scrollbar {
-		height : var(--width-bar);
-		width  : var(--width-bar);
+		background : transparent;
+		height     : var(--width-bar);
+		width      : var(--width-bar);
 	}
 
 	/* The marker showing where the browser alone would have put the thumb: half the lane's

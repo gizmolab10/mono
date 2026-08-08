@@ -47,15 +47,22 @@ export function clear_llm_docs(): void {
 // the note. Started and stopped by the registry as the AI store comes and goes.
 let heartbeat: ReturnType<typeof setInterval> | null = null;
 
+// More than one thing wants this running — the AI store while it is the active one, and the
+// chat while it is on screen. They are counted rather than switched, so whichever leaves first
+// does not take the beat away from the other.
+let asked_for = 0;
+
 export function start_llm_heartbeat(): void {
+	asked_for += 1;
 	if (heartbeat !== null) { return; }
 	debug.log('AI connection: heartbeat on — checking every 8 seconds.');
 	heartbeat = setInterval(() => { refresh_llm_docs(true); }, 8000);
 }
 
 export function stop_llm_heartbeat(): void {
-	if (heartbeat === null) { return; }
+	asked_for = Math.max(0, asked_for - 1);
+	if (asked_for > 0 || heartbeat === null) { return; }
 	clearInterval(heartbeat);
 	heartbeat = null;
-	debug.log('AI connection: heartbeat off (left the AI store).');
+	debug.log('AI connection: heartbeat off — nothing is watching the connection now.');
 }

@@ -42,6 +42,15 @@
 		onHelp();
 	}
 
+	// Where a message started from here is addressed.
+	const SENT_TO = 'sand@gizmolab.com';
+
+	/** Start a new message, addressed and otherwise empty. Nothing here is filled in for you. */
+	function send() {
+		debug.log(`Controls: starting a message to ${SENT_TO}.`);
+		window.location.href = `mailto:${SENT_TO}`;
+	}
+
 	// Hide the centered title when the row is too narrow to hold it without crowding the
 	// hamburger, the operations pill, and the help button. Measured from the real widths on
 	// screen — not a fixed break-point — so it reacts to browser zoom and any label change
@@ -100,6 +109,7 @@
 		{/each}
 	</div>
 	<span class='spacer'></span>
+	<button class='help' onclick={send} aria-label='send' use:tip={'start a message'}>⤴</button>
 	<button class='help' onclick={help} bind:this={help_el} aria-label='help' use:tip={'help'}>?</button>
 </div>
 

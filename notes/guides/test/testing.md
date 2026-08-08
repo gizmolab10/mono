@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: step
 title: "Testing"
 description: "The test commands and the patterns to write tests with."
 tags: [test]

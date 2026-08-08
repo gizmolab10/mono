@@ -2,6 +2,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
+	import { guides } from '../../ts/managers/Guides';
 	import { colors } from '../../ts/utilities/Colors';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
@@ -17,6 +18,7 @@
 	import Details from './Details.svelte';
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
+	const w_no_server = guides.w_no_server;
 
 	// Whenever any of the four theme colors changes, push all four onto the page so
 	// every component can read them as plain style names.
@@ -105,7 +107,11 @@
 
 <svelte:window onresize={handleResize} />
 
-{#if $w_app === S_App.launch}
+{#if $w_no_server}
+	<!-- The dispatcher is the only thing that knows what is on disk, so without it
+	     there is nothing to show. Said plainly rather than left as an empty list. -->
+	<div class='launch'>the dispatcher is not answering — start it, then reload</div>
+{:else if $w_app === S_App.launch}
 	<div class='launch'>setting up the overview browser...</div>
 {:else}
 

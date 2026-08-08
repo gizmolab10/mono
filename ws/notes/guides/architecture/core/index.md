@@ -10,5 +10,6 @@ For this project, I decided to use Svelte. Once my first component was working, 
 - [Hits](./hits.md)
 - [Managers](./managers.md)
 - [State](./state.md)
+- [Styles](./styles.md)
 - [Ux](./ux.md)
 

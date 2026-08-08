@@ -22,7 +22,7 @@ Collaborator (or "co") = Claude.
 Read every `.md` file in:
 
 - `notes/guides/collaborate/` — chat roles, prose voice, workflow discipline, folders to skip when mapping
-- `notes/guides/pre-flight/` — `always.md` and the two it names (`replying.md`, `working.md`), plus `keywords.md` and `shorthand.md`, apply every response; `gates.md`, `kinds.of.tasks.md`, `pitfalls.md` apply at session start
+- `notes/guides/pre-flight/` — `always.md` and the two it names (`response.md`, `agency.md`), plus `keywords.md` and `shorthand.md`, apply every response; `gates.md`, `kinds.of.tasks.md`, `pitfalls.md` apply at session start
 - `<X>/notes/work/` (top level only, where X is the active project)
 
 Also read:

@@ -1,12 +1,12 @@
 ---
 kind: specify
-title: "Working"
+title: "Agency"
 description: "How the work itself is done: what to touch, what to prove, and what never to change unasked."
 tags: [session, team, style]
 date: 2026-08-01
 ---
 
-# Working
+# Agency
 
  1. **All file paths:** `~/GitHub/mono/` — NEVER use the worktree working directory.
  2. NEVER use `npm` — use yarn.

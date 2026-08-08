@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: specify
 title: "Hooks"
 description: "What hooks are, how they differ from memory, and which ones are live."
 tags: [team, tools]

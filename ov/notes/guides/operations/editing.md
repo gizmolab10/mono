@@ -30,7 +30,7 @@ So: don't convert the page. Convert one block.
 2. **Click a block to edit it.** The block is replaced in place by a plain text box holding *that block's own markdown, straight from the file* — not a conversion of what's on screen. A heading shows its hashes, a list its dashes. Escape drops it; it saves on leaving the box.
 3. **Save replaces only those lines.** Take the file's text, swap the stamped range for what was typed, write it back. Nothing outside the edited block is touched, so the rest of the file stays bit-for-bit what it was.
 4. **Re-draw from the new text.** The changed block is read again and redrawn, so what's on screen is always what the file says — never a guess about what the file now says.
-5. **Writing needs a route that accepts writes.** The app already talks to a small local server — the diagnostic lines it posts get written to a file on this machine. A second route beside it, taking a path and a body, is the smallest addition. It refuses any path that isn't a markdown file inside a guides folder.
+5. **Writing needs a route that accepts writes.** The app already talks to a dispatcher — the diagnostic lines it posts get written to a file on this machine. A second route beside it, taking a path and a body, is the smallest addition. It refuses any path that isn't a markdown file inside a guides folder.
 6. **The OKF label block is edited as one thing**, through its own small form (kind, title, description, tags, date), since those five labels are what the app itself reads. Changing a title or tags means the app's own list of guides needs those two facts updated in place.
 7. **Mark pieces sitting inside other pieces.** ...
 

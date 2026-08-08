@@ -6,10 +6,11 @@ How collaborator works with Jonathan and maintains shared context.
 ## Contents
 
 - [Chat](./chat.md)
+- [Framing Filters](./context%20filters.md)
 - [Exclude](./exclude.md)
 - [Expectations](./expectations.md)
-- [Framing Filters](./framing filters.md)
 - [Hooks](./hooks.md)
+- [Jonathan](./jonathan.md)
 - [Voice](./voice.md)
 - [Workflow](./workflow.md)
 - [Journals](./write%20a%20journal.md)
