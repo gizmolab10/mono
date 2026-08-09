@@ -1,7 +1,7 @@
 import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, has_labels, kind_from_where, label_block, labels_for, with_labels_added, with_labels_replaced } from '../utilities/Labels';
-import { T_Kind } from '../types/Guide';
+import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
-import type { Labels } from '../types/Guide';
+import type { Labels } from '../types/File';
 
 // A file added to the guides since the app last looked carries no labels at all. One is
 // composed from its own words and marked for a person to look at.

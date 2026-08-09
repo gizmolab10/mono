@@ -2,7 +2,7 @@
 	import { w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { shut_all_areas, UNLABELED } from '../../ts/managers/Filters';
-	import { T_Bundle, T_Kind } from '../../ts/types/Guide';
+	import { T_Bundle, T_Kind } from '../../ts/types/File';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Separator from '../support/Separator.svelte';
 	import Big_Pill from '../support/Big_Pill.svelte';

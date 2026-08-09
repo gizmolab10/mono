@@ -2,7 +2,7 @@
 kind: refer
 title: "Synopsis of the Shared Guides"
 description: "A hand-kept rundown of every shared guide, what is thin, and what is missing."
-tags: [construct, notes]
+tags: [construct, journal, notes]
 date: 2026-07-08
 ---
 

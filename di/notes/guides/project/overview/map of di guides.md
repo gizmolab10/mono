@@ -2,7 +2,7 @@
 kind: refer
 title: "Guide Layout (di)"
 description: "A bird's-eye list of every page under the di guides, one line each."
-tags: [notes]
+tags: [journal, notes]
 date: 2026-05-10
 ---
 

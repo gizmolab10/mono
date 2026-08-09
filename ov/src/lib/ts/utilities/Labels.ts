@@ -1,4 +1,4 @@
-import { T_Kind, type Labels } from '../types/Guide';
+import { T_Kind, type Labels } from '../types/File';
 
 // The five labels at the top of every guide, written back into the file.
 //

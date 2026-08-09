@@ -2,6 +2,26 @@
 
 What's been finished, newest first.
 
+## 2026-08-08 — nothing is written to a file nobody asked about
+
+A file added to the guides used to be given labels the moment the app read it — a hundred guesses made at launch, none of them looked at. Now a file with no labels is left exactly as it is and reads `---` in its kind column. The labels are composed the first time someone opens that file to edit: title and description from its own words, kind read off the folder it sits in, marked stale. The judging is the collaborator's, done on one file while it is in front of a person; correcting it is Jonathan's, on the file he is already looking at.
+
+**A folder called design or designs makes its files designs**, one called work makes them work. Only the plural spelling was recognised at first, so ov's own design folder fell through — four tests now cover both spellings and the case where a word merely starts the same.
+
+**A seventh area of tags: progress** — propose, construct and done, joined by stale and think, which left `other`. The other six areas gather tags by what a guide is about; this one gathers by where a guide stands in its own life.
+
+**A `none` button in the kinds row** leaves only the files carrying no labels at all, which is how they are found so they can be opened and given some. It grays out when every file the other filters leave already has labels. Those files also sort first rather than last: an empty kind used to be treated as a blank and pushed to the bottom, and it is a real state, not a missing one.
+
+**The way back to the list grew.** The bare space among the label rows joins the two top rows, and the whole of it lights at once — one flag, so pointing at either end lights both. Two areas are left out, because a press already means something there: the run of tag areas shuts them all, and the line above them folds them away.
+
+**A word on a line now shows its edge whenever it can be pressed**, and takes the hover fill only when the cursor is actually on that bar. Told to light by the area around it, it takes white instead. The kinds in the label form gained a line of their own that folds them away and then reads which kind the guide is.
+
+**The file holding what a guide is became File.** It says what any file in the picture is — its kinds, its tags, its collections, its labels — so naming it after one of those was the wrong scale. Fourteen imports followed; one reached for it by a short name rather than the full path and had to be caught by the type check.
+
+**The line between rows starts well in from the left.** Under the first column it is painted rather than drawn as an edge, which is how it can begin part-way across without the words beside it moving.
+
+**One marker was drawn in the wrong place.** The words box reports how far down it starts from the box that wraps it — near zero — while the marker over its scrollbar was placed against the whole view, which starts far higher. Both now sit in the same box. The bar's own lane starts below the line across the page, and the marker moved and shortened to match.
+
 ## 2026-08-08 — a guide says what it is, once
 
 Two questions were being asked about every guide, and they were the same question. One was asked by the folder a file sat in — a path under `designs` made it a design. The other was asked by the file's own words. Two answers meant two places to look and two ways to be wrong, and a whole picking row that carried nothing the kinds could not carry.

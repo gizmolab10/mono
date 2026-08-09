@@ -1,6 +1,6 @@
 import { file_path_of, folder_path_of, moved_into, obsidian_link, place_of_file } from '../utilities/Saving';
 import { describe, expect, it } from 'vitest';
-import { T_Bundle } from '../types/Guide';
+import { T_Bundle } from '../types/File';
 
 describe('reading a place in the repo back into a collection and a path', () => {
 	it('reads a shared guide', () => {

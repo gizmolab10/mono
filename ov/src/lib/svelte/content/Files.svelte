@@ -12,7 +12,7 @@
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
-	import type { Filtered_Guide } from '../../ts/types/Guide';
+	import type { Filtered_Guide } from '../../ts/types/File';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { show_status } from '../../ts/managers/Status';
 	import Separator from '../support/Separator.svelte';
@@ -395,7 +395,9 @@
 		     behind it, centered on the row, and each title's page-colored background breaks
 		     the line so the titles read as words sitting on it. -->
 		<div class='table-head' class:has-bar={scrollbar_showing}>
-			<div class='head-line'><Separator /></div>
+			<div class='head-line'>
+				<Separator thickness={k.thickness.fat} />
+			</div>
 			<table class='guides-table'>
 				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<thead>
@@ -422,7 +424,7 @@
 										class='head-label'
 										class:sortable={can_sort}
 										class:sorted={!!place}
-										use:tip={can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `also sort by ${col.label}`) : false}
+										use:tip={can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `sort by ${col.label}`) : false}
 										onclick={() => sort_by_column(col.sort)}><span class='head-words'>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</span></button>
 								{/if}
 							</th>
@@ -700,9 +702,23 @@
 		border-bottom : var(--thick-faint) solid var(--accent);
 	}
 
+	/* The line starts well in from the left edge. Under the first cell it is painted rather than
+	   drawn as an edge, so it can begin part-way across without the words moving. */
+	.guides-table .file td:first-child {
+		background-size     : calc(100% - var(--gap)) var(--thick-faint);
+		background-image    : linear-gradient(var(--accent), var(--accent));
+		background-position : right bottom;
+		border-bottom-color : transparent;
+		background-repeat   : no-repeat;
+	}
+
 	/* ...but not under the last row. */
 	.guides-table .file:last-child td {
 		border-bottom-color : transparent;
+	}
+
+	.guides-table .file:last-child td:first-child {
+		background-image : none;
 	}
 
 	.kind, .project, .name, .tags-cell {

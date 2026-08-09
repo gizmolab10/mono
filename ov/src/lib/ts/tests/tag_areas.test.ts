@@ -1,6 +1,6 @@
 import { TAG_AREAS, area_of, area_reads, tags_shown, tags_without_area } from '../types/Tag_Areas';
 import { describe, expect, it } from 'vitest';
-import { ALL_TAGS } from '../types/Guide';
+import { ALL_TAGS } from '../types/File';
 
 // The areas are only a way of reading the closed tag list, so the two have to agree exactly:
 // every tag belongs to one area, and no area names a tag that isn't on the list.

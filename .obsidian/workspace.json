@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/guides/design/rewritten guides.md",
+                "file": "ov/notes/work/handoff.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "rewritten guides"
+              "title": "handoff"
             }
           }
         ],
@@ -171,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/guides/design/rewritten guides.md",
+                "file": "ov/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of rewritten guides"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -210,18 +210,22 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "7bf503989ea6fce8",
   "lastOpenFiles": [
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.e3a188bfc6a2",
-    "ov/notes/guides/design/stale guides.md",
-    "ov/notes/guides/design/ov.md",
-    "ov/notes/guides/design/okf.md",
-    "ov/notes/guides/design/organize.md",
-    "ov/notes/work/current context.md",
+    "di/notes/guides/project/overview/map of di files.md",
+    "ov/src/lib/ts/types/File.ts",
+    "ov/notes/work/handoff.md.tmp.24732.c53253d99461",
+    "ov/notes/work/code debt.md",
     "ov/notes/work/handoff.md",
+    "ov/notes/work/current context.md",
+    "ov/notes/guides/design/organize.md",
+    "ov/notes/guides/design/okf.md",
+    "ov/notes/guides/design/ov.md",
+    "ov/notes/guides/design/stale guides.md",
+    "ov/notes/guides/design/rewritten guides.md",
+    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.e3a188bfc6a2",
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.45f74d6b3fa6",
     "ov/src/lib/ts/types/Tag_Areas.ts.tmp.24732.77596872d8ab",
-    "ov/notes/work/code debt.md",
     "ov/notes/work/code debt.md.tmp.24732.d5c3178cff86",
     "ov/src/lib/svelte/content/Filters.svelte",
     "ov/src/lib/svelte/support/Filters.svelte.tmp.24732.9dcd68984474",
@@ -229,9 +233,6 @@
     "ov/notes/guides/design/constants.md",
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.16aea610f402",
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.c818b7d49b8c",
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.10914e4379ca",
-    "ov/src/lib/svelte/support/Filters.svelte.tmp.24732.598465324f93",
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.c93bdcf2fa4f",
     "ov/notes/guides/design/concepts - ui.md",
     "ov/notes/guides/design/concepts - ui copy.md",
     "notes/guides/pre-flight/shorthand.md",
@@ -242,7 +243,6 @@
     "ov/notes/work/New Folder With Items/concepts - ui.md",
     "ov/notes/work/New Folder With Items/concepts - ui copy.md",
     "ov/notes/work/concepts - ui copy.md",
-    "ov/notes/guides/design/rewritten guides.md",
     "ws/notes/guides/architecture/ux/paging.md",
     "ws/notes/guides/architecture/core/styles.md",
     "ws/notes/guides/architecture/ux/breadcrumbs.md",

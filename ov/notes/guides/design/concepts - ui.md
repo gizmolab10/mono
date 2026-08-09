@@ -2,7 +2,7 @@
 kind: design
 title: "UX terms and concepts"
 description: ""
-tags: [stale, think, UX, visual-design]
+tags: [propose, stale, think, UX, visual-design]
 date: 2026-08-07
 ---
 # UX terms and concepts

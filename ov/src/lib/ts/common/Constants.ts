@@ -89,7 +89,7 @@ export default class Constants {
 	// Every drawn line, whether an edge or a separator.
 	thickness = {
 		huge		 : common_gap,				// 7.78 — the separator between sections
-		fat			 : common_thickness * 2,	// 2.22
+		fat			 : common_thickness * 3,	// 3.33
 		big			 : common_thickness * 1.5,	// 1.67
 		normal		 : common_thickness,		// 1.11
 		small        : common_thickness * 0.7,	// 0.78

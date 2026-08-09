@@ -1,3 +1,10 @@
+---
+kind: design
+title: "Stale guides"
+description: "The ten guides furthest out of date, worst first"
+tags: [construct, journal, stale]
+date: 2026-08-08
+---
 # Stale guides
 
 The ten guides furthest out of date, worst first. Judged by one hard test: a guide that names files which are no longer there is describing something that has moved on without it. 169 guide files were read; 15 name at least one file that is gone.

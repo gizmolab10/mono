@@ -4,20 +4,9 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] add new tag area -> progress
-    - [ ] tagset -> propose, coding, done
-- [ ] loc where labels are added when detected as missing
-    - [ ] only add labels as and when a file is opened for editing
-- [ ] mark 'stale' all guide files that contain completed tasks, phases, steps
+- [ ] mark the guides that are talking about finished work
 - [ ] filters
-    - [ ] animate their relayout on list files
-    - [ ] click in area below separator -> rules
-        - [ ] click closes that section
-        - [ ] hover lights up the clickable sep title
-        - [ ] tags area is different
-- [ ] add (find and) replace in edit
-- [ ] for work files -> support for check lists
-- [ ] button to add a sibling to the current viewed file and open it for editing
+    - [ ] animate their relayout on list files- [ ] add (find and) replace in edit
 - [ ] whitespace around almond in header's thin line --gap-tight
 - [ ] OKF
     - [ ] the title label is not the file name, why?
@@ -31,25 +20,17 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [ ] navigation and name and ancestry
     - [ ] filters
     - [ ] content
-
-## Do NOT remove this section
-
-mark the guides that are talking about finished work
-
-### Success
-
-1. Every guide whose words are a list of completed tasks, phases or steps wears the `stale` tag.
-2. Nothing else is changed in those files — only the tag line.
-3. The count is said plainly: how many were looked at, how many were marked.
-4. A guide already marked is left alone rather than marked twice.
-
-### The shape of it
-
-A guide that reads as a checklist of things already done is a record, not guidance — it wants a rewrite, and `stale` is the tag that says so. The judging cannot be automated: a file full of ticked boxes might be a finished plan or a live one. So the pass is: find the candidates by what is in them, list them for a person, and mark only what that person confirms.
-
-One word covers both on purpose. `stale` already means "this has fallen behind what it describes", and a file that is a list of finished work has fallen behind in exactly that way — it describes doing rather than done. A second tag would split one idea in two and leave a reader deciding which applies, which is how a closed list stops being readable.
-
 ## done
+
+- [x] add new tag area -> progress
+    - [x] tagset -> propose, coding, done
+- [x] loc where labels are added when detected as missing
+    - [x] only add labels as and when a file is opened for editing
+- [x] mark 'stale' all guide files that contain completed tasks, phases, steps
+- [x] click in area below separator -> rules
+    - [x] click closes that section
+    - [x] hover lights up the clickable sep title
+    - [x] tags area is different
 
 - [x] eliminate purpose
     - [x] design and work joined the kinds, said in a file's own labels
@@ -165,6 +146,8 @@ One word covers both on purpose. `stale` already means "this has fallen behind w
 
 ## soon
 
+- [ ] for work files -> support for check lists
+- [ ] button to add a sibling to the current viewed file and open it for editing
 - [ ] separator
     - [ ] new prop for gap -> whitespace around line (strips parallel to it)
     - [ ] where do reach and spacer get used?

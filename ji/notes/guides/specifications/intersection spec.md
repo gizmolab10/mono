@@ -1,8 +1,8 @@
 ---
-kind: wire
+kind: specify
 title: "Intersection Rules"
 description: "The rules the intersection app follows, starting with one source of truth for every color."
-tags: [wire, visual-design]
+tags: [visual-design, wire]
 date: 2026-07-24
 ---
 

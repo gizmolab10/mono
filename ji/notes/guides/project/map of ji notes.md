@@ -2,7 +2,7 @@
 kind: refer
 title: "Notes Map (ji)"
 description: "Every file under the ji notes folder, updated whenever notes are added, moved, or removed."
-tags: [notes]
+tags: [journal, notes]
 date: 2026-07-30
 ---
 

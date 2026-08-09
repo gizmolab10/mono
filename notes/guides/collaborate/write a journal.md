@@ -2,7 +2,7 @@
 kind: step
 title: "Journals"
 description: "The formatting rules for the running journal file."
-tags: [notes, prose]
+tags: [journal, notes, prose]
 date: 2026-05-10
 ---
 

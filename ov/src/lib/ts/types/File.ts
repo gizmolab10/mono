@@ -24,6 +24,7 @@ export const ALL_TAGS: string[] = [
 	'deploy',
 	'done',
 	'geometry',
+	'journal',
 	'migrate',
 	'notes',
 	'platform',

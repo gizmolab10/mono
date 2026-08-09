@@ -5,7 +5,7 @@
 // These files are left out of the app's own list on purpose, so nothing on screen would ever
 // show the damage. That is exactly why it has to be put right at the moment of the move.
 
-import { in_order } from '../types/Guide';
+import { in_order } from '../types/File';
 
 // A bulleted link, however far it is indented and whatever follows it.
 const LINK = /^\s*- \[[^\]]*\]\(([^)]+)\)/;

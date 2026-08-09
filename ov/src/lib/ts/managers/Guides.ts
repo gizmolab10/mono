@@ -1,4 +1,4 @@
-import { T_Bundle, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
+import { T_Bundle, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/File';
 import { kind_matches, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';

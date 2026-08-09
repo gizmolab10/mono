@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: specify
 title: "Testing (di)"
 description: "Which tests cover which rules, and how each test names the rule it pins."
 tags: [test]

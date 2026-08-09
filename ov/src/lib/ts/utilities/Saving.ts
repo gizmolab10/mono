@@ -1,4 +1,4 @@
-import { T_Bundle } from '../types/Guide';
+import { T_Bundle } from '../types/File';
 
 // Writing a changed guide back to the file it came from.
 //

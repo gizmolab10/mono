@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Markdown_Blocks';
 	import { follow_link, w_command_down, w_file_place, w_search_at, w_search_for } from '../../ts/managers/Operations';
-	import { ALL_TAGS, T_Bundle, T_Kind, in_order, key_of, type Guide } from '../../ts/types/Guide';
+	import { ALL_TAGS, T_Bundle, T_Kind, in_order, key_of, type Guide } from '../../ts/types/File';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { landed_on_a_control, names_up_to } from '../../ts/utilities/Leaving';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
@@ -462,6 +462,12 @@
 	let form_tags_word = $derived(show_form_tags ? 'tags'
 		: `tags ➜ ${form_tags.length === 0 ? 'none' : [...form_tags].sort(in_order).join(', ')}`);
 
+	// The seven kinds take a row of their own, folded away the same way — and folded, the word
+	// says which one the guide is, so a kind is never hidden without a sign of it.
+	let show_form_kinds = $state(true);
+	let form_kinds_word = $derived(show_form_kinds ? 'kinds'
+		: `kinds ➜ ${form_kind === '' ? 'none' : form_kind}`);
+
 	// The word on the line above the form folds the whole form away. With the form on screen it
 	// is just the one word; folded, it says what the file is filtered, since that is the only
 	// place left to read it.
@@ -915,104 +921,104 @@
 		onmousemove={(e) => { way_out_lit = over_empty(e); }}
 		onmouseleave={() => { way_out_lit = false; }}
 		use:tip={'back to the list'} onclick={leave_if_empty}>
-	<div class='view-head'>
-		<!-- Which of the files the filters leave is being read, and how many there are. Nothing
-		     while reading off the list, on a run of guides reached by links. -->
-		{#if $w_file_place}
-			<span class='file-count'>{$w_file_place.at} of {$w_file_place.of}</span>
-		{/if}
-		<Steppers {can_back} {can_forward} {onprev} {onnext}
-			back_says='previous file' forward_says='next file' />
-		<!-- The folders above the file follow the steppers at the left. -->
-		<span class='view-ancestry'>{sits_at}</span>
-		<!-- An empty run on either side, so the name sits at the middle of whatever the folders
-		     leave over rather than at the middle of the whole row. -->
-		<span class='view-spacer'></span>
-		<!-- The name is a field that reads as plain words until the cursor is over it. Leaving
-		     it, or pressing Return, gives the file itself whatever was typed. While the
-		     question about throwing the guide away is up, the name steps aside — the question
-		     already says which file it means. -->
-		{#if !asking_to_delete}
-		<input
-			class='view-name'
-			size={Math.max(1, typed_name.length)}
-			bind:value={typed_name}
-			use:tip={'change the file\'s name'}
-			onclick={(e) => (e.currentTarget as HTMLInputElement).focus()}
-			onblur={handle_rename}
-			onkeydown={(e) => {
-				e.stopPropagation();
-				if (e.key === 'Enter') { (e.currentTarget as HTMLInputElement).blur(); }
-				if (e.key === 'Escape') { typed_name = name; (e.currentTarget as HTMLInputElement).blur(); }
-			}} />
-		{/if}
-		<span class='view-spacer'></span>
-		<!-- Asking in words rather than in a box of its own: the trash mark asks, and the
-		     question that takes its place is the thing that answers. -->
-		{#if asking_to_delete}
-			<button class='asking-yes' use:tip={'throw it away for good'}
-				onclick={(e) => { e.stopPropagation(); handle_delete(); }}>delete "{name}"</button>
-			<button class='row-button' aria-label='keep it' use:tip={'keep this guide'}
-				onclick={(e) => { e.stopPropagation(); asking_to_delete = false; }}>
-				<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-					<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
-				</svg>
-			</button>
-		{:else}
-			<!-- The two stand together at the end of the row: hand this guide on, or throw it
-			     away. Handing it on comes first, since it is the one taken more often. -->
-			<span class='row-pair'>
-				<button class='row-button lifted' aria-label='obsidian' use:tip={'open this guide in Obsidian'}
-					onclick={(e) => { e.stopPropagation(); handle_obsidian(); }}>o</button>
-				<button class='row-button' aria-label='send' use:tip={'send this guide in a message'}
-					onclick={(e) => { e.stopPropagation(); handle_send(); }}>⤴</button>
-				<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
-					onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
+		<div class='view-head'>
+			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
+				while reading off the list, on a run of guides reached by links. -->
+			{#if $w_file_place}
+				<span class='file-count'>{$w_file_place.at} of {$w_file_place.of}</span>
+			{/if}
+			<Steppers {can_back} {can_forward} {onprev} {onnext}
+				back_says='previous file' forward_says='next file' />
+			<!-- The folders above the file follow the steppers at the left. -->
+			<span class='view-ancestry'>{sits_at}</span>
+			<!-- An empty run on either side, so the name sits at the middle of whatever the folders
+				leave over rather than at the middle of the whole row. -->
+			<span class='view-spacer'></span>
+			<!-- The name is a field that reads as plain words until the cursor is over it. Leaving
+				it, or pressing Return, gives the file itself whatever was typed. While the
+				question about throwing the guide away is up, the name steps aside — the question
+				already says which file it means. -->
+			{#if !asking_to_delete}
+			<input
+				class='view-name'
+				size={Math.max(1, typed_name.length)}
+				bind:value={typed_name}
+				use:tip={'change the file\'s name'}
+				onclick={(e) => (e.currentTarget as HTMLInputElement).focus()}
+				onblur={handle_rename}
+				onkeydown={(e) => {
+					e.stopPropagation();
+					if (e.key === 'Enter') { (e.currentTarget as HTMLInputElement).blur(); }
+					if (e.key === 'Escape') { typed_name = name; (e.currentTarget as HTMLInputElement).blur(); }
+				}} />
+			{/if}
+			<span class='view-spacer'></span>
+			<!-- Asking in words rather than in a box of its own: the trash mark asks, and the
+				question that takes its place is the thing that answers. -->
+			{#if asking_to_delete}
+				<button class='asking-yes' use:tip={'throw it away for good'}
+					onclick={(e) => { e.stopPropagation(); handle_delete(); }}>delete "{name}"</button>
+				<button class='row-button' aria-label='keep it' use:tip={'keep this guide'}
+					onclick={(e) => { e.stopPropagation(); asking_to_delete = false; }}>
 					<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-						<path d={binPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' stroke-linejoin='round' />
+						<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 					</svg>
 				</button>
-			</span>
-		{/if}
-	</div>
-	<!-- The line above the search, carrying its own word. Pressing the word folds the search
-	     away, and the words below take its room; pressing it again brings it back. -->
-	<Separator at_left thickness={k.thickness.huge} title={search_word} hovered={way_out_lit}
-		onclick={() => { w_show_search.set(!$w_show_search); debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`); }}/>
-	<!-- Looking through the file on screen. Its type is "search", so the browser draws its
-	     own clear cross at the right end once there is text. -->
-	{#if $w_show_search}
-	<div class='view-search'>
-		<!-- With something typed, two triangles walk the places those words turn up, and the
-		     count says which of them is lit. -->
-		{#if $w_words !== ''}
-			<!-- The count reads first, then the two marks that walk from one place to the next. -->
-			<div class='view-steps hits'>
-				<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
-				<Steppers can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
+			{:else}
+				<!-- The two stand together at the end of the row: hand this guide on, or throw it
+					away. Handing it on comes first, since it is the one taken more often. -->
+				<span class='row-pair'>
+					<button class='row-button lifted' aria-label='obsidian' use:tip={'open this guide in Obsidian'}
+						onclick={(e) => { e.stopPropagation(); handle_obsidian(); }}>o</button>
+					<button class='row-button' aria-label='send' use:tip={'send this guide in a message'}
+						onclick={(e) => { e.stopPropagation(); handle_send(); }}>⤴</button>
+					<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
+						onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
+						<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
+							<path d={binPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' stroke-linejoin='round' />
+						</svg>
+					</button>
+				</span>
+			{/if}
+		</div>
+		<!-- The line above the search, carrying its own word. Pressing the word folds the search
+			away, and the words below take its room; pressing it again brings it back. -->
+		<Separator at_left thickness={k.thickness.huge} title={search_word} hovered={way_out_lit}
+			onclick={() => { w_show_search.set(!$w_show_search); debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`); }}/>
+		<!-- Looking through the file on screen. Its type is "search", so the browser draws its
+			own clear cross at the right end once there is text. -->
+		{#if !$w_show_search}
+			<!-- With the search folded away its line would sit right on top of the next one, so a gap
+				stands in for the row that went. -->
+			<div class='sep-gap'></div>
+		{:else}
+			<div class='view-search'>
+				<!-- With something typed, two triangles walk the places those words turn up, and the
+					count says which of them is lit. -->
+				{#if $w_words !== ''}
+					<!-- The count reads first, then the two marks that walk from one place to the next. -->
+					<div class='view-steps hits'>
+						<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
+						<Steppers can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
+					</div>
+				{/if}
+				<input
+					type='search'
+					class='search'
+					placeholder='search'
+					oninput={find_first}
+					bind:value={$w_words}
+					use:tip={'search this file'} />
 			</div>
 		{/if}
-		<input
-			type='search'
-			class='search'
-			placeholder='search'
-			oninput={find_first}
-			bind:value={$w_words}
-			use:tip={'search this file'} />
-	</div>
-	{:else}
-		<!-- With the search folded away its line would sit right on top of the next one, so a gap
-		     stands in for the row that went. -->
-		<div class='sep-gap'></div>
-	{/if}
 	</div>
 	<!-- While the filters are open the heavy line moves below them, so the form reads as part of
 	     the top rather than as words of the file. Its word folds away only what sits between it
 	     and the next line — the kind, title, date and description — leaving the tags below. -->
 	<Separator
 		at_left
-		title={filter_rows_word}
 		hovered={way_out_lit}
+		title={filter_rows_word}
 		thickness={k.gap.normal}
 		onclick={() => { w_show_filters.set(!$w_show_filters); debug.log(`Editing "${name}": the filter form is now ${!$w_show_filters ? 'hidden' : 'shown'}.`); }}/>
 	<!-- The five filters, shown only while editing. They never appear among the words, so
@@ -1028,12 +1034,6 @@
 				class:lit={way_out_lit}
 				use:tip={'back to the list'} onclick={leave_if_empty}>
 				<div class='filter-row'>
-					<span class='filter-word'>kind</span>
-					{#each KINDS as one (one)}
-						<button class='filter-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_filters(); }}>{one}</button>
-					{/each}
-				</div>
-				<div class='filter-row'>
 					<span class='filter-word'>title</span>
 					<input class='filter-field' bind:value={form_title} onblur={save_filters} />
 					<span class='filter-word'>date</span>
@@ -1043,6 +1043,20 @@
 					<span class='filter-word'>says</span>
 					<input class='filter-field' bind:value={form_description} onblur={save_filters} />
 				</div>
+				<!-- The kinds fold away behind their own word, which then says which one the guide
+				     is — the same shape the tags below use. -->
+				<div class='filter-sep'>
+					<Separator at_left thickness={k.thickness.normal} title={form_kinds_word} hovered={way_out_lit}
+						onclick={() => { show_form_kinds = !show_form_kinds; debug.log(`Editing "${name}": the kinds row is now ${show_form_kinds ? 'shown' : 'folded away'}.`); }}/>
+				</div>
+				{#if show_form_kinds}
+					<div class='filter-row'>
+						<span class='filter-word'>kind</span>
+						{#each KINDS as one (one)}
+							<button class='filter-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_filters(); }}>{one}</button>
+						{/each}
+					</div>
+				{/if}
 			</div>
 			<!-- The word on this line lights with every other one that can be pressed: while the
 			     way back to the list is lit, and while the cursor is among the tags below it. -->
@@ -1063,6 +1077,10 @@
 						<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
 					{/each}
 				</div>
+			{:else}
+				<!-- With the tags folded away their line would sit right on the heavy one below, so
+				     a gap stands in for the row that went. -->
+				<div class='sep-gap'></div>
 			{/if}
 		</div>
 		<Separator thickness={k.thickness.huge}/>
@@ -1341,8 +1359,8 @@
 
 	/* The tag areas stand clear of the heavy line below them. */
 	.filter-row.wrapping {
-		justify-content : center;
 		padding-bottom  : var(--gap);
+		justify-content : center;
 		flex-wrap       : wrap;
 	}
 

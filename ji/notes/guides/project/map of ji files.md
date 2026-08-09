@@ -2,7 +2,7 @@
 kind: refer
 title: "Map (ji)"
 description: "Every source file in ji, updated whenever files are added, moved, or removed."
-tags: [notes, wire]
+tags: [journal, notes, wire]
 date: 2026-07-29
 ---
 

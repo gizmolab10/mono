@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from './Preferences';
-import { ALL_TAGS, T_Kind } from '../types/Guide';
+import { ALL_TAGS, T_Kind } from '../types/File';
 import { get } from 'svelte/store';
 
 /**

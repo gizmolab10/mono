@@ -1,3 +1,10 @@
+---
+kind: design
+title: "OKF — turning the guides into a knowledge bundle"
+description: "OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at t..."
+tags: [done, propose]
+date: 2026-08-08
+---
 # OKF — turning the guides into a knowledge bundle
 
 OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at the top. Source: [OKF + RAG](https://medium.com/@ravishkhullar/okf-rag-the-ultimate-ai-agent-architecture-26b9ceed44f1).
