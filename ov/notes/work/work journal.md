@@ -2,6 +2,30 @@
 
 What's been finished, newest first.
 
+## 2026-08-09 — every line on the list screen now owns the gap around it
+
+The filters drew five lines by hand, each in a bare wrapper with the row it named as a sibling — so the gap between a line and its own row came from the stack rather than from either. All five are sections now, and the count row with them. The stack's own spacing went to zero in the same edit; without that, every row would have grown by one gap.
+
+**Two sources of spacing were still stacking.** The content box put its own gap between the filters, the count and the list, on top of each section's own. The list screen now stacks its three parts flush.
+
+**A section that holds subsections stands flat when folded.** It holds no gap of its own when it is open, so holding one when folded was a gap that existed in only one of the two states — and whatever follows holds its own already.
+
+**The table header's line moved to the top of its row.** It ran through the middle of the words, so half that row stood between the count row and the line anyone actually measures to. The words now ride the line and take no height at all, the way a word on any other line does — which is what makes the gap above measurable to the line and the rows below stand clear under it. Two things had to follow: the header as a whole stands in front of the line, since lifting it made a world of its own that nothing inside could reach out of; and the line itself stepped back a layer, so a word drawn on it from outside is never painted over.
+
+**Where guessing failed, the app measured.** Three rounds of reasoning about which gap was too big produced nothing; one round of asking the page for real numbers named both culprits at once.
+
+## 2026-08-09 — the editor became four files, and the page stopped blinking
+
+The editor was 1,941 lines and held four whole things that had nothing to say to each other. It is now 448: the top row, the way back to the list, and the two things the parts share — the whole file's text, and the line along the bottom that speaks up briefly. **Search** took the search row and the highlighting (239 lines). **File_OKF** took a guide's own labels (287). **File_Content** took reading the file, drawing it, folding it, and the box that changes one piece (1,052). Nothing on screen was meant to move.
+
+**The rule about clicking bare space became Hit_Empty_Space**, named for what it answers rather than for one caller's purpose. It was called Leaving, which named no subject; then Leave_Editor, which named the caller — three components ask the same question and one of them may one day not be leaving anything.
+
+**Names that had drifted.** The manager that holds every guide became Files. The list's filters became List_OKF, a file's own became File_OKF — the app calls both "filters" and the two were one keystroke apart. Browse and Editor moved up into the frame folder, since each is a whole screen; the status line moved down into content, since it is one thing the box shows.
+
+**Typing in the search field re-read the file from disk on every letter.** Working the list out again handed the editor a fresh record of the very same file, and the read was tied to that record rather than to the file's place. Five letters, five reads, five redrawings — which is what blinked. The place is now one piece of text, the same from one record to the next, so nothing stirs. Proved by making the app measure: the log alternated read, measurement, read, measurement.
+
+**A smaller blink underneath it.** Clearing the highlighted words folded away whatever piece had been opened to reach them, and the next place — usually inside that very piece — opened it again. The two answers are now worked out together, so a piece is only ever folded when the next place is somewhere else.
+
 ## 2026-08-08 — nothing is written to a file nobody asked about
 
 A file added to the guides used to be given labels the moment the app read it — a hundred guesses made at launch, none of them looked at. Now a file with no labels is left exactly as it is and reads `---` in its kind column. The labels are composed the first time someone opens that file to edit: title and description from its own words, kind read off the folder it sits in, marked stale. The judging is the collaborator's, done on one file while it is in front of a person; correcting it is Jonathan's, on the file he is already looking at.

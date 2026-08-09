@@ -1,5 +1,7 @@
 <script lang='ts'>
-	import { w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { w_show_folders, w_show_filters, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import Section from '../support/Section.svelte';
 	import Files, { w_scrollbar_showing } from '../content/Files.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { guides } from '../../ts/managers/Files';
@@ -35,51 +37,72 @@
 
 </script>
 
+<!-- The three parts stack flush against each other: each already holds its own gap above and
+     below what it shows, so a gap here would be a second helping of the same thing. -->
+<div class='browse'>
 <List_OKF />
-<div class='count-row'>
-	<!-- With nothing left after the filters there are no folders to show or hide, so the
-	     button has nothing to act on. -->
-	{#if matching > 0}
-		<!-- A drawn bar while the folders show; a folder while they are hidden. -->
-		<button class='folders-button eye' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
-			📁
-			{#if !$w_show_folders}
-				<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
-					<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
-				</svg>
-			{/if}
-		</button>
-	{/if}
-	<!-- What was picked, beside the folder button: the project's short name, then the kind,
-	     each held well clear of its neighbors. -->
-	{#if $w_project !== ''}
-		<span class='chosen-project'>{$w_project}</span>
-	{/if}
-	<!-- An upright line stands between them, but only while both are picked. -->
-	{#if $w_project !== '' && $w_kind !== ''}
-		<span class='chosen-between'>|</span>
-	{/if}
-	{#if $w_kind !== ''}
-		<span class='chosen-kind'>{$w_kind}</span>
-	{/if}
-	<span class='count'>{matching} files (of {total})</span>
-	<!-- The picked tags hug the far right, the folders button the far left, and the count
-	     keeps the middle of the whole row. -->
-	{#if $w_tags.length > 0}
-		<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
-	{/if}
-</div>
+<!-- How many the filters leave, as a section of its own. The heavy line above it is what closes
+     the picking rows off from the list; with those rows folded away there is nothing for it to
+     close, so this section stands at an edge of the view instead and draws no line at all. -->
+<Section
+	gap={k.gap.normal}
+	edge={$w_show_filters ? T_Edge.thick : T_Edge.view}>
+	{#snippet holds()}
+	<div class='count-row'>
+		<!-- With nothing left after the filters there are no folders to show or hide, so the
+		     button has nothing to act on. -->
+		{#if matching > 0}
+			<!-- A drawn bar while the folders show; a folder while they are hidden. -->
+			<button class='folders-button eye' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
+				📁
+				{#if !$w_show_folders}
+					<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
+						<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
+					</svg>
+				{/if}
+			</button>
+		{/if}
+		<!-- What was picked, beside the folder button: the project's short name, then the kind,
+		     each held well clear of its neighbors. -->
+		{#if $w_project !== ''}
+			<span class='chosen-project'>{$w_project}</span>
+		{/if}
+		<!-- An upright line stands between them, but only while both are picked. -->
+		{#if $w_project !== '' && $w_kind !== ''}
+			<span class='chosen-between'>|</span>
+		{/if}
+		{#if $w_kind !== ''}
+			<span class='chosen-kind'>{$w_kind}</span>
+		{/if}
+		<span class='count'>{matching} files (of {total})</span>
+		<!-- The picked tags hug the far right, the folders button the far left, and the count
+		     keeps the middle of the whole row. -->
+		{#if $w_tags.length > 0}
+			<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
+		{/if}
+	</div>
+	{/snippet}
+</Section>
 <Files />
+</div>
 
 <style>
+	.browse {
+		flex-direction : column;
+		display        : flex;
+		min-height     : 0;
+		flex           : 1;
+		gap            : 0;
+	}
+
 	/* The button hugs the far left; the count is placed at the middle of the whole row
-	   rather than centered in what the button leaves over, so it never drifts.
-	   Pulled 2px closer to the dividers above and below, so the row takes less height. */
+	   rather than centered in what the button leaves over, so it never drifts. */
 	/* The row holds one height whether or not the buttons are in it, so the count and the
-	   list below never shift when a button has nothing to act on and leaves. */
+	   list below never shift when a button has nothing to act on and leaves. Nothing of its
+	   own above or below — the gap on both sides is the section's — and it stands exactly as
+	   tall as the folders button, so the section is that button and one gap either side. */
 	.count-row {
-		margin      : calc(var(--gap-small) - 6px) 0 -6px 0;
-		min-height  : var(--height);
+		min-height  : var(--size);
 		gap         : var(--gap-tiny);
 		position    : relative;
 		align-items : center;
@@ -166,7 +189,6 @@
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
-		top             : 2px;
 		padding         : 0;
 	}
 

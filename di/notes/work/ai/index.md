@@ -2,7 +2,7 @@
 
 ## Contents
 
-- [Cadence](./cadence.md)
+- [Cadence](cadence.md)
 - [Learn](./learn.md)
 - [Technique](./technique.md)
 

@@ -1,17 +1,17 @@
 <script lang='ts'>
-	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { w_file_place, w_search_at, w_search_for } from '../../ts/managers/Operations';
+	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
+	import { T_Bundle, type Guide } from '../../ts/types/File';
+	import File_Content from '../content/File_Content.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_words } from '../../ts/managers/Filters';
-	import { T_Bundle, type Guide } from '../../ts/types/File';
 	import Steppers from '../support/Steppers.svelte';
+	import File_OKF from '../content/File_OKF.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import File_OKF from '../content/File_OKF.svelte';
-	import File_Content from '../content/File_Content.svelte';
 	import Search from '../content/Search.svelte';
 	import { get } from 'svelte/store';
 

@@ -1,19 +1,17 @@
 <script lang='ts'>
-	import { w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
+	import { w_project, w_kind, w_show_filters, w_tags, w_words } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { shut_all_areas, UNLABELED } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
-	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
-	import Separator from '../support/Separator.svelte';
+	import { TAG_AREAS, tags_shown } from '../../ts/types/Tag_Areas';
+	import { fade } from 'svelte/transition';
+	import Section from '../support/Section.svelte';
+	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import Big_Pill from '../support/Big_Pill.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-
-	// Whether the three picking rows show at all. The words looked for stay either way —
-	// they are the one filter worth keeping in reach while the list has the height.
-	const w_show_filters = preferences.persistent<boolean>(T_Preference.show_filters, true);
 
 	function toggle_filters() {
 		const next = !$w_show_filters;
@@ -89,6 +87,14 @@
 	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
 	let tags_word = $derived($w_tags.length === 0 ? 'all' : $w_tags.join(', '));
 
+	// How long an area that runs out of tags takes to fade away, in milliseconds. The same time a
+	// pill takes to grow or shrink, so the two read as one movement.
+	const SLIDE = 3000;
+
+	// Only the areas with something left to show. Worked out here rather than inside each pill,
+	// because an area that draws nothing must not leave a wrapper behind holding a gap open.
+	let showing_areas = $derived(TAG_AREAS.filter((area) => tags_shown(area, tags_in_use, $w_tags).length !== 0));
+
 	// What the word on the bar says: just the name while the row is there, the name and what
 	// is picked while it is folded away.
 	function heading(name: string, shown: boolean, picked: string): string {
@@ -135,84 +141,111 @@
 			use:tip={'type a word to look for'} />
 	</div>
 
-	<!-- One word over the whole set, saying what every row holds and folding them all at a
-	     press anywhere along the line. -->
-	<div>
-		<Separator at_left thickness={k.thickness.huge} title={all_word} onclick={toggle_filters}/>
-	</div>
+	<!-- The whole set of picking rows, as one section: its line carries the word that folds them
+	     all away, and it holds three subsections — the projects, the kinds, the tags. It holds no
+	     gap of its own, since each of those holds the gap at its own boundaries. -->
+	<Section
+		holds_subsections
+		gap={0}
+		edge={T_Edge.thick}
+		title={all_word}
+		folded={!$w_show_filters}
+		onclick={toggle_filters}>
+		{#snippet holds()}
+		<!-- The gap above the first line inside is this run's own: a section that holds
+		     subsections holds none, and the first of them has nothing above it to stand clear of. -->
+		<div class='picking-rows'>
+			<!-- Each section's line names what sits under it, so the word reads as a heading for
+			     the row that follows. -->
+			<Section
+				gap={k.gap.big}
+				title={heading('projects', show_projects, project_word)}
+				folded={!show_projects}
+				onclick={() => fold('projects', show_projects)}>
+				{#snippet holds()}
+					<div class='paired-rows'>{@render projects_picker()}</div>
+				{/snippet}
+			</Section>
 
-	{#if $w_show_filters}
-		<!-- Each sep names what sits under it, so the words read as a heading for the row
-		     that follows. -->
-		<div>
-			<Separator at_left title={heading('projects', show_projects, project_word)}
-				onclick={() => fold('projects', show_projects)}/>
+			<Section
+				gap={k.gap.big}
+				title={heading('kinds', show_kinds, kind_word)}
+				folded={!show_kinds}
+				onclick={() => fold('kinds', show_kinds)}>
+				{#snippet holds()}
+					<div class='kinds' use:tip={'show particular kinds of guide'}>
+						<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
+						<!-- The files carrying no labels at all — how they are found, so they can be
+						     opened and given some. -->
+						<button class='segment' class:current={$w_kind === UNLABELED} class:empty={bare === 0}
+							use:tip={bare === 0 ? 'every file left by the other filters carries labels' : 'show only the files that carry no labels'}
+							onclick={() => { if (bare > 0) { choose_kind(UNLABELED); } }}>none</button>
+						{#each shown_kinds as kind}
+							{@const in_reach = kinds.includes(kind)}
+							<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
+								use:tip={in_reach ? false : `nothing of that kind is left by the other filters`}
+								onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
+						{/each}
+					</div>
+				{/snippet}
+			</Section>
+
+			<Section
+				gap={k.gap.big}
+				title={heading('tags', show_tags, tags_word)}
+				folded={!show_tags}
+				onclick={() => fold('tags', show_tags)}>
+				{#snippet holds()}
+					<!-- Twenty-four words in one row is more than an eye can scan, so the tags are
+					     gathered into six areas, each folding away behind its own name. Stopping
+					     filtering by tag keeps its own plain pill at the front. -->
+					<!-- A click on the bare space beside the pills shuts every area at once, so getting
+					     back to six words never means pressing six crosses. -->
+					<!-- Each area is wrapped so it can be slid: opening one grows it from a word to a
+					     run of segments, and the pills after it move a long way at once. The wrapper
+					     is what carries the slide, and areas with nothing left to show are left out
+					     here rather than inside — an empty wrapper would still take a gap. -->
+					<div class='tags' role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
+						<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>all</button>
+						{#each showing_areas as area (area.name)}
+							<span class='pill-slot' transition:fade={{ duration: SLIDE }}>
+								<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
+							</span>
+						{/each}
+					</div>
+				{/snippet}
+			</Section>
 		</div>
-		{#if show_projects}
-			<div class='paired-rows'>{@render projects_picker()}</div>
-		{/if}
-
-		<div>
-			<Separator at_left title={heading('kinds', show_kinds, kind_word)}
-				onclick={() => fold('kinds', show_kinds)}/>
-		</div>
-
-		{#if show_kinds}
-			<div class='kinds' use:tip={'show particular kinds of guide'}>
-				<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
-				<!-- The files carrying no labels at all — how they are found, so they can be
-				     opened and given some. -->
-				<button class='segment' class:current={$w_kind === UNLABELED} class:empty={bare === 0}
-					use:tip={bare === 0 ? 'every file left by the other filters carries labels' : 'show only the files that carry no labels'}
-					onclick={() => { if (bare > 0) { choose_kind(UNLABELED); } }}>none</button>
-				{#each shown_kinds as kind}
-					{@const in_reach = kinds.includes(kind)}
-					<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
-						use:tip={in_reach ? false : `nothing of that kind is left by the other filters`}
-						onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
-				{/each}
-			</div>
-		{/if}
-
-		<div>
-			<Separator at_left title={heading('tags', show_tags, tags_word)}
-				onclick={() => fold('tags', show_tags)}/>
-		</div>
-
-		{#if show_tags}
-			<!-- Twenty-four words in one row is more than an eye can scan, so the tags are
-			     gathered into six areas, each folding away behind its own name. Stopping
-			     filtering by tag keeps its own plain pill at the front. -->
-			<!-- A click on the bare space beside the pills shuts every area at once, so getting
-			     back to six words never means pressing six crosses. -->
-			<div class='tags' role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
-				<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>all</button>
-				{#each TAG_AREAS as area (area.name)}
-					<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
-				{/each}
-			</div>
-		{/if}
-	{/if}
+		{/snippet}
+	</Section>
 </div>
-<!-- The plain heavy line closing the picking rows off from the list. With the rows folded
-     away there is nothing for it to close, so it goes. -->
-{#if $w_show_filters}
-	<Separator thickness={k.thickness.huge}/>
-{/if}
 
 <style>
+	/* Sections stack flush against each other: each already holds its own gap above and below
+	   what it shows, so a gap here would be a second helping of the same thing. */
 	.filters {
-		gap            : var(--gap-big);
 		flex-direction : column;
+		display        : flex;
+		gap            : 0;
+	}
+
+	/* The toggle at the far left, the search field taking whatever is left. Not a section, so it
+	   holds its own gap below — the gap the line under it would otherwise stand clear of. */
+	.top-row {
+		padding-bottom : var(--gap-big);
+		min-height     : var(--height);
+		gap            : var(--gap);
+		align-items    : center;
 		display        : flex;
 	}
 
-	/* The toggle at the far left, the search field taking whatever is left. */
-	.top-row {
-		min-height  : var(--height);
-		gap         : var(--gap);
-		align-items : center;
-		display     : flex;
+	/* The three picking rows, taken as one run. Its own gap above is what stands between the
+	   line over the whole set and the first line inside it. */
+	.picking-rows {
+		padding-top    : var(--gap-big);
+		flex-direction : column;
+		display        : flex;
+		gap            : 0;
 	}
 
 	/* The purposes and the projects share one row: the space before the first, between the
@@ -267,6 +300,12 @@
 	}
 
 	/* Twenty-two tags won't sit in one row, so they wrap. Any number can be on at once. */
+	/* The wrapper that carries a pill's slide. It hugs whatever it holds, so the row measures
+	   exactly as it did before there was anything to slide. */
+	.pill-slot {
+		display : inline-flex;
+	}
+
 	.tags {
 		gap             : var(--gap);
 		justify-content : center;

@@ -478,11 +478,16 @@
 		min-height     : 0;
 	}
 
-	/* The header table sits still above the rows. It holds back the same width on the
-	   right that the scrolled area gives its scrollbar, so the two line up. */
+	/* The header sits still above the rows. It holds back the same width on the right that the
+	   scrolled area gives its scrollbar, so the two line up. It stands only as tall as its line:
+	   the titles are pulled out of the flow and straddle that line, taking no height of their
+	   own — the same way a word on any other line in the app does. So whatever stands above
+	   measures its gap to the line, and the rows below stand one gap under it. */
 	.table-head {
+		/* Two gaps, not one: the titles straddle the line, so about half their height already
+		   hangs into the first gap. The second is what actually stands clear below them. */
+		margin-bottom : calc(var(--gap) * 2);
 		box-sizing    : border-box;
-		margin-bottom : var(--gap);
 		position      : relative;
 		width         : 100%;
 		flex-shrink   : 0;
@@ -501,20 +506,33 @@
 		padding-right : var(--gap);
 	}
 
-	/* The divider, running behind the titles, a touch below their center. It runs the
-	   full width — the scrollbar only exists beside the rows, which begin below it, so
-	   there is nothing up here for it to stop short of. */
+	/* The divider, along the very top of the header row rather than through the middle of it.
+	   That way whatever stands above the row measures its gap to the line itself, and the row
+	   holds its own gap under it. It runs the full width — the scrollbar only exists beside the
+	   rows, which begin below it, so there is nothing up here for it to stop short of. */
 	.head-line {
-		transform : translateY(-50%);
+		position : absolute;
+		right    : 0;
+		left     : 0;
+		top      : 0;
+	}
+
+	/* The titles sit in front of the line and take no height: pulled out of the flow and lifted
+	   by half their own height, so they straddle the line rather than standing under it. Its left
+	   and right edges are the header's own, so the width held back for the scrollbar still counts
+	   and the titles stay lined up with the columns below. */
+	/* The layer is named here rather than on the titles themselves: lifting the header by half its
+	   own height makes it a world of its own, and nothing inside can reach past the line unless
+	   the header as a whole stands in front of it. */
+	.table-head table {
+		/* Half its own height puts the words' box on the line; the two pixels over that put the
+		   words themselves there, since a letter sits low in the line it is written on. */
+		transform : translateY(calc(-50% - 2px));
+		z-index   : var(--z-frontmost);
 		position  : absolute;
 		right     : 0;
 		left      : 0;
-		top       : calc(50% + 2px);
-	}
-
-	/* The titles sit in front of the line. */
-	.table-head table {
-		position : relative;
+		top       : 0;
 	}
 
 	/* Only the rows scroll; they fill the space under the header. The scrollbar's room is
@@ -601,8 +619,10 @@
 	}
 
 	/* The mark in that lane, its right edge held 20px clear of the word. */
+	/* One gap wider on each side, and moved that gap left, so the mark itself stays put while the
+	   page color around it breaks a longer run of the line. */
 	.head-mark {
-		width           : calc(var(--size-small) + var(--gap) - 14px);
+		width           : calc(var(--size-small) + var(--gap) - 14px + var(--gap) * 2);
 		background      : var(--bg);
 		position        : absolute;
 		cursor          : pointer;
@@ -610,8 +630,10 @@
 		align-items     : center;
 		display         : flex;
 		border          : none;
-		top             : 39%;
-		left            : 3px;
+		/* The whole header is lifted two pixels so its words sit square on the line; the mark is
+		   a drawn shape rather than a letter, so it takes those two back. */
+		top             : calc(39% + 2px);
+		left            : calc(3px - var(--gap));
 		padding         : 0;
 	}
 
@@ -641,7 +663,7 @@
 	}
 
 	.head th:last-child .head-label {
-		margin-right : calc(0px - var(--gap));
+		margin-right : calc(var(--gap-big) - var(--gap));
 	}
 
 	.head th.kind-head .head-label,

@@ -175,10 +175,14 @@
 				     is where a file's own tags are set rather than where files are narrowed.
 				     A press on the bare space among them shuts them all; a press on an area
 				     itself is that area's own. -->
+				<!-- Each area is wrapped so it can be slid: opening one grows it from a word to a
+				     run of segments, and the pills after it move a long way at once. -->
 				<div class='filter-row wrapping tags-row' role='presentation'
 					onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
 					{#each TAG_AREAS as area (area.name)}
-						<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
+						<span class='pill-slot'>
+							<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
+						</span>
 					{/each}
 				</div>
 			{/snippet}
@@ -223,16 +227,24 @@
 		background : var(--hover);
 	}
 
+	/* The wrapper that carries a pill's slide. It hugs whatever it holds, so the row measures
+	   exactly as it did before there was anything to slide. */
+	.pill-slot {
+		display : inline-flex;
+	}
+
 	.filter-row {
 		gap         : var(--gap-tiny);
 		align-items : center;
 		display     : flex;
 	}
 
-	/* The gap below the tag areas is the section's, not theirs. */
+	/* The gap below the tag areas is the section's, not theirs. Wrapped onto more than one row,
+	   they stand a full gap apart both ways — the same as the tag areas among the filters. */
 	.filter-row.wrapping {
 		justify-content : center;
 		flex-wrap       : wrap;
+		gap             : var(--gap);
 	}
 
 	.filter-word {

@@ -53,7 +53,7 @@
 		class='section-body'
 		style:padding-top='{holds_gap}px'
 		style:padding-bottom='{holds_gap}px'
-		style:min-height='{folded ? folded_height(gap) : 0}px'
+		style:min-height='{folded ? folded_height(gap, holds_subsections) : 0}px'
 		role='presentation'
 		onmouseenter={() => onhover?.(true)}
 		onmouseleave={() => onhover?.(false)}>

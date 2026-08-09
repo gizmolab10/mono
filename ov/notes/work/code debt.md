@@ -4,30 +4,25 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [x] scrolling content should not scroll title row
-- [ ] convert 'search' titled sep -> unicode character (magnifying glass)
-- [ ] add any/all/clear to tags
-- [ ] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
-- [ ] cute: add a link to work sites
-    - [ ] on all localhost served
-    - [ ] upper right corner immediate left of help
-- [ ] filters
-    - [ ] animate their relayout on list files- [ ] add (find and) replace in edit
-- [ ] whitespace around almond in header's thin line --gap-tight
-- [ ] OKF
-    - [ ] the title label is not the file name, why?
-    - [ ] what is 'says' label for?
-        - [ ] make 'says' multi-line, auto-adjust height
-    - [ ] click file name -> edit in place
-        - [ ] ie, centered -> typing is a bitch?
+- [ ] tags
+    - [ ] animate relayout on list files
+    - [ ] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
+    - [ ] add any/all/clear
+- [ ] port Hits.ts from di
+    - [ ] replace nearly all of the on click and on hover wiring with hits logic
 
-- [ ] new unified look
-    - [ ] search, n of m steppers
-    - [ ] navigation and name and ancestry
-    - [ ] filters
-    - [ ] content
 ## done
 
+- [x] whitespace around almond in header's thin line --gap-tight
+- [x] use Section in Browse
+    - [x] the picking rows, the three inside them, and the count row all draw their own line and hold their own gap
+    - [x] the table header's line moved to the top of its row, its words riding it and taking no height
+- [x] break the editor into four
+    - [x] the search, a guide's own labels, and a guide's own words each left with their own styling
+    - [x] the click rule became Hit_Empty_Space, named for what it answers
+    - [x] Browse and Editor moved up into the frame folder, the status line down into content
+- [x] typing in the search no longer re-reads and redraws the file on every letter
+- [x] scrolling content should not scroll title row
 - [x] mark the guides that are talking about finished work
 - [x] add new tag area -> progress
     - [x] tagset -> propose, coding, done
@@ -38,7 +33,6 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [x] click closes that section
     - [x] hover lights up the clickable sep title
     - [x] tags area is different
-
 - [x] eliminate purpose
     - [x] design and work joined the kinds, said in a file's own labels
     - [x] the purpose row, its remembered setting and its last-one-on rule all went
@@ -52,7 +46,10 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 - [x] the dispatcher's list is the app's whole picture — no build-time scan of the guide folders
     - [x] nothing reloads the page when a guide is written, renamed, moved or thrown away
     - [x] with the dispatcher not answering, the screen says so rather than sitting empty
-- [x] editor: a ⤴ button right of the trash, opening a message with the guide's words
+- [x] editor
+    - [x] a ⤴ button right of the trash, opening a message with the guide's words
+    - [x] click file name -> edit in place
+        - [x] ie, centered -> typing is a bitch?
 - [x] moving a file no longer restarts the app
 - [x] mo/pre-flight — replying became response, working became agency
 - [x] ji — a ⤴ button left of help; the chat stays on screen while the AI is unreachable
@@ -153,11 +150,19 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## soon
 
-- [ ] for work files -> support for check lists
+- [ ] convert 'search' titled sep -> unicode character (magnifying glass)
+- [ ] editor
+    - [ ] the title label is not the file name, why?
+    - [ ] make 'brief' multi-line, auto-adjust height
+    - [ ] add (find and) replace
+    - [ ] support for check lists
+    - [ ] improved editing of tables
 - [ ] button to add a sibling to the current viewed file and open it for editing
 - [ ] separator
-    - [ ] new prop for gap -> whitespace around line (strips parallel to it)
     - [ ] where do reach and spacer get used?
+- [ ] cute: add a link to hub
+    - [ ] on all localhost served
+    - [ ] upper right corner immediate left of help
 - [ ] work has different tags — propose, design, progress, vital — area 'work'
 - [ ] checkbox in details preferences to show/hide tooltips
 - [ ] click and hold on a header opens the filters. does nothing if they are open

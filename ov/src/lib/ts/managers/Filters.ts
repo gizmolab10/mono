@@ -54,6 +54,12 @@ export const w_shut = preferences.persistent<string[]>(T_Preference.folders_shut
 // folders still decide what a shut fold hides, they just aren't drawn.
 export const w_show_folders = preferences.persistent<boolean>(T_Preference.show_folders, true);
 
+// Whether the three picking rows show at all. The words looked for stay either way — they are
+// the one filter worth keeping in reach while the list has the height. Held here rather than in
+// the rows themselves, since the count row below reads it too: with the rows folded away there
+// is no heavy line for the count to stand under.
+export const w_show_filters = preferences.persistent<boolean>(T_Preference.show_filters, true);
+
 // Which areas of tags are open, named rather than numbered so renaming or adding one cannot
 // shift the meaning of what was saved. Both the filters and the label form read the same list,
 // so an area left open in one is open in the other.

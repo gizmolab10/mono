@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { w_search_at } from '../../ts/managers/Operations';
 	import { what_to_open } from '../../ts/utilities/Searching';
-	import Section from '../support/Section.svelte';
+	import { w_search_at } from '../../ts/managers/Operations';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import Steppers from '../support/Steppers.svelte';
 	import { w_words } from '../../ts/managers/Filters';
+	import Steppers from '../support/Steppers.svelte';
 	import { tip } from '../../ts/utilities/Tooltip';
+	import Section from '../support/Section.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { get } from 'svelte/store';
 
@@ -176,10 +176,10 @@
 			<input
 				type='search'
 				class='search'
-				placeholder='search'
 				oninput={find_first}
 				bind:value={$w_words}
-				use:tip={'search this file'} />
+				use:tip={'search this file'}
+				placeholder='search the contents of this file' />
 		</div>
 	{/snippet}
 </Section>

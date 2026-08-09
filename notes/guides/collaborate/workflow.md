@@ -20,7 +20,7 @@ Turn-taking. Jonathan moves, co responds, Jonathan reads, Jonathan decides, co a
 
 **Questions are not orders.** "How will you do X?" asks for a description, not the action itself. Describe and wait.
 
-Living notes at [../../../di/notes/work/cadence.md](../../../di/notes/work/cadence.md).
+Living notes at [[cadence]].
 
 ## The structure
 - `notes/guides/` — living reference (style, patterns, how-tos)
