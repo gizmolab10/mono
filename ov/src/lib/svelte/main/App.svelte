@@ -2,7 +2,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
-	import { guides } from '../../ts/managers/Guides';
+	import { guides } from '../../ts/managers/Files';
 	import { colors } from '../../ts/utilities/Colors';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
@@ -11,7 +11,7 @@
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import { w_show_status } from '../../ts/managers/Status';
-	import Status_Line from './Status_Line.svelte';
+	import Status_Line from '../content/Status_Line.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Operation from './Operation.svelte';
 	import Controls from './Controls.svelte';

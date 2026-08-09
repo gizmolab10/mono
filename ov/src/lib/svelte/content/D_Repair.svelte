@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { guides } from '../../ts/managers/Guides';
+	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 

@@ -43,7 +43,7 @@ describe('drawing a whole guide', () => {
 	});
 
 	it('gives every link its own hover words', () => {
-		expect(page_of(reader, file)).toContain('data-tip="follow this link"');
+		expect(page_of(reader, file)).toContain('data-tip="visit link"');
 	});
 
 	it('agrees with the file after a change that adds lines', () => {

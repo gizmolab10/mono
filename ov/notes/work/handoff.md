@@ -4,25 +4,26 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md)  file has what's finished iand the [[current context]] you can't read off the code. 
 
-## Sections and separators become one piece
+## Break the editor into four
+
 ### Success
 
-1. The editor is built from one Section piece used five times, not from hand-set spacing at every level.
-2. A section says what it is with props — its separator's thickness, its title, whether the title can be pressed, whether it folds — and nothing else.
-3. Every gap above and below content comes from the Section, so no rule in the editor sets a margin to line something up.
-4. Nothing on screen moves.
-5. The type check and the tests are clean.
+1. The editor holds only what makes the editor: its four sections, its way back to the list, its top row.
+2. Three pieces of its own: how a guide's words read, the box that changes one piece, and the searching.
+3. Nothing on screen moves, and nothing changes what it does.
+4. The type check and the tests are clean.
+5. The editor is under 700 lines.
 
 ### The shape of it
 
-The editor is 1,897 lines with 55 separate spacing rules, and I have spent this session fixing three faults that were all the same fault: one place pushing, another pulling, and the two drifting apart. The guide names the cause — separators deployed several ways, each with its own arithmetic.
+The editor is 1,919 lines, 758 of them styling, and 48 of those rules dress a guide's own words rather than the editor's frame. Three things in there are whole in themselves and mention the editor nowhere.
 
-**What a Section is.** A rectangle bounded above and below by a separator or an edge, with equal room around its content. That is the whole idea; the props are thickness, title, pressable, foldable, and the extra strip that also takes hover and click.
+**How a guide reads** — the biggest and the cleanest. Paragraphs, the six heading levels, lists, tables, quotes, chunks of code, the marks that fold a section, the fixed slot the title stands in. It takes the words and draws them; the editor hands them over. Roughly 400 lines of styling and the folding code.
 
-**The order.** Build the Section against the tags row first, since it is the one whose height changes. Then kinds, then title-and-brief, then search, then title-and-navigator. Content last — it holds the scrolling and the pinned title, and is the only one that is not a plain stack.
+**The box that changes one piece** — making it, sizing it to what it holds, sliding it onto the place the piece stood, holding what follows still, the marking-up keys, the paired brackets and quotes. It knows about a piece of a page and the file's own lines; it does not know about a top row or a search. Roughly 250 lines.
 
-**How it stays honest.** Each phase ends with the screen unchanged. That is the test: a phase that moves something by a pixel is a phase that got the room wrong.
+**The searching** — lighting a place, stepping from one to the next, showing a place that a fold had put away. Roughly 120 lines.
 
-**What I would drop first.** The `word` on a separator and the strip that answers a press are already one component. It is the _placing_ that is scattered — so Section owns placing, and Separator keeps drawing.
+**The order.** Searching first: it is the smallest and touches the least. Then the box. The words last, because it is the one whose styling the others sit inside, and moving it will show up any rule that was quietly relying on being in the same file.
 
-**The risk.** The editor's spacing is now the product of many small corrections, several of them mine and undocumented. Some exist for reasons nobody wrote down. Any that vanish under the Section will show as a pixel shift, which is why every phase ends with a look.
+**The risk.** A rule that dresses a guide's own words has to keep reaching in from outside its file. That works — the guides' own styling already does it — but a rule that reaches in and one that does not are written differently, and every one of those 48 has to be checked rather than moved.

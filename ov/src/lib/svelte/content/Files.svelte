@@ -16,7 +16,7 @@
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { show_status } from '../../ts/managers/Status';
 	import Separator from '../support/Separator.svelte';
-	import { guides } from '../../ts/managers/Guides';
+	import { guides } from '../../ts/managers/Files';
 	import { Direction } from '../../ts/types/Angle';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';

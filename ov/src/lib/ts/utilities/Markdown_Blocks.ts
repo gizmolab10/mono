@@ -94,7 +94,7 @@ export function name_the_headings(html: string): string {
 // than the whole page's "back to the list" — the hint watcher always takes the nearest words
 // under the cursor.
 export function mark_the_links(html: string): string {
-	return html.replace(/<a\s/g, '<a data-tip="follow this link" ');
+	return html.replace(/<a\s/g, '<a data-tip="visit link" ');
 }
 
 // Every address a guide's own words link to, in the order they are written. Addresses that

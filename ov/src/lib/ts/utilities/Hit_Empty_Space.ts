@@ -18,7 +18,7 @@ export const CONTROL_TAGS = ['button', 'input', 'textarea', 'select', 'a'];
  * space — it shuts every area — and the line above it folds them away, so neither counts as the
  * way out.
  */
-export const CONTROL_CLASSES = ['view-name', 'rename-field', 'hit-count', 'tags-row', 'filter-sep'];
+export const CONTROL_CLASSES = ['view-name', 'rename-field', 'hit-count', 'tags-row', 'section-bar'];
 
 /** Did the press land on something that answers for itself? */
 export function landed_on_a_control(names: string[]): boolean {
@@ -40,4 +40,13 @@ export function names_up_to(hit: Element | null, row: Element): string[] {
 		at = at.parentElement;
 	}
 	return found;
+}
+
+/**
+ * Is the cursor on empty space right now, rather than on something that answers? Asked by every
+ * row that is a way back to the list, so all of them agree on what counts as empty.
+ */
+export function over_empty(event: MouseEvent): boolean {
+	const row = event.currentTarget as HTMLElement;
+	return !landed_on_a_control(names_up_to(event.target as HTMLElement | null, row));
 }

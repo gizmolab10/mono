@@ -16,13 +16,13 @@
 		spacer    = false,
 		at_left   = false,
 		title     = null,
-		z_layer,
+		z_layer   = k.layer.frontmost,
 	}: {
 		vertical?  : boolean;          // runs top-to-bottom instead of left-to-right
 		spacer?    : boolean;          // no bar — just a growing gap (vertical only)
 		at_left?   : boolean;          // labels run from the left end rather than spreading along the bar
 		hovered?   : boolean;          // force the title-button's hover look on, even when the cursor isn't on it (a surrounding area can light it)
-		z_layer?   : number;           // optional stacking layer
+		z_layer?   : number;           // which stacking layer it sits on — frontmost unless told otherwise, so its word is never hidden by whatever it bounds
 		thickness? : number;           // the bar's width/height in px
 		radius?    : number;           // the fillet radius in px
 		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default

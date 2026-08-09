@@ -1,6 +1,6 @@
 import App from '../svelte/main/App.svelte';
 import { w_app, S_App } from './types/App';
-import { guides } from './managers/Guides';
+import { guides } from './managers/Files';
 import { c } from './common/Configuration';
 import { debug } from './common/Debug';
 import { mount } from 'svelte';

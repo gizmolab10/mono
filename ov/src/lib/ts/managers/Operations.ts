@@ -1,7 +1,7 @@
 import { preferences, T_Preference } from './Preferences';
 import type { Filtered_Guide } from '../types/File';
 import { derived, get, writable } from 'svelte/store';
-import { guides } from './Guides';
+import { guides } from './Files';
 import { debug } from '../common/Debug';
 
 /**

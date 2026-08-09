@@ -1,0 +1,448 @@
+<script lang='ts'>
+	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
+	import { w_file_place, w_search_at, w_search_for } from '../../ts/managers/Operations';
+	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
+	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { w_words } from '../../ts/managers/Filters';
+	import { T_Bundle, type Guide } from '../../ts/types/File';
+	import Steppers from '../support/Steppers.svelte';
+	import { guides } from '../../ts/managers/Files';
+	import { tip } from '../../ts/utilities/Tooltip';
+	import { debug } from '../../ts/common/Debug';
+	import { k } from '../../ts/common/Constants';
+	import File_OKF from '../content/File_OKF.svelte';
+	import File_Content from '../content/File_Content.svelte';
+	import Search from '../content/Search.svelte';
+	import { get } from 'svelte/store';
+
+	// Show one guide. This is the frame: the top row that says which file it is and what can be
+	// done to it, then the three things stacked under it — looking through the file, what it is
+	// labeled, and the file's own words. Each of those owns its own workings; what they share
+	// is here — the whole file's text, and the line at the bottom that speaks up briefly.
+	//
+	// Which of the guides is on screen, and the run they were stepped through, is the list's;
+	// here we only draw the controls and call back.
+	let { name, address, tags, guide, onclose, can_back = false, can_forward = false, onprev = () => {}, onnext = () => {} }:
+		{ name: string; address: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: () => void; onnext?: () => void } = $props();
+
+	// The whole file, held only while it is on screen. Two of the three below write to it: the
+	// labels at the top, and a piece of the words being changed. One place holds it, so neither
+	// can be working from a stale copy.
+	let text_of_file = $state('');
+
+	// The drawn words, so a search can look inside them.
+	let page = $state<HTMLElement | null>(null);
+
+	// The search is held so the frame can reach it: a file just drawn, or drawn again, has to be
+	// told to look through the new words rather than the ones it highlighted before.
+	let find: ReturnType<typeof Search> | null = $state(null);
+
+	// A press on the empty part of either top row goes back to the list; the things in those
+	// rows that answer for themselves are left alone. The Escape key does the same.
+	// The whole block above the heavy line lights as the cursor crosses any empty part of it,
+	// so what a press would do is visible before it is made. It is followed by hand, since a
+	// block lighting on its own would light while the cursor sat on one of its controls too.
+	// The way back to the list is every bare piece of the two top rows and of the label rows, and
+	// the whole of it lights at once — one flag, so pointing at either end lights both.
+	let way_out_lit = $state(false);
+
+	function leave_if_empty(event: MouseEvent) {
+		if (!over_empty(event)) { return; }
+		debug.log(`Editing "${name}": pressed the empty part of a top row — back to the list.`);
+		onclose();
+	}
+
+	// The title says where the guide sits as well as what it is called: every folder above it,
+	// from the top down. A guide in a project starts with that project; one belonging to no
+	// project starts with the repo's own name instead.
+	const sits_at = $derived.by(() => {
+		const folders = guide.path.split('/').slice(0, -1);
+		const top = guide.bundle === T_Bundle.mono ? ['mono'] : [guide.bundle];
+		return [...top, ...folders].join(' / ');
+	});
+
+	/** Escape closes the guide; the left and right keys step to the one before or after. */
+	function on_key(event: KeyboardEvent) {
+		if (event.key === 'Escape') { onclose(); return; }
+		const back = event.key === 'ArrowLeft';
+		if (!back && event.key !== 'ArrowRight') { return; }
+		event.preventDefault();
+		if (back) { onprev(); } else { onnext(); }
+	}
+
+	$effect(() => {
+		window.addEventListener('keydown', on_key);
+		return () => window.removeEventListener('keydown', on_key);
+	});
+
+	// What a dead link, or a refused write, has to say — briefly, on a line along the bottom.
+	let note = $state('');
+	let note_wait: ReturnType<typeof setTimeout> | null = null;
+
+	function say(words_to_show: string) {
+		note = words_to_show;
+		if (note_wait !== null) { clearTimeout(note_wait); }
+		note_wait = setTimeout(() => { note = ''; }, 4000);
+	}
+
+	/**
+	 * A file has just been read and drawn. Anything highlighted belonged to the drawing before
+	 * it, and the words in the field are looked for again in this one — so coming back from the
+	 * list, or from a refresh, lands where the search left off. A guide with fewer places than
+	 * that wraps back into range on its own.
+	 */
+	function drawn() {
+		find?.forget();
+		// A dead link picked out of a report asks for its own words to be highlighted here.
+		const wanted = get(w_search_for);
+		if (wanted !== '') {
+			w_search_for.set('');
+			w_words.set(wanted);
+			requestAnimationFrame(() => find?.light_hit(0));
+			return;
+		}
+		if (get(w_words) !== '') {
+			const was_at = get(w_search_at);
+			requestAnimationFrame(() => find?.light_hit(was_at));
+		}
+	}
+
+	// The file's name in the top row is a field that reads as plain words until the cursor is
+	// over it. Typing in it changes nothing until the field is left or Return is pressed; either
+	// gives the file itself the name typed.
+	let typed_name = $state('');
+
+	// Whenever another guide comes on screen, the field starts from that guide's own name.
+	$effect(() => { typed_name = name; });
+
+	// Throwing this guide away is asked about first: the trash mark at the right of the row
+	// gives way to a cross, and the question stands over the words until it is answered.
+	let asking_to_delete = $state(false);
+	const crossPath = svg_paths.x_cross(k.size.normal, k.size.normal / 6);
+	const binPath   = svg_paths.trashcan(k.size.normal);
+
+	// Stepping to another guide takes the question with it — it belonged to the one being left.
+	$effect(() => { address; asking_to_delete = false; });
+
+	// Where a guide is sent when it is handed on.
+	const SENT_TO = 'sand@gizmolab.com';
+
+	/**
+	 * Hand this guide to Obsidian. The repo is itself a vault, so where the file sits counting
+	 * from the top of the repo is also where it sits in the vault.
+	 */
+	function handle_obsidian() {
+		const where = file_path_of(guide.bundle, guide.path);
+		debug.log(`Editing "${name}": handing it to Obsidian at ${where}.`);
+		window.location.href = obsidian_link(VAULT, where);
+	}
+
+	/**
+	 * Open a new message with this guide already in it: the file's name for a subject, its whole
+	 * words for the body. Nothing is written, moved or thrown away — the message is the reader's
+	 * to send or drop.
+	 */
+	function handle_send() {
+		const body = text_of_file;
+		const to = `mailto:${SENT_TO}?subject=${encodeURIComponent(name)}&body=${encodeURIComponent(body)}`;
+		debug.log(`Editing "${name}": handing it on to ${SENT_TO} — ${body.length} character(s) of words in the message.`);
+		window.location.href = to;
+	}
+
+	/** Throw this guide away. Only if the file itself goes does the view go back to the list. */
+	function handle_delete() {
+		asking_to_delete = false;
+		debug.log(`Editing "${name}": throwing it away.`);
+		guides.delete_one(guide).then((gone) => { if (gone) { onclose(); } });
+	}
+
+	/**
+	 * Give the file itself a different name: the file, every link naming it, and the index
+	 * beside it are put right together. A name unchanged, or emptied, does nothing.
+	 */
+	function handle_rename() {
+		const said = typed_name.trim();
+		if (said === '' || said === name) {
+			typed_name = name;
+			return;
+		}
+		debug.log(`Editing "${name}": renaming it to "${said}".`);
+		// The view follows the guide to its new place on its own; a rename that was refused puts
+		// the old name back in the field.
+		guides.rename(guide, said).then((now_at) => { if (now_at === '') { typed_name = name; } });
+	}
+</script>
+
+<div class='viewer'>
+	<!-- Everything above the heavy line is one block: its empty parts are the way back to the
+	     list, and the whole of it lights while the cursor is on any of them. -->
+	<div class='view-top' role='button' tabindex='-1' onkeyup={() => {}}
+		class:lit={way_out_lit}
+		onmousemove={(e) => { way_out_lit = over_empty(e); }}
+		onmouseleave={() => { way_out_lit = false; }}
+		use:tip={'back to the list'} onclick={leave_if_empty}>
+		<div class='view-head'>
+			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
+				while reading off the list, on a run of guides reached by links. -->
+			{#if $w_file_place}
+				<span class='file-count'>{$w_file_place.at} of {$w_file_place.of}</span>
+			{/if}
+			<Steppers {can_back} {can_forward} {onprev} {onnext}
+				back_says='previous file' forward_says='next file' />
+			<!-- The folders above the file follow the steppers at the left. -->
+			<span class='view-ancestry'>{sits_at}</span>
+			<!-- An empty run on either side, so the name sits at the middle of whatever the folders
+				leave over rather than at the middle of the whole row. -->
+			<span class='view-spacer'></span>
+			<!-- The name is a field that reads as plain words until the cursor is over it. Leaving
+				it, or pressing Return, gives the file itself whatever was typed. While the
+				question about throwing the guide away is up, the name steps aside — the question
+				already says which file it means. -->
+			{#if !asking_to_delete}
+			<input
+				class='view-name'
+				size={Math.max(1, typed_name.length)}
+				bind:value={typed_name}
+				use:tip={'change the file\'s name'}
+				onclick={(e) => (e.currentTarget as HTMLInputElement).focus()}
+				onblur={handle_rename}
+				onkeydown={(e) => {
+					e.stopPropagation();
+					if (e.key === 'Enter') { (e.currentTarget as HTMLInputElement).blur(); }
+					if (e.key === 'Escape') { typed_name = name; (e.currentTarget as HTMLInputElement).blur(); }
+				}} />
+			{/if}
+			<span class='view-spacer'></span>
+			<!-- Asking in words rather than in a box of its own: the trash mark asks, and the
+				question that takes its place is the thing that answers. -->
+			{#if asking_to_delete}
+				<button class='asking-yes' use:tip={'throw it away for good'}
+					onclick={(e) => { e.stopPropagation(); handle_delete(); }}>delete "{name}"</button>
+				<button class='row-button' aria-label='keep it' use:tip={'keep this guide'}
+					onclick={(e) => { e.stopPropagation(); asking_to_delete = false; }}>
+					<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
+						<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
+					</svg>
+				</button>
+			{:else}
+				<!-- The two stand together at the end of the row: hand this guide on, or throw it
+					away. Handing it on comes first, since it is the one taken more often. -->
+				<span class='row-pair'>
+					<button class='row-button lifted' aria-label='obsidian' use:tip={'open this guide in Obsidian'}
+						onclick={(e) => { e.stopPropagation(); handle_obsidian(); }}>o</button>
+					<button class='row-button' aria-label='send' use:tip={'send this guide in a message'}
+						onclick={(e) => { e.stopPropagation(); handle_send(); }}>⤴</button>
+					<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
+						onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
+						<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
+							<path d={binPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' stroke-linejoin='round' />
+						</svg>
+					</button>
+				</span>
+			{/if}
+		</div>
+		<Search bind:this={find} {name} {page} hovered={way_out_lit} />
+	</div>
+	<File_OKF {name} {guide} {tags} {onclose} onsay={say}
+		bind:text={text_of_file} bind:way_out_lit />
+	<File_Content {name} {address} {guide} onsay={say}
+		bind:text={text_of_file} bind:page
+		ondrawn={drawn} onredrawn={() => find?.forget()} />
+	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->
+	{#if note !== ''}
+		<div class='view-note-line'>{note}</div>
+	{/if}
+</div>
+
+<style>
+	.viewer {
+		position       : relative;   /* the anchor for the pinned close button */
+		flex-direction : column;
+		display        : flex;
+		min-height     : 0;
+		flex           : 1;
+	}
+
+	/* The triangles and the kind hug the far left; the tags and the pinned close hug the
+	   far right. The name is placed at the middle of the whole row rather than centered
+	   in whatever space its neighbors leave over, so a long tag list moves nothing. */
+	/* The two rows above the heavy line, taken as one block. Its empty parts are the way back
+	   to the list, and the whole of it lights while the cursor is on any of them. */
+	/* It reaches out to the three edges of the box it sits in — the space the box holds
+	   around its contents is part of this area, so the lit color has to cover it too. */
+	.view-top {
+		margin         : calc(var(--gap) * -1) calc(var(--gap) * -1) 0;
+		padding        : var(--gap-small) var(--gap) 0;
+		flex           : 0 0 auto;
+		cursor         : pointer;
+		flex-direction : column;
+		display        : flex;
+	}
+
+	.view-top.lit {
+		background : var(--hover);
+	}
+
+	.view-head {
+		padding-bottom : var(--gap-small);
+		height         : var(--height);
+		box-sizing     : content-box;
+		gap            : var(--gap);
+		position       : relative;
+		align-items    : center;
+		display        : flex;
+	}
+
+	/* The step marks are drawn a touch taller than a control. Held to the row's own height
+	   they still show whole — they are allowed to spill — and the row keeps one height
+	   whether they are there or not. */
+	.view-head :global(.steppers) {
+		height : var(--height);
+	}
+
+	/* The empty run that holds the buttons at the left apart from the kind and tags at the
+	   right, now that nothing sits between them. */
+	.view-spacer {
+		flex : 1 1 auto;
+	}
+
+	/* The folders above the file, just right of the steppers at the left of the button row. */
+	/* Which file of the run is on screen, reading like the folders beside it. */
+	.file-count {
+		opacity     : var(--opacity-header);
+		font-size   : var(--font-tiny);
+		color       : var(--text);
+		flex        : 0 0 auto;
+		white-space : nowrap;
+	}
+
+	.view-ancestry {
+		opacity      : var(--opacity-header);
+		font-size    : var(--font-tiny);
+		margin-left  : var(--gap-tiny);
+		color        : var(--text);
+		position     : relative;
+		flex         : 0 1 auto;
+		overflow     : hidden;
+		white-space  : nowrap;
+		min-width    : 0;
+	}
+
+	/* A round button at the end of the row: white inside a hairline edge, filling under the
+	   cursor — the same look every other small button in the app wears. */
+	/* The three at the end of the row stand one gap apart. */
+	.row-pair {
+		gap         : var(--gap);
+		flex        : 0 0 auto;
+		align-items : center;
+		display     : flex;
+	}
+
+	.row-button {
+		border          : var(--thick-small) solid var(--black);
+		border-radius   : var(--radius-percent);
+		background      : var(--white);
+		height          : var(--size);
+		width           : var(--size);
+		font-size       : var(--font);
+		color           : var(--text);
+		box-sizing      : border-box;
+		flex            : 0 0 auto;
+		cursor          : pointer;
+		font-family     : inherit;
+		justify-content : center;
+		align-items     : center;
+		display         : flex;
+		padding         : 0;
+		line-height     : 1;
+	}
+
+	.row-button:hover {
+		background : var(--hover);
+	}
+
+	/* A letter sits lower in its own line than a drawn mark does, so the letter is nudged up
+	   within its circle rather than the whole button being moved. */
+	.row-button.lifted {
+		padding-bottom : var(--gap-small);
+	}
+
+	.row-mark {
+		width   : var(--size-small);
+		height  : var(--size-small);
+		stroke  : var(--black);
+		display : block;
+		fill    : none;
+	}
+
+	/* The question itself is the button that answers it, standing where the row's other words
+	   stand and reading as an ordinary control. */
+	.asking-yes {
+		border        : var(--thick) solid var(--black);
+		border-radius : var(--radius-pill);
+		padding       : var(--pad-control);
+		font-size     : var(--font-tiny);
+		height        : var(--height);
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		flex          : 0 0 auto;
+		font-family   : inherit;
+		white-space   : nowrap;
+		cursor        : pointer;
+	}
+
+	.asking-yes:hover {
+		background : var(--hover);
+	}
+
+	/* The file's own name, in the middle of what the folders leave over. It is a field, but
+	   reads as plain words: no edge, no fill, and only as wide as the name itself. The edge is
+	   held see-through rather than absent, so nothing shifts when it appears. */
+	.view-name {
+		border        : var(--thick-faint) solid transparent;
+		border-radius : var(--radius-pill);
+		padding       : 0 var(--gap-tiny);
+		font-size     : var(--font-fat);
+		background    : transparent;
+		color         : var(--text);
+		box-sizing    : border-box;
+		flex          : 0 1 auto;
+		font-family   : inherit;
+		text-align    : center;
+		white-space   : nowrap;
+		cursor        : text;
+		outline       : none;
+		min-width     : 0;
+		/* Sits a touch above where the row would put it, so it lines up with the words
+		   beside it rather than with the buttons. */
+		position      : relative;
+		top           : -2px;
+	}
+
+	/* Under the cursor it shows what it is; with the cursor in it, it reads as a field being
+	   typed in. */
+	.view-name:hover {
+		border-color : var(--black);
+		background   : var(--hover);
+	}
+
+	.view-name:focus {
+		border-color : var(--black);
+		background   : var(--white);
+	}
+
+	/* The line a dead link leaves behind, along the bottom of the reading area. */
+	/* Both stand in the same white area as the words themselves — everything under the heavy
+	   line is one field, whether it holds the file, a complaint, or a passing message. */
+	.view-note-line {
+		border-top : var(--thick-faint) solid var(--accent);
+		opacity    : var(--opacity-label);
+		font-size  : var(--font-tiny);
+		padding-top: var(--gap-tiny);
+		background : var(--white);
+		color      : var(--text);
+		flex       : 0 0 auto;
+		text-align : center;
+	}
+</style>

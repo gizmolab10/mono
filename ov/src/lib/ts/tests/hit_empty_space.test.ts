@@ -1,4 +1,4 @@
-import { CONTROL_CLASSES, CONTROL_TAGS, landed_on_a_control } from '../utilities/Leaving';
+import { CONTROL_CLASSES, CONTROL_TAGS, landed_on_a_control } from '../utilities/Hit_Empty_Space';
 import { describe, expect, it } from 'vitest';
 
 describe('what a press in the top rows means', () => {

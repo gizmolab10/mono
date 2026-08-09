@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
-	import Files, { w_scrollbar_showing } from './Files.svelte';
+	import Files, { w_scrollbar_showing } from '../content/Files.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { guides } from '../../ts/managers/Guides';
+	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import Filters from './Filters.svelte';
+	import List_OKF from '../content/List_OKF.svelte';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
 	const MARK = k.size.normal;
@@ -35,7 +35,7 @@
 
 </script>
 
-<Filters />
+<List_OKF />
 <div class='count-row'>
 	<!-- With nothing left after the filters there are no folders to show or hide, so the
 	     button has nothing to act on. -->

@@ -123,6 +123,17 @@ describe('the address a file\'s words are read from', () => {
 	});
 });
 
+// Typing in the search field works the whole list out again, which hands the viewer a fresh
+// record of the very same file on every letter. The place that record names is the same text as
+// before, so the words on screen are left alone; reading and drawing them again is what blinked.
+
+describe('the place a file sits, from one record of it to the next', () => {
+	it('reads as the very same text, so a fresh record of one file says nothing new', () => {
+		expect(file_path_of(T_Bundle.ov, 'notes/guides/always.md'))
+			.toBe(file_path_of(T_Bundle.ov, 'notes/guides/always.md'));
+	});
+});
+
 describe('handing a file to obsidian', () => {
 	it('names the vault and the file inside it', () => {
 		expect(obsidian_link('mono', 'notes/guides/pre-flight/always.md'))

@@ -6,7 +6,7 @@
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Separator from '../support/Separator.svelte';
 	import Big_Pill from '../support/Big_Pill.svelte';
-	import { guides } from '../../ts/managers/Guides';
+	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';

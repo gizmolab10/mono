@@ -6,6 +6,7 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 - [x] scrolling content should not scroll title row
 - [ ] convert 'search' titled sep -> unicode character (magnifying glass)
+- [ ] add any/all/clear to tags
 - [ ] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
 - [ ] cute: add a link to work sites
     - [ ] on all localhost served
