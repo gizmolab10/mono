@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: work
 title: "Working features (ov)"
 description: "Everything overview can do, newest first."
 tags: [notes, UX]

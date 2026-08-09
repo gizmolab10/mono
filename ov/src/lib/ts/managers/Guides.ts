@@ -1,5 +1,5 @@
 import { T_Bundle, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
-import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { kind_matches, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
@@ -582,7 +582,7 @@ class Guides {
 		const words    = get(w_words).trim().toLowerCase();
 		return this.files.filter((guide) => {
 			if (without !== 'project' && project !== '' && guide.bundle !== project) { return false; }
-			if (without !== 'kind' && kind !== '' && guide.kind !== kind) { return false; }
+			if (without !== 'kind' && !kind_matches(kind, guide.kind, guide.labeled)) { return false; }
 			if (without !== 'tags' && tags.length > 0 && !tags.some((tag) => this.hierarchy.tag_names_of(guide.id).includes(tag))) { return false; }
 			if (words !== '' && !`${guide.title} ${guide.description}`.toLowerCase().includes(words)) { return false; }
 			return true;
@@ -601,6 +601,11 @@ class Guides {
 			if (guide.kind && !seen.includes(guide.kind)) { seen.push(guide.kind); }
 		}
 		return seen.sort(in_order);
+	}
+
+	/** How many files carrying no labels at all are within reach of the other filters. */
+	unlabeled_within_reach(): number {
+		return this.within_reach('kind').filter((guide) => !guide.labeled).length;
 	}
 
 	/** Every tag still within reach of the other filters, in alphabetical order. */

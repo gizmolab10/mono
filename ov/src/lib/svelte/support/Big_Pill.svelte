@@ -34,9 +34,15 @@
 
 {#if shown.length !== 0}
 	{#if lone !== ''}
-		<button class='tag' class:current={chosen.includes(lone)}
+		<!-- One tag left, so there is nothing to fold away — but it is drawn as the same double
+		     pill the others are, with its area's name on the top edge, so a lone tag still says
+		     which area it came from. -->
+		<button class='big shut-pill' class:holding={chosen.includes(lone)}
 			use:tip={`show files tagged "${lone}"`}
-			onclick={() => ontoggle(lone)}>{lone}</button>
+			onclick={() => ontoggle(lone)}>
+			<span class='area-name'>{area.name}</span>
+			<span class='inner shut'>{lone}</span>
+		</button>
 	{:else if !open}
 		{@const holding = area.tags.some((tag) => chosen.includes(tag))}
 		<button class='big shut-pill' class:holding use:tip={`choose ➜ ${shown.join(', ')}`} onclick={() => toggle_area(area.name)}>
@@ -151,13 +157,11 @@
 	}
 
 	/* The name sitting on the top edge, its page-colored background breaking the border so the
-	   word reads as a heading on the pill rather than as one of its tags. */
-	/* Centered over the cross: the cross is as wide as it is tall and sits inside the outer
-	   pill's own thin padding, so its middle is half the pill's height in from the left. */
+	   word reads as a heading on the pill rather than as one of its tags. It starts where the
+	   pill starts, whatever state the pill is in, so a row of them reads down a straight line. */
 	.area-name {
 		background     : color-mix(in srgb, var(--bg) 44%, transparent);
-		left           : calc(var(--height) / 2);
-		transform      : translate(-50%, -50%);
+		transform      : translateY(-50%);
 		border-radius  : var(--radius-pill);
 		font-size      : var(--font-faint);
 		padding        : 0 var(--gap-tiny);
@@ -166,11 +170,7 @@
 		white-space    : nowrap;
 		pointer-events : none;
 		top            : -1px;
-	}
-
-	/* Shut there is no cross to sit over, so the name takes the middle of the pill. */
-	.big.shut-pill .area-name {
-		left : 50%;
+		left           : 0;
 	}
 
 	/* The cross that folds the area away: its own round edge at the left end. */
@@ -234,26 +234,4 @@
 		color      : var(--text);
 	}
 
-	/* The last tag standing in an area, drawn as the plain pill the other tags use. */
-	.tag {
-		border        : var(--thick) solid var(--black);
-		border-radius : var(--radius-pill);
-		padding       : var(--pad-control);
-		font-size     : var(--font-tiny);
-		background    : var(--white);
-		color         : var(--text);
-		box-sizing    : border-box;
-		font-family   : inherit;
-		cursor        : pointer;
-		white-space   : nowrap;
-	}
-
-	.tag.current {
-		background : var(--accent);
-		color      : var(--text-on-accent);
-	}
-
-	.tag:not(.current):hover {
-		background : var(--hover);
-	}
 </style>

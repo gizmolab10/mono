@@ -43,10 +43,13 @@ export const NEEDS_A_LOOK = 'stale';
 /** The kind a composed block starts at when its folder says nothing. */
 export const KIND_UNTIL_TOLD = T_Kind.refer;
 
-/** What the folders above a file say it is, when they say anything at all. */
+/**
+ * What the folders above a file say it is, when they say anything at all. A folder called
+ * design or designs makes its files designs; one called work makes them work.
+ */
 export function kind_from_where(path: string): T_Kind {
-	if (/(^|\/)designs(\/|$)/.test(path)) { return T_Kind.design; }
-	if (/(^|\/)work(\/|$)/.test(path))    { return T_Kind.work; }
+	if (/(^|\/)designs?(\/|$)/.test(path)) { return T_Kind.design; }
+	if (/(^|\/)work(\/|$)/.test(path))     { return T_Kind.work; }
 	return KIND_UNTIL_TOLD;
 }
 

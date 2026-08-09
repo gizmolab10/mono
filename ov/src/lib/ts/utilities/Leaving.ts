@@ -12,8 +12,13 @@
 /** Things that answer a press themselves, by what they are. */
 export const CONTROL_TAGS = ['button', 'input', 'textarea', 'select', 'a'];
 
-/** Things that answer a press themselves, by what they are called. */
-export const CONTROL_CLASSES = ['view-name', 'rename-field', 'hit-count'];
+/**
+ * Things that answer a press themselves, by what they are called. The last two are whole areas
+ * rather than single controls: the run of tag areas has its own meaning for a press on its bare
+ * space — it shuts every area — and the line above it folds them away, so neither counts as the
+ * way out.
+ */
+export const CONTROL_CLASSES = ['view-name', 'rename-field', 'hit-count', 'tags-row', 'filter-sep'];
 
 /** Did the press land on something that answers for itself? */
 export function landed_on_a_control(names: string[]): boolean {

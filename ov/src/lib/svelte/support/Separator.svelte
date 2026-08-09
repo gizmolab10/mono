@@ -195,11 +195,24 @@
 		cursor        : pointer;
 	}
 
+	/* The edge appears whenever the word can be pressed — under the cursor, anywhere along its own
+	   bar, or because a surrounding area says so. */
 	.title.clickable:hover,
 	.title.clickable.forced,
 	.reachable:hover .title.clickable {
 		border-color : var(--darkgray);
-		background   : var(--hover);
+	}
+
+	/* The hover fill is only for the cursor actually being on this bar, so it still means "you are
+	   pointing here". Told to light by a surrounding area, the word takes white instead — it reads
+	   as lit without claiming the cursor. */
+	.title.clickable.forced {
+		background : var(--white);
+	}
+
+	.title.clickable:hover,
+	.reachable:hover .title.clickable {
+		background : var(--hover);
 	}
 
 	/* The clear strip that makes a two-pixel bar worth aiming at: as tall as any other control,

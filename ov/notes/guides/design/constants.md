@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: design
 title: "UX terms and concepts"
 description: ""
 tags: [done, refactor]

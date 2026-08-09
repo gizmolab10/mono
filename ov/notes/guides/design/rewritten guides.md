@@ -1,3 +1,10 @@
+---
+kind: work
+title: "Rewritten guides"
+description: "Every guide carrying the stale tag, with what I'd do to it"
+tags: [done, propose]
+date: 2026-08-08
+---
 # Rewritten guides
 
 Every guide carrying the **stale** tag, with what I'd do to it. Read all 21 on 2026-08-03. One

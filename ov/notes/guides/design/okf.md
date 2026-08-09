@@ -29,7 +29,7 @@ Left out: an **owner** label, saying who decides what a file says. In a two-pers
 
 ## Tags (closed list)
 
-Twenty-two. The first sixteen came from the shared guides — the folder-by-folder rundown in [synopsis of our guides](../../../notes/guides/synopsis%20of%20our%20guides.md) is where each one came from. The last six came from the project guides, which are a different animal: they describe apps rather than tell me how to work.
+Twenty-two. The first sixteen came from the shared guides — the folder-by-folder rundown in [synopsis of our guides](synopsis%20of%20our%20guides.md) is where each one came from. The last six came from the project guides, which are a different animal: they describe apps rather than tell me how to work.
 
 The folder a file sits in is not a tag. A tag says what the file is *about*, so two files in different folders about the same thing find each other.
 
@@ -122,7 +122,7 @@ So: one folder shape, used in all four. A folder that a bundle has nothing to sa
 
 ### A map page per bundle, built from the labels
 
-Every file's title and description, listed on one page, grouped by kind. That page is the big picture, and it is not hand-written — it is assembled from what the labels already say, so it cannot drift out of step with the files the way a hand-kept summary does. Today's hand-kept summary is [synopsis of our guides](../../../notes/guides/synopsis%20of%20our%20guides.md); it is thorough and it is stale the moment a file changes.
+Every file's title and description, listed on one page, grouped by kind. That page is the big picture, and it is not hand-written — it is assembled from what the labels already say, so it cannot drift out of step with the files the way a hand-kept summary does. Today's hand-kept summary is [synopsis of our guides](synopsis%20of%20our%20guides.md); it is thorough and it is stale the moment a file changes.
 
 One map per bundle, plus one that stitches the four together. Reading the stitched one is every guide in a few minutes.
 

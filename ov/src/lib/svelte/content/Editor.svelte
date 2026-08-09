@@ -39,7 +39,10 @@
 	// The whole block above the heavy line lights as the cursor crosses any empty part of it,
 	// so what a press would do is visible before it is made. It is followed by hand, since a
 	// block lighting on its own would light while the cursor sat on one of its controls too.
-	let top_lit = $state(false);
+	// The way back to the list is every bare piece of the two top rows and of the label rows, and
+	// the whole of it lights at once — one flag, so pointing at either end lights both.
+	let way_out_lit = $state(false);
+	let tags_lit = $state(false);   // the cursor is among the tag areas, so their own word lights
 
 	/** Is the cursor on empty space right now, rather than on something that answers? */
 	function over_empty(event: MouseEvent): boolean {
@@ -116,7 +119,10 @@
 		const box = page;
 		if (!box) { page_has_bar = false; free = { top: 0, length: 0, shows: false }; return; }
 		page_has_bar = box.scrollHeight > box.clientHeight + 1;
-		free = free_thumb(box.clientHeight, box.scrollHeight, box.scrollTop, box.offsetTop);
+		// The lane starts below the line across the page, so the marker over it starts there too
+		// and runs the shorter length — otherwise the two would not line up.
+		const below_the_line = k.gap.huge + k.gap.normal;
+		free = free_thumb(box.clientHeight - below_the_line, box.scrollHeight, box.scrollTop, box.offsetTop + below_the_line);
 	}
 
 	$effect(() => {
@@ -905,9 +911,9 @@
 	<!-- Everything above the heavy line is one block: its empty parts are the way back to the
 	     list, and the whole of it lights while the cursor is on any of them. -->
 	<div class='view-top' role='button' tabindex='-1' onkeyup={() => {}}
-		class:lit={top_lit}
-		onmousemove={(e) => { top_lit = over_empty(e); }}
-		onmouseleave={() => { top_lit = false; }}
+		class:lit={way_out_lit}
+		onmousemove={(e) => { way_out_lit = over_empty(e); }}
+		onmouseleave={() => { way_out_lit = false; }}
 		use:tip={'back to the list'} onclick={leave_if_empty}>
 	<div class='view-head'>
 		<!-- Which of the files the filters leave is being read, and how many there are. Nothing
@@ -971,7 +977,7 @@
 	</div>
 	<!-- The line above the search, carrying its own word. Pressing the word folds the search
 	     away, and the words below take its room; pressing it again brings it back. -->
-	<Separator at_left thickness={k.thickness.huge} title={search_word}
+	<Separator at_left thickness={k.thickness.huge} title={search_word} hovered={way_out_lit}
 		onclick={() => { w_show_search.set(!$w_show_search); debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`); }}/>
 	<!-- Looking through the file on screen. Its type is "search", so the browser draws its
 	     own clear cross at the right end once there is text. -->
@@ -1006,30 +1012,42 @@
 	<Separator
 		at_left
 		title={filter_rows_word}
+		hovered={way_out_lit}
 		thickness={k.gap.normal}
 		onclick={() => { w_show_filters.set(!$w_show_filters); debug.log(`Editing "${name}": the filter form is now ${!$w_show_filters ? 'hidden' : 'shown'}.`); }}/>
 	<!-- The five filters, shown only while editing. They never appear among the words, so
 	     this is the only way at them. -->
 	{#if $w_show_filters}
+		<!-- The bare space among the label rows is another way back to the list, the same as the
+		     top block — and the two light together, since they are one way out. It stops at the
+		     line above the tags: a press on the tags' own bare space already means something. -->
 		<div class='filter-form'>
-			<div class='filter-row'>
-				<span class='filter-word'>kind</span>
-				{#each KINDS as one (one)}
-					<button class='filter-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_filters(); }}>{one}</button>
-				{/each}
+			<div class='label-rows' role='button' tabindex='-1' onkeyup={() => {}}
+				onmousemove={(e) => { way_out_lit = over_empty(e); }}
+				onmouseleave={() => { way_out_lit = false; }}
+				class:lit={way_out_lit}
+				use:tip={'back to the list'} onclick={leave_if_empty}>
+				<div class='filter-row'>
+					<span class='filter-word'>kind</span>
+					{#each KINDS as one (one)}
+						<button class='filter-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_filters(); }}>{one}</button>
+					{/each}
+				</div>
+				<div class='filter-row'>
+					<span class='filter-word'>title</span>
+					<input class='filter-field' bind:value={form_title} onblur={save_filters} />
+					<span class='filter-word'>date</span>
+					<input class='filter-field date' bind:value={form_date} onblur={save_filters} />
+				</div>
+				<div class='filter-row'>
+					<span class='filter-word'>says</span>
+					<input class='filter-field' bind:value={form_description} onblur={save_filters} />
+				</div>
 			</div>
-			<div class='filter-row'>
-				<span class='filter-word'>title</span>
-				<input class='filter-field' bind:value={form_title} onblur={save_filters} />
-				<span class='filter-word'>date</span>
-				<input class='filter-field date' bind:value={form_date} onblur={save_filters} />
-			</div>
-			<div class='filter-row'>
-				<span class='filter-word'>says</span>
-				<input class='filter-field' bind:value={form_description} onblur={save_filters} />
-			</div>
+			<!-- The word on this line lights with every other one that can be pressed: while the
+			     way back to the list is lit, and while the cursor is among the tags below it. -->
 			<div class='filter-sep'>
-				<Separator at_left thickness={k.thickness.normal} title={form_tags_word}
+				<Separator at_left thickness={k.thickness.normal} title={form_tags_word} hovered={tags_lit || way_out_lit}
 					onclick={() => { show_form_tags = !show_form_tags; debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'shown' : 'folded away'}.`); }}/>
 			</div>
 			<!-- The same six areas the filters use. Every tag is within reach here, since this
@@ -1037,7 +1055,9 @@
 			{#if show_form_tags}
 				<!-- A press on the empty space among the areas shuts them all, the same as in
 				     the list. A press on an area itself is that area's own. -->
-				<div class='filter-row wrapping' role='presentation'
+				<div class='filter-row wrapping tags-row' role='presentation'
+					onmouseenter={() => { tags_lit = true; }}
+					onmouseleave={() => { tags_lit = false; }}
 					onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
 					{#each TAG_AREAS as area (area.name)}
 						<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
@@ -1054,12 +1074,14 @@
 	{:else if failed !== ''}
 		<div class='view-note'>file is unreadable — cannot view it</div>
 	{:else}
-		<!-- Where the browser would have put the thumb with no floor under it, drawn over the
-		     real one so both can be seen at once. Nothing to catch — it is only a marker. -->
-		{#if free.shows}
-			<div class='free-thumb' style:top='{free.top}px' style:height='{free.length}px'></div>
-		{/if}
 		<div class='view-body'>
+			<!-- Where the browser would have put the thumb with no floor under it, drawn over the
+			     real one so both can be seen at once. Nothing to catch — it is only a marker. It
+			     sits inside this box, the same one the words measure themselves against, so the
+			     two are counting from the same place. -->
+			{#if free.shows}
+				<div class='free-thumb' style:top='{free.top}px' style:height='{free.length}px'></div>
+			{/if}
 			<!-- The line under the title. It is a fixture of the page rather than an edge of the
 			     heading, so it stays put whether the title is shown, folded, or open for changing. -->
 			<div class='title-sep'>
@@ -1282,9 +1304,28 @@
 	   the same wherever they turn up. */
 	.filter-form {
 		gap            : var(--gap-tiny);
-		margin         : var(--gap) 0;
 		flex-direction : column;
 		display        : flex;
+	}
+
+	/* The label rows, taken as one block — the part of the form that is a way back to the list. It
+	   reaches out to the box's left and right edges and up to the line above it, so the lit color
+	   covers the room the box holds around its contents rather than stopping short. It ends at the
+	   line above the tags, which is where the way out ends. */
+	/* Below its last row it holds the room that stands between it and the tags line — the set's own
+	   spacing plus the line's — and gives that room straight back, so the color reaches the line
+	   while the line itself stays where it is. */
+	.label-rows {
+		margin         : 0 calc(var(--gap) * -1) calc((var(--gap-tiny) + var(--gap-small)) * -1);
+		padding        : var(--gap) var(--gap) calc(var(--gap-tiny) + var(--gap-small));
+		gap            : var(--gap-tiny);
+		flex-direction : column;
+		cursor         : pointer;
+		display        : flex;
+	}
+
+	.label-rows.lit {
+		background : var(--hover);
 	}
 
 	.filter-row {
@@ -1298,8 +1339,10 @@
 		margin : var(--gap-small) 0;
 	}
 
+	/* The tag areas stand clear of the heavy line below them. */
 	.filter-row.wrapping {
 		justify-content : center;
+		padding-bottom  : var(--gap);
 		flex-wrap       : wrap;
 	}
 
@@ -1523,9 +1566,12 @@
 	/* The marker showing where the browser alone would have put the thumb: half the lane's
 	   width, in the dark accent, sitting on top of the real thumb and answering to nothing. */
 	.free-thumb {
+		/* Two pixels lower than where it is placed, so it sits square with the real thumb — the
+		   browser holds its own thumb a hair off the top of the lane. */
 		width          : calc(var(--width-bar) / 2);
 		right          : calc(var(--width-bar) / 4);
 		background     : var(--accent-dark);
+		margin-top     : var(--gap-tiny);
 		position       : absolute;
 		border-radius  : 999px;
 		pointer-events : none;
@@ -1549,7 +1595,10 @@
 		min-width     : 20%;
 	}
 
+	/* The lane starts below the line across the page — the title's slot plus one gap — so the bar
+	   belongs to the words rather than running up alongside the title. */
 	.view-page::-webkit-scrollbar-track {
+		margin-top : calc(var(--gap-huge) + var(--gap));
 		background : transparent;
 	}
 

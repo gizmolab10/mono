@@ -1,6 +1,7 @@
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
 import type { Guide, Labels, Filtered_Guide } from '../types/Guide';
 import type { Sort } from './Filters';
+import { kind_matches } from './Filters';
 import { Indexes } from '../database/Indexes';
 import { T_Bundle, in_order, key_of } from '../types/Guide';
 import { debug } from '../common/Debug';
@@ -327,7 +328,7 @@ export class Hierarchy {
 	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string): boolean {
 		if (row.guide.is_folder) { return false; }
 		if (project !== '' && row.guide.bundle !== project) { return false; }
-		if (kind !== '' && row.guide.kind !== kind) { return false; }
+		if (!kind_matches(kind, row.guide.kind, row.guide.labeled)) { return false; }
 		if (tags.length > 0 && !tags.some((tag) => row.tag_names.includes(tag))) { return false; }
 		const looking_for = words.trim().toLowerCase();
 		if (looking_for !== '' && !`${row.guide.title} ${row.guide.description}`.toLowerCase().includes(looking_for)) { return false; }
@@ -346,7 +347,10 @@ export class Hierarchy {
 	 * whichever way the sort runs, so blanks never scatter through the list.
 	 */
 	private sort_key(row: Filtered_Guide, by: string): string {
-		if (by === 'kind')    { return row.guide.kind; }
+		// A file with no labels reads "---" in its kind column, and sorts where those three
+		// dashes would — ahead of every word — rather than being treated as a blank and pushed
+		// to the bottom. It is a real state, not a missing one.
+		if (by === 'kind')    { return row.guide.kind || '!'; }
 		if (by === 'project') { return row.guide.bundle; }
 		if (by === 'name')    { return row.guide.name; }
 		return row.tag_names.join(', ');

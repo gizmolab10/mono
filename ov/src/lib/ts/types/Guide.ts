@@ -6,12 +6,12 @@
 // about — a record of how something was built, or a note about work in hand. A file is one of
 // the seven, said in its own labels rather than worked out from the folder it sits in.
 export enum T_Kind {
+	design     = 'design',
+	explain    = 'explain',
+	refer      = 'refer',
 	specify    = 'specify',
 	step       = 'step',
 	wire       = 'wire',
-	explain    = 'explain',
-	refer      = 'refer',
-	design     = 'design',
 	work       = 'work',
 }
 

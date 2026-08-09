@@ -1,4 +1,5 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, has_labels, label_block, labels_for, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, has_labels, kind_from_where, label_block, labels_for, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { T_Kind } from '../types/Guide';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/Guide';
 
@@ -44,6 +45,28 @@ describe('labeling a file that has none', () => {
 		expect(tags).toEqual([NEEDS_A_LOOK]);
 		expect(labels.kind).toBe(KIND_UNTIL_TOLD);
 		expect(labels.date).toBe(TODAY);
+	});
+});
+
+describe('what the folders above a file say it is', () => {
+	it('calls it a design under a folder named design or designs', () => {
+		expect(kind_from_where('designs/roadmap.md')).toBe(T_Kind.design);
+		expect(kind_from_where('design/constants.md')).toBe(T_Kind.design);
+		expect(kind_from_where('project/design/notes.md')).toBe(T_Kind.design);
+	});
+
+	it('calls it work under a folder named work', () => {
+		expect(kind_from_where('work/handoff.md')).toBe(T_Kind.work);
+	});
+
+	it('falls back when no folder says anything', () => {
+		expect(kind_from_where('develop/add a file.md')).toBe(KIND_UNTIL_TOLD);
+		// A word that merely starts the same is not the folder it names.
+		expect(kind_from_where('designers/notes.md')).toBe(KIND_UNTIL_TOLD);
+	});
+
+	it('reaches the composed labels', () => {
+		expect(labels_for('# a title\n\nwords.', 'x.md', TODAY, 'design/x.md').labels.kind).toBe(T_Kind.design);
 	});
 });
 

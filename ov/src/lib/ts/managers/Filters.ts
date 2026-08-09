@@ -13,8 +13,18 @@ import { get } from 'svelte/store';
 // One collection at a time; empty means every collection.
 export const w_project = preferences.persistent<string>(T_Preference.filter_project, '');
 
-// One kind at a time; empty means every kind.
+// One kind at a time; empty means every kind. One more word than the seven kinds: this one
+// asks for the files that carry no labels at all, which is how they are found and given some.
+export const UNLABELED = 'none';
+
 export const w_kind = preferences.persistent<string>(T_Preference.filter_kind, '');
+
+/** Does a file survive the kind that is picked? */
+export function kind_matches(kind: string, its_kind: string, labeled: boolean): boolean {
+	if (kind === '')          { return true; }
+	if (kind === UNLABELED)   { return !labeled; }
+	return its_kind === kind;
+}
 
 // Any number of tags; empty means every tag. These widen rather than narrow — a file
 // matches if it wears any one of them — since a file usually wears only one or two and
@@ -28,7 +38,9 @@ export const w_tags = preferences.persistent<string[]>(T_Preference.filter_tags,
 	const remembered_tags = get(w_tags);
 	const still_real = remembered_tags.filter((tag) => ALL_TAGS.includes(tag));
 	if (still_real.length !== remembered_tags.length) { w_tags.set(still_real); }
-	if (get(w_kind) !== '' && !Object.values(T_Kind).includes(get(w_kind) as T_Kind)) { w_kind.set(''); }
+	const remembered_kind = get(w_kind);
+	if (remembered_kind !== '' && remembered_kind !== UNLABELED
+		&& !Object.values(T_Kind).includes(remembered_kind as T_Kind)) { w_kind.set(''); }
 }
 
 // Words looked for in a guide's title and description, ignoring case.

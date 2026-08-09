@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_project, w_kind, w_tags, w_words } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { shut_all_areas } from '../../ts/managers/Filters';
+	import { shut_all_areas, UNLABELED } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/Guide';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Separator from '../support/Separator.svelte';
@@ -40,6 +40,7 @@
 	// rows are worked out again whenever any of them moves.
 	const w_ready = guides.w_ready;
 	let kinds = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? guides.kinds_present() : []; });
+	let bare = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? guides.unlabeled_within_reach() : 0; });
 	let tags_in_use = $derived.by(() => { $w_project; $w_kind; $w_words; return $w_ready ? guides.tags_present() : []; });
 	const projects = Object.values(T_Bundle);
 	let counts = $derived.by(() => {
@@ -159,6 +160,11 @@
 		{#if show_kinds}
 			<div class='kinds' use:tip={'show particular kinds of guide'}>
 				<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
+				<!-- The files carrying no labels at all — how they are found, so they can be
+				     opened and given some. -->
+				<button class='segment' class:current={$w_kind === UNLABELED} class:empty={bare === 0}
+					use:tip={bare === 0 ? 'every file left by the other filters carries labels' : 'show only the files that carry no labels'}
+					onclick={() => { if (bare > 0) { choose_kind(UNLABELED); } }}>none</button>
 				{#each shown_kinds as kind}
 					{@const in_reach = kinds.includes(kind)}
 					<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
@@ -268,11 +274,14 @@
 		flex-wrap       : wrap;
 	}
 
+	/* The one plain pill in the row. It stands the height of the double-bordered areas beside it,
+	   so the row reads as one line of pills rather than two sizes. */
 	.tag {
 		border        : var(--thick) solid var(--black);
 		border-radius : var(--radius-pill);
-		padding       : var(--pad-control);
+		padding       : 0 var(--gap);
 		font-size     : var(--font-tiny);
+		height        : var(--height);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
