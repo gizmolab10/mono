@@ -1,5 +1,5 @@
-import { T_Bundle, T_Purpose, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
-import { w_purposes, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { T_Bundle, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/Guide';
+import { w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
@@ -97,14 +97,14 @@ class Guides {
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than
 		// in each of the places that shows it.
-		for (const w of [w_purposes, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts]) {
+		for (const w of [w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts]) {
 			w.subscribe(() => this.renarrow());
 		}
 	}
 
 	/** Work the list out again from what the filters say right now. */
 	renarrow(): void {
-		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts), get(w_purposes));
+		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts));
 		this.w_showing.set(this.hierarchy.filtered_guides);
 	}
 
@@ -361,7 +361,6 @@ class Guides {
 	 */
 	async find_dead_links(): Promise<void> {
 		const files = this.files;
-		const with_work = get(w_purposes).includes(T_Purpose.work);
 		const dead: Finding[] = [];
 		let looked = 0, followed = 0, unreadable = 0;
 
@@ -376,9 +375,9 @@ class Guides {
 				// perfectly good — the app simply never lists those, so it cannot follow them.
 				const named = link.split('#')[0];
 				if (named.endsWith('/')) { continue; }
-				// Work notes are a different country: unless they are asked for, a link into
+				// Work notes are a different country: the app never lists them, so a link into
 				// one is passed over whether it leads anywhere or not.
-				if (!with_work && /(^|\/)work(\/|$)/.test(named)) { continue; }
+				if (/(^|\/)work(\/|$)/.test(named)) { continue; }
 				const ending = named.split('/').pop()?.split('.').slice(1).pop() ?? '';
 				if (ending !== '' && ending.toLowerCase() !== 'md') { continue; }
 				followed += 1;
@@ -389,7 +388,7 @@ class Guides {
 			}
 		}
 
-		const counted = `${looked} guide(s) read, ${followed} link(s) followed, ${dead.length} leading nowhere${unreadable > 0 ? `, ${unreadable} guide(s) unreadable` : ''}${with_work ? '' : ', links into work notes passed over'}`;
+		const counted = `${looked} guide(s) read, ${followed} link(s) followed, ${dead.length} leading nowhere${unreadable > 0 ? `, ${unreadable} guide(s) unreadable` : ''}, links into work notes passed over`;
 		// Every one of them, each its own row in the report, so any can be opened where it sits.
 		show_status(`dead links: ${counted}`, dead);
 		debug.log(`Dead links: ${counted}.${dead.length > 0 ? ` They are: ${dead.map((d) => d.words).join(' | ')}` : ''}`);
@@ -585,13 +584,11 @@ class Guides {
 	 * words would still find something.
 	 */
 	private within_reach(without: 'project' | 'kind' | 'tags'): Guide[] {
-		const purposes = get(w_purposes);
 		const project  = get(w_project);
 		const kind     = get(w_kind);
 		const tags     = get(w_tags);
 		const words    = get(w_words).trim().toLowerCase();
 		return this.files.filter((guide) => {
-			if (!purposes.includes(guide.is_design ? T_Purpose.designs : T_Purpose.guides)) { return false; }
 			if (without !== 'project' && project !== '' && guide.bundle !== project) { return false; }
 			if (without !== 'kind' && kind !== '' && guide.kind !== kind) { return false; }
 			if (without !== 'tags' && tags.length > 0 && !tags.some((tag) => this.hierarchy.tag_names_of(guide.id).includes(tag))) { return false; }

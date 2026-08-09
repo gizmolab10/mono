@@ -25,7 +25,6 @@ export enum T_Preference {
 	color_text      = 'color_text',
 
 	// Filters on the guide list
-	purposes         = 'purposes',
 	filter_project  = 'filter_project',
 	filter_kind     = 'filter_kind',
 	filter_tags     = 'filter_tags',

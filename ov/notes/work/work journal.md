@@ -2,6 +2,22 @@
 
 What's been finished, newest first.
 
+## 2026-08-08 — one ladder of names, and a top that holds still
+
+Every kind of measurement now uses the same nine words — micro, faint, tiny, small, normal, big, fat, huge, pill — and a kind simply leaves out any step it has no use for. Before this, a gap called its middle `default`, a font called its middle `base`, a height called its middle `control`, and reaching for a size meant opening the file to check what this one happens to call it. Now it is one decision: pick the kind, pick the step.
+
+**Only names changed.** Every number is exactly what it was, so nothing on screen moved. 267 lines across 21 files, plus the file of constants itself; the styling names follow the same ladder, so `--font-tiny` and `--gap-tiny` read as the same step of two ladders — which is what they are.
+
+**Separator and thickness turned out to be one thing** — both are the thickness of a drawn line — so they collapsed into thickness, which gained the separator's heaviest step rather than losing any of its own.
+
+**One real break came out of it.** The word for the typeface and the word for the middle text size became the same, and the one set from code wins, so every word on the page would have fallen back to Times. The typeface has a name of its own now.
+
+**The top of a file is a fixture.** The title stands in a slot of fixed height, and the line beneath it belongs to the page rather than to the title — so the line stays whether the title is shown, folded, or open for changing, and everything after it always begins at the same place. Before, the line was the title's own bottom edge: folding the title took it away, and opening the title took it away again.
+
+**A piece opened for changing holds what follows.** The box standing in for a piece is never quite that piece's height — different spacing above, a hair of room held inside it, whole-pixel rounding — so rather than accounting for each of those, the box measures where the piece below it stood and sets the room under itself to whatever puts it back. A subheading's box does the same for its own top, since the room above a subheading depends on what came before it. Both say in the log how far off they were.
+
+**A heading is a row now.** Its fold mark used to be placed by two numbers that measured against different things — one against the heading's height, one against the mark's own — so neither could do the job alone and both were tuning knobs. The row holds the mark level with the words, and nothing says how far down it goes.
+
 ## 2026-08-07 — the disk is the only source of files
 
 Overview used to learn which guides exist by scanning the five collections when its code was prepared. That scan is gone. The dispatcher — the small server on this machine that the log lines go to — is asked what is on disk, and that list is the whole picture: read in one pass, nothing settled in advance.

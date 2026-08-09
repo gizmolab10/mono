@@ -2,13 +2,17 @@
 // Overview never keeps a file's text — only where it is and the five labels off
 // its top.
 
-// The five kinds, in the order the OKF proposal picks them.
+// The kinds a guide can be. The first five say how a guide reads; the last two say what it is
+// about — a record of how something was built, or a note about work in hand. A file is one of
+// the seven, said in its own labels rather than worked out from the folder it sits in.
 export enum T_Kind {
 	specify    = 'specify',
 	step       = 'step',
 	wire       = 'wire',
 	explain    = 'explain',
 	refer      = 'refer',
+	design     = 'design',
+	work       = 'work',
 }
 
 // The closed tag list — twenty-four, alphabetized, nothing invented on the spot.
@@ -76,14 +80,6 @@ export type Guide = Labels & {
 	is_folder : boolean;
 	is_design : boolean;     // a design says how a thing was built, a guide says how to work
 };
-
-// The two purposes the app can show: how to work, and how a thing was built. At least one is
-// always picked, and both may be.
-export enum T_Purpose {
-	guides  = 'guides',
-	designs = 'designs',
-	work    = 'work',
-}
 
 // A guide paired with the tags on it — what a listing hands back. A folder appears
 // too, so the shape of the folders shows. The tags are gathered once, here, so nothing

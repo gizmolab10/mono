@@ -4,10 +4,12 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] unify the constant sub-names (eg kinds of gap and thickness)
-- [ ] mark 'stale' all guide files that contain completed tasks, phases, steps
 - [ ] eliminate purpose
-    - [ ] add design and work to kinds
+    - [ ] add 'design' and 'work' to kinds
+    - [ ] add to 'fix' area's tagset -> propose, coding, done
+        - [ ] rename fix -> progress
+- [ ] loc where labels are added when detected as missing
+- [ ] mark 'stale' all guide files that contain completed tasks, phases, steps
 - [ ] filters
     - [ ] animate their relayout on list files
     - [ ] click in area below separator -> rules
@@ -31,8 +33,30 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [ ] filters
     - [ ] content
 
+## Next — mark the guides that are talking about finished work
+
+### Success
+
+1. Every guide whose words are a list of completed tasks, phases or steps wears the `stale` tag.
+2. Nothing else is changed in those files — only the tag line.
+3. The count is said plainly: how many were looked at, how many were marked.
+4. A guide already marked is left alone rather than marked twice.
+
+### The shape of it
+
+A guide that reads as a checklist of things already done is a record, not guidance — it wants a rewrite, and `stale` is the tag that says so. The judging cannot be automated: a file full of ticked boxes might be a finished plan or a live one. So the pass is: find the candidates by what is in them, list them for a person, and mark only what that person confirms.
+
+One word covers both on purpose. `stale` already means "this has fallen behind what it describes", and a file that is a list of finished work has fallen behind in exactly that way — it describes doing rather than done. A second tag would split one idea in two and leave a reader deciding which applies, which is how a closed list stops being readable.
+
 ## done
 
+- [x] one ladder of names across every kind of measurement
+    - [x] separator folded into thickness, the two being the same thing
+    - [x] the styling names follow the same ladder
+    - [x] the typeface got a name of its own, so it stops fighting the middle text size
+- [x] the top of a file reads as one fixture — a fixed slot for the title, a line across the page below it
+    - [x] the line belongs to the page, not to the title, so folding or opening the title never takes it away
+    - [x] a piece opened for changing holds the piece below it exactly where it stood
 - [x] the dispatcher's list is the app's whole picture — no build-time scan of the guide folders
     - [x] nothing reloads the page when a guide is written, renamed, moved or thrown away
     - [x] with the dispatcher not answering, the screen says so rather than sitting empty

@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from './Preferences';
-import { ALL_TAGS, T_Kind, T_Purpose } from '../types/Guide';
+import { ALL_TAGS, T_Kind } from '../types/Guide';
 import { get } from 'svelte/store';
 
 /**
@@ -9,19 +9,6 @@ import { get } from 'svelte/store';
  * narrows the list now, and it has to be able to read them. All four are remembered
  * across visits.
  */
-
-// Which purposes show: how to work, how a thing was built, or both. Never none — turning off
-// the last one is refused, since a list that can go blank for no visible reason is a trap.
-export const w_purposes = preferences.persistent<T_Purpose[]>(T_Preference.purposes, [T_Purpose.guides]);
-
-/** Turn one purpose on or off. The last one on cannot be turned off. */
-export function toggle_purpose(which: T_Purpose): boolean {
-	const showing = get(w_purposes);
-	if (!showing.includes(which)) { w_purposes.set([...showing, which]); return true; }
-	if (showing.length === 1) { return false; }               // the last one stays
-	w_purposes.set(showing.filter((one) => one !== which));
-	return true;
-}
 
 // One collection at a time; empty means every collection.
 export const w_project = preferences.persistent<string>(T_Preference.filter_project, '');

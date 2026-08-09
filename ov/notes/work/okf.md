@@ -67,7 +67,9 @@ New tags are not forbidden forever, but adding one means adding it here first. T
 
 ## Kinds
 
-Five. The test each one has to pass: knowing the kind changes what I do with the file before I have read a word of it.
+Seven. The test each one has to pass: knowing the kind changes what I do with the file before I have read a word of it.
+
+The first five say how a guide reads. The last two say what it is about, and were folded in when the separate purpose filter went — asking the same question twice, once by the folder a file sits in and once by the file's own words, meant two places to look and two ways to be wrong.
 
 | Kind | What it means | What I do with it |
 | --- | --- | --- |
@@ -76,6 +78,8 @@ Five. The test each one has to pass: knowing the kind changes what I do with the
 | refer | Facts, commands, names, quirks. | Look things up in it. Never obey it. |
 | wire | How one part of an app actually works. | Read it before touching that part. |
 | explain | Why the work is shaped this way. | Read it to judge a call the other kinds don't cover. |
+| design | A record of how something was built. | Read it to learn what was already decided and why. |
+| work | A note about work in hand. | Read it to pick up where the work was left. |
 
 ### Why these five and not more
 
@@ -91,11 +95,13 @@ Everything else I considered folded in:
 
 One question at a time, first yes wins:
 
-1. Does it tell me what to do at all times? → **specify**
-2. Does it tell me how to carry out one task? → **step**
-3. Does it describe a part of an app? → **wire**
-4. Does it explain why rather than what? → **explain**
-5. Otherwise → **refer**
+1. Is it a record of how something was built? → **design**
+2. Is it a note about work in hand? → **work**
+3. Does it tell me what to do at all times? → **specify**
+4. Does it tell me how to carry out one task? → **step**
+5. Does it describe a part of an app? → **wire**
+6. Does it explain why rather than what? → **explain**
+7. Otherwise → **refer**
 
 Order matters because files straddle. The debugging guide is two principles plus some technique — the first question catches it as a rule, which is right, because those principles apply whether or not I am debugging.
 

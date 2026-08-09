@@ -1,5 +1,5 @@
 ---
-kind: explain
+kind: design
 title: "Pitch — Aaron Good"
 description: "An invitation to a founding scholar, and what the research assistant is for."
 tags: [notes, think, vision]

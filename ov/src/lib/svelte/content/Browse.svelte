@@ -1,13 +1,12 @@
 <script lang='ts'>
-	import { w_purposes, w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { w_show_folders, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
 	import Files, { w_scrollbar_showing } from './Files.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { guides } from '../../ts/managers/Guides';
-	import { T_Purpose } from '../../ts/types/Guide';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import Filters from '../support/Filters.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
+	import Filters from './Filters.svelte';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
 	const MARK = k.size.normal;
@@ -19,10 +18,8 @@
 	// How many guides the filters leave — counted before the folds, so shutting a folder
 	// hides its files from the list without changing what the count says.
 	let matching = $derived.by(() => { $w_showing; return guides.hierarchy.matched_count; });
-	// How many there are to be had at all — counted within the purposes picked, since a total
-	// that includes what you have chosen not to show would only puzzle.
-	let total = $derived($w_purposes.length === 0 ? 0 : guides.files.filter((g) =>
-		$w_purposes.includes(g.is_design ? T_Purpose.designs : T_Purpose.guides)).length);
+	// How many there are to be had at all.
+	let total = $derived(guides.files.length);
 
 	function toggle_folders() {
 		const next = !$w_show_folders;

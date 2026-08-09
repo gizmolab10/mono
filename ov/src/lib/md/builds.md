@@ -2,6 +2,7 @@
 
 | Build | Date | Note |
 | ---- | ---- | ---- |
+| 7 | Aug 8, 2026 | eliminate purpose |
 | 6 | Aug 5, 2026 | hierarchal tags & UX |
 | 5 | Aug 4, 2026 | smart kinds & tags. purpose — guides, designs |
 | 4 | Aug 2, 2026 | drag and drop |

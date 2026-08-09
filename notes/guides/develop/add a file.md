@@ -23,7 +23,7 @@ date: 2026-08-02
 ---
 ```
 
-- **kind** — one of: specify, step, refer, wire, explain. Pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → step; how a part of an app works → wire; why rather than what → explain; otherwise refer.
+- **kind** — one of: specify, step, refer, wire, explain, design, work. Two of the seven say what the file is about rather than how it reads: a record of how something was built is a design, a note about work in hand is work. For the rest, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → step; how a part of an app works → wire; why rather than what → explain; otherwise refer.
 - **title** — the human name, unique across every guide.
 - **description** — one sentence that stands alone in a search result.
 - **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.

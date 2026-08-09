@@ -2,7 +2,7 @@ import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records'
 import type { Guide, Labels, Filtered_Guide } from '../types/Guide';
 import type { Sort } from './Filters';
 import { Indexes } from '../database/Indexes';
-import { T_Bundle, T_Purpose, in_order, key_of } from '../types/Guide';
+import { T_Bundle, in_order, key_of } from '../types/Guide';
 import { debug } from '../common/Debug';
 
 /**
@@ -324,10 +324,8 @@ export class Hierarchy {
 	 * Does one row survive the three filters? Folders never match on their own — they
 	 * come back only by holding something that did.
 	 */
-	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string, purposes: T_Purpose[]): boolean {
+	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string): boolean {
 		if (row.guide.is_folder) { return false; }
-		// How to work, how a thing was built, or both — at least one is always picked.
-		if (!purposes.includes(row.guide.is_design ? T_Purpose.designs : T_Purpose.guides)) { return false; }
 		if (project !== '' && row.guide.bundle !== project) { return false; }
 		if (kind !== '' && row.guide.kind !== kind) { return false; }
 		if (tags.length > 0 && !tags.some((tag) => row.tag_names.includes(tag))) { return false; }
@@ -354,7 +352,7 @@ export class Hierarchy {
 		return row.tag_names.join(', ');
 	}
 
-	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], purposes: T_Purpose[] = [T_Purpose.guides]): void {
+	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = []): void {
 		const all = this.list_guides();
 		this.all_guides = new Map(all.map((r) => [r.key, r]));
 		const closed = new Set(shut);
@@ -365,7 +363,7 @@ export class Hierarchy {
 			? all.filter((r) => !r.ancestor_keys.some((a) => closed.has(a)))
 			: all;
 
-		const matched = all.filter((r) => this.matches(r, project, kind, tags, words, purposes));
+		const matched = all.filter((r) => this.matches(r, project, kind, tags, words));
 		this.matched_count = matched.length;
 		const keep = new Set(matched.map((r) => r.key));
 		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }

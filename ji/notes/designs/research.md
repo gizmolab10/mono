@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: design
 title: "Design trade-offs (ji)"
 description: "What was weighed in choosing how ji stores and searches what it is given."
 tags: [data, research, stale]
