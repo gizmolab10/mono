@@ -218,16 +218,16 @@
 	/* The clear strip that makes a two-pixel bar worth aiming at: as tall as any other control,
 	   the full length of the bar, lying centered on it and showing nothing of itself. */
 	.reach {
+		height     : var(--thick-fat);
 		transform  : translateY(-50%);
-		height     : var(--height);
 		background : transparent;
 		position   : absolute;
 		cursor     : pointer;
 		border     : none;
-		padding    : 0;
 		width      : 100%;
-		left       : 0;
 		top        : 50%;
+		padding    : 0;
+		left       : 0;
 	}
 
 	/* A clear strip of the page color running along both sides of the line, one --gap

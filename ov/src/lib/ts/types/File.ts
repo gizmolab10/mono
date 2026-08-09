@@ -17,6 +17,7 @@ export enum T_Kind {
 
 // The closed tag list — twenty-seven, alphabetized, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
+	'arrange',
 	'build',
 	'construct',
 	'data',
@@ -43,13 +44,12 @@ export const ALL_TAGS: string[] = [
 	'tools',
 	'UX',
 	'vision',
-	'visual-design',
-	'wire',
+	'write',
 ];
 
 /**
  * Putting words in alphabetical order the way a reader expects: capital letters count the
- * same as small ones, so "UX" sits between "tools" and "visual-design" rather than ahead of
+ * same as small ones, so "UX" sits between "tools" and "vision" rather than ahead of
  * everything. Every list of words shown on screen is ordered with this.
  */
 export function in_order(one: string, two: string): number {

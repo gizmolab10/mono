@@ -2,7 +2,7 @@
 kind: wire
 title: "Components (ws)"
 description: "The two layers of the component system and the eleven folders they sit in."
-tags: [wire, UX]
+tags: [write, UX]
 date: 2026-01-28
 ---
 

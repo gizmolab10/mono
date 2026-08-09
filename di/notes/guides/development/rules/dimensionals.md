@@ -2,7 +2,7 @@
 kind: wire
 title: "Dimensionals"
 description: "How a dimension label finds its place on every redraw: eligibility, candidates, filtering, scoring, persistence and drawing."
-tags: [wire, geometry, UX]
+tags: [write, geometry, UX]
 date: 2026-08-03
 ---
 

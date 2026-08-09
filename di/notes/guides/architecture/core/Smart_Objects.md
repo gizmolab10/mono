@@ -2,7 +2,7 @@
 kind: wire
 title: "Smart Objects"
 description: "The data shape of one part: its name, three directions, formulas, repeater settings, and visibility."
-tags: [wire, data]
+tags: [write, data]
 date: 2026-05-10
 ---
 

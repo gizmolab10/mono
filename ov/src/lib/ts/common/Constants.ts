@@ -13,6 +13,15 @@ const control_height = common_size / 1.6;	    // 21.875
 // A type simply leaves out any step it has no use for.
 
 export default class Constants {
+	// How long something takes to move, in milliseconds. One place says it, so a pill growing and
+	// the rows below it shifting are one movement rather than two that happen to look alike.
+	timeout = {
+		slide		 : 700,						// a tag area growing or shrinking
+		rest		 : 300,						// how long after it arrives before it reacts to user
+		rows		 : 200,						// the pills taking a row of their own, or giving one back
+		fade		 : 200,						// something arriving or leaving its position
+	};
+
 	font = {
 		faint		 : common_font * 0.7,		// 8.75 — the credit line
 		tiny		 : common_font * 0.8,		// 10.4 — labels

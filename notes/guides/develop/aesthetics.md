@@ -2,7 +2,7 @@
 kind: specify
 title: "Aesthetics"
 description: "Visual constants and patterns, arrived at by small perturbations rather than formulas."
-tags: [visual-design]
+tags: [arrange]
 date: 2026-05-10
 ---
 

@@ -2,7 +2,7 @@
 kind: wire
 title: "Managers (di)"
 description: "One manager per concern, each a single shared instance."
-tags: [wire]
+tags: [write]
 date: 2026-05-10
 ---
 

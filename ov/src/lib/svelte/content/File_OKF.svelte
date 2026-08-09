@@ -4,7 +4,8 @@
 	import { ALL_TAGS, T_Kind, in_order, type Guide } from '../../ts/types/File';
 	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
 	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
-	import { shut_all_areas } from '../../ts/managers/Filters';
+	import { smooth_height } from '../../ts/utilities/Smooth_Height';
+	import { toggle_all_areas } from '../../ts/managers/Filters';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Section from '../support/Section.svelte';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
@@ -108,6 +109,15 @@
 	}
 </script>
 
+<!-- Folded, the section's own empty area joins the way back to the list: it is bare space above
+     the file's words, the same as the two top rows, and it lights with them. Open, the rows
+     inside answer for themselves and this stands aside. -->
+<div class='filter-block' class:lit={way_out_lit && !$w_show_filters}
+	role='button' tabindex='-1' onkeyup={() => {}}
+	onmousemove={(e) => { if (!$w_show_filters) { way_out_lit = over_empty(e); } }}
+	onmouseleave={() => { if (!$w_show_filters) { way_out_lit = false; } }}
+	use:tip={$w_show_filters ? false : 'back to the list'}
+	onclick={(e) => { if (!$w_show_filters) { leave_if_empty(e); } }}>
 <!-- What the guide is labeled, as a section of its own: its line carries the word that folds
      the whole form away, and holds three subsections — the words, the kinds, the tags. -->
 <Section
@@ -177,8 +187,8 @@
 				     itself is that area's own. -->
 				<!-- Each area is wrapped so it can be slid: opening one grows it from a word to a
 				     run of segments, and the pills after it move a long way at once. -->
-				<div class='filter-row wrapping tags-row' role='presentation'
-					onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
+				<div class='filter-row wrapping tags-row' use:smooth_height role='presentation'
+					onclick={(event) => { if (event.target === event.currentTarget) { toggle_all_areas(TAG_AREAS.map((one) => one.name)); } }}>
 					{#each TAG_AREAS as area (area.name)}
 						<span class='pill-slot'>
 							<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
@@ -190,8 +200,25 @@
 	</div>
 	{/snippet}
 </Section>
+</div>
 
 <style>
+	/* Folded, this whole block is bare space above the file's words, so it is a way back to the
+	   list and lights with the two rows above it. It reaches out to the box's left and right
+	   edges, the way those rows do, so the lit color covers the gap the box holds around its
+	   contents rather than stopping short. */
+	.filter-block {
+		margin         : 0 calc(var(--gap) * -1);
+		padding        : 0 var(--gap);
+		flex-direction : column;
+		display        : flex;
+	}
+
+	.filter-block.lit {
+		background : var(--hover);
+		cursor     : pointer;
+	}
+
 	.filter-form {
 		flex-direction : column;
 		display        : flex;
@@ -240,9 +267,20 @@
 	}
 
 	/* The gap below the tag areas is the section's, not theirs. Wrapped onto more than one row,
-	   they stand a full gap apart both ways — the same as the tag areas among the filters. */
+	   they stand a full gap apart both ways — the same as the tag areas among the filters.
+	   When a pill grows or shrinks enough to take a row of its own, or to give one back, this box
+	   changes height and everything under it moves. That change takes the same time the pill
+	   itself takes, so the two read as one movement rather than a slide and then a jump. */
+	/* The rows keep their own height whatever the box is told to be. Left to stretch, they would
+	   grow to fill a stated height — and since that height is worked out from how tall they are,
+	   each would make the other larger, over and over. */
+	/* Nothing is clipped here: each pill's own name rides above its top edge, so a box that cut
+	   off what falls outside it would take the names with it. */
 	.filter-row.wrapping {
+		transition      : height var(--slide-rows) linear;
 		justify-content : center;
+		align-content   : flex-start;
+		align-items     : center;
 		flex-wrap       : wrap;
 		gap             : var(--gap);
 	}

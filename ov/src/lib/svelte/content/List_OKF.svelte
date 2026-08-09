@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { w_project, w_kind, w_show_filters, w_tags, w_words } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { shut_all_areas, UNLABELED } from '../../ts/managers/Filters';
+	import { toggle_all_areas, UNLABELED } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
 	import { TAG_AREAS, tags_shown } from '../../ts/types/Tag_Areas';
 	import { fade } from 'svelte/transition';
+	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import Section from '../support/Section.svelte';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import Big_Pill from '../support/Big_Pill.svelte';
@@ -87,9 +88,9 @@
 	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
 	let tags_word = $derived($w_tags.length === 0 ? 'all' : $w_tags.join(', '));
 
-	// How long an area that runs out of tags takes to fade away, in milliseconds. The same time a
-	// pill takes to grow or shrink, so the two read as one movement.
-	const SLIDE = 3000;
+	// How long an area that runs out of tags takes to fade away, in milliseconds. Said in one
+	// place for the whole app, so everything that arrives or leaves does it at the same rate.
+	const FADE = k.timeout.fade;
 
 	// Only the areas with something left to show. Worked out here rather than inside each pill,
 	// because an area that draws nothing must not leave a wrapper behind holding a gap open.
@@ -176,10 +177,13 @@
 					<div class='kinds' use:tip={'show particular kinds of guide'}>
 						<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
 						<!-- The files carrying no labels at all — how they are found, so they can be
-						     opened and given some. -->
-						<button class='segment' class:current={$w_kind === UNLABELED} class:empty={bare === 0}
-							use:tip={bare === 0 ? 'every file left by the other filters carries labels' : 'show only the files that carry no labels'}
-							onclick={() => { if (bare > 0) { choose_kind(UNLABELED); } }}>none</button>
+						     opened and given some. With every file already labeled there is nothing
+						     for it to leave, so it goes rather than standing there unanswering. -->
+						{#if bare > 0 || $w_kind === UNLABELED}
+							<button class='segment' class:current={$w_kind === UNLABELED}
+								use:tip={'show only the files that carry no labels'}
+								onclick={() => choose_kind(UNLABELED)}>none</button>
+						{/if}
 						{#each shown_kinds as kind}
 							{@const in_reach = kinds.includes(kind)}
 							<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
@@ -205,10 +209,10 @@
 					     run of segments, and the pills after it move a long way at once. The wrapper
 					     is what carries the slide, and areas with nothing left to show are left out
 					     here rather than inside — an empty wrapper would still take a gap. -->
-					<div class='tags' role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { shut_all_areas(); } }}>
+					<div class='tags' use:smooth_height role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { toggle_all_areas(showing_areas.map((one) => one.name)); } }}>
 						<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>all</button>
 						{#each showing_areas as area (area.name)}
-							<span class='pill-slot' transition:fade={{ duration: SLIDE }}>
+							<span class='pill-slot' transition:fade={{ duration: FADE }}>
 								<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
 							</span>
 						{/each}
@@ -306,9 +310,20 @@
 		display : inline-flex;
 	}
 
+	/* When a pill grows or shrinks enough to take a row of its own, or to give one back, this box
+	   changes height and everything under it moves. That change takes the same time the pill
+	   itself takes, so the two read as one movement rather than a slide and then a jump. */
+	/* The rows keep their own height whatever the box is told to be. Left to stretch, they would
+	   grow to fill a stated height — and since that height is worked out from how tall they are,
+	   each would make the other larger, over and over. */
+	/* Nothing is clipped here: each pill's own name rides above its top edge, so a box that cut
+	   off what falls outside it would take the names with it. */
 	.tags {
+		transition      : height var(--slide-rows) linear;
 		gap             : var(--gap);
 		justify-content : center;
+		align-content   : flex-start;
+		align-items     : center;
 		display         : flex;
 		flex-wrap       : wrap;
 	}

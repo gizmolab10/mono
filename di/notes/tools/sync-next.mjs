@@ -9,7 +9,7 @@
 //
 // Run with: node notes/tools/sync-next.mjs
 //
-// Wired into yarn adherence so every build refreshes the section.
+// Run it with yarn next.
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';

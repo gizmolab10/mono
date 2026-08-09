@@ -2,7 +2,7 @@
 kind: specify
 title: "CSS Lessons"
 description: "Styling patterns and gotchas learned from real work; static markup, dynamic appearance."
-tags: [style, visual-design]
+tags: [style, arrange]
 date: 2026-05-10
 ---
 

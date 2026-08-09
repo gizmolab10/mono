@@ -2,7 +2,7 @@
 kind: wire
 title: "Component Salvage (ws)"
 description: "Which of the forty-odd components are worth keeping and which need rebuilding."
-tags: [wire, refactor]
+tags: [write, refactor]
 date: 2026-02-03
 ---
 

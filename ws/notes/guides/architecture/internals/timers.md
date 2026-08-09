@@ -2,7 +2,7 @@
 kind: wire
 title: "Timers (ws)"
 description: "Mouse timing held by the hits manager, so it survives a redraw."
-tags: [wire, UX]
+tags: [write, UX]
 date: 2026-01-12
 ---
 

@@ -2,13 +2,13 @@
 kind: wire
 title: "Preferences Flow (ws)"
 description: "One setting followed all the way from the click to storage and back."
-tags: [wire, data, UX]
+tags: [write, data, UX]
 date: 2026-01-12
 ---
 
 # Preferences System: Store Presentation and Persistence
 
-Okay, so I like to give people choices about looks and what have you. Of course their choices need to be remembered for them. It's a computer, for crying sake. This is a walk through how one preference flows from UI click to localStorage and back.
+Seems to me that people like to alter the looks and behavior of an app. Of course their choices need to be remembered for them. It's a computer, for crying sake. This is a walk through how one preference flows from UI click to localStorage and back.
 
 ## Table of Contents
 - [Overview](#overview)

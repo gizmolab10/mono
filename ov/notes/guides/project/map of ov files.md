@@ -2,7 +2,7 @@
 kind: refer
 title: "Map (ov)"
 description: "Every source file in overview, updated whenever files are added, moved, or removed."
-tags: [journal, notes, wire]
+tags: [journal, notes, write]
 date: 2026-07-31
 ---
 

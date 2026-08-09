@@ -2,7 +2,7 @@
 kind: wire
 title: "Search (ws)"
 description: "Matches appear as each letter is typed, in very little screen space."
-tags: [wire, UX]
+tags: [write, UX]
 date: 2026-01-12
 ---
 

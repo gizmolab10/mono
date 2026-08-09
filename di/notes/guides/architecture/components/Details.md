@@ -2,7 +2,7 @@
 kind: wire
 title: "Details (di)"
 description: "The right-side area: four folding sections for preferences, library, parts, and one part."
-tags: [wire, UX]
+tags: [write, UX]
 date: 2026-05-10
 ---
 

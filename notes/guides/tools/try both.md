@@ -2,7 +2,7 @@
 kind: step
 title: "Try Both"
 description: "Build two ways of showing something at once, behind one word you flip, and look at each."
-tags: [tools, visual-design]
+tags: [tools, arrange]
 date: 2026-08-03
 ---
 

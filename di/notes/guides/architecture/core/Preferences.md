@@ -2,7 +2,7 @@
 kind: wire
 title: "Preferences (di)"
 description: "Named values that survive a reload, kept in the browser's own storage."
-tags: [wire, data]
+tags: [write, data]
 date: 2026-05-10
 ---
 

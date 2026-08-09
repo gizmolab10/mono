@@ -2,7 +2,7 @@
 kind: wire
 title: "Layout Code"
 description: "A map of the tangled code that decides where each part of the graph gets drawn."
-tags: [wire, refactor]
+tags: [write, refactor]
 date: 2026-01-12
 ---
 

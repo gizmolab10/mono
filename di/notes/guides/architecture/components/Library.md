@@ -2,7 +2,7 @@
 kind: wire
 title: "Library (di)"
 description: "Where a saved arrangement is kept, reopened, or dropped inside the current one."
-tags: [wire, UX, data]
+tags: [write, UX, data]
 date: 2026-05-10
 ---
 

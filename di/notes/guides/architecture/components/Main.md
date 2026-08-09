@@ -2,7 +2,7 @@
 kind: wire
 title: "Main (di)"
 description: "The root layout: where the controls strip, side area, drawing area, and build-notes overlay sit."
-tags: [wire, UX]
+tags: [write, UX]
 date: 2026-05-10
 ---
 

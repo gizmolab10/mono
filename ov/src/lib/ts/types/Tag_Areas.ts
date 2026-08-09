@@ -18,12 +18,12 @@ export type Tag_Area = {
 
 export const TAG_AREAS: Tag_Area[] = [
 	{ name: 'ai',       tags: ['session', 'team', 'style', 'prose'] },
-	{ name: 'code',     tags: ['port', 'migrate', 'refactor', 'wire', 'data'] },
+	{ name: 'code',     tags: ['port', 'migrate', 'refactor', 'write', 'data'] },
 	{ name: 'fix',      tags: ['test', 'debug'] },
 	{ name: 'harness',  tags: ['platform', 'setup', 'deploy', 'tools', 'build'] },
 	{ name: 'other',    tags: ['notes', 'vision', 'research'] },
 	{ name: 'progress', tags: ['proposal', 'construct', 'done', 'journal', 'stale', 'think'] },
-	{ name: 'ux',       tags: ['visual-design', 'UX', 'geometry'] },
+	{ name: 'ux',       tags: ['arrange', 'UX', 'geometry'] },
 ];
 
 /** Which area a tag belongs to, or nothing when it belongs to none. */

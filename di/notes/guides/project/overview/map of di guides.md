@@ -3,7 +3,7 @@ kind: refer
 title: "Guide Layout (di)"
 description: "A bird's-eye list of every page under the di guides, one line each."
 tags: [journal, notes]
-date: 2026-05-10
+date: 2026-08-09
 ---
 
 # Guide layout
@@ -13,7 +13,6 @@ A bird's-eye view of every page under `notes/guides/` with a super-brief descrip
 ```text
 guides/
 ├── index.md ............................. top-level table of contents
-├── guides.layout.md ...................... this page — every guide at a glance
 ├── architecture/
 │   ├── index.md ......................... architecture table of contents
 │   ├── components/
@@ -38,9 +37,8 @@ guides/
 │   ├── graph/
 │   │   ├── index.md ..................... graph pages table of contents
 │   │   ├── axes.md ...................... rotation, swap, angular rendering
-│   │   ├── dimensionals.md .............. measurement labels and witness lines
 │   │   ├── drag.md ...................... edge and corner stretch history
-│   │   ├── editors.md ................... canvas input editors group page
+│   │   ├── editors.md ................... the four modules handling typing and dragging on the drawing
 │   │   ├── Hits_3D.md ................... three-dimensional hit testing
 │   │   ├── intersecting.faces.md ........ face-pair plane crossings
 │   │   ├── render.md .................... per-frame render pipeline overview
@@ -55,31 +53,39 @@ guides/
 │       ├── key paths.md ................. keyboard shortcuts by context
 │       ├── panel.layout.md .............. full-viewport region layout
 │       └── style.md ..................... CSS conventions and design tokens
+├── development/
+│   ├── index.md ......................... development table of contents
+│   ├── running e2e tests.md ............. what must already be running before an end-to-end test can pass
+│   ├── learn/
+│   │   ├── index.md ..................... learn table of contents
+│   │   └── lessons.md ................... patterns distilled from finished milestones
+│   └── rules/
+│       ├── index.md ..................... rules table of contents
+│       ├── dimensionals.md .............. how a measurement label finds its place on every redraw
+│       └── stipulations.md .............. the load-bearing rules, each pinned by a test
+├── pre-flight/
+│   ├── index.md ......................... pre-flight table of contents
+│   ├── always.md ........................ di's own standing rules, read every session
+│   ├── banned words.md .................. di's own words to use and never use
+│   └── lexicon.md ....................... the exact words di uses, no near-synonyms
 └── project/
     ├── index.md ......................... project table of contents
-    ├── development/
-    │   ├── index.md ..................... development table of contents
-    │   ├── adherence dashboard.md ....... auto-generated scorecard, refreshed on every build
-    │   ├── adherence log.md ............. hand-recorded sweeps, compliance, triage entries
-    │   ├── areas.json ................... module count per area (hand-maintained)
-    │   ├── best.practices.md ............ Svelte patterns and what to avoid
-    │   ├── build-status.json ............ last build outcome, written by the wrapper script
-    │   ├── dashboard guide.md ........... how to read the adherence dashboard
-    │   ├── lessons.md ................... meta-lessons from mothballed work
-    │   ├── logic driven design.md ....... logic-driven design notes
-    │   ├── stipulations.md .............. load-bearing rules catalog
-    │   ├── testing.md ................... test index per rule
-    │   └── update guides.md ........... instructions for guide updates
     ├── overview/
     │   ├── index.md ..................... overview table of contents
-    │   ├── file layout.md ............... every folder and file listed
-    │   ├── map.md ....................... flat list of notes files
+    │   ├── map of di files.md ........... where everything lives in the di source
+    │   ├── map of di guides.md .......... this page — every guide at a glance
     │   └── project.md ................... entry flow and core loop
+    ├── philosophy/
+    │   ├── index.md ..................... philosophy table of contents
+    │   ├── best.practices.md ............ Svelte patterns and what to avoid
+    │   ├── unit testing.md .............. which tests cover which rules, and how each names its rule
+    │   └── update guides.md ............. instructions for guide updates
     └── research/
         ├── index.md ..................... research table of contents
         ├── 3D.primer.md ................. quaternions, projection, perspective basics
-        ├── library-versioning.md ........ saving library objects, design notes
-        └── spatial-acceleration.md ...... flatbush adoption research notes
+        ├── dimensionals research.md ..... whether an existing constraint library beats the custom search
+        ├── library versioning.md ........ what happens to placed instances when the saved original changes
+        └── occlusion performance.md ..... ways to speed up working out what hides what
 ```
 
-The user-manual markdown files no longer live under `notes/guides/project/`. They are now in `src/manual/` (the in-app help component imports them directly). See the overview file map for the full listing.
+The user-manual markdown files no longer live under `notes/guides/project/`. They are now in `src/manual/` (the in-app help component imports them directly). See the file map for the full listing.

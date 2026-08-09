@@ -5,11 +5,13 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 ## work
 
 - [ ] tags
-    - [ ] animate relayout on list files
-    - [ ] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
-    - [ ] add any/all/clear
+    - [x] animate relayout on list files
+    - [x] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
+    - [ ] in Browse, convert 'all' button -> any/all/clear segmented control
+- [ ] search files does not match against file name, just the labels
 - [ ] port Hits.ts from di
     - [ ] replace nearly all of the on click and on hover wiring with hits logic
+- [ ] add a list of back links to the editor
 
 ## done
 

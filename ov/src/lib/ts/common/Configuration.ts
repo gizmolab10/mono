@@ -57,6 +57,10 @@ class Configuration {
 		root.setProperty('--font-big',           `${k.font.big}px`);
 		root.setProperty('--font-fat',           `${k.font.fat}px`);
 		root.setProperty('--font-huge',          `${k.font.huge}px`);
+		root.setProperty('--slide',              `${k.timeout.slide}ms`);
+		root.setProperty('--slide-rows',         `${k.timeout.rows}ms`);
+		root.setProperty('--fade',               `${k.timeout.fade}ms`);
+		root.setProperty('--rest',               `${k.timeout.rest}ms`);
 		root.setProperty('--em-tiny',            `${k.font.em.tiny}em`);
 		root.setProperty('--em-small',           `${k.font.em.small}em`);
 		root.setProperty('--em',                 `${k.font.em.normal}em`);

@@ -2,7 +2,7 @@
 kind: wire
 title: "Details (ws)"
 description: "The folding sections that show whatever is selected or in focus."
-tags: [wire, UX]
+tags: [write, UX]
 date: 2026-01-28
 ---
 

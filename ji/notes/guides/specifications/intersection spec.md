@@ -2,7 +2,7 @@
 kind: specify
 title: "Intersection Rules"
 description: "The rules the intersection app follows, starting with one source of truth for every color."
-tags: [visual-design, wire]
+tags: [arrange, write]
 date: 2026-07-24
 ---
 

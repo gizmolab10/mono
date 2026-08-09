@@ -22,7 +22,7 @@ describe('the areas against the closed tag list', () => {
 	});
 
 	it('says which area a tag belongs to, and nothing for a word that is not a tag', () => {
-		expect(area_of('wire')).toBe('code');
+		expect(area_of('write')).toBe('code');
 		expect(area_of('UX')).toBe('ux');
 		expect(area_of('nonsense')).toBe('');
 	});
@@ -40,7 +40,7 @@ describe('what an area shows', () => {
 	});
 
 	it('puts them in order, ignoring capitals', () => {
-		expect(tags_shown(ux, ['UX', 'geometry', 'visual-design'], [])).toEqual(['geometry', 'UX', 'visual-design']);
+		expect(tags_shown(ux, ['UX', 'geometry', 'arrange'], [])).toEqual(['arrange', 'geometry', 'UX']);
 	});
 
 	it('shows nothing when the area is spent', () => {
@@ -53,7 +53,7 @@ describe('what a shut area reads', () => {
 
 	it('reads its own name while nothing inside it is picked', () => {
 		expect(area_reads(other, [])).toBe('other');
-		expect(area_reads(other, ['wire'])).toBe('other');       // picked, but in another area
+		expect(area_reads(other, ['write'])).toBe('other');       // picked, but in another area
 	});
 
 	it('reads what is picked instead, in order', () => {

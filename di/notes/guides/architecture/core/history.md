@@ -2,7 +2,7 @@
 kind: wire
 title: "History (di)"
 description: "Stepping backward and forward through recent changes without losing the scene on screen."
-tags: [wire, data]
+tags: [write, data]
 date: 2026-05-10
 ---
 

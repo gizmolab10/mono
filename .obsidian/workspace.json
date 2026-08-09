@@ -49,8 +49,7 @@
               "title": "banned words"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -107,7 +106,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 388.50271224975586
+    "width": 388.50271224975586,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -185,13 +185,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/collaborate/cadence.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of cadence"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -224,22 +224,24 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "77cfec369df62652",
   "lastOpenFiles": [
+    "notes/guides/pre-flight/banned words.md",
+    "di/notes/tools/index.md.tmp.95157.3cf83f28ce5f",
+    "di/notes/guides/development/adhere/dashboard guide.md",
+    "ov/notes/work/code debt.md",
+    "notes/guides/collaborate/cadence.md",
+    "ji/notes/designs/RAG research.md",
+    "ov/src/lib/ts/tests/smooth_height.test.ts",
+    "ov/src/lib/ts/utilities/Smooth_Height.ts",
+    "ov/src/lib/svelte/support/Big_Pill.svelte.tmp.95157.48a553fbd24d",
     "ov/src/lib/svelte/support/Big_Pill.svelte.tmp.95157.1f0bcb7fe6ac",
     "ov/notes/work/handoff.md",
-    "ov/notes/work/code debt.md",
     "ov/notes/guides/project/map of ov files.md.tmp.95157.453732643576",
     "ov/src/lib/svelte/content/Files.svelte.tmp.95157.fac69b18197a",
     "ov/src/lib/svelte/content/List_OKF.svelte.tmp.95157.5b317c654860",
     "ov/src/lib/ts/tests/hit_empty_space.test.ts",
     "ov/src/lib/ts/utilities/Hit_Empty_Space.ts",
-    "ov/src/lib/ts/tests/leave_editor.test.ts",
-    "ov/src/lib/ts/utilities/Leave_Editor.ts",
-    "ov/src/lib/svelte/main/Editor.svelte.tmp.95157.f37315d95876",
-    "ov/src/lib/svelte/content/Search.svelte",
-    "ov/src/lib/svelte/content/File_Content.svelte",
-    "notes/guides/pre-flight/banned words.md",
     "notes/guides/develop/conceptual composition.md",
     "di/notes/guides/pre-flight/banned words.md",
     "ov/notes/guides/pre-flight/banned words.md",
@@ -259,9 +261,6 @@
     "ji/notes/designs/rag research.md",
     "di/notes/guides/project/overview/map of di files.md",
     "ov/notes/work/current context.md",
-    "ov/notes/guides/design/organize.md",
-    "ov/notes/guides/design/okf.md",
-    "ov/notes/guides/design/ov.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

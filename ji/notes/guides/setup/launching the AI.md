@@ -2,7 +2,7 @@
 kind: step
 title: "Launching the AI"
 description: "Everything between a cold mac and ji answering a question: Docker, AnythingLLM, the model, the key-holding server, the tunnel, and the password."
-tags: [setup, tools, wire]
+tags: [setup, tools, write]
 date: 2026-08-07
 ---
 

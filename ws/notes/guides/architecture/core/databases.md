@@ -2,7 +2,7 @@
 kind: wire
 title: "Databases (ws)"
 description: "Four storage backends behind one shared interface, each with its own hierarchy."
-tags: [wire, data]
+tags: [write, data]
 date: 2026-01-28
 ---
 

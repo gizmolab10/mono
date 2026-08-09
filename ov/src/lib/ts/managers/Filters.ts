@@ -70,9 +70,13 @@ export function toggle_area(name: string): void {
 	w_areas_open.update((open) => open.includes(name) ? open.filter((one) => one !== name) : [...open, name]);
 }
 
-/** Shut every area at once — what a click on the bare space beside the pills means. */
-export function shut_all_areas(): void {
-	w_areas_open.set([]);
+/**
+ * What a click on the bare space beside the pills means: shut every area at once — or, when they
+ * are all shut already, open every one. So the same press always does something, and the way back
+ * from six shut areas is the same press that shut them.
+ */
+export function toggle_all_areas(every_name: string[]): void {
+	w_areas_open.update((open) => open.length === 0 ? [...every_name] : []);
 }
 
 // Which columns the list is sorted by, and which way each runs. Sorting is offered only

@@ -47,14 +47,12 @@ export function gap_inside(folded: boolean, gap: number = USUAL_GAP, holds_subse
 
 /**
  * How tall a folded section stands: no content, so its whole height stands in for the row that
- * went — its own gap and a tiny one over. Without it, the line above would sit on the line
- * below.
+ * went — its own gap and a tiny one over. Without it, the line above would sit on the line below.
  *
- * A section holding subsections stands flat instead. It holds no gap of its own when it is open,
- * so holding one when it is folded would be a gap that exists in only one of the two states —
- * and whatever follows it holds its own gap already.
+ * A section that should stand flat when folded says so by asking for no gap at all. That is the
+ * one number, said once, rather than a second rule about when the first does not apply.
  */
-export function folded_height(gap: number = USUAL_GAP, holds_subsections = false): number {
-	if (holds_subsections) { return 0; }
+export function folded_height(gap: number = USUAL_GAP): number {
+	if (gap === 0) { return 0; }
 	return gap + k.gap.tiny;
 }

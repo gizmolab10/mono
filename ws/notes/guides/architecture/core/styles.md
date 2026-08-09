@@ -1,8 +1,8 @@
 ---
-kind: wire
+kind: specify
 title: "Color Management"
 description: "One place that works out every color from the current state."
-tags: [UX, visual-design, wire]
+tags: [arrange, UX, write]
 date: 2026-01-12
 ---
 

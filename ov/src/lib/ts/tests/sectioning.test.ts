@@ -65,8 +65,7 @@ describe('a folded section', () => {
 		expect(folded_height()).toBeGreaterThan(0);
 	});
 
-	it('stands flat when it holds subsections, since it holds no gap of its own either', () => {
-		expect(folded_height(k.gap.normal, true)).toBe(0);
-		expect(folded_height(k.gap.fat, true)).toBe(0);
+	it('stands flat when it asks for no gap at all', () => {
+		expect(folded_height(0)).toBe(0);
 	});
 });
