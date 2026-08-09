@@ -66,6 +66,25 @@ export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
  */
 export type On_Disk = { root: string; paths: string[] };
 
+/**
+ * The address a file's own words are read from, built from where the file sits on this machine.
+ *
+ * A file name is free to hold a question mark, a hash or a percent sign, and every one of those
+ * means something else in an address — a question mark starts the part after the name, so a file
+ * called "worth it?.md" would be asked for as "worth it" and the server would hand back the app's
+ * own page instead. Each is written as a stand-in code so it reads as part of the name. The
+ * slashes between folders are left alone, since they are doing their own job.
+ */
+export function address_of_file(full_path: string): string {
+	const safe = full_path.split('/').map((part) => encodeURIComponent(part)).join('/');
+	return `/@fs${safe}`;
+}
+
+/** The full place on this machine, back from an address — the other way round. */
+export function path_of_address(address: string): string {
+	return decodeURIComponent(address.replace(/^\/@fs/, '').split('?')[0]);
+}
+
 export async function guides_on_disk(): Promise<On_Disk> {
 	try {
 		const answer = await fetch('http://localhost:5171/list-guides');
@@ -128,6 +147,28 @@ export async function delete_guide(where: string): Promise<Saved> {
 		return { ok: false, why: said.error ?? `the server answered ${answer.status}` };
 	} catch (e) {
 		return { ok: false, why: e instanceof Error ? e.message : String(e) };
+	}
+}
+
+/**
+ * One guide's own words, read through the dispatcher rather than through the dev server.
+ *
+ * The dev server can serve a guide too, but it will not accept a name holding a question mark
+ * however that mark is written — it hands back the app's own page instead of the file, which
+ * reads on screen as a guide full of markup. Here the name travels as a query value, which the
+ * dispatcher unpacks before it touches disk, so every name works.
+ *
+ * Nothing at all comes back when the file cannot be read, and why is said in plain words.
+ */
+export async function read_guide(where: string): Promise<{ text: string | null; why: string }> {
+	const url = `http://localhost:5171/read-guide?where=${encodeURIComponent(where)}`;
+	try {
+		const answer = await fetch(url);
+		const said = await answer.json().catch(() => ({}));
+		if (answer.ok && said.success && typeof said.text === 'string') { return { text: said.text, why: '' }; }
+		return { text: null, why: said.error ?? `the server answered ${answer.status}` };
+	} catch (e) {
+		return { text: null, why: e instanceof Error ? e.message : String(e) };
 	}
 }
 

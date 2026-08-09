@@ -4,7 +4,12 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] mark the guides that are talking about finished work
+- [x] scrolling content should not scroll title row
+- [ ] convert 'search' titled sep -> unicode character (magnifying glass)
+- [ ] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
+- [ ] cute: add a link to work sites
+    - [ ] on all localhost served
+    - [ ] upper right corner immediate left of help
 - [ ] filters
     - [ ] animate their relayout on list files- [ ] add (find and) replace in edit
 - [ ] whitespace around almond in header's thin line --gap-tight
@@ -22,6 +27,7 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [ ] content
 ## done
 
+- [x] mark the guides that are talking about finished work
 - [x] add new tag area -> progress
     - [x] tagset -> propose, coding, done
 - [x] loc where labels are added when detected as missing

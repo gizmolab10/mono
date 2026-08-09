@@ -4,24 +4,25 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md)  file has what's finished iand the [[current context]] you can't read off the code. 
 
-## Next — mark the guides that are talking about finished work
-
+## Sections and separators become one piece
 ### Success
 
-1. Every guide whose words are a list of completed tasks, phases or steps wears the `stale` tag.
-2. Nothing else is changed in those files — only the tag line.
-3. The count is said plainly: how many were looked at, how many were marked.
-4. A guide already marked is left alone rather than marked twice.
-5. The type check and the tests are clean, and nothing on screen changes at all.
+1. The editor is built from one Section piece used five times, not from hand-set spacing at every level.
+2. A section says what it is with props — its separator's thickness, its title, whether the title can be pressed, whether it folds — and nothing else.
+3. Every gap above and below content comes from the Section, so no rule in the editor sets a margin to line something up.
+4. Nothing on screen moves.
+5. The type check and the tests are clean.
 
 ### The shape of it
 
-A guide that reads as a checklist of things already done is a record, not guidance — it wants a rewrite, and `stale` is the tag that says so.
+The editor is 1,897 lines with 55 separate spacing rules, and I have spent this session fixing three faults that were all the same fault: one place pushing, another pulling, and the two drifting apart. The guide names the cause — separators deployed several ways, each with its own arithmetic.
 
-**Who judges, and when.** The collaborator reads each candidate and decides; Jonathan corrects what came out wrong. That is now the settled shape for every labeling pass, and it holds here — a file full of ticked boxes might be a finished plan or a live one, and no rule tells those apart.
+**What a Section is.** A rectangle bounded above and below by a separator or an edge, with equal room around its content. That is the whole idea; the props are thickness, title, pressable, foldable, and the extra strip that also takes hover and click.
 
-**Where it differs from the labeling that just landed.** That one waits for a file to be opened, because there was no reason to touch a file nobody asked about. This one is a sweep by its nature: the whole point is to find the guides that have fallen behind, which means reading all of them. So it runs once, over every guide, and says plainly what it looked at and what it marked.
+**The order.** Build the Section against the tags row first, since it is the one whose height changes. Then kinds, then title-and-brief, then search, then title-and-navigator. Content last — it holds the scrolling and the pinned title, and is the only one that is not a plain stack.
 
-**One word covers both on purpose.** `stale` already means "this has fallen behind what it describes", and a file that is a list of finished work has fallen behind in exactly that way — it describes doing rather than done. A second tag would split one idea in two and leave a reader deciding which applies, which is how a closed list stops being readable.
+**How it stays honest.** Each phase ends with the screen unchanged. That is the test: a phase that moves something by a pixel is a phase that got the room wrong.
 
-**What it does not do.** It does not rewrite anything. Marking says a guide wants a rewrite; the rewriting is its own work, one guide at a time.
+**What I would drop first.** The `word` on a separator and the strip that answers a press are already one component. It is the _placing_ that is scattered — so Section owns placing, and Separator keeps drawing.
+
+**The risk.** The editor's spacing is now the product of many small corrections, several of them mine and undocumented. Some exist for reasons nobody wrote down. Any that vanish under the Section will show as a pixel shift, which is why every phase ends with a look.

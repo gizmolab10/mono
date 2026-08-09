@@ -7,7 +7,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
-	import { VAULT, file_path_of, obsidian_link, save_guide } from '../../ts/utilities/Saving';
+	import { VAULT, file_path_of, obsidian_link, read_guide, save_guide } from '../../ts/utilities/Saving';
 	import { has_labels, labels_for, today, with_labels_added, with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
@@ -105,11 +105,6 @@
 
 	let page = $state<HTMLElement | null>(null);
 
-	// Whether the words are taller than the room they have — the one thing a stylesheet cannot
-	// ask. Only then does the right margin come off, so the bar can sit against the box's edge;
-	// with everything on screen the words keep their margin on both sides.
-	let page_has_bar = $state(false);
-
 	// The thumb is never shorter than a fifth of its lane. Where the browser would have put it,
 	// left alone, is drawn as a thin strip over the real one, so both can be seen at once.
 	let free = $state<Free_Thumb>({ top: 0, length: 0, shows: false });
@@ -117,12 +112,30 @@
 	/** Look again at how tall the words are, and at both thumbs. */
 	function measure_page() {
 		const box = page;
-		if (!box) { page_has_bar = false; free = { top: 0, length: 0, shows: false }; return; }
-		page_has_bar = box.scrollHeight > box.clientHeight + 1;
+		if (!box) { free = { top: 0, length: 0, shows: false }; return; }
 		// The lane starts below the line across the page, so the marker over it starts there too
 		// and runs the shorter length — otherwise the two would not line up.
 		const below_the_line = k.gap.huge + k.gap.normal;
 		free = free_thumb(box.clientHeight - below_the_line, box.scrollHeight, box.scrollTop, box.offsetTop + below_the_line);
+	}
+
+	/**
+	 * Say which piece of the page is wider than the room it has, when the words can be pushed
+	 * sideways. A table will not wrap a cell, and a long unbroken run of characters will not
+	 * break — either can do it, and only measuring says which.
+	 */
+	function say_what_is_too_wide() {
+		const box = page;
+		if (!box || box.scrollWidth <= box.clientWidth + 1) { return; }
+		const room = box.clientWidth;
+		const guilty: string[] = [];
+		for (const piece of Array.from(box.children) as HTMLElement[]) {
+			if (piece.scrollWidth > room + 1) {
+				const opens = (piece.textContent ?? '').trim().slice(0, 40);
+				guilty.push(`a ${piece.tagName.toLowerCase()} needing ${Math.round(piece.scrollWidth)} — "${opens}"`);
+			}
+		}
+		debug.log(`Viewer: "${name}" is ${Math.round(box.scrollWidth)} wide with only ${Math.round(room)} of room, so it can be pushed sideways. ${guilty.length === 0 ? 'No single piece is too wide on its own — something inside one of them is.' : guilty.join('; ')}`);
 	}
 
 	$effect(() => {
@@ -768,6 +781,7 @@
 		// Folding changes how tall the words are but not the box holding them, so nothing else
 		// would tell the bar and its marker to look again.
 		measure_page();
+		say_what_is_too_wide();
 	}
 
 	/** One mark, ready to be put beside a heading. */
@@ -861,16 +875,18 @@
 	let loaded = $state(false);
 	let failed = $state('');
 	$effect(() => {
-		const where = address;
+		// The dispatcher hands over the words, not the dev server: the dev server will not accept
+		// a name holding a question mark, and answers with the app's own page instead of the file.
+		const where = file_path_of(guide.bundle, guide.path);
 		// The words already on screen stay there until the next one's are ready. Blanking them
 		// first put an empty box on screen for an instant, which read as a flash.
 		failed      = '';
 		note        = '';
 		marked      = null;      // the lit words belong to the drawing being left behind
-		fetch(where)
+		read_guide(where)
 			.then((answer) => {
-				if (!answer.ok) { throw new Error(`the server answered ${answer.status}`); }
-				return answer.text();
+				if (answer.text === null) { throw new Error(answer.why); }
+				return answer.text;
 			})
 			.then(async (text) => {
 				// This is the first time anyone has opened this file, so now is when it gets its
@@ -1040,7 +1056,7 @@
 					<input class='filter-field date' bind:value={form_date} onblur={save_filters} />
 				</div>
 				<div class='filter-row'>
-					<span class='filter-word'>says</span>
+					<span class='filter-word'>brief</span>
 					<input class='filter-field' bind:value={form_description} onblur={save_filters} />
 				</div>
 				<!-- The kinds fold away behind their own word, which then says which one the guide
@@ -1116,7 +1132,6 @@
 				class='view-page'
 				onkeyup={() => {}}
 				onclick={on_page_click}
-				class:has-bar={page_has_bar}
 				class:selecting={$w_command_down}
 				onmousedown={watch_for_bar_press}
 				use:tip={$w_command_down ? 'drag to select' : 'click a paragraph to edit it'}>
@@ -1575,12 +1590,6 @@
 		flex         : 1;
 	}
 
-	/* With a bar beside the words the right inset narrows, so the bar sits nearer the box's
-	   edge and the words still stand clear of it. */
-	.view-page.has-bar {
-		padding-right  : var(--gap);
-	}
-
 	/* The marker showing where the browser alone would have put the thumb: half the lane's
 	   width, in the dark accent, sitting on top of the real thumb and answering to nothing. */
 	.free-thumb {
@@ -1679,11 +1688,18 @@
 	/* The title stands in a slot of its own, reaching exactly as far down as the line that lies
 	   across the page. Whatever the title does — shown, folded, long or short — everything after it
 	   starts at the same place. */
+	/* The title stays at the top while the words run under it, so a long guide never loses its
+	   name. Its fill reaches both edges of the words area — stepping out past the inset they
+	   hold and putting that inset back inside itself — so nothing shows through beside it. */
 	.view-page :global(h1) {
+		margin     : 0 calc(var(--gap-fat) * -1);
+		padding    : 0 var(--gap-fat);
 		height     : var(--gap-huge);
 		box-sizing : border-box;
-		margin     : 0;
-		padding    : 0;
+		background : var(--bg);
+		position   : sticky;
+		z-index    : var(--z-controls);
+		top        : 0;
 	}
 
 	/* The first piece after the title brings no room of its own, so the whole distance from the

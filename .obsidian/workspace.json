@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "14b6ec19895b3d59",
+            "id": "77cfec369df62652",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -33,6 +33,20 @@
               },
               "icon": "lucide-file",
               "title": "handoff"
+            }
+          },
+          {
+            "id": "1e88925da75f3e68",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/develop/conceptual composition.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "conceptual composition"
             }
           }
         ],
@@ -93,7 +107,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 354.5026054382324
+    "width": 354.5026054382324,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -212,11 +227,31 @@
   },
   "active": "7bf503989ea6fce8",
   "lastOpenFiles": [
+    "ov/notes/work/code debt.md",
+    "notes/guides/develop/conceptual composition.md",
+    "ov/src/lib/ts/tests/wiki_links.test.ts",
+    "ov/notes/guides/design/conceptual composition.md",
+    "ov/notes/guides/design/OKF — midway review and plan.md",
+    "ws/notes/guides/architecture/core/components.md",
+    "ws/notes/guides/architecture/ux/components.md",
+    "ws/composition.md",
+    "notes/guides/collaborate/composition.md",
+    "ov/notes/guides/design/rewrite guides.md",
+    "ws/vite.config.js.timestamp-1786268866714-cea51eb16ab46.mjs",
+    "ov/notes/guides/design/repair staleness of files.md",
+    "ov/notes/guides/design/repairing staleness.md",
+    "logs/ov.debug.log",
+    "ov/notes/guides/design/ov - goals.md",
+    "ov/notes/guides/design/OKF.md",
+    "ov/notes/work/handoff.md",
+    "ov/notes/guides/design/worth it?.md",
+    "ov/notes/guides/design/wor#h it?.md",
+    "notes/tools/hub/test_dispatcher.py",
+    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.b77edf21e458",
+    "ji/notes/designs/rag research.md",
     "di/notes/guides/project/overview/map of di files.md",
     "ov/src/lib/ts/types/File.ts",
     "ov/notes/work/handoff.md.tmp.24732.c53253d99461",
-    "ov/notes/work/code debt.md",
-    "ov/notes/work/handoff.md",
     "ov/notes/work/current context.md",
     "ov/notes/guides/design/organize.md",
     "ov/notes/guides/design/okf.md",
@@ -226,28 +261,7 @@
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.e3a188bfc6a2",
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.45f74d6b3fa6",
     "ov/src/lib/ts/types/Tag_Areas.ts.tmp.24732.77596872d8ab",
-    "ov/notes/work/code debt.md.tmp.24732.d5c3178cff86",
-    "ov/src/lib/svelte/content/Filters.svelte",
-    "ov/src/lib/svelte/support/Filters.svelte.tmp.24732.9dcd68984474",
     "ji/notes/designs/research.md",
-    "ov/notes/guides/design/constants.md",
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.16aea610f402",
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.c818b7d49b8c",
-    "ov/notes/guides/design/concepts - ui.md",
-    "ov/notes/guides/design/concepts - ui copy.md",
-    "notes/guides/pre-flight/shorthand.md",
-    "ov/notes/work/concepts - ui.md",
-    "ov/notes/design/concepts - ui.md",
-    "ov/notes/work/design/concepts - ui.md",
-    "ov/notes/work/design/concepts - ui copy.md",
-    "ov/notes/work/New Folder With Items/concepts - ui.md",
-    "ov/notes/work/New Folder With Items/concepts - ui copy.md",
-    "ov/notes/work/concepts - ui copy.md",
-    "ws/notes/guides/architecture/ux/paging.md",
-    "ws/notes/guides/architecture/core/styles.md",
-    "ws/notes/guides/architecture/ux/breadcrumbs.md",
-    "notes/guides/pre-flight/response.md",
-    "notes/guides/pre-flight/agency.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

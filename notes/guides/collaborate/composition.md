@@ -1,8 +1,8 @@
 ---
-kind: specify
+kind: design
 title: "Component Composition (ws)"
 description: "Props down, events up, slots for flexible content, compound components for the complicated parts."
-tags: [style, platform]
+tags: [platform, style]
 date: 2026-01-12
 ---
 

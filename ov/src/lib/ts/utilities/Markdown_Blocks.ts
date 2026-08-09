@@ -122,5 +122,33 @@ export function links_in(text: string): string[] {
 // same call on the changed text — never a patch of what is already on screen.
 export function page_of(reader: MarkdownIt, text: string): string {
 	const { body, skipped } = body_of(text);
-	return mark_the_links(name_the_headings(stamp_blocks(reader, body, skipped)));
+	return mark_the_links(name_the_headings(stamp_blocks(reader, plain_links(body), skipped)));
+}
+
+/**
+ * Obsidian's own way of naming another guide is two square brackets round its name, and these
+ * guides are an Obsidian vault, so the form is all through them. The reader knows only the
+ * ordinary form, so each one is turned into that before the words are drawn — and then the
+ * finding, the mending on rename, and the dead-link check all go on knowing one shape.
+ *
+ * `[[name]]` becomes a link reading "name" and pointing at "name.md". A bar gives the words to
+ * show instead: `[[name|say this]]`. A hash names a heading inside it, and travels along.
+ *
+ * Anything inside a chunk of code is left exactly as written, so a guide can show the form
+ * itself without it turning into a link.
+ */
+export function plain_links(text: string): string {
+	const one = (whole: string): string => {
+		const inside = whole.slice(2, -2);
+		const [before, says] = inside.split('|');
+		const [name, ...rest] = before.split('#');
+		const heading = rest.join('#');
+		if (name.trim() === '') { return whole; }
+		const where = `${encodeURIComponent(name.trim())}.md${heading === '' ? '' : `#${heading}`}`;
+		return `[${(says ?? name).trim()}](${where})`;
+	};
+	// Split on fenced chunks and on words between single backticks, and only change what falls
+	// between them — the odd pieces of the split are the untouchable ones.
+	const pieces = text.split(/(```[\s\S]*?```|~~~[\s\S]*?~~~|`[^`\n]*`)/g);
+	return pieces.map((piece, at) => at % 2 === 1 ? piece : piece.replace(/\[\[[^\]\n]*\]\]/g, one)).join('');
 }

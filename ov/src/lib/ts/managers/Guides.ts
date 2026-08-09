@@ -3,7 +3,7 @@ import { kind_matches, w_project, w_kind, w_tags, w_words, w_shut, w_show_folder
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, place_of_file, save_guide } from '../utilities/Saving';
+import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, place_of_file, read_guide, save_guide } from '../utilities/Saving';
 import { has_labels } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
@@ -137,7 +137,7 @@ class Guides {
 			return;
 		}
 		const was_key = key_of(guide);
-		this.hierarchy.rehang(guide, folder, to_path, `/@fs${answer.full_path}`);
+		this.hierarchy.rehang(guide, folder, to_path, address_of_file(answer.full_path));
 		this.renarrow();
 		// A guide is named by where it sits, so anything reading this one has to follow it.
 		this.moved_to?.(was_key, key_of(guide));
@@ -157,7 +157,7 @@ class Guides {
 	private get repo_root(): string {
 		const file = this.files.find((g) => g.address !== '');
 		if (!file) { return ''; }
-		const full = decodeURIComponent(file.address.replace(/^\/@fs/, '').split('?')[0]);
+		const full = path_of_address(file.address);
 		const where = file_path_of(file.bundle, file.path);
 		return full.endsWith(where) ? full.slice(0, full.length - where.length) : '';
 	}
@@ -256,7 +256,7 @@ class Guides {
 		// Every place another guide names this one, found while the old name still answers.
 		const mends: Array<{ where: string; address: string; text: string; changed: string; how_many: number }> = [];
 		for (const other of this.files) {
-			const at = other.address.replace(/^\/@fs/, '').split('?')[0];
+			const at = path_of_address(other.address);
 			const text = await this.read_file(at);
 			if (text === null) { continue; }
 			let changed = text;
@@ -280,7 +280,7 @@ class Guides {
 			return '';
 		}
 
-		this.hierarchy.rehang(guide, folder, to_path, `/@fs${answer.full_path}`);
+		this.hierarchy.rehang(guide, folder, to_path, address_of_file(answer.full_path));
 		guide.name = named;
 		this.renarrow();
 		// Said at once, before the slow work of mending links: a guide is named by where it
@@ -313,8 +313,8 @@ class Guides {
 				else { debug.log(`Renaming: ${index_at} was NOT written — ${wrote.why}. It still names "${was_name}".`); }
 			}
 		}
-		show_status(`"${was_name}" is now "${named}" — ${mended} guide(s) mended${refused > 0 ? `, ${refused} refused` : ''}.`);
-		debug.log(`Renamed "${was_name}" to "${named}": the file moved from ${from} to ${to}, ${mended} guide(s) had links mended${refused > 0 ? `, ${refused} refused` : ''}. Nothing is restarted — the moved file is read from where it now sits.`);
+		show_status(`"${was_name}" is now "${named}" — ${mended} file(s) mended${refused > 0 ? `, ${refused} refused` : ''}.`);
+		debug.log(`Renamed "${was_name}" to "${named}": the file moved from ${from} to ${to}, ${mended} file(s) had links mended${refused > 0 ? `, ${refused} refused` : ''}. Nothing is restarted — the moved file is read from where it now sits.`);
 		return key_of(guide);
 	}
 
@@ -367,7 +367,7 @@ class Guides {
 		for (const guide of files) {
 			const where = file_path_of(guide.bundle, guide.path);
 			show_status(`looking through ${where}`);
-			const text = await this.read_file(guide.address.replace(/^\/@fs/, '').split('?')[0]);
+			const text = await this.read_file(path_of_address(guide.address));
 			if (text === null) { unreadable += 1; debug.log(`Dead links: could not read ${where}.`); continue; }
 			looked += 1;
 			for (const link of links_in(text)) {
@@ -395,19 +395,13 @@ class Guides {
 	}
 
 	/**
-	 * Read one file straight off this machine, or nothing if it isn't there. Asked for a file
-	 * that doesn't exist, the server hands back the app's own page rather than saying no — so
-	 * anything that comes back as a web page counts as not there.
+	 * Read one file's words, or nothing if it isn't there. The dispatcher hands them over rather
+	 * than the dev server: the dev server will not accept a name holding a question mark, however
+	 * that mark is written, and answers with the app's own page instead of the file.
 	 */
 	private async read_file(full_path: string): Promise<string | null> {
-		try {
-			const answer = await fetch(`/@fs${full_path}`);
-			if (!answer.ok) { return null; }
-			if ((answer.headers.get('content-type') ?? '').includes('text/html')) { return null; }
-			return await answer.text();
-		} catch {
-			return null;
-		}
+		const answer = await read_guide(full_path);
+		return answer.text;
 	}
 
 	/**
@@ -507,7 +501,7 @@ class Guides {
 
 			const top = this.hierarchy.folder_at(place.bundle, '', place.bundle);
 			if (place.bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
-			const done = await this.hang_one_file(place.bundle, place.path, `/@fs${on_disk.root}${where}`, place.is_design, top);
+			const done = await this.hang_one_file(place.bundle, place.path, address_of_file(`${on_disk.root}${where}`), place.is_design, top);
 			read      += done.read;
 			failed    += done.failed;
 			unlabeled += done.unlabeled;

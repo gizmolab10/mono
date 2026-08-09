@@ -8,7 +8,7 @@ A file added to the guides used to be given labels the moment the app read it �
 
 **A folder called design or designs makes its files designs**, one called work makes them work. Only the plural spelling was recognised at first, so ov's own design folder fell through — four tests now cover both spellings and the case where a word merely starts the same.
 
-**A seventh area of tags: progress** — propose, construct and done, joined by stale and think, which left `other`. The other six areas gather tags by what a guide is about; this one gathers by where a guide stands in its own life.
+**A seventh area of tags: progress** — proposal, construct and done, joined by stale and think, which left `other`. The other six areas gather tags by what a guide is about; this one gathers by where a guide stands in its own life.
 
 **A `none` button in the kinds row** leaves only the files carrying no labels at all, which is how they are found so they can be opened and given some. It grays out when every file the other filters leave already has labels. Those files also sort first rather than last: an empty kind used to be treated as a blank and pushed to the bottom, and it is a real state, not a missing one.
 

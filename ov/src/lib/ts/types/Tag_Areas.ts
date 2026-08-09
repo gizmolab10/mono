@@ -22,7 +22,7 @@ export const TAG_AREAS: Tag_Area[] = [
 	{ name: 'fix',      tags: ['test', 'debug'] },
 	{ name: 'harness',  tags: ['platform', 'setup', 'deploy', 'tools', 'build'] },
 	{ name: 'other',    tags: ['notes', 'vision', 'research'] },
-	{ name: 'progress', tags: ['propose', 'construct', 'done', 'journal', 'stale', 'think'] },
+	{ name: 'progress', tags: ['proposal', 'construct', 'done', 'journal', 'stale', 'think'] },
 	{ name: 'ux',       tags: ['visual-design', 'UX', 'geometry'] },
 ];
 

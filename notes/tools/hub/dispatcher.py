@@ -424,6 +424,42 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif urllib.parse.urlparse(self.path).path == '/read-guide':
+            # Hand back one guide's own words, for the overview app.
+            # /read-guide?where=<its place, from the top of the repo or in full on this machine>
+            #
+            # The dev server can serve these too, but it will not accept a name holding a
+            # question mark however it is written — it answers with the app's own page instead
+            # of the file. Here the name arrives as a query value, which is unpacked before
+            # anything touches disk, so every name works.
+            #
+            # The same two refusals as saving: it has to be a guide, and it has to sit inside
+            # the repo.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                where = params.get('where', [''])[0]
+                if not where:
+                    self._send_response(400, {'success': False, 'error': 'no file named'})
+                    return
+                if not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
+                    self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
+                    return
+                # Either a place counting from the top of the repo, or a full place on this
+                # machine — the app has one or the other to hand depending on what it is doing.
+                full = os.path.realpath(where if os.path.isabs(where) else os.path.join(GITHUB_DIR, where))
+                root = os.path.realpath(GITHUB_DIR)
+                if not full.startswith(root + os.sep):
+                    self._send_response(409, {'success': False, 'error': 'outside the repo'})
+                    return
+                if not os.path.isfile(full):
+                    self._send_response(404, {'success': False, 'error': f'no such file: {where!r}'})
+                    return
+                with open(full, 'r') as f:
+                    text = f.read()
+                self._send_response(200, {'success': True, 'path': full, 'text': text})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif urllib.parse.urlparse(self.path).path == '/list-guides':
             # Every guide and design on disk right now, for the overview app: /list-guides
             #
@@ -613,12 +649,13 @@ class APIHandler(BaseHTTPRequestHandler):
             # Append or overwrite ~/GitHub/mono/logs/<where>.log with the request body.
             # /log?where=<name> picks the file (defaults to "debug"); ?erase=1 overwrites
             # (first call per browser session), otherwise the body is appended. <name>
-            # must be a bare filename (letters, digits, dash, underscore) so it can't
-            # point outside the logs folder.
+            # must be a bare filename (letters, digits, dash, underscore, dot) so it can't
+            # point outside the logs folder — and two dots in a row are refused, since that
+            # is how a name climbs out of the folder it is given.
             try:
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', ['debug'])[0]
-                if not where or not all(c.isalnum() or c in '-_' for c in where):
+                if not where or '..' in where or not all(c.isalnum() or c in '-_.' for c in where):
                     self._send_response(400, {'success': False, 'error': f'bad where: {where!r}'})
                     return
                 content_length = int(self.headers.get('Content-Length', 0))
@@ -761,7 +798,10 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not os.path.isfile(full_from):
                     self._send_response(409, {'success': False, 'error': 'no such file'})
                     return
-                if os.path.exists(full_to):
+                # This disk treats "okf.md" and "OKF.md" as one and the same, so changing only the
+                # capitals in a name finds the file itself sitting where it wants to go. That is a
+                # re-lettering, not a clash, and it is allowed.
+                if os.path.exists(full_to) and not os.path.samefile(full_from, full_to):
                     self._send_response(409, {'success': False, 'error': 'a file of that name is already there'})
                     return
                 if not os.path.isdir(os.path.dirname(full_to)):

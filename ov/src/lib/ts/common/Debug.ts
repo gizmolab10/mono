@@ -18,7 +18,7 @@ export class Debug {
 	// A line worth having only while something is being worked on: written the same way
 	// as any other, but says nothing for now. Change this one body to `this.log(...)`
 	// and every such line speaks again.
-	log_soon(_text: string, _filename: string = 'ov', _erases: boolean = true): void {
+	log_soon(_text: string, _filename: string = 'ov.debug', _erases: boolean = true): void {
 	}
 
 	// Append one extra line to the stated log file. `erases` (the default) lets the
@@ -26,7 +26,7 @@ export class Debug {
 	// even on the first line. A non-erasing call never marks the file, so it can't
 	// eat a later erasing call's one-shot overwrite. Says nothing at all away from
 	// this machine — nothing built, nothing sent, nothing to fail.
-	log(text: string, filename: string = 'ov', erases: boolean = true): void {
+	log(text: string, filename: string = 'ov.debug', erases: boolean = true): void {
 		if (!served_from_here) { return; }
 		const base = `http://localhost:5171/log?where=${filename}`;
 		const erasing = erases && !this.logs_erased.get(filename);

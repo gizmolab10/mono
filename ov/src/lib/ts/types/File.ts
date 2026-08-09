@@ -29,7 +29,7 @@ export const ALL_TAGS: string[] = [
 	'notes',
 	'platform',
 	'port',
-	'propose',
+	'proposal',
 	'prose',
 	'refactor',
 	'research',

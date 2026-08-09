@@ -2,7 +2,7 @@
 kind: design
 title: "Pitch — Aaron Good"
 description: "An invitation to a founding scholar, and what the research assistant is for."
-tags: [notes, propose, think, vision]
+tags: [notes, proposal, think, vision]
 date: 2026-08-06
 ---
 

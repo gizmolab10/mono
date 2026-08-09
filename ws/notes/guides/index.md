@@ -4,4 +4,5 @@
 
 - [Architecture](./architecture/)
 - [Collaborate](./collaborate/)
+- [Composition](composition.md)
 

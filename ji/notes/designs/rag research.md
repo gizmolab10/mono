@@ -2,11 +2,11 @@
 kind: design
 title: "Design trade-offs (ji)"
 description: "What was weighed in choosing how ji stores and searches what it is given."
-tags: [data, propose, research, stale]
+tags: [data, done, proposal, research]
 date: 2026-08-06
 ---
 
-# design trade-offs
+# RAG design trade-offs
 
 
 ## RAG + AnythingLLM for ji

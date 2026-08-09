@@ -1,4 +1,4 @@
-import { file_path_of, folder_path_of, moved_into, obsidian_link, place_of_file } from '../utilities/Saving';
+import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_link, path_of_address, place_of_file } from '../utilities/Saving';
 import { describe, expect, it } from 'vitest';
 import { T_Bundle } from '../types/File';
 
@@ -92,6 +92,34 @@ describe('where a guide lands when dropped into a folder', () => {
 
 	it('keeps a name with spaces whole', () => {
 		expect(moved_into('pre-flight', 'adding a guide.md')).toBe('pre-flight/adding a guide.md');
+	});
+});
+
+// A file name is free to hold a question mark, a hash or a percent sign, and each of those
+// means something else in an address. Written raw, "worth it?.md" is asked for as "worth it",
+// and the server hands back the app's own page instead of the file.
+
+describe('the address a file\'s words are read from', () => {
+	it('leaves an ordinary name alone but for its spaces', () => {
+		expect(address_of_file('/Users/x/mono/notes/guides/always.md')).toBe('/@fs/Users/x/mono/notes/guides/always.md');
+		expect(address_of_file('/x/adding a guide.md')).toBe('/@fs/x/adding%20a%20guide.md');
+	});
+
+	it('spells out the characters an address would read as punctuation', () => {
+		expect(address_of_file('/x/worth it?.md')).toBe('/@fs/x/worth%20it%3F.md');
+		expect(address_of_file('/x/why #2.md')).toBe('/@fs/x/why%20%232.md');
+		expect(address_of_file('/x/100% done.md')).toBe('/@fs/x/100%25%20done.md');
+	});
+
+	it('leaves the slashes between folders doing their own job', () => {
+		expect(address_of_file('/a b/c d/e.md')).toBe('/@fs/a%20b/c%20d/e.md');
+		expect(address_of_file('/a/b/c.md')).not.toContain('%2F');
+	});
+
+	it('reads back as the very place it was built from', () => {
+		for (const full of ['/x/always.md', '/x/worth it?.md', '/x/why #2.md', '/x/100% done.md', '/a b/c d/e.md']) {
+			expect(path_of_address(address_of_file(full))).toBe(full);
+		}
 	});
 });
 
