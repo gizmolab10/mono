@@ -35,7 +35,8 @@
               "title": "handoff"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -171,13 +172,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -210,12 +211,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "14b6ec19895b3d59",
+  "active": "7bf503989ea6fce8",
   "lastOpenFiles": [
+    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.45f74d6b3fa6",
+    "ov/src/lib/ts/types/Tag_Areas.ts.tmp.24732.77596872d8ab",
+    "ov/notes/work/code debt.md",
+    "ov/notes/work/code debt.md.tmp.24732.d5c3178cff86",
     "ov/src/lib/svelte/content/Filters.svelte",
     "ov/src/lib/svelte/support/Filters.svelte.tmp.24732.9dcd68984474",
     "ov/notes/work/handoff.md",
-    "ov/notes/work/code debt.md",
     "ji/notes/designs/research.md",
     "ov/notes/guides/design/constants.md",
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.16aea610f402",
@@ -224,9 +228,6 @@
     "ov/src/lib/svelte/support/Filters.svelte.tmp.24732.598465324f93",
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.c93bdcf2fa4f",
     "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.8ce31610f595",
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.d3b6a55abf72",
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.78a204187e7b",
-    "ov/src/lib/svelte/content/Editor.svelte.tmp.24732.ad7907d8490c",
     "ov/notes/guides/design/concepts - ui.md",
     "ov/notes/guides/design/concepts - ui copy.md",
     "notes/guides/pre-flight/shorthand.md",

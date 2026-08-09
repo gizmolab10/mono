@@ -8,7 +8,7 @@
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { VAULT, file_path_of, obsidian_link, save_guide } from '../../ts/utilities/Saving';
-	import { with_labels_replaced } from '../../ts/utilities/Labels';
+	import { has_labels, labels_for, today, with_labels_added, with_labels_replaced } from '../../ts/utilities/Labels';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import { shut_all_areas, w_words } from '../../ts/managers/Filters';
@@ -825,6 +825,26 @@
 		if (page) { refresh_marks(); }
 	});
 
+	/**
+	 * Give a file its labels, if it has none, and write them. The whole file again either way —
+	 * one that already carries labels comes back untouched. A refused write is said in the log
+	 * and the file is shown as it is, since nothing is lost by that.
+	 */
+	async function label_it_if_bare(text: string): Promise<string> {
+		if (has_labels(text)) { return text; }
+		const where = file_path_of(guide.bundle, guide.path);
+		const with_block = with_labels_added(text, `${name}.md`, today(), guide.path);
+		const answer = await save_guide(where, with_block, text);
+		if (!answer.ok) {
+			debug.log(`Editing "${name}": it carries no labels and could not be given any — ${answer.why}. It is shown as it is.`);
+			return text;
+		}
+		debug.log(`Editing "${name}": opened for the first time with no labels, so a block was composed from its own words and written to ${where}. Its kind came from the folder it sits in, and it is marked stale for a person to look at.`);
+		const made = labels_for(text, `${name}.md`, today(), guide.path);
+		guides.relabel(guide, made.labels, made.tags);
+		return with_block;
+	}
+
 	let words  = $state<string | null>(null);
 	let loaded = $state(false);
 	let failed = $state('');
@@ -840,7 +860,11 @@
 				if (!answer.ok) { throw new Error(`the server answered ${answer.status}`); }
 				return answer.text();
 			})
-			.then((text) => {
+			.then(async (text) => {
+				// This is the first time anyone has opened this file, so now is when it gets its
+				// labels — composed from its own words, its kind read off the folder it sits in,
+				// and marked stale so Jonathan corrects whatever came out wrong.
+				text = await label_it_if_bare(text);
 				text_of_file = text;                 // what an edit slices its own words out of
 				words  = page_of(reader, text);
 				loaded = true;

@@ -2,7 +2,7 @@
 kind: design
 title: "Intersection Project Roadmap"
 description: "Jeff's overview of the project's scope and where it is headed."
-tags: [vision]
+tags: [construct, propose, vision]
 date: 2026-07-24
 ---
 

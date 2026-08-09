@@ -4,7 +4,7 @@ import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, place_of_file, save_guide } from '../utilities/Saving';
-import { has_labels, today, with_labels_added } from '../utilities/Labels';
+import { has_labels } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
 import { debug } from '../common/Debug';
@@ -549,19 +549,11 @@ class Guides {
 			debug.log(`Could not read the guide "${bundle}/${path}" from ${address}: ${e instanceof Error ? e.message : e}. It is left out.`);
 			return { read: 0, failed: 1, unlabeled: 0, bytes: 0 };
 		}
-		// A file added since the app's code was prepared has no labels at all, so it would show
-		// with no kind, no tags and its file name for a title. One is composed from the file's
-		// own words and written to it, marked "stale" so a person still looks at it.
+		// A file that has never been labeled is left exactly as it is. It shows in the list with
+		// nothing in its kind column, and gets a block composed for it the first time someone
+		// opens it to edit — nothing is written to a file nobody asked about.
 		if (!has_labels(text)) {
-			const with_block = with_labels_added(text, `${name}.md`, today());
-			const where = file_path_of(bundle, path);
-			const answer = await save_guide(where, with_block, text);
-			if (answer.ok) {
-				text = with_block;
-				debug.log(`Guides: "${bundle}/${path}" arrived with no labels, so a block was composed from its own words and written to ${where}. It is marked stale for a person to look at.`);
-			} else {
-				debug.log(`Guides: "${bundle}/${path}" has no labels and could not be given any — ${answer.why}. It is shown as it is.`);
-			}
+			debug.log(`Guides: "${bundle}/${path}" carries no labels. It is left as it is and will be given some the first time it is opened for editing.`);
 		}
 		const { labels, tags } = labels_from(text, `${bundle}/${path}`);
 		const guide = this.hierarchy.add_guide(bundle, path, name, address, {

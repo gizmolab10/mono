@@ -4,11 +4,10 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## work
 
-- [ ] eliminate purpose
-    - [ ] add 'design' and 'work' to kinds
-    - [ ] add to 'fix' area's tagset -> propose, coding, done
-        - [ ] rename fix -> progress
+- [ ] add new tag area -> progress
+    - [ ] tagset -> propose, coding, done
 - [ ] loc where labels are added when detected as missing
+    - [ ] only add labels as and when a file is opened for editing
 - [ ] mark 'stale' all guide files that contain completed tasks, phases, steps
 - [ ] filters
     - [ ] animate their relayout on list files
@@ -33,7 +32,9 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
     - [ ] filters
     - [ ] content
 
-## Next — mark the guides that are talking about finished work
+## Do NOT remove this section
+
+mark the guides that are talking about finished work
 
 ### Success
 
@@ -50,6 +51,9 @@ One word covers both on purpose. `stale` already means "this has fallen behind w
 
 ## done
 
+- [x] eliminate purpose
+    - [x] design and work joined the kinds, said in a file's own labels
+    - [x] the purpose row, its remembered setting and its last-one-on rule all went
 - [x] one ladder of names across every kind of measurement
     - [x] separator folded into thickness, the two being the same thing
     - [x] the styling names follow the same ladder

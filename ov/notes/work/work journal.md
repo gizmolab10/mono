@@ -2,6 +2,16 @@
 
 What's been finished, newest first.
 
+## 2026-08-08 — a guide says what it is, once
+
+Two questions were being asked about every guide, and they were the same question. One was asked by the folder a file sat in — a path under `designs` made it a design. The other was asked by the file's own words. Two answers meant two places to look and two ways to be wrong, and a whole picking row that carried nothing the kinds could not carry.
+
+**Design and work joined the kinds**, so there are seven: the first five say how a guide reads, the last two say what it is about. That is a real difference and it is fine — a file is one of the seven, and the question is asked once.
+
+**What went with the purpose row.** Its own remembered setting, its own toggling rule (the last one on could not be turned off — a rule that existed only because purpose was not a kind), and the side-by-side layout that measured two pickers against the width of the box so they could share a bar. Projects now has its own bar like kinds and tags.
+
+**The sweep was small.** Three files sit under a designs folder across all five collections; they had said explain, refer and specify, and now say design. No file gained `work`: the app never lists work notes at all, so the kind is there for when they are swept in.
+
 ## 2026-08-08 — one ladder of names, and a top that holds still
 
 Every kind of measurement now uses the same nine words — micro, faint, tiny, small, normal, big, fat, huge, pill — and a kind simply leaves out any step it has no use for. Before this, a gap called its middle `default`, a font called its middle `base`, a height called its middle `control`, and reaching for a size meant opening the file to check what this one happens to call it. Now it is one decision: pick the kind, pick the step.

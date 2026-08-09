@@ -15,17 +15,20 @@ export enum T_Kind {
 	work       = 'work',
 }
 
-// The closed tag list — twenty-four, alphabetized, nothing invented on the spot.
+// The closed tag list — twenty-seven, alphabetized, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
 	'build',
+	'construct',
 	'data',
 	'debug',
 	'deploy',
+	'done',
 	'geometry',
 	'migrate',
 	'notes',
 	'platform',
 	'port',
+	'propose',
 	'prose',
 	'refactor',
 	'research',

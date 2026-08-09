@@ -27,18 +27,28 @@ export function label_block(labels: Labels, tags: string[]): string {
 
 // --- labeling a file that has none ------------------------------------------
 //
-// A file added to the guides since the app last looked has no labels at all, so it would show
-// with no kind, no tags, and its file name for a title. Rather than leave it out in the cold,
-// one is composed from the file's own words — its first heading for a title, the first thing
-// it says for a description — and marked "stale", the one tag that means a person still has
-// to look at it. Nothing here judges what kind of guide it is; that is exactly what the mark
-// is for.
+// A file that has never been labeled shows with no kind at all, and is left exactly as it is
+// until someone opens it to edit. Only then is a block composed from the file's own words — its
+// first heading for a title, the first thing it says for a description — and marked "stale", the
+// one tag that means a person still has to look at it. Nothing is ever written to a file nobody
+// asked about.
+//
+// The kind is guessed from where the file sits: under a designs folder it is a design, under a
+// work folder it is work, and anywhere else there is nothing in the path to go on, so it starts
+// at refer and the stale mark says to check.
 
 /** The tag that says these labels were composed rather than written. */
 export const NEEDS_A_LOOK = 'stale';
 
-/** The kind a composed block starts at, until a person says otherwise. */
+/** The kind a composed block starts at when its folder says nothing. */
 export const KIND_UNTIL_TOLD = T_Kind.refer;
+
+/** What the folders above a file say it is, when they say anything at all. */
+export function kind_from_where(path: string): T_Kind {
+	if (/(^|\/)designs(\/|$)/.test(path)) { return T_Kind.design; }
+	if (/(^|\/)work(\/|$)/.test(path))    { return T_Kind.work; }
+	return KIND_UNTIL_TOLD;
+}
 
 /** Today, written the way every guide writes its date. */
 export function today(): string {
@@ -94,12 +104,12 @@ function title_from_name(file_name: string): string {
  * The labels to give a file that has none, read off the file's own words. `today` is handed in
  * rather than asked for, so the same file always composes the same block in a test.
  */
-export function labels_for(text: string, file_name: string, today: string): { labels: Labels; tags: string[] } {
+export function labels_for(text: string, file_name: string, today: string, where = ''): { labels: Labels; tags: string[] } {
 	const heading = first_heading(text);
 	const title = heading === '' ? title_from_name(file_name) : heading;
 	return {
 		labels: {
-			kind        : KIND_UNTIL_TOLD,
+			kind        : kind_from_where(where),
 			title,
 			description : first_words(text),
 			date        : today,
@@ -113,9 +123,9 @@ export function labels_for(text: string, file_name: string, today: string): { la
  * The whole file again with a composed label block at its top, its words left exactly as they
  * are. A file that already carries labels is handed back untouched — this only ever adds.
  */
-export function with_labels_added(text: string, file_name: string, today: string): string {
+export function with_labels_added(text: string, file_name: string, today: string, where = ''): string {
 	if (has_labels(text)) { return text; }
-	const { labels, tags } = labels_for(text, file_name, today);
+	const { labels, tags } = labels_for(text, file_name, today, where);
 	return with_labels_replaced(text, labels, tags);
 }
 

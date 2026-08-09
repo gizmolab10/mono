@@ -57,6 +57,6 @@ describe('what a shut area reads', () => {
 	});
 
 	it('reads what is picked instead, in order', () => {
-		expect(area_reads(other, ['think', 'notes'])).toBe('notes, think');
+		expect(area_reads(other, ['vision', 'notes'])).toBe('notes, vision');
 	});
 });

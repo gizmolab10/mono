@@ -2,7 +2,7 @@
 kind: refer
 title: "UX terms and concepts"
 description: ""
-tags: [stale, think, UX, visual-design]
+tags: [done, refactor]
 date: 2026-08-07
 ---
 # Subtypes of constants

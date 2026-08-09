@@ -360,7 +360,9 @@
 	{#if shows_kind}
 		<!-- A folder shows how many matching files it holds. A file shows its kind, unless one
 		     kind is picked — then every file would read the same, so the cell stays blank. -->
-		<td class='kind'><span>{row.guide.is_folder ? (folder_count.get(row.key) ?? 0) : ($w_kind !== '' ? '' : (row.guide.kind || '—'))}</span></td>
+		<!-- A file that has never been labeled reads "---", the same three dashes a label block
+		     opens with — it is waiting for one, and gets it the first time it is opened. -->
+		<td class='kind'><span>{row.guide.is_folder ? (folder_count.get(row.key) ?? 0) : ($w_kind !== '' ? '' : (row.guide.kind || '---'))}</span></td>
 	{/if}
 	{#if shows_project}
 		<td class='project'><span>{row.guide.bundle}</span></td>
