@@ -2,7 +2,7 @@
 kind: wire
 title: "How di Runs"
 description: "The big picture of what happens from the moment the app starts."
-tags: [write]
+tags: [program]
 date: 2026-06-22
 ---
 

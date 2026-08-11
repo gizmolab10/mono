@@ -7,6 +7,7 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Handoff](handoff.md) — where to pick up, and the context the code doesn't say.
 - [Code debt](code%20debt.md) — everything still owed.
 - [Work journal](work%20journal.md) — what's been finished, newest first.
+- [Tag drift](tag%20drift.md) — guides whose tags stopped describing them when the tags were renamed.
 - [Working features](working%20features.md) — what the app can do, newest first.
 - [File layout](file%20layout.md) — where everything lives.
 - [Stale](stale%20guides.md) — the ten guides furthest out of date, worst first.

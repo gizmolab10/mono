@@ -2,7 +2,7 @@
 kind: wire
 title: "Graph (di)"
 description: "The drawing area: the canvas and everything floating over it."
-tags: [write, UX]
+tags: [program, UX]
 date: 2026-05-10
 ---
 

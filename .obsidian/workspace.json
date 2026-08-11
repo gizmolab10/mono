@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "77cfec369df62652",
+            "id": "a932f7d0e39d14ca",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -27,26 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/collaborate/cadence.md",
+                "file": "ov/notes/work/handoff.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "cadence"
-            }
-          },
-          {
-            "id": "1e88925da75f3e68",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/banned words.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "banned words"
+              "title": "handoff"
             }
           }
         ]
@@ -81,7 +67,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:caden",
+                "query": "file:hooks",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -106,8 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 388.50271224975586,
-    "collapsed": true
+    "width": 388.50271224975586
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -209,8 +194,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 352.5,
-    "collapsed": true
+    "width": 237.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -224,24 +208,37 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "77cfec369df62652",
+  "active": "a932f7d0e39d14ca",
   "lastOpenFiles": [
-    "notes/guides/pre-flight/banned words.md",
-    "di/notes/tools/index.md.tmp.95157.3cf83f28ce5f",
-    "di/notes/guides/development/adhere/dashboard guide.md",
-    "ov/notes/work/code debt.md",
-    "notes/guides/collaborate/cadence.md",
-    "ji/notes/designs/RAG research.md",
-    "ov/src/lib/ts/tests/smooth_height.test.ts",
-    "ov/src/lib/ts/utilities/Smooth_Height.ts",
-    "ov/src/lib/svelte/support/Big_Pill.svelte.tmp.95157.48a553fbd24d",
-    "ov/src/lib/svelte/support/Big_Pill.svelte.tmp.95157.1f0bcb7fe6ac",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.b666d537946d",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.18b8e9238a7e",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.5ab738c53acf",
+    "ov/src/lib/ts/utilities/Markdown_Blocks.ts.tmp.34102.682155dd6c1f",
+    "ov/src/lib/ts/types/File.ts.tmp.34102.a9b11b49ca78",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.6b4607e9f8dc",
+    "ov/src/lib/ts/utilities/Colors.ts.tmp.34102.fb998ecc9ab7",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.48fdc2f206dd",
     "ov/notes/work/handoff.md",
-    "ov/notes/guides/project/map of ov files.md.tmp.95157.453732643576",
-    "ov/src/lib/svelte/content/Files.svelte.tmp.95157.fac69b18197a",
-    "ov/src/lib/svelte/content/List_OKF.svelte.tmp.95157.5b317c654860",
-    "ov/src/lib/ts/tests/hit_empty_space.test.ts",
-    "ov/src/lib/ts/utilities/Hit_Empty_Space.ts",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.16c499e04c01",
+    "ov/src/lib/ts/utilities/Markdown_Blocks.ts.tmp.34102.966fe5cd3942",
+    "notes/work/claude agent skills.md",
+    "notes/tools/hub/__pycache__/test_dispatcher.cpython-310.pyc",
+    "ov/notes/work/code debt.md",
+    "notes/guides/collaborate/tags hierarchy.md",
+    "notes/guides/develop/constants.md",
+    "notes/guides/collaborate/organize.md",
+    "ov/notes/guides/design/organize.md",
+    "ji/notes/designs/organize.md",
+    "notes/guides/collaborate/hooks.md",
+    "notes/guides/develop/lessons.md",
+    "notes/guides/pre-flight/response.md",
+    "notes/guides/collaborate/skills.md",
+    "notes/guides/collaborate/cadence.md",
+    "ov/notes/guides/pre-flight/lexicon.md",
+    "ov/notes/work/tag drift.md",
+    "notes/guides/pre-flight/banned words.md",
+    "di/notes/guides/development/adhere/dashboard guide.md",
+    "ji/notes/designs/RAG research.md",
     "notes/guides/develop/conceptual composition.md",
     "di/notes/guides/pre-flight/banned words.md",
     "ov/notes/guides/pre-flight/banned words.md",
@@ -249,18 +246,6 @@
     "ov/notes/guides/design/OKF — midway review and plan.md",
     "ws/notes/guides/architecture/core/components.md",
     "ws/notes/guides/architecture/ux/components.md",
-    "ws/composition.md",
-    "notes/guides/collaborate/composition.md",
-    "ov/notes/guides/design/rewrite guides.md",
-    "ov/notes/guides/design/repair staleness of files.md",
-    "ov/notes/guides/design/repairing staleness.md",
-    "ov/notes/guides/design/ov - goals.md",
-    "ov/notes/guides/design/OKF.md",
-    "ov/notes/guides/design/worth it?.md",
-    "ov/notes/guides/design/wor#h it?.md",
-    "ji/notes/designs/rag research.md",
-    "di/notes/guides/project/overview/map of di files.md",
-    "ov/notes/work/current context.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

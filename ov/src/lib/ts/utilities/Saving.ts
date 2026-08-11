@@ -1,4 +1,5 @@
 import { T_Bundle } from '../types/File';
+import { k } from '../common/Constants';
 
 // Writing a changed guide back to the file it came from.
 //
@@ -17,17 +18,20 @@ function notes_of(bundle: T_Bundle): string {
 }
 
 // Where a file sits, counting from the top of the repo. A design's place already begins with
-// "designs", so it hangs straight off the notes folder; everything else is under guides.
+// "designs" and a work note's with "work", so those two hang straight off the notes folder;
+// everything else is under guides.
 export function file_path_of(bundle: T_Bundle, path: string): string {
 	const ending = path.endsWith('.md') ? path : `${path}.md`;
-	const inside = ending.startsWith('designs/') ? ending : `guides/${ending}`;
+	const beside = ending.startsWith('designs/') || ending.startsWith('work/');
+	const inside = beside ? ending : `guides/${ending}`;
 	return `${notes_of(bundle)}/${inside}`;
 }
 
 /**
  * The other way round: which collection a file belongs to, and where it sits inside that
- * collection, read off its place in the repo. Anything that is not a guide or a design reads
- * as nothing at all.
+ * collection, read off its place in the repo. A work note counts only where it sits at the very
+ * top of the work folder — those are the ones a guide links to, and the app shows each of them
+ * as a child of its own project. Anything else reads as nothing at all.
  */
 export type Guide_Place = { bundle: T_Bundle; path: string; is_design: boolean };
 
@@ -39,17 +43,20 @@ export function place_of_file(where: string): Guide_Place | null {
 		const inside = where.slice(notes.length);
 		if (inside.startsWith('guides/'))  { return { bundle, path: inside.slice('guides/'.length), is_design: false }; }
 		if (inside.startsWith('designs/')) { return { bundle, path: inside, is_design: true }; }
+		if (inside.startsWith('work/'))    { return inside.split('/').length === 2 ? { bundle, path: inside, is_design: false } : null; }
 		return null;
 	}
 	return null;
 }
 
 // The folder a file sits in, counting from the top of the repo. A collection's own top folder
-// has no place inside it, so the guides folder itself is the answer.
+// has no place inside it, so the guides folder itself is the answer. The designs folder and the
+// work folder stand beside guides rather than inside it.
 export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
 	const notes = notes_of(bundle);
 	if (folder_path === '') { return `${notes}/guides`; }
-	return folder_path.startsWith('designs') ? `${notes}/${folder_path}` : `${notes}/guides/${folder_path}`;
+	const beside = folder_path.startsWith('designs') || folder_path.startsWith('work');
+	return beside ? `${notes}/${folder_path}` : `${notes}/guides/${folder_path}`;
 }
 
 // Nothing restarts this app any more. Moving or renaming a guide used to, because the list of
@@ -98,6 +105,27 @@ export async function guides_on_disk(): Promise<On_Disk> {
 	}
 }
 
+/**
+ * Ask the dispatcher to start itself over, so code changed on disk is the code answering.
+ *
+ * It never answers this one: it spawns a fresh copy of itself and exits, so the asking always
+ * ends as a failed fetch. What proves the fresh copy is up is asking it for the guides — the
+ * one question every route needs it awake for — every second and a half until it answers.
+ */
+export async function restart_dispatcher(tries = 10): Promise<Saved> {
+	try {
+		await fetch('http://localhost:5171/restart-dispatcher', { method: 'POST' });
+	} catch {
+		// It exits part way through answering, so this always throws. Nothing is wrong.
+	}
+	for (let at = 0; at < tries; at++) {
+		await new Promise((done) => setTimeout(done, k.timeout.asking));
+		const on_disk = await guides_on_disk();
+		if (on_disk.paths.length > 0) { return { ok: true, why: '' }; }
+	}
+	return { ok: false, why: `it did not answer within ${Math.round((tries * k.timeout.asking) / 1000)} seconds` };
+}
+
 // Show one folder in the Finder. Only the dispatcher can do it, since a page served
 // over the web cannot open anything on this machine itself.
 export async function show_folder(where: string): Promise<Saved> {
@@ -110,6 +138,13 @@ export async function show_folder(where: string): Promise<Saved> {
 	} catch (e) {
 		return { ok: false, why: e instanceof Error ? e.message : String(e) };
 	}
+}
+
+// Where a file sits once it is given a different name: exactly where it sat, with the last part
+// swapped. Built out of its own old place rather than the folder it hangs under, since a work
+// note hangs straight off its project and the work folder would be lost.
+export function renamed_path(path: string, new_name: string): string {
+	return [...path.split('/').slice(0, -1), `${new_name}.md`].join('/');
 }
 
 // Where a guide would sit if it were dropped into this folder: the folder's own place inside

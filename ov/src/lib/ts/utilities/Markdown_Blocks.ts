@@ -1,4 +1,5 @@
 import type MarkdownIt from 'markdown-it';
+import { CHECKBOX, svg_paths } from './SVG_Paths';
 
 // Where each piece of a drawn guide came from in the file it was read out of.
 //
@@ -57,12 +58,28 @@ export function still_reads(text: string, from: number, to: number, as_opened: s
 // the easiest to get wrong, so they wait until the plain ones are proven.
 export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: number): string {
 	const tokens = reader.parse(markdown, {});
+	// How deep each piece sits. A heading's own number is its depth; everything under a heading
+	// sits one deeper than it. Before the first heading, a piece counts as sitting under the
+	// title. What that depth means on screen is decided where the page is drawn.
+	let under = 1;
 	for (const token of tokens) {
+		// One exception to the outermost-only rule: every list item is told the one line it
+		// begins on, since pressing a thing-to-be-done's box writes that single line back.
+		if (token.type === 'list_item_open' && token.map) {
+			token.attrSet('data-line', String(token.map[0] + skipped));
+			token.attrSet('data-number', String(token.map[0] + 1));
+		}
 		// Only the outermost pieces, and only the ones that open something or stand alone —
 		// a closing tag has no words of its own to carry the numbers.
 		if (token.level !== 0 || token.nesting < 0 || !token.map) { continue; }
+		// The row the piece begins on, counted the way a person counts — from one, at the first
+		// row shown, with the labels at the top left out. The two below count the file itself,
+		// from zero, since they are what puts words back.
+		token.attrSet('data-number', String(token.map[0] + 1));
 		token.attrSet('data-from', String(token.map[0] + skipped));
 		token.attrSet('data-to',   String(token.map[1] + skipped));
+		if (token.type === 'heading_open') { under = Number(token.tag.slice(1)); }
+		token.attrSet('data-depth', String(token.type === 'heading_open' ? under : under + 1));
 	}
 	return numbers_out_of_code(reader.renderer.render(tokens, reader.options, {}));
 }
@@ -74,7 +91,7 @@ export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: numb
  * moved out to the box around it.
  */
 export function numbers_out_of_code(html: string): string {
-	return html.replace(/<pre><code([^>]*?)(data-from="\d+" data-to="\d+")([^>]*)>/g,
+	return html.replace(/<pre><code([^>]*?)(data-number="\d+" data-from="\d+" data-to="\d+" data-depth="\d+")([^>]*)>/g,
 		(_, before, numbers, after) => `<pre ${numbers}><code${before}${after}>`);
 }
 
@@ -88,6 +105,45 @@ export function name_the_headings(html: string): string {
 		const named = words.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 		return named === '' ? whole : `<h${level} id="${named}"${already}>${inside}</h${level}>`;
 	});
+}
+
+/**
+ * A list item beginning with a pair of square brackets is a thing to be done, which the reader
+ * knows nothing about and draws as the two brackets themselves. Each becomes a box, filled when
+ * the letter x sits between them, and its item is named so the bullet beside it can come off and
+ * a finished one's words can be struck through.
+ */
+export function boxes_for_tasks(html: string): string {
+	// The shape and the slot it is given both come from the one place, so they cannot disagree.
+	const side = CHECKBOX.size;
+	const drawn = `<svg overflow='visible' width='${side}' height='${side}' viewBox='0 0 ${side} ${side}'><path d='${svg_paths.checkbox()}'/></svg>`;
+	return html.replace(/<li([^>]*)>(\s*(?:<p[^>]*>\s*)?)\[([ xX])\]\s/g,
+		(_whole, already: string, between: string, inside: string) => {
+			const done = inside === ' ' ? '' : ' done';
+			return `<li${already} class="task${done}">${between}<span class="task-box${done}">${drawn}</span> `;
+		});
+}
+
+/**
+ * One line of the file with its pair of brackets turned over: empty becomes an x, an x becomes
+ * empty. The step in, the bullet and every word after the brackets are handed back untouched.
+ *
+ * Nothing comes back for a line that is not a thing to be done, so a press that lands on a line
+ * the file has since changed writes nothing.
+ */
+export function flipped_task(line: string): string | null {
+	const hit = line.match(/^(\s*(?:[-*+]|\d+[.)])\s+)\[([ xX])\](\s)/);
+	if (!hit) { return null; }
+	return `${hit[1]}[${hit[2] === ' ' ? 'x' : ' '}]${hit[3]}${line.slice(hit[0].length)}`;
+}
+
+/**
+ * A line of three dashes is drawn as a rule, which is a shape the browser fills in itself and
+ * will not hang a number on. It is drawn as an ordinary row instead, carrying the very same
+ * numbers, and the line across it is painted where the page decides how everything else looks.
+ */
+export function rules_as_rows(html: string): string {
+	return html.replace(/<hr([^>]*?)\s*\/?>/g, (_whole, already: string) => `<div class="rule"${already}></div>`);
 }
 
 // Every link carries its own hover words, so pointing at one says "follow this link" rather
@@ -116,13 +172,14 @@ export function links_in(text: string): string[] {
 }
 
 // The whole page for one guide, built out of the file's own text: labels taken off the top,
-// every outermost piece stamped with the lines it came from, headings named, links marked.
+// every outermost piece stamped with the lines it came from, headings named, things to be done
+// given their boxes, links marked.
 //
 // Everything a drawn guide knows comes from here, so drawing it again after a change is the
 // same call on the changed text — never a patch of what is already on screen.
 export function page_of(reader: MarkdownIt, text: string): string {
 	const { body, skipped } = body_of(text);
-	return mark_the_links(name_the_headings(stamp_blocks(reader, plain_links(body), skipped)));
+	return mark_the_links(rules_as_rows(boxes_for_tasks(name_the_headings(stamp_blocks(reader, plain_links(body), skipped)))));
 }
 
 /**

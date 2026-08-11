@@ -2,7 +2,7 @@
 	import { w_show_folders, w_show_filters, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import Section from '../support/Section.svelte';
-	import Files, { w_scrollbar_showing } from '../content/Files.svelte';
+	import Files, { w_first_column, w_scrollbar_showing } from '../content/Files.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
@@ -52,15 +52,21 @@
 		<!-- With nothing left after the filters there are no folders to show or hide, so the
 		     button has nothing to act on. -->
 		{#if matching > 0}
-			<!-- A drawn bar while the folders show; a folder while they are hidden. -->
-			<button class='folders-button eye' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
-				📁
-				{#if !$w_show_folders}
-					<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
-						<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
-					</svg>
-				{/if}
-			</button>
+			<!-- It stands in a lane as wide as the list's first column, held to that lane's right
+			     end and inset by the same gap the first title holds — so the button's right edge
+			     falls exactly where the first title's words end. With no fixed first column there
+			     is nothing to line up with, so the lane collapses and it hugs the far left. -->
+			<span class='folders-lane' style:width='{$w_first_column}px'>
+				<!-- A drawn bar while the folders show; a folder while they are hidden. -->
+				<button class='folders-button eye' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
+					📁
+					{#if !$w_show_folders}
+						<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
+							<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
+						</svg>
+					{/if}
+				</button>
+			</span>
 		{/if}
 		<!-- What was picked, beside the folder button: the project's short name, then the kind,
 		     each held well clear of its neighbors. -->
@@ -161,6 +167,17 @@
 	   words hold back the same, and the two end on the same edge. */
 	.chosen-tags.has-bar {
 		margin-right : calc(var(--thick-fat) + var(--gap));
+	}
+
+	/* The lane the folders button sits in, as wide as the list's first column. The button is held
+	   to its right end and inset by the gap the first title holds, so the two right edges agree. */
+	.folders-lane {
+		padding-right   : var(--gap-fat);
+		box-sizing      : border-box;
+		justify-content : flex-end;
+		align-items     : center;
+		display         : flex;
+		flex            : 0 0 auto;
 	}
 
 	.folders-button {

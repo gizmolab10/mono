@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Markdown_Blocks';
+	import { body_of, flipped_task, lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Markdown_Blocks';
 	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
@@ -117,6 +117,7 @@
 		// Holding the option key turns the words into something to pick up rather than
 		// something to click: dragging selects them, and nothing here answers.
 		if ($w_command_down) { return; }
+		if (flip_the_box(event)) { return; }
 		const anchor = (event.target as HTMLElement | null)?.closest?.('a') as HTMLAnchorElement | null;
 		if (!anchor) { open_the_piece(event); return; }
 		event.preventDefault();
@@ -137,6 +138,42 @@
 		}
 		if (found.why === 'a heading inside this same guide') { move_to_heading(found.heading); return; }
 		onsay(`"${link}" is ${found.why}`);
+	}
+
+	/**
+	 * A press on a thing-to-be-done's box. The item carries the one line of the file it came from,
+	 * so the brackets on that line are turned over and the whole file written back — the same
+	 * road every other change takes, and nothing else on the line is touched.
+	 *
+	 * Says whether it was a box, so a press that was not one goes on to the link and the piece.
+	 */
+	function flip_the_box(event: MouseEvent): boolean {
+		const drawn = (event.target as HTMLElement | null)?.closest?.('.task-box') as HTMLElement | null;
+		if (!drawn) { return false; }
+		const item = drawn.closest('li.task') as HTMLElement | null;
+		if (!item || item.dataset.line === undefined) { return false; }
+		event.preventDefault();
+		event.stopPropagation();
+		const at = Number(item.dataset.line);
+		const line = lines_between(text, at, at + 1);
+		const flipped = flipped_task(line);
+		if (flipped === null) {
+			onsay('the guide changed underneath — nothing saved');
+			debug.log(`Editing "${name}": a box on line ${at} was pressed, but that line now reads "${line}", which holds no pair of brackets. Nothing written.`);
+			return true;
+		}
+		const whole = with_lines_replaced(text, at, at + 1, flipped);
+		const was   = text;
+		const where = file_path_of(guide.bundle, guide.path);
+		debug.log(`Editing "${name}": line ${at} turned over — "${line}" becoming "${flipped}". Writing it to ${where}.`);
+		redraw(whole);
+		save_guide(where, whole, was).then((answer) => {
+			if (answer.ok) { debug.log(`Editing "${name}": ${where} written.`); return; }
+			onsay(`not saved — ${answer.why}`);
+			debug.log(`Editing "${name}": ${where} was NOT written — ${answer.why}. Putting the words back the way the file has them.`);
+			redraw(was);
+		});
+		return true;
 	}
 
 	// --- changing one piece of the file ---------------------------------------
@@ -391,7 +428,7 @@
 	// The top heading is the exception — whether a file's title has its own words folded away
 	// is one setting for the whole app, so every file opens the way the last one was left, and
 	// it is remembered between visits.
-	const FOLD_MARK = k.size.small * 1.05;
+	const FOLD_MARK = k.size.pointer;
 	const w_fold_titles = preferences.persistent<boolean>(T_Preference.fold_titles, false);
 	let folded_at = $state<number[]>([]);
 	let folds_for = '';                             // which file the folds above belong to
@@ -489,12 +526,21 @@
 		refresh_marks();
 	}
 
-	/** The mark itself: the same soft pointer the folders use, turned down or sideways. */
+	/**
+	 * The mark itself: the same soft pointer the folders use, turned down or sideways.
+	 *
+	 * The shape's measured size runs to fractions of a pixel, which leaves every mark's edges
+	 * straddling a screen pixel — and a straddled edge is rounded one way or the other each time
+	 * it is painted. The drawing is given whole pixels instead, with the extra space added to
+	 * what it looks through so the shape keeps its size exactly.
+	 */
 	function fold_mark_svg(open: boolean): string {
 		const way = open ? Direction.down : Direction.right;
 		const path = svg_paths.soft_pointer(FOLD_MARK, way);
 		const at = svg_paths.soft_pointer_bounds(FOLD_MARK, way);
-		return `<svg overflow='visible' width='${at.width}' height='${at.height}' viewBox='${at.minX} ${at.minY} ${at.width} ${at.height}'><path d='${path}'/></svg>`;
+		const wide = Math.ceil(at.width);
+		const tall = Math.ceil(at.height);
+		return `<svg overflow='visible' width='${wide}' height='${tall}' viewBox='${at.minX} ${at.minY} ${wide} ${tall}'><path d='${path}'/></svg>`;
 	}
 
 	function toggle_fold(at: number) {
@@ -510,6 +556,87 @@
 		refresh_marks();
 	}
 
+	// --- folding what sits under one thing to be done -------------------------
+
+	// A thing to be done can hold a list of its own. Each one that does gets the same soft pointer
+	// a heading gets, turned down while what it holds shows and sideways while it is put away.
+	// Which are folded is kept by the line each item begins on, and belongs to the file being
+	// read — another file opens with everything showing.
+	let tasks_folded = $state<number[]>([]);
+
+	/** Draw a pointer beside every thing to be done that holds a list, and apply its fold. */
+	function mark_the_tasks() {
+		if (!page) { return; }
+		const items = [...page.querySelectorAll('li.task')] as HTMLElement[];
+		let made = 0;
+		for (const item of items) {
+			const held = item.querySelector(':scope > ul, :scope > ol') as HTMLElement | null;
+			if (!held || item.dataset.line === undefined) { continue; }
+			const at = Number(item.dataset.line);
+			const away = tasks_folded.includes(at);
+			held.style.display = away ? 'none' : '';
+			const mark = one_mark(!away, away ? 'show what is under this' : 'put away what is under this',
+				() => toggle_task_fold(at));
+			mark.classList.add('task-fold');
+			item.prepend(mark);
+			made += 1;
+		}
+		debug.log(`Folding "${name}": ${items.length} thing(s) to be done, ${made} of them holding a list of their own, ${tasks_folded.length} put away.`);
+	}
+
+	function toggle_task_fold(at: number) {
+		const away = !tasks_folded.includes(at);
+		tasks_folded = away ? [...tasks_folded, at] : tasks_folded.filter((one) => one !== at);
+		debug.log(`Reading "${name}": what sits under the thing to be done on line ${at} is now ${away ? 'put away' : 'showing'}.`);
+		refresh_marks();
+	}
+
+	/**
+	 * A row for every line of the file no piece covers — a blank line, or a rule the reader draws
+	 * as nothing. Each carries its own number, so the column beside the words counts the file
+	 * straight through with none missing, and each opens for changing like any other piece.
+	 */
+	function fill_the_gaps() {
+		if (!page) { return; }
+		page.querySelectorAll('.blank-line').forEach((row) => row.remove());
+		const lines = text.split('\n').length;
+		// The labels at the top are not part of the words, so counting starts below them — and the
+		// number shown counts from the first row, while the two that put words back count the file.
+		const skipped = body_of(text).skipped;
+		const row_for = (line: number, before: Element | null) => {
+			const row = document.createElement('div');
+			row.className = 'blank-line';
+			row.setAttribute('data-number', String(line - skipped + 1));
+			row.setAttribute('data-from', String(line));
+			row.setAttribute('data-to', String(line + 1));
+			page!.insertBefore(row, before);
+		};
+		let at = skipped;
+		let made = 0;
+		const rows_up_to = (stop: number, before: Element | null) => {
+			for (; at < stop; at++) { row_for(at, before); made += 1; }
+		};
+		for (const piece of [...page.children] as HTMLElement[]) {
+			const from = Number(piece.dataset.from);
+			if (Number.isNaN(from)) { continue; }
+			rows_up_to(from, piece);
+			at = Number(piece.dataset.to);
+		}
+		rows_up_to(lines, null);
+		// A list begins on the very row its first item begins on, so both name that row and both
+		// would draw it, one number over the other. Whichever comes first on the page keeps it and
+		// the other's is taken off — done here, where the whole page can be seen at once, since a
+		// list nested inside an item carries no number of its own and its first item must keep one.
+		const drawn = new Set<string>();
+		let doubled = 0;
+		for (const one of [...page.querySelectorAll('[data-number]')] as HTMLElement[]) {
+			const says = one.dataset.number ?? '';
+			if (drawn.has(says)) { one.removeAttribute('data-number'); doubled += 1; continue; }
+			drawn.add(says);
+		}
+		debug.log(`Viewer "${name}": the file has ${lines} line(s); ${made} of them are covered by no piece and were given a row of their own; ${drawn.size} row(s) show a number and ${doubled} second claim(s) on a row were taken off.`);
+	}
+
 	/** Take every mark off and draw them again, so each points the way its section now sits. */
 	function refresh_marks() {
 		if (!page) { return; }
@@ -518,10 +645,13 @@
 		if (folds_for !== address) {
 			folds_for = address;
 			folded_at = [];
+			tasks_folded = [];
 			touched   = false;
 		}
 		page.querySelectorAll('.fold-mark').forEach((mark) => mark.remove());
+		fill_the_gaps();
 		apply_folds();
+		mark_the_tasks();
 	}
 
 	// The marks are put on the drawn page by hand, so they are drawn again every time the words
@@ -693,15 +823,19 @@
 		display     : flex;
 	}
 
-	/* The mark stands in the lane the words are held off by. It is exactly as wide as that lane and
+	/* The mark stands in the lane the words are held off by: as wide as the shape drawn in it,
+	   one gap past the row number on its left and one gap short of the words on its right. It
 	   gives all of that width back, so the words beside it start where they always did. It is put
 	   on the page by hand rather than drawn from here, so it is named as reaching outside this
 	   component. */
 	:global(.fold-mark) {
-		margin-left     : calc(var(--gap-big) * -1);
-		width           : var(--gap-big);
+		margin-left     : calc(0px - var(--gap) - var(--size-pointer));
+		width           : var(--size-pointer);
 		margin-right    : var(--gap);
 		background      : transparent;
+		/* Each mark is painted on a surface of its own, so filling one under the cursor cannot
+		   send the browser back over its neighbours' edges. */
+		transform       : translateZ(0);
 		flex            : 0 0 auto;
 		cursor          : pointer;
 		justify-content : center;
@@ -797,8 +931,10 @@
 		/* The gap it holds is padding rather than margin, so its own color fills the whole
 		   area below the heavy line instead of leaving a border of the page around it. The
 		   left inset has to be inside the box in any case: the marks beside the headings sit
-		   in it, and anything outside a box that scrolls is clipped away. */
-		padding      : 0 var(--gap-fat);
+		   in it, and anything outside a box that scrolls is clipped away. The left inset is
+		   built up rather than picked: the row numbers end at the one number that says so, then
+		   a gap, then the pointer, then a gap — and there the words begin. */
+		padding      : 0 var(--gap-fat) 0 calc(var(--inset-numbers) + var(--gap) * 2 + var(--size-pointer));
 		top          : var(--gap-fat);
 		font-size    : var(--font);
 		color        : var(--text);
@@ -879,6 +1015,61 @@
 		margin-top : 0;
 	}
 
+	/* Every outermost piece stands the line it begins on out in the left margin. The piece has
+	   to hold a place of its own for the number to be put against. */
+	.view-page :global(> [data-number]) {
+		position : relative;
+	}
+
+	/* A line of the file the reader draws as nothing — a blank line, a rule — still gets a row,
+	   one line of the words tall and holding the same gap a paragraph holds, so its number stands
+	   the same distance from its neighbours as every other number. */
+	.view-page :global(> .blank-line),
+	.view-page :global(> .rule) {
+		height : var(--height-small);
+		margin : var(--gap) 0;
+	}
+
+	/* Every number ends at the same place, whatever it is: one digit or three, its right edge
+	   stands where every other one's does — back past the pointer and the two gaps around it. It
+	   is hung off that edge and grows leftward, so a third digit widens it instead of wrapping
+	   onto a second line.
+	   An item inside a list carries one too. Nothing between it and its outermost piece holds a
+	   place of its own, so its number is measured from that piece's left edge, the same edge every
+	   other number is measured from — and a list stepped in does not step its numbers in. */
+	.view-page :global([data-number])::before {
+		content      : attr(data-number);
+		font-size    : var(--font-faint);
+		margin-right : calc(var(--gap) * 2 + var(--size-pointer));
+		color        : var(--gray);
+		position     : absolute;
+		line-height  : inherit;
+		white-space  : nowrap;
+		right        : 100%;
+	}
+
+	/* A paragraph's own words, and a list's, sit a hair lower than a heading's — so their numbers
+	   go down by the same hair to stand level with them. A list itself is named as well as its
+	   items, since a list keeps the row it shares with its first item and draws that one.
+	   The nudge is a margin, never a top: an item's number is measured from its outermost piece,
+	   so a top would stack every item's number at that one piece's top edge. */
+	.view-page :global(p[data-number])::before,
+	.view-page :global(ul[data-number])::before,
+	.view-page :global(ol[data-number])::before,
+	.view-page :global(li.task[data-number])::before {
+		margin-top : var(--gap-small);
+	}
+
+	/* How deep a piece sits steps its words in by one gap a level, counting from a second-level
+	   heading. It is padding rather than margin so the piece's own left edge stays put — the row
+	   number is hung off that edge, and the numbers stand in one column whatever the depth.
+	   The title has a slot of its own and is left out. */
+	.view-page :global(> [data-depth="3"]) { padding-left : var(--gap); }
+	.view-page :global(> [data-depth="4"]) { padding-left : calc(var(--gap) * 2); }
+	.view-page :global(> [data-depth="5"]) { padding-left : calc(var(--gap) * 3); }
+	.view-page :global(> [data-depth="6"]) { padding-left : calc(var(--gap) * 4); }
+	.view-page :global(> [data-depth="7"]) { padding-left : calc(var(--gap) * 5); }
+
 	/* The guide's own headings, lists, code and tables. Styled here because the markup is
 	   handed in whole rather than written out tag by tag, so each part has to be named. */
 	.view-page :global(h1),
@@ -909,15 +1100,23 @@
 	/* The title stays at the top while the words run under it, so a long guide never loses its
 	   name. Its fill reaches both edges of the words area — stepping out past the inset they
 	   hold and putting that inset back inside itself — so nothing shows through beside it. */
-	.view-page :global(h1) {
-		margin     : 0 calc(var(--gap-fat) * -1);
-		padding    : 0 var(--gap-fat);
+	/* Named by its number as well as its tag, so it outweighs the rule that gives every piece a
+	   place of its own — that rule would otherwise take the title's stickiness away. */
+	.view-page :global(> h1[data-number]) {
+		margin     : 0 calc(var(--gap-fat) * -1) 0 calc(0px - var(--inset-numbers) - var(--gap) * 2 - var(--size-pointer));
+		padding    : 0 var(--gap-big) 0 calc(var(--gap-big) + var(--size-pointer) + var(--inset-numbers));
+		z-index    : var(--z-controls);
 		height     : var(--gap-huge);
 		box-sizing : border-box;
 		background : var(--bg);
 		position   : sticky;
-		z-index    : var(--z-controls);
 		top        : 0;
+	}
+
+	/* The title's own left edge is the page's, so its number is pushed back the other way to land
+	   where every other number's right edge stands. */
+	.view-page :global(> h1[data-number])::before {
+		margin-right : calc(0px - var(--inset-numbers));
 	}
 
 	/* The first piece after the title brings no gap of its own, so the whole distance from the
@@ -948,6 +1147,85 @@
 
 	.view-page :global(li) {
 		margin-bottom : var(--gap-tiny);
+	}
+
+	/* A thing to be done wears a box where its bullet would be, so a list of them reads as a
+	   column of boxes. Pressing one writes the other letter into the file. */
+	.view-page :global(li.task) {
+		list-style : none;
+	}
+
+	/* A finished thing has its words struck through and grayed. A strike reaches every descendant
+	   and none of them can drop it — except one standing as a single inline lump, which is why the
+	   list a finished thing holds is drawn as one: its own items then read as they are. */
+	.view-page :global(li.task.done) {
+		text-decoration : line-through;
+		color           : var(--gray);
+	}
+
+	/* Standing on the text baseline would leave the line's own drop below it, which shows as a
+	   pixel appearing and going as an item is finished and unfinished — so it is held to the top
+	   of its line instead. */
+	.view-page :global(li.task.done > ul),
+	.view-page :global(li.task.done > ol) {
+		vertical-align  : top;
+		text-decoration : none;
+		display         : inline-block;
+		color           : var(--text);
+		width           : 100%;
+	}
+
+	/* The pointer beside a thing that holds a list of its own hangs left of the box, in the flow
+	   rather than out of it: it takes back exactly what it gives, so the box and the words after
+	   it stand where they always did — and its item holds no place of its own, which is what lets
+	   that item's number be measured from the outermost piece. */
+	:global(.fold-mark.task-fold) {
+		margin-left    : calc(0px - var(--size-pointer) - var(--gap));
+		height         : var(--size-small);
+		display        : inline-flex;
+		margin-right   : var(--gap);
+		vertical-align : middle;
+		position       : static;
+	}
+
+	/* Still to do: the drawn square, in outline on the page's own white. The shape itself comes
+	   from the one place every drawn shape comes from; only how it is inked is decided here. */
+	.view-page :global(li.task .task-box) {
+		margin         : 0 var(--gap-small) 0 calc(var(--gap) * -0.5);
+		display        : inline-flex;
+		position       : relative;
+		cursor         : pointer;
+		line-height    : 0;
+		/* The box stands on the words' baseline, so its whole height sits above it while the
+		   letters keep their tails below — the two pixels put its middle back on theirs. */
+		top            : 2px;
+	}
+
+	.view-page :global(li.task .task-box path) {
+		stroke-width : var(--thick-big);
+		stroke       : var(--lightgray);
+		fill         : var(--white);
+	}
+
+	/* Done: a filled square inside a hairline, with a green check standing on it. It keeps an
+	   outline of its own so the drawn shape covers the same ground either way. */
+	.view-page :global(li.task .task-box.done path) {
+		fill         : var(--faintgray);
+		stroke       : var(--gray);
+		stroke-width : 0.5;
+	}
+
+	/* The check itself — two sides of a square, turned onto its corner. */
+	.view-page :global(li.task .task-box.done::after) {
+		border-width : 0 var(--thick-fat) var(--thick-fat) 0;
+		border       : solid var(--green);
+		transform    : rotate(45deg);
+		position     : absolute;
+		content      : '';
+		height       : 55%;
+		width        : 25%;
+		left         : 36%;
+		top          : 12%;
 	}
 
 	.view-page :global(a) {
@@ -1009,10 +1287,17 @@
 		width       : 1%;
 	}
 
-	.view-page :global(hr) {
+	/* A line of three dashes. It is an ordinary row so it can carry its number, taking exactly the
+	   space any other row takes. The line is painted across the row's middle, where the number's
+	   own letters sit — along its top edge it would ride above them, since a line of text keeps
+	   half its leading above the letters. */
+	.view-page :global(.rule)::after {
 		border-top : var(--thick-faint) solid var(--accent);
-		margin     : var(--gap-fat) 0;
-		border     : none;
+		position   : absolute;
+		content    : '';
+		right      : 0;
+		left       : 0;
+		top        : 50%;
 	}
 
 	/* The one place found, highlighted in the accent. */

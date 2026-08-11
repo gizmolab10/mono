@@ -3,6 +3,7 @@
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
 	import { guides } from '../../ts/managers/Files';
+	import { guides_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
 	import { colors } from '../../ts/utilities/Colors';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
@@ -19,6 +20,21 @@
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
 	const w_no_server = guides.w_no_server;
+
+	// The dispatcher is asked once, as the page arrives. Restarted after that, it has no way to
+	// say so — which left the screen holding "start it, then reload" until someone did. So while
+	// that message is up, it is asked again every second or two, and the page starts itself over
+	// the moment it answers.
+	$effect(() => {
+		if (!$w_no_server) { return; }
+		const asking = setInterval(async () => {
+			const on_disk = await guides_on_disk();
+			if (on_disk.paths.length === 0) { return; }
+			debug.log(`Guides: the dispatcher is answering again — ${on_disk.paths.length} file(s) on disk, so the page starts itself over.`);
+			window.location.reload();
+		}, k.timeout.asking);
+		return () => clearInterval(asking);
+	});
 
 	// Whenever any of the four theme colors changes, push all four onto the page so
 	// every component can read them as plain style names.
@@ -70,6 +86,18 @@
 
 	let showBuildNotes = $state(false);
 
+	// The dispatcher is the only thing that reads and writes the files, so changing its code means
+	// starting it over. The button's own face is the whole report — nothing goes to the status
+	// line, which is for what the guides are doing.
+	let restarting = $state(false);
+
+	async function restart() {
+		restarting = true;
+		const answer = await restart_dispatcher();
+		restarting = false;
+		debug.log(`Dispatcher: asked to start over — ${answer.ok ? 'it is answering again.' : `it did not come back: ${answer.why}.`}`);
+	}
+
 	// Whether details shows at all is the hamburger's doing, and it is remembered across visits.
 	const w_show_details = preferences.persistent<boolean>(T_Preference.show_details, true);
 
@@ -108,9 +136,10 @@
 <svelte:window onresize={handleResize} />
 
 {#if $w_no_server}
-	<!-- The dispatcher is the only thing that knows what is on disk, so without it
-	     there is nothing to show. Said plainly rather than left as an empty list. -->
-	<div class='launch'>the dispatcher is not answering — start it, then reload</div>
+	<!-- Nothing is said while the dispatcher is down: it is asked again every second and a half,
+	     and the page starts itself over the moment it answers. Naming the fault would only ask
+	     for something that is already being done. -->
+	<div class='launch'>setting up the overview browser...</div>
 {:else if $w_app === S_App.launch}
 	<div class='launch'>setting up the overview browser...</div>
 {:else}
@@ -127,7 +156,7 @@
 {/if}
 
 <div class='frame' style:width='{width}px' style:height='{height}px'>
-	<Controls onclick={toggle_details} detailsShown={$w_show_details} {buildNumber} onBuildOpen={() => { showBuildNotes = true; debug.log(`Build notes: opened, showing build ${buildNumber}.`); }} />
+	<Controls onclick={toggle_details} detailsShown={$w_show_details} {buildNumber} {restarting} onRestart={restart} onBuildOpen={() => { showBuildNotes = true; debug.log(`Build notes: opened, showing build ${buildNumber}.`); }} />
 	<div class='boxes'>
 		{#if $w_show_details}
 			<Details width={details_width} />

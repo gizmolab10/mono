@@ -2,7 +2,7 @@
 kind: wire
 title: "Bubble Integration"
 description: "Webseriously runs inside a frame and keeps in step with Bubble by passing messages."
-tags: [write, platform]
+tags: [program, platform]
 date: 2026-01-22
 ---
 

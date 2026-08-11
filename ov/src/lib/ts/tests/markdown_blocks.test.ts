@@ -1,4 +1,4 @@
-import { body_of, lines_between, links_in, page_of, stamp_blocks, still_reads, with_lines_replaced } from '../utilities/Markdown_Blocks';
+import { body_of, boxes_for_tasks, flipped_task, lines_between, links_in, page_of, stamp_blocks, still_reads, with_lines_replaced } from '../utilities/Markdown_Blocks';
 import { describe, expect, it } from 'vitest';
 import MarkdownIt from 'markdown-it';
 
@@ -39,7 +39,7 @@ describe('drawing a whole guide', () => {
 	it('names each heading after its own words, and stamps it too', () => {
 		const html = page_of(reader, file);
 		expect(html).toContain('id="a-title"');
-		expect(html).toMatch(/<h1 id="a-title" data-from="4" data-to="5">/);
+		expect(html).toMatch(/<h1 id="a-title" data-number="2" data-from="4" data-to="5" data-depth="1">/);
 	});
 
 	it('gives every link its own hover words', () => {
@@ -254,5 +254,130 @@ describe('stamping a block with its lines', () => {
 
 	it('still draws the words themselves', () => {
 		expect(stamp_blocks(reader, '# title\n\nsome words', 0)).toContain('some words');
+	});
+
+	// Beside the two numbers that put words back sits a third, the one shown in the left margin.
+	// It counts the rows shown, from one, with the labels at the top left out — so the first row
+	// on screen always reads 1 however many label lines sit above it.
+	it('counts the rows shown from one, whatever the labels took', () => {
+		expect([...stamp_blocks(reader, 'hello\n\nthere', 4).matchAll(/data-number="(\d+)"/g)].map((hit) => hit[1]))
+			.toEqual(['1', '3']);
+		expect([...stamp_blocks(reader, 'hello\n\nthere', 0).matchAll(/data-number="(\d+)"/g)].map((hit) => hit[1]))
+			.toEqual(['1', '3']);
+	});
+
+
+	it('moves all four out of a fenced chunk of code, onto the box around it', () => {
+		const html = stamp_blocks(reader, '```\nsome code\n```', 0);
+		expect(html).toContain('<pre data-number="1" data-from="0" data-to="3" data-depth="2">');
+		expect(html).not.toContain('<code data-');
+	});
+});
+
+// A rule is a shape the browser fills in itself and will not hang a number on, so it is drawn
+// as an ordinary row carrying the very same numbers.
+
+describe('a line of three dashes', () => {
+	it('is drawn as an ordinary row, keeping every number it was stamped with', () => {
+		const html = page_of(reader, 'words\n\n---\n\nmore');
+		expect(html).not.toContain('<hr');
+		expect(html).toContain('<div class="rule" data-number="3" data-from="2" data-to="3" data-depth="2"></div>');
+	});
+});
+
+// How deep each piece sits: a heading's own number, and one deeper than that for everything
+// under it. Before the first heading, a piece counts as sitting under the title.
+
+describe('how deep each piece sits', () => {
+	const depths = (markdown: string) =>
+		[...stamp_blocks(reader, markdown, 0).matchAll(/data-depth="(\d+)"/g)].map((hit) => Number(hit[1]));
+
+	it('gives a heading its own number', () => {
+		expect(depths('# one\n\n## two\n\n### three\n\n###### six')).toEqual([1, 2, 3, 6]);
+	});
+
+	it('puts a paragraph one deeper than the heading above it', () => {
+		expect(depths('## two\n\nwords\n\n### three\n\nmore')).toEqual([2, 3, 3, 4]);
+	});
+
+	it('counts a piece before any heading as sitting under the title', () => {
+		expect(depths('words\n\n## two')).toEqual([2, 2]);
+	});
+});
+
+// A list item beginning with a pair of brackets is a thing to be done. The brackets are drawn
+// as a box, filled when the letter x sits between them, and pressing the box writes the other
+// letter back into the file — so every item carries the one line it came from.
+
+describe('a list item that is a thing to be done', () => {
+	it('draws an empty pair of brackets as an empty box', () => {
+		const drawn = boxes_for_tasks('<ul>\n<li>[ ] one</li>\n</ul>');
+		expect(drawn).toContain('<li class="task"><span class="task-box">');
+		expect(drawn).toContain('<path d=');
+		expect(drawn.endsWith('</span> one</li>\n</ul>')).toBe(true);
+	});
+
+	it('draws a pair holding an x as a filled box, whichever letter it is', () => {
+		expect(boxes_for_tasks('<li>[x] one</li>')).toContain('task-box done');
+		expect(boxes_for_tasks('<li>[X] one</li>')).toContain('task-box done');
+	});
+
+	it('names a finished item itself, so its words can be struck through', () => {
+		expect(boxes_for_tasks('<li>[x] one</li>')).toContain('<li class="task done">');
+		expect(boxes_for_tasks('<li>[ ] one</li>')).toContain('<li class="task">');
+	});
+
+	it('reaches inside a list whose items are wrapped in paragraphs', () => {
+		expect(boxes_for_tasks('<li>\n<p>[ ] one</p>\n</li>'))
+			.toContain('<li class="task">\n<p><span class="task-box">');
+	});
+
+	it('leaves the line an item was stamped with alone', () => {
+		expect(boxes_for_tasks('<li data-line="3">[ ] one</li>')).toContain('data-line="3"');
+	});
+
+	it('leaves an ordinary item, and brackets standing anywhere else, alone', () => {
+		expect(boxes_for_tasks('<li>one</li>')).toBe('<li>one</li>');
+		expect(boxes_for_tasks('<li>one [ ] two</li>')).toBe('<li>one [ ] two</li>');
+		expect(boxes_for_tasks('<p>[ ] one</p>')).toBe('<p>[ ] one</p>');
+	});
+
+	it('reaches the whole drawn guide', () => {
+		expect(page_of(reader, '- [ ] one\n- [x] two')).toContain('class="task-box"');
+	});
+
+	it('tells every item which line of the file it came from', () => {
+		const html = page_of(reader, '# title\n\n- [ ] one\n- [x] two');
+		expect([...html.matchAll(/data-line="(\d+)"/g)].map((hit) => hit[1])).toEqual(['2', '3']);
+	});
+
+	it('counts that line from the file, not from the words, when labels were taken off', () => {
+		const html = page_of(reader, '---\nkind: refer\n---\n- [ ] one');
+		expect(html).toContain('data-line="3"');
+	});
+});
+
+// Pressing a box writes the other letter back into the file. Only the one line changes, and
+// only the brackets on it — everything else on that line stands.
+
+describe('flipping a thing to be done', () => {
+	it('fills an empty pair of brackets', () => {
+		expect(flipped_task('- [ ] port Hits.ts')).toBe('- [x] port Hits.ts');
+	});
+
+	it('empties a full pair, whichever letter it holds', () => {
+		expect(flipped_task('- [x] port Hits.ts')).toBe('- [ ] port Hits.ts');
+		expect(flipped_task('- [X] port Hits.ts')).toBe('- [ ] port Hits.ts');
+	});
+
+	it('keeps the step in, and the bullet, exactly as they were', () => {
+		expect(flipped_task('\t\t* [ ] one')).toBe('\t\t* [x] one');
+		expect(flipped_task('  3. [ ] one')).toBe('  3. [x] one');
+	});
+
+	it('answers with nothing for a line that is not a thing to be done', () => {
+		expect(flipped_task('- ordinary')).toBe(null);
+		expect(flipped_task('[ ] no bullet')).toBe(null);
+		expect(flipped_task('')).toBe(null);
 	});
 });

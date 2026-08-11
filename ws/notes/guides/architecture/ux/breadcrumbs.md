@@ -2,7 +2,7 @@
 kind: wire
 title: "Breadcrumbs (ws)"
 description: "Three parts working together to show either ancestry or browsing history."
-tags: [write, UX]
+tags: [program, UX]
 date: 2026-01-12
 ---
 

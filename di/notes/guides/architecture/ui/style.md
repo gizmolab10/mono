@@ -2,7 +2,7 @@
 kind: specify
 title: "Style (di interface)"
 description: "The look every interactive control shares, and the one exception for the active state."
-tags: [arrange, style]
+tags: [visual, style]
 date: 2026-05-11
 ---
 

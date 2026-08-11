@@ -2,7 +2,7 @@
 kind: wire
 title: "Geometry (ws)"
 description: "Who does what in layout: the coordinator, the helpers, and what triggers a rebuild."
-tags: [write, geometry]
+tags: [program, geometry]
 date: 2026-01-12
 ---
 

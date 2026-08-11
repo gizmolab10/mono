@@ -1,5 +1,5 @@
 ---
-kind: step
+kind: howto
 title: "Migration Documents"
 description: "How to write a migration document that breaks a big component change into safe phases."
 tags: [migrate, refactor]

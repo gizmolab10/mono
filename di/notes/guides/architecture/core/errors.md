@@ -2,7 +2,7 @@
 kind: wire
 title: "Errors (di)"
 description: "Turning a formula failure into something the user can act on: a red mark and a plain message."
-tags: [write, UX]
+tags: [program, UX]
 date: 2026-05-10
 ---
 

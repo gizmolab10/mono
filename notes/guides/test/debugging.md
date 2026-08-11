@@ -1,5 +1,5 @@
 ---
-kind: step
+kind: howto
 title: "Debugging"
 description: "Two principles: check the source first, and work systematically."
 tags: [debug]

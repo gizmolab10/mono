@@ -1,13 +1,16 @@
+---
+kind: refer
+title: "Co — wisdom layer for AI assistants"
+description: "A collaboration layer that sits on any AI assistant and gives it memory, gates, voice and roles."
+tags: [plans, proposal, team, vision]
+date: 2026-08-10
+---
 # Co — wisdom layer for AI assistants
 
 **Started:** 2026-02-23
 **Status:** Ideas
 
 **The pitch:** OpenClaw gives your AI superpowers. Co gives it wisdom and creative force multiplier.
-
-Co is the free open-source layer, monetized through templates/onboarding ("get started in 10 minutes instead of 3 months")
-
-beginning each chat. detect files that need updating & inform me (eg, maps)
 
 ## The problem
 
@@ -29,6 +32,20 @@ The architecture is general. The content is personal. Co ships the architecture 
 ### Persistent memory that improves
 
 Not session history. Not `/compact` summaries. Structured guides that the AI reads every time, written in your words, updated from real experience.
+
+### Injection, not hope
+
+A guide nobody reads is a folder. Co puts them into the message itself, before the AI has a chance to skip them. The handful that must never be out of sight go in whole, every single turn. The rest take turns, one file per message, on a rotation — because what gets injected is cut off at a couple thousand characters, and a rule that arrives truncated is a rule that isn't there.
+
+The same hook proves the labels tell the truth: every file that claims it must always arrive is checked against what actually arrived, and a lie either way is reported at the top of the message.
+
+### Named commands
+
+A slash and a word runs a whole procedure — check the labels, write the journal, distill the learn log. Not shortcuts for typing. Procedures with steps, kept in one place, so the AI can't improvise them differently each time.
+
+### Staleness, caught early
+
+At the start of each chat, find the files that have gone out of date — maps that no longer match the folders, links that lead nowhere, labels that stopped describing their file — and say so. Don't fix them. Say so.
 
 ### Learning from mistakes
 
@@ -77,7 +94,7 @@ OpenClaw has `AGENTS.md`, `SOUL.md`, `TOOLS.md` — static config files. Co repl
 
 **What OpenClaw would need:**
 
-- pre/post action hooks (gates need to intercept before execution)
+- a hook that fires on every message and can add to it, plus pre/post action hooks (gates need to intercept before execution). Claude Code already has all three, and that's what mono's own system runs on — so this isn't speculation, it's a port
 - persistent structured storage beyond session history
 - config self-modification from within a session (learning loop writes rules)
 - or: Co runs as a sidecar wrapping the gateway, injecting context
@@ -110,6 +127,7 @@ Self-hosted costs $5–30/mo in API fees. Most personal users typically pay arou
 **Universal — everyone needs these:**
 
 - persistent memory that survives sessions
+- injection that puts it in front of the AI every message, with a rotation for whatever won't fit
 - learning from mistakes (log → pattern → rule)
 - gates before risky actions
 - clear roles (human = what/why, AI = how/where)
@@ -127,9 +145,12 @@ Self-hosted costs $5–30/mo in API fees. Most personal users typically pay arou
 - [ ] the core loop: show the AI what good looks like, extract the lesson, store it
 - [ ] a place for rules that persist (guides equivalent)
 - [ ] a place for mistakes that get distilled (learn.md equivalent)
+- [ ] injection with a rotation, and a check that the labels and the sending agree
 - [ ] gates — forced reading before acting
 - [ ] voice — captured from examples, enforced
 - [ ] roles — defined, not implicit
+- [ ] named commands — a slash and a word runs a whole procedure
+- [ ] a staleness sweep at the start of a chat, reported and never fixed unasked
 - [ ] onboarding: guided setup that asks the right questions to seed the system
 - [ ] escape hatches: "relearn", "stop", shorthand that feels natural
 

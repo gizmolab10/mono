@@ -1,4 +1,4 @@
-import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_link, path_of_address, place_of_file } from '../utilities/Saving';
+import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_link, path_of_address, place_of_file, renamed_path } from '../utilities/Saving';
 import { describe, expect, it } from 'vitest';
 import { T_Bundle } from '../types/File';
 
@@ -18,18 +18,30 @@ describe('reading a place in the repo back into a collection and a path', () => 
 			.toEqual({ bundle: T_Bundle.ws, path: 'designs/styles.md', is_design: true });
 	});
 
+	it('keeps the work folder in the path, the same as designs', () => {
+		expect(place_of_file('ov/notes/work/handoff.md'))
+			.toEqual({ bundle: T_Bundle.ov, path: 'work/handoff.md', is_design: false });
+		expect(place_of_file('notes/work/learn.md'))
+			.toEqual({ bundle: T_Bundle.mono, path: 'work/learn.md', is_design: false });
+	});
+
+	it('reads a work note sitting deeper than the top of the work folder as nothing', () => {
+		expect(place_of_file('di/notes/work/now/learn.md')).toBe(null);
+		expect(place_of_file('ji/notes/work/proposals/ov.md')).toBe(null);
+	});
+
 	it('is the other way round from working out where a guide sits', () => {
 		for (const [bundle, path] of [
 			[T_Bundle.mono, 'pre-flight/always.md'],
 			[T_Bundle.ji, 'roadmap.md'],
 			[T_Bundle.ov, 'designs/a plan.md'],
+			[T_Bundle.ov, 'work/handoff.md'],
 		] as Array<[T_Bundle, string]>) {
 			expect(place_of_file(file_path_of(bundle, path))).toEqual({ bundle, path, is_design: path.startsWith('designs/') });
 		}
 	});
 
 	it('reads anything that is not a guide as nothing', () => {
-		expect(place_of_file('ov/notes/work/handoff.md')).toBe(null);
 		expect(place_of_file('ov/src/lib/main.css')).toBe(null);
 		expect(place_of_file('notes/guides/a folder')).toBe(null);
 		expect(place_of_file('')).toBe(null);
@@ -62,6 +74,11 @@ describe('working out where a guide sits', () => {
 		expect(file_path_of(T_Bundle.ws, 'designs/styles.md')).toBe('ws/notes/designs/styles.md');
 		expect(file_path_of(T_Bundle.mono, 'designs/a plan.md')).toBe('notes/designs/a plan.md');
 	});
+
+	it('puts a work note in the work folder, not under guides', () => {
+		expect(file_path_of(T_Bundle.ov, 'work/handoff.md')).toBe('ov/notes/work/handoff.md');
+		expect(file_path_of(T_Bundle.mono, 'work/learn.md')).toBe('notes/work/learn.md');
+	});
 });
 
 describe('working out where a folder sits', () => {
@@ -79,6 +96,11 @@ describe('working out where a folder sits', () => {
 		expect(folder_path_of(T_Bundle.ws, 'designs')).toBe('ws/notes/designs');
 		expect(folder_path_of(T_Bundle.ji, 'designs/older')).toBe('ji/notes/designs/older');
 	});
+
+	it('puts the work folder beside guides too', () => {
+		expect(folder_path_of(T_Bundle.ov, 'work')).toBe('ov/notes/work');
+		expect(folder_path_of(T_Bundle.mono, 'work')).toBe('notes/work');
+	});
 });
 
 describe('where a guide lands when dropped into a folder', () => {
@@ -92,6 +114,28 @@ describe('where a guide lands when dropped into a folder', () => {
 
 	it('keeps a name with spaces whole', () => {
 		expect(moved_into('pre-flight', 'adding a guide.md')).toBe('pre-flight/adding a guide.md');
+	});
+});
+
+// A rename gives a file a different name and leaves it exactly where it sits. Building the new
+// place out of the folder it hangs under sends a work note into the guides folder, since a work
+// note hangs straight off its project — so the new place is built out of its own old place.
+
+describe('where a file sits after it is given a different name', () => {
+	it('keeps a guide in its folder', () => {
+		expect(renamed_path('architecture/core/units.md', 'measures')).toBe('architecture/core/measures.md');
+	});
+
+	it('keeps a file at the top of its collection', () => {
+		expect(renamed_path('roadmap.md', 'plans')).toBe('plans.md');
+	});
+
+	it('keeps a work note in the work folder', () => {
+		expect(renamed_path('work/handoff.md', 'where I am')).toBe('work/where I am.md');
+	});
+
+	it('keeps a design in the designs folder', () => {
+		expect(renamed_path('designs/styles.md', 'colors')).toBe('designs/colors.md');
 	});
 });
 

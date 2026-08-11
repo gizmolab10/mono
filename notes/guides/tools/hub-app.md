@@ -2,7 +2,7 @@
 kind: wire
 title: "Hub App"
 description: "What the Hub app is, how it is put together, and what its screens do."
-tags: [write, tools]
+tags: [program, tools]
 date: 2026-05-10
 ---
 

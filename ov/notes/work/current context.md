@@ -1,3 +1,10 @@
+---
+kind: refer
+title: "Context"
+description: ""
+tags: [journal]
+date: 2026-08-10
+---
 # Context
 
 **The app as it stands.** A controls row (hamburger, build number), then two boxes: the details column on the left with the accent color picker, and the content box beside it. The content box does one of two things — looking through the guides, or reading one. Looking through means five filters (which purposes show, one project, one kind, any number of tags, and words looked for in titles and descriptions), a count, and the list: every folder and file, folders leading their contents, each folder opening and shutting and remembering which it was. With the folders hidden the list flattens to every file, sortable by any run of columns.

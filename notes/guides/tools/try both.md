@@ -1,8 +1,8 @@
 ---
-kind: step
+kind: howto
 title: "Try Both"
 description: "Build two ways of showing something at once, behind one word you flip, and look at each."
-tags: [tools, arrange]
+tags: [tools, visual]
 date: 2026-08-03
 ---
 

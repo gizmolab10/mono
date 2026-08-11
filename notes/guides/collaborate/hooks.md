@@ -1,14 +1,80 @@
 ---
-kind: specify
+kind: explain
 title: "Hooks"
 description: "What hooks are, how they differ from memory, and which ones are live."
-tags: [team, tools]
+tags: [always, session, team, tools]
 date: 2026-07-08
 ---
 
 # Hooks
 
 Hooks are shell commands that fire automatically when Claude does something — edits a file, runs a command, receives a message. They live in settings.json and run without asking.
+
+## The cut, and the two parts
+
+What a hook incorporates is cut off at about 2000 characters.
+
+
+
+**Part A** — (first 2000) the always file, whole, every single turn. It holds the five rules I break most: be brief, plain English, guess, no fluff, show evidence. It is kept short deliberately, so it always survives the cut.
+
+**Part B** — (everything else): the reply rules, how the work is done, and the two lists of banned words. These are divided into three smaller pieces. One of them is incorporated per turn, in rotation. The rotation pointer is kept in a tiny file. 
+
+The cost is minimal: a rule in part B is out of sight for two or three turns at a time.
+
+## The live suite
+
+Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked from `.claude/settings.local.json`. Some hooks are a whole command written into the settings file itself, others are scripts it invokes.
+
+### UserPromptSubmit — fires when you send a message
+
+| Hook | What it does |
+|----|----|
+| debug-reminder *(inline)* | On words like bug/fix/log/why, injects "read the log data first" |
+| log-present *(inline)* | When you paste log markers, injects "read the log yourself, don't ask me to" |
+| geometric-mode *(inline)* | Toggles a flag on "geometric"; while on, injects geometry-caution and log-naming rules |
+| done-checklist.sh | On a "done" command, injects the done checklist from shorthand.md |
+| inject-always.sh | Injects part A whole, then one part of B in turn; complains first if any file's labels disagree with what is sent (lives in `.claude/hooks/`) |
+
+### PreToolUse — fires before a tool runs
+
+| Hook | What it does |
+|----|----|
+| snapshot-before-edit.sh | Copies the file to a snapshot folder before an Edit/Write, for undo |
+| bash-command-check.sh | Denies batched commands, npx, and git worktree; auto-approves read-only exploration |
+
+### PostToolUse — fires after an Edit/Write
+
+| Hook | What it does |
+|----|----|
+| plain-english-check.sh | Flags jargon in .md files and in log/comment lines of .ts files (lives in `.claude/hooks/`) |
+| mark-ts-check-pending.sh | If a .ts/.svelte changed, drops a marker so the end-of-turn type check runs |
+
+### Stop — fires when I finish (all warn-only now)
+
+| Hook | What it does |
+|----|----|
+| banned-words-check.sh | Logs banned words; hard ones get rewritten on screen by display-fix.sh |
+| conciseness-check.sh | Logs filler and over-length |
+| phrase-check.sh | Logs permission-asking and hollow reassurances |
+| required-disclaimer-check.sh | Logs a hedge that lacks "I AM GUESSING" |
+| diagnostic-citation-check.sh | Logs a cause-claim with no citation |
+| check-ts.sh | If a .ts/.svelte changed, runs svelte-check; injects any errors as next-turn context |
+
+### MessageDisplay — fires as text is shown
+
+| Hook | What it does |
+|----|----|
+| display-fix.sh | Rewrites hard banned words on screen as the reply streams |
+
+### Proving the two halves agree
+
+Every file that arrives, in either part, wears the `always` tag. Two things can go wrong, and the hook complains about both, before anything else it prints:
+
+1. A file arrives without the tag — its labels lie.
+2. A file wears the tag and never arrives — they lie the other way.
+
+`/always` proves the complaint works, by breaking each half in turn and putting it back. A check that stays silent when something is broken is not a check.
 
 ## Why hooks
 
@@ -78,7 +144,7 @@ Settings load in order: user then project then local. Later overrides earlier.
 
 The command's stdout is parsed as JSON. Which fields matter depends on the event:
 
-**Inject text into my context** — `hookSpecificOutput.additionalContext`. Works on UserPromptSubmit, PostToolUse, and Stop. The debugging reminder and inject-always.sh use this. It is advice I read, not a hard stop.
+**Inject text into my context** — `hookSpecificOutput.additionalContext`. Works on UserPromptSubmit, PostToolUse, and Stop. The debugging reminder and inject-always.sh use this. It is advice I read, not a hard stop — and it is cut off at about two thousand characters, which is the whole reason for the two parts below.
 
 **Approve or deny a tool** (PreToolUse only) — `hookSpecificOutput.permissionDecision` set to `"deny"` or `"allow"`, plus `permissionDecisionReason`. bash-command-check.sh uses this to deny npx and to auto-approve read-only greps.
 
@@ -95,53 +161,6 @@ A Stop hook fires AFTER the reply is finished and already on screen. If it retur
 Nothing runs before display that can quietly swallow the first attempt. Confirmed against the official docs: there is no pre-send gate, and MessageDisplay can only rewrite what's shown, never reject.
 
 The fix we settled on: judgment hooks are **warn-only**. They log the violation to `di/.claude/hooks/log.jsonl` and exit clean — never reject. Hard banned words (the deterministic ones) get rewritten on screen by display-fix.sh instead of rejected. The cost: style, hedge, and citation rules became advisory — logged, not enforced. The always-rules injected each turn still nudge me toward them.
-
-## The live suite
-
-Eighteen hook commands run today. Scripts live in `di/.claude/hooks/` (one exception noted), wired up in `.claude/settings.local.json`. Inline commands sit directly in that settings file.
-
-### UserPromptSubmit — fires when you send a message
-
-| Hook | What it does |
-|----|----|
-| debug-reminder *(inline)* | On words like bug/fix/log/why, injects "read the log data first" |
-| log-present *(inline)* | When you paste log markers, injects "read the log yourself, don't ask me to" |
-| geometric-mode *(inline)* | Toggles a flag on "geometric"; while on, injects geometry-caution and log-naming rules |
-| plain-english *(inline)* | Always injects the plain-English rule |
-| guess + implication *(inline)* | Always injects the evidence and implication rules |
-| done-checklist.sh | On a "done" command, injects the done checklist from shorthand.md |
-| inject-always.sh | Always injects always.md plus the banned-words table |
-
-### PreToolUse — fires before a tool runs
-
-| Hook | What it does |
-|----|----|
-| snapshot-before-edit.sh | Copies the file to a snapshot folder before an Edit/Write, for undo |
-| bash-command-check.sh | Denies batched commands, npx, and git worktree; auto-approves read-only exploration |
-
-### PostToolUse — fires after an Edit/Write
-
-| Hook | What it does |
-|----|----|
-| plain-english-check.sh | Flags jargon in .md files and in log/comment lines of .ts files (lives in `.claude/hooks/`) |
-| mark-ts-check-pending.sh | If a .ts/.svelte changed, drops a marker so the end-of-turn type check runs |
-
-### Stop — fires when I finish (all warn-only now)
-
-| Hook | What it does |
-|----|----|
-| banned-words-check.sh | Logs banned words; hard ones get rewritten on screen by display-fix.sh |
-| conciseness-check.sh | Logs filler and over-length |
-| phrase-check.sh | Logs permission-asking and hollow reassurances |
-| required-disclaimer-check.sh | Logs a hedge that lacks "I AM GUESSING" |
-| diagnostic-citation-check.sh | Logs a cause-claim with no citation |
-| check-ts.sh | If a .ts/.svelte changed, runs svelte-check; injects any errors as next-turn context |
-
-### MessageDisplay — fires as text is shown
-
-| Hook | What it does |
-|----|----|
-| display-fix.sh | Rewrites hard banned words on screen as the reply streams |
 
 ## Building a hook, step by step
 

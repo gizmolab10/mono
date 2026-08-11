@@ -1,3 +1,10 @@
+---
+kind: refer
+title: "Agent Skills"
+description: "AI generated in dialogue with humans"
+tags: [proposal]
+date: 2026-08-10
+---
 # Agent Skills
 
 _AI generated in dialogue with humans. Not fully reviewed._

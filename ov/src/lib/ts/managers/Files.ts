@@ -3,7 +3,7 @@ import { kind_matches, w_project, w_kind, w_tags, w_words, w_shut, w_show_folder
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, place_of_file, read_guide, save_guide } from '../utilities/Saving';
+import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, place_of_file, read_guide, renamed_path, save_guide } from '../utilities/Saving';
 import { has_labels } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
@@ -250,8 +250,8 @@ class Guides {
 		const folder = this.hierarchy.folder_holding(guide);
 		if (!folder) { show_status(`"${was_name}" hangs under no folder, so it cannot be renamed`); return ''; }
 		const from = file_path_of(guide.bundle, guide.path);
-		const to_path = moved_into(folder.path, `${named}.md`);
-		const to = file_path_of(folder.bundle, to_path);
+		const to_path = renamed_path(guide.path, named);
+		const to = file_path_of(guide.bundle, to_path);
 
 		// Every place another guide names this one, found while the old name still answers.
 		const mends: Array<{ where: string; address: string; text: string; changed: string; how_many: number }> = [];
@@ -517,14 +517,15 @@ class Guides {
 
 	/**
 	 * Read one file and hang it under the folders its path names, making each folder the first
-	 * time it is met. The path begins with "designs" for a design, so the two purposes can
-	 * never collide.
+	 * time it is met. The path begins with "designs" for a design and "work" for a work note, so
+	 * the three purposes can never collide — and each of those two gets a folder of its own,
+	 * standing beside the guides inside its project.
 	 */
 	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: Guide): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
-		const under = is_design ? 'designs' : '';
-		const inside = is_design ? path.slice('designs/'.length) : path;
-		const roof = is_design ? this.hierarchy.folder_at(bundle, under, under) : top;
-		if (is_design) { this.hierarchy.add_relationship(top.id, roof.id); }
+		const under = is_design ? 'designs' : path.startsWith('work/') ? 'work' : '';
+		const inside = under === '' ? path : path.slice(under.length + 1);
+		const roof = under === '' ? top : this.hierarchy.folder_at(bundle, under, under);
+		if (under !== '') { this.hierarchy.add_relationship(top.id, roof.id); }
 		const parts = inside.split('/');
 		const name = parts[parts.length - 1].replace(/\.md$/, '');
 		let parent = roof;

@@ -44,10 +44,12 @@ class Configuration {
 		root.setProperty('--radius',             `${k.radius.corner.normal}px`);
 		root.setProperty('--radius-pill',        `${k.radius.corner.pill}px`);
 		root.setProperty('--radius-percent',     `${k.radius.percent}%`);
+		root.setProperty('--height-small',       `${k.height.small}px`);
 		root.setProperty('--height',             `${k.height.normal}px`);
 		root.setProperty('--height-big',         `${k.height.big}px`);
 		root.setProperty('--height-fat',         `${k.height.fat}px`);
 		root.setProperty('--size-small',         `${k.size.small}px`);
+		root.setProperty('--size-pointer',       `${k.size.pointer}px`);
 		root.setProperty('--size',               `${k.size.normal}px`);
 		root.setProperty('--size-fat',           `${k.size.fat}px`);
 		root.setProperty('--font-faint',         `${k.font.faint}px`);
@@ -69,6 +71,7 @@ class Configuration {
 		root.setProperty('--fw-big',             `${k.font.weight.big}`);
 		root.setProperty('--fw-huge',            `${k.font.weight.huge}`);
 		root.setProperty('--inset-cluster',      `${k.inset.cluster}px`);
+		root.setProperty('--inset-numbers',      `${k.inset.numbers}px`);
 		root.setProperty('--inset-pill-top',     `${k.inset.pill.top}px`);
 		root.setProperty('--inset-pill-left',    `${k.inset.pill.left}px`);
 		root.setProperty('--inset-popup-edge',   `${k.inset.popup.edge}px`);
@@ -103,6 +106,7 @@ class Configuration {
 		root.setProperty('--darkgray',   colors.darkgray);
 		root.setProperty('--lightgray',  colors.lightgray);
 		root.setProperty('--faintgray',  colors.faintgray);
+		root.setProperty('--green',      colors.green);
 	}
 
 	/**

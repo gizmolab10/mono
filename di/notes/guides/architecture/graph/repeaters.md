@@ -2,7 +2,7 @@
 kind: wire
 title: "Repeaters"
 description: "Generating duplicates of a template part along an axis: studs, joists, stairs, ramps."
-tags: [write, geometry]
+tags: [program, geometry]
 date: 2026-05-10
 ---
 

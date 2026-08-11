@@ -2,7 +2,7 @@
 kind: wire
 title: "Radial Paging"
 description: "Showing one page at a time when the widgets around the ring do not all fit."
-tags: [write, UX, geometry]
+tags: [program, UX, geometry]
 date: 2026-01-12
 ---
 

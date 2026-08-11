@@ -30,6 +30,7 @@ export class Colors {
 	offwhite          = '#eee';
 	white			  = '#fff';
 	banner			  = '#f8f8f8';
+	green			  = '#34a853';				// the check mark on a thing that is done
 	black			  = '#1a1a1a';				// the one ink black — never #000
 
 	// Reactive colors (stores). Wrapped so every write marks the canvas out

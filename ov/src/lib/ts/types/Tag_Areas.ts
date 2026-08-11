@@ -3,13 +3,13 @@ import { ALL_TAGS, in_order } from './File';
 /**
  * The tags, gathered into seven areas.
  *
- * Twenty-seven words in one row is more than an eye can scan, so each area folds its tags
+ * Thirty words in one row is more than an eye can scan, so each area folds its tags
  * away behind its own name and opens again when pressed. The areas are a way of reading the
  * list, not a second thing to filter by — what a guide actually wears is still one flat set
  * of tags, and every tag belongs to exactly one area.
  *
  * Six of them gather tags by what a guide is about. "progress" gathers by where a guide stands
- * in its own life — put forward, being built, finished, wanting thought, fallen behind.
+ * in its own life — put forward, being built, finished, written up.
  */
 export type Tag_Area = {
 	name : string;
@@ -17,13 +17,13 @@ export type Tag_Area = {
 };
 
 export const TAG_AREAS: Tag_Area[] = [
-	{ name: 'ai',       tags: ['session', 'team', 'style', 'prose'] },
-	{ name: 'code',     tags: ['port', 'migrate', 'refactor', 'write', 'data'] },
-	{ name: 'fix',      tags: ['test', 'debug'] },
-	{ name: 'harness',  tags: ['platform', 'setup', 'deploy', 'tools', 'build'] },
-	{ name: 'other',    tags: ['notes', 'vision', 'research'] },
-	{ name: 'progress', tags: ['proposal', 'construct', 'done', 'journal', 'stale', 'think'] },
-	{ name: 'ux',       tags: ['arrange', 'UX', 'geometry'] },
+	{ name: 'ai',       tags: ['always', 'prose', 'session', 'style', 'team'] },
+	{ name: 'code',     tags: ['data', 'migrate', 'port', 'program', 'refactor'] },
+	{ name: 'fix',      tags: ['debug', 'speed', 'stale', 'test'] },
+	{ name: 'bedrock',  tags: ['build', 'deploy', 'platform', 'setup', 'tools'] },
+	{ name: 'progress', tags: ['proposal', 'construct', 'done', 'journal'] },
+	{ name: 'think',    tags: ['methods', 'notes', 'plans', 'research', 'vision'] },
+	{ name: 'ux',       tags: ['geometry', 'UX', 'visual'] },
 ];
 
 /** Which area a tag belongs to, or nothing when it belongs to none. */

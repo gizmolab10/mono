@@ -1,3 +1,10 @@
+---
+kind: refer
+title: "Deliverables"
+description: "urls for review and feedback"
+tags: [done, journal, proposal]
+date: 2026-08-10
+---
 # Deliverables
 
 **Started:** 2026-01-13

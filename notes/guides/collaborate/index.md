@@ -11,6 +11,8 @@ How collaborator works with Jonathan and maintains shared context.
 - [Expectations](./expectations.md)
 - [Hooks](./hooks.md)
 - [Jonathan](./jonathan.md)
+- [Organize](./organize.md)
+- [Tags hierarchy](./tags%20hierarchy.md)
 - [Voice](./voice.md)
 - [Workflow](./workflow.md)
 - [Journals](./write%20a%20journal.md)

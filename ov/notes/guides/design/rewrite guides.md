@@ -1,5 +1,5 @@
 ---
-kind: work
+kind: refer
 title: "Rewritten guides"
 description: "Every guide carrying the stale tag, with what I'd do to it"
 tags: [done, proposal]

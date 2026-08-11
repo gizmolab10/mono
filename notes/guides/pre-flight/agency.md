@@ -2,7 +2,7 @@
 kind: specify
 title: "Agency"
 description: "How the work itself is done: what to touch, what to prove, and what never to change unasked."
-tags: [session, team, style]
+tags: [always, session, team, style]
 date: 2026-08-01
 ---
 
@@ -14,7 +14,7 @@ date: 2026-08-01
  4. **Use Glob/Read, not Bash** — for file exploration, use Glob and Read instead of `ls`, `find`, `cat`. Avoids permission prompts.
  5. **Exact match** — names, paths, requirements: character-by-character.
  6. **Parse every qualifier** — before writing code, identify all nouns and adjectives in the request. Each one constrains the solution. If you skip one, you solve the wrong problem.
- 7. **Read before act** — re-read the file or input before editing, claiming, or disagreeing.
+ 7. **Read before act** — re-read the file or input before editing, claiming, or disagreeing. A copy of a file already in this conversation may be stale, and a stale copy reads exactly like a fresh one; never answer from it. When Jonathan says a file differs from what you said, re-read it before replying.
  8. **Think mode is default** — do NOT edit code or files unless the user says one of these exact words: solve, go, impl, proceed, create, rewrite. Default is think/show/discuss/propose.
  9. **Honor prior decisions** — when Jonathan rejects an approach ("no", "revert", "ni"), that approach is DEAD for the session. Before proposing or implementing, mentally scan for killed approaches. Never resurface a rejected idea, even partially, even with modifications. If stuck, say so — don't recycle.
 10. **Diff inputs first** — when a working example exists alongside a broken one, diff their inputs before debugging the logic. The bug is usually in the data, not the renderer.

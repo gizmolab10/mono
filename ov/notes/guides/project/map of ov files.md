@@ -2,7 +2,7 @@
 kind: refer
 title: "Map (ov)"
 description: "Every source file in overview, updated whenever files are added, moved, or removed."
-tags: [journal, notes, write]
+tags: [journal, notes, program]
 date: 2026-07-31
 ---
 
@@ -63,8 +63,8 @@ Overview's files. Update this when files are added, moved, or removed.
 - `managers/Status.ts` — whether there is anything to say along the bottom, and what. One call says a line and starts the few seconds after which it clears itself.
 - `managers/Preferences.ts` — what the browser remembers between visits. Every name reads `ov_` then the parts joined by underscores, and the name in the code is the name in the browser. None of ji's renaming and sweeping code came over: overview has no old names to bring forward.
 - `database/Indexes.ts` — the instant lookups (tags by file, files by tag, children by folder, parents by file), rebuilt whenever the records change. **⟵ji**
-- `types/File.ts` — what a guide is: the seven kinds, the closed list of twenty-seven tags, the five collections, the five labels off a file's top, and a listed row — a guide together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything.
-- `types/Tag_Areas.ts` — the tags gathered into seven areas, so twenty-seven words can be read a handful at a time. Six gather by what a guide is about; `progress` gathers by where a guide stands in its own life. The areas are only a way of reading the list, not a second thing to filter by: every tag belongs to exactly one, and the tests prove the two lists agree. Also answers which of an area's tags are still worth showing, and what a shut area reads.
+- `types/File.ts` — what a guide is: the seven kinds, the closed list of twenty-nine tags, the five collections, the five labels off a file's top, and a listed row — a guide together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything.
+- `types/Tag_Areas.ts` — the tags gathered into eight areas, so twenty-nine words can be read a handful at a time. Seven gather by what a guide is about; `progress` gathers by where a guide stands in its own life. The areas are only a way of reading the list, not a second thing to filter by: every tag belongs to exactly one, and the tests prove the two lists agree. Also answers which of an area's tags are still worth showing, and what a shut area reads.
 - `types/App.ts` — the two states the app can be in: setting up, and ready.
 - `types/Details.ts` — the sections inside the details column, by name.
 - `types/DB_Records.ts` — the record shapes the hierarchy keeps: tags, tag placements, folder links, and link meanings. **⟵ji**
@@ -91,7 +91,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `saving.test.ts` — working out where a guide sits, counting from the top of the repo.
 - `labels.test.ts` — writing the five labels back to the top of a file.
 - `index_files.test.ts` — mending the index files a move leaves lying.
-- `tag_areas.test.ts` — that the seven areas and the closed tag list agree exactly, what an area offers, and what a shut one reads.
+- `tag_areas.test.ts` — that the eight areas and the closed tag list agree exactly, what an area offers, and what a shut one reads.
 - `stepping.test.ts` — which way each step mark points, whether it is drawn and whether it answers, and the holding that repeats a step.
 - `sections.test.ts` — what each heading owns, which headings carry a folding mark, when the top one reads as folded, and what goes out of sight.
 

@@ -1,5 +1,5 @@
 ---
-kind: step
+kind: howto
 title: "Refactoring"
 description: "The guardrails for letting the collaborator refactor a temperamental codebase."
 tags: [refactor]

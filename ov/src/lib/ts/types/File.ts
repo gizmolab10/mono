@@ -2,22 +2,21 @@
 // Overview never keeps a file's text — only where it is and the five labels off
 // its top.
 
-// The kinds a guide can be. The first five say how a guide reads; the last two say what it is
-// about — a record of how something was built, or a note about work in hand. A file is one of
-// the seven, said in its own labels rather than worked out from the folder it sits in.
+// The kinds a guide can be. Five say how a guide reads; design says what it is about — a record
+// of how something was built. A file is one of the six, said in its own labels rather than worked
+// out from the folder it sits in.
 export enum T_Kind {
 	design     = 'design',
 	explain    = 'explain',
+	howto      = 'howto',
 	refer      = 'refer',
 	specify    = 'specify',
-	step       = 'step',
 	wire       = 'wire',
-	work       = 'work',
 }
 
-// The closed tag list — twenty-seven, alphabetized, nothing invented on the spot.
+// The closed tag list — thirty, alphabetized, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
-	'arrange',
+	'always',
 	'build',
 	'construct',
 	'data',
@@ -26,25 +25,28 @@ export const ALL_TAGS: string[] = [
 	'done',
 	'geometry',
 	'journal',
+	'methods',
 	'migrate',
 	'notes',
+	'plans',
 	'platform',
 	'port',
+	'program',
 	'proposal',
 	'prose',
 	'refactor',
 	'research',
 	'session',
 	'setup',
+	'speed',
 	'stale',
 	'style',
 	'team',
 	'test',
-	'think',
 	'tools',
 	'UX',
 	'vision',
-	'write',
+	'visual',
 ];
 
 /**

@@ -2,7 +2,7 @@
 kind: wire
 title: "Recents (ws)"
 description: "A fresh start on remembering the places recently visited."
-tags: [write, data]
+tags: [program, data]
 date: 2026-01-22
 ---
 

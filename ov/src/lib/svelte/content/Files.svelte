@@ -4,6 +4,10 @@
 	// Whether the rows have a scrollbar right now. The count row above reads it so its own
 	// right edge lines up with the column titles, which hold back room for the bar.
 	export const w_scrollbar_showing = writable(false);
+
+	// How wide the first column is, in pixels. It changes with what the filters leave, and the
+	// count row above reads it so the folders button ends where the first title's words end.
+	export const w_first_column = writable(0);
 </script>
 
 <script lang='ts'>
@@ -255,6 +259,14 @@
 		{ label: 'name', width: 'auto', sort: T_Sort.name },
 		{ label: 'tags', width: 'auto', sort: T_Sort.tags },
 	]);
+
+	// The count row above draws its folders button in a lane this wide, so the button's right
+	// edge falls where the first title's words end. A width of "auto" means no fixed column is
+	// left, and the row goes back to hugging the far left.
+	$effect(() => {
+		const first = columns[0]?.width ?? 'auto';
+		w_first_column.set(first.endsWith('px') ? parseFloat(first) : 0);
+	});
 
 	// A column that isn't on screen must not go on quietly ordering the list, so when either
 	// the project or the kind column leaves, it stops sorting too.

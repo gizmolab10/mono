@@ -5,6 +5,10 @@ import Angle from '../types/Angle';
 // curves: 0 = sharp tips, toward 0.5 = the pull-backs meet mid-side and it's all curve.
 const POINTER_SOFTEN = 0.55 ;
 
+// How wide the box beside a thing to be done is drawn, and how far its corners curve. Said here
+// so whatever gives the shape its slot on the page can ask for the very same numbers.
+export const CHECKBOX = { size: 13, radius: 4 };
+
 export class SVG_Paths {
 
 	private rotated(p: Point, angle: number): Point { const [rx, ry] = Angle.rotate_xy(p.x, p.y, angle); return new Point(rx, ry); }
@@ -40,6 +44,23 @@ export class SVG_Paths {
 		const ring = `M ${n(c - r)} ${n(c)} a ${n(r)} ${n(r)} 0 1 0 ${n(r * 2)} 0 a ${n(r)} ${n(r)} 0 1 0 ${n(-r * 2)} 0`;
 		const slash = ` M ${n(c - reach)} ${n(c + reach)} L ${n(c + reach)} ${n(c - reach)}`;
 		return ring + slash;
+	}
+
+	/**
+	 * The box beside a thing to be done: a square whose sides are `size` across, with each corner
+	 * curved by `radius`. It fills its box exactly, corner to corner, so whatever draws it sets
+	 * the stroke and the fill and nothing here decides how it looks. A corner larger than half a
+	 * side would fold back on itself, so it is held to that.
+	 */
+	checkbox(size: number = CHECKBOX.size, radius: number = CHECKBOX.radius): string {
+		const r = Math.min(radius, size / 2);
+		const n = (v: number) => +v.toFixed(2);
+		const near = n(r);
+		const far  = n(size - r);
+		return `M ${near} 0 H ${far} A ${near} ${near} 0 0 1 ${n(size)} ${near}`
+			+ ` V ${far} A ${near} ${near} 0 0 1 ${far} ${n(size)}`
+			+ ` H ${near} A ${near} ${near} 0 0 1 0 ${far}`
+			+ ` V ${near} A ${near} ${near} 0 0 1 ${near} 0 Z`;
 	}
 
 	x_cross(diameter: number, margin: number): string {

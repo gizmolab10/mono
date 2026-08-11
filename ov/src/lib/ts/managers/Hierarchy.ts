@@ -4,6 +4,7 @@ import type { Sort } from './Filters';
 import { kind_matches } from './Filters';
 import { Indexes } from '../database/Indexes';
 import { T_Bundle, in_order, key_of } from '../types/File';
+import { link_agrees, parts_of_link } from '../utilities/Following_Links';
 import { debug } from '../common/Debug';
 
 /**
@@ -296,7 +297,7 @@ export class Hierarchy {
 		// Step zero: a guide is named without its ending everywhere else in the app, so the
 		// ending comes off here and everything after this works on plain names.
 		const wanted_path = decodeURIComponent(before.trim()).replace(/\.md$/i, '');
-		const parts = wanted_path.split('/').filter((p) => p !== '' && p !== '.');
+		const parts = parts_of_link(wanted_path);
 		const name = parts[parts.length - 1] ?? '';
 
 		if (wanted_path === '') {
@@ -310,10 +311,16 @@ export class Hierarchy {
 		const chain = this.ancestry_of(from.id);
 		for (let step = 0; step < chain.length; step++) {
 			const found = this.file_named_under(chain[step], name);
-			if (found) {
-				debug.log(`Link from "${from.name}" to "${wanted_path}": found "${found.name}" in ${found.bundle} after climbing ${step + 1} folder(s) of the ${chain.length} above it.`);
-				return { guide: found, heading, why: '' };
+			if (!found) { continue; }
+			// A link naming folders has to land under exactly those folders. Without this, a link
+			// out to a work note — which the app never lists — ends on whichever guide happens to
+			// share its last word, and pressing it opens the very file it was written in.
+			if (!link_agrees(parts, found.path)) {
+				debug.log(`Link from "${from.name}" to "${wanted_path}": the only guide named "${name}" sits at ${found.path}, which is not where the link says — nothing opens.`);
+				return { guide: null, heading, why: 'a file outside the guides' };
 			}
+			debug.log(`Link from "${from.name}" to "${wanted_path}": found "${found.name}" in ${found.bundle} after climbing ${step + 1} folder(s) of the ${chain.length} above it.`);
+			return { guide: found, heading, why: '' };
 		}
 		debug.log(`Link from "${from.name}" to "${wanted_path}": no guide named "${name}" under any of the ${chain.length} folders above it — nothing opens.`);
 		return { guide: null, heading, why: 'external link' };

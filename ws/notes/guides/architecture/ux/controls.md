@@ -2,7 +2,7 @@
 kind: wire
 title: "Controls Layout (ws)"
 description: "How the running total of widths places every primary control, and how to reorder without breaking it."
-tags: [write, UX]
+tags: [program, UX]
 date: 2026-01-12
 ---
 

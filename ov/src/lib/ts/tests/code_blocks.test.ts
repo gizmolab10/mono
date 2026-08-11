@@ -11,7 +11,7 @@ describe('a chunk of code is one piece', () => {
 	const drawn = stamp_blocks(reader, 'words\n\n```js\nlet a = 1;\n```\n', 0);
 
 	it('carries its lines on the box, not on the words inside', () => {
-		expect(drawn).toContain('<pre data-from="2" data-to="5">');
+		expect(drawn).toContain('<pre data-number="3" data-from="2" data-to="5" data-depth="2">');
 		expect(drawn).not.toContain('<code data-from');
 	});
 
@@ -31,6 +31,6 @@ describe('a chunk of code is one piece', () => {
 
 	it('does the same on a whole drawn guide', () => {
 		const file = ['---', 'kind: rule', '---', '', '# a title', '', '```', 'code', '```'].join('\n');
-		expect(page_of(reader, file)).toContain('<pre data-from="6" data-to="9">');
+		expect(page_of(reader, file)).toContain('<pre data-number="4" data-from="6" data-to="9" data-depth="2">');
 	});
 });

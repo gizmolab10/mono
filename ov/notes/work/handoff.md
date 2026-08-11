@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Handoff"
+description: "My resume point for overview: the one thing to do next"
+tags: [proposal]
+date: 2026-08-10
+---
 # Handoff
 
 My resume point for overview: the one thing to do next.
@@ -11,7 +18,8 @@ Everything still owed is in [code debt](code%20debt.md). The [work journal](work
 1. Opening or shutting a tag area slides the pills beside it to their new places rather than jumping them.
 2. A pill that arrives fades in where it belongs; one that goes fades out where it stood.
 3. Nothing moves that did not move before, and the list still answers a press mid-slide.
-4. The type check and the tests are clean.
+4. Resizing the window or opening/closing the details also animates their repositioning
+5. The type check and the tests are clean.
 
 ### The shape of it
 

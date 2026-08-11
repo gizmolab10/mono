@@ -1,3 +1,10 @@
+---
+kind: refer
+title: "Work"
+description: "What's been finished, newest first"
+tags: [journal]
+date: 2026-08-10
+---
 # Work
 
 What's been finished, newest first.

@@ -2,7 +2,7 @@
 kind: refer
 title: "File Layout (di)"
 description: "Where everything lives in the di source."
-tags: [journal, notes, write]
+tags: [journal, notes, program]
 date: 2026-06-25
 ---
 

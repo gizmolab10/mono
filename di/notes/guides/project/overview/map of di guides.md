@@ -56,9 +56,6 @@ guides/
 ├── development/
 │   ├── index.md ......................... development table of contents
 │   ├── running e2e tests.md ............. what must already be running before an end-to-end test can pass
-│   ├── learn/
-│   │   ├── index.md ..................... learn table of contents
-│   │   └── lessons.md ................... patterns distilled from finished milestones
 │   └── rules/
 │       ├── index.md ..................... rules table of contents
 │       ├── dimensionals.md .............. how a measurement label finds its place on every redraw

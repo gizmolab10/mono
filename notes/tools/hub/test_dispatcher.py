@@ -31,6 +31,20 @@ def ask(route, **params):
         return e.code, json.loads(e.read().decode() or '{}')
 
 
+def tell(route, body, **params):
+    """Tell the dispatcher to do something, with a JSON body. Answers the same way."""
+    url = f'{WHERE}{route}'
+    if params:
+        url += '?' + urllib.parse.urlencode(params)
+    sending = urllib.request.Request(url, data=json.dumps(body).encode(),
+                                     headers={'Content-Type': 'application/json'}, method='POST')
+    try:
+        with urllib.request.urlopen(sending, timeout=5) as answer:
+            return answer.status, json.loads(answer.read().decode())
+    except urllib.error.HTTPError as e:
+        return e.code, json.loads(e.read().decode() or '{}')
+
+
 passed, failed = [], []
 
 
@@ -52,9 +66,20 @@ except Exception as e:
 check('listing the guides answers', code, 200)
 check('listing the guides succeeds', said.get('success'), True)
 
+# --- the work notes sitting at the top of each project's work folder ----------
+#
+# Those are the ones guides link to: the handoff, the debt, the journal. Anything deeper —
+# milestones, dated notes — stays out, so the list grows by a tenth and not by three times.
+
+listed = said.get('paths', [])
+check('the top of a work folder is listed', 'ov/notes/work/handoff.md' in listed, True)
+check('the shared collection\'s work is listed too', 'notes/work/learn.md' in listed, True)
+deeper = [one for one in listed if '/notes/work/' in f'/{one}' and one.count('/') > 3]
+check('nothing deeper than the top of a work folder is listed', deeper, [])
+
 # --- reading one guide's words -----------------------------------------------
 
-ordinary = 'ov/notes/guides/design/organize.md'
+ordinary = 'notes/guides/collaborate/organize.md'
 code, said = ask('/read-guide', where=ordinary)
 check('reading an ordinary guide answers', code, 200)
 check('reading an ordinary guide succeeds', said.get('success'), True)
@@ -83,10 +108,40 @@ code, said = ask('/read-guide', where='ov/src/lib/main.css')
 check('anything that is not a guide is refused', code, 409)
 
 code, said = ask('/read-guide', where='ov/notes/work/handoff.md')
-check('a work note is refused', code, 409)
+check('a work note at the top of a work folder is read', said.get('success'), True)
+
+code, said = ask('/read-guide', where='di/notes/work/now/learn.md')
+check('a work note sitting deeper is refused', code, 409)
 
 code, said = ask('/read-guide', where='ov/notes/guides/design/no such guide.md')
 check('a guide that is not there is refused', code, 404)
+
+# --- writing a work note ------------------------------------------------------
+#
+# Labels are assigned in the app, which writes the whole file back. Nothing is written here:
+# the words said to have been opened are deliberately wrong, so the write stops one step past
+# the guard. "the file changed since it was opened" proves the guard let a work note through.
+
+code, said = tell('/save-guide', {'text': 'x', 'as_opened': 'not what is on disk'},
+                  where='ov/notes/work/handoff.md')
+check('a work note passes the writing guard', said.get('error'), 'the file changed since it was opened')
+
+code, said = tell('/save-guide', {'text': 'x', 'as_opened': ''}, where='ov/src/lib/main.css')
+check('anything that is not a note is refused a write', code, 409)
+
+# --- renaming and throwing away a work note -----------------------------------
+#
+# Nothing is moved or thrown away here: each names a work note that isn't there, so it stops one
+# step past the guard. "no such file" proves the guard let a work note through.
+
+code, said = tell('/move-guide', {}, **{'from': 'ov/notes/work/no such note.md', 'to': 'ov/notes/work/nor this.md'})
+check('a work note passes the renaming guard', said.get('error'), 'no such file')
+
+code, said = tell('/delete-guide', {}, where='ov/notes/work/no such note.md')
+check('a work note passes the throwing-away guard', said.get('error'), 'no such file')
+
+code, said = tell('/delete-guide', {}, where='di/notes/work/now/learn.md')
+check('a work note sitting deeper is refused a throwing-away', code, 409)
 
 # --- say how it went ---------------------------------------------------------
 

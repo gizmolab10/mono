@@ -20,6 +20,7 @@ export default class Constants {
 		rest		 : 300,						// how long after it arrives before it reacts to user
 		rows		 : 200,						// the pills taking a row of their own, or giving one back
 		fade		 : 200,						// something arriving or leaving its position
+		asking		 : 1500,					// how often the dispatcher is asked again while it is down
 	};
 
 	font = {
@@ -57,6 +58,7 @@ export default class Constants {
 		pill		 : { top: common_size * 0.48,    left: common_size * 1.6 },			// 16.8, 56
 		credit		 : { bottom: common_size * 0.35, left: common_size * 0.35 },		// 12.25, 15.75
 		cluster		 : common_size / 4,													// 8.75
+		numbers		 : common_gap * 2.4,												// where the right edge of every row number stands, from the page's left edge
 	};
 
 	radius = {
@@ -107,6 +109,7 @@ export default class Constants {
 
 	// Smallest first, the same as the widths.
 	height = {
+		small        : control_height * 0.3,	// 15.31 — one row of the words: a blank line, a rule
 		normal		 : control_height,			// 21.88 — one control
 		big			 : control_height * 1.3,	// 28.44 — a row that can be hidden
 		fat			 : common_size * 1.2,		// 42 — the banner
@@ -114,6 +117,7 @@ export default class Constants {
 
 	size = {
 		small		 : control_height * 0.9,	// 19.69 — the shared drawn-cross size
+		pointer		 : control_height * 0.945,	// 20.67 — the soft pointer beside a heading
 		normal		 : control_height,			// 21.88 — one control
 		big			 : common_size * 0.7,		// 24.5 — the hamburger
 		fat			 : common_size / 1.25,		// 28 — a round button

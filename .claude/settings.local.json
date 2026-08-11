@@ -80,18 +80,6 @@
           },
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"BE BRIEF RULE: Answer in the fewest words that fully answer, on the FIRST pass. Lead with the answer. Hard ceiling of 3 sentences or 3 short bullets unless Jonathan explicitly asks you to expand. No preamble, no recap of his request, no summary of what you just did, no options list unless asked. If a one-sentence answer is complete, send one sentence. This governs every reply.\"}}'"
-          },
-          {
-            "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"PLAIN ENGLISH RULE: All explanations, answers to questions, and console.log messages must use plain English. No jargon, no code references, no variable names, no type names in explanations. Say what things DO, not what they are CALLED. If you must reference a specific line or file for evidence, do it in a separate line after the plain English explanation. Console logs you write must also be readable by a human who does not know the codebase — use real names (ALPHA, BETA), descriptive labels (edge CG, face ABCD), and short sentences, not key dumps.\"}}'"
-          },
-          {
-            "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"GUESS RULE: Every statement about what code does, what caused a bug, or what will happen must be backed by evidence you can point to. If you cannot point to evidence, prefix the statement with I AM GUESSING. No exceptions. Never pad a pros-and-cons list — if there are no real cons, say no cons found. IMPLICATION RULE: Before stating a conclusion, ask yourself: if this is true, what else must be true? Follow the chain. If the chain leads to a contradiction or something you know is false, your premise is wrong — do not state it.\"}}'"
-          },
-          {
-            "type": "command",
             "command": ".claude/hooks/done-checklist.sh"
           },
           {

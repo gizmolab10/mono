@@ -309,6 +309,19 @@ def run_tests_async():
     finally:
         tests_running = False
 
+def is_listed_note(where):
+    """Whether the overview app may read this file's words and write them back.
+
+    Every guide and every design, at any depth. A work note only where it sits at the very top
+    of a work folder — those are the ones the app lists and the ones a guide links to. Anything
+    deeper stays out, the same rule the listing uses."""
+    if not where.endswith('.md'):
+        return False
+    if any(part in where for part in ('notes/guides/', 'notes/designs/')):
+        return True
+    at = where.find('notes/work/')
+    return at >= 0 and '/' not in where[at + len('notes/work/'):]
+
 def is_skippable_deploy(deploy):
     """Check if a deploy should be skipped (canceled or failed build)."""
     state = deploy.get('state', '').lower()
@@ -433,15 +446,16 @@ class APIHandler(BaseHTTPRequestHandler):
             # of the file. Here the name arrives as a query value, which is unpacked before
             # anything touches disk, so every name works.
             #
-            # The same two refusals as saving: it has to be a guide, and it has to sit inside
-            # the repo.
+            # The same two refusals as saving: it has to be one of the files the app lists —
+            # a guide, a design, or a work note at the top of a work folder — and it has to sit
+            # inside the repo.
             try:
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
                 if not where:
                     self._send_response(400, {'success': False, 'error': 'no file named'})
                     return
-                if not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
+                if not is_listed_note(where):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 # Either a place counting from the top of the repo, or a full place on this
@@ -481,6 +495,15 @@ class APIHandler(BaseHTTPRequestHandler):
                             for one in files:
                                 if one.endswith('.md'):
                                     found.append(os.path.relpath(os.path.join(here, one), root))
+                    # The work folder gives up only what sits at its very top: the handoff, the
+                    # debt, the journal, the working features. Those are the ones a guide links
+                    # to. Everything deeper — milestones, dated notes — stays out, so the list
+                    # grows by a tenth instead of by three times.
+                    work = os.path.join(root, os.path.join(collection, 'notes', 'work') if collection else os.path.join('notes', 'work'))
+                    if os.path.isdir(work):
+                        for one in sorted(os.listdir(work)):
+                            if one.endswith('.md') and os.path.isfile(os.path.join(work, one)):
+                                found.append(os.path.relpath(os.path.join(work, one), root))
                 found.sort()
                 # The repo's own place on this machine goes back too, since the app reads each
                 # file by its full place and has nothing else to work it out from.
@@ -678,8 +701,9 @@ class APIHandler(BaseHTTPRequestHandler):
             # {"text": <the whole new file>, "as_opened": <the file as the app last read it>}.
             #
             # Two refusals guard it, and both answer 409 rather than writing:
-            #   - the path must end in .md and sit inside a "notes/guides" or "notes/designs" folder, and must
-            #     resolve inside the repo (no climbing out with "..", no symlinks out)
+            #   - the path must be one of the files the app lists — a guide, a design, or a work
+            #     note at the top of a work folder — and must resolve inside the repo (no climbing
+            #     out with "..", no symlinks out)
             #   - the file on disk must still read exactly as the app last saw it
             try:
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
@@ -687,7 +711,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not where:
                     self._send_response(400, {'success': False, 'error': 'no file named'})
                     return
-                if not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
+                if not is_listed_note(where):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 full = os.path.realpath(os.path.join(GITHUB_DIR, where))
@@ -768,7 +792,8 @@ class APIHandler(BaseHTTPRequestHandler):
             # /move-guide?from=<path from the top of the repo>&to=<the same>
             #
             # Every refusal answers 409 and moves nothing:
-            #   - either path is not a .md file inside a "notes/guides" or "notes/designs" folder
+            #   - either path is not one of the files the app lists — a guide, a design, or a work
+            #     note at the top of a work folder
             #   - either path resolves outside the repo
             #   - the file to move isn't there, or something is already at the new place
             #   - the folder it would land in doesn't exist (folders are never made here)
@@ -782,7 +807,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 root = os.path.realpath(GITHUB_DIR)
 
                 def guide_path(where):
-                    if not where or not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
+                    if not where or not is_listed_note(where):
                         return None
                     full = os.path.realpath(os.path.join(GITHUB_DIR, where))
                     return full if full.startswith(root + os.sep) else None
@@ -817,14 +842,15 @@ class APIHandler(BaseHTTPRequestHandler):
             # /delete-guide?where=<path from the top of the repo>
             #
             # Every refusal answers 409 and throws nothing away:
-            #   - the path is not a .md file inside a "notes/guides" or "notes/designs" folder
+            #   - the path is not one of the files the app lists — a guide, a design, or a work
+            #     note at the top of a work folder
             #   - the path resolves outside the repo (no climbing out with "..", no symlinks out)
             #   - the file isn't there
             try:
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
                 root = os.path.realpath(GITHUB_DIR)
-                if not where or not where.endswith('.md') or not any(part in where for part in ('notes/guides/', 'notes/designs/')):
+                if not where or not is_listed_note(where):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 full = os.path.realpath(os.path.join(GITHUB_DIR, where))

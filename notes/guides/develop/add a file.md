@@ -1,5 +1,5 @@
 ---
-kind: step
+kind: howto
 title: "Adding a Guide"
 description: "Put a new guide where overview will find it, label it, and prove it arrived."
 tags: [notes, setup, tools]
@@ -15,7 +15,7 @@ Five labels, this order, fenced by three dashes above and below, at the very top
 
 ```
 ---
-kind: step
+kind: howto
 title: "Adding a File"
 description: "One sentence saying what this file tells you to do."
 tags: [notes, setup]
@@ -23,7 +23,7 @@ date: 2026-08-02
 ---
 ```
 
-- **kind** — one of: specify, step, refer, wire, explain, design, work. Two of the seven say what the file is about rather than how it reads: a record of how something was built is a design, a note about work in hand is work. For the rest, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → step; how a part of an app works → wire; why rather than what → explain; otherwise refer.
+- **kind** — one of: specify, howto, refer, wire, explain, design. One of the six says what the file is about rather than how it reads: a record of how something was built is a design. For the other five, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → howto; how a part of an app works → wire; why rather than what → explain; otherwise refer.
 - **title** — the human name, unique across every guide.
 - **description** — one sentence that stands alone in a search result.
 - **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.

@@ -2,7 +2,7 @@
 kind: wire
 title: "Axes — Rotate and Swap"
 description: "Two ways to reorient a part: rotate it visually, or exchange its axis data."
-tags: [write, geometry]
+tags: [program, geometry]
 date: 2026-05-10
 ---
 

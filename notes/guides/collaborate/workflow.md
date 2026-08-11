@@ -1,5 +1,5 @@
 ---
-kind: step
+kind: howto
 title: "Workflow"
 description: "The turn-taking cadence and the propose-before-acting discipline."
 tags: [session, team]

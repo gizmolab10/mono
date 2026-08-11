@@ -2,7 +2,7 @@
 kind: specify
 title: "Banned Words (di)"
 description: "The words that cause friction in di, each with the word to use instead."
-tags: [prose, session]
+tags: [always, prose, session]
 date: 2026-07-15
 ---
 

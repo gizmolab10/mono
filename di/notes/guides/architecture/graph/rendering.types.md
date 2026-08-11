@@ -2,7 +2,7 @@
 kind: wire
 title: "Rendering Types"
 description: "The two shapes a vertex takes once the projection pipeline is done with it."
-tags: [write, geometry]
+tags: [program, geometry]
 date: 2026-05-10
 ---
 

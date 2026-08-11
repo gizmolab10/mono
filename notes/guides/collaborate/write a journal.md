@@ -1,5 +1,5 @@
 ---
-kind: step
+kind: howto
 title: "Journals"
 description: "The formatting rules for the running journal file."
 tags: [journal, notes, prose]

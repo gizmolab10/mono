@@ -1,5 +1,5 @@
 ---
-kind: step
+kind: howto
 title: "Markdown Structure"
 description: "How to structure markdown so every concept has a heading that can be linked to."
 tags: [notes, prose]

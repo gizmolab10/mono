@@ -1,10 +1,31 @@
-import { svg_paths } from '../utilities/SVG_Paths';
+import { CHECKBOX, svg_paths } from '../utilities/SVG_Paths';
 import { describe, expect, it } from 'vitest';
 
 /** Every number in a drawn path, in the order it is written. */
 function numbers_in(path: string): number[] {
 	return (path.match(/-?\d+(\.\d+)?/g) ?? []).map(Number);
 }
+
+describe('the box beside a thing to be done', () => {
+	it('draws a square of the size it is given, with four rounded corners', () => {
+		const drawn = svg_paths.checkbox(15, 3);
+		expect(drawn.match(/A /g)?.length).toBe(4);
+		expect(Math.max(...numbers_in(drawn))).toBe(15);
+		expect(Math.min(...numbers_in(drawn))).toBe(0);
+	});
+
+	it('falls back to the one size and corner everything else asks for', () => {
+		expect(svg_paths.checkbox()).toBe(svg_paths.checkbox(CHECKBOX.size, CHECKBOX.radius));
+	});
+
+	it('grows with the size it is given', () => {
+		expect(Math.max(...numbers_in(svg_paths.checkbox(40, 3)))).toBe(40);
+	});
+
+	it('never curves further than half a side, however large the corner asked for', () => {
+		expect(svg_paths.checkbox(10, 99)).toBe(svg_paths.checkbox(10, 5));
+	});
+});
 
 describe('the clear mark', () => {
 	const SIZE = 20;

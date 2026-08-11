@@ -55,14 +55,12 @@ describe('what the folders above a file say it is', () => {
 		expect(kind_from_where('project/design/notes.md')).toBe(T_Kind.design);
 	});
 
-	it('calls it work under a folder named work', () => {
-		expect(kind_from_where('work/handoff.md')).toBe(T_Kind.work);
-	});
-
 	it('falls back when no folder says anything', () => {
 		expect(kind_from_where('develop/add a file.md')).toBe(KIND_UNTIL_TOLD);
 		// A word that merely starts the same is not the folder it names.
 		expect(kind_from_where('designers/notes.md')).toBe(KIND_UNTIL_TOLD);
+		// The work folder says nothing about how a file reads, so it falls back too.
+		expect(kind_from_where('work/handoff.md')).toBe(KIND_UNTIL_TOLD);
 	});
 
 	it('reaches the composed labels', () => {
@@ -89,7 +87,7 @@ describe('putting a composed block at the top of a file', () => {
 // has to come out exactly as a guide's top is written by hand.
 
 const five: Labels = {
-	kind        : 'step',
+	kind        : 'howto',
 	title       : 'Adding a Guide',
 	description : 'What a new guide needs.',
 	date        : '2026-08-02',
@@ -100,7 +98,7 @@ describe('writing the five labels', () => {
 	it('writes them in their settled order, fenced above and below', () => {
 		expect(label_block(five, ['notes', 'setup'])).toBe([
 			'---',
-			'kind: step',
+			'kind: howto',
 			'title: "Adding a Guide"',
 			'description: "What a new guide needs."',
 			'tags: [notes, setup]',
@@ -131,7 +129,7 @@ describe('putting the labels back into a file', () => {
 	it('gives a file with no labels a block at the very top', () => {
 		const bare = '# Just words\n\nhere';
 		const after = with_labels_replaced(bare, five, ['notes']);
-		expect(after.startsWith('---\nkind: step')).toBe(true);
+		expect(after.startsWith('---\nkind: howto')).toBe(true);
 		expect(after.endsWith('\n# Just words\n\nhere')).toBe(true);
 	});
 
@@ -139,7 +137,7 @@ describe('putting the labels back into a file', () => {
 		const odd = '---\nkind: rule\nno closing fence';
 		const after = with_labels_replaced(odd, five, []);
 		expect(after).toContain('no closing fence');
-		expect(after.startsWith('---\nkind: step')).toBe(true);
+		expect(after.startsWith('---\nkind: howto')).toBe(true);
 	});
 
 	it('changes nothing but the block when the labels are the same', () => {

@@ -2,7 +2,7 @@
 kind: wire
 title: "Two Dimensions"
 description: "How flat mode works: the snap, what hides what, and face rotation."
-tags: [write, geometry]
+tags: [program, geometry]
 date: 2026-05-10
 ---
 

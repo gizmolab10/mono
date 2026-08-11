@@ -3,10 +3,12 @@
 	import { k } from '../../ts/common/Constants';
 	import { tip } from '../../ts/utilities/Tooltip';
 
-	// The controls row: always visible, full width, sitting on the accent. The hamburger
-	// at its left shows or hides details; the build number at its right opens the notes.
-	let { onclick, detailsShown, buildNumber, onBuildOpen }:
-		{ onclick: () => void; detailsShown: boolean; buildNumber: number; onBuildOpen: () => void } = $props();
+	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
+	// left shows or hides details; at its right the dispatcher starts over, and the build number
+	// beyond it opens the notes.
+	let { onclick, detailsShown, buildNumber, onBuildOpen, onRestart, restarting }:
+		{ onclick: () => void; detailsShown: boolean; buildNumber: number; onBuildOpen: () => void;
+		  onRestart: () => void; restarting: boolean } = $props();
 
 	const size = k.size.big;
 	const hamburgerPath = svg_paths.hamburger(size);
@@ -18,10 +20,14 @@
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
+	<span class='spacer'></span>
+	<button class='build-button' onclick={onRestart} disabled={restarting}
+		use:tip={'start the dispatcher over, so changed code is the code answering'}>
+		{restarting ? 'restarting...' : 'dispatcher'}
+	</button>
 	<button class='build-button' onclick={onBuildOpen} use:tip={'show build notes'}>
 		build {buildNumber}
 	</button>
-	<span class='spacer'></span>
 </div>
 
 <style>
@@ -58,7 +64,8 @@
 		fill : var(--hover);
 	}
 
-	/* Takes up whatever is left, so the two buttons stay together at the left. */
+	/* Takes up whatever is left, so the hamburger stays at the left and the two
+	   named buttons stay together at the right. */
 	.spacer {
 		flex : 1;
 	}
@@ -77,5 +84,13 @@
 
 	.build-button:hover {
 		background : var(--hover);
+	}
+
+	/* While the dispatcher is starting over there is nothing to press, so it stays white
+	   under the pointer and the pointer stays an arrow. */
+	.build-button:disabled,
+	.build-button:disabled:hover {
+		background : var(--white);
+		cursor     : default;
 	}
 </style>

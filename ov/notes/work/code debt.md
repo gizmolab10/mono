@@ -1,20 +1,38 @@
+---
+kind: specify
+title: "Code debt"
+description: "write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff"
+tags: [journal, plans, proposal]
+date: 2026-08-10
+---
 # Code debt
 
-write a proposal for JUST the first unchecked item (ignore sll the others)  to the top of handoff. success first.
+write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff. success first.
 
 ## work
 
-- [ ] tags
-    - [x] animate relayout on list files
-    - [x] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
-    - [ ] in Browse, convert 'all' button -> any/all/clear segmented control
-- [ ] search files does not match against file name, just the labels
+- [ ] animate tag relayout during window resize and details hide <-> show
+- [x] trial run with ov work
+    - [x] follow a link that points outside the guides folders
+        - [ ] add labels to work files
+        - [x] do NOT include code files
+- [ ] add a list of back links to the editor
+- [ ] separators -> hover/click works on left-most 1/3 of the line and the title button, ignored otherwise
 - [ ] port Hits.ts from di
     - [ ] replace nearly all of the on click and on hover wiring with hits logic
-- [ ] add a list of back links to the editor
+- [ ] tags
+    - [ ] in Browse, convert 'all' button -> any/all/clear/not segmented control
+    - [ ] ability to filter 'show me what is NOT tagged X'
 
 ## done
 
+- [x] tags
+    - [x] animate relayout on list files
+    - [x] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row
+- [x] murky -> lexicon
+    - [x] ov/notes/guides/design/organize.md
+- [x] line the right edge of the folders button with the right edge of the first header text
+- [x] search files does not match against file name, just the labels
 - [x] whitespace around almond in header's thin line --gap-tight
 - [x] use Section in Browse
     - [x] the picking rows, the three inside them, and the count row all draw their own line and hold their own gap
@@ -152,6 +170,8 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## soon
 
+- [ ] incorporate source code, hooks and CLAUDE
+    - [ ] add more kinds and tags?
 - [ ] convert 'search' titled sep -> unicode character (magnifying glass)
 - [ ] editor
     - [ ] the title label is not the file name, why?
@@ -179,11 +199,6 @@ write a proposal for JUST the first unchecked item (ignore sll the others)  to t
 
 ## postpone
 
-- [ ] incorporate work, source code, hooks and CLAUDE
-    - [ ] can each file get okf labels at the top?
-    - [ ] add more kinds and tags?
-- [ ] follow a link that points outside the guides folders (a work note, a code file)
-    - [ ] abandoned for now, the shape of it was never clear
 - [ ] encapsulate in a new file ts/common/okf.md
     - [ ] for open source
     - [ ] ALL the kinds, tags, project 2-char names

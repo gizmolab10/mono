@@ -1,36 +1,77 @@
 #!/bin/bash
-# UserPromptSubmit hook: injects always.md content into every response context,
-# then the banned-words tables — so the pre-send self-scan (always rule 25) can
-# check each draft against the real lists in front of it, not from memory.
+# UserPromptSubmit hook. Two parts, because what arrives is cut off at about 2000
+# characters and everything past that is lost without a word.
 #
-# Two word lists go in: the shared every-project one, plus the list belonging to
-# whichever project is being worked on (named by .working_project). Every project
-# keeps its list at the same relative spot, exactly like the always files, so no
-# project is named here — a project that has no list simply contributes nothing.
+#   A — the always file, every single turn. It holds the five rules that must never
+#       be out of sight, and it is short enough to survive the cut whole.
+#   B — everything else: the rest of the reply rules, how the work is done, and the
+#       two lists of banned words. One of them per turn, in rotation, so each gets
+#       the leftover room to itself rather than being crowded out.
+#
+# Which one B sends is decided by a count kept in a file, since a hook remembers
+# nothing between turns.
+#
+# Run .claude/hooks/test-always-tag.sh to prove the labels and the sending agree.
 REPO="/Users/sand/GitHub/mono"
-ALWAYS_FILE="$REPO/notes/guides/pre-flight/always.md"
-BANNED_SHARED="$REPO/notes/guides/pre-flight/banned words.md"
+PRE_FLIGHT="$REPO/notes/guides/pre-flight"
+ALWAYS_FILE="$PRE_FLIGHT/always.md"
+BANNED_SHARED="$PRE_FLIGHT/banned words.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
 BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
+COUNT_FILE="$REPO/.claude/hooks/.turn-count"
 
-# The standing rules live in three files now: always names the other two, response
-# governs how a reply is written, agency governs how the work is done. All three go
-# in, since a rule that isn't in front of the model isn't a rule.
-PRE_FLIGHT="$REPO/notes/guides/pre-flight"
-for RULES in "$ALWAYS_FILE" "$PRE_FLIGHT/response.md" "$PRE_FLIGHT/agency.md"; do
-  if [ -f "$RULES" ]; then
-    cat "$RULES"
-    echo ""
-  fi
+# What goes round in part B, in order. A project with no list of its own simply
+# contributes nothing and the rotation is one shorter that day.
+IN_TURN=("$PRE_FLIGHT/response.md" "$PRE_FLIGHT/agency.md")
+[ -f "$BANNED_SHARED" ] && IN_TURN+=("$BANNED_SHARED")
+[ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && IN_TURN+=("$BANNED_PROJECT")
+
+# Every file named here arrives with every message or in its turn, so every one of
+# them wears the "always" tag. A file that does not is a file whose labels lie, and
+# nothing else would ever notice — so it is said first, before the rules themselves.
+# First matters: what follows is cut off, and a complaint at the end is never read.
+MISSING=()
+for FILE in "$ALWAYS_FILE" "${IN_TURN[@]}"; do
+  [ -f "$FILE" ] || continue
+  grep -q '^tags:.*\balways\b' "$FILE" || MISSING+=("${FILE#$REPO/}")
 done
 
-BANNED_FILES=()
-[ -f "$BANNED_SHARED" ] && BANNED_FILES+=("$BANNED_SHARED")
-[ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && BANNED_FILES+=("$BANNED_PROJECT")
-
-if [ ${#BANNED_FILES[@]} -gt 0 ]; then
+if [ ${#MISSING[@]} -gt 0 ]; then
+  echo "--- LABELS ARE WRONG ---"
+  echo "These arrive with every message, or in their turn, but do not wear the \"always\" tag. Tell Jonathan, and offer to add it:"
+  for ONE in "${MISSING[@]}"; do echo "  $ONE"; done
   echo ""
-  echo "--- BANNED WORDS (scan every draft against this before sending; swap each Never word for its Use word) ---"
-  cat "${BANNED_FILES[@]}"
+fi
+
+# The other half of the same promise: a guide wearing the tag but never arriving is a
+# guide whose labels lie the other way round. Two sorts are let off:
+#   - every project's own list of banned words, since only one arrives on any given day;
+#   - a guide of the "explain" kind, which is about this machinery and is never sent.
+SENT=$(printf '%s\n' "$ALWAYS_FILE" "${IN_TURN[@]}" "$REPO"/*/notes/guides/pre-flight/"banned words.md")
+STRAY=()
+while IFS= read -r FILE; do
+  grep -q '^kind: *explain *$' "$FILE" && continue
+  printf '%s\n' "$SENT" | grep -qxF "$FILE" || STRAY+=("${FILE#$REPO/}")
+done < <(grep -rl '^tags:.*\balways\b' "$REPO"/notes/guides "$REPO"/*/notes/guides 2>/dev/null)
+
+if [ ${#STRAY[@]} -gt 0 ]; then
+  echo "--- LABELS ARE WRONG ---"
+  echo "These wear the \"always\" tag but never arrive. Tell Jonathan, and offer to take it off:"
+  for ONE in "${STRAY[@]}"; do echo "  $ONE"; done
+  echo ""
+fi
+
+# Part A, whole, every turn.
+[ -f "$ALWAYS_FILE" ] && cat "$ALWAYS_FILE" && echo ""
+
+# Part B: one file, whichever the count lands on. The count only ever grows, so the
+# remainder walks the list evenly.
+if [ ${#IN_TURN[@]} -gt 0 ]; then
+  TURN=$(cat "$COUNT_FILE" 2>/dev/null | tr -cd '0-9')
+  [ -z "$TURN" ] && TURN=0
+  echo $(( TURN + 1 )) > "$COUNT_FILE"
+  PICKED="${IN_TURN[$(( TURN % ${#IN_TURN[@]} ))]}"
+  echo "--- ONE PART IN TURN: ${PICKED#$REPO/} (turn $TURN of ${#IN_TURN[@]}; the others arrive on the turns after this) ---"
+  cat "$PICKED"
 fi
 exit 0

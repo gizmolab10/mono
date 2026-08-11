@@ -1,5 +1,5 @@
 ---
-kind: specify
+kind: explain
 title: "Cadence"
 description: "How Jonathan and co actually work together"
 tags: [done, proposal, team]
