@@ -459,7 +459,6 @@
 		const all_of_them = titles_shut
 			? [...new Set([...(touched ? folded_at : foldable_headings(levels)), ...tops])]
 			: folded_at.filter((at) => !tops.includes(at));
-		debug.log(`Folding "${name}": ${pieces.length} piece(s) on the page, ${foldable_headings(levels).length} heading(s) below the top one, ${all_of_them.length} folded, titles ${titles_shut ? 'folded' : 'shown'}.`);
 		const out_of_sight = hidden_pieces(levels, all_of_them);
 		pieces.forEach((piece, at) => {
 			// The box standing in for an open piece is not part of the file's own run.
@@ -495,7 +494,6 @@
 			debug.log(`Folding "${name}": stopped after ${made} mark(s) — ${String(trouble)}`);
 			return;
 		}
-		debug.log(`Folding "${name}": ${made} mark(s) drawn.`);
 		// Folding changes how tall the words are but not the box holding them, so nothing else
 		// would tell the bar and its marker to look again.
 		measure_page();
@@ -568,7 +566,6 @@
 	function mark_the_tasks() {
 		if (!page) { return; }
 		const items = [...page.querySelectorAll('li.task')] as HTMLElement[];
-		let made = 0;
 		for (const item of items) {
 			const held = item.querySelector(':scope > ul, :scope > ol') as HTMLElement | null;
 			if (!held || item.dataset.line === undefined) { continue; }
@@ -579,9 +576,7 @@
 				() => toggle_task_fold(at));
 			mark.classList.add('task-fold');
 			item.prepend(mark);
-			made += 1;
 		}
-		debug.log(`Folding "${name}": ${items.length} thing(s) to be done, ${made} of them holding a list of their own, ${tasks_folded.length} put away.`);
 	}
 
 	function toggle_task_fold(at: number) {
@@ -612,9 +607,8 @@
 			page!.insertBefore(row, before);
 		};
 		let at = skipped;
-		let made = 0;
 		const rows_up_to = (stop: number, before: Element | null) => {
-			for (; at < stop; at++) { row_for(at, before); made += 1; }
+			for (; at < stop; at++) { row_for(at, before); }
 		};
 		for (const piece of [...page.children] as HTMLElement[]) {
 			const from = Number(piece.dataset.from);
@@ -628,13 +622,11 @@
 		// the other's is taken off — done here, where the whole page can be seen at once, since a
 		// list nested inside an item carries no number of its own and its first item must keep one.
 		const drawn = new Set<string>();
-		let doubled = 0;
 		for (const one of [...page.querySelectorAll('[data-number]')] as HTMLElement[]) {
 			const says = one.dataset.number ?? '';
-			if (drawn.has(says)) { one.removeAttribute('data-number'); doubled += 1; continue; }
+			if (drawn.has(says)) { one.removeAttribute('data-number'); continue; }
 			drawn.add(says);
 		}
-		debug.log(`Viewer "${name}": the file has ${lines} line(s); ${made} of them are covered by no piece and were given a row of their own; ${drawn.size} row(s) show a number and ${doubled} second claim(s) on a row were taken off.`);
 	}
 
 	/** Take every mark off and draw them again, so each points the way its section now sits. */

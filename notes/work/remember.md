@@ -1,8 +1,8 @@
 ---
 kind: design
 title: "Faster Session Starts"
-description: "go di costs ~45k input tokens — reads CLAUDE.MD chain, all pre-flight guides, collaborate guides, di project files, work/revisit"
-tags: [always, session, speed]
+description: "an improved workflow and hooks design"
+tags: [always, session, speed, team]
 date: 2026-08-11
 ---
 # Faster Session Starts

@@ -136,9 +136,11 @@
 </script>
 
 <!-- Clearing a row is something done, never something picked, so it stands apart from the
-     control as a pill of its own — the same shape the tag areas beside it wear. -->
-{#snippet clearer(says: string, press: () => void)}
-	<button class='clear' onclick={press} use:tip={says}>clear</button>
+     control as a pill of its own — the same shape the tag areas beside it wear. With the row
+     already showing everything there is nothing to clear, so it grays and answers nothing. -->
+{#snippet clearer(says: string, dead: boolean, press: () => void)}
+	<button class='clear' class:dead onclick={() => { if (!dead) { press(); } }}
+		use:tip={dead ? false : says}>clear</button>
 {/snippet}
 
 {#snippet projects_picker()}
@@ -189,7 +191,7 @@
 				onclick={() => fold('projects', show_projects)}>
 				{#snippet holds()}
 					<div class='paired-rows'>
-						{@render clearer('show every project\'s guides', () => w_project.set(''))}
+						{@render clearer('show every project\'s guides', $w_project === '', () => w_project.set(''))}
 						{@render projects_picker()}
 					</div>
 				{/snippet}
@@ -202,7 +204,7 @@
 				onclick={() => fold('kinds', show_kinds)}>
 				{#snippet holds()}
 					<div class='paired-rows'>
-					{@render clearer('show every kind of guide', () => w_kind.set(''))}
+					{@render clearer('show every kind of guide', $w_kind === '', () => w_kind.set(''))}
 					<div class='kinds' use:tip={'show particular kinds of guide'}>
 						<!-- The files carrying no labels at all — how they are found, so they can be
 						     opened and given some. With every file already labeled there is nothing
@@ -250,8 +252,9 @@
 							<button class='segment' class:current={$w_tag_picking === T_Picking.all}
 								onclick={() => pick_way(T_Picking.all)}
 								use:tip={'a file shows only if it wears every picked tag'}>all of</button>
-							<button class='segment press' onclick={clear_tags}
-								use:tip={'stop filtering by tag'}>clear</button>
+							<button class='segment press' class:dead={$w_tags.length === 0}
+								onclick={() => { if ($w_tags.length > 0) { clear_tags(); } }}
+								use:tip={$w_tags.length === 0 ? false : 'stop filtering by tag'}>clear</button>
 							<button class='segment press' onclick={invert_tags}
 								use:tip={'pick exactly the tags that are not picked'}>invert</button>
 						</span>
@@ -362,13 +365,19 @@
 		flex-shrink   : 0;
 	}
 
-	.clear:hover {
+	.clear:not(.dead):hover {
 		background : var(--hover);
 	}
 
-	.clear:active {
+	.clear:not(.dead):active {
 		color      : var(--text-on-accent);
 		background : var(--accent);
+	}
+
+	/* Nothing to clear: grayed and dead to the touch, the same as a word with nothing behind it. */
+	.clear.dead {
+		color  : var(--gray);
+		cursor : default;
 	}
 
 	/* A collection with no guides yet: grayed and dead to the touch. */
@@ -427,13 +436,19 @@
 
 	/* A press is never a state, so it takes the fill only while the cursor is on it and a
 	   stronger one while it is held. */
-	.picking .segment.press:hover {
+	.picking .segment.press:not(.dead):hover {
 		background : var(--hover);
 	}
 
-	.picking .segment.press:active {
+	.picking .segment.press:not(.dead):active {
 		color      : var(--text-on-accent);
 		background : var(--accent);
+	}
+
+	/* Nothing to clear: grayed and dead to the touch, the same as a word with nothing behind it. */
+	.picking .segment.dead {
+		color  : var(--gray);
+		cursor : default;
 	}
 
 	.search {

@@ -3,7 +3,6 @@
 	import { w_areas_open, toggle_area } from '../../ts/managers/Filters';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
 	// One area of tags, standing as a single pill. Shut, it shows the tagset name — or the names
@@ -61,7 +60,6 @@
 		const measured = tags.map((one) => (one.offsetLeft + one.offsetWidth) / whole);
 		const lead     = mark.offsetWidth + k.gap.tiny;
 		const share    = lead / (lead + whole);
-		debug.log(`Tag area "${area.name}": the cross and its gap take ${Math.round(lead)} of the ${Math.round(lead + whole)} the open pill needs, so they take the first ${Math.round(share * 100)}% of the time. Each tag's far edge sits at ${measured.map((e) => e.toFixed(2)).join(', ')} of the way along the run.`);
 		edges = measured;
 		first_share = share;
 	});

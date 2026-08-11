@@ -1,6 +1,5 @@
 import type { Writable } from 'svelte/store';
 import { writable } from 'svelte/store';
-import { debug } from '../common/Debug';
 
 /**
  * Preferences — what the browser remembers between visits.
@@ -99,9 +98,6 @@ class Preferences {
 	 */
 	persistent<T>(key: T_Preference, fallback: T): Writable<T> {
 		const saved = this.read<T>(key);
-		debug.log(`Setting "${key}": ${saved === null
-			? `nothing was saved, so it starts at the fallback ${JSON.stringify(fallback)}.`
-			: `read back ${JSON.stringify(saved)} from the last visit.`}`);
 		const w = writable<T>(saved ?? fallback);
 		w.subscribe((v) => this.write(key, v));
 		return w;

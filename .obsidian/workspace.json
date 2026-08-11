@@ -13,12 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/pre-flight/always.md",
+                "file": "ov/notes/work/code debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "always"
+              "title": "code debt"
+            }
+          },
+          {
+            "id": "9cb0da3cb1511867",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/assessment of our guides.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "assessment of our guides"
             }
           },
           {
@@ -170,13 +184,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/pre-flight/always.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of always"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -208,13 +222,16 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "a932f7d0e39d14ca",
   "lastOpenFiles": [
+    "notes/guides/assessment of our guides.md",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.87979.d6d314e7199d",
+    "ov/notes/work/code debt.md",
+    "notes/guides/pre-flight/always.md",
     "ov/src/lib/ts/utilities/Smooth_Height.ts.tmp.87979.993121cddc88",
     "notes/work/remember.md",
     "notes/work/context.md",
     "logs/ji.debug.log",
-    "ov/notes/work/code debt.md",
     "ov/src/lib/svelte/content/List_OKF.svelte.tmp.87979.339ee945d173",
     "ov/src/lib/ts/tests/filters.test.ts",
     "ov/notes/work/handoff.md",
@@ -223,8 +240,6 @@
     "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.5ab738c53acf",
     "ov/src/lib/ts/utilities/Markdown_Blocks.ts.tmp.34102.682155dd6c1f",
     "ov/src/lib/ts/types/File.ts.tmp.34102.a9b11b49ca78",
-    "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.6b4607e9f8dc",
-    "ov/src/lib/ts/utilities/Colors.ts.tmp.34102.fb998ecc9ab7",
     "notes/work/claude agent skills.md",
     "notes/guides/collaborate/tags hierarchy.md",
     "notes/guides/develop/constants.md",
@@ -244,8 +259,6 @@
     "notes/guides/develop/conceptual composition.md",
     "di/notes/guides/pre-flight/banned words.md",
     "ov/notes/guides/pre-flight/banned words.md",
-    "ov/notes/guides/design/conceptual composition.md",
-    "ov/notes/guides/design/OKF — midway review and plan.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

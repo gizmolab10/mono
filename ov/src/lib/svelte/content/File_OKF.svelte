@@ -89,6 +89,7 @@
 		debug.log(`Editing "${name}": the filters changed — writing them to ${where}.`);
 		text = whole;                         // the words below are untouched, so no redraw
 		save_guide(where, whole, was).then((answer) => {
+			debug.log(`Editing "${name}": the answer came back — ${answer.ok ? 'written' : `refused, ${answer.why}`}.`);
 			if (!answer.ok) {
 				text = was;
 				onsay(`not saved — ${answer.why}`);
@@ -96,8 +97,15 @@
 				return;
 			}
 			// The list shows the title and the tags, so it is told at once rather than
-			// waiting for every file to be read again.
-			guides.relabel(guide, filters, form_tags);
+			// waiting for every file to be read again. A fault here would leave the file
+			// written and the app still holding the old labels, so it is said out loud.
+			try {
+				guides.relabel(guide, filters, form_tags);
+			} catch (trouble) {
+				onsay('written, but the list was not told');
+				debug.log(`Editing "${name}": ${where} was written, but telling the list failed — ${String(trouble)}. The app still holds the old labels.`);
+				return;
+			}
 			debug.log(`Editing "${name}": filters written — kind "${filters.kind}", ${form_tags.length} tag(s).`);
 		});
 	}
