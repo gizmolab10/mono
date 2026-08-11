@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Component Salvage (ws)"
 description: "Which of the forty-odd components are worth keeping and which need rebuilding."
 tags: [program, refactor]

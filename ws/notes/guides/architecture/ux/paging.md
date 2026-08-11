@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Radial Paging"
 description: "Showing one page at a time when the widgets around the ring do not all fit."
 tags: [program, UX, geometry]

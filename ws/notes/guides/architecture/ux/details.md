@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Details (ws)"
 description: "The folding sections that show whatever is selected or in focus."
 tags: [program, UX]

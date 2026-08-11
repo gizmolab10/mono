@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Recents (ws)"
 description: "A fresh start on remembering the places recently visited."
 tags: [program, data]

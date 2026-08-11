@@ -81,21 +81,21 @@ The first five say how a guide reads. The last two say what it is about, and wer
 | Kind | What it means | What I do with it |
 | --- | --- | --- |
 | specify | A standing instruction. Breaking it is a mistake. | Obey it, every time, without being asked. |
-| step | Steps for a task, when that task comes up. | Follow it start to finish while doing that task. |
+| howto | Steps for a task, when that task comes up. | Follow it start to finish while doing that task. |
 | refer | Facts, commands, names, quirks. | Look things up in it. Never obey it. |
-| wire | How one part of an app actually works. | Read it before touching that part. |
+| arch | How one part of an app actually works. | Read it before touching that part. |
 | explain | Why the work is shaped this way. | Read it to judge a call the other kinds don't cover. |
 | design | A record of how something was built. | Read it to learn what was already decided and why. |
 | work | A note about work in hand. | Read it to pick up where the work was left. |
 
 ### Why these five and not more
 
-The obey/follow/look-up divide is the whole point — those three cover most of the shared guides and they are genuinely different acts. **wire** earns its place on volume alone: 70 of the 165 files sit under an architecture folder, and none of the first three fit them. **explain** earns its place because those files answer a question the others can't — what to do when no rule applies.
+The obey/follow/look-up divide is the whole point — those three cover most of the shared guides and they are genuinely different acts. **arch** earns its place on volume alone: 70 of the 165 files sit under an architecture folder, and none of the first three fit them. **explain** earns its place because those files answer a question the others can't — what to do when no rule applies.
 
 Everything else I considered folded in:
 
 1. A **record** kind for the running logs of past mistakes. It folds into specify: the whole reason those files are read at session start is "never do this again", which is an instruction, not history.
-2. A **specification** kind for ji's three spec files. It folds into wire: a spec says how a part works, written before the part exists instead of after.
+2. A **specification** kind for ji's three spec files. It folds into arch: a spec says how a part works, written before the part exists instead of after.
 3. A **map** kind for the index files. Held until step 5 decides whether index files survive at all.
 
 ### How the kind is chosen

@@ -28,6 +28,7 @@ export enum T_Preference {
 	filter_project  = 'filter_project',
 	filter_kind     = 'filter_kind',
 	filter_tags     = 'filter_tags',
+	tag_picking     = 'tag_picking',
 	filter_text     = 'filter_text',
 
 	// The guide list itself

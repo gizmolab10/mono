@@ -26,21 +26,51 @@ export function kind_matches(kind: string, its_kind: string, labeled: boolean): 
 	return its_kind === kind;
 }
 
-// Any number of tags; empty means every tag. These widen rather than narrow — a file
-// matches if it wears any one of them — since a file usually wears only one or two and
-// asking for all of three would find nothing.
+// Any number of tags; empty means every tag.
 export const w_tags = preferences.persistent<string[]>(T_Preference.filter_tags, []);
 
-// A word that was picked last visit and has since been renamed or dropped would narrow the
-// list to nothing while no longer showing anywhere — nothing to click to undo it. So anything
-// remembered that is no longer on either closed list is let go at launch.
+/**
+ * The two ways picked tags can narrow the list. A file usually wears one or two, so asking
+ * for all of three finds nothing — which is why any-of is where it starts.
+ */
+export enum T_Picking {
+	any = 'any of',
+	all = 'all of',
+}
+
+export const w_tag_picking = preferences.persistent<string>(T_Preference.tag_picking, T_Picking.any);
+
+/** Does a file survive the tags that are picked? Nothing picked lets everything through. */
+export function tags_match(picking: string, chosen: string[], worn: string[]): boolean {
+	if (chosen.length === 0) { return true; }
+	return picking === T_Picking.all
+		? chosen.every((tag) => worn.includes(tag))
+		: chosen.some((tag) => worn.includes(tag));
+}
+
+/** Exactly the tags on offer that are not picked — what inverting leaves picked. */
+export function inverted(offered: string[], chosen: string[]): string[] {
+	return offered.filter((tag) => !chosen.includes(tag));
+}
+
+/**
+ * Which of the remembered words are still among the choices. A word picked last visit and
+ * since renamed or dropped would narrow the list while showing nowhere — nothing to press to
+ * undo it — so it is let go at launch. Hands back the very list it was given when every one
+ * survives, so nothing is written for no reason.
+ */
+export function kept_from(remembered: string[], choices: string[]): string[] {
+	const still_real = remembered.filter((one) => choices.includes(one));
+	return still_real.length === remembered.length ? remembered : still_real;
+}
+
+// Three remembered words are let go here, all by the one rule above.
 {
-	const remembered_tags = get(w_tags);
-	const still_real = remembered_tags.filter((tag) => ALL_TAGS.includes(tag));
-	if (still_real.length !== remembered_tags.length) { w_tags.set(still_real); }
-	const remembered_kind = get(w_kind);
-	if (remembered_kind !== '' && remembered_kind !== UNLABELED
-		&& !Object.values(T_Kind).includes(remembered_kind as T_Kind)) { w_kind.set(''); }
+	const tags = kept_from(get(w_tags), ALL_TAGS);
+	if (tags !== get(w_tags)) { w_tags.set(tags); }
+	const kinds = [UNLABELED, ...Object.values(T_Kind)] as string[];
+	if (kept_from([get(w_kind)], ['', ...kinds]).length === 0) { w_kind.set(''); }
+	if (kept_from([get(w_tag_picking)], Object.values(T_Picking)).length === 0) { w_tag_picking.set(T_Picking.any); }
 }
 
 // Words looked for in a guide's title and description, ignoring case.

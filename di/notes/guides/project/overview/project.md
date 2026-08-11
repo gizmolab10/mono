@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "How di Runs"
 description: "The big picture of what happens from the moment the app starts."
 tags: [program]

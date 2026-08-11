@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Layout Code"
 description: "A map of the tangled code that decides where each part of the graph gets drawn."
 tags: [program, refactor]

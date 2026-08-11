@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "History (di)"
 description: "Stepping backward and forward through recent changes without losing the scene on screen."
 tags: [program, data]

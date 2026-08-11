@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Architecture Overview (ws)"
 description: "Start here: how the pieces of Webseriously fit together."
 tags: [program]

@@ -68,7 +68,7 @@ These are said by every project, so they belong at the top, not in overview:
 | work note | one in-flight file under a project's work folder — never a guide |
 | collection | one project's whole set: mo, ws, di, ji, ov. Never "bundle", never "repo" |
 | labels | the block at the top of a guide — five things, always in this order |
-| kind | one of the six: specify, howto, wire, explain, refer, design |
+| kind | one of the six: specify, howto, arch, explain, refer, design |
 | tag | one of the thirty on the closed list. A file wears any number |
 | tag area | one of the seven groupings the tags are read in. Only a way of reading them |
 | brief | the one line saying what a guide is for. Never "description" |

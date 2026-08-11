@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Rotation (di)"
 description: "Rotating a child part is visual only; the stored bounds do not change."
 tags: [program, geometry]

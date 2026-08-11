@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Breadcrumbs (ws)"
 description: "Three parts working together to show either ancestry or browsing history."
 tags: [program, UX]

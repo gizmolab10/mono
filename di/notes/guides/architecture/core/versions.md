@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "File Format Migration (di)"
 description: "How an old saved file is brought up to the current scene format."
 tags: [program, data, migrate]

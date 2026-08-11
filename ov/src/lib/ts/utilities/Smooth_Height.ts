@@ -67,13 +67,27 @@ export function smooth_height(box: HTMLElement) {
 	// wraps its pills onto another row.
 	const watcher = new ResizeObserver(look_again);
 	watcher.observe(box);
-	for (const one of Array.from(box.children)) { watcher.observe(one); }
+
+	// Which children there are changes too: clearing or turning over what is picked brings pills
+	// back and takes others away. Watching only the ones that were there at the start would leave
+	// an arriving pill unwatched, and the box holding a height worked out before it came — so the
+	// list is watched as well, and every child taken up afresh whenever it changes.
+	function watch_the_children() {
+		watcher.disconnect();
+		watcher.observe(box);
+		for (const one of Array.from(box.children)) { watcher.observe(one); }
+		look_again();
+	}
+	const arrivals = new MutationObserver(watch_the_children);
+	arrivals.observe(box, { childList: true });
+	watch_the_children();
+
 	// The first reading waits for the page to have drawn once: taken any sooner it finds the pills
 	// still stacked, and states a height several rows tall that nothing afterwards corrects.
 	requestAnimationFrame(look_again);
 
 	return {
 		update() { look_again(); },
-		destroy() { watcher.disconnect(); },
+		destroy() { watcher.disconnect(); arrivals.disconnect(); },
 	};
 }

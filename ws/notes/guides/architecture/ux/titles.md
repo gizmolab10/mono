@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Editable Titles (ws)"
 description: "What the editable title component did, captured before it was replaced."
 tags: [program, UX]

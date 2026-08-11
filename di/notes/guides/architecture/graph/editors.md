@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Editors (di)"
 description: "The four small modules that handle typing and dragging directly on the drawing area."
 tags: [program, UX]

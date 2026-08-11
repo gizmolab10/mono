@@ -2,7 +2,7 @@
 kind: refer
 title: "Deliverables"
 description: "urls for review and feedback"
-tags: [done, journal, proposal]
+tags: [done, journal, plans, proposal]
 date: 2026-08-10
 ---
 # Deliverables

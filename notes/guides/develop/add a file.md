@@ -23,7 +23,7 @@ date: 2026-08-02
 ---
 ```
 
-- **kind** — one of: specify, howto, refer, wire, explain, design. One of the six says what the file is about rather than how it reads: a record of how something was built is a design. For the other five, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → howto; how a part of an app works → wire; why rather than what → explain; otherwise refer.
+- **kind** — one of: specify, howto, refer, arch, explain, design. One of the six says what the file is about rather than how it reads: a record of how something was built is a design. For the other five, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → howto; how a part of an app works → arch; why rather than what → explain; otherwise refer.
 - **title** — the human name, unique across every guide.
 - **description** — one sentence that stands alone in a search result.
 - **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.

@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Details (di)"
 description: "The right-side area: four folding sections for preferences, library, parts, and one part."
 tags: [program, UX]

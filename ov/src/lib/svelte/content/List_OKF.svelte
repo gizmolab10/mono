@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { w_project, w_kind, w_show_filters, w_tags, w_words } from '../../ts/managers/Filters';
+	import { w_project, w_kind, w_show_filters, w_tags, w_tag_picking, w_words } from '../../ts/managers/Filters';
+	import { inverted, T_Picking } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { toggle_all_areas, UNLABELED } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
@@ -40,7 +41,10 @@
 	const w_ready = guides.w_ready;
 	let kinds = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? guides.kinds_present() : []; });
 	let bare = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? guides.unlabeled_within_reach() : 0; });
-	let tags_in_use = $derived.by(() => { $w_project; $w_kind; $w_words; return $w_ready ? guides.tags_present() : []; });
+	// The tags row names the picked tags and which way they pick, unlike the other two rows: with
+	// every picked tag required, it cannot set its own filter aside, so what it offers changes as
+	// the picks do.
+	let tags_in_use = $derived.by(() => { $w_project; $w_kind; $w_words; $w_tags; $w_tag_picking; return $w_ready ? guides.tags_present() : []; });
 	const projects = Object.values(T_Bundle);
 	let counts = $derived.by(() => {
 		$w_kind; $w_tags; $w_words;
@@ -71,6 +75,21 @@
 
 	function clear_tags() {
 		w_tags.set([]);
+		debug.log('Filters: every picked tag dropped.');
+	}
+
+	// What inverting works over: the tags the row actually offers — those still within reach,
+	// and those already picked, which always show so a choice never vanishes under the cursor.
+	function invert_tags() {
+		const offered = [...new Set([...tags_in_use, ...$w_tags])];
+		const now = inverted(offered, $w_tags);
+		w_tags.set(now);
+		debug.log(`Filters: the tags turned over — ${$w_tags.length} of the ${offered.length} on offer were picked, ${now.length} are now.`);
+	}
+
+	function pick_way(way: T_Picking) {
+		w_tag_picking.set(way);
+		debug.log(`Filters: a file now shows if it wears ${way} the ${$w_tags.length} picked tag(s).`);
 	}
 
 	// Each row can be folded away by pressing the word above it. Folded, that word says how to
@@ -116,9 +135,14 @@
 		: `✂ filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
 </script>
 
+<!-- Clearing a row is something done, never something picked, so it stands apart from the
+     control as a pill of its own — the same shape the tag areas beside it wear. -->
+{#snippet clearer(says: string, press: () => void)}
+	<button class='clear' onclick={press} use:tip={says}>clear</button>
+{/snippet}
+
 {#snippet projects_picker()}
 	<div class='kinds' use:tip={'show just one project\'s guides'}>
-		<button class='segment' class:current={$w_project === ''} onclick={() => w_project.set('')}>all</button>
 		{#each shown_projects as project}
 			{@const held = counts.get(project) ?? 0}
 			<button class='segment' class:current={$w_project === project} class:empty={held === 0}
@@ -164,7 +188,10 @@
 				folded={!show_projects}
 				onclick={() => fold('projects', show_projects)}>
 				{#snippet holds()}
-					<div class='paired-rows'>{@render projects_picker()}</div>
+					<div class='paired-rows'>
+						{@render clearer('show every project\'s guides', () => w_project.set(''))}
+						{@render projects_picker()}
+					</div>
 				{/snippet}
 			</Section>
 
@@ -174,8 +201,9 @@
 				folded={!show_kinds}
 				onclick={() => fold('kinds', show_kinds)}>
 				{#snippet holds()}
+					<div class='paired-rows'>
+					{@render clearer('show every kind of guide', () => w_kind.set(''))}
 					<div class='kinds' use:tip={'show particular kinds of guide'}>
-						<button class='segment' class:current={$w_kind === ''} onclick={() => w_kind.set('')}>all</button>
 						<!-- The files carrying no labels at all — how they are found, so they can be
 						     opened and given some. With every file already labeled there is nothing
 						     for it to leave, so it goes rather than standing there unanswering. -->
@@ -190,6 +218,7 @@
 								use:tip={in_reach ? false : `nothing of that kind is left by the other filters`}
 								onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
 						{/each}
+					</div>
 					</div>
 				{/snippet}
 			</Section>
@@ -210,7 +239,22 @@
 					     is what carries the slide, and areas with nothing left to show are left out
 					     here rather than inside — an empty wrapper would still take a gap. -->
 					<div class='tags' use:smooth_height role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { toggle_all_areas(showing_areas.map((one) => one.name)); } }}>
-						<button class='tag' class:current={$w_tags.length === 0} onclick={clear_tags} use:tip={'stop filtering by tag'}>all</button>
+						<!-- One control holding two of each kind: the two on the left are states, saying
+						     how the picked tags narrow; the two on the right are presses that change
+						     what is picked and leave the state alone, so neither ever reads as
+						     picked — they answer under the cursor only. -->
+						<span class='picking'>
+							<button class='segment' class:current={$w_tag_picking === T_Picking.any}
+								onclick={() => pick_way(T_Picking.any)}
+								use:tip={'a file shows if it wears any one of the picked tags'}>any of</button>
+							<button class='segment' class:current={$w_tag_picking === T_Picking.all}
+								onclick={() => pick_way(T_Picking.all)}
+								use:tip={'a file shows only if it wears every picked tag'}>all of</button>
+							<button class='segment press' onclick={clear_tags}
+								use:tip={'stop filtering by tag'}>clear</button>
+							<button class='segment press' onclick={invert_tags}
+								use:tip={'pick exactly the tags that are not picked'}>invert</button>
+						</span>
 						{#each showing_areas as area (area.name)}
 							<span class='pill-slot' transition:fade={{ duration: FADE }}>
 								<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
@@ -252,11 +296,12 @@
 		gap            : 0;
 	}
 
-	/* The purposes and the projects share one row: the space before the first, between the
-	   two, and after the second are all the same. */
+	/* The clearing pill and the control it belongs to, centered together with one gap between
+	   them — the same gap the tag pills hold. */
 	.paired-rows {
-		justify-content : space-evenly;
+		justify-content : center;
 		align-items     : center;
+		gap             : var(--gap);
 		display         : flex;
 	}
 
@@ -265,7 +310,6 @@
 		border        : var(--thick) solid var(--black);
 		height        : var(--height);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font);
 		background    : var(--white);
 		box-sizing    : border-box;
 		align-self    : center;
@@ -274,7 +318,10 @@
 		flex-shrink   : 0;
 	}
 
+	/* A button keeps no text size of its own, so it is said here — the same size the tags read at,
+	   so every picking row is one size. */
 	.segment {
+		font-size  : var(--font-tiny);
 		padding    : var(--pad-control);
 		background : transparent;
 		color      : var(--text);
@@ -295,6 +342,33 @@
 
 	.segment:not(.current):not(.empty):hover {
 		background : var(--hover);
+	}
+
+	/* Clearing a row stands apart from its control, as a pill of its own. It is never a state —
+	   it is something done, not something picked — so it never reads as picked, filling only
+	   under the cursor and filling stronger while it is held. */
+	.clear {
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
+		border-radius : var(--radius-pill);
+		padding       : var(--pad-control);
+		font-size     : var(--font-tiny);
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		align-self    : center;
+		cursor        : pointer;
+		white-space   : nowrap;
+		flex-shrink   : 0;
+	}
+
+	.clear:hover {
+		background : var(--hover);
+	}
+
+	.clear:active {
+		color      : var(--text-on-accent);
+		background : var(--accent);
 	}
 
 	/* A collection with no guides yet: grayed and dead to the touch. */
@@ -328,28 +402,38 @@
 		flex-wrap       : wrap;
 	}
 
-	/* The one plain pill in the row. It stands the height of the double-bordered areas beside it,
-	   so the row reads as one line of pills rather than two sizes. */
-	.tag {
+	/* The control at the front of the row, saying how the picked tags narrow and holding the two
+	   presses that change what is picked. It stands the height of the areas beside it and reads at
+	   their size, so the row is one line of pills rather than two. */
+	.picking {
 		border        : var(--thick) solid var(--black);
-		border-radius : var(--radius-pill);
-		padding       : 0 var(--gap);
-		font-size     : var(--font-tiny);
 		height        : var(--height);
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
-		color         : var(--text);
 		box-sizing    : border-box;
-		cursor        : pointer;
-		white-space   : nowrap;
+		align-items   : stretch;
+		overflow      : hidden;
+		display       : inline-flex;
+		flex-shrink   : 0;
 	}
 
-	.tag.current {
-		background : var(--accent);
-		color      : var(--text-on-accent);
+	/* A button keeps no text size of its own, so it is said here — without it each segment falls
+	   back to whatever the browser draws a button at, which is larger than the tags beside them. */
+	.picking .segment {
+		font-size : var(--font-tiny);
+		padding   : 0 var(--gap);
 	}
 
-	.tag:not(.current):hover {
+	/* A press is never a state, so it takes the fill only while the cursor is on it and a
+	   stronger one while it is held. */
+	.picking .segment.press:hover {
 		background : var(--hover);
+	}
+
+	.picking .segment.press:active {
+		color      : var(--text-on-accent);
+		background : var(--accent);
 	}
 
 	.search {

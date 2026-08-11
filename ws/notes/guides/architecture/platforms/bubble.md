@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Bubble Integration"
 description: "Webseriously runs inside a frame and keeps in step with Bubble by passing messages."
 tags: [program, platform]

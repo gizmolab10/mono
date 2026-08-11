@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Buttons (ws)"
 description: "The button components that grew ad-hoc, gathered up for a sanity check."
 tags: [program, UX]

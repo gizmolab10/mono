@@ -1,7 +1,7 @@
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
 import type { Guide, Labels, Filtered_Guide } from '../types/File';
 import type { Sort } from './Filters';
-import { kind_matches } from './Filters';
+import { kind_matches, tags_match } from './Filters';
 import { Indexes } from '../database/Indexes';
 import { T_Bundle, in_order, key_of } from '../types/File';
 import { link_agrees, parts_of_link } from '../utilities/Following_Links';
@@ -332,11 +332,11 @@ export class Hierarchy {
 	 * Does one row survive the three filters? Folders never match on their own — they
 	 * come back only by holding something that did.
 	 */
-	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string): boolean {
+	private matches(row: Filtered_Guide, project: string, kind: string, tags: string[], words: string, picking: string): boolean {
 		if (row.guide.is_folder) { return false; }
 		if (project !== '' && row.guide.bundle !== project) { return false; }
 		if (!kind_matches(kind, row.guide.kind, row.guide.labeled)) { return false; }
-		if (tags.length > 0 && !tags.some((tag) => row.tag_names.includes(tag))) { return false; }
+		if (!tags_match(picking, tags, row.tag_names)) { return false; }
 		const looking_for = words.trim().toLowerCase();
 		if (looking_for !== '' && !`${row.guide.title} ${row.guide.description}`.toLowerCase().includes(looking_for)) { return false; }
 		return true;
@@ -363,7 +363,7 @@ export class Hierarchy {
 		return row.tag_names.join(', ');
 	}
 
-	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = []): void {
+	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = ''): void {
 		const all = this.list_guides();
 		this.all_guides = new Map(all.map((r) => [r.key, r]));
 		const closed = new Set(shut);
@@ -374,7 +374,7 @@ export class Hierarchy {
 			? all.filter((r) => !r.ancestor_keys.some((a) => closed.has(a)))
 			: all;
 
-		const matched = all.filter((r) => this.matches(r, project, kind, tags, words));
+		const matched = all.filter((r) => this.matches(r, project, kind, tags, words, picking));
 		this.matched_count = matched.length;
 		const keep = new Set(matched.map((r) => r.key));
 		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }
@@ -417,7 +417,7 @@ export class Hierarchy {
 		}
 
 		const folders_shown = this.filtered_guides.filter((r) => r.guide.is_folder).length;
-		debug.log(`Narrowed: project "${project || 'all'}", kind "${kind || 'all'}", tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_guides.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
+		debug.log(`Narrowed: project "${project || 'all'}", kind "${kind || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_guides.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
 	}
 
 	/** The guides wearing one tag. */

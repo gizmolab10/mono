@@ -5,7 +5,7 @@
 	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
 	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
-	import { toggle_all_areas } from '../../ts/managers/Filters';
+	import { inverted, toggle_all_areas } from '../../ts/managers/Filters';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Section from '../support/Section.svelte';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
@@ -107,6 +107,23 @@
 		form_tags = form_tags.includes(tag) ? form_tags.filter((t) => t !== tag) : [...form_tags, tag].sort(in_order);
 		save_filters();
 	}
+
+	/** Take every tag off this guide, and write it. */
+	function clear_tags() {
+		debug.log(`Editing "${name}": all ${form_tags.length} tag(s) taken off.`);
+		form_tags = [];
+		save_filters();
+	}
+
+	/**
+	 * Give this guide exactly the tags it did not wear, and write it. Every tag on the closed list
+	 * is on offer here, since this is where a file's own tags are set.
+	 */
+	function invert_tags() {
+		form_tags = inverted(ALL_TAGS, form_tags).sort(in_order);
+		debug.log(`Editing "${name}": the tags turned over — it now wears ${form_tags.length} of the ${ALL_TAGS.length}.`);
+		save_filters();
+	}
 </script>
 
 <!-- Folded, the section's own empty area joins the way back to the list: it is bare space above
@@ -189,6 +206,15 @@
 				     run of segments, and the pills after it move a long way at once. -->
 				<div class='filter-row wrapping tags-row' use:smooth_height role='presentation'
 					onclick={(event) => { if (event.target === event.currentTarget) { toggle_all_areas(TAG_AREAS.map((one) => one.name)); } }}>
+					<!-- Two presses at the front of the row. Neither is a state — a file wears the
+					     tags it wears — so neither ever reads as picked; they answer under the
+					     cursor only. -->
+					<span class='picking'>
+						<button class='segment press' onclick={clear_tags}
+							use:tip={'take every tag off this guide'}>clear</button>
+						<button class='segment press' onclick={invert_tags}
+							use:tip={'give it exactly the tags it does not wear'}>invert</button>
+					</span>
 					{#each TAG_AREAS as area (area.name)}
 						<span class='pill-slot'>
 							<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
@@ -258,6 +284,48 @@
 	   exactly as it did before there was anything to slide. */
 	.pill-slot {
 		display : inline-flex;
+	}
+
+	/* The two presses at the front of the tag row, standing the height of the areas beside them
+	   and reading at their size, so the row is one line of pills rather than two. */
+	.picking {
+		border        : var(--thick) solid var(--black);
+		height        : var(--height);
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-tiny);
+		background    : var(--white);
+		box-sizing    : border-box;
+		align-items   : stretch;
+		overflow      : hidden;
+		display       : inline-flex;
+		flex-shrink   : 0;
+	}
+
+	/* A button keeps no text size of its own, so it is said here — without it each segment falls
+	   back to whatever the browser draws a button at, which is larger than the tags beside them. */
+	.picking .segment {
+		font-size  : var(--font-tiny);
+		padding    : 0 var(--gap);
+		background : transparent;
+		color      : var(--text);
+		cursor     : pointer;
+		white-space: nowrap;
+		border     : none;
+	}
+
+	.picking .segment:not(:last-child) {
+		border-right : var(--thick) solid var(--black);
+	}
+
+	/* Neither is a state, so each takes the fill only under the cursor and a stronger one
+	   while it is held. */
+	.picking .segment.press:hover {
+		background : var(--hover);
+	}
+
+	.picking .segment.press:active {
+		color      : var(--text-on-accent);
+		background : var(--accent);
 	}
 
 	.filter-row {

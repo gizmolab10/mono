@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Timers (ws)"
 description: "Mouse timing held by the hits manager, so it survives a redraw."
 tags: [program, UX]

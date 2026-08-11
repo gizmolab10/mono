@@ -11,18 +11,19 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [ ] tags
-    - [ ] in Browse, convert the 'all' button -> 'any of'/'all of'/clear/invert segmented control
-    - [ ] in Editor, just clear/invert segmented control
 - [ ] animate tag relayout during window resize and details hide <-> show
 - [ ] add a list of back links to the editor
 - [ ] separators -> hover/click works on left-most 1/3 of the line and the title button, ignored otherwise
-- [ ] bring up to date -> synopsis of our guides
+- [ ] bring one file up to date -> synopsis of our guides
 - [ ] port Hits.ts from di
     - [ ] replace nearly all of the on click and on hover wiring with hits logic
 
 ## done
 
+- [x] tags
+    - [x] in Browse, the 'all' button became an 'any of'/'all of'/clear/invert segmented control
+    - [x] in Editor, just clear/invert
+    - [x] with 'all of' picked, a tag that would empty the list grays out
 - [x] work notes are files like any other
     - [x] each project's work folder stands beside its guides
     - [x] read, write, rename and throw away; anything deeper than its top stays out

@@ -19,7 +19,7 @@ Everything still owed is in [code debt](code%20debt.md). The [work journal](work
 2. With `any of` picked, a file shows if it wears any picked tag — what happens today. With `all of`, it shows only if it wears every one of them.
 3. `clear` drops every picked tag. `invert` picks exactly the tags that were not picked, and drops the ones that were. Those two segments only light during a click or hover.
 4. The editor's own tags row gets the same segmented control with only `clear` and `invert`.
-5. Which way the picking runs is remembered between visits, and a remembered value that is no longer one of the four is let go at launch.
+5. Which way the picking runs is remembered between visits, and a remembered value that is neither of the two is let go at launch. The editor remembers nothing, since both of its segments are presses.
 6. The type check and the tests are clean.
 
 ### The shape of it

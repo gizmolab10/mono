@@ -6,12 +6,12 @@
 // of how something was built. A file is one of the six, said in its own labels rather than worked
 // out from the folder it sits in.
 export enum T_Kind {
+	arch       = 'arch',
 	design     = 'design',
 	explain    = 'explain',
 	howto      = 'howto',
 	refer      = 'refer',
 	specify    = 'specify',
-	wire       = 'wire',
 }
 
 // The closed tag list — thirty, alphabetized, nothing invented on the spot.

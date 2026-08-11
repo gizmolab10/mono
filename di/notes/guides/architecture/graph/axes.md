@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Axes — Rotate and Swap"
 description: "Two ways to reorient a part: rotate it visually, or exchange its axis data."
 tags: [program, geometry]

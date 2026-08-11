@@ -1,5 +1,5 @@
 import { T_Bundle, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/File';
-import { kind_matches, w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { kind_matches, tags_match, T_Picking, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
@@ -97,14 +97,14 @@ class Guides {
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than
 		// in each of the places that shows it.
-		for (const w of [w_project, w_kind, w_tags, w_words, w_shut, w_show_folders, w_sorts]) {
+		for (const w of [w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts]) {
 			w.subscribe(() => this.renarrow());
 		}
 	}
 
 	/** Work the list out again from what the filters say right now. */
 	renarrow(): void {
-		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts));
+		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts), get(w_tag_picking));
 		this.w_showing.set(this.hierarchy.filtered_guides);
 	}
 
@@ -574,11 +574,16 @@ class Guides {
 		const project  = get(w_project);
 		const kind     = get(w_kind);
 		const tags     = get(w_tags);
+		const picking  = get(w_tag_picking);
 		const words    = get(w_words).trim().toLowerCase();
+		// The tags row is the one that cannot set its own filter fully aside. With every picked
+		// tag required, a tag worth offering is one worn by a file that already wears them all —
+		// so the picked tags stay in the question, and a tag that would empty the list grays out.
+		const set_aside = without === 'tags' && picking !== T_Picking.all;
 		return this.files.filter((guide) => {
 			if (without !== 'project' && project !== '' && guide.bundle !== project) { return false; }
 			if (without !== 'kind' && !kind_matches(kind, guide.kind, guide.labeled)) { return false; }
-			if (without !== 'tags' && tags.length > 0 && !tags.some((tag) => this.hierarchy.tag_names_of(guide.id).includes(tag))) { return false; }
+			if (!set_aside && !tags_match(picking, tags, this.hierarchy.tag_names_of(guide.id))) { return false; }
 			if (words !== '' && !`${guide.title} ${guide.description}`.toLowerCase().includes(words)) { return false; }
 			return true;
 		});

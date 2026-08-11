@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Code debt"
+description: "write a proposal for the first unchecked item to the top of handoff"
+tags: [journal, plans, proposal]
+date: 2026-08-11
+---
 # Code debt
 
 write a proposal for the first unchecked item to the top of handoff.

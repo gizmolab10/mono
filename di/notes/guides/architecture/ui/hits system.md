@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Hits System (di)"
 description: "One spatial index decides which single element the mouse is talking to."
 tags: [program, UX]

@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Scenes (di)"
 description: "What happens between app launch and a populated 3D canvas."
 tags: [program, geometry]

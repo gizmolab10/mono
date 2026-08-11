@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Intersection Lines"
 description: "Drawing the line where two parts' faces cross each other."
 tags: [program, geometry]

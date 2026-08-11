@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Search (ws)"
 description: "Matches appear as each letter is typed, in very little screen space."
 tags: [program, UX]

@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Managers (ws)"
 description: "Sixteen shared instances, each owning one area of the app."
 tags: [program]

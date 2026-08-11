@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Preferences Flow (ws)"
 description: "One setting followed all the way from the click to storage and back."
 tags: [program, data, UX]

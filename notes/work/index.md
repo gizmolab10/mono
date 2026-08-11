@@ -7,8 +7,8 @@
 - [Next](./next/)
 - [Agent Skills](./claude%20agent%20skills.md)
 - [Co](./co.md)
-- [Faster](./faster.md)
 - [Journal](./journal.md)
 - [Learn](./learn.md)
+- [Faster](./remember.md)
 - [Worktrees](./worktrees.md)
 

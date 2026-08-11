@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Main (di)"
 description: "The root layout: where the controls strip, side area, drawing area, and build-notes overlay sit."
 tags: [program, UX]

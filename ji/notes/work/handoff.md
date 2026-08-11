@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Handoff"
+description: "My resume point for ji: the one thing to do next, and the context you can't read off the code"
+tags: [journal, session]
+date: 2026-08-11
+---
 # Handoff
 
 My resume point for ji: the one thing to do next, and the context you can't read off the code. What just finished is in the [work journal](work%20journal.md); everything still owed is in [code debt](code%20debt.md).

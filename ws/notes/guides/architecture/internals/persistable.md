@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Persistable"
 description: "The shared base every stored record extends, for saving, loading, and identity."
 tags: [program, data]

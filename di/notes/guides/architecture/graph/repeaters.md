@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Repeaters"
 description: "Generating duplicates of a template part along an axis: studs, joists, stairs, ramps."
 tags: [program, geometry]

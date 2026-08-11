@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Graph (di)"
 description: "The drawing area: the canvas and everything floating over it."
 tags: [program, UX]

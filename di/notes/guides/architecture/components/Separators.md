@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Separators (di)"
 description: "The small divider drawn between sections, horizontal or vertical."
 tags: [program, UX]

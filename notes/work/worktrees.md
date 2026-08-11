@@ -1,3 +1,10 @@
+---
+kind: howto
+title: "Worktrees"
+description: "Claude Code spawns a worktree per session — a branch with an auto-generated name (loving-khayyam, funny-wozniak, etc.) living under ~/.claude-worktrees/mono/"
+tags: [session]
+date: 2026-08-11
+---
 # Worktrees
 
 Claude Code spawns a worktree per session — a branch with an auto-generated name (loving-khayyam, funny-wozniak, etc.) living under `~/.claude-worktrees/mono/`. The worktree vanishes when the session ends, but the branch stays. They pile up fast. 28 branches and counting.

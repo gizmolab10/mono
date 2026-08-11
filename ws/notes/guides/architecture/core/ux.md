@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "UX Manager (ws)"
 description: "What is focused, what is grabbed, what is being edited, and what the details show."
 tags: [program, UX]

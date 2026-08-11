@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Algebra Aliases"
 description: "Nine plain names for a part's position and length, so nobody has to type the raw bound names."
 tags: [program, geometry]

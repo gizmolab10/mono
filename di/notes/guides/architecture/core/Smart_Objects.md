@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Smart Objects"
 description: "The data shape of one part: its name, three directions, formulas, repeater settings, and visibility."
 tags: [program, data]

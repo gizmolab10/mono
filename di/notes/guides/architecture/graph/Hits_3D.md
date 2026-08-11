@@ -1,5 +1,5 @@
 ---
-kind: wire
+kind: arch
 title: "Hit Testing in 3D"
 description: "Working out which corner, edge, or face of a part the mouse is over."
 tags: [program, geometry, UX]
