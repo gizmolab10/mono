@@ -35,7 +35,8 @@
               "title": "handoff"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -170,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/work/handoff.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of handoff"
             }
           },
           {
@@ -208,8 +209,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a932f7d0e39d14ca",
+  "active": "7bf503989ea6fce8",
   "lastOpenFiles": [
+    "ov/notes/work/code debt.md",
+    "ov/notes/work/handoff.md",
     "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.b666d537946d",
     "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.18b8e9238a7e",
     "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.5ab738c53acf",
@@ -218,12 +221,9 @@
     "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.6b4607e9f8dc",
     "ov/src/lib/ts/utilities/Colors.ts.tmp.34102.fb998ecc9ab7",
     "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.48fdc2f206dd",
-    "ov/notes/work/handoff.md",
     "ov/src/lib/svelte/content/File_Content.svelte.tmp.34102.16c499e04c01",
     "ov/src/lib/ts/utilities/Markdown_Blocks.ts.tmp.34102.966fe5cd3942",
     "notes/work/claude agent skills.md",
-    "notes/tools/hub/__pycache__/test_dispatcher.cpython-310.pyc",
-    "ov/notes/work/code debt.md",
     "notes/guides/collaborate/tags hierarchy.md",
     "notes/guides/develop/constants.md",
     "notes/guides/collaborate/organize.md",

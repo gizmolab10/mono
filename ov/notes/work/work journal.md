@@ -9,6 +9,22 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-11 — work notes joined the files, and every row learned its line number
+
+A work note used to be a country the app could see into but never enter: links pointed at them and failed, and the dispatcher refused to hand one over. Now each project's work folder stands beside its guides, holding the notes at its top — and only those, since anything deeper would triple the list. They read, write, rename and go like any guide.
+
+**The kinds are six.** `work` went, since a folder now says it; `step` became `howto`. Twenty-seven guide files were relabelled, along with the app's list and the two notes that spell the six out.
+
+**A dispatcher button in the top row.** Changing the dispatcher's code used to mean walking to the hub. The button asks it to start over, then asks it for the guides every second and a half until it answers. Nothing is said in the status line — the button's own face is the whole report.
+
+**Things to be done are boxes now.** A list item beginning with a pair of brackets draws as a rounded square: outlined while still to do, filled with a green check when done, its words struck through. Pressing one turns that single line's brackets over and writes the file back — the same road every other change takes. An item holding a list of its own gets the soft pointer a heading gets.
+
+**Every row shows the line it begins on.** The number counts the rows shown, from one, with the labels left out; the two numbers that put words back still count the file itself. A line the reader draws as nothing — a blank line, a rule — gets a row of its own so the column has no holes, and where a list and its first item both name one row, the second claim is dropped.
+
+**One constant holds the whole left lane.** It says where the numbers' right edge stands; the pointer is one gap past that, the words one gap past the pointer, and the title's step-out reads the same sum. Four rules that used to carry their own numbers now read from the one.
+
+**Two lessons, both about measuring.** Asked why a soft pointer's neighbour jumped on hover, I measured inside the hover event — where the hover style is not on the element yet — and read the old picture twice, then reported that nothing moved. Measured two frames later it really was still, so the fault was in the painting: an edge on a fractional pixel is rounded afresh each repaint. Whole pixels and a paint surface of its own cured it. The second lesson is older and I repeated it: I asked Jonathan to paste the log. It is on disk, and reading it is the one thing I can always do.
+
 ## 2026-08-09 — every line on the list screen now owns the gap around it
 
 The filters drew five lines by hand, each in a bare wrapper with the row it named as a sibling — so the gap between a line and its own row came from the stack rather than from either. All five are sections now, and the count row with them. The stack's own spacing went to zero in the same edit; without that, every row would have grown by one gap.

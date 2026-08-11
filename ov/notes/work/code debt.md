@@ -11,21 +11,34 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
+- [ ] tags
+    - [ ] in Browse, convert the 'all' button -> 'any of'/'all of'/clear/invert segmented control
+    - [ ] in Editor, just clear/invert segmented control
 - [ ] animate tag relayout during window resize and details hide <-> show
-- [x] trial run with ov work
-    - [x] follow a link that points outside the guides folders
-        - [ ] add labels to work files
-        - [x] do NOT include code files
 - [ ] add a list of back links to the editor
 - [ ] separators -> hover/click works on left-most 1/3 of the line and the title button, ignored otherwise
+- [ ] bring up to date -> synopsis of our guides
 - [ ] port Hits.ts from di
     - [ ] replace nearly all of the on click and on hover wiring with hits logic
-- [ ] tags
-    - [ ] in Browse, convert 'all' button -> any/all/clear/not segmented control
-    - [ ] ability to filter 'show me what is NOT tagged X'
 
 ## done
 
+- [x] work notes are files like any other
+    - [x] each project's work folder stands beside its guides
+    - [x] read, write, rename and throw away; anything deeper than its top stays out
+- [x] the kinds are six — work eliminated, step became howto
+- [x] a dispatcher button in the top row, starting it over without leaving the app
+- [x] things to be done
+    - [x] `- [ ]` and `- [x]` draw as a box, pressed to write the other letter back
+    - [x] a done item's words struck through; one holding a list gets a soft pointer
+- [x] every row shows the line of the file it begins on
+    - [x] a line the reader draws as nothing gets a row of its own, so none is missing
+    - [x] a row named twice shows its number once
+    - [x] one constant says where the numbers end; the pointer and the words follow from it
+- [x] trial run with ov work
+    - [x] follow a link that points outside the guides folders
+        - [x] add labels to work files
+        - [x] do NOT include code files
 - [x] tags
     - [x] animate relayout on list files
     - [x] when a tagset (area) is unfolded, move it to the first row of tags, all the others go to  new second row

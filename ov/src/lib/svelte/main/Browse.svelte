@@ -58,7 +58,12 @@
 			     is nothing to line up with, so the lane collapses and it hugs the far left. -->
 			<span class='folders-lane' style:width='{$w_first_column}px'>
 				<!-- A drawn bar while the folders show; a folder while they are hidden. -->
-				<button class='folders-button eye' onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
+				<!-- With a project and a kind both picked and the folders hidden, the lane is too
+				     narrow to hold the button and its left end runs off the edge, so it is moved
+				     back into view. -->
+				<button class='folders-button eye'
+					class:crowded={$w_kind !== ''}
+					onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
 					📁
 					{#if !$w_show_folders}
 						<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
@@ -175,22 +180,28 @@
 		padding-right   : var(--gap-fat);
 		box-sizing      : border-box;
 		justify-content : flex-end;
+		flex            : 0 0 auto;
 		align-items     : center;
 		display         : flex;
-		flex            : 0 0 auto;
 	}
 
 	.folders-button {
 		border        : var(--thick-small) solid var(--black);
-		height        : var(--size);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
 		font-size     : var(-font-label);
 		background    : var(--white);
+		height        : var(--size);
 		color         : var(--text);
 		box-sizing    : border-box;
 		cursor        : pointer;
 		white-space   : nowrap;
+	}
+
+	/* Moved rather than given space: the lane holds the button to its right end, so anything that
+	   changes the button's own size leaves its left end exactly where it was. */
+	.folders-button.crowded {
+		transform : translateX(var(--gap-fat));
 	}
 
 	.folders-button:hover {

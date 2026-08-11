@@ -3,34 +3,39 @@ kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
 tags: [proposal]
-date: 2026-08-10
+date: 2026-08-11
 ---
 # Handoff
 
 My resume point for overview: the one thing to do next.
 
-Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md)  file has what's finished iand the [[current context]] you can't read off the code. 
+Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## Animate the list as the tags move it
+## The tags row says how it is picking
 
 ### Success
 
-1. Opening or shutting a tag area slides the pills beside it to their new places rather than jumping them.
-2. A pill that arrives fades in where it belongs; one that goes fades out where it stood.
-3. Nothing moves that did not move before, and the list still answers a press mid-slide.
-4. Resizing the window or opening/closing the details also animates their repositioning
-5. The type check and the tests are clean.
+1. The tags row's `all` button becomes a segmented control reading **any of / all of / clear / invert**.
+2. With `any of` picked, a file shows if it wears any picked tag — what happens today. With `all of`, it shows only if it wears every one of them.
+3. `clear` drops every picked tag. `invert` picks exactly the tags that were not picked, and drops the ones that were. Those two segments only light during a click or hover.
+4. The editor's own tags row gets the same segmented control with only `clear` and `invert`.
+5. Which way the picking runs is remembered between visits, and a remembered value that is no longer one of the four is let go at launch.
+6. The type check and the tests are clean.
 
 ### The shape of it
 
-Opening one tag area is the biggest jump on the screen: the area grows from one word to a run of segments, the pills after it wrap onto another row, and every file row below jumps down by that much at once. Nothing about it is wrong — it is simply instant, so the eye has to find its place again.
+The narrowing already asks whether a row wears any picked tag, in one line:
 
-Svelte draws this for us. A keyed loop takes an `animate:flip`, which measures where each thing was, where it lands, and slides between the two; the pills already loop over the tag areas by name, so the key is there. What arrives and what goes take `transition:fade`.
+    if (tags.length > 0 && !tags.some((tag) => row.tag_names.includes(tag))) { return false; }
 
-**The order.** The tag areas first, since that is the jump being complained about.
+`all of` is the same line with `some` becoming `every`. Which one runs comes from a new remembered setting, read the same way the kind and the project are.
 
-**What will not get done.** The file rows and the count above. Neither jumps at all.
+`clear` and `invert` are not states — they are two presses that change what is picked and leave the control reading whatever it read before. So the control holds two of one kind and two of another, which is worth drawing plainly: the two states sit together at the left, the two presses at the right.
 
-**Decision.** The wrapped tag rows never change height mid-slide. So nothing below the pills moves while a slide runs, and nothing that measures the page can read a size that is about to change. If a slide ever did change that height, the pills would have to be given a fixed number of rows rather than the height being animated.
+**The order.** The setting and the narrowing first, since they are the whole behaviour; then the control in the list; then the same control, minus two words, in the editor.
 
-**No risk found.**
+**What will not get done.** The kinds row and the projects row keep their single `all`. Only one kind and one project can be picked, so there is nothing for any-of and all-of to say there.
+
+**Decision to make before starting.** With `all of` picked and a tag added that no file wears alongside the others, the list goes empty. The picking rows already gray out what would leave nothing — that guard asks its question with its own filter left out, so it will need to ask with the any-of/all-of setting applied, or a tag that empties the list will still look available.
+
+**The risk.** The remembered setting is the third one that can outlive its own list of choices. The other two are let go at launch by a check written twice; a third copy of it is the moment to say it once.

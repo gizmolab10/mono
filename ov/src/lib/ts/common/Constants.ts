@@ -109,10 +109,10 @@ export default class Constants {
 
 	// Smallest first, the same as the widths.
 	height = {
-		small        : control_height * 0.3,	// 15.31 — one row of the words: a blank line, a rule
+		small        : control_height * 0.1,	// 15.31 — one row of the words: a blank line, a rule
 		normal		 : control_height,			// 21.88 — one control
 		big			 : control_height * 1.3,	// 28.44 — a row that can be hidden
-		fat			 : common_size * 1.2,		// 42 — the banner
+		fat			 : common_size	  * 1.2,	// 42 — the banner
 	};
 
 	size = {
