@@ -5,28 +5,30 @@ description: "pass Separator more than one title"
 tags: [active]
 date: 2026-08-12
 ---
-# Action
+# Action type
 
-i want to pass Separator more than one title. each title needs its own handler and a position enum {left, center, right}. combine those three things into one prop -> a type containing an HTML element (eg a segmented control) and an enum value.
+i want to pass **Separator** more than one title. each title needs its own handler and a position enum {left, center, right}. combine those three things into one prop -> a type containing an **HTML element** (eg a segmented control) and an enum value.
 
 ## convert these
 
 ### analysis
 
-Separators are used in two ways:
+**Separators** are used in two ways:
 
-1. All of the titled separators are called through Section
-2. All of the separators called directly have no title
-3. None of the separators have a plain, non-clickable title
+1. All of the titled **separators** are called through **Section**
+2. All of the **separators** called directly have no title
+3. None of the **separators** have a plain, non-clickable title
 
 ### conversion steps:
 
 - [ ] for ALL ***clickable*** titles
-    - [ ] ***copy*** button creation from separator to caller
-        - [ ] place button in an action -> position.left
-        - [ ] add logic to use it
+    - [ ] ***copy*** button creation from **separator** to caller
+        - [x] Search — the first one, the pattern for the rest
+        - [ ] File_OKF (three), List_OKF (four)
+    - [x] place button in an **action** -> `position.left`
+    - [x] add logic to use it — **Separator** lends each given **element** a place at its own end or middle
 - [ ] leave all plain titles as is
-- [ ] remove from separator and section
+- [ ] remove from **separator** and **section**
     - [ ] all hover logic
     - [ ] onclick
 

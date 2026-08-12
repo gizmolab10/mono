@@ -15,12 +15,12 @@
 	import Search from '../content/Search.svelte';
 	import { get } from 'svelte/store';
 
-	// Show one guide. This is the frame: the top row that says which file it is and what can be
+	// Show one file. This is the frame: the top row that says which file it is and what can be
 	// done to it, then the three things stacked under it — looking through the file, what it is
 	// labeled, and the file's own words. Each of those owns its own workings; what they share
 	// is here — the whole file's text, and the line at the bottom that speaks up briefly.
 	//
-	// Which of the guides is on screen, and the run they were stepped through, is the list's;
+	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the controls and call back.
 	let { name, address, tags, guide, onclose, can_back = false, can_forward = false, onprev = () => {}, onnext = () => {} }:
 		{ name: string; address: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: () => void; onnext?: () => void } = $props();
@@ -52,8 +52,8 @@
 		onclose();
 	}
 
-	// The title says where the guide sits as well as what it is called: every folder above it,
-	// from the top down. A guide in a project starts with that project; one belonging to no
+	// The title says where the file sits as well as what it is called: every folder above it,
+	// from the top down. A file in a project starts with that project; one belonging to no
 	// project starts with the repo's own name instead.
 	const sits_at = $derived.by(() => {
 		const folders = guide.path.split('/').slice(0, -1);
@@ -61,7 +61,7 @@
 		return [...top, ...folders].join(' / ');
 	});
 
-	/** Escape closes the guide; the left and right keys step to the one before or after. */
+	/** Escape closes the file; the left and right keys step to the one before or after. */
 	function on_key(event: KeyboardEvent) {
 		if (event.key === 'Escape') { onclose(); return; }
 		const back = event.key === 'ArrowLeft';
@@ -88,7 +88,7 @@
 	/**
 	 * A file has just been read and drawn. Anything highlighted belonged to the drawing before
 	 * it, and the words in the field are looked for again in this one — so coming back from the
-	 * list, or from a refresh, lands where the search left off. A guide with fewer places than
+	 * list, or from a refresh, lands where the search left off. A file with fewer places than
 	 * that wraps back into range on its own.
 	 */
 	function drawn() {
@@ -112,23 +112,23 @@
 	// gives the file itself the name typed.
 	let typed_name = $state('');
 
-	// Whenever another guide comes on screen, the field starts from that guide's own name.
+	// Whenever another file comes on screen, the field starts from that file's own name.
 	$effect(() => { typed_name = name; });
 
-	// Throwing this guide away is asked about first: the trash mark at the right of the row
+	// Throwing this file away is asked about first: the trash mark at the right of the row
 	// gives way to a cross, and the question stands over the words until it is answered.
 	let asking_to_delete = $state(false);
 	const crossPath = svg_paths.x_cross(k.size.normal, k.size.normal / 6);
 	const binPath   = svg_paths.trashcan(k.size.normal);
 
-	// Stepping to another guide takes the question with it — it belonged to the one being left.
+	// Stepping to another file takes the question with it — it belonged to the one being left.
 	$effect(() => { address; asking_to_delete = false; });
 
-	// Where a guide is sent when it is handed on.
+	// Where a file is sent when it is handed on.
 	const SENT_TO = 'sand@gizmolab.com';
 
 	/**
-	 * Hand this guide to Obsidian. The repo is itself a vault, so where the file sits counting
+	 * Hand this file to Obsidian. The repo is itself a vault, so where the file sits counting
 	 * from the top of the repo is also where it sits in the vault.
 	 */
 	function handle_obsidian() {
@@ -138,7 +138,7 @@
 	}
 
 	/**
-	 * Open a new message with this guide already in it: the file's name for a subject, its whole
+	 * Open a new message with this file already in it: the file's name for a subject, its whole
 	 * words for the body. Nothing is written, moved or thrown away — the message is the reader's
 	 * to send or drop.
 	 */
@@ -150,16 +150,16 @@
 	}
 
 	/**
-	 * Make a new guide in the same folder as this one and open it. It arrives named "unnamed",
+	 * Make a new file in the same folder as this one and open it. It arrives named "unnamed",
 	 * labeled as something to refer to and marked as the one being worked on, so the very next
 	 * thing to do is give it a name — which the field at the top of the row is already for.
 	 */
 	function handle_create() {
-		debug.log(`Editing "${name}": making a new guide beside it.`);
+		debug.log(`Editing "${name}": making a new file beside it.`);
 		guides.create_beside(guide).then((made) => { if (made) { open_view(key_of(made)); } });
 	}
 
-	/** Throw this guide away. Only if the file itself goes does the view go back to the list. */
+	/** Throw this file away. Only if the file itself goes does the view go back to the list. */
 	function handle_delete() {
 		asking_to_delete = false;
 		debug.log(`Editing "${name}": throwing it away.`);
@@ -177,7 +177,7 @@
 			return;
 		}
 		debug.log(`Editing "${name}": renaming it to "${said}".`);
-		// The view follows the guide to its new place on its own; a rename that was refused puts
+		// The view follows the file to its new place on its own; a rename that was refused puts
 		// the old name back in the field.
 		guides.rename(guide, said).then((now_at) => { if (now_at === '') { typed_name = name; } });
 	}
@@ -193,7 +193,7 @@
 		use:tip={'back to the list'} onclick={leave_if_empty}>
 		<div class='view-head'>
 			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
-				while reading off the list, on a run of guides reached by links. -->
+				while reading off the list, on a run of files reached by links. -->
 			{#if $w_file_place}
 				<span class='file-count'>{$w_file_place.at} of {$w_file_place.of}</span>
 			{/if}
@@ -206,7 +206,7 @@
 			<span class='view-spacer'></span>
 			<!-- The name is a field that reads as plain words until the cursor is over it. Leaving
 				it, or pressing Return, gives the file itself whatever was typed. While the
-				question about throwing the guide away is up, the name steps aside — the question
+				question about throwing the file away is up, the name steps aside — the question
 				already says which file it means. -->
 			{#if !asking_to_delete}
 			<input
@@ -228,25 +228,25 @@
 			{#if asking_to_delete}
 				<button class='asking-yes' use:tip={'throw it away for good'}
 					onclick={(e) => { e.stopPropagation(); handle_delete(); }}>delete "{name}"</button>
-				<button class='row-button' aria-label='keep it' use:tip={'keep this guide'}
+				<button class='row-button' aria-label='keep it' use:tip={'keep this file'}
 					onclick={(e) => { e.stopPropagation(); asking_to_delete = false; }}>
 					<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
 						<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 					</svg>
 				</button>
 			{:else}
-				<!-- The four stand together at the end of the row: make one beside this guide, open
+				<!-- The four stand together at the end of the row: make one beside this file, open
 					it in Obsidian, hand it on, or throw it away. The making comes first and the
 					throwing away last, so the one that cannot be undone stands furthest from the
 					one taken most often. -->
 				<span class='row-pair'>
-					<button class='row-button' aria-label='new' use:tip={'make a new guide in this folder'}
+					<button class='row-button' aria-label='new' use:tip={'make a new file in this folder'}
 						onclick={(e) => { e.stopPropagation(); handle_create(); }}>+</button>
-					<button class='row-button lifted' aria-label='obsidian' use:tip={'open this guide in Obsidian'}
+					<button class='row-button lifted' aria-label='obsidian' use:tip={'open this file in Obsidian'}
 						onclick={(e) => { e.stopPropagation(); handle_obsidian(); }}>o</button>
-					<button class='row-button' aria-label='send' use:tip={'send this guide in a message'}
+					<button class='row-button' aria-label='send' use:tip={'compose an email containing this file'}
 						onclick={(e) => { e.stopPropagation(); handle_send(); }}>⤴</button>
-					<button class='row-button' aria-label='delete' use:tip={'throw this guide away'}
+					<button class='row-button' aria-label='delete' use:tip={'throw this file away'}
 						onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
 						<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
 							<path d={binPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' stroke-linejoin='round' />

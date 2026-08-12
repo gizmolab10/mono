@@ -2,6 +2,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { what_to_open } from '../../ts/utilities/Searching';
 	import { w_search_at } from '../../ts/managers/Operations';
+	import Action, { T_Position } from '../../ts/types/Action';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
@@ -29,6 +30,19 @@
 	// Shown, the word is just "search". Folded away with something typed, it says what is being
 	// looked for, so a search left running is never invisible.
 	let search_word = $derived($w_show_search || $w_words === '' ? 'search' : `search ➜ ${$w_words}`);
+
+	// The word that folds this section away. It is ours now, not the line's: we build the button,
+	// style it, and hand the made element to the line, which only finds it a place to stand.
+	// The browser makes it one drawing after we ask, so this holds nothing on the first drawing
+	// and the made button on the next — which is itself a change, so the line is told at once.
+	let fold_word: HTMLElement | null = $state(null);
+	const to_do = $derived(Object.assign(new Action(), { element: fold_word, position: T_Position.left }));
+
+	/** Put the search row away, or bring it back. */
+	function toggle_search() {
+		w_show_search.set(!$w_show_search);
+		debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`);
+	}
 
 	let marked: HTMLElement | null = null;      // the run of words highlighted right now, if any
 
@@ -153,14 +167,20 @@
 	}
 </script>
 
+<!-- The word that folds this section away, built here rather than by the line it stands on: the
+     line is handed the made button and only finds it a place. It is written out of sight, since
+     the moment the browser has made it, it is taken and put on the line instead. -->
+<div class='out_of_sight'>
+	<button type='button' class='fold-word' class:forced={hovered} bind:this={fold_word}
+		onclick={toggle_search}>{search_word}</button>
+</div>
+
 <!-- Looking through the file on screen, as a section of its own: its line carries the word
      that folds it away, and the section holds the gap around it. -->
 <Section
+	actions={[to_do]}
 	edge={T_Edge.thick}
-	title={search_word}
-	{hovered}
-	folded={!$w_show_search}
-	onclick={() => { w_show_search.set(!$w_show_search); debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`); }}>
+	folded={!$w_show_search}>
 	{#snippet holds()}
 		<!-- Its type is "search", so the browser draws its own clear cross at the right end
 		     once there is text. -->
@@ -185,6 +205,40 @@
 </Section>
 
 <style>
+	/* Where the fold word is written before the line takes it. It is taken out of here on the
+	   very next drawing, so nothing is ever seen in this spot. */
+	.out_of_sight {
+		display : none;
+	}
+
+	/* The word that folds this section away, standing on the line above. Its page-colored
+	   background masks the line behind it. The edge is held see-through and counted inside the
+	   word's own space, so the hover edge adds no width and the word never shifts. */
+	.fold-word {
+		border        : 0.5px solid transparent;
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-faint);
+		color         : var(--darkgray);
+		padding       : 0 var(--gap);
+		background    : var(--bg);
+		box-sizing    : border-box;
+		font-family   : inherit;
+		white-space   : nowrap;
+		cursor        : pointer;
+	}
+
+	/* The edge appears under the cursor, or because the area around it says so. Told to light
+	   from outside, it takes white — it reads as marked without claiming the cursor. */
+	.fold-word:hover {
+		border-color : var(--darkgray);
+		background   : var(--hover);
+	}
+
+	.fold-word.forced {
+		border-color : var(--darkgray);
+		background   : var(--white);
+	}
+
 	/* The search row, under the top row: the walking triangles, then the field. */
 	/* One height whether or not anything is typed, so the words below never shift when the
 	   step triangles and the count arrive beside the field. */

@@ -63,8 +63,7 @@
               "title": "handoff"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -199,13 +198,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/action type.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of action type"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -237,15 +236,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "fd28867d8dc37ff3",
+  "active": "a932f7d0e39d14ca",
   "lastOpenFiles": [
-    "ji/notes/work/code debt.md",
     "ov/notes/work/action type.md",
+    "ov/notes/work/code debt.md",
+    "ji/notes/work/code debt.md",
     "ov/src/lib/ts/utilities/Opening_Code.ts",
     "ov/src/lib/ts/tests/opening_code.test.ts",
     "ov/notes/work/unnamed.md",
     "ov/notes/work/unnamed 2.md",
-    "ov/notes/work/code debt.md",
     "ov/src/lib/ts/types/Action.ts",
     "ov/src/lib/ts/types/Types copy.ts",
     "ov/notes/guides/design/OKF — midway review and plan.md",

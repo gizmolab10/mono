@@ -11,7 +11,13 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [ ] cannot edit checkbox text when it has sub items
+- [ ] replace '+' button with t-cross path
+- [ ] overstrike -> fainter gray
+- [ ] blank line following checkbox line is missing
+- [ ] compose an email does not work on Windows
+- [ ] cannot edit
+    - [ ] colon at the end of an H3
+    - [ ] checkbox text when it has sub items
 - [ ] animate tag relayout during window resize and details hide <-> show
 - [ ] add a list of back links to the editor
 - [ ] port Hits.ts from di

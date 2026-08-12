@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import Action, { T_Position } from '../../ts/types/Action';
 	import { k } from '../../ts/common/Constants';
-	import Action from '../../ts/types/Action';
 
 	// A colored divider — a thin accent bar, horizontal or vertical — with little rounded
 	// gussets (fillets) at its ends so it meets a rounded panel cleanly. Can instead be a
@@ -43,6 +43,21 @@
 	// there is no saying which was meant, so those keep their own separate presses.
 	const whole_bar = $derived(onclick !== undefined && words.length === 1);
 
+	// Anything handed over to sit on the line, each with the end or middle it belongs at. A caller
+	// builds its own control and gives us the made element; only the ones actually made are taken,
+	// since an element arrives one drawing after the caller asks the browser for it.
+	const placed = $derived((actions ?? []).filter((one) => one.element !== null));
+
+	/**
+	 * Put a given element inside its holder, and take it out again when the holder goes. The
+	 * element belongs to whoever built it — it is only being lent a place to stand — so it is
+	 * never made, changed or thrown away here.
+	 */
+	function holds_element(holder: HTMLElement, element: HTMLElement) {
+		holder.append(element);
+		return { destroy() { if (element.parentNode === holder) { holder.removeChild(element); } } };
+	}
+
 	const r         = $derived(radius);
 	const fillet_tr = $derived(`M ${r} 0 A ${r} ${r} 0 0 0 0 ${r} L 0 0 Z`);
 	const fillet_tl = $derived(`M ${-r} 0 A ${r} ${r} 0 0 1 0 ${r} L 0 0 Z`);
@@ -53,6 +68,18 @@
 <!-- The labels: a button when a click handler is given, else plain text. Spread along the bar,
      each at the middle of its own share of it — or, held to the left, run together from one
      wide inset off the left end. -->
+<!-- Whatever the caller built, each standing where it asked to: hard against the left end,
+     centered, or hard against the right. Its own background masks the line behind it, the same
+     way a word on the line does. -->
+{#snippet given_things()}
+	{#each placed as one, i (i)}
+		<span class='placed' class:left={one.position === T_Position.left}
+			class:center={one.position === T_Position.center}
+			class:right={one.position === T_Position.right}
+			use:holds_element={one.element as HTMLElement}></span>
+	{/each}
+{/snippet}
+
 {#snippet title_tags()}
 	{#if at_left}
 		<span class='at-left'>
@@ -102,7 +129,7 @@
 			style='position:absolute; left:100%; bottom:0; pointer-events:none'>
 			<path d={fillet_br} />
 		</svg>
-		{#if !spacer}{@render title_tags()}{/if}
+		{#if !spacer}{@render given_things()}{@render title_tags()}{/if}
 	</div>
 {:else}
 	<div
@@ -131,6 +158,7 @@
 		{#if whole_bar && onclick}
 			<button type='button' class='reach' aria-label={words[0]} onclick={(event) => onclick(event, 0)}></button>
 		{/if}
+		{@render given_things()}
 		{@render title_tags()}
 	</div>
 {/if}
@@ -147,6 +175,24 @@
 	.separator path {
 		fill : var(--accent);
 	}
+
+	/* Something the caller built, standing on the line at the end or middle it asked for. The
+	   page-colored background masks the line behind it, so it reads as breaking the divider —
+	   the same as a word does. It carries no look of its own: how it is drawn belongs to
+	   whoever built it. The left inset matches a word's, so a word and a given thing at the
+	   same end line up. */
+	.placed {
+		transform   : translateY(-50%);
+		background  : var(--bg);
+		position    : absolute;
+		align-items : center;
+		display     : flex;
+		top         : 50%;
+	}
+
+	.placed.left   { left      : var(--gap-fat); }
+	.placed.center { left      : 50%; transform : translate(-50%, -50%); }
+	.placed.right  { right     : var(--gap); }
 
 	/* A label sitting on the bar; its page-colored background masks the line so the title reads
 	   as text breaking the divider. How far along the bar it sits is set above, since that

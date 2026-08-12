@@ -25,7 +25,7 @@
 	}: {
 		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
 		onclick?           : (() => void) | undefined;            // pressing the word, anywhere along the line
-		actiona?           : Action[] | null;
+		actions?           : Action[] | null;         // things to sit on the line, each at its own end or middle
 		title?             : string | null;           // a word sitting on that line
 		holds              : Snippet;                 // what it shows
 		holds_subsections? : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
@@ -46,7 +46,7 @@
 	<!-- An edge of the view has no line to draw, so nothing is put there at all. -->
 	{#if edge !== T_Edge.view}
 		<div class='section-bar'>
-			<Separator at_left thickness={bar} title={title} {hovered} onclick={onclick ? () => onclick() : undefined}/>
+			<Separator at_left thickness={bar} title={title} {actions} {hovered} onclick={onclick ? () => onclick() : undefined}/>
 		</div>
 	{/if}
 
