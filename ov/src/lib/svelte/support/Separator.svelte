@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { k } from '../../ts/common/Constants';
+	import Action from '../../ts/types/Action';
 
 	// A colored divider — a thin accent bar, horizontal or vertical — with little rounded
 	// gussets (fillets) at its ends so it meets a rounded panel cleanly. Can instead be a
@@ -9,14 +10,15 @@
 	let {
 		radius    = k.radius.corner.tiny,
 		thickness = k.thickness.normal,
+		z_layer   = k.layer.controls,
 		reach     = 'var(--gap)',
 		onclick   = undefined,
 		vertical  = false,
 		hovered   = false,
 		spacer    = false,
 		at_left   = false,
+		actions   = null,
 		title     = null,
-		z_layer   = k.layer.controls,
 	}: {
 		vertical?  : boolean;          // runs top-to-bottom instead of left-to-right
 		spacer?    : boolean;          // no bar — just a growing gap (vertical only)
@@ -26,6 +28,7 @@
 		thickness? : number;           // the bar's width/height in px
 		radius?    : number;           // the fillet radius in px
 		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default
+		actions?   : Action[] | null;
 		title?     : string | string[] | null;    // when set, a label sits on the bar, its --bg mask breaking the line; several labels spread evenly, each centered over its own share of the bar
 		onclick?   : ((event: MouseEvent, which: number) => void) | undefined;   // when set, each label is a button that runs this — given the click so it can stop it bubbling, and which label was pressed
 	} = $props();

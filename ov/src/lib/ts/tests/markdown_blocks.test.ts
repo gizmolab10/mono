@@ -232,8 +232,8 @@ describe('stamping a block with its lines', () => {
 		expect(stamps('```\nsome code\n```')).toEqual([[0, 3]]);
 	});
 
-	it('stamps a whole list once, not its items', () => {
-		expect(stamps('- one\n- two\n- three')).toEqual([[0, 3]]);
+	it('stamps a list whole, and each of its items with its own one line', () => {
+		expect(stamps('- one\n- two\n- three')).toEqual([[0, 3], [0, 1], [1, 2], [2, 3]]);
 	});
 
 	it('stamps a quote once', () => {
@@ -313,7 +313,8 @@ describe('a list item that is a thing to be done', () => {
 	it('draws an empty pair of brackets as an empty box', () => {
 		const drawn = boxes_for_tasks('<ul>\n<li>[ ] one</li>\n</ul>');
 		expect(drawn).toContain('<li class="task"><span class="task-box">');
-		expect(drawn).toContain('<path d=');
+		expect(drawn).toContain("<path class='square' d=");
+		expect(drawn).toContain("<path class='check' d=");
 		expect(drawn.endsWith('</span> one</li>\n</ul>')).toBe(true);
 	});
 
@@ -344,6 +345,16 @@ describe('a list item that is a thing to be done', () => {
 
 	it('reaches the whole drawn guide', () => {
 		expect(page_of(reader, '- [ ] one\n- [x] two')).toContain('class="task-box"');
+	});
+
+	it('gives every item the one line it begins on, so a press opens that line alone', () => {
+		const html = stamp_blocks(reader, '- one\n- two', 0);
+		expect(html).toContain('data-from="0" data-to="1"');
+		expect(html).toContain('data-from="1" data-to="2"');
+	});
+
+	it('counts an item\'s line against the whole file, labels included', () => {
+		expect(stamp_blocks(reader, '- one', 4)).toContain('data-from="4" data-to="5"');
 	});
 
 	it('tells every item which line of the file it came from', () => {

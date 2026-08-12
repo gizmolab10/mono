@@ -72,6 +72,7 @@ class Configuration {
 		root.setProperty('--fw-huge',            `${k.font.weight.huge}`);
 		root.setProperty('--inset-cluster',      `${k.inset.cluster}px`);
 		root.setProperty('--inset-numbers',      `${k.inset.numbers}px`);
+		root.setProperty('--inset-list',        `${k.inset.list}px`);
 		root.setProperty('--inset-pill-top',     `${k.inset.pill.top}px`);
 		root.setProperty('--inset-pill-left',    `${k.inset.pill.left}px`);
 		root.setProperty('--inset-popup-edge',   `${k.inset.popup.edge}px`);

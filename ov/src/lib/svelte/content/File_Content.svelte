@@ -3,7 +3,8 @@
 	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
-	import { file_path_of, read_guide, save_guide } from '../../ts/utilities/Saving';
+	import { file_path_of, path_of_address, read_guide, save_guide } from '../../ts/utilities/Saving';
+	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
 	import { follow_link, w_command_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
@@ -71,14 +72,25 @@
 		const box = page;
 		if (!box || box.scrollWidth <= box.clientWidth + 1) { return; }
 		const gap = box.clientWidth;
+		// Where the words are free to run: the box less the inset it holds on both sides.
+		const inside = box.getBoundingClientRect();
+		const style  = getComputedStyle(box);
+		const free   = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
 		const guilty: string[] = [];
-		for (const piece of Array.from(box.children) as HTMLElement[]) {
-			if (piece.scrollWidth > gap + 1) {
-				const opens = (piece.textContent ?? '').trim().slice(0, 40);
-				guilty.push(`a ${piece.tagName.toLowerCase()} needing ${Math.round(piece.scrollWidth)} — "${opens}"`);
+		// The piece that reaches furthest right is the one pushing the page, whether or not it is
+		// itself too wide — a child inside it can carry it past the edge. So each is measured for
+		// its own width and for how far its far edge lands.
+		const walk = (one: HTMLElement, depth: number) => {
+			const at = one.getBoundingClientRect();
+			const over = Math.round(at.right - inside.right);
+			if (over > 1 || one.scrollWidth > free + 1) {
+				const opens = (one.textContent ?? '').trim().slice(0, 30);
+				guilty.push(`${'  '.repeat(depth)}a ${one.tagName.toLowerCase()}${one.className ? ` (${one.className})` : ''} ${Math.round(at.width)} wide, needing ${one.scrollWidth}, ending ${over} past the edge — "${opens}"`);
+				for (const child of Array.from(one.children) as HTMLElement[]) { walk(child, depth + 1); }
 			}
-		}
-		debug.log(`Viewer: "${name}" is ${Math.round(box.scrollWidth)} wide with only ${Math.round(gap)} of gap, so it can be pushed sideways. ${guilty.length === 0 ? 'No single piece is too wide on its own — something inside one of them is.' : guilty.join('; ')}`);
+		};
+		for (const piece of Array.from(box.children) as HTMLElement[]) { walk(piece, 0); }
+		debug.log(`Viewer: "${name}" is ${Math.round(box.scrollWidth)} wide with ${Math.round(gap)} of box and ${Math.round(free)} free inside its inset, so it can be pushed sideways.\n${guilty.length === 0 ? 'Nothing reaches past the edge — the width comes from the box itself.' : guilty.join('\n')}`);
 	}
 
 	$effect(() => {
@@ -128,6 +140,14 @@
 		if (/^[a-z][a-z0-9+.-]*:/i.test(link)) {
 			window.open(link, '_blank', 'noopener');
 			debug.log(`Link out of "${name}" to the web: ${link} — opened in a new tab, this guide stays.`);
+			return;
+		}
+		// A file of code is not a guide, so nothing in the collection answers for it. It goes to
+		// the editor on this machine instead, at the line the link names.
+		if (is_code_link(link)) {
+			const opens = code_link_of(path_of_address(guide.address), link);
+			window.location.href = opens;
+			debug.log(`Link out of "${name}" to code: ${link} — handed to VSCode as ${opens}.`);
 			return;
 		}
 		const found = guides.hierarchy.explore(guide, link);
@@ -270,6 +290,43 @@
 		}
 	}
 
+	/**
+	 * Where one piece's own first letter stands, across the window. The first run of words inside
+	 * it is found and its first letter measured on its own — asking the piece where it starts
+	 * gives the box around the words, which is a different place whenever anything sits before
+	 * them: a bullet, a checkbox, a step-in.
+	 */
+	function first_letter_at(block: HTMLElement): number | null {
+		const walk = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+		let words = walk.nextNode() as Text | null;
+		while (words && words.data.trim() === '') { words = walk.nextNode() as Text | null; }
+		if (!words) { return null; }
+		const at = words.data.search(/\S/);
+		const one = document.createRange();
+		one.setStart(words, at);
+		one.setEnd(words, at + 1);
+		const found = one.getBoundingClientRect();
+		return found.width === 0 && found.left === 0 ? null : found.left;
+	}
+
+	/**
+	 * Hold the box's own words to the place the piece's words stood. Whatever the box would
+	 * otherwise begin at, the space before its words is widened or narrowed to close the
+	 * difference — its outer edges are left alone, so nothing around it moves.
+	 */
+	function start_the_words_at(wanted: number | null) {
+		const the_box = box;
+		if (!the_box || wanted === null) { return; }
+		const style  = getComputedStyle(the_box);
+		const before = parseFloat(style.paddingLeft) || 0;
+		const starts = the_box.getBoundingClientRect().left
+			+ (parseFloat(style.borderLeftWidth) || 0) + before + (parseFloat(style.textIndent) || 0);
+		const off = wanted - starts;
+		if (Math.abs(off) < 0.5) { return; }
+		the_box.style.paddingLeft = `${before + off}px`;
+		debug.log(`Editing "${name}": the words stood at ${wanted.toFixed(2)} and the box began them at ${starts.toFixed(2)}, so the space before them went from ${before.toFixed(2)} to ${(before + off).toFixed(2)}.`);
+	}
+
 	/** Open one piece of the page for editing, in place. */
 	function open_box(block: HTMLElement) {
 		close_box(true);
@@ -339,9 +396,15 @@
 		// Where a subheading itself was standing. The gap above a subheading depends on what came
 		// before it, so rather than work that out, the box is slid onto the same place afterwards.
 		const held_to = drop === 0 && box.classList.contains('heading') ? block.getBoundingClientRect().top : null;
+		// Where the piece's own first letter stands, read while it is still on screen. Everything
+		// that steps a piece in — a list's own indent, the box beside a thing to be done, a
+		// paragraph's first-line step — is already in that one number, so it is measured rather
+		// than worked out from the pieces of it.
+		const letter_at = first_letter_at(block);
 		block.parentNode?.insertBefore(box, block);
 		block.style.display = 'none';
 		fit_box();
+		start_the_words_at(letter_at);
 		if (held_to !== null) { sit_where_it_stood(held_to); }
 		hold_what_follows(after, was_at);
 		box.focus();
@@ -1130,6 +1193,13 @@
 		line-height : 1.5;
 	}
 
+	/* How far a list steps its items in. Said here because the browser has a number of its own —
+	   forty — and it is the one measurement on the page that would come from outside the ladder. */
+	.view-page :global(ul),
+	.view-page :global(ol) {
+		padding-inline-start : var(--inset-list);
+	}
+
 	/* Every paragraph steps in a little, the way a printed page does, and stands clear of the
 	   one before it. */
 	.view-page :global(p) {
@@ -1158,11 +1228,14 @@
 	/* Standing on the text baseline would leave the line's own drop below it, which shows as a
 	   pixel appearing and going as an item is finished and unfinished — so it is held to the top
 	   of its line instead. */
+	/* A list holds its own step-in. Stating a full width without saying the step-in comes out of
+	   it puts the two together, and the list runs past the edge of what holds it. */
 	.view-page :global(li.task.done > ul),
 	.view-page :global(li.task.done > ol) {
 		vertical-align  : top;
 		text-decoration : none;
 		display         : inline-block;
+		box-sizing      : border-box;
 		color           : var(--text);
 		width           : 100%;
 	}
@@ -1193,31 +1266,33 @@
 		top            : 2px;
 	}
 
-	.view-page :global(li.task .task-box path) {
+	.view-page :global(li.task .task-box .square) {
 		stroke-width : var(--thick-big);
 		stroke       : var(--lightgray);
 		fill         : var(--white);
 	}
 
-	/* Done: a filled square inside a hairline, with a green check standing on it. It keeps an
-	   outline of its own so the drawn shape covers the same ground either way. */
-	.view-page :global(li.task .task-box.done path) {
+	/* Done: a filled square inside a hairline. It keeps an outline of its own so the drawn shape
+	   covers the same ground either way. */
+	.view-page :global(li.task .task-box.done .square) {
 		fill         : var(--faintgray);
 		stroke       : var(--gray);
 		stroke-width : 0.5;
 	}
 
-	/* The check itself — two sides of a square, turned onto its corner. */
-	.view-page :global(li.task .task-box.done::after) {
-		border-width : 0 var(--thick-fat) var(--thick-fat) 0;
-		border       : solid var(--green);
-		transform    : rotate(45deg);
-		position     : absolute;
-		content      : '';
-		height       : 55%;
-		width        : 25%;
-		left         : 36%;
-		top          : 12%;
+	/* The check is drawn into every box and shows only on a finished one: one green stroke with
+	   nothing filled, its ends and its corner rounded. */
+	.view-page :global(li.task .task-box .check) {
+		display : none;
+	}
+
+	.view-page :global(li.task .task-box.done .check) {
+		stroke-linejoin : round;
+		stroke-linecap  : round;
+		stroke-width    : var(--thick-big);
+		stroke          : var(--green);
+		display         : block;
+		fill            : none;
 	}
 
 	.view-page :global(a) {

@@ -59,6 +59,7 @@ export default class Constants {
 		credit		 : { bottom: common_size * 0.35, left: common_size * 0.35 },		// 12.25, 15.75
 		cluster		 : common_size / 4,													// 8.75
 		numbers		 : common_gap * 2.4,												// where the right edge of every row number stands, from the page's left edge
+		list		 : 15,																// how far a list steps its items in; the browser's own is 40
 	};
 
 	radius = {

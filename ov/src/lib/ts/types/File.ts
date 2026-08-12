@@ -14,18 +14,17 @@ export enum T_Kind {
 	specify    = 'specify',
 }
 
-// The closed tag list — thirty, alphabetized, nothing invented on the spot.
+// The closed tag list — twenty-nine, alphabetized, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
+	'active',
 	'always',
 	'build',
-	'construct',
 	'data',
 	'debug',
 	'deploy',
 	'done',
 	'geometry',
 	'journal',
-	'methods',
 	'migrate',
 	'notes',
 	'plans',

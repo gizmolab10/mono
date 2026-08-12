@@ -5,13 +5,16 @@ How collaborator works with Jonathan and maintains shared context.
 
 ## Contents
 
+- [Breakdown](./breakdown.md)
+- [Cadence](./cadence.md)
 - [Chat](./chat.md)
+- [Composition](./composition.md)
 - [Framing Filters](./context%20filters.md)
 - [Exclude](./exclude.md)
 - [Expectations](./expectations.md)
 - [Hooks](./hooks.md)
 - [Jonathan](./jonathan.md)
-- [Organize](./organize.md)
+- [Skills](./skills.md)
 - [Tags hierarchy](./tags%20hierarchy.md)
 - [Voice](./voice.md)
 - [Workflow](./workflow.md)

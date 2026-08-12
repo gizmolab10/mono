@@ -27,6 +27,28 @@ describe('the box beside a thing to be done', () => {
 	});
 });
 
+describe('the check inside a finished box', () => {
+	it('is one stroke of two straight runs, down then up', () => {
+		const drawn = svg_paths.checkmark(20);
+		expect(drawn.match(/L /g)?.length).toBe(2);
+		const [, from_y, , mid_y, , to_y] = numbers_in(drawn);
+		expect(mid_y).toBeGreaterThan(from_y);          // down to the corner
+		expect(to_y).toBeLessThan(mid_y);               // then up, higher than it started
+		expect(to_y).toBeLessThan(from_y);
+	});
+
+	it('stays inside the box it is given', () => {
+		for (const found of numbers_in(svg_paths.checkmark(20))) {
+			expect(found).toBeGreaterThanOrEqual(0);
+			expect(found).toBeLessThanOrEqual(20);
+		}
+	});
+
+	it('falls back to the same size the box does', () => {
+		expect(svg_paths.checkmark()).toBe(svg_paths.checkmark(CHECKBOX.size));
+	});
+});
+
 describe('the clear mark', () => {
 	const SIZE = 20;
 	const drawn = svg_paths.circle_slash(SIZE);

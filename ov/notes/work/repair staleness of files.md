@@ -1,8 +1,8 @@
 ---
 kind: design
 title: "Repair staleness"
-description: "runs in, and there is none — asking it answers \"no key for the model is set on this machine\""
-tags: [done, journal]
+description: "runs in, and there is none — asking it answers \\\"no key for the model is set on this machine\\\""
+tags: [active, journal]
 date: 2026-08-08
 ---
 # Repair staleness

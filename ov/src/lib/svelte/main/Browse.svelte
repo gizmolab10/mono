@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { w_show_folders, w_show_filters, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import Section from '../support/Section.svelte';
 	import Files, { w_first_column, w_scrollbar_showing } from '../content/Files.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import List_OKF from '../content/List_OKF.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
+	import Section from '../support/Section.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import List_OKF from '../content/List_OKF.svelte';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
 	const MARK = k.size.normal;
@@ -48,50 +48,50 @@
 	gap={k.gap.normal}
 	edge={$w_show_filters ? T_Edge.thick : T_Edge.view}>
 	{#snippet holds()}
-	<div class='count-row'>
-		<!-- With nothing left after the filters there are no folders to show or hide, so the
-		     button has nothing to act on. -->
-		{#if matching > 0}
-			<!-- It stands in a lane as wide as the list's first column, held to that lane's right
-			     end and inset by the same gap the first title holds — so the button's right edge
-			     falls exactly where the first title's words end. With no fixed first column there
-			     is nothing to line up with, so the lane collapses and it hugs the far left. -->
-			<span class='folders-lane' style:width='{$w_first_column}px'>
-				<!-- A drawn bar while the folders show; a folder while they are hidden. -->
-				<!-- With a project and a kind both picked and the folders hidden, the lane is too
-				     narrow to hold the button and its left end runs off the edge, so it is moved
-				     back into view. -->
-				<button class='folders-button eye'
-					class:crowded={$w_kind !== ''}
-					onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
-					📁
-					{#if !$w_show_folders}
-						<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
-							<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
-						</svg>
-					{/if}
-				</button>
-			</span>
-		{/if}
-		<!-- What was picked, beside the folder button: the project's short name, then the kind,
-		     each held well clear of its neighbors. -->
-		{#if $w_project !== ''}
-			<span class='chosen-project'>{$w_project}</span>
-		{/if}
-		<!-- An upright line stands between them, but only while both are picked. -->
-		{#if $w_project !== '' && $w_kind !== ''}
-			<span class='chosen-between'>|</span>
-		{/if}
-		{#if $w_kind !== ''}
-			<span class='chosen-kind'>{$w_kind}</span>
-		{/if}
-		<span class='count'>{matching} files (of {total})</span>
-		<!-- The picked tags hug the far right, the folders button the far left, and the count
-		     keeps the middle of the whole row. -->
-		{#if $w_tags.length > 0}
-			<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
-		{/if}
-	</div>
+		<div class='count-row'>
+			<!-- With nothing left after the filters there are no folders to show or hide, so the
+				button has nothing to act on. -->
+			{#if matching > 0}
+				<!-- It stands in a lane as wide as the list's first column, held to that lane's right
+					end and inset by the same gap the first title holds — so the button's right edge
+					falls exactly where the first title's words end. With no fixed first column there
+					is nothing to line up with, so the lane collapses and it hugs the far left. -->
+				<span class='folders-lane' style:width='{$w_first_column}px'>
+					<!-- A drawn bar while the folders show; a folder while they are hidden. -->
+					<!-- With a project and a kind both picked and the folders hidden, the lane is too
+						narrow to hold the button and its left end runs off the edge, so it is moved
+						back into view. -->
+					<button class='folders-button eye'
+						class:crowded={$w_kind !== ''}
+						onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
+						📁
+						{#if !$w_show_folders}
+							<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
+								<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
+							</svg>
+						{/if}
+					</button>
+				</span>
+			{/if}
+			<!-- What was picked, beside the folder button: the project's short name, then the kind,
+				each held well clear of its neighbors. -->
+			{#if $w_project !== ''}
+				<span class='chosen-project'>{$w_project}</span>
+			{/if}
+			<!-- An upright line stands between them, but only while both are picked. -->
+			{#if $w_project !== '' && $w_kind !== ''}
+				<span class='chosen-between'>|</span>
+			{/if}
+			{#if $w_kind !== ''}
+				<span class='chosen-kind'>{$w_kind}</span>
+			{/if}
+			<span class='count'>{matching} files (of {total})</span>
+			<!-- The picked tags hug the far right, the folders button the far left, and the count
+				keeps the middle of the whole row. -->
+			{#if $w_tags.length > 0}
+				<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
+			{/if}
+		</div>
 	{/snippet}
 </Section>
 <Files />

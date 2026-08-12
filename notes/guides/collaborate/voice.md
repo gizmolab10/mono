@@ -1,5 +1,5 @@
 ---
-kind: specify
+kind: howto
 title: "Voice and Tone"
 description: "How prose written into files should read: first person, warm, punchy."
 tags: [prose]

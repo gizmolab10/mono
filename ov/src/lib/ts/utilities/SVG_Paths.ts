@@ -63,6 +63,16 @@ export class SVG_Paths {
 			+ ` V ${near} A ${near} ${near} 0 0 1 ${near} 0 Z`;
 	}
 
+	/**
+	 * The check inside a finished box: one stroke of two straight runs, down to a corner and then
+	 * up past where it started. Drawn as a line with nothing filled, so whatever draws it sets the
+	 * stroke and its ends. It keeps within the same `size` box the square uses.
+	 */
+	checkmark(size: number = CHECKBOX.size): string {
+		const n = (v: number) => +(v * size).toFixed(2);
+		return `M ${n(0.24)} ${n(0.52)} L ${n(0.43)} ${n(0.71)} L ${n(0.77)} ${n(0.31)}`;
+	}
+
 	x_cross(diameter: number, margin: number): string {
 		const start = margin + 2;
 		const end = diameter - start;

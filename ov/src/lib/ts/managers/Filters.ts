@@ -30,12 +30,14 @@ export function kind_matches(kind: string, its_kind: string, labeled: boolean): 
 export const w_tags = preferences.persistent<string[]>(T_Preference.filter_tags, []);
 
 /**
- * The two ways picked tags can narrow the list. A file usually wears one or two, so asking
- * for all of three finds nothing — which is why any-of is where it starts.
+ * The three ways picked tags can narrow the list. A file usually wears one or two, so asking
+ * for all of three finds nothing — which is why any-of is where it starts. Any-but is any-of
+ * turned round: it keeps the files the same picks would have thrown away.
  */
 export enum T_Picking {
 	any = 'any of',
 	all = 'all of',
+	but = 'any but',
 }
 
 export const w_tag_picking = preferences.persistent<string>(T_Preference.tag_picking, T_Picking.any);
@@ -43,9 +45,11 @@ export const w_tag_picking = preferences.persistent<string>(T_Preference.tag_pic
 /** Does a file survive the tags that are picked? Nothing picked lets everything through. */
 export function tags_match(picking: string, chosen: string[], worn: string[]): boolean {
 	if (chosen.length === 0) { return true; }
-	return picking === T_Picking.all
-		? chosen.every((tag) => worn.includes(tag))
-		: chosen.some((tag) => worn.includes(tag));
+	switch (picking) {
+		case T_Picking.all: return chosen.every((tag) => worn.includes(tag));
+		case T_Picking.but: return !chosen.some((tag) => worn.includes(tag));
+		default:            return chosen.some((tag) => worn.includes(tag));
+	}
 }
 
 /** Exactly the tags on offer that are not picked — what inverting leaves picked. */
@@ -73,8 +77,19 @@ export function kept_from(remembered: string[], choices: string[]): string[] {
 	if (kept_from([get(w_tag_picking)], Object.values(T_Picking)).length === 0) { w_tag_picking.set(T_Picking.any); }
 }
 
-// Words looked for in a guide's title and description, ignoring case.
+// Words looked for in a file's own name, its title and its brief, ignoring case.
 export const w_words = preferences.persistent<string>(T_Preference.filter_text, '');
+
+/**
+ * Does a file survive the words typed? All three are looked in, since the three disagree often
+ * enough: a file called "assessment of our guides" whose title still reads "Synopsis of the
+ * Shared Guides" is found by either word.
+ */
+export function words_match(words: string, name: string, title: string, description: string): boolean {
+	const looking_for = words.trim().toLowerCase();
+	if (looking_for === '') { return true; }
+	return `${name} ${title} ${description}`.toLowerCase().includes(looking_for);
+}
 
 // Which folders are shut, named by where each one sits rather than by the number it
 // happens to get this launch, since those numbers are made fresh every time.

@@ -2,7 +2,7 @@
 kind: specify
 title: "Code debt"
 description: "write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff"
-tags: [journal, plans, proposal]
+tags: [active, journal, plans, proposal]
 date: 2026-08-10
 ---
 # Code debt
@@ -11,20 +11,24 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [x] bring one file up to date -> synopsis of our guides
-- [ ] create collaborate/breakdown.md describing how to
-    - [ ] declare a breakdown
-    - [ ] state the objective
-    - [ ] take stock
-    - [ ] try again
+- [ ] cannot edit checkbox text when it has sub items
 - [ ] animate tag relayout during window resize and details hide <-> show
 - [ ] add a list of back links to the editor
-- [ ] separators -> hover/click works on left-most 1/3 of the line and the title button, ignored otherwise
 - [ ] port Hits.ts from di
     - [ ] replace nearly all of the on click and on hover wiring with hits logic
 
 ## done
 
+- [x] declaring a breakdown
+    - [x] a guide with the four steps: declare it, state the objective, take stock, try again
+    - [x] a `/br` skill that walks them on the spot
+    - [x] four phrases in keywords, two states in gates
+- [x] the assessment of mono's guides brought up to date
+    - [x] every one of the 55 files listed under its real folder, each with its own brief
+    - [x] every file name in it a working link
+- [x] kind renames — step became howto, wire became arch
+- [x] the settled diagnostic lines taken out — the tag timing, the remembered settings, the folds and the row count
+- [x] a clear that has nothing to clear grays and answers nothing
 - [x] tags
     - [x] in Browse, the 'all' button became an 'any of'/'all of'/clear/invert segmented control
     - [x] in Editor, just clear/invert

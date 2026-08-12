@@ -1,8 +1,8 @@
 ---
 kind: design
-title: "Synopsis of the Shared Guides"
+title: "Assessment of our Guides"
 description: "A hand-kept rundown of every shared guide, what is thin, and what is missing."
-tags: [always, construct, journal, notes, session, team]
+tags: [active, journal, notes, session, team]
 date: 2026-07-08
 ---
 # Assessment of mono's guide files
@@ -24,13 +24,44 @@ The guides act as a three-tier memory architecture.
 
 ## Observations
 
-- **Three files are applied to every message**, invoked by a hook: [always](pre-flight/always.md), and one of [response](pre-flight/response.md), [agency](pre-flight/agency.md) and [banned words](pre-flight/banned%20words.md) on a rotation. Providing a rock solid guarantee of consistency and good communication.
+- **Three files are applied to every message**, invoked by a hook: [always](pre-flight/always.md), and one of [response](pre-flight/response.md), [agency](pre-flight/agency.md) and [lexicon](pre-flight/lexicon.md) on a rotation. Providing a rock solid guarantee of consistency and good communication.
 - **The pre-flight folder layers the same idea three ways** — [keywords](pre-flight/keywords.md) trigger [gates](pre-flight/gates.md) which point at guides — so the right guide for a task type cannot be missed.
-- **Two files hold the whole vocabulary**: [banned words](pre-flight/banned%20words.md) says which words are never used, and each project keeps a lexicon defining a limited set of terms — makes communication understandable. Both are enforced by the same hook.
+- **Two files hold the whole vocabulary**: [banned words](pre-flight/banned%20words.md) says which words are never used, and [lexicon](pre-flight/lexicon.md) says which words to reach for, with each project keeping its own for its own things. The lexicon arrives before a message is written; the table is read by the two scripts that check a finished reply.
 - **One acknowledged conflict** between guides: [refactor](develop/refactor.md) wants every file searched before each single change; [migrate](develop/migrate.md) groups several changes into one phase and searches twice, once before the phase and once after. The [kinds of tasks](pre-flight/kinds%20of%20tasks.md) table says outright that the two disagree.
 - **Two files overlap on enforcement**: [hooks](collaborate/hooks.md) describes the mechanism, [always](pre-flight/always.md) lists what the mechanism enforces. They are designed to be read together.
 - **Two siblings with a split purpose**: [build](develop/build.md) is the tooling reference, [build notes](develop/build%20notes.md) is the maintenance process for the build-notes log.
 - **The develop folder has grown to sixteen files** and now holds three things at once: how to write code, how to write a document about code, and what past work taught. The last two arrived from elsewhere — [create a proposal](develop/create%20a%20proposal.md) came from setup, [lessons](develop/lessons.md) came from di.
+
+## Redundancies and conflicts
+
+Every one below was found by reading the files, and every one names where it sits.
+
+### One rule, said in several places
+
+A rule in three files is three wordings, and no reader can tell whether they differ.
+
+- **Read before act** — [agency](pre-flight/agency.md) 7, [pitfalls](pre-flight/pitfalls.md) 1, and [chat](collaborate/chat.md)'s File Freshness, which carries its own list of trigger phrases the other two do not have.
+- **Exact match** — [agency](pre-flight/agency.md) 5 and [pitfalls](pre-flight/pitfalls.md) 2.
+- **Show evidence** — [always](pre-flight/always.md) 5 and [pitfalls](pre-flight/pitfalls.md) 3.
+- **Test before done** — [agency](pre-flight/agency.md) 12 and [pitfalls](pre-flight/pitfalls.md) 5.
+- **What to do when a tool fails** — [pitfalls](pre-flight/pitfalls.md) 6 and the whole of [gotchas](pre-flight/gotchas.md). Both say use write_file over create_file, and both say cycle tools rather than repeat. The second file adds nothing the first lacks.
+- **Search every file before a multi-file change** — [gates](pre-flight/gates.md)'s table, [kinds of tasks](pre-flight/kinds%20of%20tasks.md)'s multi-file row, and [chat](collaborate/chat.md)'s refactoring discipline. Three.
+- **The done checklist** — [shorthand](pre-flight/shorthand.md)'s `done` row, and a hardcoded copy inside `.claude/hooks/done-checklist.sh` at line 42. A script holding a copy of a guide is the pair most likely to drift, since nothing reads both.
+- **The banned-word pairs** — [banned words](pre-flight/banned%20words.md) and the last section of [lexicon](pre-flight/lexicon.md). Deliberate: one is the wall, one is the word to reach for. Still two copies of 21 pairs.
+
+### Two files that disagree
+
+- **`rewrite` means two opposite things.** [shorthand](pre-flight/shorthand.md) row 24 makes it a request to say the last reply again in plain English. [agency](pre-flight/agency.md) 8 lists it among the six words that turn a proposal into work. One word, one meaning asking for words, the other for action.
+- **Act, or wait?** [pitfalls](pre-flight/pitfalls.md) 4 says "if obvious, act". [agency](pre-flight/agency.md) 8 says do not edit anything unless Jonathan says one of six words. A single clear next step satisfies the first and is forbidden by the second.
+- **[always](pre-flight/always.md) pulls against itself.** Rule 1 caps a reply at three sentences. Rules 5, 6 and 7 each demand more words — a quoted line, every part named, both sides of a difference stated. Four rules, one budget.
+- **[voice](collaborate/voice.md) breaks its own rule.** It tells the writer to prefer the lexicon and avoid the banned words, and its own list of what good prose is says "easy to absorb". *Absorb* is on the banned list.
+
+### A file against the world
+
+- **[always](pre-flight/always.md)'s brief says five rules.** Its first line says seven govern every reply.
+- **[hooks](collaborate/hooks.md) puts the scripts in the wrong repo.** It says they live in `di/.claude/hooks/` and log to `di/.claude/hooks/log.jsonl`. They live in mono's `.claude/hooks/`.
+- **[hooks](collaborate/hooks.md) counts sixteen.** Seventeen are wired today, and its Stop table leaves out the murk counter.
+- **[pitfalls](pre-flight/pitfalls.md) skips two numbers.** It runs 1 to 16, then jumps to 19. Either two rules were removed without renumbering, or two are missing.
 
 ## Still needed
 
@@ -65,11 +96,11 @@ The guides act as a three-tier memory architecture.
 
 What is risked, ranked by likelihood and cost.
 
-### Highest — co goes off the rails and cannot recover
+### Struck — co goes off the rails and cannot recover
 
-The rules address particular failures as they are found. The broader thing — the work going wrong mid-session and neither of us knowing how to get back — has no guide. Declaring a breakdown, stating the objective, taking stock, and trying again is the shape of what is missing.
+[breakdown](collaborate/breakdown.md) holds the four steps — declare it, state the objective, take stock, try again — and `/br` walks them on the spot. [keywords](pre-flight/keywords.md) sends four phrases to it; [gates](pre-flight/gates.md) names two states that call for it: the same fix tried twice, and three rounds with nothing measured.
 
-**Direct evidence:** the [learn](../work/learn.md) log holds four entries of the same kind of failure, each caught after the fact.
+**Still open:** it was written while nothing was failing. Whether the four steps hold under a real breakdown is unproven.
 
 ### High — compaction loses working state
 
@@ -99,6 +130,7 @@ Seven, each holding one kind of guidance.
 
 ### collaborate — how Jonathan and co work together
 
+- [breakdown](collaborate/breakdown.md) — what to do when the work has gone wrong and neither of us knows how to get back.
 - [cadence](collaborate/cadence.md) — how the two of us actually work together.
 - [chat](collaborate/chat.md) — who does what, and what co must do to stay reliable.
 - [composition](collaborate/composition.md) — props down, events up, slots for flexible content.

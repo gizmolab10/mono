@@ -2,7 +2,7 @@
 kind: refer
 title: "Rewritten guides"
 description: "Every guide carrying the stale tag, with what I'd do to it"
-tags: [done, proposal]
+tags: [active, proposal]
 date: 2026-08-08
 ---
 # Rewritten guides

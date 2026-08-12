@@ -44,6 +44,7 @@ Two of them do not write the project name: `/ji` and `/lv` only read and offer.
 | Skill | What it does |
 | --- | --- |
 | `/always` | proves that the guides arriving with every message and the guides wearing the `always` tag are the same set |
+| `/br` | stops the work and walks the four steps of [breakdown](breakdown.md): declare it, state the objective, take stock, try again |
 | `/dream` | a reflective pass over the memory files, gathering what was learned into something a later session can read quickly |
 
 ## Skills against shorthand

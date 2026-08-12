@@ -1,7 +1,7 @@
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
 import type { Guide, Labels, Filtered_Guide } from '../types/File';
 import type { Sort } from './Filters';
-import { kind_matches, tags_match } from './Filters';
+import { kind_matches, tags_match, words_match } from './Filters';
 import { Indexes } from '../database/Indexes';
 import { T_Bundle, in_order, key_of } from '../types/File';
 import { link_agrees, parts_of_link } from '../utilities/Following_Links';
@@ -337,8 +337,7 @@ export class Hierarchy {
 		if (project !== '' && row.guide.bundle !== project) { return false; }
 		if (!kind_matches(kind, row.guide.kind, row.guide.labeled)) { return false; }
 		if (!tags_match(picking, tags, row.tag_names)) { return false; }
-		const looking_for = words.trim().toLowerCase();
-		if (looking_for !== '' && !`${row.guide.title} ${row.guide.description}`.toLowerCase().includes(looking_for)) { return false; }
+		if (!words_match(words, row.guide.name, row.guide.title, row.guide.description)) { return false; }
 		return true;
 	}
 

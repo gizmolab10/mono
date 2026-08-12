@@ -1,4 +1,4 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, has_labels, kind_from_where, label_block, labels_for, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, with_labels_added, with_labels_replaced } from '../utilities/Labels';
 import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/File';
@@ -143,5 +143,54 @@ describe('putting the labels back into a file', () => {
 	it('changes nothing but the block when the labels are the same', () => {
 		const same = with_labels_replaced(file, { kind: 'rule', title: 'Old', description: 'Was.', date: '2026-01-01', labeled: true }, ['prose']);
 		expect(same).toBe(file);
+	});
+});
+
+// A guide made from nothing: labeled before it holds a word, so it never shows as unlabeled
+// and never needs a person to go and label it.
+
+describe('a brand new guide', () => {
+	it('opens with a full block and its own heading', () => {
+		const made = blank_guide('unnamed', TODAY, T_Kind.refer, ['active']);
+		expect(made.startsWith('---\n')).toBe(true);
+		expect(made).toContain(`kind: ${T_Kind.refer}`);
+		expect(made).toContain('tags: [active]');
+		expect(made).toContain(`date: ${TODAY}`);
+		expect(made.endsWith('---\n# unnamed\n')).toBe(true);   // no blank line between them
+	});
+
+	it('wears whatever kind and tags it is given', () => {
+		const made = blank_guide('unnamed', TODAY, T_Kind.howto, ['prose', 'team']);
+		expect(made).toContain(`kind: ${T_Kind.howto}`);
+		expect(made).toContain('tags: [prose, team]');
+	});
+
+	it('is read back as labeled, with the name as its title', () => {
+		const made = blank_guide('a second try', TODAY, T_Kind.refer, ['active']);
+		expect(has_labels(made)).toBe(true);
+		expect(made).toContain('title: "a second try"');
+	});
+
+	it('marks a quote mark in the name as standing for itself', () => {
+		expect(blank_guide('the "one"', TODAY, T_Kind.refer, ['active'])).toContain('title: "the \\"one\\""');
+	});
+});
+
+// A name nobody else in the folder is using. The first is plain; after that a number.
+
+describe('finding a free name', () => {
+	it('takes the plain name when the folder has none', () => {
+		expect(free_name('unnamed', [])).toBe('unnamed');
+		expect(free_name('unnamed', ['index', 'murk'])).toBe('unnamed');
+	});
+
+	it('counts up until nothing answers to it', () => {
+		expect(free_name('unnamed', ['unnamed'])).toBe('unnamed 2');
+		expect(free_name('unnamed', ['unnamed', 'unnamed 2'])).toBe('unnamed 3');
+		expect(free_name('unnamed', ['unnamed', 'unnamed 3'])).toBe('unnamed 2');
+	});
+
+	it('ignores how a name is capitalized, the way a filesystem does', () => {
+		expect(free_name('unnamed', ['Unnamed'])).toBe('unnamed 2');
 	});
 });

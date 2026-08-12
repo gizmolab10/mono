@@ -2,7 +2,7 @@
 kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
-tags: [proposal]
+tags: [active, proposal]
 date: 2026-08-11
 ---
 # Handoff
@@ -11,31 +11,29 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## The tags row says how it is picking
+## A guide for declaring a breakdown
 
 ### Success
 
-1. The tags row's `all` button becomes a segmented control reading **any of / all of / clear / invert**.
-2. With `any of` picked, a file shows if it wears any picked tag — what happens today. With `all of`, it shows only if it wears every one of them.
-3. `clear` drops every picked tag. `invert` picks exactly the tags that were not picked, and drops the ones that were. Those two segments only light during a click or hover.
-4. The editor's own tags row gets the same segmented control with only `clear` and `invert`.
-5. Which way the picking runs is remembered between visits, and a remembered value that is neither of the two is let go at launch. The editor remembers nothing, since both of its segments are presses.
-6. The type check and the tests are clean.
+1. A new shared guide, `notes/guides/collaborate/breakdown.md`, kind `howto`, labelled and linked from the collaborate index.
+2. It gives four steps in order: declare the breakdown, state the objective, take stock, try again. Each step says what to write down and who writes it.
+3. It names what a breakdown is, so it can be called before an hour is lost: the same fix tried twice, an explanation that the evidence contradicts, or Jonathan saying the work has gone wrong.
+4. The `keywords` file sends "breakdown", "off the rails" and "start over" to it, and `gates` names it for the debug and implement task kinds.
+5. The [assessment](../../notes/guides/assessment%20of%20our%20guides.md) has its highest exposure struck, and its thin/partial lists take the new file's real state.
 
 ### The shape of it
 
-The narrowing already asks whether a row wears any picked tag, in one line:
+Four steps, each one thing to write:
 
-    if (tags.length > 0 && !tags.some((tag) => row.tag_names.includes(tag))) { return false; }
+1. **Declare it.** Say the word, stop the work, write down what was being attempted. Either of us can call it; neither has to justify calling it.
+2. **State the objective.** What was supposed to be true when this was done — in Jonathan's words, not mine. Every breakdown so far began with me solving something adjacent.
+3. **Take stock.** What is known, what is guessed, what was measured. The learn log already holds four entries whose common shape is a guess reported as a fact, so this step's own rule is: anything unmeasured goes in the guessed column.
+4. **Try again.** One approach, named, with what would prove it wrong stated before it starts.
 
-`all of` is the same line with `some` becoming `every`. Which one runs comes from a new remembered setting, read the same way the kind and the project are.
+**The order.** Write the guide first, then wire the keywords and gates to it, then correct the assessment. The wiring is what makes it arrive when it is needed rather than when someone remembers it.
 
-`clear` and `invert` are not states — they are two presses that change what is picked and leave the control reading whatever it read before. So the control holds two of one kind and two of another, which is worth drawing plainly: the two states sit together at the left, the two presses at the right.
+**What will not get done.** The other seven structural gaps the assessment names. This is the one it ranks highest, and the one with four incidents behind it.
 
-**The order.** The setting and the narrowing first, since they are the whole behaviour; then the control in the list; then the same control, minus two words, in the editor.
+**Decision to make before starting.** Whether the four steps live in a guide that gets read, or in a skill that gets run. A guide is read when a gate fires; a skill is a word Jonathan types. The learn log says the failures are noticed by Jonathan first, which argues for the skill — but a skill still needs the four steps written somewhere, so the guide comes either way.
 
-**What will not get done.** The kinds row and the projects row keep their single `all`. Only one kind and one project can be picked, so there is nothing for any-of and all-of to say there.
-
-**Decision to make before starting.** With `all of` picked and a tag added that no file wears alongside the others, the list goes empty. The picking rows already gray out what would leave nothing — that guard asks its question with its own filter left out, so it will need to ask with the any-of/all-of setting applied, or a tag that empties the list will still look available.
-
-**The risk.** The remembered setting is the third one that can outlive its own list of choices. The other two are let go at launch by a check written twice; a third copy of it is the moment to say it once.
+**The risk.** A guide about recovering from failure is written while nothing is failing, so it will read as tidy. The four incidents in the learn log are the only real material; the guide should quote them rather than describe them in the abstract.

@@ -53,6 +53,41 @@ export function kind_from_where(path: string): T_Kind {
 	return KIND_UNTIL_TOLD;
 }
 
+// --- a guide made from nothing ----------------------------------------------
+
+/** The name a new guide is given until it is given a real one. */
+export const NAME_UNTIL_TOLD = 'unnamed';
+
+/** The tag a new guide wears: it is the one being worked on. */
+export const TAG_WHEN_NEW = 'active';
+
+/**
+ * The whole of a brand new guide: a full block of labels and a heading holding its name.
+ * It is labeled from the moment it exists, so it never shows as unlabeled and nobody has to
+ * go back and label it. Its brief is left empty, for whoever writes the first sentence.
+ *
+ * The kind and the tags come from outside, since what a new guide should wear is decided by
+ * what the list is filtered by — a guide labeled otherwise would be made and then hidden.
+ */
+export function blank_guide(name: string, date: string, kind: string, tags: string[]): string {
+	const labels: Labels = { kind, title: name, description: '', date, labeled: true };
+	return `${label_block(labels, tags)}\n# ${name}\n`;
+}
+
+/**
+ * A name no file in the folder answers to. The plain one when it is free, then the same name
+ * with a number after it, counting up from two. Capitals are ignored, since two names that
+ * differ only in case are one file on this machine.
+ */
+export function free_name(wanted: string, taken: string[]): string {
+	const used = new Set(taken.map((one) => one.toLowerCase()));
+	if (!used.has(wanted.toLowerCase())) { return wanted; }
+	for (let next = 2; ; next += 1) {
+		const tried = `${wanted} ${next}`;
+		if (!used.has(tried.toLowerCase())) { return tried; }
+	}
+}
+
 /** Today, written the way every guide writes its date. */
 export function today(): string {
 	const now = new Date();

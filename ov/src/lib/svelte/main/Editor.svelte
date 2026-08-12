@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { w_file_place, w_search_at, w_search_for } from '../../ts/managers/Operations';
+	import { w_file_place, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
-	import { T_Bundle, type Guide } from '../../ts/types/File';
+	import { T_Bundle, key_of, type Guide } from '../../ts/types/File';
 	import File_Content from '../content/File_Content.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_words } from '../../ts/managers/Filters';
@@ -149,6 +149,16 @@
 		window.location.href = to;
 	}
 
+	/**
+	 * Make a new guide in the same folder as this one and open it. It arrives named "unnamed",
+	 * labeled as something to refer to and marked as the one being worked on, so the very next
+	 * thing to do is give it a name — which the field at the top of the row is already for.
+	 */
+	function handle_create() {
+		debug.log(`Editing "${name}": making a new guide beside it.`);
+		guides.create_beside(guide).then((made) => { if (made) { open_view(key_of(made)); } });
+	}
+
 	/** Throw this guide away. Only if the file itself goes does the view go back to the list. */
 	function handle_delete() {
 		asking_to_delete = false;
@@ -225,9 +235,13 @@
 					</svg>
 				</button>
 			{:else}
-				<!-- The two stand together at the end of the row: hand this guide on, or throw it
-					away. Handing it on comes first, since it is the one taken more often. -->
+				<!-- The four stand together at the end of the row: make one beside this guide, open
+					it in Obsidian, hand it on, or throw it away. The making comes first and the
+					throwing away last, so the one that cannot be undone stands furthest from the
+					one taken most often. -->
 				<span class='row-pair'>
+					<button class='row-button' aria-label='new' use:tip={'make a new guide in this folder'}
+						onclick={(e) => { e.stopPropagation(); handle_create(); }}>+</button>
 					<button class='row-button lifted' aria-label='obsidian' use:tip={'open this guide in Obsidian'}
 						onclick={(e) => { e.stopPropagation(); handle_obsidian(); }}>o</button>
 					<button class='row-button' aria-label='send' use:tip={'send this guide in a message'}
@@ -330,7 +344,7 @@
 
 	/* A round button at the end of the row: white inside a hairline edge, filling under the
 	   cursor — the same look every other small button in the app wears. */
-	/* The three at the end of the row stand one gap apart. */
+	/* The four at the end of the row stand one gap apart. */
 	.row-pair {
 		gap         : var(--gap);
 		flex        : 0 0 auto;

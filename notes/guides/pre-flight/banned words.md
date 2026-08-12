@@ -2,7 +2,7 @@
 kind: specify
 title: "Banned Words (mono)"
 description: "The words that cause friction in any project, each with the word to use instead."
-tags: [always, prose, session, team]
+tags: [prose, session, team]
 date: 2026-07-27
 ---
 
@@ -15,7 +15,7 @@ di's own vocabulary (smart objects, unifaces, placement, measurements) stays in 
 The **same** column marks a row whose two sides are the same kind of word, so an ending can carry across: mark it `y` and "copies" becomes "moves", "copied" becomes "moved". Leave it blank when the pair is a change of wording rather than a like-for-like word — "ship" to "done" is not a verb swapped for a verb, and carrying the ending over would invent "doned". A blank row swaps to the plain replacement, as it always has.
 
 | Use                        | hooked | same | Never                                  | Meaning            |
-| -------------------------- | :------: | :----: | -------------------------------------- | ------------------ |
+| -------------------------- | :----: | :--: | -------------------------------------- | ------------------ |
 | done, complete             | y      |      | ship                                   |                    |
 | write code                 | y      |      | ship                                   |                    |
 | add, insert, write, update | y      |      | land                                   | add a thing        |

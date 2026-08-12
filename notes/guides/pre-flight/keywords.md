@@ -47,6 +47,11 @@ Words in input that trigger reading a guide before acting.
 | bug           | test/debugging.md                                          |
 | fix           | test/debugging.md                                          |
 |               |                                                            |
+| breakdown     | collaborate/breakdown.md                                   |
+| off the rails | collaborate/breakdown.md                                   |
+| start over    | collaborate/breakdown.md                                   |
+| going in circles | collaborate/breakdown.md                                |
+|               |                                                            |
 | cd            | pre-flight/always.md                                       |
 | go            | pre-flight/always.md                                       |
 | create        | pre-flight/always.md                                       |

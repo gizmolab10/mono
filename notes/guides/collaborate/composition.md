@@ -2,7 +2,7 @@
 kind: design
 title: "Component Composition (ws)"
 description: "Props down, events up, slots for flexible content, compound components for the complicated parts."
-tags: [methods, platform, proposal, style]
+tags: [platform, proposal]
 date: 2026-01-12
 ---
 

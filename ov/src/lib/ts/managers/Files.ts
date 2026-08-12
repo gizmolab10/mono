@@ -1,10 +1,10 @@
-import { T_Bundle, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/File';
-import { kind_matches, tags_match, T_Picking, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/File';
+import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, place_of_file, read_guide, renamed_path, save_guide } from '../utilities/Saving';
-import { has_labels } from '../utilities/Labels';
+import { blank_guide, free_name, has_labels, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
 import { debug } from '../common/Debug';
@@ -355,6 +355,72 @@ class Guides {
 	}
 
 	/**
+	 * A new guide in the same folder as one already open. It arrives named "unnamed", labeled
+	 * as something to refer to and marked as the one being worked on — so it never shows up
+	 * unlabeled and nobody has to go back and label it.
+	 *
+	 * Everything is done here that a restart would otherwise be needed for: the file is written,
+	 * hung under the same folder, given its tag, and named in the index beside it. Hands back
+	 * the new guide so the view can open it, or nothing when the file was refused.
+	 */
+	async create_beside(guide: Guide): Promise<Guide | null> {
+		const folder = this.hierarchy.folder_holding(guide);
+		if (!folder) { show_status(`"${guide.name}" hangs under no folder, so nothing can be made beside it`); return null; }
+		const folder_path = guide.path.split('/').slice(0, -1).join('/');
+		const beside = this.files.filter((one) => one.bundle === guide.bundle
+			&& one.path.split('/').slice(0, -1).join('/') === folder_path);
+		const name = free_name(NAME_UNTIL_TOLD, beside.map((one) => one.name));
+
+		// Labeled to match whatever the list is filtered by, so the new guide is one of the files
+		// on screen and can be opened straight away. A kind nobody picked, or the one that means
+		// "no kind at all", leaves it at refer; tags nobody picked leave it wearing the one that
+		// says it is being worked on. Under any-but the picked tags are the ones to keep off it,
+		// so only that one tag goes on.
+		const wanted_kind = get(w_kind);
+		const kind = wanted_kind === '' || wanted_kind === UNLABELED ? KIND_UNTIL_TOLD : wanted_kind as T_Kind;
+		const picked = get(w_tag_picking) === T_Picking.but ? [] : get(w_tags);
+		const tags = picked.length === 0 ? [TAG_WHEN_NEW] : picked;
+
+		const path = renamed_path(guide.path, name);
+		const where = file_path_of(guide.bundle, path);
+		const text = blank_guide(name, today(), kind, tags);
+		// Nothing on disk is what the app expects to find, which is how the server is told to
+		// make the file rather than change one.
+		const wrote = await save_guide(where, text, '');
+		if (!wrote.ok) {
+			show_status(`"${name}" was not made — ${wrote.why}`);
+			debug.log(`Making "${name}" at ${where} was refused — ${wrote.why}. Nothing changed.`);
+			return null;
+		}
+
+		const address = address_of_file(renamed_path(path_of_address(guide.address), name));
+		const made = this.hierarchy.add_guide(guide.bundle, path, name, address, {
+			kind, title: name, description: '', date: today(), labeled: true,
+		}, guide.is_design);
+		this.hierarchy.add_relationship(folder.id, made.id);
+		for (const tag of tags) { this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, made.id); }
+		// The folder link and the tags are only arrays until this is called; the walk that fills
+		// the list reads the lookups, so without it the new guide is hung nowhere the list can see.
+		this.hierarchy.reindex();
+		this.renarrow();
+
+		// The index beside it names every file in the folder, so it names this one too.
+		const index_at = `${where.split('/').slice(0, -1).join('/')}/index.md`;
+		const root = this.repo_root;
+		const index_text = root === '' ? null : await this.read_file(`${root}${index_at}`);
+		if (index_text !== null) {
+			const added = with_line_added(index_text, line_for(`${name}.md`));
+			const said = await save_guide(index_at, added.text, index_text);
+			if (said.ok) { debug.log(`Making: ${index_at} now names "${name}".`); }
+			else { debug.log(`Making: ${index_at} was NOT written — ${said.why}. It does not name "${name}".`); }
+		}
+
+		show_status(`"${name}" was made.`);
+		debug.log(`Made "${name}": ${where} exists, is labeled kind "${kind}" with tag(s) [${tags.join(', ')}] — taken from the filters — and sits at "${key_of(made)}" in the list.`);
+		return made;
+	}
+
+	/**
 	 * Look through every guide's own words for links that lead nowhere. Nothing is changed —
 	 * this only says what it found, the first few on screen and all of them in the log. A link
 	 * to the web is left alone, since nothing here can judge it.
@@ -575,7 +641,7 @@ class Guides {
 		const kind     = get(w_kind);
 		const tags     = get(w_tags);
 		const picking  = get(w_tag_picking);
-		const words    = get(w_words).trim().toLowerCase();
+		const words    = get(w_words);
 		// The tags row is the one that cannot set its own filter fully aside. With every picked
 		// tag required, a tag worth offering is one worn by a file that already wears them all —
 		// so the picked tags stay in the question, and a tag that would empty the list grays out.
@@ -584,7 +650,7 @@ class Guides {
 			if (without !== 'project' && project !== '' && guide.bundle !== project) { return false; }
 			if (without !== 'kind' && !kind_matches(kind, guide.kind, guide.labeled)) { return false; }
 			if (!set_aside && !tags_match(picking, tags, this.hierarchy.tag_names_of(guide.id))) { return false; }
-			if (words !== '' && !`${guide.title} ${guide.description}`.toLowerCase().includes(words)) { return false; }
+			if (!words_match(words, guide.name, guide.title, guide.description)) { return false; }
 			return true;
 		});
 	}

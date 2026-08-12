@@ -2,7 +2,7 @@
 kind: design
 title: "How many md files? 531"
 description: "What is actually in the repo, in markdown"
-tags: [construct, plans, proposal]
+tags: [active, plans, proposal]
 date: 2026-08-08
 ---
 # How many md files? 531
@@ -69,7 +69,7 @@ These are said by every project, so they belong at the top, not in overview:
 | collection | one project's whole set: mo, ws, di, ji, ov. Never "bundle", never "repo" |
 | labels | the block at the top of a guide — five things, always in this order |
 | kind | one of the six: specify, howto, arch, explain, refer, design |
-| tag | one of the thirty on the closed list. A file wears any number |
+| tag | one of the twenty-nine on the closed list. A file wears any number |
 | tag area | one of the seven groupings the tags are read in. Only a way of reading them |
 | brief | the one line saying what a guide is for. Never "description" |
 | title | what a guide calls itself. Falls back to the file's own name |

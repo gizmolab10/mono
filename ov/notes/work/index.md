@@ -4,8 +4,16 @@ Ongoing work for overview.
 
 The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.md`.
 
+- [Synopsis Of Our Guides](./assessment%20of%20our%20guides.md)
 - [Handoff](handoff.md) — where to pick up, and the context the code doesn't say.
 - [Code debt](code%20debt.md) — everything still owed.
+- [Unnamed](action%20type.md)
+- [Organize](./organize.md)
+- [Repair staleness of files](./repair%20staleness%20of%20files.md)
+- [Stale guides](./stale%20guides.md)
+- [Unnamed 2](./unnamed%202.md)
+- [Unnamed](./unnamed.md)
+- [Unnamed](./unnamed.md)
 - [Work journal](work%20journal.md) — what's been finished, newest first.
 - [Tag drift](tag%20drift.md) — guides whose tags stopped describing them when the tags were renamed.
 - [Working features](working%20features.md) — what the app can do, newest first.

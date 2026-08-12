@@ -59,6 +59,10 @@
 	let shown_projects = $derived(test === 'a' ? projects
 		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_project === p));
 
+	// How many words the kinds row actually offers — the kinds themselves, and the one that asks
+	// for the files carrying no labels, which is only there while there are some.
+	let kinds_offered = $derived(shown_kinds.length + (bare > 0 || $w_kind === UNLABELED ? 1 : 0));
+
 	function choose_project(project: string) {
 		w_project.set($w_project === project ? '' : project);
 	}
@@ -136,14 +140,17 @@
 </script>
 
 <!-- Clearing a row is something done, never something picked, so it stands apart from the
-     control as a pill of its own — the same shape the tag areas beside it wear. With the row
-     already showing everything there is nothing to clear, so it grays and answers nothing. -->
-{#snippet clearer(says: string, dead: boolean, press: () => void)}
-	<button class='clear' class:dead onclick={() => { if (!dead) { press(); } }}
-		use:tip={dead ? false : says}>clear</button>
+     control as a pill of its own — the same shape the tag areas beside it wear. It is drawn only
+     where it would do something: one of the words is picked, and there is more than one to pick
+     from. With a single choice on offer there is nowhere to go back to. -->
+{#snippet clearer(says: string, press: () => void)}
+	<button class='clear' onclick={press} use:tip={says}>clear</button>
 {/snippet}
 
+<!-- With the other filters leaving nothing, a row has no words to offer. The control itself is
+     left out then, since an empty one still draws its edge and reads as a sliver. -->
 {#snippet projects_picker()}
+	{#if shown_projects.length > 0}
 	<div class='kinds' use:tip={'show just one project\'s guides'}>
 		{#each shown_projects as project}
 			{@const held = counts.get(project) ?? 0}
@@ -152,6 +159,7 @@
 				onclick={() => { if (held > 0) { choose_project(project); } }}>{project}</button>
 		{/each}
 	</div>
+	{/if}
 {/snippet}
 
 <div class='filters'>
@@ -191,7 +199,9 @@
 				onclick={() => fold('projects', show_projects)}>
 				{#snippet holds()}
 					<div class='paired-rows'>
-						{@render clearer('show every project\'s guides', $w_project === '', () => w_project.set(''))}
+						{#if $w_project !== '' && shown_projects.length > 1}
+							{@render clearer('show every project\'s guides', () => w_project.set(''))}
+						{/if}
 						{@render projects_picker()}
 					</div>
 				{/snippet}
@@ -204,7 +214,10 @@
 				onclick={() => fold('kinds', show_kinds)}>
 				{#snippet holds()}
 					<div class='paired-rows'>
-					{@render clearer('show every kind of guide', $w_kind === '', () => w_kind.set(''))}
+					{#if $w_kind !== '' && kinds_offered > 1}
+						{@render clearer('show every kind of guide', () => w_kind.set(''))}
+					{/if}
+					{#if kinds_offered > 0}
 					<div class='kinds' use:tip={'show particular kinds of guide'}>
 						<!-- The files carrying no labels at all — how they are found, so they can be
 						     opened and given some. With every file already labeled there is nothing
@@ -221,6 +234,7 @@
 								onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
 						{/each}
 					</div>
+					{/if}
 					</div>
 				{/snippet}
 			</Section>
@@ -241,10 +255,12 @@
 					     is what carries the slide, and areas with nothing left to show are left out
 					     here rather than inside — an empty wrapper would still take a gap. -->
 					<div class='tags' use:smooth_height role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { toggle_all_areas(showing_areas.map((one) => one.name)); } }}>
-						<!-- One control holding two of each kind: the two on the left are states, saying
-						     how the picked tags narrow; the two on the right are presses that change
-						     what is picked and leave the state alone, so neither ever reads as
-						     picked — they answer under the cursor only. -->
+						<!-- One control holding two kinds: the three on the left are states, saying how
+						     the picked tags narrow; the ones on the right are presses that change what
+						     is picked and leave the state alone, so neither ever reads as picked —
+						     they answer under the cursor only.
+						     With no tag picked there is nothing to clear, so that segment is not
+						     there at all; it arrives with the first tag chosen. -->
 						<span class='picking'>
 							<button class='segment' class:current={$w_tag_picking === T_Picking.any}
 								onclick={() => pick_way(T_Picking.any)}
@@ -252,9 +268,13 @@
 							<button class='segment' class:current={$w_tag_picking === T_Picking.all}
 								onclick={() => pick_way(T_Picking.all)}
 								use:tip={'a file shows only if it wears every picked tag'}>all of</button>
-							<button class='segment press' class:dead={$w_tags.length === 0}
-								onclick={() => { if ($w_tags.length > 0) { clear_tags(); } }}
-								use:tip={$w_tags.length === 0 ? false : 'stop filtering by tag'}>clear</button>
+							<button class='segment' class:current={$w_tag_picking === T_Picking.but}
+								onclick={() => pick_way(T_Picking.but)}
+								use:tip={'a file shows only if it wears none of the picked tags'}>any but</button>
+							{#if $w_tags.length > 0}
+								<button class='segment press' onclick={clear_tags}
+									use:tip={'stop filtering by tag'}>clear</button>
+							{/if}
 							<button class='segment press' onclick={invert_tags}
 								use:tip={'pick exactly the tags that are not picked'}>invert</button>
 						</span>
@@ -365,19 +385,13 @@
 		flex-shrink   : 0;
 	}
 
-	.clear:not(.dead):hover {
+	.clear:hover {
 		background : var(--hover);
 	}
 
-	.clear:not(.dead):active {
+	.clear:active {
 		color      : var(--text-on-accent);
 		background : var(--accent);
-	}
-
-	/* Nothing to clear: grayed and dead to the touch, the same as a word with nothing behind it. */
-	.clear.dead {
-		color  : var(--gray);
-		cursor : default;
 	}
 
 	/* A collection with no guides yet: grayed and dead to the touch. */
@@ -436,19 +450,13 @@
 
 	/* A press is never a state, so it takes the fill only while the cursor is on it and a
 	   stronger one while it is held. */
-	.picking .segment.press:not(.dead):hover {
+	.picking .segment.press:hover {
 		background : var(--hover);
 	}
 
-	.picking .segment.press:not(.dead):active {
+	.picking .segment.press:active {
 		color      : var(--text-on-accent);
 		background : var(--accent);
-	}
-
-	/* Nothing to clear: grayed and dead to the touch, the same as a word with nothing behind it. */
-	.picking .segment.dead {
-		color  : var(--gray);
-		cursor : default;
 	}
 
 	.search {

@@ -5,6 +5,7 @@ These guides are intended to help co contribute with excellence to the collabora
 ## At session start, read these:
 
 - [Shorthand](./shorthand.md) — parse commands and abbreviations
+- [Lexicon](./lexicon.md) — the words every project says
 - [Gates](./gates.md) — check for STOP/SEARCH/LIST/WAIT
 
 ## Every response, read these

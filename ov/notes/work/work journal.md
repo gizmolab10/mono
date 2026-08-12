@@ -9,6 +9,20 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-11 — the tags row says how it is picking, and the guides were counted again
+
+The tags row's `all` button became a control of four: **any of** and **all of** are states, remembered between visits; **clear** and **invert** are presses that change what is picked and never read as picked. The editor's own tags row got the two presses alone, since a file wears the tags it wears. All three rows' clear grays and answers nothing when there is nothing to clear.
+
+**The decision the proposal left open.** With every picked tag required, the tags row cannot set its own filter aside: a tag worth offering is one worn by a file that already wears them all. So the picked tags stay in the question there, and a tag that would empty the list grays out.
+
+**A defect I made and the log named.** The row's list of tags is worked out from the things it names, and it named the project, the kind and the words. My change made it read the picked tags too, so it went stale the moment they moved — pills vanished and stayed vanished. It names them now.
+
+**The kinds are down to six and two were renamed.** `step` became `howto`, `wire` became `arch`, across eighty-three guide files, the app's own list, and the three notes that spell the six out.
+
+**The assessment of mono's guides was a month stale.** It named eight folders including one that is gone, and a dozen files by names they no longer have. Every one of the 55 files is now listed under its real folder with its own brief, and every file name in it is a working link — 57 of them, each checked against disk. The thin and partial lists were re-checked file by file: one of the two "cut at a STOP marker" claims was wrong.
+
+**Eighty log lines a session went.** The tag-area timing, the remembered settings, the three folding lines and the row count — each had settled its own question and none had been asked again. What stayed reports a decision whose values could still surprise, or a fault.
+
 ## 2026-08-11 — work notes joined the files, and every row learned its line number
 
 A work note used to be a country the app could see into but never enter: links pointed at them and failed, and the dispatcher refused to hand one over. Now each project's work folder stands beside its guides, holding the notes at its top — and only those, since anything deeper would triple the list. They read, write, rename and go like any guide.

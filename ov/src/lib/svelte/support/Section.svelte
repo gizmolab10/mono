@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { T_Edge, USUAL_GAP, folded_height, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
+	import Action from '../../ts/types/Action';
 	import Separator from './Separator.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -13,23 +14,25 @@
 	let {
 		edge               = T_Edge.thin,
 		gap                = USUAL_GAP,
-		title              = null,
-		hovered            = false,
-		folded             = false,
 		onclick            = undefined,
 		onhover            = undefined,
+		hovered            = false,
+		folded             = false,
 		holds_subsections  = false,
+		actions            = null,
+		title              = null,
 		holds,
 	}: {
-		holds_subsections? : boolean;       // its content is itself sections, which hold the gap at its own boundaries
-		edge?              : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
-		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
+		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
+		onclick?           : (() => void) | undefined;            // pressing the word, anywhere along the line
+		actiona?           : Action[] | null;
 		title?             : string | null;           // a word sitting on that line
+		holds              : Snippet;                 // what it shows
+		holds_subsections? : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
 		hovered?           : boolean;                 // force the word's edge on, because a surrounding area says so
 		folded?            : boolean;                 // its content is put away, so it holds no gap
-		onclick?           : (() => void) | undefined;            // pressing the word, anywhere along the line
-		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
-		holds              : Snippet;                 // what it shows
+		edge?              : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
+		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
 	} = $props();
 
 	// Said once here, so the line and the gap can never disagree about what this section is.

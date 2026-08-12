@@ -12,5 +12,4 @@ I am trying here to convey a way of being that persists from chat to chat. Not s
 - [Setup](./setup/)
 - [Test](./test/)
 - [Tools](./tools/)
-- [Synopsis Of Our Guides](./assessment%20of%20our%20guides.md)
 

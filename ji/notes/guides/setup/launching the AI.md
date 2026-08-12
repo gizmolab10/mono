@@ -2,7 +2,7 @@
 kind: howto
 title: "Launching the AI"
 description: "Everything between a cold mac and ji answering a question: Docker, AnythingLLM, the model, the key-holding server, the tunnel, and the password."
-tags: [setup, tools, program]
+tags: [platform, program, setup, tools]
 date: 2026-08-07
 ---
 

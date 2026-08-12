@@ -63,11 +63,16 @@ export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: numb
 	// title. What that depth means on screen is decided where the page is drawn.
 	let under = 1;
 	for (const token of tokens) {
-		// One exception to the outermost-only rule: every list item is told the one line it
-		// begins on, since pressing a thing-to-be-done's box writes that single line back.
+		// One exception to the outermost-only rule: every list item carries the one line it begins
+		// on, three times over. Pressing a thing-to-be-done's box writes that single line back;
+		// the two that put words back name the same line, so pressing the item itself opens that
+		// one line rather than the whole list around it — whatever it wraps to on screen, and
+		// whatever list it holds, since each item inside that carries its own.
 		if (token.type === 'list_item_open' && token.map) {
 			token.attrSet('data-line', String(token.map[0] + skipped));
 			token.attrSet('data-number', String(token.map[0] + 1));
+			token.attrSet('data-from', String(token.map[0] + skipped));
+			token.attrSet('data-to',   String(token.map[0] + skipped + 1));
 		}
 		// Only the outermost pieces, and only the ones that open something or stand alone —
 		// a closing tag has no words of its own to carry the numbers.
@@ -115,8 +120,12 @@ export function name_the_headings(html: string): string {
  */
 export function boxes_for_tasks(html: string): string {
 	// The shape and the slot it is given both come from the one place, so they cannot disagree.
+	// Both shapes are drawn into every box; the check shows only on a finished one, which is what
+	// the page's own styling decides.
 	const side = CHECKBOX.size;
-	const drawn = `<svg overflow='visible' width='${side}' height='${side}' viewBox='0 0 ${side} ${side}'><path d='${svg_paths.checkbox()}'/></svg>`;
+	const drawn = `<svg overflow='visible' width='${side}' height='${side}' viewBox='0 0 ${side} ${side}'>`
+		+ `<path class='square' d='${svg_paths.checkbox()}'/>`
+		+ `<path class='check' d='${svg_paths.checkmark()}'/></svg>`;
 	return html.replace(/<li([^>]*)>(\s*(?:<p[^>]*>\s*)?)\[([ xX])\]\s/g,
 		(_whole, already: string, between: string, inside: string) => {
 			const done = inside === ' ' ? '' : ' done';

@@ -15,15 +15,20 @@
 REPO="/Users/sand/GitHub/mono"
 PRE_FLIGHT="$REPO/notes/guides/pre-flight"
 ALWAYS_FILE="$PRE_FLIGHT/always.md"
-BANNED_SHARED="$PRE_FLIGHT/banned words.md"
+LEXICON="$PRE_FLIGHT/lexicon.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
 BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
 COUNT_FILE="$REPO/.claude/hooks/.turn-count"
 
 # What goes round in part B, in order. A project with no list of its own simply
 # contributes nothing and the rotation is one shorter that day.
+#
+# The shared lexicon holds the slot the shared banned-word table used to. Both say
+# the same thing about the same words — one as a wall, one as a word to reach for —
+# and only the second is any use while a sentence is being written. The table is
+# still read by the two scripts that check a finished reply.
 IN_TURN=("$PRE_FLIGHT/response.md" "$PRE_FLIGHT/agency.md")
-[ -f "$BANNED_SHARED" ] && IN_TURN+=("$BANNED_SHARED")
+[ -f "$LEXICON" ] && IN_TURN+=("$LEXICON")
 [ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && IN_TURN+=("$BANNED_PROJECT")
 
 # Every file named here arrives with every message or in its turn, so every one of
