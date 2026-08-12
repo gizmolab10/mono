@@ -6,6 +6,7 @@
 	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import { inverted, toggle_all_areas } from '../../ts/managers/Filters';
+	import Action, { T_Position } from '../../ts/types/Action';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Section from '../support/Section.svelte';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
@@ -62,6 +63,36 @@
 	let filter_rows_word = $derived($w_show_filters ? '✂ filters'
 		: `✂ filters ➜ ${[form_kind, ...[...form_tags].sort(in_order)]
 			.filter((one) => one !== '').join(', ') || 'none'}`);
+
+	// The three words that fold these sections away are ours, not the lines'. Each is built as a
+	// button below, out of sight; the browser makes it one drawing after we ask, so each of these
+	// holds nothing on the first drawing and the made button on the next — which is itself a
+	// change, so the line it stands on is told at once.
+	let filters_button = $state<HTMLElement | null>(null);
+	let kinds_button   = $state<HTMLElement | null>(null);
+	let tags_button    = $state<HTMLElement | null>(null);
+
+	const filters_action = $derived(Object.assign(new Action(), { element: filters_button, position: T_Position.left }));
+	const kinds_action   = $derived(Object.assign(new Action(), { element: kinds_button,   position: T_Position.left }));
+	const tags_action    = $derived(Object.assign(new Action(), { element: tags_button,    position: T_Position.left }));
+
+	/** Put the whole form away, or bring it back. */
+	function toggle_filters() {
+		w_show_filters.set(!$w_show_filters);
+		debug.log(`Editing "${name}": the filter form is now ${!$w_show_filters ? 'hidden' : 'shown'}.`);
+	}
+
+	/** Put the kinds row away, or bring it back. */
+	function toggle_kinds() {
+		show_form_kinds = !show_form_kinds;
+		debug.log(`Editing "${name}": the kinds row is now ${show_form_kinds ? 'shown' : 'folded away'}.`);
+	}
+
+	/** Put the tag areas away, or bring them back. */
+	function toggle_tags() {
+		show_form_tags = !show_form_tags;
+		debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'shown' : 'folded away'}.`);
+	}
 
 	// Whenever another guide comes on screen, the form starts from what that guide says.
 	$effect(() => {
@@ -137,6 +168,18 @@
 <!-- Folded, the section's own empty area joins the way back to the list: it is bare space above
      the file's words, the same as the two top rows, and it lights with them. Open, the rows
      inside answer for themselves and this stands aside. -->
+<!-- The three words that fold these sections away, built here rather than by the lines they stand
+     on. Each is written out of sight, since the moment the browser has made it, it is taken and
+     put on its line instead. -->
+<div class='out_of_sight'>
+	<button type='button' class='fold-word' class:forced={way_out_lit}
+		bind:this={filters_button} onclick={toggle_filters}>{filter_rows_word}</button>
+	<button type='button' class='fold-word' class:forced={way_out_lit}
+		bind:this={kinds_button} onclick={toggle_kinds}>{form_kinds_word}</button>
+	<button type='button' class='fold-word' class:forced={tags_lit || way_out_lit}
+		bind:this={tags_button} onclick={toggle_tags}>{form_tags_word}</button>
+</div>
+
 <div class='filter-block' class:lit={way_out_lit && !$w_show_filters}
 	role='button' tabindex='-1' onkeyup={() => {}}
 	onmousemove={(e) => { if (!$w_show_filters) { way_out_lit = over_empty(e); } }}
@@ -149,10 +192,8 @@
 	holds_subsections
 	gap={k.gap.normal}
 	edge={T_Edge.thick}
-	hovered={way_out_lit}
-	title={filter_rows_word}
-	folded={!$w_show_filters}
-	onclick={() => { w_show_filters.set(!$w_show_filters); debug.log(`Editing "${name}": the filter form is now ${!$w_show_filters ? 'hidden' : 'shown'}.`); }}>
+	actions={[filters_action]}
+	folded={!$w_show_filters}>
 	{#snippet holds()}
 	<!-- The bare space among the label rows is another way back to the list, the same as the
 	     top block — and the two light together, since they are one way out. It stops at the
@@ -181,10 +222,8 @@
 			<!-- The kinds, as a section of their own: its line carries the word that folds them
 			     away and then says which kind the guide is. -->
 			<Section
-				title={form_kinds_word}
-				folded={!show_form_kinds}
-				hovered={way_out_lit}
-				onclick={() => { show_form_kinds = !show_form_kinds; debug.log(`Editing "${name}": the kinds row is now ${show_form_kinds ? 'shown' : 'folded away'}.`); }}>
+				actions={[kinds_action]}
+				folded={!show_form_kinds}>
 				{#snippet holds()}
 					<!-- No word beside them: the line above already says what they are. -->
 					<div class='filter-row wrapping'>
@@ -200,11 +239,9 @@
 		     other one that can be pressed — while the way back to the list is lit, and while
 		     the cursor is among the tags themselves. -->
 		<Section
-			title={form_tags_word}
+			actions={[tags_action]}
 			folded={!show_form_tags}
-			hovered={tags_lit || way_out_lit}
-			onhover={(over) => { tags_lit = over; }}
-			onclick={() => { show_form_tags = !show_form_tags; debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'shown' : 'folded away'}.`); }}>
+			onhover={(over) => { tags_lit = over; }}>
 			{#snippet holds()}
 				<!-- The same areas the filters use. Every tag is within reach here, since this
 				     is where a file's own tags are set rather than where files are narrowed.
@@ -237,6 +274,40 @@
 </div>
 
 <style>
+	/* Where the three fold words are written before their lines take them. Each is taken out of
+	   here on the very next drawing, so nothing is ever seen in this spot. */
+	.out_of_sight {
+		display : none;
+	}
+
+	/* A word that folds its section away, standing on the line above it. Its page-colored
+	   background masks the line behind it. The edge is held see-through and counted inside the
+	   word's own space, so the hover edge adds no width and the word never shifts. */
+	.fold-word {
+		border        : 0.5px solid transparent;
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-faint);
+		color         : var(--darkgray);
+		padding       : 0 var(--gap);
+		background    : var(--bg);
+		box-sizing    : border-box;
+		font-family   : inherit;
+		white-space   : nowrap;
+		cursor        : pointer;
+	}
+
+	/* The edge appears under the cursor, or because the area around it says so. Told to light
+	   from outside, it takes white — it reads as marked without claiming the cursor. */
+	.fold-word:hover {
+		border-color : var(--darkgray);
+		background   : var(--hover);
+	}
+
+	.fold-word.forced {
+		border-color : var(--darkgray);
+		background   : var(--white);
+	}
+
 	/* Folded, this whole block is bare space above the file's words, so it is a way back to the
 	   list and lights with the two rows above it. It reaches out to the box's left and right
 	   edges, the way those rows do, so the lit color covers the gap the box holds around its

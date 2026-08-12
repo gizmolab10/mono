@@ -21,10 +21,11 @@ i want to pass **Separator** more than one title. each title needs its own handl
 
 ### conversion steps:
 
-- [ ] for ALL ***clickable*** titles
-    - [ ] ***copy*** button creation from **separator** to caller
+- [x] for ALL ***clickable*** titles
+    - [x] ***copy*** button creation from **separator** to caller
         - [x] Search — the first one, the pattern for the rest
-        - [ ] File_OKF (three), List_OKF (four)
+        - [x] File_OKF (three) — filters, kinds, tags
+        - [x] List_OKF (four) — filters, projects, kinds, tags
     - [x] place button in an **action** -> `position.left`
     - [x] add logic to use it — **Separator** lends each given **element** a place at its own end or middle
 - [ ] leave all plain titles as is

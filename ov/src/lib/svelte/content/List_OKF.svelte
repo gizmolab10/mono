@@ -4,6 +4,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { toggle_all_areas, UNLABELED } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
+	import Action, { T_Position } from '../../ts/types/Action';
 	import { TAG_AREAS, tags_shown } from '../../ts/types/Tag_Areas';
 	import { fade } from 'svelte/transition';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
@@ -137,7 +138,35 @@
 		.filter((one) => one !== 'all').join(', '));
 	let all_word = $derived($w_show_filters ? '✂ filters'
 		: `✂ filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
+
+	// The four words that fold these sections away are ours, not the lines'. Each is built as a
+	// button below, out of sight; the browser makes it one drawing after we ask, so each of these
+	// holds nothing on the first drawing and the made button on the next — which is itself a
+	// change, so the line it stands on is told at once.
+	let all_button      = $state<HTMLElement | null>(null);
+	let projects_button = $state<HTMLElement | null>(null);
+	let kinds_button    = $state<HTMLElement | null>(null);
+	let tags_button     = $state<HTMLElement | null>(null);
+
+	const all_action      = $derived(Object.assign(new Action(), { element: all_button,      position: T_Position.left }));
+	const projects_action = $derived(Object.assign(new Action(), { element: projects_button, position: T_Position.left }));
+	const kinds_action    = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left }));
+	const tags_action     = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left }));
 </script>
+
+<!-- The four words that fold these sections away, built here rather than by the lines they stand
+     on. Each is written out of sight, since the moment the browser has made it, it is taken and
+     put on its line instead. -->
+<div class='out_of_sight'>
+	<button type='button' class='fold-word' bind:this={all_button}
+		onclick={toggle_filters}>{all_word}</button>
+	<button type='button' class='fold-word' bind:this={projects_button}
+		onclick={() => fold('projects', show_projects)}>{heading('projects', show_projects, project_word)}</button>
+	<button type='button' class='fold-word' bind:this={kinds_button}
+		onclick={() => fold('kinds', show_kinds)}>{heading('kinds', show_kinds, kind_word)}</button>
+	<button type='button' class='fold-word' bind:this={tags_button}
+		onclick={() => fold('tags', show_tags)}>{heading('tags', show_tags, tags_word)}</button>
+</div>
 
 <!-- Clearing a row is something done, never something picked, so it stands apart from the
      control as a pill of its own — the same shape the tag areas beside it wear. It is drawn only
@@ -183,9 +212,8 @@
 		holds_subsections
 		gap={0}
 		edge={T_Edge.thick}
-		title={all_word}
-		folded={!$w_show_filters}
-		onclick={toggle_filters}>
+		actions={[all_action]}
+		folded={!$w_show_filters}>
 		{#snippet holds()}
 		<!-- The gap above the first line inside is this run's own: a section that holds
 		     subsections holds none, and the first of them has nothing above it to stand clear of. -->
@@ -194,9 +222,8 @@
 			     the row that follows. -->
 			<Section
 				gap={k.gap.big}
-				title={heading('projects', show_projects, project_word)}
-				folded={!show_projects}
-				onclick={() => fold('projects', show_projects)}>
+				actions={[projects_action]}
+				folded={!show_projects}>
 				{#snippet holds()}
 					<div class='paired-rows'>
 						{#if $w_project !== '' && shown_projects.length > 1}
@@ -209,9 +236,8 @@
 
 			<Section
 				gap={k.gap.big}
-				title={heading('kinds', show_kinds, kind_word)}
-				folded={!show_kinds}
-				onclick={() => fold('kinds', show_kinds)}>
+				actions={[kinds_action]}
+				folded={!show_kinds}>
 				{#snippet holds()}
 					<div class='paired-rows'>
 					{#if $w_kind !== '' && kinds_offered > 1}
@@ -241,9 +267,8 @@
 
 			<Section
 				gap={k.gap.big}
-				title={heading('tags', show_tags, tags_word)}
-				folded={!show_tags}
-				onclick={() => fold('tags', show_tags)}>
+				actions={[tags_action]}
+				folded={!show_tags}>
 				{#snippet holds()}
 					<!-- Twenty-four words in one row is more than an eye can scan, so the tags are
 					     gathered into six areas, each folding away behind its own name. Stopping
@@ -292,6 +317,33 @@
 </div>
 
 <style>
+	/* Where the four fold words are written before their lines take them. Each is taken out of
+	   here on the very next drawing, so nothing is ever seen in this spot. */
+	.out_of_sight {
+		display : none;
+	}
+
+	/* A word that folds its section away, standing on the line above it. Its page-colored
+	   background masks the line behind it. The edge is held see-through and counted inside the
+	   word's own space, so the hover edge adds no width and the word never shifts. */
+	.fold-word {
+		border        : 0.5px solid transparent;
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-faint);
+		color         : var(--darkgray);
+		padding       : 0 var(--gap);
+		background    : var(--bg);
+		box-sizing    : border-box;
+		font-family   : inherit;
+		white-space   : nowrap;
+		cursor        : pointer;
+	}
+
+	.fold-word:hover {
+		border-color : var(--darkgray);
+		background   : var(--hover);
+	}
+
 	/* Sections stack flush against each other: each already holds its own gap above and below
 	   what it shows, so a gap here would be a second helping of the same thing. */
 	.filters {
