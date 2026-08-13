@@ -5,7 +5,6 @@ description: "The data shape of one part: its name, three directions, formulas, 
 tags: [program, data]
 date: 2026-05-10
 ---
-
 # Smart Objects
 
 The data shape for one part. Holds the part's name, three directions, formulas, repeater config, visibility, and a back-reference to the scene-tree entry that draws it.

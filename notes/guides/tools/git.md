@@ -5,7 +5,6 @@ description: "How to undo common mistakes in the change history."
 tags: [tools]
 date: 2026-05-10
 ---
-
 # Git Recipes
 
 Common git operations for fixing mistakes.

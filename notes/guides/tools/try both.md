@@ -5,7 +5,6 @@ description: "Build two ways of showing something at once, behind one word you f
 tags: [tools, visual]
 date: 2026-08-03
 ---
-
 # Try both
 
 When a look can't be settled by argument — and a look almost never can — build both and put a

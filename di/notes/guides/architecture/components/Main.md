@@ -5,7 +5,6 @@ description: "The root layout: where the controls strip, side area, drawing area
 tags: [program, UX]
 date: 2026-05-10
 ---
-
 # Main
 
 The root layout component. Decides where the toolbar, the side panel, the drawing area, and the build-notes modal sit on the screen.

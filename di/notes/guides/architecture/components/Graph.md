@@ -5,7 +5,6 @@ description: "The drawing area: the canvas and everything floating over it."
 tags: [program, UX]
 date: 2026-05-10
 ---
-
 # Graph
 
 The drawing area — the canvas plus everything that floats over it.

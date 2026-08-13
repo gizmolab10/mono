@@ -5,7 +5,6 @@ description: "The small divider drawn between sections, horizontal or vertical."
 tags: [program, UX]
 date: 2026-05-10
 ---
-
 # Separator
 
 A small visual divider used between sections inside a panel. Either a horizontal bar or a vertical bar.
