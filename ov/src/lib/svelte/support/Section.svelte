@@ -101,21 +101,24 @@
 		flex : 0 0 auto;
 	}
 
+	/* It reaches out to the box's own left and right edges and holds that width back as its own
+	   step-in, so what it shows stands exactly where it did. The reach is always there, whether
+	   or not anything is filled — a reach that arrived with the fill would move the words at the
+	   same moment the color changed, and a jump alongside a fade reads as neither. */
 	.section-body {
+		margin-left    : calc(var(--gap) * -1);
+		margin-right   : calc(var(--gap) * -1);
+		padding-left   : var(--gap);
+		padding-right  : var(--gap);
 		flex-direction : column;
 		display        : flex;
 		flex           : 0 0 auto;
 	}
 
 	/* The bare space here does something when pressed, so the whole background fills while the
-	   cursor is on it. The fill reaches out to the box's own left and right edges, so it covers
-	   the gap the box holds around its contents rather than stopping short. */
+	   cursor is on it — the only thing the filling changes, so it fades rather than jumping. */
 	.section-body.lit {
-		margin-left  : calc(var(--gap) * -1);
-		margin-right : calc(var(--gap) * -1);
-		padding-left : var(--gap);
-		padding-right: var(--gap);
-		background   : var(--hover);
-		cursor       : pointer;
+		background : var(--hover);
+		cursor     : pointer;
 	}
 </style>

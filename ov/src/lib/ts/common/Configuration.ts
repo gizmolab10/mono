@@ -62,6 +62,7 @@ class Configuration {
 		root.setProperty('--slide',              `${k.timeout.slide}ms`);
 		root.setProperty('--slide-rows',         `${k.timeout.rows}ms`);
 		root.setProperty('--fade',               `${k.timeout.fade}ms`);
+		root.setProperty('--hover-fade',         `${k.timeout.hover}ms`);
 		root.setProperty('--rest',               `${k.timeout.rest}ms`);
 		root.setProperty('--em-tiny',            `${k.font.em.tiny}em`);
 		root.setProperty('--em-small',           `${k.font.em.small}em`);

@@ -337,7 +337,7 @@
 
 	.fold-word.forced {
 		border-color : var(--darkgray);
-		background   : var(--hover);
+		background   : var(--bg);
 	}
 
 	/* Folded, this whole block is bare space above the file's words, so it is a way back to the

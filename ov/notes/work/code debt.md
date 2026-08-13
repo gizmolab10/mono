@@ -11,6 +11,8 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
+- [ ] 1/8 s fade the hover. too flashy,, annoying
+- [ ] not show tt when mouse is swiping
 - [ ] replace '+' button with t-cross path
 - [ ] OPTION-click turns a tag red, search discards matches to it
 - [ ] change `type Guide` -> `File` in `File.ts`
@@ -27,6 +29,9 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## done
 
+- [x] the two colors are both chosen — a page picker beside the accent, and the hover a lean from the page toward the accent
+- [x] a word on a line masks it with a pill, so the line's cut ends never show past the curve
+- [x] whatever sits between a file's labels and its first heading is offered for removal, and holding a step mark stops at a file that raised something
 - [x] rename \_OKF -> Filters
 - [x] a word on a line is the caller's own — every clickable title built by its caller, handed to the line as a made element with the end or middle it stands at
 - [x] the picking control and both clears stand on their own lines, at the middle, and go when the section folds

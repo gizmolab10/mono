@@ -33,6 +33,20 @@
    --width-bar: 15px;
 }
 
+/* A fill arriving under the cursor takes a third of a second, and the same to go. Crossing a
+   row of pills used to flash each one in turn, which reads as the screen twitching.
+
+   Said here rather than in each component, since every one of them paints the same --hover and
+   every one would otherwise carry its own copy of the timing. It names the elements that take a
+   fill — anything pressable, a tag area, a section's own background, a row of the list — and
+   :where() holds its weight at nothing, so a component's own rule always wins.
+
+   How long is one number in Constants, pushed onto the page at startup. */
+
+:where(button, .big, .section-body, .clear, .fold-word, .picking, .head-label, .guides-table td) {
+   transition: background-color var(--hover-fade) linear;
+}
+
 /* Everything below is a catalogue, not code — what a component style can read,
    and where each name comes from.
 

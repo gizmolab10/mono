@@ -130,13 +130,16 @@
 	   the same as a word does. It carries no look of its own: how it is drawn belongs to
 	   whoever built it. The left inset matches a word's, so a word and a given thing at the
 	   same end line up. */
+	/* The mask is a pill, the same shape as whatever stands in it — a square one leaves the line's
+	   cut ends showing past the curve at top and bottom, or stops short of it in the middle. */
 	.placed {
-		transform   : translateY(-50%);
-		background  : var(--section-bg, var(--bg));
-		position    : absolute;
-		align-items : center;
-		display     : flex;
-		top         : 50%;
+		transform     : translateY(-50%);
+		border-radius : var(--radius-pill);
+		background    : var(--section-bg, var(--bg));
+		position      : absolute;
+		align-items   : center;
+		display       : flex;
+		top           : 50%;
 	}
 
 	.placed.left   { left      : var(--gap-fat); }

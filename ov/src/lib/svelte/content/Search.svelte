@@ -236,7 +236,7 @@
 
 	.fold-word.forced {
 		border-color : var(--darkgray);
-		background   : var(--hover);
+		background   : var(--bg);
 	}
 
 	/* The search row, under the top row: the walking triangles, then the field. */

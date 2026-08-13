@@ -9,6 +9,18 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-12 — both colors are chosen now, and a word masks the line with its own shape
+
+The page color used to be worked out from the accent. It is a choice of its own, remembered like the accent and picked beside it, so moving one leaves the other where it was put. Everything read off both — the hover, the readable text, the mild accent, the banner — is worked out in one place whenever either moves. The hover became a lean from the page a third of the way toward the accent, lifted a tenth toward white, so it holds for whichever pair is picked, light page or dark.
+
+**A word on a line masks it with a pill.** The mask was a rectangle standing behind a pill-shaped word, which showed two ways: the line stopping short of the curve with a crescent of page color between, or the curve eating the middle of the line and leaving two square horns. One shape for both, and both went.
+
+**A lit section says its own color to everything inside it.** Whatever paints itself to mask the line — a word, a name riding above a pill — reads that value, so it still matches while the section is filled. Finding this took a measurement: the log showed the word reading the right color and painting white anyway, because a second rule for "pressable, because the area around it says so" outranked it and painted white on purpose.
+
+**A section's bare background answers a press and fills under the cursor**, the gap above and below its contents included. The two halves disagreed at first — the fill lit everywhere but inside the rows, the press worked only inside them — because each asked a different question of a different element. Both ask the section now, through a question narrower than the one deciding the way back to the list: a whole area is a background, not a thing that answers.
+
+**Whatever sits between a file's labels and its first heading is offered for removal.** The words start at that heading, whatever its rank — not every file opens with a top-level one — and spaces holding a heading off the left edge count as characters to take out. Nothing is written unless the button is pressed; dismissing the line is the answer no. Holding a step mark or an arrow key stops at a file that raised something, and one more press goes on.
+
 ## 2026-08-12 — a word on a line is now the caller's own, and a bar only lends it a place
 
 A section's line used to build the word that folds it, style it, and light it. It now takes made things instead: a caller writes its own control, hands over the element and where it wants to stand — left, middle or right — and the line only finds it a place. All eight clickable titles moved out, three in the file form and four in the filters and one in the search. With them went the line's `title`, its `onclick`, its hover styling, and the clear strip that made a two-pixel line worth aiming at.
