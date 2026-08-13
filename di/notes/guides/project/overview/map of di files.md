@@ -5,7 +5,6 @@ description: "Where everything lives in the di source."
 tags: [journal, notes, program]
 date: 2026-06-25
 ---
-
 # File Layout
 
 Where everything lives.

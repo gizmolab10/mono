@@ -5,7 +5,6 @@ description: "Which of the forty-odd components are worth keeping and which need
 tags: [program, refactor]
 date: 2026-02-03
 ---
-
 # Components
 **Started:** 2026-01-06 | **Status:** Phase 2 in progress
 

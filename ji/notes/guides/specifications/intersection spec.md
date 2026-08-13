@@ -5,7 +5,6 @@ description: "The rules the intersection app follows, starting with one source o
 tags: [visual, program]
 date: 2026-07-24
 ---
-
 # Rules
 
 ## colors

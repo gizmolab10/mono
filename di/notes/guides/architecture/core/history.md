@@ -5,7 +5,6 @@ description: "Stepping backward and forward through recent changes without losin
 tags: [program, data]
 date: 2026-05-10
 ---
-
 # History (undo and redo)
 
 The history module is in charge of letting the user step backward through the last several changes — and forward again — without losing the currently-displayed scene.

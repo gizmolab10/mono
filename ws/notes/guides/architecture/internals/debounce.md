@@ -5,7 +5,6 @@ description: "Ten scattered timing patterns, and the proposal to bring them into
 tags: [program, refactor]
 date: 2026-01-20
 ---
-
 # Debounce & Timing Consolidation Proposal
 
 ## Current State

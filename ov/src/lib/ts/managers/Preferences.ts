@@ -21,6 +21,7 @@ export enum T_Preference {
 
 	// Colors
 	color_accent    = 'color_accent',
+	color_background = 'color_background',
 	color_text      = 'color_text',
 
 	// Filters on the guide list

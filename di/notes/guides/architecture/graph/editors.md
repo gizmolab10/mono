@@ -5,7 +5,6 @@ description: "The four small modules that handle typing and dragging directly on
 tags: [program, UX]
 date: 2026-05-20
 ---
-
 # Editors
 
 Four small modules that handle the user's typed-and-dragged input on the drawing area. Each one owns a single kind of edit; together they are the input layer for everything the user can change directly on the canvas.

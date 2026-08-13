@@ -25,6 +25,31 @@ export function body_of(text: string): { body: string; skipped: number } {
 	return { body: lines.slice(ends_at + 1).join('\n'), skipped: ends_at + 1 };
 }
 
+/**
+ * A file's words start at its first heading, whatever its rank — not every file opens with a
+ * top-level one. Every character between the labels and that heading is left over: a stray line,
+ * a run of blanks, spaces holding the heading off the left edge. It all goes the first time the
+ * file is opened.
+ *
+ * A heading is still a heading with up to three spaces before it, which is why those count as
+ * characters to take out rather than as a reason to find nothing. Four or more make it an
+ * ordinary stepped-in line, and no heading at all.
+ *
+ * The labels themselves stay exactly as they are, and so does every line from the heading down.
+ * A file with no heading is left alone: there is no saying where its words were meant to begin,
+ * so nothing is thrown away on a guess.
+ */
+export function without_words_above_heading(text: string): string {
+	const { body, skipped } = body_of(text);
+	const lines = body.split('\n');
+	const at = lines.findIndex((line) => /^ {0,3}#{1,6}\s/.test(line));
+	if (at < 0) { return text; }                        // no heading to start the words at
+	const labels = text.split('\n').slice(0, skipped);
+	const from_heading = [lines[at].replace(/^ +/, ''), ...lines.slice(at + 1)];
+	const put_right = [...labels, ...from_heading].join('\n');
+	return put_right === text ? text : put_right;
+}
+
 // The file's own words for one block: the run of lines it was stamped with, given back
 // exactly as they sit in the file. Asking for lines the file doesn't have gives back only
 // the ones it does; asking for nothing gives nothing.

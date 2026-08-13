@@ -5,7 +5,6 @@ description: "What happens to already-placed instances when the saved original c
 tags: [data, done, plans, research]
 date: 2026-05-10
 ---
-
 # Versions
 
 A library object is a snapshot. But the original keeps evolving. What happens to the instances already placed in other graphs?

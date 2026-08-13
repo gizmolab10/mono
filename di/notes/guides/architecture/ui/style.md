@@ -5,7 +5,6 @@ description: "The look every interactive control shares, and the one exception f
 tags: [visual, style]
 date: 2026-05-11
 ---
-
 # DI UI Style Guide
 
 Background rule: everything is `var(--white)` / `var(--bg)` by default. The active/selected state is the exception.

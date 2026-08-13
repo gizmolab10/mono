@@ -5,7 +5,6 @@ description: "How a dimension label finds its place on every redraw: eligibility
 tags: [program, geometry, UX]
 date: 2026-08-03
 ---
-
 # Dimensionals
 
 This spec describes what the dimensions code does every time the canvas redraws. The spine is the per-render data pipeline. Each chapter is one stage of that pipeline; chapter one shows the whole flow, chapters two through eight walk it stage by stage, chapter nine covers the log, and chapter ten lists the constants.

@@ -47,6 +47,18 @@ describe('holding a mark down', () => {
 		vi.useRealTimers();
 	});
 
+	it('says which steps are its own patter and which was the press', () => {
+		vi.useFakeTimers();
+		const asked: boolean[] = [];
+		const holding = make_holding(400, 100);
+		holding.start((repeated) => { asked.push(repeated); });
+		expect(asked).toEqual([false]);            // the press itself
+		vi.advanceTimersByTime(400 + 100 * 2);
+		expect(asked).toEqual([false, true, true]);
+		holding.stop();
+		vi.useRealTimers();
+	});
+
 	it('never runs two beats at once', () => {
 		vi.useFakeTimers();
 		let steps = 0;

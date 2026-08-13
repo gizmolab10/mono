@@ -5,11 +5,13 @@ description: "Everything overview can do, newest first."
 tags: [journal, notes, UX]
 date: 2026-08-06
 ---
-
 # working features
 
 | #   | Feature                                                                                                                                                                                                                                                                                                                                                                                         |
 | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 52  | A word on a line belongs to whoever put it there: a caller builds its own control and hands the line the made element with the end or middle it stands at. The line only lends it a place, masking itself behind it. Folded, whatever stands at the middle goes with what it acts on; the word at the left stays, since it is the way back |
+| 51  | A section's whole background answers a press on its bare space and fills while the cursor is on it — the gap it holds above and below its contents included. A run of tags holds one gap above itself only when an area name rides above a pill in its topmost line, which is measured, since the run wraps |
+| 50  | A `+` in the editor's top row makes a file beside the one open, labeled to match whatever the list is filtered by, and opens it ready to be named. A link in a guide naming a file of code opens it in VSCode, at the line the link names |
 | 49  | The tags row says how it is picking: `any of` and `all of` are states, remembered between visits; `clear` and `invert` are presses that never read as picked. Every row's clear grays when there is nothing to clear, and with `all of` on, a tag that would empty the list grays too. The editor's tags row gets the two presses alone |
 | 48  | A work note is one of the files: each project's work folder stands beside its guides, holding the notes at its top. They read, write, rename and throw away like any guide; anything deeper stays out |
 | 47  | Every row shows the line of the file it begins on, counted from one, in a lane at the left. A line the reader draws as nothing — a blank line, a rule — gets a row of its own so no number is missing, and a row named twice shows its number once |

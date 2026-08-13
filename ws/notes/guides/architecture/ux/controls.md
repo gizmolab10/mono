@@ -5,7 +5,6 @@ description: "How the running total of widths places every primary control, and 
 tags: [program, UX]
 date: 2026-01-12
 ---
-
 # Controls Layout: The `lefts` Array System
 
 The `lefts` array controls horizontal positioning of all the primary controls. Cumulative sum of widths, numeric key order matters. Want to move stuff around? This explains the system and how to reorder without breaking everything.

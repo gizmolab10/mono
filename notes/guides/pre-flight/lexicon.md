@@ -5,7 +5,6 @@ description: "The words every project says, and the word to use where another ha
 tags: [always, prose, session, team]
 date: 2026-08-11
 ---
-
 # Lexicon
 
 The words used across every project. Use them exactly, even when a near synonym exists. If it is here, that is its name.

@@ -30,8 +30,8 @@
 			guide={$w_viewed.guide}
 			can_back={$w_can_back}
 			can_forward={$w_can_forward}
-			onprev={() => step_view(-1)}
-			onnext={() => step_view(1)}
+			onprev={(repeated) => step_view(-1, repeated)}
+			onnext={(repeated) => step_view(1, repeated)}
 			onclose={() => { debug.log(`Reading: closed "${$w_viewed?.guide.name}" — back to the guides.`); close_view(); }} />
 	{:else}
 		<Browse />

@@ -5,7 +5,6 @@ description: "A bird's-eye list of every page under the di guides, one line each
 tags: [journal, notes]
 date: 2026-08-09
 ---
-
 # Guide layout
 
 A bird's-eye view of every page under `notes/guides/` with a super-brief description.

@@ -355,7 +355,7 @@
 	   word reads as a heading on the pill rather than as one of its tags. It starts where the
 	   pill starts, whatever state the pill is in, so a row of them reads down a straight line. */
 	.area-name {
-		background     : color-mix(in srgb, var(--bg) 44%, transparent);
+		background     : var(--section-bg, var(--bg));
 		transform      : translateY(-50%);
 		border-radius  : var(--radius-pill);
 		font-size      : var(--font-faint);

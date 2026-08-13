@@ -5,7 +5,6 @@ description: "Start here: how the pieces of Webseriously fit together."
 tags: [program]
 date: 2026-02-22
 ---
-
 # Architecture Overview
 
 Start here. This is how the pieces fit together.

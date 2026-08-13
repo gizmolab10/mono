@@ -2,11 +2,12 @@
 	import { w_project, w_kind, w_show_filters, w_tags, w_tag_picking, w_words } from '../../ts/managers/Filters';
 	import { inverted, T_Picking } from '../../ts/managers/Filters';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { toggle_all_areas, UNLABELED } from '../../ts/managers/Filters';
+	import { toggle_all_areas, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { TAG_AREAS, tags_shown } from '../../ts/types/Tag_Areas';
 	import { fade } from 'svelte/transition';
+	import { names_ride_in, places_of } from '../../ts/utilities/Tag_Rows';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import Section from '../support/Section.svelte';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
@@ -120,6 +121,30 @@
 	// because an area that draws nothing must not leave a wrapper behind holding a gap open.
 	let showing_areas = $derived(TAG_AREAS.filter((area) => tags_shown(area, tags_in_use, $w_tags).length !== 0));
 
+	// Does a name ride above a pill in the topmost row of tags? Only then does the row hold a gap
+	// above itself, so that name stands clear of the line overhead.
+	let tags_row = $state<HTMLElement | null>(null);
+	let names_riding = $state(false);
+
+
+	function look_for_names() {
+		names_riding = tags_row === null ? false : names_ride_in(places_of(tags_row));
+	}
+
+	// Measured again whenever the pills change, and again whenever the run changes shape — it
+	// wraps differently at a different width, and a pill opening slides its neighbors onto
+	// another line partway through.
+	$effect(() => {
+		showing_areas; $w_areas_open; $w_tags; tags_in_use;
+		look_for_names();
+		const row = tags_row;
+		if (!row) { return; }
+		const watcher = new ResizeObserver(look_for_names);
+		watcher.observe(row);
+		for (const pill of [...row.children]) { watcher.observe(pill); }
+		return () => watcher.disconnect();
+	});
+
 	// What the word on the bar says: just the name while the row is there, the name and what
 	// is picked while it is folded away.
 	function heading(name: string, shown: boolean, picked: string): string {
@@ -148,10 +173,24 @@
 	let kinds_button    = $state<HTMLElement | null>(null);
 	let tags_button     = $state<HTMLElement | null>(null);
 
+	// How the picked tags narrow, and the two presses that change which are picked. It stands on
+	// the tags line at the middle, so it is beside the word that folds them rather than inside
+	// what that word folds away.
+	let picking_control = $state<HTMLElement | null>(null);
+
+	// Stopping a row filtering, standing on that row's own line at the middle. Each is built only
+	// where it would do something, so on a row narrowing nothing there is no element at all and
+	// the line is given none.
+	let projects_clear = $state<HTMLElement | null>(null);
+	let kinds_clear    = $state<HTMLElement | null>(null);
+
 	const all_action      = $derived(Object.assign(new Action(), { element: all_button,      position: T_Position.left }));
 	const projects_action = $derived(Object.assign(new Action(), { element: projects_button, position: T_Position.left }));
 	const kinds_action    = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left }));
 	const tags_action     = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left }));
+	const picking_action  = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
+	const projects_clearer = $derived(Object.assign(new Action(), { element: projects_clear, position: T_Position.center }));
+	const kinds_clearer    = $derived(Object.assign(new Action(), { element: kinds_clear,    position: T_Position.center }));
 </script>
 
 <!-- The four words that fold these sections away, built here rather than by the lines they stand
@@ -166,15 +205,41 @@
 		onclick={() => fold('kinds', show_kinds)}>{heading('kinds', show_kinds, kind_word)}</button>
 	<button type='button' class='fold-word' bind:this={tags_button}
 		onclick={() => fold('tags', show_tags)}>{heading('tags', show_tags, tags_word)}</button>
+	<!-- One control holding two kinds: the three on the left are states, saying how the picked
+	     tags narrow; the ones on the right are presses that change what is picked and leave the
+	     state alone, so neither ever reads as picked — they answer under the cursor only.
+	     With no tag picked there is nothing to clear, so that segment is not there at all; it
+	     arrives with the first tag chosen. -->
+	<!-- Clearing a row is something done, never something picked, so it stands apart from the
+	     control it belongs to. It is drawn only where it would do something: one of the words is
+	     picked, and there is more than one to pick from. With a single choice on offer there is
+	     nowhere to go back to, so nothing is made and the line is given none. -->
+	{#if $w_project !== '' && shown_projects.length > 1}
+		<button class='clear' bind:this={projects_clear} onclick={() => w_project.set('')}
+			use:tip={'show every project\'s guides'}>clear</button>
+	{/if}
+	{#if $w_kind !== '' && kinds_offered > 1}
+		<button class='clear' bind:this={kinds_clear} onclick={() => w_kind.set('')}
+			use:tip={'show every kind of guide'}>clear</button>
+	{/if}
+	<span class='picking' bind:this={picking_control}>
+		<button class='segment' class:current={$w_tag_picking === T_Picking.any}
+			onclick={() => pick_way(T_Picking.any)}
+			use:tip={'a file shows if it wears any one of the picked tags'}>any of</button>
+		<button class='segment' class:current={$w_tag_picking === T_Picking.all}
+			onclick={() => pick_way(T_Picking.all)}
+			use:tip={'a file shows only if it wears every picked tag'}>all of</button>
+		<button class='segment' class:current={$w_tag_picking === T_Picking.but}
+			onclick={() => pick_way(T_Picking.but)}
+			use:tip={'a file shows only if it wears none of the picked tags'}>any but</button>
+		{#if $w_tags.length > 0}
+			<button class='segment press' onclick={clear_tags}
+				use:tip={'stop filtering by tag'}>clear</button>
+		{/if}
+		<button class='segment press' onclick={invert_tags}
+			use:tip={'pick exactly the tags that are not picked'}>invert</button>
+	</span>
 </div>
-
-<!-- Clearing a row is something done, never something picked, so it stands apart from the
-     control as a pill of its own — the same shape the tag areas beside it wear. It is drawn only
-     where it would do something: one of the words is picked, and there is more than one to pick
-     from. With a single choice on offer there is nowhere to go back to. -->
-{#snippet clearer(says: string, press: () => void)}
-	<button class='clear' onclick={press} use:tip={says}>clear</button>
-{/snippet}
 
 <!-- With the other filters leaving nothing, a row has no words to offer. The control itself is
      left out then, since an empty one still draws its edge and reads as a sliver. -->
@@ -222,13 +287,10 @@
 			     the row that follows. -->
 			<Section
 				gap={k.gap.big}
-				actions={[projects_action]}
+				actions={[projects_action, projects_clearer]}
 				folded={!show_projects}>
 				{#snippet holds()}
 					<div class='paired-rows'>
-						{#if $w_project !== '' && shown_projects.length > 1}
-							{@render clearer('show every project\'s guides', () => w_project.set(''))}
-						{/if}
 						{@render projects_picker()}
 					</div>
 				{/snippet}
@@ -236,13 +298,10 @@
 
 			<Section
 				gap={k.gap.big}
-				actions={[kinds_action]}
+				actions={[kinds_action, kinds_clearer]}
 				folded={!show_kinds}>
 				{#snippet holds()}
 					<div class='paired-rows'>
-					{#if $w_kind !== '' && kinds_offered > 1}
-						{@render clearer('show every kind of guide', () => w_kind.set(''))}
-					{/if}
 					{#if kinds_offered > 0}
 					<div class='kinds' use:tip={'show particular kinds of guide'}>
 						<!-- The files carrying no labels at all — how they are found, so they can be
@@ -267,7 +326,10 @@
 
 			<Section
 				gap={k.gap.big}
-				actions={[tags_action]}
+				actions={[tags_action, picking_action]}
+				fills_when_bare
+				onbare={() => toggle_all_areas(showing_areas.map((one) => one.name))}
+				bare_says={$w_areas_open.length === 0 ? 'expand tags' : 'collapse tags'}
 				folded={!show_tags}>
 				{#snippet holds()}
 					<!-- Twenty-four words in one row is more than an eye can scan, so the tags are
@@ -279,30 +341,7 @@
 					     run of segments, and the pills after it move a long way at once. The wrapper
 					     is what carries the slide, and areas with nothing left to show are left out
 					     here rather than inside — an empty wrapper would still take a gap. -->
-					<div class='tags' use:smooth_height role='presentation' onclick={(event) => { if (event.target === event.currentTarget) { toggle_all_areas(showing_areas.map((one) => one.name)); } }}>
-						<!-- One control holding two kinds: the three on the left are states, saying how
-						     the picked tags narrow; the ones on the right are presses that change what
-						     is picked and leave the state alone, so neither ever reads as picked —
-						     they answer under the cursor only.
-						     With no tag picked there is nothing to clear, so that segment is not
-						     there at all; it arrives with the first tag chosen. -->
-						<span class='picking'>
-							<button class='segment' class:current={$w_tag_picking === T_Picking.any}
-								onclick={() => pick_way(T_Picking.any)}
-								use:tip={'a file shows if it wears any one of the picked tags'}>any of</button>
-							<button class='segment' class:current={$w_tag_picking === T_Picking.all}
-								onclick={() => pick_way(T_Picking.all)}
-								use:tip={'a file shows only if it wears every picked tag'}>all of</button>
-							<button class='segment' class:current={$w_tag_picking === T_Picking.but}
-								onclick={() => pick_way(T_Picking.but)}
-								use:tip={'a file shows only if it wears none of the picked tags'}>any but</button>
-							{#if $w_tags.length > 0}
-								<button class='segment press' onclick={clear_tags}
-									use:tip={'stop filtering by tag'}>clear</button>
-							{/if}
-							<button class='segment press' onclick={invert_tags}
-								use:tip={'pick exactly the tags that are not picked'}>invert</button>
-						</span>
+					<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
 						{#each showing_areas as area (area.name)}
 							<span class='pill-slot' transition:fade={{ duration: FADE }}>
 								<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
@@ -332,11 +371,11 @@
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
 		padding       : 0 var(--gap);
-		background    : var(--bg);
 		box-sizing    : border-box;
+		background    : var(--section-bg, var(--bg));
 		font-family   : inherit;
-		white-space   : nowrap;
 		cursor        : pointer;
+		white-space   : nowrap;
 	}
 
 	.fold-word:hover {
@@ -374,17 +413,17 @@
 	/* The clearing pill and the control it belongs to, centered together with one gap between
 	   them — the same gap the tag pills hold. */
 	.paired-rows {
+		gap             : var(--gap);
 		justify-content : center;
 		align-items     : center;
-		gap             : var(--gap);
 		display         : flex;
 	}
 
 	/* One pill with a segment per kind; the chosen one fills with the accent. */
 	.kinds {
 		border        : var(--thick) solid var(--black);
-		height        : var(--height);
 		border-radius : var(--radius-pill);
+		height        : var(--height);
 		background    : var(--white);
 		box-sizing    : border-box;
 		align-self    : center;
@@ -396,8 +435,8 @@
 	/* A button keeps no text size of its own, so it is said here — the same size the tags read at,
 	   so every picking row is one size. */
 	.segment {
-		font-size  : var(--font-tiny);
 		padding    : var(--pad-control);
+		font-size  : var(--font-tiny);
 		background : transparent;
 		color      : var(--text);
 		cursor     : pointer;
@@ -422,12 +461,14 @@
 	/* Clearing a row stands apart from its control, as a pill of its own. It is never a state —
 	   it is something done, not something picked — so it never reads as picked, filling only
 	   under the cursor and filling stronger while it is held. */
+	/* It stands on its row's own line beside the word that folds the row, so it takes that word's
+	   size — the same text and the same edge thickness, which makes both boxes the same height.
+	   Its height is whatever that text needs; nothing is fixed. */
 	.clear {
-		border        : var(--thick) solid var(--black);
-		height        : var(--height);
+		border        : 0.5px solid var(--black);
 		border-radius : var(--radius-pill);
-		padding       : var(--pad-control);
-		font-size     : var(--font-tiny);
+		padding       : 0 var(--gap);
+		font-size     : var(--font-faint);
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
@@ -467,36 +508,44 @@
 	   each would make the other larger, over and over. */
 	/* Nothing is clipped here: each pill's own name rides above its top edge, so a box that cut
 	   off what falls outside it would take the names with it. */
+	/* With a name riding above a pill in the topmost row, the run holds one gap above itself so
+	   that name stands clear of the line overhead. It is a margin, so it sits outside the height
+	   this box is told to hold and never joins the slide. */
+	.tags.named {
+		margin-top : var(--gap);
+	}
+
+
 	.tags {
 		transition      : height var(--slide-rows) linear;
 		gap             : var(--gap);
-		justify-content : center;
 		align-content   : flex-start;
+		justify-content : center;
 		align-items     : center;
 		display         : flex;
 		flex-wrap       : wrap;
 	}
 
-	/* The control at the front of the row, saying how the picked tags narrow and holding the two
-	   presses that change what is picked. It stands the height of the areas beside it and reads at
-	   their size, so the row is one line of pills rather than two. */
+	/* The control saying how the picked tags narrow, holding the two presses that change what is
+	   picked. It stands on the tags line beside the word that folds them, so it takes that word's own
+	   size — the same text and the same edge thickness, which makes both boxes exactly as tall
+	   as each other. Its height is whatever that text needs; nothing is fixed. */
 	.picking {
-		border        : var(--thick) solid var(--black);
-		height        : var(--height);
+		border        : 0.5px solid var(--black);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font-tiny);
+		font-size     : var(--font-faint);
 		background    : var(--white);
+		display       : inline-flex;
 		box-sizing    : border-box;
 		align-items   : stretch;
 		overflow      : hidden;
-		display       : inline-flex;
 		flex-shrink   : 0;
 	}
 
 	/* A button keeps no text size of its own, so it is said here — without it each segment falls
-	   back to whatever the browser draws a button at, which is larger than the tags beside them. */
+	   back to whatever the browser draws a button at, which is larger than the word beside it. */
 	.picking .segment {
-		font-size : var(--font-tiny);
+		font-size : var(--font-faint);
 		padding   : 0 var(--gap);
 	}
 
@@ -513,11 +562,11 @@
 
 	.search {
 		border        : var(--thick) solid var(--black);
-		height        : var(--height);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(--font);
+		height        : var(--height);
 		background    : var(--white);
+		font-size     : var(--font);
 		color         : var(--text);
 		box-sizing    : border-box;
 		width         : 100%;
@@ -528,8 +577,8 @@
 	   curve nor its width. The edge is drawn inside, so nothing moves. */
 	.search:focus,
 	.search:focus-visible {
-		border-color : var(--accent);
 		box-shadow   : inset 0 0 0 var(--thick) var(--accent);
+		border-color : var(--accent);
 		outline      : none;
 	}
 </style>

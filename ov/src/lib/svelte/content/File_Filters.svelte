@@ -5,7 +5,8 @@
 	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
 	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
-	import { inverted, toggle_all_areas } from '../../ts/managers/Filters';
+	import { inverted, toggle_all_areas, w_areas_open } from '../../ts/managers/Filters';
+	import { names_ride_in, places_of } from '../../ts/utilities/Tag_Rows';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Section from '../support/Section.svelte';
@@ -72,9 +73,38 @@
 	let kinds_button   = $state<HTMLElement | null>(null);
 	let tags_button    = $state<HTMLElement | null>(null);
 
+	// The two presses that change which tags the guide wears. They stand on the tags line at the
+	// middle, beside the word that folds the areas rather than inside what that word folds away.
+	let picking_control = $state<HTMLElement | null>(null);
+
 	const filters_action = $derived(Object.assign(new Action(), { element: filters_button, position: T_Position.left }));
 	const kinds_action   = $derived(Object.assign(new Action(), { element: kinds_button,   position: T_Position.left }));
 	const tags_action    = $derived(Object.assign(new Action(), { element: tags_button,    position: T_Position.left }));
+	const picking_action = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
+
+	// Does a name ride above a pill in the topmost row of tags? Only then does the row hold a gap
+	// above itself, so that name stands clear of the line overhead.
+	let tags_row = $state<HTMLElement | null>(null);
+	let names_riding = $state(false);
+
+
+	function look_for_names() {
+		names_riding = tags_row === null ? false : names_ride_in(places_of(tags_row));
+	}
+
+	// Measured again whenever the picks change, and again whenever the run changes shape — it
+	// wraps differently at a different width, and a pill opening slides its neighbors onto
+	// another line partway through.
+	$effect(() => {
+		form_tags; $w_areas_open; show_form_tags;
+		look_for_names();
+		const row = tags_row;
+		if (!row) { return; }
+		const watcher = new ResizeObserver(look_for_names);
+		watcher.observe(row);
+		for (const pill of [...row.children]) { watcher.observe(pill); }
+		return () => watcher.disconnect();
+	});
 
 	/** Put the whole form away, or bring it back. */
 	function toggle_filters() {
@@ -178,6 +208,14 @@
 		bind:this={kinds_button} onclick={toggle_kinds}>{form_kinds_word}</button>
 	<button type='button' class='fold-word' class:forced={tags_lit || way_out_lit}
 		bind:this={tags_button} onclick={toggle_tags}>{form_tags_word}</button>
+	<!-- Two presses. Neither is a state — a guide wears the tags it wears — so neither ever reads
+	     as picked; they answer under the cursor only. -->
+	<span class='picking' bind:this={picking_control}>
+		<button class='segment press' onclick={clear_tags}
+			use:tip={'take every tag off this guide'}>clear</button>
+		<button class='segment press' onclick={invert_tags}
+			use:tip={'give it exactly the tags it does not wear'}>invert</button>
+	</span>
 </div>
 
 <div class='filter-block' class:lit={way_out_lit && !$w_show_filters}
@@ -239,7 +277,10 @@
 		     other one that can be pressed — while the way back to the list is lit, and while
 		     the cursor is among the tags themselves. -->
 		<Section
-			actions={[tags_action]}
+			actions={[tags_action, picking_action]}
+			fills_when_bare
+			onbare={() => toggle_all_areas(TAG_AREAS.map((one) => one.name))}
+			bare_says={$w_areas_open.length === 0 ? 'expand tags' : 'collapse tags'}
 			folded={!show_form_tags}
 			onhover={(over) => { tags_lit = over; }}>
 			{#snippet holds()}
@@ -249,17 +290,8 @@
 				     itself is that area's own. -->
 				<!-- Each area is wrapped so it can be slid: opening one grows it from a word to a
 				     run of segments, and the pills after it move a long way at once. -->
-				<div class='filter-row wrapping tags-row' use:smooth_height role='presentation'
-					onclick={(event) => { if (event.target === event.currentTarget) { toggle_all_areas(TAG_AREAS.map((one) => one.name)); } }}>
-					<!-- Two presses at the front of the row. Neither is a state — a file wears the
-					     tags it wears — so neither ever reads as picked; they answer under the
-					     cursor only. -->
-					<span class='picking'>
-						<button class='segment press' onclick={clear_tags}
-							use:tip={'take every tag off this guide'}>clear</button>
-						<button class='segment press' onclick={invert_tags}
-							use:tip={'give it exactly the tags it does not wear'}>invert</button>
-					</span>
+				<div class='filter-row wrapping tags-row' class:named={names_riding}
+					bind:this={tags_row} use:smooth_height>
 					{#each TAG_AREAS as area (area.name)}
 						<span class='pill-slot'>
 							<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
@@ -289,7 +321,7 @@
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
 		padding       : 0 var(--gap);
-		background    : var(--bg);
+		background    : var(--section-bg, var(--bg));
 		box-sizing    : border-box;
 		font-family   : inherit;
 		white-space   : nowrap;
@@ -305,7 +337,7 @@
 
 	.fold-word.forced {
 		border-color : var(--darkgray);
-		background   : var(--white);
+		background   : var(--hover);
 	}
 
 	/* Folded, this whole block is bare space above the file's words, so it is a way back to the
@@ -365,13 +397,13 @@
 		display : inline-flex;
 	}
 
-	/* The two presses at the front of the tag row, standing the height of the areas beside them
-	   and reading at their size, so the row is one line of pills rather than two. */
+	/* The two presses, standing on the tags line beside the word that folds the areas. They take
+	   that word's size — the same text and the same edge thickness, which makes both boxes the
+	   same height. Their height is whatever that text needs; nothing is fixed. */
 	.picking {
-		border        : var(--thick) solid var(--black);
-		height        : var(--height);
+		border        : 0.5px solid var(--black);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font-tiny);
+		font-size     : var(--font-faint);
 		background    : var(--white);
 		box-sizing    : border-box;
 		align-items   : stretch;
@@ -381,9 +413,9 @@
 	}
 
 	/* A button keeps no text size of its own, so it is said here — without it each segment falls
-	   back to whatever the browser draws a button at, which is larger than the tags beside them. */
+	   back to whatever the browser draws a button at, which is larger than the word beside it. */
 	.picking .segment {
-		font-size  : var(--font-tiny);
+		font-size  : var(--font-faint);
 		padding    : 0 var(--gap);
 		background : transparent;
 		color      : var(--text);
@@ -412,6 +444,14 @@
 		align-items : center;
 		display     : flex;
 	}
+
+	/* With a name riding above a pill in the topmost row, the run holds one gap above itself so
+	   that name stands clear of the line overhead. It is a margin, so it sits outside the height
+	   this box is told to hold and never joins the slide. */
+	.tags-row.named {
+		margin-top : var(--gap);
+	}
+
 
 	/* The gap below the tag areas is the section's, not theirs. Wrapped onto more than one row,
 	   they stand a full gap apart both ways — the same as the tag areas among the filters.

@@ -5,7 +5,6 @@ description: "Visual constants and patterns, arrived at by small perturbations r
 tags: [visual]
 date: 2026-05-10
 ---
-
 # Aesthetics
 
 Visual design constants and patterns.

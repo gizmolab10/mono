@@ -5,7 +5,6 @@ description: "Every file under the ji notes folder, updated whenever notes are a
 tags: [journal, notes]
 date: 2026-07-30
 ---
-
 # Notes map — ji
 
 Every file under `notes/`. Update when notes files are added, moved, or removed.

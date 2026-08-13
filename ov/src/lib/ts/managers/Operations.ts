@@ -114,8 +114,10 @@ export function open_view(key: string): void {
 	w_anchor.set(key);
 	w_view_guide.set(key);
 	w_operation.set(T_Operation.edit);
-	const files = rows.filter((r) => !r.guide.is_folder).length;
-	debug.log(`Opened "${row.guide.name}" — ${files} guide(s) on screen to step through, among ${rows.length} rows. The link stack starts empty.`);
+	w_stepping_halted.set(false);              // opening from the list is a fresh start
+	const files = rows.filter((r) => !r.guide.is_folder);
+	const at = files.findIndex((r) => r.key === key);
+	debug.log(`Opened "${row.guide.name}" — file ${at + 1} of ${files.length} on screen, among ${rows.length} rows${at < 0 ? '; it is not among them, so the count shows nothing' : ''}. The link stack starts empty.`);
 }
 
 /**
@@ -149,7 +151,22 @@ export function follow_link(key: string): void {
  * Step before or after. While the link stack holds anything it is what gets walked; the
  * list is walked only once the stack is empty.
  */
-export function step_view(by: number): void {
+/**
+ * Has the file on screen something that wants looking at — an offer to put it right, or words
+ * that could not be read? Holding a step mark, or holding an arrow key, walks past a file in a
+ * moment, so a file that raised something stops the walk there. One more press goes on.
+ */
+export const w_stepping_halted = writable(false);
+
+/** Said by whatever read the file: it raised something, so the walk stops here. */
+export function halt_stepping(why: string): void {
+	w_stepping_halted.set(true);
+	debug.log(`Stepping: held at this file — ${why}. Another press goes on.`);
+}
+
+export function step_view(by: number, repeated = false): void {
+	if (repeated && get(w_stepping_halted)) { return; }
+	w_stepping_halted.set(false);              // a press of its own always goes
 	const stack = get(w_link_stack);
 	if (stack.length > 0) { step_stack(by); return; }
 	step_list(by);

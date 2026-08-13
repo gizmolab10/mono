@@ -5,7 +5,6 @@ description: "How to move from Svelte 4 to 5, where reactivity works altogether 
 tags: [platform, migrate]
 date: 2026-01-12
 ---
-
 # Migrating to Svelte 5
 
 How to upgrade from Svelte 4 to 5. The runes are coming. Reactivity works completely differently. This is going to be a project.

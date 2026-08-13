@@ -5,7 +5,6 @@ description: "How to move a capability from one project to another: read the sou
 tags: [port]
 date: 2026-05-10
 ---
-
 # Porting Code
 
 How to port code from one project A to another B.

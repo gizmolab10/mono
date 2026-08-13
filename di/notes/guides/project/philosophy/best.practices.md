@@ -5,7 +5,6 @@ description: "The Svelte patterns di uses, and the rule about which reactive too
 tags: [style, platform]
 date: 2026-05-10
 ---
-
 # Best Practices
 
 Svelte 5 patterns and choices for the di project, based on research and implementation experience.

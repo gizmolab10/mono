@@ -5,7 +5,6 @@ description: "Setting up the Claude desktop app to reach local files."
 tags: [setup]
 date: 2026-05-10
 ---
-
 # Giving Claude Filesystem Access
 
 Quick guide for setting up Claude Desktop to access your local filesystem.

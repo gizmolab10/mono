@@ -5,7 +5,6 @@ description: "Patterns distilled from finished milestones that would mislead a s
 tags: [debug, session]
 date: 2026-06-22
 ---
-
 # Lessons
 
 Meta-lessons distilled from the two mothballed milestones (the facet tracer and the drag rewrite). Each is a pattern that would mislead a successor on any feature, not just the one that surfaced it. The point is to spot the same shape early when it shows up somewhere new.

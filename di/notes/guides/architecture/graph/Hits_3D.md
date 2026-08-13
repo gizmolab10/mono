@@ -5,7 +5,6 @@ description: "Working out which corner, edge, or face of a part the mouse is ove
 tags: [program, geometry, UX]
 date: 2026-05-10
 ---
-
 # Hits_3D
 
 Three-dimensional hit testing on the canvas — corners, edges, faces of every part the user sees.

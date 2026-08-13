@@ -5,7 +5,6 @@ description: "Guides whose tags stopped describing them when the tags were renam
 tags: [active, notes]
 date: 2026-08-09
 ---
-
 # Tag drift
 
 Four tags were renamed in place, across every guide that wore them, without anyone reading the guides:

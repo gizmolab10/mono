@@ -1,6 +1,8 @@
 <script lang='ts'>
 	import { T_Edge, USUAL_GAP, folded_height, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
-	import Action from '../../ts/types/Action';
+	import { over_nothing } from '../../ts/utilities/Hit_Empty_Space';
+	import { tip } from '../../ts/utilities/Tooltip';
+	import Action, { T_Position } from '../../ts/types/Action';
 	import Separator from './Separator.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -14,22 +16,22 @@
 	let {
 		edge               = T_Edge.thin,
 		gap                = USUAL_GAP,
-		onclick            = undefined,
 		onhover            = undefined,
-		hovered            = false,
+		onbare             = undefined,
+		bare_says          = '',
 		folded             = false,
 		holds_subsections  = false,
+		fills_when_bare    = false,
 		actions            = null,
-		title              = null,
 		holds,
 	}: {
 		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
-		onclick?           : (() => void) | undefined;            // pressing the word, anywhere along the line
+		onbare?            : (() => void) | undefined;               // a press landed on the bare background, on nothing that answers for itself
+		bare_says?         : string;                  // what a press on the bare background would do, shown while the cursor is on it
 		actions?           : Action[] | null;         // things to sit on the line, each at its own end or middle
-		title?             : string | null;           // a word sitting on that line
 		holds              : Snippet;                 // what it shows
 		holds_subsections? : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
-		hovered?           : boolean;                 // force the word's edge on, because a surrounding area says so
+		fills_when_bare?   : boolean;                 // its whole background fills while the cursor is on bare space, because a press there does something
 		folded?            : boolean;                 // its content is put away, so it holds no gap
 		edge?              : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
 		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
@@ -38,15 +40,30 @@
 	// Said once here, so the line and the gap can never disagree about what this section is.
 	let bar = $derived(thickness_of(edge));
 	let holds_gap = $derived(gap_inside(folded, gap, holds_subsections));
+
+	// Folded, the line keeps only what stands at its ends — the word that brings the section back.
+	// Anything at the middle acts on what is now out of sight, so it goes with it.
+	let on_the_line = $derived(folded
+		? (actions ?? []).filter((one) => one.position !== T_Position.center)
+		: actions);
+
+	// Is the cursor on this section's own bare space right now? The whole background is what a
+	// press there acts on, so the whole background is what fills — the gap it holds above and
+	// below its contents included, since that gap is bare space too.
+	let bare_lit = $state(false);
 </script>
 
 <!-- The line and what it bounds are one thing, so whatever stacks these sections puts its own
      spacing between whole sections rather than between a section's line and its content. -->
-<div class='section'>
+<!-- What color this section is standing on, said as a value anything inside it can read. Whatever
+     paints itself to mask the line behind it — a word on the line, a name above a pill — reads
+     this rather than the page color, so it still matches while the section is lit. It is only set
+     when lit, so a section inside a lit one inherits the lit color rather than overriding it. -->
+<div class='section' style:--section-bg={bare_lit && fills_when_bare && !folded ? 'var(--hover)' : undefined}>
 	<!-- An edge of the view has no line to draw, so nothing is put there at all. -->
 	{#if edge !== T_Edge.view}
 		<div class='section-bar'>
-			<Separator at_left thickness={bar} title={title} {actions} {hovered} onclick={onclick ? () => onclick() : undefined}/>
+			<Separator thickness={bar} actions={on_the_line} />
 		</div>
 	{/if}
 
@@ -54,12 +71,17 @@
 	     below. Open, it holds the same gap above and below whatever it shows. -->
 	<div
 		class='section-body'
+		class:lit={fills_when_bare && bare_lit && !folded}
 		style:padding-top='{holds_gap}px'
 		style:padding-bottom='{holds_gap}px'
 		style:min-height='{folded ? folded_height(gap) : 0}px'
 		role='presentation'
+		use:tip={bare_says !== '' && bare_lit ? bare_says : false}
 		onmouseenter={() => onhover?.(true)}
-		onmouseleave={() => onhover?.(false)}>
+		onmousemove={(event) => { if (fills_when_bare) { bare_lit = over_nothing(event); } }}
+		onmouseleave={() => { onhover?.(false); bare_lit = false; }}
+		onclick={(event) => { if (over_nothing(event)) { onbare?.(); } }}
+		onkeyup={() => {}}>
 		{#if !folded}{@render holds()}{/if}
 	</div>
 </div>
@@ -83,5 +105,17 @@
 		flex-direction : column;
 		display        : flex;
 		flex           : 0 0 auto;
+	}
+
+	/* The bare space here does something when pressed, so the whole background fills while the
+	   cursor is on it. The fill reaches out to the box's own left and right edges, so it covers
+	   the gap the box holds around its contents rather than stopping short. */
+	.section-body.lit {
+		margin-left  : calc(var(--gap) * -1);
+		margin-right : calc(var(--gap) * -1);
+		padding-left : var(--gap);
+		padding-right: var(--gap);
+		background   : var(--hover);
+		cursor       : pointer;
 	}
 </style>

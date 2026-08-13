@@ -11,12 +11,17 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## from jeff
 
-1.  Messaging: I couldn't get the messaging feature to work. It briefly seemed to connect to Outlook, but I use Gmail.  
+1.  Messaging: I couldn't get the messaging feature to work. It briefly seemed to connect to Outlook, but I use Gmail.
+
 2.  Tagging: The tagging feature could use some of your UI expertise. I couldn't find a way to add a tag after a document was already loaded.  
+
 3.  Upload Feedback: What do you think about adding an animated icon (like the old hourglass) or a notification to let the user know their document is uploading or has been received?
 
 ## work
 
+- [x] second color picker in preferences -> bg
+- [ ] when opening a file, if the first character is a return, remove it
+- [ ] maps -> actual clickable links to source files
 - [ ] move the gear in chat to the area below the question-in-flight (ie, where the reply will go)
 - [ ] port Hits.ts from di (not 3D!)
     - [ ] so tooltips & hover work more reliably (leave events often do not happen)

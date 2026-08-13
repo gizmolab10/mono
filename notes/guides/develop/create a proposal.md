@@ -5,7 +5,6 @@ description: "A worked example of writing a proposal from scratch in short cycle
 tags: [team, prose]
 date: 2026-05-29
 ---
-
 # How we wrote the proposal from scratch
 
 ## Where we started

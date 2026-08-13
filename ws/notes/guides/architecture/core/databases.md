@@ -5,7 +5,6 @@ description: "Four storage backends behind one shared interface, each with its o
 tags: [program, data]
 date: 2026-01-28
 ---
-
 # Database Abstraction Architecture
 
 I built this to run on Firebase, Airtable, Local, and Test databases. They share a unified CRUD interface. Each database gets its own Hierarchy instance, so live-switching back-and-forth doesn't lose loaded data.

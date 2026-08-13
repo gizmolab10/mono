@@ -5,7 +5,6 @@ description: "The words that cause friction in any project, each with the word t
 tags: [prose, session, team]
 date: 2026-07-27
 ---
-
 # Substitutions for banned words — every project
 
 These banned words have caused friction, in every project. Use the left column, never the right. Plural, past-tense and gerund forms of the words in the right column are also banned, and should be substituted using the same form.

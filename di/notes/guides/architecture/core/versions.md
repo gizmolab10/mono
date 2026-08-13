@@ -5,7 +5,6 @@ description: "How an old saved file is brought up to the current scene format."
 tags: [program, data, migrate]
 date: 2026-05-10
 ---
-
 # File Format Migration
 
 How a v1 `.di` file becomes a v9 scene at runtime.

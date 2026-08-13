@@ -5,7 +5,6 @@ description: "Every source file in ji, updated whenever files are added, moved, 
 tags: [journal, notes, program]
 date: 2026-07-29
 ---
-
 # Map — ji source
 
 The intersection project's files. Update this when files are added, moved, or removed.

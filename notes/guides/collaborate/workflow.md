@@ -5,7 +5,6 @@ description: "The turn-taking cadence and the propose-before-acting discipline."
 tags: [session, team]
 date: 2026-07-07
 ---
-
 # Workflow
 
 See [motive.md](../philosophy/use%20ai.md) for the origin story and philosophy behind this system.

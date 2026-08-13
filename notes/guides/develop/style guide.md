@@ -5,7 +5,6 @@ description: "Naming, formatting, and organization patterns to follow strictly a
 tags: [style]
 date: 2026-07-13
 ---
-
 # Style Guide: Codebase Conventions
 
 This document defines naming, formatting, and organization patterns. Follow these strictly for consistency across projects.

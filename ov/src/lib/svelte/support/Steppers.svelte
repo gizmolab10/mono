@@ -16,8 +16,8 @@
 		{
 			can_back?     : boolean;                 // is there anything behind
 			can_forward?  : boolean;                 // is there anything ahead
-			onprev?       : () => void;
-			onnext?       : () => void;
+			onprev?       : (repeated?: boolean) => void;   // told whether this is the press or the patter after it
+			onnext?       : (repeated?: boolean) => void;
 			vertical?     : boolean;                 // runs up-and-down rather than side-to-side
 			always_both?  : boolean;                 // draw the one that leads nowhere too, dead to the touch
 			back_says?    : string;                  // the hover words for each
@@ -35,11 +35,11 @@
 	$effect(() => holding.stop);        // let go if this leaves the screen mid-hold
 </script>
 
-{#snippet mark(live: boolean, path: string, bounds: { minX: number; minY: number; width: number; height: number }, says: string, step: () => void)}
+{#snippet mark(live: boolean, path: string, bounds: { minX: number; minY: number; width: number; height: number }, says: string, step: (repeated?: boolean) => void)}
 	<button class='step' class:dead={!live} aria-label={says} use:tip={live ? says : false}
 		onmousedown={(e) => { e.stopPropagation(); if (live) { holding.start(step); } }}
 		onmouseup={holding.stop} onmouseleave={holding.stop}
-		onclick={(e) => { e.stopPropagation(); if (live && e.detail === 0) { step(); } }}>
+		onclick={(e) => { e.stopPropagation(); if (live && e.detail === 0) { step(false); } }}>
 		<svg overflow='visible' width={bounds.width} height={bounds.height}
 			viewBox='{bounds.minX} {bounds.minY} {bounds.width} {bounds.height}'><path d={path} /></svg>
 	</button>

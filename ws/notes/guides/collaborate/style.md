@@ -5,7 +5,6 @@ description: "The ws conventions that differ from the shared ones."
 tags: [style]
 date: 2026-02-02
 ---
-
 # Style (ws-specific)
 
 ws-specific conventions that differ from shared mono guides.

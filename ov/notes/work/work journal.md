@@ -9,6 +9,20 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-12 — a word on a line is now the caller's own, and a bar only lends it a place
+
+A section's line used to build the word that folds it, style it, and light it. It now takes made things instead: a caller writes its own control, hands over the element and where it wants to stand — left, middle or right — and the line only finds it a place. All eight clickable titles moved out, three in the file form and four in the filters and one in the search. With them went the line's `title`, its `onclick`, its hover styling, and the clear strip that made a two-pixel line worth aiming at.
+
+**One thing to know about handing over a made element.** A caller writes its button out of sight, and the browser makes it one drawing later — so the line is handed nothing on the first drawing and the button on the next. That arrival is itself a change, so the line is told at once; nobody has to touch anything.
+
+**The picking control and both clears moved onto their own lines**, standing at the middle. Each takes the fold word's own text size and edge, so the two boxes are the same height. Folded, whatever stands at the middle goes with what it acts on — the fold word stays, since it is the way back.
+
+**A row of tags holds a gap above itself only when a name rides above a pill in its topmost line.** Which pills are in that line is measured: the run wraps, so nothing but measuring says. The reckoning lives in one place and is proved without a page.
+
+**A bug of two halves.** The fill and the press disagreed: the fill lit everywhere but inside the rows, the press worked only inside them. They were asking different questions of different elements. Both now ask the section, and the question is narrower than the one that decides the way back to the list — a whole area is a background, not a thing that answers.
+
+**Elsewhere.** A `+` in the editor's top row makes a file beside the one open and opens it, labeled to match the filters so it is one of the files on screen. A link ending `.ts` or `.svelte` hands off to VSCode at the line it names. The tags picking control gained **any but** — a file shows only if it wears none of the picked tags.
+
 ## 2026-08-11 — the tags row says how it is picking, and the guides were counted again
 
 The tags row's `all` button became a control of four: **any of** and **all of** are states, remembered between visits; **clear** and **invert** are presses that change what is picked and never read as picked. The editor's own tags row got the two presses alone, since a file wears the tags it wears. All three rows' clear grays and answers nothing when there is nothing to clear.
@@ -53,11 +67,11 @@ The filters drew five lines by hand, each in a bare wrapper with the row it name
 
 ## 2026-08-09 — the editor became four files, and the page stopped blinking
 
-The editor was 1,941 lines and held four whole things that had nothing to say to each other. It is now 448: the top row, the way back to the list, and the two things the parts share — the whole file's text, and the line along the bottom that speaks up briefly. **Search** took the search row and the highlighting (239 lines). **File_OKF** took a guide's own labels (287). **File_Content** took reading the file, drawing it, folding it, and the box that changes one piece (1,052). Nothing on screen was meant to move.
+The editor was 1,941 lines and held four whole things that had nothing to say to each other. It is now 448: the top row, the way back to the list, and the two things the parts share — the whole file's text, and the line along the bottom that speaks up briefly. **Search** took the search row and the highlighting (239 lines). **File_Filters** took a guide's own labels (287). **File_Content** took reading the file, drawing it, folding it, and the box that changes one piece (1,052). Nothing on screen was meant to move.
 
 **The rule about clicking bare space became Hit_Empty_Space**, named for what it answers rather than for one caller's purpose. It was called Leaving, which named no subject; then Leave_Editor, which named the caller — three components ask the same question and one of them may one day not be leaving anything.
 
-**Names that had drifted.** The manager that holds every guide became Files. The list's filters became List_OKF, a file's own became File_OKF — the app calls both "filters" and the two were one keystroke apart. Browse and Editor moved up into the frame folder, since each is a whole screen; the status line moved down into content, since it is one thing the box shows.
+**Names that had drifted.** The manager that holds every guide became Files. The list's filters became List_Filters, a file's own became File_Filters — the app calls both "filters" and the two were one keystroke apart. Browse and Editor moved up into the frame folder, since each is a whole screen; the status line moved down into content, since it is one thing the box shows.
 
 **Typing in the search field re-read the file from disk on every letter.** Working the list out again handed the editor a fresh record of the very same file, and the read was tied to that record rather than to the file's place. Five letters, five reads, five redrawings — which is what blinked. The place is now one piece of text, the same from one record to the next, so nothing stirs. Proved by making the app measure: the log alternated read, measurement, read, measurement.
 

@@ -22,6 +22,12 @@ import { get } from 'svelte/store';
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** How far the hover color leans from the page toward the accent, out of a hundred. */
+const HOVER_TOWARD_ACCENT = 33;
+
+/** And how much white is then mixed in, so the hover sits above the page rather than level. */
+const HOVER_LIGHTENED = 10;
+
 export class Colors {
 	darkgray          = '#666';
 	gray			  = '#888';
@@ -35,7 +41,9 @@ export class Colors {
 
 	// Reactive colors (stores). Wrapped so every write marks the canvas out
 	// of date — color changes are canvas-visible.
-	w_background_color  = stale_writable<string>('rgb(135, 135, 135)');
+	// The page color is a choice of its own, remembered like the accent. It starts at what the
+	// starting accent would have derived, so a first launch looks as it always did.
+	w_background_color  = make_stale(preferences.persistent<string>(T_Preference.color_background, '#F3F1EE'));
 	w_hover_color       = stale_writable<string>('rgb(220, 220, 220)');
 	w_text_color	    = make_stale(preferences.persistent<string>(T_Preference.color_text, 'black'));
 	w_accent_color	    = make_stale(preferences.persistent<string>(T_Preference.color_accent, 'rgb(200, 200, 200)'));
@@ -81,37 +89,57 @@ export class Colors {
 
 		this.w_accent_color.subscribe((color : string) => {
 			preferences.write(T_Preference.color_accent, color);
-			const bg = this.accent_to_background(color);
-			this.w_background_color.set(bg);
-			this.banner = this.ofBannerFor(bg);
-			// Hover color: a lighter version of the accent (ratio 2 yields
-			// roughly halfway between accent and white). The pitch-black
-			// guardrail catches the case where lighterBy returns the literal
-			// string 'null' for a zero-luminance input.
-			const hover = this.lighterBy(color, 2);
-			this.w_hover_color.set((hover === 'null' || !hover) ? 'rgb(220, 220, 220)' : hover);
+			this.settle();
+		});
 
-			// Text flips to white on a dark background so it stays readable. There
-			// are two backgrounds: the content region sits on --bg, the details
-			// region sits on the accent itself, so each gets its own text color.
-			// Threshold 0.5 is the readable midpoint (0 = black … 1 = white).
-			const accent_lume = this.luminance_ofColor(color);
-			const bg_lume = this.luminance_ofColor(bg);
-			const text_on_bg = bg_lume < 0.5 ? 'white' : 'black';
-			// The readable text for anything sitting on the accent itself — white on a
-			// dark accent, black on a light one. Named text_onAccent (--text-on-accent);
-			// every accent-filled button reads it.
-			const text_onAccent = accent_lume < 0.4 ? 'white' : 'black';
-			this.w_text_color.set(text_on_bg);
-			if (typeof document !== 'undefined') {
-				document.documentElement.style.setProperty('--text-on-accent', text_onAccent);
-				document.documentElement.style.setProperty('--accent-dark', this.accent_to_accentDark(color));
-				// A soft accent — 30% of the way from the page color to the accent — for a fill
-				// that reads gentler than the full accent.
-				document.documentElement.style.setProperty('--mild-accent', `color-mix(in srgb, ${color} 30%, ${bg})`);
-			}
+		this.w_background_color.subscribe((color : string) => {
+			preferences.write(T_Preference.color_background, color);
+			this.settle();
 		});
 	}
+
+	/**
+	 * Everything worked out from the two colors that are chosen — the accent and the page. Called
+	 * whenever either moves, since half of what is worked out here reads both: the mild accent
+	 * mixes them, and the text has to be readable against whichever it sits on.
+	 *
+	 * The page color used to be worked out from the accent. It is a choice of its own now, so
+	 * picking an accent leaves it exactly where it was put.
+	 */
+	private settle() : void {
+		const color = get(this.w_accent_color);
+		const bg = get(this.w_background_color);
+		this.banner = this.ofBannerFor(bg);
+		// What the cursor puts under itself: a third of the way from the page toward the accent,
+		// then lifted a tenth toward white. Both colors are chosen, so a hover reads as the page
+		// leaning toward the accent — which holds whichever pair is picked, light page or dark —
+		// and the lift keeps it above the page rather than level with it.
+		const leaning = `color-mix(in srgb, ${color} ${HOVER_TOWARD_ACCENT}%, ${bg})`;
+		this.w_hover_color.set(`color-mix(in srgb, ${this.white} ${HOVER_LIGHTENED}%, ${leaning})`);
+
+		// Text flips to white on a dark background so it stays readable. There
+		// are two backgrounds: the content region sits on --bg, the details
+		// region sits on the accent itself, so each gets its own text color.
+		// Threshold 0.5 is the readable midpoint (0 = black … 1 = white).
+		const accent_lume = this.luminance_ofColor(color);
+		const bg_lume = this.luminance_ofColor(bg);
+		const text_on_bg = bg_lume < 0.5 ? 'white' : 'black';
+		// The readable text for anything sitting on the accent itself — white on a
+		// dark accent, black on a light one. Named text_onAccent (--text-on-accent);
+		// every accent-filled button reads it.
+		const text_onAccent = accent_lume < 0.4 ? 'white' : 'black';
+		this.w_text_color.set(text_on_bg);
+		if (typeof document !== 'undefined') {
+			document.documentElement.style.setProperty('--text-on-accent', text_onAccent);
+			document.documentElement.style.setProperty('--accent-dark', this.accent_to_accentDark(color));
+			// A soft accent — 30% of the way from the page color to the accent — for a fill
+			// that reads gentler than the full accent.
+			document.documentElement.style.setProperty('--mild-accent', `color-mix(in srgb, ${color} 30%, ${bg})`);
+		}
+	}
+
+	/** The page color the accent would have given, for whoever wants to go back to it. */
+	background_from_accent(accent : string) : string { return this.accent_to_background(accent); }
 
 	ofBackgroundFor(color : string) : string { return this.lighterBy(color, 10); }
 	ofBannerFor(background : string) : string { return this.blend('white', background, 4); }

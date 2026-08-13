@@ -5,7 +5,6 @@ description: "Generating duplicates of a template part along an axis: studs, joi
 tags: [program, geometry]
 date: 2026-05-10
 ---
-
 # Repeaters
 
 Automagic clone generation. a parent SO with a repeater config produces copies of its first child (the template) along a chosen axis. studs, joists, stairs, and ramps are all the same mechanism — what varies is the template shape, parent rotation, and constraints.

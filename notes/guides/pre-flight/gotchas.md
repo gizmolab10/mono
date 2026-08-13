@@ -5,7 +5,6 @@ description: "Where the collaborator's own tools misbehave, and the workaround f
 tags: [tools]
 date: 2026-06-19
 ---
-
 # Gotchas and workarounds for Claude Code tools.
 
 ## File Operations

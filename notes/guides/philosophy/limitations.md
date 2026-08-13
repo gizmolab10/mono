@@ -5,7 +5,6 @@ description: "The failure modes the collaborator falls into, named so they can b
 tags: [debug, team, vision]
 date: 2026-06-03
 ---
-
 # Collaborator Limitations
 
 Known failure modes. Not excuses — just patterns to watch for.

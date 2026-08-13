@@ -5,7 +5,6 @@ description: "The button components that grew ad-hoc, gathered up for a sanity c
 tags: [program, UX]
 date: 2026-01-12
 ---
-
 # Button Components Analysis
 
 These just cropped up, ad-hoc, at the beginning of the project. Might give it a sanity check.

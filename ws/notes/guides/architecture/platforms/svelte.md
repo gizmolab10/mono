@@ -5,7 +5,6 @@ description: "The plan for the Svelte 5 upgrade and where it currently stands."
 tags: [migrate, platform]
 date: 2026-01-12
 ---
-
 # Svelte 5 Migration Roadmap
 
 **Started:** 2026-01-05  

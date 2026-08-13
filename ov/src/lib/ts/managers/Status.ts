@@ -17,6 +17,16 @@ export type Finding = { words: string; key?: string; link?: string };
 export const w_findings = writable<Finding[]>([]);
 
 /**
+ * Something the app has noticed and will do only if asked: the words say what was found, the
+ * button says what pressing it does. The cross that dismisses the line is the answer "no" —
+ * nothing happens, and nothing is asked again until the same thing is noticed again.
+ *
+ * It is not remembered across visits, since what it would do is an action rather than a value.
+ */
+export type Offer = { says: string; does: () => void };
+export const w_offer = writable<Offer | null>(null);
+
+/**
  * Say something. One line's worth goes along the bottom and stays until it is dismissed;
  * anything written as several lines is read as a report instead, since the bottom of a
  * window is no place for a list.
@@ -24,9 +34,22 @@ export const w_findings = writable<Finding[]>([]);
 export function show_status(words: string, findings: Finding[] = []): void {
 	w_status.set(words);
 	w_findings.set(findings);
+	w_offer.set(null);
 	w_show_status.set(true);
 	if (findings.length > 0 || words.split('\n').length > 2) { show_status_as_report(); return; }
 	debug.log(`Status line: "${words}".`);
+}
+
+/**
+ * Say what was found, and offer to act on it. Nothing happens unless the button is pressed;
+ * dismissing the line is the answer "no".
+ */
+export function offer_status(words: string, says: string, does: () => void): void {
+	w_status.set(words);
+	w_findings.set([]);
+	w_offer.set({ says, does });
+	w_show_status.set(true);
+	debug.log(`Status line: "${words}" — offering "${says}".`);
 }
 
 /** Take the line away. Whatever was being read stays where it is. */
@@ -34,7 +57,17 @@ export function hide_status(): void {
 	w_show_status.set(false);
 	w_status.set('');
 	w_findings.set([]);
+	w_offer.set(null);
 	if (get(w_operation) === T_Operation.report) { w_operation.set(T_Operation.browse); }
+}
+
+/** Press the offer: do the thing, then take the line away. */
+export function take_the_offer(): void {
+	const offer = get(w_offer);
+	if (!offer) { return; }
+	debug.log(`Status line: "${offer.says}" was pressed.`);
+	offer.does();
+	hide_status();
 }
 
 /**

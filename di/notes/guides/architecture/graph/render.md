@@ -5,7 +5,6 @@ description: "The nine stages every frame runs through, always in the same order
 tags: [program, geometry]
 date: 2026-05-10
 ---
-
 # How Rendering Works
 
 `src/lib/ts/render/Render.ts` — every frame starts here.

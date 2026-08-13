@@ -5,7 +5,6 @@ description: "The two layers of the component system and the eleven folders they
 tags: [program, UX]
 date: 2026-01-28
 ---
-
 # Component Architecture
 
 **Synopsis**: Webseriously's component system has two layers: (1) **Svelte components** organized into 11 directories by purpose (controls, details, draw, main, mouse, radial, search, text, tree, widget, experimental), and (2) **Components manager** that tracks S_Component state objects for complex interactive components that need state persistence across recreation. Simple interactive elements use S_Element (see Elements manager), while complex components like pagers and breadcrumbs use S_Component for additional behavior management.

@@ -5,7 +5,6 @@ description: "An invitation to a founding scholar, and what the research assista
 tags: [notes, plans, proposal, vision]
 date: 2026-08-06
 ---
-
 # Pitch
 
 Hi Jon  

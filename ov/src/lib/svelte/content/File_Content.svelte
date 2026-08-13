@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { body_of, flipped_task, lines_between, page_of, still_reads, with_lines_replaced } from '../../ts/utilities/Markdown_Blocks';
+	import { body_of, flipped_task, lines_between, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
 	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { file_path_of, path_of_address, read_guide, save_guide } from '../../ts/utilities/Saving';
 	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
-	import { follow_link, w_command_down } from '../../ts/managers/Operations';
+	import { offer_status, show_status } from '../../ts/managers/Status';
+	import { follow_link, halt_stepping, w_command_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { key_of, type Guide } from '../../ts/types/File';
@@ -739,6 +740,33 @@
 		return with_block;
 	}
 
+	/**
+	 * A file's words start at its top heading. Anything between the labels and that heading is
+	 * left over, so it is said along the bottom with a button that takes it out. Nothing is
+	 * written unless that button is pressed — dismissing the line leaves the file alone.
+	 */
+	function offer_to_clear_above_heading(whole: string): void {
+		const cleared = without_words_above_heading(whole);
+		if (cleared === whole) { return; }
+		const found = whole.length - cleared.length;
+		debug.log(`Editing "${name}": ${found} character(s) sit between the labels and the top heading. Offering to take them out; nothing is written unless it is asked for.`);
+		offer_status('found an extra character', 'remove it', () => { clear_above_heading(cleared, whole); });
+		halt_stepping(`"${name}" holds ${found} character(s) above its top heading`);
+	}
+
+	/** Take out what sits above the heading. A refused write leaves the file exactly as it was. */
+	async function clear_above_heading(cleared: string, whole: string): Promise<void> {
+		const answer = await save_guide(file_path_of(guide.bundle, guide.path), cleared, whole);
+		if (!answer.ok) {
+			show_status(`"${name}" was not changed — ${answer.why}`);
+			debug.log(`Editing "${name}": the characters above its top heading could not be taken out — ${answer.why}. It is shown as it is.`);
+			return;
+		}
+		text  = cleared;
+		words = page_of(reader, cleared);
+		debug.log(`Editing "${name}": took out the ${whole.length - cleared.length} character(s) that sat between the labels and the top heading.`);
+	}
+
 	let words  = $state<string | null>(null);
 	let loaded = $state(false);
 	let failed = $state('');
@@ -767,6 +795,7 @@
 				words  = page_of(reader, whole);
 				loaded = true;
 				debug.log(`Viewer: read ${whole.length} character(s) for "${name}" and turned them into a ${words.length}-character page, every piece carrying the lines it came from.`);
+				offer_to_clear_above_heading(whole);
 				ondrawn();
 				// A link can name a heading in the guide it opens; the words have to be drawn
 				// before there is anything to move down to.
@@ -780,6 +809,7 @@
 				failed = e instanceof Error ? e.message : String(e);
 				loaded = true;
 				debug.log(`Viewer: could not read "${name}" from ${where} — ${failed}.`);
+				halt_stepping(`"${name}" could not be read — ${failed}`);
 			});
 		// Let it all go the moment this one is off screen, box included.
 		return () => { close_box(false); words = null; text = ''; };

@@ -5,7 +5,6 @@ description: "How prose written into files should read: first person, warm, punc
 tags: [prose]
 date: 2026-07-08
 ---
-
 # Voice and Tone Guide
 
 I do have strong opinions written material: I want our guides to satisfy and nurture, not just inform. I try to write that way (aka voice), but my output is meager. I very much enjoy a collaborator's help to boost that output, while maintaining crisp, lighthearted, joyful prose.

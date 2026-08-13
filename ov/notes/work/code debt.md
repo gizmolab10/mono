@@ -12,19 +12,29 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 ## work
 
 - [ ] replace '+' button with t-cross path
+- [ ] OPTION-click turns a tag red, search discards matches to it
+- [ ] change `type Guide` -> `File` in `File.ts`
 - [ ] overstrike -> fainter gray
+- [ ] add a list of back links to the editor
 - [ ] blank line following checkbox line is missing
 - [ ] compose an email does not work on Windows
 - [ ] cannot edit
     - [ ] colon at the end of an H3
     - [ ] checkbox text when it has sub items
 - [ ] animate tag relayout during window resize and details hide <-> show
-- [ ] add a list of back links to the editor
 - [ ] port Hits.ts from di
     - [ ] replace nearly all of the on click and on hover wiring with hits logic
 
 ## done
 
+- [x] rename \_OKF -> Filters
+- [x] a word on a line is the caller's own — every clickable title built by its caller, handed to the line as a made element with the end or middle it stands at
+- [x] the picking control and both clears stand on their own lines, at the middle, and go when the section folds
+- [x] a row of tags holds a gap above itself only when a name rides above a pill in its topmost line
+- [x] the fill and the press of a section's bare background ask one question of one place
+- [x] a `+` in the editor's top row makes a file beside the one open and opens it
+- [x] a link naming a file of code opens it in VSCode, at the line it names
+- [x] any but — a file shows only if it wears none of the picked tags
 - [x] declaring a breakdown
     - [x] a guide with the four steps: declare it, state the objective, take stock, try again
     - [x] a `/br` skill that walks them on the spot

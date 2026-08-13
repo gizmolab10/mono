@@ -13,12 +13,12 @@
 export const CONTROL_TAGS = ['button', 'input', 'textarea', 'select', 'a'];
 
 /**
- * Things that answer a press themselves, by what they are called. The last two are whole areas
+ * Things that answer a press themselves, by what they are called. The last three are whole areas
  * rather than single controls: the run of tag areas has its own meaning for a press on its bare
- * space — it shuts every area — and the line above it folds them away, so neither counts as the
- * way out.
+ * space — it shuts every area — the line above it folds them away, and one tag area answers a
+ * press anywhere on it while it is shut. None of the three counts as the way out.
  */
-export const CONTROL_CLASSES = ['view-name', 'rename-field', 'hit-count', 'tags-row', 'section-bar'];
+export const CONTROL_CLASSES = ['view-name', 'rename-field', 'hit-count', 'tags-row', 'section-bar', 'pill-slot'];
 
 /** Did the press land on something that answers for itself? */
 export function landed_on_a_control(names: string[]): boolean {
@@ -49,4 +49,26 @@ export function names_up_to(hit: Element | null, row: Element): string[] {
 export function over_empty(event: MouseEvent): boolean {
 	const row = event.currentTarget as HTMLElement;
 	return !landed_on_a_control(names_up_to(event.target as HTMLElement | null, row));
+}
+
+/**
+ * The single things that take a press of their own, with no whole areas among them. A tag area
+ * counts: shut, the whole of it answers a press.
+ */
+export const THINGS_THAT_ANSWER = [...CONTROL_TAGS, 'pill-slot'];
+
+/** Did the press land on one of those? */
+export function landed_on_a_thing(names: string[]): boolean {
+	return names.some((name) => THINGS_THAT_ANSWER.includes(name.toLowerCase()));
+}
+
+/**
+ * Is the cursor on the bare background of the area it is in? A different question from the one
+ * above: this one asks only whether some single thing is under the cursor, so the areas named in
+ * CONTROL_CLASSES — which are backgrounds themselves — do not stop the walk. A section whose own
+ * background does something asks this.
+ */
+export function over_nothing(event: MouseEvent): boolean {
+	const area = event.currentTarget as HTMLElement;
+	return !landed_on_a_thing(names_up_to(event.target as HTMLElement | null, area));
 }

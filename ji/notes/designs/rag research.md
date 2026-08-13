@@ -5,7 +5,6 @@ description: "What was weighed in choosing how ji stores and searches what it is
 tags: [data, done, plans, proposal, research]
 date: 2026-08-06
 ---
-
 # RAG design trade-offs
 
 

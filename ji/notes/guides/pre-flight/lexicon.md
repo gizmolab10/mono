@@ -5,7 +5,6 @@ description: "The exact words ji uses in prose, comments, log lines, and test na
 tags: [prose, session]
 date: 2026-07-30
 ---
-
 # Lexicon
 
 The words used in this project. When writing prose, comments, log lines, or test names, use these words exactly, even when near synonyms exist. If it's here, that's its name.

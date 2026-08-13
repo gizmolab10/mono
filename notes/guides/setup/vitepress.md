@@ -5,7 +5,6 @@ description: "How the monorepo's documentation sites are configured."
 tags: [build, deploy, setup]
 date: 2026-05-10
 ---
-
 # VitePress Setup
 
 Configuration for the monorepo's VitePress documentation sites.

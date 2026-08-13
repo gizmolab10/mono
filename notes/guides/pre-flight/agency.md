@@ -5,7 +5,6 @@ description: "How the work itself is done: what to touch, what to prove, and wha
 tags: [always, session, team, style]
 date: 2026-08-01
 ---
-
 # Agency
 
  1. **All file paths:** `~/GitHub/mono/` — NEVER use the worktree working directory.

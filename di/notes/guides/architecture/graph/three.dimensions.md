@@ -5,7 +5,6 @@ description: "How depth gets squashed onto a flat canvas, and how the app works 
 tags: [program, geometry]
 date: 2026-05-10
 ---
-
 # Three Dimensions on a Flat Screen
 
 Every object in the scene is just a bag of corners and edges floating in 3D space. The problem: my canvas is flat. So every frame, the renderer has to squash all that depth onto a 2D surface, figure out what's in front of what, and draw it so it *looks* like you're staring at a real solid thing.

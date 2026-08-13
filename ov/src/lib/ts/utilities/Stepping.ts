@@ -38,8 +38,12 @@ export function mark_is_live(can_go: boolean): boolean {
 export const HOLD_PAUSE = 400;
 export const HOLD_TICK = 120;
 
+/**
+ * Each step is told whether it is the press itself or one of the patter that follows, so
+ * whatever is being stepped through can refuse to be carried past something it wants looked at.
+ */
 export type Holding = {
-	start : (step: () => void) => void;
+	start : (step: (repeated: boolean) => void) => void;
 	stop  : () => void;
 };
 
@@ -52,10 +56,10 @@ export function make_holding(pause = HOLD_PAUSE, tick = HOLD_TICK): Holding {
 		if (beat !== null) { clearInterval(beat); beat = null; }
 	}
 
-	function start(step: () => void): void {
+	function start(step: (repeated: boolean) => void): void {
 		stop();                                   // never two runs at once
-		step();                                   // the first step, right away
-		wait = setTimeout(() => { beat = setInterval(step, tick); }, pause);
+		step(false);                              // the press itself, right away
+		wait = setTimeout(() => { beat = setInterval(() => step(true), tick); }, pause);
 	}
 
 	return { start, stop };

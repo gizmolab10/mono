@@ -1,19 +1,20 @@
 <script lang='ts'>
-	// The accent color picker. Choosing an accent drives Colors' subscribers, which
-	// re-push the page color, the hover color and the text color onto the page.
+	// The two colors that are chosen: the accent, and the page behind everything. Each drives
+	// Colors' subscribers, which re-work the hover color, the text color and the rest.
 	import { colors } from '../../ts/utilities/Colors';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 
-	const { w_accent_color } = colors;
+	const { w_accent_color, w_background_color } = colors;
 
-	// True while the native color picker is open, so its hover hint is hushed until it closes. There's
-	// no "picker open" event, so track it: it opens on the swatch's click and closes on change or blur.
-	let picking = $state(false);
-	function open_picker()  { picking = true; }
-	function close_picker() { picking = false; }
+	// True while the native picker is open, so its hover hint is hushed until it closes. There's
+	// no "picker open" event, so track it: it opens on the swatch's click and closes on change or
+	// blur. One name per picker, since either can be the one open.
+	let picking = $state('');
+	function open_picker(which: string)  { picking = which; }
+	function close_picker() { picking = ''; }
 
-	// The picked color is brightened when it is too dark to read against — anything
+	// A picked color is brightened when it is too dark to read against — anything
 	// dimmer than the floor below is lifted to it, hue kept.
 	const DARKEST_ALLOWED = 0.2;
 
@@ -24,13 +25,31 @@
 		debug.log(`Accent picked: ${raw}, brightness ${brightness.toFixed(3)} against a floor of ${DARKEST_ALLOWED} — ${clamped === raw ? 'bright enough, kept as is' : `too dark, lifted to ${clamped}`}.`);
 		w_accent_color.set(clamped);
 	}
+
+	// The page color takes whatever is picked, with no floor: it is what everything else is read
+	// against, and the text flips to white on a dark one, so a dark page is a real choice.
+	function pick_background(e: Event) {
+		const raw = (e.target as HTMLInputElement).value;
+		debug.log(`Page color picked: ${raw}, brightness ${colors.luminance_ofColor(raw).toFixed(3)} — the text follows it.`);
+		w_background_color.set(raw);
+	}
 </script>
 
 <div class='color-row'>
 	<div class='color-group'>
 		<span class='label'>accent</span>
-		<label class='picker' class:picking use:tip={picking ? false : 'pick the accent color'}>
-			<input class='accent' type='color' value={$w_accent_color} oninput={pick} onclick={open_picker} onchange={close_picker} onblur={close_picker} />
+		<label class='picker accent-face' class:picking={picking === 'accent'}
+			use:tip={picking === '' ? 'pick the accent color' : false}>
+			<input class='hidden-input' type='color' value={$w_accent_color} oninput={pick}
+				onclick={() => open_picker('accent')} onchange={close_picker} onblur={close_picker} />
+		</label>
+	</div>
+	<div class='color-group'>
+		<span class='label'>page</span>
+		<label class='picker page-face' class:picking={picking === 'page'}
+			use:tip={picking === '' ? 'pick the color behind everything' : false}>
+			<input class='hidden-input' type='color' value={$w_background_color} oninput={pick_background}
+				onclick={() => open_picker('page')} onchange={close_picker} onblur={close_picker} />
 		</label>
 	</div>
 </div>
@@ -55,11 +74,11 @@
 		opacity   : var(--opacity-label);
 	}
 
-	/* The visible button is this circle — we own its color fully. */
+	/* The visible button is this circle — we own its color fully. Each one wears the color it
+	   picks, so the two read as what they are. */
 	.picker {
 		border-radius : var(--radius-percent);
 		border        : var(--thick) solid var(--black);
-		background    : var(--accent);
 		box-sizing    : border-box;
 		position      : relative;
 		cursor        : pointer;
@@ -68,7 +87,10 @@
 		height        : var(--height);
 	}
 
-	/* No hover light while the picker is open. */
+	.accent-face { background : var(--accent); }
+	.page-face   { background : var(--bg); }
+
+	/* No hover light while a picker is open. */
 	.picker:not(.picking):hover {
 		background : var(--hover);
 	}
@@ -76,7 +98,7 @@
 	/* The real color input lies invisibly on top: it catches the click to open
 	   the native picker, but shows nothing — so there is no browser swatch to
 	   fight, and the circle above is the only thing seen. */
-	.accent {
+	.hidden-input {
 		position : absolute;
 		cursor   : pointer;
 		width    : 100%;

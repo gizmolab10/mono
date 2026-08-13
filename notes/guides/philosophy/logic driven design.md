@@ -5,7 +5,6 @@ description: "Rules, tests, and code kept in lock-step, so any drift is caught b
 tags: [vision, test]
 date: 2026-06-19
 ---
-
 # Logic Driven Design
 
 The development process the project follows.

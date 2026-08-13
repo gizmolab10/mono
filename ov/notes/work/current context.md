@@ -2,7 +2,7 @@
 kind: refer
 title: "Context"
 description: ""
-tags: [active, journal, stale]
+tags: [journal]
 date: 2026-08-10
 ---
 # Context

@@ -1,4 +1,4 @@
-import { body_of, boxes_for_tasks, flipped_task, lines_between, links_in, page_of, stamp_blocks, still_reads, with_lines_replaced } from '../utilities/Markdown_Blocks';
+import { body_of, boxes_for_tasks, flipped_task, lines_between, links_in, page_of, stamp_blocks, still_reads, with_lines_replaced, without_words_above_heading } from '../utilities/Markdown_Blocks';
 import { describe, expect, it } from 'vitest';
 import MarkdownIt from 'markdown-it';
 
@@ -107,6 +107,67 @@ describe('taking the labels off', () => {
 		const { body, skipped } = body_of(text);
 		expect(body).toBe(text);
 		expect(skipped).toBe(0);
+	});
+});
+
+// A file's words start at its top heading. Anything above that heading and below the labels is
+// left over — a stray line, a run of blanks — and goes the first time the file is opened.
+
+describe('clearing whatever sits above the top heading', () => {
+	const labels = ['---', 'kind: refer', 'title: "A"', '---'].join('\n');
+
+	it('takes out a stray line above the heading', () => {
+		const text = `${labels}\n\nleft over\n\n# A\n\nwords`;
+		expect(without_words_above_heading(text)).toBe(`${labels}\n# A\n\nwords`);
+	});
+
+	it('takes out blank lines alone', () => {
+		expect(without_words_above_heading(`${labels}\n\n\n# A\n`)).toBe(`${labels}\n# A\n`);
+	});
+
+	it('leaves a file whose heading already follows its labels', () => {
+		const text = `${labels}\n# A\n\nwords`;
+		expect(without_words_above_heading(text)).toBe(text);
+	});
+
+	it('leaves a file with no heading at all exactly as it was', () => {
+		const text = `${labels}\n\nwords with no heading\n\nand more of them`;
+		expect(without_words_above_heading(text)).toBe(text);
+	});
+
+	it('leaves a file with no labels, clearing only what is above its heading', () => {
+		expect(without_words_above_heading('stray\n\n# A\n\nwords')).toBe('# A\n\nwords');
+	});
+
+	it('keeps everything below the heading, the heading included', () => {
+		const text = `${labels}\nstray\n# A\n\n# a second one\n\nwords`;
+		expect(without_words_above_heading(text)).toBe(`${labels}\n# A\n\n# a second one\n\nwords`);
+	});
+
+	it('starts at the first heading, whatever its rank', () => {
+		expect(without_words_above_heading(`${labels}\n\n\n## Edge stretch\n\nwords`))
+			.toBe(`${labels}\n## Edge stretch\n\nwords`);
+		expect(without_words_above_heading(`${labels}\n\n### deeper still\n`)).toBe(`${labels}\n### deeper still\n`);
+	});
+
+	it('keeps every heading from the first one down', () => {
+		const text = `${labels}\n\n## not the top\n\n# A`;
+		expect(without_words_above_heading(text)).toBe(`${labels}\n## not the top\n\n# A`);
+	});
+
+	it('finds a heading held off the left edge, and takes those spaces too', () => {
+		expect(without_words_above_heading(`${labels}\n\n # A\n\nwords`)).toBe(`${labels}\n# A\n\nwords`);
+		expect(without_words_above_heading(`${labels}\n   # A\n`)).toBe(`${labels}\n# A\n`);
+	});
+
+	it('leaves a line stepped in four or more, which is no heading at all', () => {
+		const text = `${labels}\n\n    # A\n`;
+		expect(without_words_above_heading(text)).toBe(text);
+	});
+
+	it('says a heading already hard against the labels needs nothing done', () => {
+		const text = `${labels}\n# A\n\nwords`;
+		expect(without_words_above_heading(text)).toBe(text);
 	});
 });
 

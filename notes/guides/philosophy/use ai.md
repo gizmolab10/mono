@@ -5,7 +5,6 @@ description: "Why the work is shaped this way: let structure emerge, keep work f
 tags: [vision, notes]
 date: 2026-05-10
 ---
-
 # How we use AI
 
 ## How It Started

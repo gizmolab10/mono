@@ -5,7 +5,6 @@ description: "Who does what between Jonathan and the collaborator, and what the 
 tags: [team, session]
 date: 2026-05-10
 ---
-
 # Working with Co
 
 A guide to the division of labor between me and co (Claude). Jonathan's job — hard, complex, always on guard, and preferably damned fast. Jonathan needs co to be reliable and predictable. Co is a guessing algorithm that needs a well-specified context upon which to base these guesses. This will hopefully allow Jonathan to remain "in flow." This is more likely to happen if co avoids crazy suggestions, breaks good code, or misunderstands.

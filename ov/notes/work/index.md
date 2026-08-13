@@ -7,7 +7,6 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Synopsis Of Our Guides](./assessment%20of%20our%20guides.md)
 - [Handoff](handoff.md) — where to pick up, and the context the code doesn't say.
 - [Code debt](code%20debt.md) — everything still owed.
-- [Unnamed](action%20type.md)
 - [Organize](./organize.md)
 - [Repair staleness of files](./repair%20staleness%20of%20files.md)
 - [Stale guides](./stale%20guides.md)

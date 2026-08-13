@@ -5,7 +5,6 @@ description: "Setting up a new machine to work on the monorepo."
 tags: [setup]
 date: 2026-05-10
 ---
-
 # Developer Onboarding
 
 How to set up a new machine for development on the monorepo.

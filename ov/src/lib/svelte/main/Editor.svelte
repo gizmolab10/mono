@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { w_file_place, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
-	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
 	import { T_Bundle, key_of, type Guide } from '../../ts/types/File';
+	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
 	import File_Content from '../content/File_Content.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
-	import File_OKF from '../content/File_OKF.svelte';
+	import File_Filters from '../content/File_Filters.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
@@ -23,7 +23,7 @@
 	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the controls and call back.
 	let { name, address, tags, guide, onclose, can_back = false, can_forward = false, onprev = () => {}, onnext = () => {} }:
-		{ name: string; address: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: () => void; onnext?: () => void } = $props();
+		{ name: string; address: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void } = $props();
 
 	// The whole file, held only while it is on screen. Two of the three below write to it: the
 	// labels at the top, and a piece of the words being changed. One place holds it, so neither
@@ -67,7 +67,9 @@
 		const back = event.key === 'ArrowLeft';
 		if (!back && event.key !== 'ArrowRight') { return; }
 		event.preventDefault();
-		if (back) { onprev(); } else { onnext(); }
+		// The key held down repeats on its own; a file that raised something stops that walk,
+		// exactly as holding a step mark does.
+		if (back) { onprev(event.repeat); } else { onnext(event.repeat); }
 	}
 
 	$effect(() => {
@@ -190,7 +192,7 @@
 		class:lit={way_out_lit}
 		onmousemove={(e) => { way_out_lit = over_empty(e); }}
 		onmouseleave={() => { way_out_lit = false; }}
-		use:tip={'back to the list'} onclick={leave_if_empty}>
+		use:tip={'back to browse'} onclick={leave_if_empty}>
 		<div class='view-head'>
 			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
 				while reading off the list, on a run of files reached by links. -->
@@ -257,7 +259,7 @@
 		</div>
 		<Search bind:this={find} {name} {page} hovered={way_out_lit} />
 	</div>
-	<File_OKF {name} {guide} {tags} {onclose} onsay={say}
+	<File_Filters {name} {guide} {tags} {onclose} onsay={say}
 		bind:text={text_of_file} bind:way_out_lit />
 	<File_Content {name} {address} {guide} onsay={say}
 		bind:text={text_of_file} bind:page

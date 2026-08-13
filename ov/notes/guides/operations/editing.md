@@ -5,7 +5,6 @@ description: "How this app lets you change a guide from inside the app, one piec
 tags: [program, notes]
 date: 2026-08-02
 ---
-
 # Editing
 
 Editing a guide from inside overview: you change what's on the page, and the file on disk changes with it.

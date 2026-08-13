@@ -5,7 +5,6 @@ description: "Matches appear as each letter is typed, in very little screen spac
 tags: [program, UX]
 date: 2026-01-12
 ---
-
 # Search Functionality Architecture
 
 Instant search. Type a single letter and the matches appear instantly. Type more or choose one and done. economical use of screen real estate.

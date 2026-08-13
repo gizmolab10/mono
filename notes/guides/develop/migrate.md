@@ -5,7 +5,6 @@ description: "How to write a migration document that breaks a big component chan
 tags: [migrate, refactor]
 date: 2026-05-10
 ---
-
 # Migration Guide
 
 How to create effective migration documents for component refactors.

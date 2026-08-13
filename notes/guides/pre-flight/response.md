@@ -5,7 +5,6 @@ description: "How every reply is written: how short, how plain, and what must be
 tags: [always, prose, session, team]
 date: 2026-08-01
 ---
-
 # Response
 
 Everything about how a reply is written, apart from the five in [always](always.md) — be brief, plain English, guess, no fluff, show evidence. Those five are never repeated here; they are the ones that must never be out of sight.

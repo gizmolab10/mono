@@ -5,7 +5,6 @@ description: "Netlify, VitePress, and related tooling, with the gotchas that bit
 tags: [build, deploy, setup]
 date: 2026-05-10
 ---
-
 # Build & Deploy
 
 Reference for Netlify, VitePress, and related tooling.

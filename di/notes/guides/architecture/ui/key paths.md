@@ -5,7 +5,6 @@ description: "Every key and modifier, what it does, grouped by the context it is
 tags: [UX]
 date: 2026-05-10
 ---
-
 # Key Paths
 
 Two columns: which key (with any modifier), and what it does. Grouped by the context the key is interpreted in. Within a context, simpler keys come first.

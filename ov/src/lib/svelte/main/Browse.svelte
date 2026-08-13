@@ -3,7 +3,7 @@
 	import Files, { w_first_column, w_scrollbar_showing } from '../content/Files.svelte';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import List_OKF from '../content/List_OKF.svelte';
+	import List_Filters from '../content/List_Filters.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import Section from '../support/Section.svelte';
@@ -40,7 +40,7 @@
 <!-- The three parts stack flush against each other: each already holds its own gap above and
      below what it shows, so a gap here would be a second helping of the same thing. -->
 <div class='browse'>
-<List_OKF />
+<List_Filters />
 <!-- How many the filters leave, as a section of its own. The heavy line above it is what closes
      the picking rows off from the list; with those rows folded away there is nothing for it to
      close, so this section stands at an edge of the view instead and draws no line at all. -->

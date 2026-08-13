@@ -5,7 +5,6 @@ description: "The exact words di uses; no synonyms, no near-synonyms."
 tags: [prose, session]
 date: 2026-06-30
 ---
-
 # Lexicon
 
 The words used in this project. When writing prose, comments, log lines, or test names, use these words exactly. Do not invent synonyms; do not substitute "near-synonyms" that sound similar.

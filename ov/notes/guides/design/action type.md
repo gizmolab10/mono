@@ -2,7 +2,7 @@
 kind: design
 title: "new Action type"
 description: "pass Separator more than one title"
-tags: [active]
+tags: [done]
 date: 2026-08-12
 ---
 # Action type
@@ -24,14 +24,15 @@ i want to pass **Separator** more than one title. each title needs its own handl
 - [x] for ALL ***clickable*** titles
     - [x] ***copy*** button creation from **separator** to caller
         - [x] Search — the first one, the pattern for the rest
-        - [x] File_OKF (three) — filters, kinds, tags
-        - [x] List_OKF (four) — filters, projects, kinds, tags
+        - [x] File_Filters (three) — filters, kinds, tags
+        - [x] List_Filters (four) — filters, projects, kinds, tags
     - [x] place button in an **action** -> `position.left`
     - [x] add logic to use it — **Separator** lends each given **element** a place at its own end or middle
 - [ ] leave all plain titles as is
-- [ ] remove from **separator** and **section**
-    - [ ] all hover logic
-    - [ ] onclick
+- [x] remove from **separator** and **section**
+    - [x] all hover logic
+    - [x] onclick
+    - [x] title, and the whole-line press strip that went with it
 
 ### calls to Section
 
@@ -39,13 +40,13 @@ Each of these reaches a Separator through [Section.svelte:46](../../src/lib/svel
 
 | file | line |
 | --- | --- |
-| [File_OKF.svelte](../../src/lib/svelte/content/File_OKF.svelte#L148) | 148 |
-| [File_OKF.svelte](../../src/lib/svelte/content/File_OKF.svelte#L183) | 183 |
-| [File_OKF.svelte](../../src/lib/svelte/content/File_OKF.svelte#L202) | 202 |
-| [List_OKF.svelte](../../src/lib/svelte/content/List_OKF.svelte#L182) | 182 |
-| [List_OKF.svelte](../../src/lib/svelte/content/List_OKF.svelte#L195) | 195 |
-| [List_OKF.svelte](../../src/lib/svelte/content/List_OKF.svelte#L210) | 210 |
-| [List_OKF.svelte](../../src/lib/svelte/content/List_OKF.svelte#L242) | 242 |
+| [File_Filters.svelte](../../src/lib/svelte/content/File_Filters.svelte#L148) | 148 |
+| [File_Filters.svelte](../../src/lib/svelte/content/File_Filters.svelte#L183) | 183 |
+| [File_Filters.svelte](../../src/lib/svelte/content/File_Filters.svelte#L202) | 202 |
+| [List_Filters.svelte](../../src/lib/svelte/content/List_Filters.svelte#L182) | 182 |
+| [List_Filters.svelte](../../src/lib/svelte/content/List_Filters.svelte#L195) | 195 |
+| [List_Filters.svelte](../../src/lib/svelte/content/List_Filters.svelte#L210) | 210 |
+| [List_Filters.svelte](../../src/lib/svelte/content/List_Filters.svelte#L242) | 242 |
 | [Search.svelte](../../src/lib/svelte/content/Search.svelte#L158) | 158 |
 | [Browse.svelte](../../src/lib/svelte/main/Browse.svelte#L47) | 47 |
 

@@ -5,7 +5,6 @@ description: "The phrases Jonathan uses to steer a debugging session and what ea
 tags: [team, debug]
 date: 2026-05-10
 ---
-
 # How Jonathan Guides
 
 Patterns from debugging intersection line occlusion (Feb 2025).

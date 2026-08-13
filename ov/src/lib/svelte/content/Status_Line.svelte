@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_status, hide_status, show_status_as_report } from '../../ts/managers/Status';
+	import { w_status, w_offer, hide_status, show_status_as_report, take_the_offer } from '../../ts/managers/Status';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
@@ -14,6 +14,25 @@
 	// guessed: past three lines they are handed to the report, which has the whole box.
 	const MOST_LINES = 3;
 	let words_element = $state<HTMLElement | null>(null);
+
+	// While an offer is up, Return takes it — the same as pressing the button. A press that lands
+	// in a field or in the box editing a piece belongs to whatever is being typed, so it is left
+	// alone; only a press with nothing being typed answers here.
+	function on_key(event: KeyboardEvent) {
+		if (event.key !== 'Enter' || !$w_offer) { return; }
+		const at = document.activeElement as HTMLElement | null;
+		const typing = at !== null && (at.isContentEditable
+			|| ['input', 'textarea', 'select'].includes(at.tagName.toLowerCase()));
+		if (typing) { return; }
+		event.preventDefault();
+		debug.log(`Status line: Return taken as "${$w_offer.says}".`);
+		take_the_offer();
+	}
+
+	$effect(() => {
+		window.addEventListener('keydown', on_key);
+		return () => window.removeEventListener('keydown', on_key);
+	});
 
 	$effect(() => {
 		$w_status;                            // measure again whenever the words change
@@ -33,7 +52,12 @@
 
 <div class='status'>
 	<span class='status-words' bind:this={words_element}>{$w_status}</span>
-	<button class='status-close' aria-label='dismiss' use:tip={'dismiss this'} onclick={hide_status}>
+	<!-- Something the app will do only if asked. Dismissing the line is the answer "no". -->
+	{#if $w_offer}
+		<button class='status-offer' use:tip={'do this'} onclick={take_the_offer}>{$w_offer.says}</button>
+	{/if}
+	<button class='status-close' aria-label='dismiss'
+		use:tip={$w_offer ? 'leave it as it is' : 'dismiss this'} onclick={hide_status}>
 		<svg class='status-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
 			<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 		</svg>
@@ -63,6 +87,27 @@
 		text-align : center;
 		flex       : 1 1 auto;
 		min-width  : 0;
+	}
+
+	/* What the app will do if asked, standing after the words. It reads at the words' own size,
+	   so the line is one thing rather than a sentence with a control stuck on it. */
+	.status-offer {
+		border        : 0.5px solid var(--black);
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-tiny);
+		padding       : 0 var(--gap);
+		background    : var(--white);
+		color         : var(--text);
+		box-sizing    : border-box;
+		font-family   : inherit;
+		white-space   : nowrap;
+		margin-left   : var(--gap);
+		cursor        : pointer;
+		flex          : 0 0 auto;
+	}
+
+	.status-offer:hover {
+		background : var(--hover);
 	}
 
 	.status-close {
