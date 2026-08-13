@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Edge, USUAL_GAP, folded_height, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
+	import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
 	import { over_nothing } from '../../ts/utilities/Hit_Empty_Space';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import Action, { T_Position } from '../../ts/types/Action';
@@ -40,6 +40,7 @@
 	// Said once here, so the line and the gap can never disagree about what this section is.
 	let bar = $derived(thickness_of(edge));
 	let holds_gap = $derived(gap_inside(folded, gap, holds_subsections));
+	let gap_under_line = $derived(gap_above(folded, gap, holds_subsections, bar));
 
 	// Folded, the line keeps only what stands at its ends — the word that brings the section back.
 	// Anything at the middle acts on what is now out of sight, so it goes with it.
@@ -68,19 +69,24 @@
 	{/if}
 
 	<!-- Folded, the section still stands one gap tall, so the line above never sits on the line
-	     below. Open, it holds the same gap above and below whatever it shows. -->
+	     below. Open, it holds the same gap above and below whatever it shows.
+
+	     Folded, it also answers the cursor with nothing at all — no fill, no tip, no press, and
+	     nothing said to whoever asked to hear about the cursor. What a press there would act on
+	     is out of sight, so offering it would be a lie. -->
 	<div
 		class='section-body'
+		class:folded
 		class:lit={fills_when_bare && bare_lit && !folded}
-		style:padding-top='{holds_gap}px'
+		style:padding-top='{gap_under_line}px'
 		style:padding-bottom='{holds_gap}px'
-		style:min-height='{folded ? folded_height(gap) : 0}px'
+		style:min-height='{folded ? folded_height(gap, bar) : 0}px'
 		role='presentation'
-		use:tip={bare_says !== '' && bare_lit ? bare_says : false}
-		onmouseenter={() => onhover?.(true)}
-		onmousemove={(event) => { if (fills_when_bare) { bare_lit = over_nothing(event); } }}
+		use:tip={bare_says !== '' && bare_lit && !folded ? bare_says : false}
+		onmouseenter={() => { if (!folded) { onhover?.(true); } }}
+		onmousemove={(event) => { if (fills_when_bare && !folded) { bare_lit = over_nothing(event); } }}
 		onmouseleave={() => { onhover?.(false); bare_lit = false; }}
-		onclick={(event) => { if (over_nothing(event)) { onbare?.(); } }}
+		onclick={(event) => { if (!folded && over_nothing(event)) { onbare?.(); } }}
 		onkeyup={() => {}}>
 		{#if !folded}{@render holds()}{/if}
 	</div>
@@ -113,6 +119,28 @@
 		flex-direction : column;
 		display        : flex;
 		flex           : 0 0 auto;
+	}
+
+	/* Folded, it stands its own gap tall with nothing in it, and takes the accent — so the fold
+	   reads as one band of color between its line and the line below. */
+	.section-body.folded {
+		position   : relative;
+		background : var(--accent);
+	}
+
+	/* A hairline down the exact middle of that band, so the fold reads as a line rather than as
+	   a stripe of color. Half a pixel, and pulled back half of its own height, which is what puts
+	   its middle on the band's middle whatever the band's height turns out to be. */
+	.section-body.folded::after {
+		background     : var(--black);
+		transform      : translateY(-50%);
+		pointer-events : none;
+		position       : absolute;
+		content        : '';
+		height         : 0.5px;
+		right          : 0;
+		left           : 0;
+		top            : 50%;
 	}
 
 	/* The bare space here does something when pressed, so the whole background fills while the

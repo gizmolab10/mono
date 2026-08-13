@@ -366,7 +366,7 @@
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.fold-word {
-		border        : 0.5px solid transparent;
+		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
@@ -465,7 +465,7 @@
 	   size — the same text and the same edge thickness, which makes both boxes the same height.
 	   Its height is whatever that text needs; nothing is fixed. */
 	.clear {
-		border        : 0.5px solid var(--black);
+		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		padding       : 0 var(--gap);
 		font-size     : var(--font-faint);
@@ -531,7 +531,7 @@
 	   size — the same text and the same edge thickness, which makes both boxes exactly as tall
 	   as each other. Its height is whatever that text needs; nothing is fixed. */
 	.picking {
-		border        : 0.5px solid var(--black);
+		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		background    : var(--white);

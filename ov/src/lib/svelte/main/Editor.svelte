@@ -4,6 +4,7 @@
 	import { T_Bundle, key_of, type Guide } from '../../ts/types/File';
 	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
 	import File_Content from '../content/File_Content.svelte';
+	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
@@ -45,6 +46,18 @@
 	// The way back to the list is every bare piece of the two top rows and of the label rows, and
 	// the whole of it lights at once — one flag, so pointing at either end lights both.
 	let way_out_lit = $state(false);
+
+	// Whether the label form is put away. Folded, it stands flat, so the words below draw no line
+	// of their own — the form's own line is already standing there.
+	let filters_folded = $state(false);
+
+	// What the stack of lines is holding, said to the log once the browser has drawn them. It is
+	// read again whenever a fold changes or another file opens, since those are what move them.
+	$effect(() => {
+		filters_folded; address;
+		const soon = setTimeout(() => report_line_spacing('the editor'), k.timeout.slide);
+		return () => clearTimeout(soon);
+	});
 
 	function leave_if_empty(event: MouseEvent) {
 		if (!over_empty(event)) { return; }
@@ -260,8 +273,8 @@
 		<Search bind:this={find} {name} {page} hovered={way_out_lit} />
 	</div>
 	<File_Filters {name} {guide} {tags} {onclose} onsay={say}
-		bind:text={text_of_file} bind:way_out_lit />
-	<File_Content {name} {address} {guide} onsay={say}
+		bind:text={text_of_file} bind:way_out_lit bind:folded={filters_folded} />
+	<File_Content {name} {address} {guide} onsay={say} draws_line={!filters_folded}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->

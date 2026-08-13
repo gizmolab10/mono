@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { w_show_folders, w_show_filters, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
 	import Files, { w_first_column, w_scrollbar_showing } from '../content/Files.svelte';
+	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import List_Filters from '../content/List_Filters.svelte';
@@ -22,6 +23,14 @@
 	let matching = $derived.by(() => { $w_showing; return guides.hierarchy.matched_count; });
 	// How many there are to be had at all.
 	let total = $derived(guides.files.length);
+
+	// What the stack of lines is holding, said to the log once the browser has drawn them. It is
+	// read again whenever a fold changes, since that is what moves them.
+	$effect(() => {
+		$w_show_filters; $w_show_folders; $w_kind; $w_project; $w_tags;
+		const soon = setTimeout(() => report_line_spacing('browse'), k.timeout.slide);
+		return () => clearTimeout(soon);
+	});
 
 	function toggle_folders() {
 		const next = !$w_show_folders;

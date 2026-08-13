@@ -24,6 +24,19 @@ export default class Constants {
 		asking		 : 1500,					// how often the dispatcher is asked again while it is down
 	};
 
+	// How long the mouse has to do a thing before it counts as that thing, in milliseconds. ⟵di
+	threshold = {
+		autorepeat	 : 150,						// between one repeat and the next, while a press is held
+		double_click : 400,						// how long a second press has to arrive within
+		alteration	 : 500,						// between one flip and the next, while something blinks
+		long_click	 : 800,						// how long a press has to be held to be a long one
+	};
+
+	// The empty string, said once so nothing has to write two quote marks and mean something by it.
+	empty = '';
+
+	cursor_default = 'default';
+
 	font = {
 		faint		 : common_font * 0.7,		// 8.75 — the credit line
 		tiny		 : common_font * 0.8,		// 10.4 — labels
@@ -105,7 +118,7 @@ export default class Constants {
 		fat			 : common_thickness * 3,	// 3.33
 		big			 : common_thickness * 1.5,	// 1.67
 		normal		 : common_thickness,		// 1.11
-		small        : common_thickness * 0.7,	// 0.78
+		small        : 0.75,					// the edge every clickable is drawn with; said flat, not from the ladder
 		faint		 : common_thickness * 0.5,	// 0.56
 	};
 

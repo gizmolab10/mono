@@ -27,15 +27,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ji/notes/work/code debt.md",
+                "file": "ov/notes/work/hits manager.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code debt"
+              "title": "hits manager"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -92,7 +93,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 388.50271224975586
+    "width": 388.50271224975586,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -170,13 +172,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/work/hits manager.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of hits manager"
             }
           },
           {
@@ -208,24 +210,26 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a932f7d0e39d14ca",
+  "active": "fd28867d8dc37ff3",
   "lastOpenFiles": [
-    "ov/src/lib/main.css.tmp.69970.406e051b71fb",
-    "ov/src/lib/ts/common/Configuration.ts.tmp.69970.eca3d671d858",
-    "ov/notes/guides/project/working features.md.tmp.69970.d3018b4308c1",
-    "ov/src/lib/svelte/support/Steppers.svelte.tmp.69970.b0648eb4a2ad",
-    "ov/src/lib/ts/managers/Operations.ts.tmp.69970.7188f9205632",
-    "ov/src/lib/svelte/content/File_Content.svelte.tmp.69970.79b30c466ad0",
-    "ov/src/lib/ts/tests/markdown_blocks.test.ts.tmp.69970.f35d07d33cda",
+    "ov/src/lib/svelte/support/Section.svelte.tmp.69970.2e3c41241838",
+    "ov/src/lib/svelte/content/List_Filters.svelte.tmp.69970.39120fcae3fd",
+    "ov/src/lib/svelte/content/File_Filters.svelte.tmp.69970.98fd723c745d",
+    "ov/src/lib/ts/tests/separator_spacing.test.ts",
+    "ov/src/lib/ts/utilities/Separator_Spacing.ts",
+    "ov/src/lib/svelte/support/Separator.svelte.tmp.69970.b4083e0360b0",
+    "ov/src/lib/ts/utilities/Sectioning.ts.tmp.69970.dfc9096b068e",
     "ji/notes/work/code debt.md",
-    "ov/src/lib/svelte/support/Separator.svelte.tmp.69970.3beb798ef7a0",
-    "ov/src/lib/svelte/support/Section.svelte.tmp.69970.9082f2ad5a3f",
     "ov/notes/work/code debt.md",
-    "ov/notes/guides/design/action type.md",
-    "ov/notes/work/code debt.md.tmp.69970.002c1684bea3",
-    "ov/src/lib/svelte/main/Editor.svelte.tmp.69970.8293ff07bc62",
-    "ov/notes/work/action type.md",
+    "ov/notes/work/hits manager.md",
+    "ov/notes/work/hits manager.md",
+    "ov/dist/assets/index-BRJjhsDk.js",
+    "ov/dist/assets/index-vqSXGa_P.css",
     "ov/notes/work/unnamed.md",
+    "ov/src/lib/ts/events/Hits.ts",
+    "ov/src/lib/ts/events/S_Hit_Target.ts",
+    "ov/notes/guides/design/action type.md",
+    "ov/notes/work/action type.md",
     "ov/notes/work/unnamed 2.md",
     "ov/notes/guides/design/OKF — midway review and plan.md",
     "ov/notes/work/murk.md",
@@ -244,8 +248,6 @@
     "notes/work/claude agent skills.md",
     "notes/guides/collaborate/tags hierarchy.md",
     "notes/guides/develop/constants.md",
-    "notes/guides/collaborate/organize.md",
-    "ov/notes/guides/design/organize.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

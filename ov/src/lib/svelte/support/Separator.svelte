@@ -16,12 +16,12 @@
 		spacer    = false,
 		actions   = null,
 	}: {
-		vertical?  : boolean;          // runs top-to-bottom instead of left-to-right
-		spacer?    : boolean;          // no bar — just a growing gap (vertical only)
+		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default
 		z_layer?   : number;           // which stacking layer the line sits on — above whatever it bounds, but never in front of a word drawn on it from outside
 		thickness? : number;           // the bar's width/height in px
 		radius?    : number;           // the fillet radius in px
-		reach?     : string;           // how far each end extends so it meets the accent frame's inner edge; the app --gap by default
+		vertical?  : boolean;          // runs top-to-bottom instead of left-to-right
+		spacer?    : boolean;          // no bar — just a growing gap (vertical only)
 		actions?   : Action[] | null;  // things a caller built, each to stand at its own end or middle
 	} = $props();
 
@@ -120,7 +120,7 @@
 		flex-shrink : 0;
 	}
 
-	/* The fillets are filled with the same accent as the bar. */
+	/* The gussets are filled with the same accent as the line. */
 	.separator path {
 		fill : var(--accent);
 	}

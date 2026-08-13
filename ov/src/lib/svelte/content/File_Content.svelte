@@ -25,16 +25,17 @@
 
 	let {
 		name, address, guide, text = $bindable(''), page = $bindable<HTMLElement | null>(null),
-		onsay, ondrawn, onredrawn,
+		onsay, ondrawn, onredrawn, draws_line = true,
 	}: {
-		name      : string;                  // what the file is called
-		address   : string;                  // which file it is, so folds belong to one file at a time
-		guide     : Guide;                   // the record of the file being read
-		text      : string;                  // the whole file, held only while it is on screen
-		page      : HTMLElement | null;      // the drawn words, so a search can look inside them
-		onsay     : (words: string) => void; // something to tell the reader, briefly
-		ondrawn   : () => void;              // a file has just been read and drawn
-		onredrawn : () => void;              // the page was built afresh from changed words
+		name       : string;                  // what the file is called
+		address    : string;                  // which file it is, so folds belong to one file at a time
+		guide      : Guide;                   // the record of the file being read
+		text       : string;                  // the whole file, held only while it is on screen
+		page       : HTMLElement | null;      // the drawn words, so a search can look inside them
+		draws_line?: boolean;                 // draw the line that closes off the top; false while whatever stands above already has one there
+		onsay      : (words: string) => void; // something to tell the reader, briefly
+		ondrawn    : () => void;              // a file has just been read and drawn
+		onredrawn  : () => void;              // the page was built afresh from changed words
 	} = $props();
 
 	// The guides are written in markdown, so they are turned into a real page before being
@@ -818,10 +819,15 @@
 
 <!-- The heavy line that closes the top off from the file's own words. The words are a section
      of their own, and this is what bounds it — it is drawn here rather than by a Section since
-     the words scroll, which a plain stack of sections does not do. -->
-<div class='section-bar'>
-	<Separator thickness={k.thickness.huge}/>
-</div>
+     the words scroll, which a plain stack of sections does not do.
+
+     With the label form folded away it stands flat, so its own line is already at this very
+     spot and nothing is drawn here — two lines touching read as one thick one. -->
+{#if draws_line}
+	<div class='section-bar'>
+		<Separator thickness={k.thickness.huge}/>
+	</div>
+{/if}
 <!-- Nothing is said while the words are being read: the wait is too short to see, and a
      line that flashes and goes reads as a fault. -->
 {#if !loaded}
@@ -1187,10 +1193,13 @@
 	   hold and putting that inset back inside itself — so nothing shows through beside it. */
 	/* Named by its number as well as its tag, so it outweighs the rule that gives every piece a
 	   place of its own — that rule would otherwise take the title's stickiness away. */
+	/* It stands over the words that run under it and under every control, since it is the file's
+	   own words: a word standing on the line above hangs down into this area, and the one that can
+	   be pressed is the one that has to be whole. */
 	.view-page :global(> h1[data-number]) {
 		margin     : 0 calc(var(--gap-fat) * -1) 0 calc(0px - var(--inset-numbers) - var(--gap) * 2 - var(--size-pointer));
 		padding    : 0 var(--gap-big) 0 calc(var(--gap-big) + var(--size-pointer) + var(--inset-numbers));
-		z-index    : var(--z-controls);
+		z-index    : var(--z-hideable);
 		height     : var(--gap-huge);
 		box-sizing : border-box;
 		background : var(--bg);

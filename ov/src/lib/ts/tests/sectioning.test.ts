@@ -1,4 +1,4 @@
-import { T_Edge, folded_height, gap_inside, thickness_of } from '../utilities/Sectioning';
+import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../utilities/Sectioning';
 import { describe, expect, it } from 'vitest';
 import { k } from '../common/Constants';
 
@@ -22,7 +22,7 @@ describe('the line at a boundary', () => {
 
 describe('the gap inside a section', () => {
 	it('is the same above and below, which is the whole rule', () => {
-		expect(gap_inside(false)).toBe(k.gap.normal);
+		expect(gap_inside(false)).toBe(USUAL_GAP);
 	});
 
 	it('is nothing while folded — there is no content to stand clear of', () => {
@@ -39,8 +39,9 @@ describe('a section told to hold a different gap', () => {
 		expect(gap_inside(true, k.gap.fat)).toBe(0);
 	});
 
-	it('stands that tall while folded, so its two lines still do not meet', () => {
-		expect(folded_height(k.gap.fat)).toBe(k.gap.fat + k.gap.tiny);
+	it('still stands the one folded height, so a fold looks the same wherever it is', () => {
+		expect(folded_height(k.gap.fat)).toBe(folded_height(USUAL_GAP));
+		expect(folded_height(k.gap.big)).toBe(folded_height(USUAL_GAP));
 	});
 });
 
@@ -59,10 +60,35 @@ describe('a section holding subsections', () => {
 	});
 });
 
+describe('the gap between a section\'s line and what it shows', () => {
+	it('is measured from the line\'s middle, so half the line is given back', () => {
+		expect(gap_above(false, k.gap.normal, false, k.thickness.huge))
+			.toBe(k.gap.normal - k.thickness.huge / 2);
+	});
+
+	it('is the whole gap where no line is drawn at all', () => {
+		expect(gap_above(false, k.gap.normal)).toBe(k.gap.normal);
+	});
+
+	it('is nothing at all when the line\'s own half is wider than the gap', () => {
+		expect(gap_above(false, k.gap.faint, false, k.thickness.huge)).toBe(0);
+	});
+
+	it('is nothing while folded, and nothing while it holds subsections', () => {
+		expect(gap_above(true, k.gap.normal, false, k.thickness.normal)).toBe(0);
+		expect(gap_above(false, k.gap.normal, true, k.thickness.normal)).toBe(0);
+	});
+});
+
 describe('a folded section', () => {
-	it('stands its own gap tall and a tiny one over, so its two lines do not meet', () => {
-		expect(folded_height()).toBe(k.gap.normal + k.gap.tiny);
+	it('stands the usual gap tall and a tiny one over, so its two lines do not meet', () => {
+		expect(folded_height(USUAL_GAP, k.thickness.huge)).toBe(USUAL_GAP + k.gap.tiny);
 		expect(folded_height()).toBeGreaterThan(0);
+	});
+
+	it('gives back whatever the line above it is drawn thinner than the heavy one', () => {
+		expect(folded_height(USUAL_GAP, k.thickness.normal))
+			.toBe(USUAL_GAP + k.gap.tiny + k.thickness.huge - k.thickness.normal);
 	});
 
 	it('stands flat when it asks for no gap at all', () => {

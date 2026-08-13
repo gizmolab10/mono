@@ -15,7 +15,6 @@
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
 
 	// What a guide is labeled: its title, its date, the line saying what it is for, its one kind,
 	// and its tags. The labels are never on the page — they are taken off before the words are
@@ -23,13 +22,15 @@
 	// where it matters: the kind and the tags are picked from the only lists the app accepts.
 
 	let {
-		name, guide, tags, text = $bindable(''), way_out_lit = $bindable(false), onclose, onsay,
+		name, guide, tags, text = $bindable(''), way_out_lit = $bindable(false),
+		folded = $bindable(false), onclose, onsay,
 	}: {
 		name        : string;                // what the file is called
 		guide       : Guide;                 // the record of the file being read
 		tags        : string[];              // the tags it wears right now
 		text        : string;                // the whole file, which a write here changes
 		way_out_lit : boolean;               // the way back to the list is lit, here and in the row above
+		folded      : boolean;               // the whole form is put away, told outward so the words below know their line has nothing to stand under
 		onclose     : () => void;            // back to the list
 		onsay       : (words: string) => void;  // something to tell the reader, briefly
 	} = $props();
@@ -45,6 +46,10 @@
 	// Whether the form is on screen at all. Remembered across visits, since it is a way of
 	// working rather than something about one guide.
 	const w_show_filters = preferences.persistent<boolean>(T_Preference.show_filters, true);
+
+	// Said outward, so whoever stacks this knows the form is away and its own line would stand
+	// on the line above with nothing between them.
+	$effect(() => { folded = !$w_show_filters; });
 
 	// The tag areas take four rows of their own, so the word above them folds them away — and
 	// says what the guide wears while they are gone, as the filters' own lines do.
@@ -222,13 +227,17 @@
 	role='button' tabindex='-1' onkeyup={() => {}}
 	onmousemove={(e) => { if (!$w_show_filters) { way_out_lit = over_empty(e); } }}
 	onmouseleave={() => { if (!$w_show_filters) { way_out_lit = false; } }}
-	use:tip={$w_show_filters ? false : 'back to the list'}
+	use:tip={$w_show_filters ? false : 'back to browse'}
 	onclick={(e) => { if (!$w_show_filters) { leave_if_empty(e); } }}>
 <!-- What the guide is labeled, as a section of its own: its line carries the word that folds
-     the whole form away, and holds three subsections — the words, the kinds, the tags. -->
+     the whole form away, and holds three subsections — the words, the kinds, the tags.
+
+     It asks for no gap at all, which is how a section says it should stand flat when folded: the
+     words below come straight up under its line, and the line that would have stood under it is
+     left undrawn. Its own children hold the gap while it is open, so the number is unused then. -->
 <Section
 	holds_subsections
-	gap={k.gap.normal}
+	gap={0}
 	edge={T_Edge.thick}
 	actions={[filters_action]}
 	folded={!$w_show_filters}>
@@ -241,7 +250,7 @@
 			onmousemove={(e) => { way_out_lit = over_empty(e); }}
 			onmouseleave={() => { way_out_lit = false; }}
 			class:lit={way_out_lit}
-			use:tip={'back to the list'} onclick={leave_if_empty}>
+			use:tip={'back to browse'} onclick={leave_if_empty}>
 			<!-- What a guide says about itself in words: its title, its date, and one line
 			     saying what it is for. They sit closer together than sections do, since they
 			     are rows of one thing rather than things of their own. -->
@@ -316,16 +325,16 @@
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.fold-word {
-		border        : 0.5px solid transparent;
+		background    : var(--section-bg, var(--bg));
+		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
 		padding       : 0 var(--gap);
-		background    : var(--section-bg, var(--bg));
 		box-sizing    : border-box;
 		font-family   : inherit;
-		white-space   : nowrap;
 		cursor        : pointer;
+		white-space   : nowrap;
 	}
 
 	/* The edge appears under the cursor, or because the area around it says so. Told to light
@@ -401,7 +410,7 @@
 	   that word's size — the same text and the same edge thickness, which makes both boxes the
 	   same height. Their height is whatever that text needs; nothing is fixed. */
 	.picking {
-		border        : 0.5px solid var(--black);
+		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		background    : var(--white);

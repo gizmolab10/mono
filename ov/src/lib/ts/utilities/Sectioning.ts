@@ -46,13 +46,34 @@ export function gap_inside(folded: boolean, gap: number = USUAL_GAP, holds_subse
 }
 
 /**
+ * The gap between a section's own line and what it shows, measured from the line's middle rather
+ * than from its lower edge. Half the line stands inside that distance, so half of it is given back
+ * here — and the gap reads the same whether the line above is the hair or the heavy one.
+ *
+ * Where half the line is wider than the gap itself, nothing is held: the content comes straight up
+ * under the line.
+ */
+export function gap_above(folded: boolean, gap: number = USUAL_GAP, holds_subsections = false, thickness = 0): number {
+	const inside = gap_inside(folded, gap, holds_subsections);
+	if (inside === 0) { return 0; }
+	return Math.max(0, inside - thickness / 2);
+}
+
+/**
  * How tall a folded section stands: no content, so its whole height stands in for the row that
- * went — its own gap and a tiny one over. Without it, the line above would sit on the line below.
+ * went — the usual gap and a tiny one over. Without it, the line above would sit on the line below.
+ *
+ * The gap a section holds open is not asked. A fold shows the same band whether it put away one
+ * search field or a stack of tag rows, so the number is one number for every section.
  *
  * A section that should stand flat when folded says so by asking for no gap at all. That is the
  * one number, said once, rather than a second rule about when the first does not apply.
+ *
+ * How thick the line above is drawn comes in too, since what stands between two lines is measured
+ * from their middles: half of one line and half of the next are inside the distance.
  */
-export function folded_height(gap: number = USUAL_GAP): number {
+export function folded_height(gap: number = USUAL_GAP, thickness: number = 0): number {
+	const delta = k.thickness.huge - thickness;
 	if (gap === 0) { return 0; }
-	return gap + k.gap.tiny;
+	return USUAL_GAP + delta;
 }

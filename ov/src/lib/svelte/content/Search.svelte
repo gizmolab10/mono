@@ -215,7 +215,7 @@
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.fold-word {
-		border        : 0.5px solid transparent;
+		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
