@@ -1,9 +1,9 @@
 import { T_Drag, T_Hit_Target } from '../types/Hit_Targets';
 import Mouse_Timer, { T_Timer } from './Mouse_Timer';
 import type { Dictionary } from '../types/Types';
-import S_Hit_Target from './S_Hit_Target';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
+import S_Hit_Target from './S_Hit_Target';
 import S_Mouse from './S_Mouse';
 import { tick } from 'svelte';
 import RBush from 'rbush';

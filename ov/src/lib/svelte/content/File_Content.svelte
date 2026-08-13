@@ -998,8 +998,14 @@
 		flex : 0 0 auto;
 	}
 
-	/* Holds the words and the line that lies over them. */
+	/* Holds the words and the line that lies over them.
+
+	   How tall the title's slot stands, said once here and read by both the title and the line
+	   that closes it off: the title's own one line of words, with the one gap held above and below
+	   it. That gap is what a section holds under its own line — the whole gap less half the heavy
+	   line, since a gap is measured from a line's middle. */
 	.view-body {
+		--title-slot   : calc(var(--font-fat) * 1.25 + var(--gap-tiny) * 2);
 		position       : relative;
 		flex-direction : column;
 		display        : flex;
@@ -1012,7 +1018,7 @@
 	   so nothing the title does moves it. */
 	.title-sep {
 		z-index  : var(--z-controls);
-		top      : var(--gap-huge);
+		top      : var(--title-slot);
 		position : absolute;
 		left     : 0;
 		right    : 0;
@@ -1198,9 +1204,9 @@
 	   be pressed is the one that has to be whole. */
 	.view-page :global(> h1[data-number]) {
 		margin     : 0 calc(var(--gap-fat) * -1) 0 calc(0px - var(--inset-numbers) - var(--gap) * 2 - var(--size-pointer));
-		padding    : 0 var(--gap-big) 0 calc(var(--gap-big) + var(--size-pointer) + var(--inset-numbers));
+		padding    : var(--gap-tiny) var(--gap-big) 0 calc(var(--gap-big) + var(--size-pointer) + var(--inset-numbers));
 		z-index    : var(--z-hideable);
-		height     : var(--gap-huge);
+		height     : var(--title-slot);
 		box-sizing : border-box;
 		background : var(--bg);
 		position   : sticky;
@@ -1214,9 +1220,10 @@
 	}
 
 	/* The first piece after the title brings no gap of its own, so the whole distance from the
-	   line to the words is the one gap the slot leaves below it. */
+	   line to the words is set here. The line stands at the slot's lower edge, so its own
+	   thickness is inside this distance as well as the gap that follows it. */
 	.view-page :global(h1 + *) {
-		margin-top : var(--gap);
+		margin-top : calc(var(--thick-huge) + var(--gap-tiny));
 	}
 
 	.view-page :global(h2) { color : #48b57e; }

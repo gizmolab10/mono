@@ -11,7 +11,8 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [ ] 1/8 s fade the hover. too flashy,, annoying
+- [ ] register hamburger with hits manager
+- [x] 1/8 s fade the hover. too flashy,, annoying
 - [ ] not show tt when mouse is swiping
 - [ ] replace '+' button with t-cross path
 - [ ] OPTION-click turns a tag red, search discards matches to it
@@ -29,6 +30,11 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## done
 
+- [x] every gap around a line measured from the line's middle
+    - [x] a section holds it above and below alike, whatever its own line is drawn at
+    - [x] a folded section holds the one gap, and one asking for no gap stands flat
+    - [x] the title's slot in a file's words said once, and read by the line that closes it
+- [x] everything that can be pressed stands in front of the words around it
 - [x] the two colors are both chosen — a page picker beside the accent, and the hover a lean from the page toward the accent
 - [x] a word on a line masks it with a pill, so the line's cut ends never show past the curve
 - [x] whatever sits between a file's labels and its first heading is offered for removal, and holding a step mark stops at a file that raised something

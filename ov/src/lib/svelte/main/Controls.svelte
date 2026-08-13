@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
 	import { tip } from '../../ts/utilities/Tooltip';
@@ -12,10 +13,16 @@
 
 	const size = k.size.big;
 	const hamburgerPath = svg_paths.hamburger(size);
+
+	// The hamburger is the first control to hand the whole of itself to the one manager. It says
+	// its name, what a press does, and what to show while the cursor is on it — and nothing else:
+	// the action makes the target, hands over the rectangle, and stamps the element while it is
+	// the one under the cursor. It carries no press handler, no hover rule and no hint of its own.
 </script>
 
 <div class='controls-row layer-controls'>
-	<button class='hamburger-button' {onclick} aria-label='toggle details' use:tip={`${detailsShown ? 'hide' : 'show'} details`}>
+	<button class='hamburger-button' aria-label='toggle details'
+		use:hit_target={{ id: 'hamburger', onpress: onclick, tip: `${detailsShown ? 'hide' : 'show'} details` }}>
 		<svg class='hamburger-icon' viewBox='0 0 {size} {size}' width={size} height={size}>
 			<path d={hamburgerPath} />
 		</svg>
@@ -60,7 +67,9 @@
 		fill         : currentColor;
 	}
 
-	.hamburger-button:hover .hamburger-icon path {
+	/* The cursor is on it — the stamp comes from the manager, which is the only thing that knows.
+	   It is put on the element from outside this file, so it is named as reaching outside. */
+	.hamburger-button:global([data-hit]) .hamburger-icon path {
 		fill : var(--hover);
 	}
 

@@ -3,7 +3,7 @@ kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
 tags: [proposal]
-date: 2026-08-12
+date: 2026-08-13
 ---
 # Handoff
 
@@ -11,24 +11,24 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## Fade the hover over an eighth of a second
+## Register the hamburger with the hits manager
 
-Every hover fill arrives and goes in the same instant the cursor crosses an edge. Moving across a row of pills flashes each one in turn, which reads as the screen twitching.
+The hits manager is ported and builds, and nothing calls it. One control goes first, so the whole road is walked once on something small: the hamburger at the top left. The four steps are already written down in [hits manager](hits%20manager.md) under "implement for a control".
 
 ### Success
 
-1. A hover fill takes an eighth of a second to arrive and the same to go, everywhere one is drawn.
-2. The length is one named number in [Constants.ts](../../src/lib/ts/common/Constants.ts), beside `fade`, `rest` and `slide` — reached for by name, never written as a number in a stylesheet.
-3. Nothing else fades with it: what a press does still happens at once, and the tag areas keep their own slide.
+1. The cursor is fed in once, at the top of the app, and nowhere else.
+2. The hamburger owns one target, made once, handed the drawn element when the browser makes it.
+3. Its own press handler, its own mouse-enter handler and its own `:hover` rule are all gone; what it does and whether it is lit both come from the manager.
+4. It is told when it moves or resizes, and told when it leaves the screen.
+5. Pressing it and pointing at it read on screen exactly as they do now.
 
-### Where the fills are
+### Where it stands today
 
-Every rule that paints `var(--hover)`. They sit in the two filter forms, the search, the section's own background, the tag areas, the list's rows, and the editor's top row.
-
-`grep -rn 'var(--hover)' ov/src` — the whole list
+It is drawn at [Controls.svelte:18-21](../../src/lib/svelte/main/Controls.svelte#L18-L21), a press shows or hides the details, and it lights through a `:hover` rule on its own drawn shape at [Controls.svelte:63](../../src/lib/svelte/main/Controls.svelte#L63).
 
 ### The one judgment call
 
-A fill that fades in also fades out, and the cursor leaves faster than it arrives. If leaving should be quicker than arriving, that is a second number; if the two are the same, it is one. Say which before it starts.
+Feeding the cursor in at the top of the app hands every move to the manager, while every other control still answers for itself. Whether those two can run side by side for a while, or the wiring has to move all at once, is the thing to settle before it starts.
 
-**What will not get done.** The rest of the debt list. This is its first unchecked item.
+**What will not get done.** The rest of the debt list, and the other five kinds of thing in the breakdown — sections, subsections, clickable titles, rows, segmented controls. This is one control.

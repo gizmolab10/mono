@@ -81,14 +81,14 @@ describe('the gap between a section\'s line and what it shows', () => {
 });
 
 describe('a folded section', () => {
-	it('stands the usual gap tall and a tiny one over, so its two lines do not meet', () => {
-		expect(folded_height(USUAL_GAP, k.thickness.huge)).toBe(USUAL_GAP + k.gap.tiny);
+	it('stands the usual gap tall under the heavy line, so its two lines do not meet', () => {
+		expect(folded_height(USUAL_GAP, k.thickness.huge)).toBe(USUAL_GAP);
 		expect(folded_height()).toBeGreaterThan(0);
 	});
 
-	it('gives back whatever the line above it is drawn thinner than the heavy one', () => {
+	it('stands taller by whatever the line above it is drawn thinner than the heavy one', () => {
 		expect(folded_height(USUAL_GAP, k.thickness.normal))
-			.toBe(USUAL_GAP + k.gap.tiny + k.thickness.huge - k.thickness.normal);
+			.toBeCloseTo(USUAL_GAP + k.thickness.huge - k.thickness.normal, 10);
 	});
 
 	it('stands flat when it asks for no gap at all', () => {

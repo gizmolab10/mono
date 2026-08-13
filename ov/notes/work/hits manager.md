@@ -7,7 +7,7 @@ date: 2026-08-12
 ---
 # hits manager
 
-## break it
+## break it down
 
 - [ ] store
 - [ ] other larger footprint

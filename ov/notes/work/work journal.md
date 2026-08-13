@@ -9,6 +9,18 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-13 — a gap is measured from a line's middle, and nothing paints over a control
+
+A line has thickness, so its edges move whenever that thickness changes; its middle does not. Every gap around a line is now measured from there — half the line is given back — so the same gap reads the same under the hair and under the heavy one. A section holds it above and below alike. Folded, it holds the one gap and nothing else, whatever gap it holds when open; a section asking for no gap at all stands flat, and the editor's label form does exactly that, so the words below it draw no line of their own and two heavy lines never touch.
+
+**The title's slot was a number unrelated to any gap.** It is worked out now from the title's own line of words with that one gap above and below it, said once and read by both the title and the line that closes it off.
+
+**Everything that can be pressed stands in front of the words around it.** One rule gives every button a place on the controls layer. The file's own sticky title had claimed that same layer, and being later in the document it painted over a word hanging down off the line above — so the title moved one layer down. It still covers the words running under it.
+
+**Finding that took a measurement, twice.** Walking up from the word showed nothing above it that could cover it; asking which element actually stands at the word's lowest point named the title. Guessing had already failed on the same fault once.
+
+**The fade of the hover.** Every hover fill arrives and goes over a third of a second, said once in the global stylesheet over the elements that take one, so no component carries its own copy of the timing. Crossing a row of pills used to flash each one in turn.
+
 ## 2026-08-12 — both colors are chosen now, and a word masks the line with its own shape
 
 The page color used to be worked out from the accent. It is a choice of its own, remembered like the accent and picked beside it, so moving one leaves the other where it was put. Everything read off both — the hover, the readable text, the mild accent, the banner — is worked out in one place whenever either moves. The hover became a lean from the page a third of the way toward the accent, lifted a tenth toward white, so it holds for whichever pair is picked, light page or dark.

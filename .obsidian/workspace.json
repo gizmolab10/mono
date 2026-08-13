@@ -35,8 +35,7 @@
               "title": "hits manager"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -172,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/hits manager.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of hits manager"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -210,24 +209,23 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "fd28867d8dc37ff3",
+  "active": "a932f7d0e39d14ca",
   "lastOpenFiles": [
+    "ov/src/lib/ts/events/Hits.ts.tmp.69970.8b9c07007880",
+    "ov/src/lib/ts/utilities/Tooltip.ts.tmp.69970.315e32f6db18",
+    "ov/src/lib/svelte/main/Controls.svelte.tmp.69970.c9596d2545e8",
+    "ov/src/lib/ts/events/Hit_Target.ts",
+    "ov/notes/work/index.md.tmp.69970.4c83968386e9",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.69970.6528f447b27d",
+    "ov/src/lib/svelte/content/File_Content.svelte.tmp.69970.7d535f9245d9",
+    "ov/notes/work/hits manager.md",
     "ov/src/lib/svelte/support/Section.svelte.tmp.69970.2e3c41241838",
     "ov/src/lib/svelte/content/List_Filters.svelte.tmp.69970.39120fcae3fd",
     "ov/src/lib/svelte/content/File_Filters.svelte.tmp.69970.98fd723c745d",
     "ov/src/lib/ts/tests/separator_spacing.test.ts",
-    "ov/src/lib/ts/utilities/Separator_Spacing.ts",
-    "ov/src/lib/svelte/support/Separator.svelte.tmp.69970.b4083e0360b0",
-    "ov/src/lib/ts/utilities/Sectioning.ts.tmp.69970.dfc9096b068e",
     "ji/notes/work/code debt.md",
     "ov/notes/work/code debt.md",
-    "ov/notes/work/hits manager.md",
-    "ov/notes/work/hits manager.md",
-    "ov/dist/assets/index-BRJjhsDk.js",
-    "ov/dist/assets/index-vqSXGa_P.css",
     "ov/notes/work/unnamed.md",
-    "ov/src/lib/ts/events/Hits.ts",
-    "ov/src/lib/ts/events/S_Hit_Target.ts",
     "ov/notes/guides/design/action type.md",
     "ov/notes/work/action type.md",
     "ov/notes/work/unnamed 2.md",

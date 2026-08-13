@@ -32,6 +32,7 @@ export default class S_Hit_Target {
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	autorepeat_event?: MouseEvent;
+	tip: string | null = null;         // the words shown while the cursor is on it
 	autorepeat_isFirstCall = true;
 	autorepeat_id?: number;
 	type: T_Hit_Target;

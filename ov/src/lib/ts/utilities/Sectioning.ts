@@ -61,7 +61,7 @@ export function gap_above(folded: boolean, gap: number = USUAL_GAP, holds_subsec
 
 /**
  * How tall a folded section stands: no content, so its whole height stands in for the row that
- * went — the usual gap and a tiny one over. Without it, the line above would sit on the line below.
+ * went — the usual gap. Without it, the line above would sit on the line below.
  *
  * The gap a section holds open is not asked. A fold shows the same band whether it put away one
  * search field or a stack of tag rows, so the number is one number for every section.

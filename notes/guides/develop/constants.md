@@ -2,7 +2,7 @@
 kind: design
 title: "UX terms and concepts"
 description: ""
-tags: [done, refactor]
+tags: [done, refactor, stale]
 date: 2026-08-07
 ---
 # Subtypes of constants

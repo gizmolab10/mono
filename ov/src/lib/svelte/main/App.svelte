@@ -5,6 +5,9 @@
 	import { guides } from '../../ts/managers/Files';
 	import { guides_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
 	import { colors } from '../../ts/utilities/Colors';
+	import { Point } from '../../ts/types/Coordinates';
+	import S_Mouse from '../../ts/events/S_Mouse';
+	import { hits } from '../../ts/events/Hits';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Configuration';
 	import ToolTip from '../support/ToolTip.svelte';
@@ -133,7 +136,14 @@
 	});
 </script>
 
-<svelte:window onresize={handleResize} />
+<!-- The cursor is fed to the manager here and nowhere else: it asks which targets hold that point
+     and hands the press to the one of highest precedence. A control that has moved over to it
+     watches nothing itself. -->
+<svelte:window
+	onresize={handleResize}
+	onmousemove={(event) => hits.handle_mouse_movement_at(new Point(event.clientX, event.clientY))}
+	onmousedown={(event) => hits.handle_s_mouse_at(new Point(event.clientX, event.clientY), S_Mouse.down(event, null))}
+	onmouseup={(event) => hits.handle_s_mouse_at(new Point(event.clientX, event.clientY), S_Mouse.up(event, null))} />
 
 {#if $w_no_server}
 	<!-- Nothing is said while the dispatcher is down: it is asked again every second and a half,
