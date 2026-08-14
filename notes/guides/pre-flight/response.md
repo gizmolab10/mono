@@ -37,6 +37,8 @@ Before sending, scan the draft against the banned-words table (injected each tur
 
 Never ask Jonathan to paste a log. Every app writes its own into `logs/`, and reading a file is the one thing i can always do. When a measurement is needed, add it, ask him to do the thing on screen once, then go and read what it wrote.
 
+And read it FIRST, before touching a single file. The log holds everything since he last loaded the page; my first edit sends a reload through the dev server, and the reload wipes it. i lost a whole alert that way — every detail i needed, gone, because i started fixing before i started reading.
+
 ## 8. Say it once
 
 This is the one source for it. It governs replies and prose written into files alike; the voice guide points here rather than repeating it.

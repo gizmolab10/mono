@@ -11,21 +11,32 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [ ] change repair links -> allow links into work notes
-- [ ] not show tt when mouse is swiping
-- [ ] replace '+' button with t-cross path
-- [ ] OPTION-click turns a tag red, search discards matches to it
+- [ ] click down on a file in the browser should not go to the file. prevents being able to drag a file into another folder, breaking a needed feature
+- [ ] gap between sep and search in editor --gap
+- [ ] editor top row
+    - [ ] allocate 80px for the N of M
+    - [ ] right justify it so it hugs the back/forward buttons
+- [ ] editor, steppers should but don't autorepeat
+- [ ] remember the scroll position in the fifo
 - [ ] placeholder text and overstrike -> --lightgray
-- [ ] add a list of back links to the editor
-- [ ] blank line following checkbox line is missing
 - [ ] compose an email does not work on Windows
-- [ ] cannot edit
-    - [ ] colon at the end of an H3
-    - [ ] checkbox text when it has sub items
-- [ ] animate tag relayout during window resize and details hide <-> show
+- [ ] add a list of back links to the editor
+- [ ] 1340 occurrences of 'guide' -> many should be 'file'
 
 ## done
 
+- [x] the dead-link check follows links into work notes
+    - [x] only what reaches deeper than a work folder's own top is passed over, the same line the
+        reading of a place in the repo draws
+    - [x] the count line says how many were passed over, and only when any were
+- [x] opening a piece for changing moves none of its words
+    - [x] the box stands inside the piece, with the piece's own words out of sight behind it, so the
+        row number never leaves the element that draws it
+    - [x] the markdown the drawn page gives no width to — a heading's hashes, a thing to be done's
+        brackets — stands out to the left, and the first word lands where it stood
+    - [x] a thing to be done that holds a list keeps that list on screen below the box
+    - [x] the manager's queued-rebuild mark is cleared whatever the waiting does, and redrawing the
+        fold marks says so
 - [x] the details column folds behind words on lines, like everything else
     - [x] its two banners went — the block, the shape behind it, and its fill
     - [x] the column is one stack of sections on the page color, standing on the accent
@@ -237,6 +248,15 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 - [x] each row -> expand the clickable and tt responder to the entire row
 
 ## soon
+
+- [ ] not show tt when mouse is swiping
+- [ ] replace '+' button with t-cross path
+- [ ] OPTION-click turns a tag red, search discards matches to it
+- [ ] blank line following checkbox line is missing
+- [ ] cannot edit
+    - [ ] colon at the end of an H3
+    - [x] checkbox text when it has sub items
+- [ ] animate tag relayout during window resize and details hide <-> show
 
 - [ ] incorporate source code, hooks and CLAUDE
     - [ ] add more kinds and tags?

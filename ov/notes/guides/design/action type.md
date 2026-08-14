@@ -19,7 +19,7 @@ i want to pass **Separator** more than one title. each title needs its own handl
 2. All of the **separators** called directly have no title
 3. None of the **separators** have a plain, non-clickable title
 
-### conversion steps:
+### conversion steps
 
 - [x] for ALL ***clickable*** titles
     - [x] ***copy*** button creation from **separator** to caller
@@ -50,15 +50,14 @@ Each of these reaches a Separator through [Section.svelte:46](../../src/lib/svel
 | [Search.svelte](../../src/lib/svelte/content/Search.svelte#L158) | 158 |
 | [Browse.svelte](../../src/lib/svelte/main/Browse.svelte#L47) | 47 |
 
-
 ### separators with no title
 
 these do not need conversison
 
 | file | line |
 | --- | --- |
-| [File_Content.svelte](../../src/lib/svelte/content/File_Content.svelte#L784) | 784 |
-| [File_Content.svelte](../../src/lib/svelte/content/File_Content.svelte#L804) | 804 |
+| [Markdown_Editor.svelte](../../src/lib/svelte/content/Markdown_Editor.svelte#L784) | 784 |
+| [Markdown_Editor.svelte](../../src/lib/svelte/content/Markdown_Editor.svelte#L804) | 804 |
 | [Files.svelte](../../src/lib/svelte/content/Files.svelte#L411) | 411 |
 
 ## done

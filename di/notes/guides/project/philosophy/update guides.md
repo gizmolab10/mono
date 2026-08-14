@@ -37,7 +37,7 @@ When adding, moving, renaming, or removing a guide page, all the following stay 
 
 1. **The folder's own `index.md`.** Add or remove the link in the contents list. Pages are listed alphabetically.
 2. **The architecture top-level `index.md`** (for any page under `architecture/`). The descriptive bullet list is grouped by sub-folder; the contents list at the bottom names the folders.
-3. **The `guides.layout.md` file.** A bird's-eye tree of every page; each entry has a one-line description of eight words or less.
+3. **The [map of di guides](map%20of%20di%20guides.md) file.** A bird's-eye tree of every page; each entry has a one-line description of eight words or less.
 4. **The map page** (`project/overview/map.md`) — only when source-code paths or notes-tree paths change. The map is a flat list, not an index.
 
 For a moved page, also fix every inbound link surfaced by the docs build.
@@ -58,7 +58,7 @@ The command `yarn docs:build` catches dead links, lint warnings, and broken page
 
 ## Where pages live
 
-The current folder shape is documented in [the guides layout map](guides.layout.md). The layout map is the canonical answer to "where does a new page belong" — read it before placing.
+The current folder shape is documented in [[map of di guides]]. The layout map is the canonical answer to "where does a new page belong" — read it before placing.
 
 ## Citation hygiene
 

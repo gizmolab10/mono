@@ -12,7 +12,7 @@ import RBush from 'rbush';
 
 // Who is under the cursor, and what a press on them means. ⟵di
 //
-// Every part of the app the mouse can reach hands over one hit target holding the rectangle it
+// Every part of the app the mouse can reach registers one hit target holding the rectangle it
 // stands in. They are kept in a structure that answers "what is at this point" without asking
 // each in turn, so the question costs the same with four hundred of them as with four.
 //
@@ -81,7 +81,10 @@ export default class Hits {
 		if (s_mouse.isDown) {
 			target.clicks += 1;
 			if (target.respondsTo_autorepeat) {
-				target.handle_s_mouse?.(s_mouse);
+				// The repeating begins with one beat at once, and that beat is the press. Saying
+				// the press here as well acted on a single click twice — a step mark went back
+				// two files, and where the second step arrived back at the first it read as
+				// doing nothing at all.
 				this.start_autorepeat(target);
 			} else if (s_mouse.event && target.respondsTo_longClick) {
 				this.start_longClick(target, s_mouse.event);
@@ -152,8 +155,15 @@ export default class Hits {
 	async defer_recalibrate() {
 		if (this.rebuild_is_waiting) { return; }
 		this.rebuild_is_waiting = true;
-		await tick();
-		this.rebuild_is_waiting = false;
+		// The waiting is what clears the flag, so it is cleared whatever the waiting does. Left set
+		// by a wait that never came back, every later request would see one already queued and turn
+		// away — and since a target asks for this the moment it arrives, nothing would ever be
+		// measured again and no press would reach anything.
+		try {
+			await tick();
+		} finally {
+			this.rebuild_is_waiting = false;
+		}
 		this.recalibrate();
 	}
 
@@ -166,8 +176,12 @@ export default class Hits {
 		if (this.rebuild_is_drawing) { return; }
 		this.rebuild_is_drawing = true;
 		requestAnimationFrame(() => {
-			this.rebuild_is_drawing = false;
-			this.recalibrate();
+			// Cleared whatever the rebuild does, for the same reason the deferred one is.
+			try {
+				this.recalibrate();
+			} finally {
+				this.rebuild_is_drawing = false;
+			}
 		});
 	}
 
@@ -196,14 +210,35 @@ export default class Hits {
 	/** Every target asked again where it stands. Said after anything that moves things about. */
 	recalibrate() {
 		const bush = new RBush<Target_RBRect>();
+		const flat: string[] = [];
+		const gone: string[] = [];
 		for (const target of [...this.targets]) {
+			// A target whose element has left the page answers for nothing and can never be asked
+			// again, so it goes here. Whatever drew it may be long finished by now; this is the one
+			// place that looks at every one of them.
+			const element = target.html_element;
+			if (!!element && !element.isConnected) {
+				gone.push(target.id);
+				this.delete_hit_target(target);
+				continue;
+			}
 			target.update_rect();
 			const rect = target.rect;
 			if (!!rect) {
+				// A rectangle of no size at the very corner of the page is what an element that is
+				// not drawn measures at. It answers for nowhere, which is worth saying by name: a run
+				// of them means everything was asked where it stood before the browser put it there.
+				if (rect.width === 0 && rect.height === 0) { flat.push(target.id); }
 				this.insert_into_rbush(target, bush);
 			}
 		}
 		this.rbush = bush;
+		if (gone.length > 0) {
+			debug.log(`Hits: ${gone.length} target(s) whose element had left the page were let go: ${gone.join(', ')}.`);
+		}
+		if (flat.length > 0) {
+			debug.log(`Hits: asked all ${this.targets.length} target(s) again — ${flat.length} measured no size at all, so a press there reaches nothing: ${flat.join(', ')}.`);
+		}
 	}
 
 	// ===== ADD AND REMOVE =====

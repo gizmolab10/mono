@@ -19,6 +19,7 @@
 		edge               = T_Edge.thin,
 		gap                = USUAL_GAP,
 		gap_at_foot        = undefined,
+		extra_when_folded  = 0,
 		onhover            = undefined,
 		onbare             = undefined,
 		bare_says          = '',
@@ -40,6 +41,7 @@
 		edge?              : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
 		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
 		gap_at_foot?       : number;                  // a different number below its content, where the two sides are drawn against different things
+		extra_when_folded? : number;                  // more than the one folded height, for the one section that needs it
 	} = $props();
 
 	// Said once here, so the line and the gap can never disagree about what this section is.
@@ -96,7 +98,7 @@
 		class:lit={fills_when_bare && !folded}
 		style:padding-top='{gap_under_line}px'
 		style:padding-bottom='{gap_below}px'
-		style:min-height='{folded ? folded_height(gap, bar) : 0}px'
+		style:min-height='{folded ? folded_height(gap, bar, extra_when_folded) : 0}px'
 		role='presentation'
 		use:hit_target={{ id, type: T_Hit_Target.section, dormant: folded,
 			onpress: folded ? undefined : onbare,

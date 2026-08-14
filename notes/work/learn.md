@@ -62,40 +62,42 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 - 2026-08-12 deleted a prop nobody asked me to touch: the type check failed on Separator's `action` prop — a typo in its type, and never read. I removed the prop and its import and called it dead. Jonathan never asked for a removal. The typo was the whole bug: the class in `Action.ts` is spelled `Anction`, so `action?: Action` resolved to a class that could not take its own `null` default. Rule: a checker complaining about something I was not asked to change licenses me to REPORT it, never to delete it. Fix the smallest thing that is actually wrong — here, one misspelled class name — and leave every prop, field and export standing. Unused today is not dead; it is somebody's next turn. When a real error stands in a file that is not mine, say so and stop.
 - 2026-08-13 refused to fix a whitespace warning and called it a rule: a trailing space and a doubled blank line stood in a file I had just written to. I left both and said a whitespace pass over his markdown was the thing I am told never to run. Wrong reading. The rule bans a blind range or line-number sweep across a whole file, because it cannot tell a right line from a wrong one. A named warning at a named line is the opposite of blind: the checker says exactly which character is wrong. Rule: always fix whitespace warnings — trailing spaces, doubled blank lines, missing blank lines around a heading or a list — one line at a time, at the line the checker names, whoever wrote it. Never hide behind the no-sweep rule to leave one standing.
 - 2026-08-13 hung mid-task and said nothing — TWICE IN ONE SESSION: partway through wiring the controls into the hits manager an edit was refused and I stopped dead, replying "No response requested."; hours later, midway through the done checklist, I did it again with nothing refused at all. Both times Jonathan had to spend a whole turn saying "you were hung" and "resume". Rule: NEVER end a turn without words. Every turn ends with a reply, whatever happened — work finished, work blocked, or nothing to do. A refused tool call is a message from him: adjust and say so in one line. A long run of edits is not a licence to go quiet partway; if one step blocks, name it and carry on with the rest. Silence reads as a crash. The second time proves the first rule was not enough: check before ending that the reply exists.
+- 2026-08-14 kept writing "land" after it was banned: the banned list has held "land" since it was written, with add/insert/write/update/do/perform/implement in its place — and i wrote "a wrong guess opens the wrong words", "where the second landed on the first", "nowhere to back out to", over and over through one session. Jonathan had to say it again. Rule: "land" is banned in every sense. Something arriving somewhere is **put** there or **written** there; something taking effect is **done**; something ending up somewhere is where it **stands** or where it **goes**. The pre-send scan reads the banned table every turn — read it for real, and check the draft against it, rather than trusting that a word i reach for by habit is allowed.
+- 2026-08-13 called table-alignment warnings someone else's — TWICE IN ONE TURN (SAME FAMILY AS 2026-08-13 whitespace): I added a row to the working-features table, the checker named 28 misaligned rows, and both times I reported them as "all 28 rows, none of them mine" and moved on. Jonathan: "always fix the table-alignment warnings." A table is one thing, not 62 things — adding a row to it makes every row's alignment mine. Rule: always fix table-alignment warnings in a table I write to, the whole table in one pass: pad every cell to its column's widest and stretch the divider row to match. Keep a copy first and diff ignoring spacing, so it is proved that only the spacing moved. The no-sweep rule bans a blind line-number pass; a checker naming a table is not blind.
 - 2026-07-11 apply a constant "throughout" — sweep, bridge, flag, verify (WHAT WORKED): asked to source a set of Constants everywhere, I grepped for EVERY hardcoded occurrence of the values (not just the obvious spots), routed them all through the existing single-source bridge (push the numbers to CSS variables once, read them with var()) instead of scattering inline one-offs, and BEFORE applying flagged the two judgment calls (which 10px corners count as "banner") and the small value shifts the constants introduced (12→11.7, 16→17.5). Closed by grepping again to prove no literal remained. Jonathan: "exactly what i was going to ask for." Rule: when told to use a token/constant "throughout", (1) grep the literal values to find every site, (2) run them through the project's established single-source mechanism rather than per-element hacks, (3) surface judgment calls and any value a constant shifts before editing, (4) verify completeness with a follow-up grep, and (5) anticipate the next tokens they'll add and leave the bridge ready for them.
 
 ---
 
 ## Distilled
 
-| Pattern | Rule added to |
-|----|----|
-| Stale reads | `always.md` — "Re-read before editing" |
-| Wrong year/path assumptions | `always.md` — "Verify Before Writing" |
-| Tool failure deflection | `workarounds.md` — "Tool Failure Recovery" |
-| Incomplete rename | `workflow.md` — "Rename with mv, then search" |
-| Project-specific swap | `workflow.md` — "Remove, don't swap" |
-| Worktree paths | `always.md` — already covered in "All file paths" |
-| Drifting from requirements | `always.md` — "Requirements Echo" |
-| Ignoring shorthand | `always.md` — "Shorthand First" |
-| Revisit as info not action | `shorthand.md` — revisit now includes "ask Work on?" |
-| Incomplete journal | `shorthand.md` — journal now says "Execute ALL parts" |
-| Contradicted self | `always.md` — "Before saying No, verify" |
-| Misread exact name | `always.md` — "Exact names matter" |
-| Checked off without testing | `always.md` — "Code written ≠ feature complete" |
-| Asked which task first | `always.md` — "Task lists are priority-ordered" |
-| Used Bash ls instead of Glob/Read | `always.md` — "Use Glob/Read, not Bash" |
-| Speculated instead of observing | `pitfalls.md` #12 — "Observe before speculating" |
-| Abbreviated code names | `pitfalls.md` #13 — "No abbreviations in code" |
-| Misread "here" as file reference | `pitfalls.md` #14 — "'Here' means chat output" |
-| Wrote to Claude memory dir | `CLAUDE.md` — already added |
-| Worktree paths (repeated) | `pitfalls.md` #7 — already covered |
-| npm instead of yarn (repeated) | `always.md` — already covered |
-| Skipped always.md reads (repeated) | `CLAUDE.md` — already covered |
-| Miscounted entries (stale read) | `pitfalls.md` #1 — already covered |
-| Ignored shorthand command (repeated) | `pitfalls.md` #8 — already covered |
-| Logged without checking existing rules | `pitfalls.md` #15 — already covered |
-| Treated question as instruction | `pitfalls.md` #16 — "Questions aren't instructions" |
-| Promised beyond this chat | `pitfalls.md` #17 — "Scope promises to this chat" |
-| Trimmed rejected idea instead of restarting | `pitfalls.md` #18 — "Rejection means start over" |
-| Treated analysis shorthand as action | `pitfalls.md` #19 — "Analysis shorthands are not action requests" |
+| Pattern                                     | Rule added to                                                     |
+| ------------------------------------------- | ----------------------------------------------------------------- |
+| Stale reads                                 | `always.md` — "Re-read before editing"                            |
+| Wrong year/path assumptions                 | `always.md` — "Verify Before Writing"                             |
+| Tool failure deflection                     | `workarounds.md` — "Tool Failure Recovery"                        |
+| Incomplete rename                           | `workflow.md` — "Rename with mv, then search"                     |
+| Project-specific swap                       | `workflow.md` — "Remove, don't swap"                              |
+| Worktree paths                              | `always.md` — already covered in "All file paths"                 |
+| Drifting from requirements                  | `always.md` — "Requirements Echo"                                 |
+| Ignoring shorthand                          | `always.md` — "Shorthand First"                                   |
+| Revisit as info not action                  | `shorthand.md` — revisit now includes "ask Work on?"              |
+| Incomplete journal                          | `shorthand.md` — journal now says "Execute ALL parts"             |
+| Contradicted self                           | `always.md` — "Before saying No, verify"                          |
+| Misread exact name                          | `always.md` — "Exact names matter"                                |
+| Checked off without testing                 | `always.md` — "Code written ≠ feature complete"                   |
+| Asked which task first                      | `always.md` — "Task lists are priority-ordered"                   |
+| Used Bash ls instead of Glob/Read           | `always.md` — "Use Glob/Read, not Bash"                           |
+| Speculated instead of observing             | `pitfalls.md` #12 — "Observe before speculating"                  |
+| Abbreviated code names                      | `pitfalls.md` #13 — "No abbreviations in code"                    |
+| Misread "here" as file reference            | `pitfalls.md` #14 — "'Here' means chat output"                    |
+| Wrote to Claude memory dir                  | `CLAUDE.md` — already added                                       |
+| Worktree paths (repeated)                   | `pitfalls.md` #7 — already covered                                |
+| npm instead of yarn (repeated)              | `always.md` — already covered                                     |
+| Skipped always.md reads (repeated)          | `CLAUDE.md` — already covered                                     |
+| Miscounted entries (stale read)             | `pitfalls.md` #1 — already covered                                |
+| Ignored shorthand command (repeated)        | `pitfalls.md` #8 — already covered                                |
+| Logged without checking existing rules      | `pitfalls.md` #15 — already covered                               |
+| Treated question as instruction             | `pitfalls.md` #16 — "Questions aren't instructions"               |
+| Promised beyond this chat                   | `pitfalls.md` #17 — "Scope promises to this chat"                 |
+| Trimmed rejected idea instead of restarting | `pitfalls.md` #18 — "Rejection means start over"                  |
+| Treated analysis shorthand as action        | `pitfalls.md` #19 — "Analysis shorthands are not action requests" |

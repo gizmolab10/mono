@@ -20,6 +20,11 @@ DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 GITHUB_DIR = os.path.expanduser('~/GitHub/mono')
 UPDATE_DOCS = os.path.join(GITHUB_DIR, 'notes/tools/docs/update-project-docs.sh')
 
+# The folders inside a work folder whose notes go out with the guides, beside the notes standing at
+# that folder's own top. Overview draws the same line in `ov/src/lib/ts/utilities/Saving.ts`, and
+# the two lists have to agree — a file sent from here that it will not place is read and thrown away.
+WORK_FOLDERS = ('next', 'milestones', 'now', 'done', 'proposals')
+
 # Load ports.json — single source of truth
 with open(os.path.join(SCRIPT_DIR, 'ports.json'), 'r') as f:
     PORTS = json.load(f)
@@ -495,15 +500,24 @@ class APIHandler(BaseHTTPRequestHandler):
                             for one in files:
                                 if one.endswith('.md'):
                                     found.append(os.path.relpath(os.path.join(here, one), root))
-                    # The work folder gives up only what sits at its very top: the handoff, the
-                    # debt, the journal, the working features. Those are the ones a guide links
-                    # to. Everything deeper — milestones, dated notes — stays out, so the list
-                    # grows by a tenth instead of by three times.
+                    # The work folder gives up what sits at its very top — the handoff, the debt,
+                    # the journal, the working features — and what sits one folder down inside the
+                    # five named here. Those are the ones a guide links to. Anything deeper, and
+                    # any other folder, stays out.
+                    #
+                    # Overview draws the same line for itself, in `site_of_file`. The two have to
+                    # agree: a file sent from here that it will not place is read and thrown away.
                     work = os.path.join(root, os.path.join(collection, 'notes', 'work') if collection else os.path.join('notes', 'work'))
                     if os.path.isdir(work):
                         for one in sorted(os.listdir(work)):
-                            if one.endswith('.md') and os.path.isfile(os.path.join(work, one)):
-                                found.append(os.path.relpath(os.path.join(work, one), root))
+                            whole = os.path.join(work, one)
+                            if one.endswith('.md') and os.path.isfile(whole):
+                                found.append(os.path.relpath(whole, root))
+                            elif os.path.isdir(whole) and one.lower() in WORK_FOLDERS:
+                                for deeper in sorted(os.listdir(whole)):
+                                    inside_one = os.path.join(whole, deeper)
+                                    if deeper.endswith('.md') and os.path.isfile(inside_one):
+                                        found.append(os.path.relpath(inside_one, root))
                 found.sort()
                 # The repo's own place on this machine goes back too, since the app reads each
                 # file by its full place and has nothing else to work it out from.
@@ -767,16 +781,18 @@ class APIHandler(BaseHTTPRequestHandler):
                 self._send_response(500, {'success': False, 'error': str(e)})
 
         elif urllib.parse.urlparse(self.path).path == '/show-folder':
-            # Show one guides folder in the Finder, for the overview app.
+            # Show one folder of notes in the Finder, for the overview app.
             # /show-folder?where=<path from the top of the repo>
             #
-            # It refuses, answering 409, anything that isn't a folder inside the repo's guides.
+            # It refuses, answering 409, anything that is not a folder holding notes the app
+            # lists — the guides, the designs, and the work. Work is here because the app lists
+            # work notes now, so a file's own folder can be a work folder.
             try:
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
                 root = os.path.realpath(GITHUB_DIR)
                 full = os.path.realpath(os.path.join(GITHUB_DIR, where)) if where else ''
-                if not where or not any(part in where for part in ('notes/guides', 'notes/designs')) or not full.startswith(root + os.sep):
+                if not where or not any(part in where for part in ('notes/guides', 'notes/designs', 'notes/work')) or not full.startswith(root + os.sep):
                     self._send_response(409, {'success': False, 'error': f'not a guides folder: {where!r}'})
                     return
                 if not os.path.isdir(full):

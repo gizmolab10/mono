@@ -5,7 +5,7 @@
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { WAY_OUT } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
-	import File_Content from '../content/File_Content.svelte';
+	import Markdown_Editor from '../content/Markdown_Editor.svelte';
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_words } from '../../ts/managers/Filters';
@@ -201,7 +201,7 @@
 	<div class='view-top' role='button' tabindex='-1' onkeyup={() => {}}
 		class:lit={way_out_lit}
 		use:hit_target={{ id: `${WAY_OUT}.top`, type: T_Hit_Target.section,
-			onpress: onclose, tip: 'back to browse' }}>
+			onpress: onclose, tip: 'resume browse' }}>
 		<div class='view-head'>
 			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
 				while reading off the list, on a run of files reached by links. -->
@@ -273,7 +273,7 @@
 	</div>
 	<Editor_Filters {name} {guide} {tags} {onclose} onsay={say}
 		bind:text={text_of_file} bind:folded={filters_folded} />
-	<File_Content {name} {address} {guide} onsay={say} draws_line={!filters_folded}
+	<Markdown_Editor {name} {address} {guide} onsay={say} draws_line={!filters_folded}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->

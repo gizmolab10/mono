@@ -29,3 +29,77 @@ export function link_agrees(link_parts: string[], where: string): boolean {
 	const from = place.length - link_parts.length;
 	return link_parts.every((one, at) => one.toLowerCase() === place[from + at].toLowerCase());
 }
+
+/**
+ * Which file a link most likely meant, where the exact rule above refuses every one of them.
+ *
+ * That rule answers a press, and a press must never open a file the link does not name — a wrong
+ * guess opens the wrong words and nothing on screen says so. Naming a likely file in a report is a
+ * different question: nothing is opened and nothing is written, so a good guess is the whole point.
+ * These two answer that second question, and nothing else asks them.
+ */
+
+/** The folder words of a place, its own name left off. */
+function folders_of(place: string): string[] {
+	return place.split('/').filter((one) => one !== '').slice(0, -1);
+}
+
+/**
+ * Where a link points, counting from the top of the repo. A link is written relative to the file it
+ * sits in and never says where that file stands, so the two are put together here: the folders above
+ * the file, then the link's own words, with each `..` climbing one folder and each `.` standing
+ * still. Climbing past the top of the repo simply stops there.
+ *
+ * Without this a link is read as the words it happens to spell, and a link written from inside a
+ * work folder — `proposals/one.md` — names no work folder at all.
+ */
+export function resolved_from(from_place: string, link: string): string {
+	const at = folders_of(from_place);
+	let where = link.split('#')[0].trim();
+	try { where = decodeURIComponent(where); } catch { /* a stray percent sign; the words as written will do */ }
+	for (const word of where.split('/')) {
+		if (word === '' || word === '.') { continue; }
+		if (word === '..') { at.pop(); continue; }
+		at.push(word);
+	}
+	return at.join('/');
+}
+
+/** How many of the words a link names turn up in a file's place. */
+export function words_shared(link_parts: string[], place: string): number {
+	const words = place.replace(/\.md$/i, '').split('/').filter((one) => one !== '').map((one) => one.toLowerCase());
+	return link_parts.filter((one) => words.includes(one.toLowerCase())).length;
+}
+
+/**
+ * How far apart two files stand: the number of folder steps from the one holding the first to the
+ * one holding the second. The folders they share at the front are dropped, then what is left on
+ * each side is counted — up out of the one, down into the other.
+ */
+export function steps_between(from_place: string, to_place: string): number {
+	const from = folders_of(from_place);
+	const to   = folders_of(to_place);
+	let same = 0;
+	while (same < from.length && same < to.length && from[same].toLowerCase() === to[same].toLowerCase()) { same += 1; }
+	return (from.length - same) + (to.length - same);
+}
+
+/**
+ * The one file a dead link most likely meant, out of every file of that name.
+ *
+ * Most shared words first; where two share as many, the closer one wins. Where two are equal on
+ * both, nothing comes back — naming one of them would be a coin toss said as an answer.
+ */
+export function likeliest(link_parts: string[], from_place: string, places: string[]): string | null {
+	if (places.length === 0) { return null; }
+	if (places.length === 1) { return places[0]; }
+	const scored = places.map((place) => ({
+		place,
+		shared: words_shared(link_parts, place),
+		steps: steps_between(from_place, place),
+	}));
+	scored.sort((a, b) => b.shared - a.shared || a.steps - b.steps);
+	const [first, second] = scored;
+	if (first.shared === second.shared && first.steps === second.steps) { return null; }
+	return first.place;
+}

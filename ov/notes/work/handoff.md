@@ -3,7 +3,7 @@ kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
 tags: [proposal]
-date: 2026-08-13
+date: 2026-08-14
 ---
 # Handoff
 
@@ -11,27 +11,25 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## The details column's banners become lines with words on them
+## The gap between the editor's line and its search field
 
-The details column has two things that fold: preferences and repair. Each wears a banner of its own — a full-width block with the title inside it, a fill that arrives under the cursor, and a rounded shape drawn behind — while every other folding thing in the app is a line across, with the word standing on it and masking it.
+The search field in the editor sits under a heavy line, and the distance between them is wrong. It should be one gap — the same one every other section holds under its own line.
 
 ### Success
 
-1. Both fold behind a word on a line, the same one every other section uses.
-2. Each holds its own gap the way a section does, so nothing in the column sets a margin of its own to line itself up.
-3. Which one is open is still remembered between visits, and the press still turns one over.
-4. The banner's own drawing goes — the block, the shape behind it, and its fill.
+1. The distance from the middle of that line down to the top of the search field is one gap.
+2. Nothing else in the editor moves: the label rows and the file's own words begin where they did.
+3. Folding the search away leaves the line standing where it stands now.
+4. Whatever sets the distance is the section's, said once — nothing beside the field sets a margin of its own to line itself up.
 
 ### Where it stands
 
-Both are drawn by [Hideable.svelte](../../src/lib/svelte/support/Hideable.svelte), asked for twice by [Details.svelte:44-49](../../src/lib/svelte/main/Details.svelte#L44-L49). Its banner is a target of the manager already, named by its own title.
+The field is held by a section of its own, bounded above by the heavy line: [Search.svelte:184-211](../../src/lib/svelte/content/Search.svelte#L184-L211). It asks for no gap of its own, so it takes the usual one, and the arithmetic behind that lives in [Sectioning.ts](../../src/lib/ts/utilities/Sectioning.ts) — the gap under a line gives back half the line's thickness, since a gap is measured from a line's middle.
 
-Every other folding thing in the app does this with a section and an action: the caller builds its own word out of sight and hands the line the made element with the end it stands at. [Search.svelte](../../src/lib/svelte/content/Search.svelte) is the smallest one to read.
+The row inside it is `.view-search`, holding the count, the step marks and the field.
 
-### Settled
+### Open
 
-Both take the heavy line above their own word.
-
-Below the second one, the same question the filters' kinds and tags rows already answer: with both folded away, nothing stands open at the foot of the column, so the last one stands flat and whatever follows draws no line — two lines with nothing between them read as one thick one. With the first open, the second stands as it is, folded or not. That question is already written down and proved: `foot_is_all_folds` in [Filters.ts](../../src/lib/ts/managers/Filters.ts), with four tests.
+Whether the distance is wrong because the section holds the wrong gap, or because the row inside it holds one of its own on top. Measure both before changing either — the two-sources-of-gap fault is the one this whole piece exists to prevent.
 
 **What will not get done.** The rest of the debt list. This is its first unchecked item.

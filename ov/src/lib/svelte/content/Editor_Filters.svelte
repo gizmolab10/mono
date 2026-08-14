@@ -244,7 +244,7 @@
 <div class='filter-block' class:lit={way_out_lit && !$w_show_filters}
 	role='button' tabindex='-1' onkeyup={() => {}}
 	use:hit_target={{ id: `${WAY_OUT}.block`, type: T_Hit_Target.section,
-		dormant: $w_show_filters, onpress: onclose, tip: 'back to browse' }}>
+		dormant: $w_show_filters, onpress: onclose, tip: 'resume browse' }}>
 <!-- What the guide is labeled, as a section of its own: its line carries the word that folds
      the whole form away, and holds three subsections — the words, the kinds, the tags.
 
@@ -266,7 +266,7 @@
 		<div class='label-rows' role='button' tabindex='-1' onkeyup={() => {}}
 			class:lit={way_out_lit}
 			use:hit_target={{ id: `${WAY_OUT}.labels`, type: T_Hit_Target.section,
-				onpress: onclose, tip: 'back to browse' }}>
+				onpress: onclose, tip: 'resume browse' }}>
 			<!-- What a guide says about itself in words: its title, its date, and one line
 			     saying what it is for. They sit closer together than sections do, since they
 			     are rows of one thing rather than things of their own. -->

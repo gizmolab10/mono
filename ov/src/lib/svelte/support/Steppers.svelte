@@ -25,6 +25,11 @@
 			forward_says? : string;
 		} = $props();
 
+	// Has the press being held now had its first beat? The manager begins the repeating with one
+	// beat at once, and that beat is the press itself; every beat after it is the patter. Only one
+	// mark can be held at a time, and letting go clears this — so one answer serves both.
+	let patter = false;
+
 	// The same fat mark as ji's, turned whichever way this pair runs.
 	const SIZE = k.size.normal * 1.1;
 	let back_path      = $derived(svg_paths.fat_polygon(SIZE, back_direction(vertical)));
@@ -35,13 +40,13 @@
 </script>
 
 {#snippet mark(which: string, live: boolean, path: string, bounds: { minX: number; minY: number; width: number; height: number }, says: string, step: (repeated?: boolean) => void)}
-	<!-- One press, then a patter while it is held — the manager's own, said as two callbacks:
-	     the press itself, and each repeat after the pause. A mark that leads nowhere hands over
-	     neither, so it stands there and answers nothing. -->
+	<!-- One press, then a patter while it is held. The manager says both through the one callback,
+	     beginning with a beat at once — so the first is the press and the rest are the patter. A
+	     mark that leads nowhere registers neither, so it stands there and answers nothing. -->
 	<button class='step' class:dead={!live} aria-label={says}
 		use:hit_target={{ id: `${id}.${which}`, tip: live ? says : null,
-			onpress: live ? () => step(false) : undefined,
-			onautorepeat: live ? () => step(true) : undefined }}>
+			onrelease: live ? () => { patter = false; } : undefined,
+			onautorepeat: live ? () => { step(patter); patter = true; } : undefined }}>
 		<svg overflow='visible' width={bounds.width} height={bounds.height}
 			viewBox='{bounds.minX} {bounds.minY} {bounds.width} {bounds.height}'><path d={path} /></svg>
 	</button>

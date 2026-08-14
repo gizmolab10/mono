@@ -58,11 +58,11 @@ The intersection project's files. Update this when files are added, moved, or re
 - `managers/Drop.ts` — the browser side of a drop, in two passes: first it walks everything without saving, only to count it, then it saves, counting off as it goes. Reads dropped entries, walks folders all the way down, and saves each file into the active store with the batch's tags, linked under its folder. Refuses anything over the size limit out loud, skips endings we don't take, and applies the store-wide same-name rules — a name already held anywhere with the same date is silently ignored, a different date stops and asks. Knows nothing about what a file *is* — that lives with the document.
 - `managers/Dropping.ts` — what a drop in progress looks like to the screen: how many things it holds, how many are done, and the one question it can stop to ask. The question is a promise the saving waits on, so nothing is saved or removed until a choice is made.
 - `support/Drop_Status.svelte` — two lines that appear only while a drop runs, shown inside the drop box. The status line counts ("captured 3 of 40") with a filling ring, standing where the families list stands. Below it, rarely seen, the dialog line: the two-copies question, or a single thing the drop has to say (a refusal), each waiting on OK. A drop that lands on the table opens the drop box first, so the reporting always happens here.
-- `types/Angle.ts`, `types/Coordinates.ts`, `types/Types.ts` — angle math, points/sizes/rects, shared types. **⟵di**.
+- `types/Angle.ts`, `types/Coordinates.ts`, `types/Types.ts` — angle math, points/sizes/rects, shared types.
 
 ## src/lib/ts/database/ — the document store
 
-The ported plugin store, trimmed to ji's data. See [db spec](../work/db%20spec.md) and [db proposal](../work/db%20proposal.md).
+The ported plugin store, trimmed to ji's data. See [[db spec]] and [[db proposal]].
 
 - `DB_Records.ts` — the five stored record shapes (Document, Tag, Tagging, Relationship, Predicate) plus the storage and record-kind lists. What a document *is* now lives in `types/Document.ts`; this file re-exports it for older imports.
 - `DB_Common.ts` — the persistence seam every storage fills its own way: read/write one record kind's whole list, and read/write/delete/clear the document bytes. Holds no records and no tree logic — those live on the Hierarchy that wraps it. A subclass only decides where the lists and the bytes actually live.
@@ -102,7 +102,7 @@ The markdown behind the help overlay (`lib/svelte/main/Help.svelte`). Each file 
 
 ## proxy/ — the key-holding server (runs on the mac, not shipped in the build)
 
-Lets a browser on any computer reach the mac's AnythingLLM without ever seeing its key. See [thin proxy proposal](../work/proposals/thin%20proxy%20proposal.md). Secrets live only in the gitignored `.env`.
+Lets a browser on any computer reach the mac's AnythingLLM without ever seeing its key. See [[thin proxy proposal]]. Secrets live only in the gitignored `.env`.
 
 - `proxy.mjs` — the server: checks ji's share token, and on a match forwards only ji's own handful of AnythingLLM calls, swapping in the real key. Refuses every other request.
 - `run.sh` — the supervisor: starts the server and a free tunnel, reads the tunnel's current public address, and runs the publish step so the address reaches the pointer link.

@@ -95,7 +95,13 @@ describe('a folded section', () => {
 			.toBeCloseTo(USUAL_GAP + k.thickness.huge - k.thickness.normal, 10);
 	});
 
+	it('stands taller by whatever extra it asks for', () => {
+		expect(folded_height(USUAL_GAP, k.thickness.normal, k.gap.small))
+			.toBeCloseTo(folded_height(USUAL_GAP, k.thickness.normal) + k.gap.small, 10);
+	});
+
 	it('stands flat when it asks for no gap at all', () => {
 		expect(folded_height(0)).toBe(0);
+		expect(folded_height(0, k.thickness.normal, k.gap.small)).toBe(0);
 	});
 });

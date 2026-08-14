@@ -60,12 +60,13 @@ Each project keeps its own lexicon for its own things — [di](../../../di/notes
 The [banned words](banned%20words.md) turned the right way round — the word to use, with the one it replaces.
 
 - **move** — relocate: put it there and take it from here. Never *copy*, which is a different act.
-- **add**, **insert**, **write**, **update** — changes to text or code. Never *land*.
+- **add**, **insert**, **write**, **update**, **put** — changes to text or code, and a thing arriving somewhere. Never *land*, in any sense.
 - **do**, **perform** — taking an action. Never *land*.
 - **implement**, **write** — building a thing. Never *land*.
 - **done**, **complete** — finished work. Never *ship*.
 - **write code** — producing code. Never *ship*.
 - **place**, **include** — putting a value where it goes. Never *absorb*.
+- **register** — tell the hits manager about a thing, so it knows where that thing stands and what it says. Never *hand over*, never *hand to*.
 - **stub out** — empty bodies ready to fill. Never *scaffold*.
 - **gap** — empty space. Never *room*.
 - **margin** — the empty strip at an edge. Never *band*, *bar*, *padding*, *gutter*.

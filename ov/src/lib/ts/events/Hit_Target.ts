@@ -6,7 +6,7 @@ import { hits } from './Hits';
 
 // One element told to answer the cursor, said in one place. ⟵di
 //
-// An element wearing this makes its target, hands over its own rectangle, and is stamped
+// An element wearing this makes its target, registers its own rectangle, and is stamped
 // `data-hit` while the cursor is on it — so the styling asks the stamp rather than the browser's
 // own `:hover`, and the one manager is the only thing that decides which target is under the
 // cursor. Going off screen takes the target with it.

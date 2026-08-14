@@ -62,9 +62,13 @@ export const w_viewed = derived([guides.w_showing, w_view_guide], ([rows, key]) 
 	rows.find((r) => r.key === key)
 	?? (key === null ? null : guides.hierarchy.all_guides.get(key) ?? null));
 
-/** Is there a guide behind this one — the one below on the stack, or a place in the list? */
-export const w_can_back = derived([guides.w_showing, w_link_stack], ([rows, stack]) =>
-	stack.length > 0 || rows.filter((r) => !r.file.is_folder).length > 1);
+// Reading that began in a report. Backing up then goes to the report rather than stepping the
+// list, since a report is where the reader was and the list is not.
+export const w_from_report = writable(false);
+
+/** Is there a guide behind this one — the report it was opened from, the one below on the stack, or a place in the list? */
+export const w_can_back = derived([guides.w_showing, w_link_stack, w_from_report], ([rows, stack, from_report]) =>
+	from_report || stack.length > 0 || rows.filter((r) => !r.file.is_folder).length > 1);
 
 /** Forward means the guide above on the stack; off the stack, it walks the list. */
 export const w_can_forward = derived([guides.w_showing, w_link_stack, w_stack_at], ([rows, stack, at]) =>
@@ -113,11 +117,22 @@ export function open_view(key: string): void {
 	w_stack_at.set(-1);
 	w_anchor.set(key);
 	w_view_guide.set(key);
+	w_from_report.set(false);
 	w_operation.set(T_Operation.edit);
 	w_stepping_halted.set(false);              // opening from the list is a fresh start
 	const files = rows.filter((r) => !r.file.is_folder);
 	const at = files.findIndex((r) => r.key === key);
 	debug.log(`Opened "${row.file.name}" — file ${at + 1} of ${files.length} on screen, among ${rows.length} rows${at < 0 ? '; it is not among them, so the count shows nothing' : ''}. The link stack starts empty.`);
+}
+
+/**
+ * Open one file picked out of a report. The same as opening it off the list, but the report is
+ * remembered as where the reading began — so the back mark is drawn whatever the list holds, and
+ * pressing it goes back to what was found rather than stepping to another file.
+ */
+export function open_from_report(key: string): void {
+	open_view(key);
+	if (get(w_operation) === T_Operation.edit) { w_from_report.set(true); }
 }
 
 /**
@@ -129,6 +144,14 @@ export function open_view(key: string): void {
 export function follow_link(key: string): void {
 	const row = guides.hierarchy.all_guides.get(key);
 	if (!row || row.file.is_folder) { debug.log(`Following a link: nothing to open at "${key}".`); return; }
+	// Which file the reading began at is forgotten by a reload, while the file being read is
+	// remembered — so a link followed after a reload had nowhere to back out to, and the mark did
+	// nothing at all. The file standing on screen when the stack starts is where it began.
+	if (get(w_anchor) === null) {
+		const here = get(w_view_guide);
+		w_anchor.set(here);
+		debug.log(`Following a link: nothing said where this reading began — a reload forgets it — so "${here ?? 'nothing'}", the file on screen, is taken as the beginning.`);
+	}
 	const stack = get(w_link_stack);
 	const already = stack.indexOf(key);
 	if (already >= 0) {
@@ -165,11 +188,22 @@ export function halt_stepping(why: string): void {
 }
 
 export function step_view(by: number, repeated = false): void {
+	debug.log(`Stepping ${by > 0 ? 'forward' : 'back'}${repeated ? ' (held down)' : ''}: the stack holds ${get(w_link_stack).length}, standing at ${get(w_stack_at)}, where the reading began ${get(w_from_report) ? 'in a report' : 'on the list'}, and the walk is ${get(w_stepping_halted) ? 'held' : 'free'}.`);
 	if (repeated && get(w_stepping_halted)) { return; }
 	w_stepping_halted.set(false);              // a press of its own always goes
 	const stack = get(w_link_stack);
+	// Back, from a file opened out of a report and with no links followed since, is the report
+	// itself. Forward from there steps the list, the same as any other reading.
+	if (by < 0 && stack.length === 0 && get(w_from_report)) { back_to_report(); return; }
 	if (stack.length > 0) { step_stack(by); return; }
 	step_list(by);
+}
+
+/** Back to what the report found. Whatever it holds is still there — nothing cleared it. */
+function back_to_report(): void {
+	w_from_report.set(false);
+	w_operation.set(T_Operation.report);
+	debug.log('Backed out of a file opened from a report — the report is on screen again.');
 }
 
 /** Walk the stack of guides reached by links. Backing out of the bottom empties it. */
@@ -183,7 +217,8 @@ function step_stack(by: number): void {
 		w_link_stack.set([]);
 		w_stack_at.set(-1);
 		if (home) { w_view_guide.set(home); }
-		debug.log(`Backed out past the bottom of the stack — ${stack.length} visit(s) forgotten, back to "${home ?? 'nothing'}" and the list's own stepping.`);
+		// Where the marks go back to depends on where the reading began: a report, or the list.
+		debug.log(`Backed out past the bottom of the stack — ${stack.length} visit(s) forgotten, back to "${home ?? 'nothing, so nothing moved'}" and ${get(w_from_report) ? 'the report it was opened from' : 'the list\'s own stepping'}.`);
 		return;
 	}
 	w_stack_at.set(to);
@@ -221,6 +256,7 @@ export function close_view(): void {
 	w_view_guide.set(null);
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
+	w_from_report.set(false);
 	if (get(w_operation) === T_Operation.edit) { w_operation.set(T_Operation.browse); }
 }
 

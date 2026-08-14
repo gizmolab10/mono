@@ -4,7 +4,15 @@ import type { Sort } from './Filters';
 import { kind_matches, tags_match, words_match } from './Filters';
 import { Indexes } from '../database/Indexes';
 import { T_Bundle, in_order, key_of } from '../types/File';
-import { link_agrees, parts_of_link } from '../utilities/Following_Links';
+import { likeliest, link_agrees, parts_of_link, resolved_from } from '../utilities/Following_Links';
+import { file_path_of, reaches_under_work } from '../utilities/Saving';
+
+/**
+ * What a link says when it points at a real file below the top of a work folder — the one kind
+ * this app never lists. Said in one place, since the report has its own words for the same thing
+ * and printing both reads as saying it twice.
+ */
+export const CANNOT_FIND = 'a file this app cannot find';
 import { debug } from '../common/Debug';
 
 /**
@@ -315,15 +323,50 @@ export class Hierarchy {
 			// A link naming folders has to land under exactly those folders. Without this, a link
 			// out to a work note — which the app never lists — ends on whichever guide happens to
 			// share its last word, and pressing it opens the very file it was written in.
-			if (!link_agrees(parts, found.path)) {
-				debug.log(`Link from "${from.name}" to "${wanted_path}": the only guide named "${name}" sits at ${found.path}, which is not where the link says — nothing opens.`);
+			//
+			// Asked of the file's whole place, counting from the top of the repo. A file's place
+			// inside its own collection has the project and the notes and guides folders stripped
+			// off it, so a link written the long way round — `../../../di/notes/guides/…` — could
+			// never agree with anything, and every one of them read as dead.
+			const whole = file_path_of(found.bundle, found.path);
+			if (!link_agrees(parts, whole)) {
+				debug.log(`Link from "${from.name}" to "${wanted_path}": the only guide named "${name}" sits at ${whole}, which is not where the link says — nothing opens.`);
 				return { file: null, heading, why: 'a file outside the guides' };
 			}
 			debug.log(`Link from "${from.name}" to "${wanted_path}": found "${found.name}" in ${found.bundle} after climbing ${step + 1} folder(s) of the ${chain.length} above it.`);
 			return { file: found, heading, why: '' };
 		}
-		debug.log(`Link from "${from.name}" to "${wanted_path}": no guide named "${name}" under any of the ${chain.length} folders above it — nothing opens.`);
-		return { file: null, heading, why: 'external link' };
+		// Nothing of that name stands under any folder above this file. A link that says outright
+		// it is on the web never reaches here — a press opens one of those in a new tab — so every
+		// link that gets this far names a file, and the honest answer is that it was not found.
+		const points_at = resolved_from(file_path_of(from.bundle, from.path), before);
+		debug.log(`Link from "${from.name}" to "${wanted_path}": no file named "${name}" under any of the ${chain.length} folders above it. It points at ${points_at}${reaches_under_work(points_at) ? ', which sits below the top of a work folder — this app lists none of those' : ''}. Nothing opens.`);
+		return { file: null, heading, why: CANNOT_FIND };
+	}
+
+	/**
+	 * Which file a dead link most likely meant — for a report to name, never for a press to open.
+	 * Nothing is opened and nothing is written by this, so a good guess is what is wanted; the
+	 * exact rule above still answers every press, and refuses.
+	 *
+	 * Every file of that name is looked at, wherever it sits. Most shared words first; where two
+	 * share as many, the closer one wins, counted in folder steps from the file the link is written
+	 * in. Where two are equal on both, nothing comes back and the report says how many there were.
+	 */
+	likely_meant(from: File, link: string): { place: string | null; of: number; name: string } {
+		const wanted = decodeURIComponent(link.split('#')[0].trim()).replace(/\.md$/i, '');
+		const parts = parts_of_link(wanted);
+		const name = parts[parts.length - 1] ?? '';
+		if (name === '') { return { place: null, of: 0, name }; }
+		const places: string[] = [];
+		for (const row of this.all_guides.values()) {
+			if (row.file.is_folder || row.file.name !== name) { continue; }
+			places.push(file_path_of(row.file.bundle, row.file.path));
+		}
+		const here = file_path_of(from.bundle, from.path);
+		const place = likeliest(parts, here, places);
+		debug.log(`Link from "${from.name}" to "${wanted}": ${places.length} file(s) named "${name}" — ${place === null ? (places.length === 0 ? 'none to offer' : 'two of them equally likely, so none is offered') : `the likeliest is ${place}`}.`);
+		return { place, of: places.length, name };
 	}
 
 	// --- narrowing ------------------------------------------------------------

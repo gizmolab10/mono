@@ -1,4 +1,4 @@
-import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_link, path_of_address, site_of_file, renamed_path } from '../utilities/Saving';
+import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_link, path_of_address, reaches_under_work, site_of_file, renamed_path } from '../utilities/Saving';
 import { describe, expect, it } from 'vitest';
 import { T_Bundle } from '../types/File';
 
@@ -25,9 +25,20 @@ describe('reading a place in the repo back into a collection and a path', () => 
 			.toEqual({ bundle: T_Bundle.mono, path: 'work/learn.md', is_design: false });
 	});
 
-	it('reads a work note sitting deeper than the top of the work folder as nothing', () => {
-		expect(site_of_file('di/notes/work/now/learn.md')).toBe(null);
-		expect(site_of_file('ji/notes/work/proposals/ov.md')).toBe(null);
+	it('keeps a work note inside one of the named folders, and its folder in the path', () => {
+		expect(site_of_file('di/notes/work/now/learn.md'))
+			.toEqual({ bundle: T_Bundle.di, path: 'work/now/learn.md', is_design: false });
+		expect(site_of_file('ji/notes/work/proposals/ov.md'))
+			.toEqual({ bundle: T_Bundle.ji, path: 'work/proposals/ov.md', is_design: false });
+	});
+
+	it('reads a work note in a folder nothing links to as nothing', () => {
+		expect(site_of_file('di/notes/work/mothballs/old.md')).toBe(null);
+		expect(site_of_file('notes/work/jeff/a.md')).toBe(null);
+	});
+
+	it('reads a work note two folders down as nothing, whatever it sits under', () => {
+		expect(site_of_file('notes/work/done/docs/README.md')).toBe(null);
 	});
 
 	it('is the other way round from working out where a guide sits', () => {
@@ -45,6 +56,58 @@ describe('reading a place in the repo back into a collection and a path', () => 
 		expect(site_of_file('ov/src/lib/main.css')).toBe(null);
 		expect(site_of_file('notes/guides/a folder')).toBe(null);
 		expect(site_of_file('')).toBe(null);
+	});
+});
+
+// A link is written relative to whoever wrote it, so it never says where it sits in the repo. The
+// dead-link check follows one into a work note like any other, and passes over only what points
+// somewhere under a work folder that the app lists nothing from — the same line site_of_file draws.
+
+describe('a link reaching under a work folder', () => {
+	it('lets a note at the top of a work folder through', () => {
+		expect(reaches_under_work('../../work/handoff.md')).toBe(false);
+		expect(reaches_under_work('work/code debt.md')).toBe(false);
+		expect(reaches_under_work('../../../ov/notes/work/work journal.md')).toBe(false);
+	});
+
+	it('lets a note inside one of the named folders through', () => {
+		expect(reaches_under_work('../../work/now/learn.md')).toBe(false);
+		expect(reaches_under_work('../work/proposals/ov.md')).toBe(false);
+		expect(reaches_under_work('work/milestones/one.md')).toBe(false);
+		expect(reaches_under_work('work/next/pacing.md')).toBe(false);
+		expect(reaches_under_work('work/done/january.md')).toBe(false);
+	});
+
+	it('turns away a folder nothing links to', () => {
+		expect(reaches_under_work('../../work/mothballs/old.md')).toBe(true);
+		expect(reaches_under_work('work/jeff/a.md')).toBe(true);
+	});
+
+	it('turns away anything two folders down, whatever it sits under', () => {
+		expect(reaches_under_work('notes/work/done/docs/history/PHASE1-FINAL.md')).toBe(true);
+	});
+
+	it('lets a link naming no work folder through', () => {
+		expect(reaches_under_work('pre-flight/always.md')).toBe(false);
+		expect(reaches_under_work('always.md')).toBe(false);
+		expect(reaches_under_work('')).toBe(false);
+	});
+
+	it('reads only a whole folder called work, never a name that merely holds the letters', () => {
+		expect(reaches_under_work('../workflow/steps/one.md')).toBe(false);
+		expect(reaches_under_work('homework/a/b.md')).toBe(false);
+	});
+
+	it('agrees with the line drawn by reading a place in the repo', () => {
+		for (const where of ['ov/notes/work/handoff.md', 'notes/work/learn.md',
+			'di/notes/work/now/learn.md', 'ji/notes/work/proposals/ov.md']) {
+			expect(site_of_file(where)).not.toBe(null);
+			expect(reaches_under_work(where)).toBe(false);
+		}
+		for (const where of ['di/notes/work/mothballs/old.md', 'notes/work/done/docs/README.md']) {
+			expect(site_of_file(where)).toBe(null);
+			expect(reaches_under_work(where)).toBe(true);
+		}
 	});
 });
 

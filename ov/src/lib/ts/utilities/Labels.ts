@@ -95,6 +95,21 @@ export function today(): string {
 	return `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}`;
 }
 
+// The months, spelled out, for a date a person reads rather than one a file carries.
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+	'July', 'August', 'September', 'October', 'November', 'December'];
+
+/**
+ * A moment written out for reading: the day, the month by name, the year, then the clock — twelve
+ * hours with the half of the day said, since that is how it is read aloud.
+ */
+export function moment_written_out(when: Date): string {
+	const hour = when.getHours();
+	const shown = hour % 12 === 0 ? 12 : hour % 12;
+	const minutes = String(when.getMinutes()).padStart(2, '0');
+	return `${when.getDate()} ${MONTHS[when.getMonth()]}, ${when.getFullYear()} at ${shown}:${minutes} ${hour < 12 ? 'AM' : 'PM'}`;
+}
+
 /** Does this file carry a label block at all? */
 export function has_labels(text: string): boolean {
 	const lines = text.split('\n');

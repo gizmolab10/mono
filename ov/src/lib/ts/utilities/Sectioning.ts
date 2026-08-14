@@ -72,9 +72,12 @@ export function gap_above(folded: boolean, gap: number = USUAL_GAP, holds_subsec
  *
  * How thick the line above is drawn comes in too, since what stands between two lines is measured
  * from their middles: half of one line and half of the next are inside the distance.
+ *
+ * One section can ask for more than that one number, and says how much. A section standing flat is
+ * standing flat: it asks for no gap, and whatever extra it named is not added to nothing.
  */
-export function folded_height(gap: number = USUAL_GAP, thickness: number = 0): number {
+export function folded_height(gap: number = USUAL_GAP, thickness: number = 0, extra: number = 0): number {
 	const delta = k.thickness.huge - thickness;
 	if (gap === 0) { return 0; }
-	return USUAL_GAP + delta;
+	return USUAL_GAP + delta + extra;
 }

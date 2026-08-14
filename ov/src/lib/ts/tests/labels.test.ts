@@ -1,4 +1,4 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
 import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/File';
@@ -192,5 +192,24 @@ describe('finding a free name', () => {
 
 	it('ignores how a name is capitalized, the way a filesystem does', () => {
 		expect(free_name('unnamed', ['Unnamed'])).toBe('unnamed 2');
+	});
+});
+
+// A report is kept across a reload, so it says when it was made. Written the way it is read aloud,
+// never the way a file writes its date.
+
+describe('a moment written out for reading', () => {
+	it('names the day, the month, the year and the clock', () => {
+		expect(moment_written_out(new Date(2026, 7, 14, 13, 56))).toBe('14 August, 2026 at 1:56 PM');
+	});
+
+	it('counts the clock in twelves, saying which half of the day', () => {
+		expect(moment_written_out(new Date(2026, 0, 1, 9, 5))).toBe('1 January, 2026 at 9:05 AM');
+		expect(moment_written_out(new Date(2026, 11, 31, 23, 59))).toBe('31 December, 2026 at 11:59 PM');
+	});
+
+	it('says midnight and midday as twelve, never as nothing', () => {
+		expect(moment_written_out(new Date(2026, 5, 2, 0, 0))).toBe('2 June, 2026 at 12:00 AM');
+		expect(moment_written_out(new Date(2026, 5, 2, 12, 0))).toBe('2 June, 2026 at 12:00 PM');
 	});
 });

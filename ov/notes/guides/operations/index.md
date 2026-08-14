@@ -2,4 +2,3 @@
 
 ## Contents
 
-- [Editing](./editing.md)

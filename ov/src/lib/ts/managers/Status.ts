@@ -1,5 +1,6 @@
 import { w_operation, T_Operation } from './Operations';
 import { preferences, T_Preference } from './Preferences';
+import { moment_written_out } from '../utilities/Labels';
 import { debug } from '../common/Debug';
 import { get, writable } from 'svelte/store';
 
@@ -13,8 +14,17 @@ export const w_status      = preferences.persistent<string>(T_Preference.status_
 
 // One thing found while putting things right. When it names a guide and a link, the report
 // draws it as a row that can be clicked: that opens the guide for editing with the link lit.
-export type Finding = { words: string; key?: string; link?: string };
-export const w_findings = writable<Finding[]>([]);
+//
+// What was found is remembered along with the words above it and whether the line is showing, so a
+// reload comes back to the whole report rather than to its first line with nothing under it. It is
+// a report of what was true when it was made: mend one of these and its row stays until the check
+// is run again.
+export type Finding = { words: string; key?: string; link?: string; find?: string };
+export const w_findings = preferences.persistent<Finding[]>(T_Preference.status_findings, []);
+
+// When the report was made, written out for reading. Remembered with it, and shown at its top —
+// so a report kept across a reload never reads as this minute's.
+export const w_findings_made = preferences.persistent<string>(T_Preference.status_made, '');
 
 /**
  * Something the app has noticed and will do only if asked: the words say what was found, the
@@ -34,6 +44,7 @@ export const w_offer = writable<Offer | null>(null);
 export function show_status(words: string, findings: Finding[] = []): void {
 	w_status.set(words);
 	w_findings.set(findings);
+	w_findings_made.set(findings.length > 0 ? moment_written_out(new Date()) : '');
 	w_offer.set(null);
 	w_show_status.set(true);
 	if (findings.length > 0 || words.split('\n').length > 2) { show_status_as_report(); return; }
@@ -47,6 +58,7 @@ export function show_status(words: string, findings: Finding[] = []): void {
 export function offer_status(words: string, says: string, does: () => void): void {
 	w_status.set(words);
 	w_findings.set([]);
+	w_findings_made.set('');
 	w_offer.set({ says, does });
 	w_show_status.set(true);
 	debug.log(`Status line: "${words}" — offering "${says}".`);
@@ -57,6 +69,7 @@ export function hide_status(): void {
 	w_show_status.set(false);
 	w_status.set('');
 	w_findings.set([]);
+	w_findings_made.set('');
 	w_offer.set(null);
 	if (get(w_operation) === T_Operation.report) { w_operation.set(T_Operation.browse); }
 }

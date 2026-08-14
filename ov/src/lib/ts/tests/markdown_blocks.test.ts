@@ -1,4 +1,4 @@
-import { body_of, boxes_for_tasks, flipped_task, lines_between, links_in, page_of, stamp_blocks, still_reads, with_lines_replaced, without_words_above_heading } from '../utilities/Markdown_Blocks';
+import { body_of, boxes_for_tasks, flipped_task, lines_between, links_in, mark_the_links, markup_prefix, page_of, plain_links, stamp_blocks, still_reads, with_lines_replaced, without_words_above_heading, words_for_link } from '../utilities/Markdown_Blocks';
 import { describe, expect, it } from 'vitest';
 import MarkdownIt from 'markdown-it';
 
@@ -42,8 +42,8 @@ describe('drawing a whole guide', () => {
 		expect(html).toMatch(/<h1 id="a-title" data-number="2" data-from="4" data-to="5" data-depth="1">/);
 	});
 
-	it('gives every link its own hover words', () => {
-		expect(page_of(reader, file)).toContain('data-tip="visit link"');
+	it('gives every link its own hover words, naming where it goes', () => {
+		expect(page_of(reader, file)).toContain(`data-tip="go to 'there'"`);
 	});
 
 	it('agrees with the file after a change that adds lines', () => {
@@ -63,27 +63,103 @@ describe('drawing a whole guide', () => {
 	});
 });
 
-describe('the addresses a guide links to', () => {
+describe('the words the hover says over a link', () => {
+	it('names the file, without the folders above it or its ending', () => {
+		expect(words_for_link('there.md')).toBe(`go to 'there'`);
+		expect(words_for_link('../../pre-flight/always.md')).toBe(`go to 'always'`);
+		expect(words_for_link('banned%20words.md')).toBe(`go to 'banned words'`);
+	});
+
+	it('drops a heading named after the file', () => {
+		expect(words_for_link('chat.md#saying-it-once')).toBe(`go to 'chat'`);
+	});
+
+	it('says what it does where there is no file to name', () => {
+		expect(words_for_link('#naming')).toBe('go to this heading');
+		expect(words_for_link('')).toBe('go to this heading');
+		expect(words_for_link('https://example.com/a.md')).toBe('visit link');
+		expect(words_for_link('mailto:a@b.com')).toBe('visit link');
+	});
+
+	it('leaves a stray percent sign alone rather than giving up', () => {
+		expect(words_for_link('100% done.md')).toBe(`go to '100% done'`);
+	});
+
+	it('spells out a quote in a name, so the words cannot break the page', () => {
+		expect(mark_the_links(`<a href="it's a &quot;thing&quot;.md">x</a>`))
+			.toContain('&quot;thing&quot;');
+	});
+});
+
+describe('the markup the drawn page gives no width to', () => {
+	it('takes a heading of every rank, with its space', () => {
+		expect(markup_prefix('# a title')).toBe('# ');
+		expect(markup_prefix('###### deep down')).toBe('###### ');
+		expect(markup_prefix('##   held off')).toBe('##   ');
+	});
+
+	it('keeps the up-to-three spaces a heading may stand behind', () => {
+		expect(markup_prefix('   ## still a heading')).toBe('   ## ');
+	});
+
+	it('takes a thing to be done, finished or not, whatever leads it', () => {
+		expect(markup_prefix('- [ ] to do')).toBe('- [ ] ');
+		expect(markup_prefix('- [x] done')).toBe('- [x] ');
+		expect(markup_prefix('\t* [X] nested')).toBe('\t* [X] ');
+		expect(markup_prefix('1. [ ] numbered')).toBe('1. [ ] ');
+	});
+
+	it('finds nothing where the drawn page spends the same width', () => {
+		expect(markup_prefix('an ordinary paragraph')).toBe('');
+		expect(markup_prefix('- a plain bullet')).toBe('');
+		expect(markup_prefix('#no space, so no heading')).toBe('');
+		expect(markup_prefix('    # four spaces, so a stepped-in line')).toBe('');
+		expect(markup_prefix('')).toBe('');
+	});
+});
+
+// A link is two things: where it points, and what it reads as. Both are wanted, because only the
+// words are ever drawn on the page — so a search through those words can never find an address.
+
+describe('the links a guide holds', () => {
+	const addresses = (text: string) => links_in(text).map((one) => one.address);
+
 	it('finds one in a sentence and one in a list', () => {
-		expect(links_in('see [that](./that.md) for more\n\n- [other](../other/other.md)'))
+		expect(addresses('see [that](./that.md) for more\n\n- [other](../other/other.md)'))
 			.toEqual(['./that.md', '../other/other.md']);
 	});
 
 	it('keeps a link to a heading in the same guide', () => {
-		expect(links_in('jump to [naming](#naming)')).toEqual(['#naming']);
+		expect(addresses('jump to [naming](#naming)')).toEqual(['#naming']);
 	});
 
 	it('leaves out anything that says outright it is on the web', () => {
-		expect(links_in('[here](https://example.com) and [there](./there.md)')).toEqual(['./there.md']);
+		expect(addresses('[here](https://example.com) and [there](./there.md)')).toEqual(['./there.md']);
 	});
 
 	it('leaves out what a fenced chunk of code is showing', () => {
 		const text = 'real [one](./one.md)\n\n```\nshown [two](./two.md)\n```\n\nreal [three](./three.md)';
-		expect(links_in(text)).toEqual(['./one.md', './three.md']);
+		expect(addresses(text)).toEqual(['./one.md', './three.md']);
 	});
 
 	it('finds nothing in a guide with no links', () => {
 		expect(links_in('# just words\n\nnothing to follow')).toEqual([]);
+	});
+
+	it('hands back the words each link reads as, beside where it points', () => {
+		expect(links_in('see [thin proxy proposal](../work/proposals/thin%20proxy%20proposal.md).'))
+			.toEqual([{ address: '../work/proposals/thin%20proxy%20proposal.md', words: 'thin proxy proposal' }]);
+	});
+
+	it('hands back nothing for words where a link has none', () => {
+		expect(links_in('[](./bare.md)')).toEqual([{ address: './bare.md', words: '' }]);
+	});
+
+	it('sees Obsidian\'s own form once it is turned into the ordinary one, the way the drawing does', () => {
+		const text = 'see [[thin proxy proposal]] for how.';
+		expect(links_in(text)).toEqual([]);
+		expect(links_in(plain_links(text)))
+			.toEqual([{ address: 'thin%20proxy%20proposal.md', words: 'thin proxy proposal' }]);
 	});
 });
 

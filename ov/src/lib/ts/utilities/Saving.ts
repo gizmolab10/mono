@@ -28,10 +28,21 @@ export function file_path_of(bundle: T_Bundle, path: string): string {
 }
 
 /**
+ * The folders inside a work folder whose notes the app lists, beside the notes standing at that
+ * folder's own top. Every other folder there holds work of a kind nothing links to.
+ */
+export const WORK_FOLDERS = ['next', 'milestones', 'now', 'done', 'proposals'];
+
+/** How far below a work folder a place sits: nothing at its top, one for a note inside a folder. */
+function under_work(parts: string[], at: number): number {
+	return parts.length - at - 2;
+}
+
+/**
  * The other way round: which collection a file belongs to, and where it sits inside that
- * collection, read off where it stands in the repo. A work note counts only where it sits at the
- * very top of the work folder — those are the ones a guide links to, and the app shows each of
- * them as a child of its own project. Anything else reads as nothing at all.
+ * collection, read off where it stands in the repo. A work note counts where it sits at the very
+ * top of the work folder, and inside any of the folders named above — those are the ones a guide
+ * links to, and the app shows each of them under its own project. Anything else reads as nothing.
  */
 export type File_Site = { bundle: T_Bundle; path: string; is_design: boolean };
 
@@ -43,10 +54,33 @@ export function site_of_file(where: string): File_Site | null {
 		const inside = where.slice(notes.length);
 		if (inside.startsWith('guides/'))  { return { bundle, path: inside.slice('guides/'.length), is_design: false }; }
 		if (inside.startsWith('designs/')) { return { bundle, path: inside, is_design: true }; }
-		if (inside.startsWith('work/'))    { return inside.split('/').length === 2 ? { bundle, path: inside, is_design: false } : null; }
+		if (inside.startsWith('work/')) {
+			const parts = inside.split('/');
+			const deep = under_work(parts, 0);
+			const listed = deep === 0 || (deep === 1 && WORK_FOLDERS.includes(parts[1].toLowerCase()));
+			return listed ? { bundle, path: inside, is_design: false } : null;
+		}
 		return null;
 	}
 	return null;
+}
+
+/**
+ * Does a link reach into a work folder somewhere the app lists nothing? It lists the notes at that
+ * folder's own top and the ones inside the named folders — the same line `site_of_file` draws — so
+ * a link past those names something nothing here can answer for, and judging it would call every
+ * one of them dead.
+ *
+ * Read off the address exactly as it is written. A link is relative to whoever wrote it and never
+ * says where it sits in the repo, so the last `work` in it is the one it means.
+ */
+export function reaches_under_work(address: string): boolean {
+	const parts = address.split('/');
+	const at = parts.lastIndexOf('work');
+	if (at < 0) { return false; }
+	const deep = under_work(parts, at);
+	if (deep <= 0) { return false; }
+	return !(deep === 1 && WORK_FOLDERS.includes(parts[at + 1].toLowerCase()));
 }
 
 // The folder a file sits in, counting from the top of the repo. A collection's own top folder

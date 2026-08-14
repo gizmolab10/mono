@@ -13,29 +13,30 @@ di's own vocabulary (smart objects, unifaces, placement, measurements) stays in 
 
 The **same** column marks a row whose two sides are the same kind of word, so an ending can carry across: mark it `y` and "copies" becomes "moves", "copied" becomes "moved". Leave it blank when the pair is a change of wording rather than a like-for-like word — "ship" to "done" is not a verb swapped for a verb, and carrying the ending over would invent "doned". A blank row swaps to the plain replacement, as it always has.
 
-| Use                        | hooked | same | Never                                  | Meaning            |
-| -------------------------- | :----: | :--: | -------------------------------------- | ------------------ |
-| done, complete             | y      |      | ship                                   |                    |
-| write code                 | y      |      | ship                                   |                    |
-| add, insert, write, update | y      |      | land                                   | add a thing        |
-| do, perform, can be done   | y      |      | land                                   | complete an action |
-| implement, write           | y      |      | land                                   | build a thing      |
-| gap                        | y      | y    | room                                   | empty space        |
-| highlighted                | y      | y    | lit                                    | marked on screen   |
-| place, include, insert     | y      | y    | absorb                                 |                    |
-| stub out                   | y      |      | scaffold                               |                    |
-| margin                     | y      | y    | band, bar, padding, gutter             |                    |
-| visual confirmation        | y      |      | eyeball, nod                           |                    |
-| more work, a lot of work   | y      |      | bigger lift, heavy lift, heavy lifting |                    |
-| move                       | y      | y    | copy                                   |                    |
-| details                    | y      |      | panel                                  |                    |
-| mock                       | y      | y    | repro, reproduction                    |                    |
-| main                       | y      |      | cross-project                          |                    |
-| bug, problem, issue        | y      | y    | liar                                   |                    |
-| drifted                    |        |      | slid                                   |                    |
-| who does what              |        |      | split                                  |                    |
-| detour                     | y      | y    | side-build                             |                    |
-| useless cruft              | y      |      | padded                                 |                    |
-| easy to misuse             | y      |      | footgun                                | self-inflicted     |
-| hierarchy                  | y      | y    | tree                                   | ji structure       |
-| plugin architecture        | y      |      | seam                                   | storage interface  |
+| Use                             | hooked | same | Never                                  | Meaning            |
+| --------------------------      | :----: | :--: | -------------------------------------- | ------------------ |
+| done, complete                  | y      |      | ship                                   |                    |
+| write code                      | y      |      | ship                                   |                    |
+| add, insert, write, update, put | y      |      | land                                   | add a thing        |
+| do, perform, can be done        | y      |      | land                                   | complete an action |
+| implement, write                | y      |      | land                                   | build a thing      |
+| gap                             | y      | y    | room                                   | empty space        |
+| highlighted                     | y      | y    | lit                                    | marked on screen   |
+| place, include, insert          | y      | y    | absorb                                 |                    |
+| register                        | y      |      | hand over, hand to                     | tell the manager   |
+| stub out                        | y      |      | scaffold                               |                    |
+| margin                          | y      | y    | band, bar, padding, gutter             |                    |
+| visual confirmation             | y      |      | eyeball, nod                           |                    |
+| more work, a lot of work        | y      |      | bigger lift, heavy lift, heavy lifting |                    |
+| move                            | y      | y    | copy                                   |                    |
+| details                         | y      |      | panel                                  |                    |
+| mock                            | y      | y    | repro, reproduction                    |                    |
+| main                            | y      |      | cross-project                          |                    |
+| bug, problem, issue             | y      | y    | liar                                   |                    |
+| drifted                         |        |      | slid                                   |                    |
+| who does what                   |        |      | split                                  |                    |
+| detour                          | y      | y    | side-build                             |                    |
+| useless cruft                   | y      |      | padded                                 |                    |
+| easy to misuse                  | y      |      | footgun                                | self-inflicted     |
+| hierarchy                       | y      | y    | tree                                   | ji structure       |
+| plugin architecture             | y      |      | seam                                   | storage interface  |

@@ -341,9 +341,11 @@
 			<!-- Folded under a folded kinds row, it asks for no gap at all — which is how a section
 			     says it stands flat. Its line is then the last thing in the picking rows and the
 			     count row below draws none, so nothing stands between that line and the list. With
-			     the kinds open it stands as it is, folded or not. -->
+			     the kinds open it stands as it is, folded or not — and folded, it takes one small gap
+			     more than the one folded height, since it is the last band before the list. -->
 			<Section
 				id='list.tags'
+				extra_when_folded={k.gap.small}
 				gap={foot_is_all_folds(!show_kinds, !show_tags) ? 0 : k.gap.big}
 				actions={[tags_action, picking_action]}
 				fills_when_bare

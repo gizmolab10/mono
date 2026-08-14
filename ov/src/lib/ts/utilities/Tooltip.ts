@@ -1,4 +1,5 @@
 import { get, writable } from 'svelte/store';
+import { debug } from '../common/Debug';
 import { hits } from '../events/Hits';
 
 // The one hover hint shown at a time. A single ToolTip mounted at the app root reads this and
@@ -36,8 +37,18 @@ export function start_tips(): () => void {
 	// holds which target the cursor is on, and that target holds the words. It is asked first,
 	// since it names the one thing under the cursor while the walk up the page finds the nearest
 	// thing that happens to carry words — often a whole row standing behind the control.
-	function said_by_the_manager(): string | null {
-		return get(hits.w_s_hover)?.tip ?? null;
+	//
+	// The one exception is a thing standing inside what the manager names: a link inside a file's
+	// own words is smaller than those words, and its own words are the truer answer. Without this
+	// every link read as the whole page's "click a paragraph to edit it".
+	function words_to_show(el: HTMLElement | null): string | null {
+		const target = get(hits.w_s_hover);
+		const said = target?.tip ?? null;
+		const stands_on = target?.html_element ?? null;
+		const inside = !!el && !!stands_on && stands_on !== el && stands_on.contains(el);
+		debug.log_soon(`Hover: the manager says "${said ?? 'nothing'}" for "${target?.id ?? 'nothing'}"; the element under the cursor says "${el?.dataset.tip ?? 'nothing'}" and ${inside ? 'stands inside it, so its own words win' : 'does not stand inside it, so the manager wins'}.`);
+		if (inside) { return el.dataset.tip ?? said; }
+		return said ?? el?.dataset.tip ?? null;
 	}
 
 	function on_move(event: MouseEvent) {
@@ -49,15 +60,15 @@ export function start_tips(): () => void {
 		}
 		at_x = event.clientX;
 		at_y = event.clientY;
-		w_tip.set({ message: said_by_the_manager() ?? el?.dataset.tip ?? null, x: at_x, y: at_y, appearance });
+		w_tip.set({ message: words_to_show(el), x: at_x, y: at_y, appearance });
 	}
 
 	// The manager is told the cursor after this watcher is, so its answer arrives one move late.
 	// This says it again the moment it changes, which is what makes the hint show on the way in
 	// rather than on the move after.
-	const stop_watching = hits.w_s_hover.subscribe((hovering) => {
+	const stop_watching = hits.w_s_hover.subscribe(() => {
 		appearance++;
-		w_tip.set({ message: hovering?.tip ?? current?.dataset.tip ?? null, x: at_x, y: at_y, appearance });
+		w_tip.set({ message: words_to_show(current), x: at_x, y: at_y, appearance });
 	});
 
 	// Some hints say something different while a key is held — hovering a guide with the

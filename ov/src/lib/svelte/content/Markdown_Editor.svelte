@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { body_of, flipped_task, lines_between, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
+	import { body_of, flipped_task, lines_between, markup_prefix, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
 	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
@@ -219,8 +219,9 @@
 	// piece in a plain box holding the file's own words for those lines — hashes, dashes and
 	// all — rather than anything worked back out of what's on screen. Leaving the box writes
 	// just those lines back.
-	const TITLE_DROP = k.gap.small * 2;             // how far the title's box is drawn below where it stands
 	let box: HTMLTextAreaElement | null = null;     // the open box, if there is one
+	let kept: HTMLElement | null = null;            // the piece's own words, held out of sight behind the box
+	let held_list: HTMLElement | null = null;       // the list an open item holds, kept on screen beside the box
 	let stood_in_for: HTMLElement | null = null;    // the piece it is standing in front of
 	let opened_with = '';                           // what the box held when it opened
 	let trailing = '';                              // the blank line(s) at its end, kept out of sight
@@ -257,26 +258,8 @@
 	/** Grow the box to hold everything typed into it. */
 	function fit_box() {
 		if (!box) { return; }
-		// The title's box stands in a slot of its own, reaching down to the line across the page.
-		// It never grows, so the words after it never move.
-		if (box.classList.contains('title')) { return; }
 		box.style.height = 'auto';
 		box.style.height = `${box.scrollHeight}px`;
-	}
-
-	/**
-	 * Slide the open box up or down until it starts where the piece it stands in for started, by
-	 * changing the gap above it. Whatever set that gap — the piece before, a fold, the title's
-	 * own slot — the words do not jump when the piece opens.
-	 */
-	function sit_where_it_stood(was_at: number) {
-		if (!box) { return; }
-		const the_box = box;
-		const drift = the_box.getBoundingClientRect().top - was_at;
-		if (Math.abs(drift) < 0.01) { return; }
-		const gap = parseFloat(getComputedStyle(the_box).marginTop) || 0;
-		the_box.style.marginTop = `${gap - drift}px`;
-		debug.log(`Editing "${name}": the box stood ${drift.toFixed(2)}px off, so the gap above it went from ${gap.toFixed(2)}px to ${(gap - drift).toFixed(2)}px.`);
 	}
 
 	/** The first piece after this one that is actually on screen, skipping any put away by a fold. */
@@ -313,7 +296,7 @@
 	 * gives the box around the words, which is a different place whenever anything sits before
 	 * them: a bullet, a checkbox, a step-in.
 	 */
-	function first_letter_at(block: HTMLElement): number | null {
+	function first_letter_at(block: HTMLElement): { left: number; top: number; tall: number } | null {
 		const walk = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
 		let words = walk.nextNode() as Text | null;
 		while (words && words.data.trim() === '') { words = walk.nextNode() as Text | null; }
@@ -323,25 +306,91 @@
 		one.setStart(words, at);
 		one.setEnd(words, at + 1);
 		const found = one.getBoundingClientRect();
-		return found.width === 0 && found.left === 0 ? null : found.left;
+		return found.width === 0 && found.left === 0 ? null : { left: found.left, top: found.top, tall: found.height };
+	}
+
+	// One surface, kept aside, for measuring how wide a run of characters is drawn.
+	const ruler = document.createElement('canvas');
+
+	/**
+	 * How wide a run of characters comes out in the open box's own lettering. A tab is counted as
+	 * the tab stop the box uses, since a drawing surface gives one the width of a single space and
+	 * a typing field does not.
+	 */
+	function width_in_box(the_box: HTMLTextAreaElement, run: string): number {
+		if (run === '') { return 0; }
+		const paint = ruler.getContext('2d');
+		if (!paint) { return 0; }
+		const style = getComputedStyle(the_box);
+		const stops = Number.parseInt(style.tabSize, 10) || 8;
+		paint.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+		return paint.measureText(run.replace(/\t/g, ' '.repeat(stops))).width;
 	}
 
 	/**
-	 * Hold the box's own words to the place the piece's words stood. Whatever the box would
+	 * Hold the box's first word to the place the piece's first word stood. Whatever the box would
 	 * otherwise begin at, the space before its words is widened or narrowed to close the
 	 * difference — its outer edges are left alone, so nothing around it moves.
+	 *
+	 * The markdown at the head of the line is drawn as nothing on the page and as characters in the
+	 * box, so its width is taken off: the hashes and the brackets stand out to the left and the word
+	 * after them stands where it always did.
 	 */
-	function start_the_words_at(wanted: number | null) {
+	function start_the_words_at(wanted: number | null, prefix_wide: number) {
 		const the_box = box;
 		if (!the_box || wanted === null) { return; }
 		const style  = getComputedStyle(the_box);
 		const before = parseFloat(style.paddingLeft) || 0;
 		const starts = the_box.getBoundingClientRect().left
 			+ (parseFloat(style.borderLeftWidth) || 0) + before + (parseFloat(style.textIndent) || 0);
+		const off = wanted - (starts + prefix_wide);
+		if (Math.abs(off) < 0.5) { return; }
+		const want = before + off;
+		if (want >= 0) {
+			the_box.style.paddingLeft = `${want}px`;
+			debug.log(`Editing "${name}": the words stood at ${wanted.toFixed(2)} and the box began them at ${(starts + prefix_wide).toFixed(2)} with ${prefix_wide.toFixed(2)}px of markup ahead of them, so the space before them went from ${before.toFixed(2)} to ${want.toFixed(2)}.`);
+			return;
+		}
+		// The space before the words has run out — the markup reaches further left than the box's
+		// own inset. The box itself moves left by what is left over and widens by exactly that, so
+		// its right edge stays where it was and the lane the row number stood in takes the markup.
+		const wide = the_box.getBoundingClientRect().width;
+		const gap  = parseFloat(style.marginLeft) || 0;
+		the_box.style.paddingLeft = '0px';
+		the_box.style.marginLeft  = `${gap + want}px`;
+		the_box.style.width       = `${wide - want}px`;
+		debug.log(`Editing "${name}": the words stood at ${wanted.toFixed(2)} with ${prefix_wide.toFixed(2)}px of markup ahead of them, which is ${(-want).toFixed(2)}px more than the ${before.toFixed(2)}px before them — so the box moved left from ${gap.toFixed(2)} to ${(gap + want).toFixed(2)} and widened from ${wide.toFixed(2)} to ${(wide - want).toFixed(2)}.`);
+	}
+
+	/**
+	 * Hold the box's own words to the height the piece's words stood at. Each kind of box is drawn a
+	 * little off its own place already — a heading a pixel up, the title a few pixels down — and what
+	 * is left over after all of that is measured here and taken out, so no piece's words move.
+	 *
+	 * The box's first line begins at the top of what it holds, so where that line starts is its own
+	 * top edge plus whatever it keeps above the words.
+	 *
+	 * A letter is measured as the letter alone, standing in the middle of the taller line that holds
+	 * it, while the box's own top is the top of that line — so half the difference between the two
+	 * is what the box would otherwise be drawn low by. Both carry the same lettering and the same
+	 * leading, so that half is the same on either side, and where a letter fills its whole line it
+	 * is nothing at all.
+	 *
+	 */
+	function start_the_words_down_at(letter: { top: number; tall: number } | null) {
+		const the_box = box;
+		if (!the_box || letter === null) { return; }
+		const style   = getComputedStyle(the_box);
+		const leading = parseFloat(style.lineHeight) || 0;
+		const half    = letter.tall > 0 && leading > letter.tall ? (leading - letter.tall) / 2 : 0;
+		const wanted  = letter.top - half;
+		const starts  = the_box.getBoundingClientRect().top
+			+ (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.paddingTop) || 0);
 		const off = wanted - starts;
 		if (Math.abs(off) < 0.5) { return; }
-		the_box.style.paddingLeft = `${before + off}px`;
-		debug.log(`Editing "${name}": the words stood at ${wanted.toFixed(2)} and the box began them at ${starts.toFixed(2)}, so the space before them went from ${before.toFixed(2)} to ${(before + off).toFixed(2)}.`);
+		const at = parseFloat(style.top) || 0;
+		the_box.style.top = `${at + off}px`;
+		debug.log(`Editing "${name}": the letter stood ${letter.top.toFixed(2)} down and is ${letter.tall.toFixed(2)} tall in a line of ${leading.toFixed(2)}, so its line began ${wanted.toFixed(2)} down against the box's ${starts.toFixed(2)} — and the box went from ${at.toFixed(2)}px to ${(at + off).toFixed(2)}px off its place.`);
 	}
 
 	/** Open one piece of the page for editing, in place. */
@@ -360,19 +409,12 @@
 		// so the file's own lines are unchanged either way.
 		trailing = opened_with.slice(opened_with.replace(/\n+$/, '').length);
 		box.value = opened_with.slice(0, opened_with.length - trailing.length);
-		// A paragraph steps in; a bulleted list does not. The box matches whichever it holds,
-		// so opening a piece never shifts its first line.
-		if (opened_with.trimStart().startsWith('-')) { box.classList.add('flush'); }
 		// A chunk of code reads in the even-width letters it is written in, and lines are left
 		// exactly where they fall — so the box holding one is dressed to match.
 		if (block.tagName === 'PRE') { box.classList.add('code'); }
-		// A heading stands further clear of what comes before it than a paragraph does. The box
-		// takes that same standing-clear, so opening a heading doesn't jerk it upward.
+		// A heading's ring stands one gap further left than any other, since the hashes it holds
+		// reach out into the lane beside the words.
 		if (/^H[1-6]$/.test(block.tagName)) { box.classList.add('heading'); }
-		// The title's box is drawn a few pixels lower so it sits square with the line across the
-		// page, and the words below come down with it.
-		const drop = block.tagName === 'H1' ? TITLE_DROP : 0;
-		if (drop > 0) { box.classList.add('title'); box.style.top = `${drop}px`; }
 		box.addEventListener('input', fit_box);
 		box.addEventListener('blur', () => {
 			if (pressed_the_bar) { pressed_the_bar = false; box?.focus(); return; }
@@ -408,24 +450,58 @@
 		// held to it afterwards. Under a folded heading the pieces that follow are put away, and a
 		// piece that is not on screen has no place to be held to — so the first one still showing
 		// is the one to watch.
-		const after = next_one_showing(block);
+		// A thing to be done can hold a list of its own, and that list is nothing to do with the one
+		// line being changed — so it stays on screen. It is moved out to stand just after the item
+		// while the item itself is out of sight, and put back when the box closes.
+		held_list = block.tagName === 'LI'
+			? block.querySelector(':scope > ul, :scope > ol') as HTMLElement | null
+			: null;
+		const after = held_list ?? next_one_showing(block);
 		const was_at = after ? after.getBoundingClientRect().top : 0;
-		// Where a subheading itself was standing. The gap above a subheading depends on what came
-		// before it, so rather than work that out, the box is slid onto the same place afterwards.
-		const held_to = drop === 0 && box.classList.contains('heading') ? block.getBoundingClientRect().top : null;
 		// Where the piece's own first letter stands, read while it is still on screen. Everything
 		// that steps a piece in — a list's own indent, the box beside a thing to be done, a
 		// paragraph's first-line step — is already in that one number, so it is measured rather
 		// than worked out from the pieces of it.
 		const letter_at = first_letter_at(block);
-		block.parentNode?.insertBefore(box, block);
-		block.style.display = 'none';
+		// Every row number is hung off its own piece, so a number that moved is a piece that moved.
+		// Where each one stands is noted now and asked again once the box is open, and any that went
+		// anywhere is said by its own number.
+		const numbers_stood = new Map<HTMLElement, number>();
+		for (const one of [...(page?.querySelectorAll('[data-number]') ?? [])] as HTMLElement[]) {
+			numbers_stood.set(one, one.getBoundingClientRect().top);
+		}
+		// The box stands inside the piece, and the piece's own words are put out of sight behind it.
+		// The piece itself never moves, so its row number — which is drawn by the piece and by the
+		// rules that know what kind of piece it is — stays exactly where it stood. Standing the box
+		// beside the piece instead meant working out where each kind of piece hangs its number, and
+		// every kind hangs it somewhere slightly different.
+		kept = document.createElement('span');
+		kept.className = 'edit-kept';
+		kept.append(...block.childNodes);
+		block.append(kept, box);
+		// A thing to be done can hold a list of its own, and that list is nothing to do with the one
+		// line being changed — so it comes back out to stand below the box while the item's own words
+		// stay out of sight. It goes back inside when the box closes.
+		if (held_list) { block.append(held_list); }
+		const prefix_wide = width_in_box(box, markup_prefix(box.value.split('\n')[0] ?? ''));
 		fit_box();
-		start_the_words_at(letter_at);
-		if (held_to !== null) { sit_where_it_stood(held_to); }
+		start_the_words_at(letter_at?.left ?? null, prefix_wide);
 		hold_what_follows(after, was_at);
+		// Last, since it moves the box without moving anything around it — the one above changes what
+		// the page lays out, and this one reads the answer it settled on.
+		start_the_words_down_at(letter_at);
+		const moved: string[] = [];
+		for (const [one, was] of numbers_stood) {
+			const now = one.getBoundingClientRect().top;
+			if (Math.abs(now - was) > 0.5) { moved.push(`${one.dataset.number} by ${(now - was).toFixed(2)}`); }
+		}
+		if (moved.length > 0) {
+			debug.log(`Editing "${name}": opening the box moved ${moved.length} of the ${numbers_stood.size} row number(s) — ${moved.join(', ')}.`);
+		}
 		box.focus();
-		debug.log(`Editing "${name}": opened lines ${from} through ${to - 1} — ${opened_with.length} character(s) of the file's own words.`);
+		register_the_links();                     // the links in this piece went behind the box with its words
+		hits.recalibrate();                        // the piece's own words went and a box took their place
+		debug.log(`Editing "${name}": opened lines ${from} through ${to - 1} — ${opened_with.length} character(s) of the file's own words, in a box standing inside the piece itself${held_list ? '. The list it holds stands below the box' : ''}.`);
 	}
 
 	/** Put the piece back. Leaving the box keeps what was typed; Escape throws it away. */
@@ -436,19 +512,26 @@
 		const typed = the_box.value + trailing;    // the blank line that was kept aside goes back
 		const from  = Number(the_piece.dataset.from);
 		const to    = Number(the_piece.dataset.to);
-		// Let go of both before touching the page: whatever happens next, this cannot be
+		const the_kept = kept;
+		const the_held = held_list;
+		// Let go of all four before touching the page: whatever happens next, this cannot be
 		// entered twice for the same box.
 		box = null;
+		kept = null;
+		held_list = null;
 		stood_in_for = null;
 		// Stepping to another file, or leaving the view, draws or drops the whole page while
 		// the box is still open — and leaving the box is what closes it. By then the page may
 		// already be gone or half taken apart, so putting things back is allowed to fail.
 		try {
 			the_box.remove();
-			the_piece.style.display = '';
+			if (the_kept) { the_piece.append(...the_kept.childNodes); the_kept.remove(); }
+			if (the_held) { the_piece.append(the_held); }
 		} catch (trouble) {
 			debug.log(`Editing "${name}": the page was already gone when the box closed — ${String(trouble)}`);
 		}
+		register_the_links();                     // the piece's own links came back with its words
+		hits.recalibrate();                        // the box went and the piece behind it came back
 		if (!keep)                  { debug.log(`Editing "${name}": dropped the change to lines ${from} through ${to - 1}.`); return; }
 		if (typed === opened_with)  { debug.log(`Editing "${name}": lines ${from} through ${to - 1} closed unchanged.`); return; }
 		// The lines have to still say what they said when the box opened, or the numbers are
@@ -541,8 +624,7 @@
 			: folded_at.filter((at) => !tops.includes(at));
 		const out_of_sight = hidden_pieces(levels, all_of_them);
 		pieces.forEach((piece, at) => {
-			// The box standing in for an open piece is not part of the file's own run.
-			if (piece.classList.contains('edit-box')) { return; }
+			// A piece holding an open box is still the piece; nothing here treats it differently.
 			piece.style.display = out_of_sight.has(at) ? 'none' : '';
 			piece.classList.toggle('folded-away', all_of_them.includes(at));
 		});
@@ -709,6 +791,37 @@
 		}
 	}
 
+	// --- the links, registered with the hits manager --------------------------
+
+	// Every link in a file's own words is something to press, so each is registered with the
+	// manager. Without that it names the words as a whole wherever a link stands, and a thing it
+	// does not know about is a thing it can never say has moved. The press itself is left where it
+	// is, on the words' own click — which link was pressed is worked out from the press.
+	let link_targets: Array<{ destroy: () => void }> = [];
+
+	function drop_the_link_targets() {
+		for (const one of link_targets) { one.destroy(); }
+		link_targets = [];
+	}
+
+	function register_the_links() {
+		drop_the_link_targets();
+		if (!page) { return; }
+		// A link inside a piece that is open for changing is out of sight behind the box, and a
+		// link inside a folded section is put away — neither is there to be pressed, so neither is
+		// registered at all. Done again whenever the words change, fold, open or close.
+		const anchors = ([...page.querySelectorAll('a[href]')] as HTMLAnchorElement[])
+			.filter((anchor) => anchor.offsetParent !== null);
+		anchors.forEach((anchor, at) => {
+			link_targets.push(hit_target(anchor, {
+				id: `page.link.${at}`,
+				type: T_Hit_Target.control,
+				tip: anchor.dataset.tip ?? null,
+			}));
+		});
+		debug.log(`Reading "${name}": ${anchors.length} link(s) registered, each answering for its own place and its own words.`);
+	}
+
 	/** Take every mark off and draw them again, so each points the way its section now sits. */
 	function refresh_marks() {
 		if (!page) { return; }
@@ -724,6 +837,11 @@
 		fill_the_gaps();
 		apply_folds();
 		mark_the_tasks();
+		register_the_links();
+		// Every one of those three adds rows and marks to the page and puts pieces in and out of
+		// sight, which moves everything below them. Nothing else says so, and the file's own words
+		// are a target with more inside them than anywhere else in the app.
+		hits.defer_recalibrate();
 	}
 
 	// The marks are put on the drawn page by hand, so they are drawn again every time the words
@@ -732,6 +850,9 @@
 		words;
 		$w_fold_titles;                            // the shared title fold redraws the marks too
 		if (page) { refresh_marks(); }
+		// The links go with the drawing they belong to: the next one registers its own, and
+		// leaving the view leaves the manager holding none of them.
+		return () => { drop_the_link_targets(); };
 	});
 
 	// --- reading the file -----------------------------------------------------
@@ -888,38 +1009,54 @@
 {/if}
 
 <style>
-	/* The box standing in for one piece of the file. It is put on the page by hand rather
-	   than drawn from here, so it is named as reaching outside this component. */
+	/* The piece's own words while a box stands over them. They keep their place in the file and
+	   their place in the page; they simply are not drawn, and the soft pointer among them goes
+	   with them. */
+	:global(.edit-kept) {
+		display : none;
+	}
+
+	/* The box standing over one piece of the file. It is put on the page by hand rather
+	   than drawn from here, so it is named as reaching outside this component.
+
+	   It stands inside the piece it is changing, so the size, weight and leading are the piece's
+	   own and nothing here names them — a heading's box reads as a heading, a paragraph's as a
+	   paragraph. The piece also holds the gap above and below, so the box holds none. */
 	:global(.edit-box) {
 		/* A ring of dashes in the accent, marking off the piece open for changing. It is drawn
 		   outside the box rather than as an edge of it, so it takes no gap and the words stay
 		   exactly where they were. */
 		outline         : var(--thick-fat) dashed var(--accent);
-		/* The same size, leading, spacing and step-in a paragraph reads at, so opening a piece
-		   for editing doesn't reflow the words around it. */
 		/* It reaches a gap further left than the words do, and holds that same gap inside itself,
 		   so the ring of dashes stands clear of the first letter without moving it. */
-		/* The gap below is short by the hair the box holds inside itself, so the box reaches that
-		   much lower while the piece after it stays where it was. It has to be a pull rather than a
-		   smaller push: the piece below pushes back with a gap of its own, and the larger wins. */
-		margin          : var(--gap) 0 calc(var(--gap-faint) * -1) calc(var(--gap) * -1);
+		margin          : 0 0 0 calc(var(--gap) * -1);
 		/* Stated on all four sides. Left to itself a typing field carries a pixel of its own
-		   above and below, which makes it taller than the piece it stands in for. */
+		   above and below, which makes it taller than the words it stands over. */
 		padding         : 0 0 var(--gap-faint) var(--gap);
 		width           : calc(100% + var(--gap));
 		border-radius   : var(--radius-small);
 		background      : var(--white);
-		font-size       : var(--font);
 		color           : var(--text);
 		box-sizing      : border-box;
 		white-space     : pre-wrap;
 		font-family     : inherit;
+		font-size       : inherit;
+		font-weight     : inherit;
+		line-height     : inherit;
 		overflow        : hidden;
 		display         : block;
 		border          : none;
 		resize          : none;
-		text-indent     : 10px;
-		line-height     : 1.5;
+		/* A paragraph steps its first line in and leaves the rest at the edge. The box takes that
+		   same step, so a paragraph of several lines reads in the box exactly as it reads on the
+		   page. */
+		text-indent     : inherit;
+		/* A heading is drawn as a row, so its box is one of that row's parts and takes whatever
+		   width is left. */
+		flex            : 1 1 auto;
+		/* Every box is drawn a little off its own place, by however much its words stood off the
+		   place the box would give them. */
+		position        : relative;
 	}
 
 	/* A heading is a row: its mark, then its words. The row itself holds the mark level with the
@@ -968,36 +1105,12 @@
 		fill : var(--hover);
 	}
 
-	/* A piece that begins with a dash is a list, and a list starts at the edge. It reaches the
-	   same gap further left as any other piece, so its own step-in loses that much. */
-	:global(.edit-box.flush) {
-		margin-left   : calc(var(--gap-fat) - 0);
-	}
-
-	/* A heading holds more gap above it than a paragraph does, and starts at the edge rather than
-	   stepping in, so the box standing in for one does both. */
+	/* A heading's ring reaches one gap further left than any other box's, and holds that same gap
+	   inside itself — so the ring moves and the words do not. */
 	:global(.edit-box.heading) {
-		margin-top      : var(--gap-fat);
-		text-indent     : 0;
-	}
-
-	/* A subheading's box is drawn a pixel above where it stands, so its words line up with the
-	   heading they replace. The title has its own nudge, the other way. */
-	:global(.edit-box.heading:not(.title)) {
-		position : relative;
-		top      : -1px;
-	}
-
-	/* The box holding the title takes the title's own slot, exactly — same height, same place — so
-	   the words after it begin where they always do. It is drawn a little lower than it stands, so
-	   it sits square with the line across the page; that is drawing only, and moves nothing. */
-	:global(.edit-box.title) {
-		/* The slot's leftover gap is split evenly above and below, the way the title itself sits in
-		   the middle of that slot. The two halves plus the box come to the whole slot. */
-		margin      : calc((var(--gap-huge) - var(--height)) / 2) 0;
-		margin-left : calc(var(--gap) * -1);
-		height      : var(--height);
-		position    : relative;
+		margin-left  : calc(var(--gap) * -2);
+		padding-left : calc(var(--gap) * 2);
+		width        : calc(100% + var(--gap) * 2);
 	}
 
 	/* A chunk of code reads the same open or shut: even-width letters on the off-white block,
@@ -1155,9 +1268,9 @@
 	   place of its own, so its number is measured from that piece's left edge, the same edge every
 	   other number is measured from — and a list stepped in does not step its numbers in. */
 	.view-page :global([data-number])::before {
-		content      : attr(data-number);
-		font-size    : var(--font-faint);
 		margin-right : calc(var(--gap) * 2 + var(--size-pointer));
+		font-size    : var(--font-faint);
+		content      : attr(data-number);
 		color        : var(--gray);
 		position     : absolute;
 		line-height  : inherit;

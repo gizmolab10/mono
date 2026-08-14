@@ -55,6 +55,8 @@ export enum T_Preference {
 	// The line along the bottom
 	show_status     = 'show_status',
 	status_words    = 'status_words',
+	status_findings = 'status_findings',
+	status_made     = 'status_made',
 }
 
 // Every saved name of ours starts with this.

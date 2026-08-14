@@ -1,11 +1,12 @@
 import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type File, type Labels, type Filtered_File } from '../types/File';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
-import { Hierarchy } from './Hierarchy';
+import { CANNOT_FIND, Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, site_of_file, read_guide, renamed_path, save_file } from '../utilities/Saving';
+import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, reaches_under_work, site_of_file, read_guide, renamed_path, save_file } from '../utilities/Saving';
 import { blank_guide, free_name, has_labels, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
-import { links_in } from '../utilities/Markdown_Blocks';
+import { links_in, plain_links } from '../utilities/Markdown_Blocks';
+import { resolved_from } from '../utilities/Following_Links';
 import { show_status, type Finding } from './Status';
 import { debug } from '../common/Debug';
 
@@ -82,6 +83,11 @@ class Guides {
 	// knows what is on disk, so without it there is nothing to show at all — and the screen
 	// says so rather than sitting empty.
 	w_no_server = writable(false);
+
+	// Every markdown file the dispatcher found, counting from the top of the repo — including the
+	// ones the app never lists. Only the dead-link check reads it, and only to tell a link naming
+	// a real file it cannot open from a link naming nothing at all.
+	places_on_disk = new Set<string>();
 
 	// Said whenever a guide moves from one place to another, with where it sat and where it now
 	// sits. Whatever keeps track of which guide is being read hands in its own answer here, so
@@ -261,7 +267,8 @@ class Guides {
 			if (text === null) { continue; }
 			let changed = text;
 			let how_many = 0;
-			for (const link of new Set(links_in(text))) {
+			// Mending works on addresses alone, and one address named twice is mended once.
+			for (const link of new Set(links_in(text).map((one) => one.address))) {
 				const found = this.hierarchy.explore(other, link);
 				if (!found.file || found.file.id !== guide.id) { continue; }
 				const whole_old = `](${link})`;
@@ -428,7 +435,7 @@ class Guides {
 	async find_dead_links(): Promise<void> {
 		const files = this.files;
 		const dead: Finding[] = [];
-		let looked = 0, followed = 0, unreadable = 0;
+		let looked = 0, followed = 0, unreadable = 0, deeper = 0;
 
 		for (const guide of files) {
 			const where = file_path_of(guide.bundle, guide.path);
@@ -436,25 +443,53 @@ class Guides {
 			const text = await this.read_file(path_of_address(guide.address));
 			if (text === null) { unreadable += 1; debug.log(`Dead links: could not read ${where}.`); continue; }
 			looked += 1;
-			for (const link of links_in(text)) {
+			// Obsidian's own `[[name]]` is turned into the ordinary form first, exactly as the
+			// drawing does it. Read raw, none of those was seen at all — and a link the check
+			// cannot see is one it can never call dead.
+			for (const { address: link, words: reads_as } of links_in(plain_links(text))) {
 				// Only links to guides are judged. A link to a source file or to a folder is
 				// perfectly good — the app simply never lists those, so it cannot follow them.
 				const named = link.split('#')[0];
 				if (named.endsWith('/')) { continue; }
-				// Work notes are a different country: the app never lists them, so a link into
-				// one is passed over whether it leads anywhere or not.
-				if (/(^|\/)work(\/|$)/.test(named)) { continue; }
+				// A work note is one of the files now, so a link into one is judged like any other.
+				// The one kind left out is a link pointing at a real file this app cannot find: the
+				// files below the top of a work folder, which it lists none of. Judging those would
+				// call every one of them dead when the fault is only that the app cannot reach them.
+				//
+				// Two things have to be true, and each was a bug of its own. Where the link points
+				// is worked out from the file it sits in, since a link written inside a work folder
+				// names no work folder itself. And a file has to be there — a link written from a
+				// work note as though it sat among the guides, `collaborate/organize.md`, points at
+				// a spot under that work folder where nothing is, and that is dead like any other.
+				const points_at = resolved_from(where, named);
+				if (reaches_under_work(points_at) && this.places_on_disk.has(points_at)) { deeper += 1; continue; }
 				const ending = named.split('/').pop()?.split('.').slice(1).pop() ?? '';
 				if (ending !== '' && ending.toLowerCase() !== 'md') { continue; }
 				followed += 1;
 				const answer = this.hierarchy.explore(guide, link);
 				if (answer.file) { continue; }
 				if (answer.why === 'a heading inside this same guide') { continue; }
-				dead.push({ words: `${where} → ${link} (${answer.why})`, key: key_of(guide), link });
+				// Nothing answers this link exactly, so the likeliest file of that name is named
+				// beside it. Nothing is opened by that and nothing written — it is a suggestion for
+				// a person to judge, which is why a guess is welcome here and refused on a press.
+				const guess = this.hierarchy.likely_meant(guide, link);
+				const says = guess.place !== null ? `did you mean "${guess.place}"?`
+					: guess.of > 1 ? `${guess.of} files carry that name, none of them likelier than another`
+					: `cannot find "${guess.name}"`;
+				// Where the two say the same thing, only one of them is written.
+				const both = answer.why === CANNOT_FIND ? says : `${answer.why} — ${says}`;
+				// A space is written into a link as %20, which is three characters to read past on
+				// every row. It is shown as the space it is.
+				//
+				// What a press looks for is the words the link reads as, never its address: the
+				// address lives in what the link points at, and only the words are ever drawn on
+				// the page — so a search through those words could never find an address.
+				const reads = link.replace(/%20/g, ' ');
+				dead.push({ words: `${where} → ${reads} (${both})`, key: key_of(guide), link, find: reads_as });
 			}
 		}
 
-		const counted = `${looked} guide(s) read, ${followed} link(s) followed, ${dead.length} leading nowhere${unreadable > 0 ? `, ${unreadable} guide(s) unreadable` : ''}, links into work notes passed over`;
+		const counted = `${looked} file(s) read, ${followed} link(s) followed, ${dead.length} leading nowhere${unreadable > 0 ? `, ${unreadable} file(s) unreadable` : ''}${deeper > 0 ? `, ${deeper} pointing at files this app cannot find` : ''}`;
 		// Every one of them, each its own row in the report, so any can be opened where it sits.
 		show_status(`dead links: ${counted}`, dead);
 		debug.log(`Dead links: ${counted}.${dead.length > 0 ? ` They are: ${dead.map((d) => d.words).join(' | ')}` : ''}`);
@@ -554,6 +589,10 @@ class Guides {
 			return;
 		}
 		this.w_no_server.set(false);
+		// Every markdown file the dispatcher found, whether or not the app lists it. The dead-link
+		// check needs the ones it does not list — those below the top of a work folder — so it can
+		// tell a link naming a real file it cannot open from a link naming nothing at all.
+		this.places_on_disk = new Set(on_disk.paths);
 
 		for (const where of on_disk.paths) {
 			const site = site_of_file(where);

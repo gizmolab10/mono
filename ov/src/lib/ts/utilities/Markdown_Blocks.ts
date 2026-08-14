@@ -172,6 +172,22 @@ export function flipped_task(line: string): string | null {
 }
 
 /**
+ * The markdown standing at the head of a line that the drawn page gives no width to: a heading's
+ * hashes, or the bullet and brackets of a thing to be done. What follows it is the piece's own
+ * first word — the one thing the box holding that piece is lined up by.
+ *
+ * Nothing comes back for any other line, so every other box starts exactly where it always did.
+ * A heading keeps the up-to-three spaces that may stand before its hashes, since those are drawn
+ * as nothing too.
+ */
+export function markup_prefix(line: string): string {
+	const heading = line.match(/^ {0,3}#{1,6}[ \t]+/);
+	if (heading) { return heading[0]; }
+	const task = line.match(/^[ \t]*(?:[-*+]|\d+[.)])[ \t]+\[[ xX]\][ \t]/);
+	return task ? task[0] : '';
+}
+
+/**
  * A line of three dashes is drawn as a rule, which is a shape the browser fills in itself and
  * will not hang a number on. It is drawn as an ordinary row instead, carrying the very same
  * numbers, and the line across it is painted where the page decides how everything else looks.
@@ -180,26 +196,59 @@ export function rules_as_rows(html: string): string {
 	return html.replace(/<hr([^>]*?)\s*\/?>/g, (_whole, already: string) => `<div class="rule"${already}></div>`);
 }
 
-// Every link carries its own hover words, so pointing at one says "follow this link" rather
-// than the whole page's "back to the list" — the hint watcher always takes the nearest words
-// under the cursor.
-export function mark_the_links(html: string): string {
-	return html.replace(/<a\s/g, '<a data-tip="visit link" ');
+/**
+ * What the hover says over one link: the name of the file it goes to, without the folders above it
+ * and without its ending — the same way a file is named everywhere else in the app.
+ *
+ * A link to a place in this same file names no file, and one that says outright it is on the web
+ * names nothing here can put a name to, so each says what it does instead.
+ */
+export function words_for_link(href: string): string {
+	let before = href.split('#')[0].trim();
+	try { before = decodeURIComponent(before); } catch { /* a stray percent sign; the words as written will do */ }
+	if (before === '')                             { return 'go to this heading'; }
+	if (/^[a-z][a-z0-9+.-]*:/i.test(before))       { return 'visit link'; }
+	const name = before.replace(/\/+$/, '').split('/').pop()?.replace(/\.md$/i, '') ?? '';
+	return name === '' ? 'visit link' : `go to '${name}'`;
 }
 
-// Every address a guide's own words link to, in the order they are written. Addresses that
-// say outright they are on the web are left out, since nothing here can judge them, as are
-// the ones written inside a fenced chunk of code, which are being shown rather than followed.
-export function links_in(text: string): string[] {
-	const found: string[] = [];
+/** The characters that mean something else inside an attribute, spelled out. */
+function spelled_out(words: string): string {
+	return words.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Every link carries its own hover words, so pointing at one says where it goes rather than the
+// whole page's "back to the list" — the hint watcher always takes the nearest words under the
+// cursor.
+export function mark_the_links(html: string): string {
+	return html.replace(/<a\s([^>]*)>/g, (_whole, already: string) => {
+		const found = /href\s*=\s*"([^"]*)"/.exec(already);
+		return `<a data-tip="${spelled_out(words_for_link(found ? found[1] : ''))}" ${already}>`;
+	});
+}
+
+/**
+ * Every link a guide's own words hold, in the order they are written: the address it points at,
+ * and the words it reads as. Addresses that say outright they are on the web are left out, since
+ * nothing here can judge them, as are the ones written inside a fenced chunk of code, which are
+ * being shown rather than followed.
+ *
+ * Both are wanted because they are seen in different places. The address is what a link is judged
+ * by; the words are the only part of it drawn on the page, so they are the only part a search
+ * through those words can ever find.
+ */
+export type Link_In_Words = { address: string; words: string };
+
+export function links_in(text: string): Link_In_Words[] {
+	const found: Link_In_Words[] = [];
 	let fenced = false;
 	for (const line of text.split('\n')) {
 		if (/^\s*(```|~~~)/.test(line)) { fenced = !fenced; continue; }
 		if (fenced) { continue; }
-		for (const hit of line.matchAll(/\[[^\]]*\]\(([^)\s]+)[^)]*\)/g)) {
-			const address = hit[1];
+		for (const hit of line.matchAll(/\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g)) {
+			const address = hit[2];
 			if (/^[a-z][a-z0-9+.-]*:/i.test(address)) { continue; }   // says outright it is elsewhere
-			found.push(address);
+			found.push({ address, words: hit[1] });
 		}
 	}
 	return found;

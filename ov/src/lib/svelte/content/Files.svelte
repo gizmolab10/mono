@@ -73,6 +73,12 @@
 		});
 	}
 
+	/** Where a file's own folder sits inside its collection. Nothing at all for one at the top. */
+	function folder_of(path: string): string {
+		const parts = path.split('/');
+		return parts.slice(0, -1).join('/');
+	}
+
 	// The whole row answers, not just the name: a file opens for reading, a folder opens or
 	// shuts. The row is a target of the middle kind, so the triangle standing in it — a control —
 	// takes the cursor first and the row never hears that press at all.
@@ -83,13 +89,24 @@
 				const where = folder_path_of(row.file.bundle, row.file.path);
 				show_folder(where).then((answer) => {
 					if (answer.ok) { debug.log(`Row clicked with the command key: showing the folder ${where} in the Finder.`); return; }
-					show_status(`could not show ${where} — ${answer.why}`);
+					show_status(`could not open ${where} — ${answer.why}`);
 					debug.log(`Row clicked with the command key, but the folder ${where} was not shown — ${answer.why}.`);
 				});
 				return;
 			}
 			debug.log(`Row clicked: the folder "${row.file.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
 			toggle_folder(row.key, row.file.name);
+			return;
+		}
+		// Command with option shows the folder this file sits in, the same as command alone does
+		// on a folder's own row — so a file's folder can be reached without hunting for it.
+		if (holding_command && holding_option) {
+			const where = folder_path_of(row.file.bundle, folder_of(row.file.path));
+			show_folder(where).then((answer) => {
+				if (answer.ok) { debug.log(`Row clicked with command and option: showing the folder ${where}, which holds "${row.file.name}", in the Finder.`); return; }
+				show_status(`could not open ${where} — ${answer.why}`);
+				debug.log(`Row clicked with command and option, but the folder ${where} was not shown — ${answer.why}.`);
+			});
 			return;
 		}
 		// The command key alone hands the file to Obsidian; anything else opens it here.
@@ -156,10 +173,13 @@
 	// What the hint over a row says, which depends on what clicking it would do.
 	function row_hint(row: Filtered_File, holding_command: boolean, holding_option: boolean): string {
 		if (!row.file.is_folder) {
-			const what = !holding_command ? 'edit' : holding_option ? 'edit' : 'edit in obsidian';
-			return `${what} "${row.file.name}"`;
+			if (holding_command && holding_option) {
+				const where = folder_of(row.file.path);
+				return `open "${where === '' ? row.file.bundle : where.split('/').pop()}" in the finder`;
+			}
+			return `${holding_command ? 'edit in obsidian' : 'edit'} "${row.file.name}"`;
 		}
-		if (holding_command) { return `show "${row.file.name}" in the finder`; }
+		if (holding_command) { return `open "${row.file.name}" in the finder`; }
 		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.file.name}"`;
 	}
 
@@ -478,6 +498,10 @@
 				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<tbody>
 					{#each shown as row, row_number (row.key)}
+						<!-- A row opens when the press is let go, never on the way down: a file is
+						     dragged from its row into a folder, and acting on the way down opened the
+						     file before the drag could begin. A drag that does begin ends in its own
+						     way, so nothing is ever let go here and nothing opens. -->
 						<!-- svelte-ignore a11y_mouse_events_have_key_events a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
 						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.file.is_folder}
 							class:opened={row.file.is_folder && row.has_children && !$w_shut.includes(row.key)}
@@ -486,7 +510,7 @@
 							draggable={$w_show_folders && !row.file.is_folder}
 							use:hit_target={{ id: `list.row.${row.key}`, type: T_Hit_Target.section,
 								tip: row_hint(row, $w_command_down, $w_option_down),
-								onpress: () => click_row(row, $w_command_down, $w_option_down) }}
+								onrelease: () => click_row(row, $w_command_down, $w_option_down) }}
 							ondragstart={(e) => start_drag(e, row)}
 							ondragend={end_drag}
 							ondragover={(e) => drag_over(e, row)}

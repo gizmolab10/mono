@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { w_status, w_findings, hide_status, type Finding } from '../../ts/managers/Status';
-	import { open_view, w_search_for } from '../../ts/managers/Operations';
+	import { w_status, w_findings, w_findings_made, hide_status, type Finding } from '../../ts/managers/Status';
+	import { open_from_report, w_search_for } from '../../ts/managers/Operations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
@@ -12,13 +12,17 @@
 
 	/**
 	 * A dead link picked out of the report: its guide opens with the link's own words lit
-	 * where they sit, so the fix can be typed on the spot.
+	 * where they sit, so the fix can be typed on the spot. The back mark then goes to the
+	 * report rather than to another file, so the rest of what was found is one press away.
 	 */
 	function handleDeadLink(found: Finding) {
 		if (!found.key || !found.link) { return; }
-		w_search_for.set(found.link);
-		open_view(found.key);
-		debug.log(`Report: opening "${found.key}", with "${found.link}" lit.`);
+		// The words the link reads as, which are the only part of it drawn on the page. Its
+		// address lives in what it points at, so looking for that would find nothing.
+		const looks_for = found.find ?? found.link;
+		w_search_for.set(looks_for);
+		open_from_report(found.key);
+		debug.log(`Report: opening "${found.key}", looking for "${looks_for}" — the words "${found.link}" reads as. Backing up will come back here.`);
 	}
 </script>
 
@@ -30,7 +34,9 @@
 				<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 			</svg>
 		</button>
-		<span class='report-title'>report</span>
+		<!-- Its own word, and when it was made. A report is kept across a reload, so without the
+		     moment on it a week-old one reads exactly like this minute's. -->
+		<span class='report-title'>{$w_findings_made === '' ? 'report' : `report on ${$w_findings_made}`}</span>
 	</div>
 	<div class='report-words'>
 		{$w_status}

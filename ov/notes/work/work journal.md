@@ -9,6 +9,39 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-14 — a box that stands inside the piece it is changing
+
+Opening a piece for changing moved its words. A heading jumped bigger-to-smaller and light-to-heavy;
+the hashes and the `- [ ]` took width the drawn page spends on nothing, so every first word slid
+right; and the row number in the left lane went up for one kind of piece and down for another.
+
+**The first tries were arithmetic, and arithmetic was the wrong tool.** I copied the piece's
+lettering onto the box, measured the markup at the head of the line and stood it out to the left,
+took off half the leading, hung the number off the box, then off the box's place. Each one fixed
+some pieces and moved others, because each rested on my own model of where a given kind of piece
+hangs its number — and every kind hangs it somewhere slightly different.
+
+**The log said it outright.** The first thing to be done in a list read right while every other one
+was two pixels low. That first one's number is drawn by the list, not by the item, and the list was
+never touched. So the rule was there all along: a number that never leaves the element that draws it
+never moves.
+
+**So the box stands inside the piece now**, with the piece's own words held out of sight behind it.
+The piece keeps its place, its lettering, its gaps and its number; the box inherits the lot. The
+code that copied the lettering, the code that slid the box onto the piece's place, and four kinds of
+box styling all went. What is left is measured, never reasoned about: the markup's own width, and
+whatever is left over between where the words stood and where the box begins them.
+
+**A thing to be done can hold a list of its own**, and that list has nothing to do with the one line
+being changed — so it comes back out to stand below the box while the item's own words are away.
+
+**Two faults in the hits manager, either of which stops every press landing.** It marks that a
+rebuild is queued, waits, then clears the mark — and the clearing sat after the waiting rather than
+inside it, so a wait that never came back left the mark standing, and a standing mark turns away
+every later request. Since a target asks for a rebuild the moment it arrives, nothing would ever be
+measured again. And redrawing the fold marks adds rows and pointers across the whole page without
+telling the manager anything.
+
 ## 2026-08-13 — the details column folds the way everything else does
 
 The column's two things — preferences and repair — each wore a banner: a full-width block with the
