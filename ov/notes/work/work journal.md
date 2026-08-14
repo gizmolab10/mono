@@ -9,6 +9,30 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-13 — the details column folds the way everything else does
+
+The column's two things — preferences and repair — each wore a banner: a full-width block with the
+title inside it, a fill arriving under the cursor, and a rounded shape drawn behind. Every other
+folding thing in the app is a line across with the word standing on it, masking the line behind it.
+Both are that now, and the banner's own drawing is gone.
+
+**The column became one stack of sections.** The page color runs from the first line down to the
+last; the column's own gap above that first line, and whatever is left below the last, stand on the
+accent. A closing line is drawn under the last section only while it is open — folded, it stands
+one gap tall with its own hairline, and nothing below it draws another line.
+
+**A section can now hold a different gap below what it shows.** Above its contents it gives back
+half its own line, since a gap is measured from a line's middle; below them the line that bounds
+the gap belongs to whatever comes next, and is not this section's to give back. The details column
+asks for that half on top of the gap above, so both sides draw as one gap and the contents sit
+centred.
+
+**Three faults of my own, found on screen.** The word handed to the line was never bound, so the
+line was given nothing and no word appeared. The word and its section shared one name, and the
+manager keeps one target per name, so the section threw the word's away. And the column's width
+changes when it is shown or hidden with no window resize to report it — which the manager's own
+self-check named exactly, down to the eight pixels across and eight down.
+
 ## 2026-08-13 — the manager pays its own way, and a file is called a file
 
 Reading the wiring back showed three costs it had added. The hovered target was written to a store

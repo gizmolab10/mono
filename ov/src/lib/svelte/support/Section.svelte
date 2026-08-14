@@ -18,6 +18,7 @@
 		id,
 		edge               = T_Edge.thin,
 		gap                = USUAL_GAP,
+		gap_at_foot        = undefined,
 		onhover            = undefined,
 		onbare             = undefined,
 		bare_says          = '',
@@ -38,6 +39,7 @@
 		folded?            : boolean;                 // its content is put away, so it holds no gap
 		edge?              : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
 		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
+		gap_at_foot?       : number;                  // a different number below its content, where the two sides are drawn against different things
 	} = $props();
 
 	// Said once here, so the line and the gap can never disagree about what this section is.
@@ -46,7 +48,7 @@
 	// back. Below them, the line that bounds the gap belongs to whatever comes next and is not
 	// this section's to give back — so the whole gap is held.
 	let gap_under_line = $derived(gap_above(folded, gap, holds_subsections, bar));
-	let gap_below = $derived(gap_inside(folded, gap, holds_subsections));
+	let gap_below = $derived(gap_inside(folded, gap_at_foot ?? gap, holds_subsections));
 
 	// Folded, the line keeps only what stands at its ends — the word that brings the section back.
 	// Anything at the middle acts on what is now out of sight, so it goes with it.
@@ -156,6 +158,7 @@
 		left           : 0;
 		top            : 50%;
 	}
+
 
 	/* The bare space here does something when pressed, so the whole background fills while the
 	   cursor is on it — the only thing the filling changes, so it fades rather than jumping. The

@@ -7,16 +7,15 @@ date: 2026-08-10
 ---
 # Code debt
 
-write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff. success first.
+write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff. success criteria at the top.
 
 ## work
 
-- [ ] convert details banners -> clickable titled seps
 - [ ] change repair links -> allow links into work notes
 - [ ] not show tt when mouse is swiping
 - [ ] replace '+' button with t-cross path
 - [ ] OPTION-click turns a tag red, search discards matches to it
-- [ ] overstrike -> fainter gray
+- [ ] placeholder text and overstrike -> --lightgray
 - [ ] add a list of back links to the editor
 - [ ] blank line following checkbox line is missing
 - [ ] compose an email does not work on Windows
@@ -27,6 +26,11 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## done
 
+- [x] the details column folds behind words on lines, like everything else
+    - [x] its two banners went — the block, the shape behind it, and its fill
+    - [x] the column is one stack of sections on the page color, standing on the accent
+    - [x] a section can hold a different gap below what it shows, since the two sides are drawn
+        against different things
 - [x] the record of one file is called a file
     - [x] `Guide` -> `File`, `Filtered_Guide` -> `Filtered_File`, and the field on a row -> `file`
     - [x] `Guide_Place` -> `File_Site`, `Pill_Place` -> `Pill_Placement`
