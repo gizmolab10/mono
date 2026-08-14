@@ -1,7 +1,8 @@
 import { T_Drag, T_Hit_Target } from '../types/Hit_Targets';
 import Mouse_Timer, { T_Timer } from './Mouse_Timer';
 import type { Dictionary } from '../types/Types';
-import { Point } from '../types/Coordinates';
+import { Point, Rect } from '../types/Coordinates';
+import { k } from '../common/Constants';
 import { writable, get } from 'svelte/store';
 import S_Hit_Target from './S_Hit_Target';
 import { debug } from '../common/Debug';
@@ -32,6 +33,9 @@ type Target_RBRect = {
 
 export default class Hits {
 	disable_hover = false;
+	rebuild_is_waiting = false;      // a rebuild is already queued for the next drawing
+	rebuild_is_drawing = false;      // a rebuild is already queued for the next frame
+	drift_check: ReturnType<typeof setInterval> | null = null;   // the beat that asks whether the hovered target has gone stale
 	longClick_fired: boolean = false;
 	doubleClick_fired: boolean = false;
 	rbush = new RBush<Target_RBRect>();
@@ -72,15 +76,6 @@ export default class Hits {
 	handle_s_mouse_at(point: Point, s_mouse: S_Mouse): boolean {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
-		// TEMPORARY measurement — what a press found, and what it handed the press to.
-		debug.log(`PRESS at ${Math.round(point.x)},${Math.round(point.y)} ${s_mouse.isDown ? 'down' : 'up'}:`
-			+ ` ${matches.length} target(s) — ${matches.map((one) => {
-				const held = one.rect;
-				const now = one.html_element?.getBoundingClientRect();
-				return `${one.id} [held ${held ? `${Math.round(held.x)},${Math.round(held.y)} ${Math.round(held.size.width)}x${Math.round(held.size.height)}` : 'none'}`
-					+ ` drawn ${now ? `${Math.round(now.x)},${Math.round(now.y)} ${Math.round(now.width)}x${Math.round(now.height)}` : 'none'}]`;
-			}).join(', ') || 'none'};`
-			+ ` handed to ${target?.id ?? 'nobody'}, which ${target?.handle_s_mouse ? 'has' : 'has no'} handler.`);
 		if (!target) { return false; }
 
 		if (s_mouse.isDown) {
@@ -133,7 +128,7 @@ export default class Hits {
 	}
 
 	clear_hover() {
-		this.w_s_hover.set(null);
+		this.set_asHovering(null);
 	}
 
 	// ===== GENERAL =====
@@ -142,16 +137,60 @@ export default class Hits {
 		this.rbush.clear();
 		this.stop_autorepeat();
 		this.cancel_longClick();
-		this.w_s_hover.set(null);
+		this.set_asHovering(null);
 		this.cancel_doubleClick();
 		this.targets_dict_byID = {};
 		this.longClick_fired = false;
 		this.targets_dict_byType = {};
 	}
 
+	/**
+	 * Every target asked again, once the browser has drawn. A run of things arriving together each
+	 * asks for this, so the second and every one after it join the one already waiting — forty rows
+	 * arriving cost one rebuild rather than forty.
+	 */
 	async defer_recalibrate() {
+		if (this.rebuild_is_waiting) { return; }
+		this.rebuild_is_waiting = true;
 		await tick();
+		this.rebuild_is_waiting = false;
 		this.recalibrate();
+	}
+
+	/**
+	 * Every target asked again where it stands, at the next drawing. Scrolling says this on every
+	 * one of its events, and each rectangle read makes the browser settle its layout — so the
+	 * asking is held until the drawing, and a fast scroll costs one rebuild rather than a hundred.
+	 */
+	recalibrate_when_drawn() {
+		if (this.rebuild_is_drawing) { return; }
+		this.rebuild_is_drawing = true;
+		requestAnimationFrame(() => {
+			this.rebuild_is_drawing = false;
+			this.recalibrate();
+		});
+	}
+
+	/**
+	 * Everything inside one scrolling box moved by exactly this much. Nothing is read from the
+	 * browser: a scroll moves every rectangle in the box by the distance scrolled and leaves every
+	 * other rectangle where it was, so the distance is applied and the structure rebuilt from what
+	 * is already held.
+	 *
+	 * Asking which targets are inside the box walks up from each element, which costs nothing —
+	 * unlike reading a rectangle, which makes the browser settle its layout first.
+	 */
+	shift_inside(box: HTMLElement, by: Point) {
+		const bush = new RBush<Target_RBRect>();
+		for (const target of [...this.targets]) {
+			if (!target.rect) { continue; }
+			const element = target.html_element;
+			if (!!element && element !== box && box.contains(element)) {
+				target.shift_by(by);
+			}
+			this.insert_into_rbush(target, bush);
+		}
+		this.rbush = bush;
 	}
 
 	/** Every target asked again where it stands. Said after anything that moves things about. */
@@ -192,6 +231,8 @@ export default class Hits {
 
 	delete_hit_target(target: S_Hit_Target) {
 		if (!!target && !!target.rect) {
+			// Going while the cursor is on it would leave its stamp standing.
+			if (get(this.w_s_hover) === target) { this.set_asHovering(null); }
 			const id = target.id;
 			if (!!id) {
 				delete this.targets_dict_byID[id];
@@ -248,6 +289,61 @@ export default class Hits {
 		return smallest;
 	}
 
+	/**
+	 * The one guard against the whole design's one weakness: every rectangle is held rather than
+	 * read, so anything that moves without saying so leaves a target answering for a strip of the
+	 * page it no longer occupies — and nothing on screen shows it.
+	 *
+	 * While the cursor rests on a target, its rectangle is read afresh once a second and compared
+	 * with what is held. A difference is somebody's missing word, and it is said in the log with
+	 * both readings. One read a second, and only while something is hovered.
+	 */
+	private watch_for_drift(target: S_Hit_Target | null) {
+		if (this.drift_check !== null) {
+			clearInterval(this.drift_check);
+			this.drift_check = null;
+		}
+		if (!target) { return; }
+		this.drift_check = setInterval(() => {
+			const held = target.rect;
+			const drawn = Rect.rect_forElement(target.html_element);
+			if (!held || !drawn || !held.differs_from(drawn, k.thickness.faint)) { return; }
+			this.say_it_drifted(target, held, drawn);
+		}, k.timeout.drift);
+	}
+
+	/**
+	 * Said in a box the reader cannot miss, since this is a fault nothing on screen shows and the
+	 * app goes on working. It carries everything needed to mend it: which target, what kind it is,
+	 * where it is held, where it is drawn, how far off that is, and what the element is called on
+	 * the page. Said once — the check stops rather than saying the same thing every second.
+	 */
+	private say_it_drifted(target: S_Hit_Target, held: Rect, drawn: Rect) {
+		if (this.drift_check !== null) {
+			clearInterval(this.drift_check);
+			this.drift_check = null;
+		}
+		const element = target.html_element;
+		const named = !element ? 'nothing' : `<${element.tagName.toLowerCase()} class="${element.className}">`;
+		const words = [
+			`A hit target has gone stale — it answers for a strip of the page it no longer stands on.`,
+			``,
+			`    what     ${target.id}`,
+			`    kind     ${T_Hit_Target[target.type]}`,
+			`    element  ${named}`,
+			`    held at  ${held.description}`,
+			`    drawn at ${drawn.description}`,
+			`    off by   ${Math.round(drawn.x - held.x)} across, ${Math.round(drawn.y - held.y)} down,`
+				+ ` ${Math.round(drawn.width - held.width)} wider, ${Math.round(drawn.height - held.height)} taller`,
+			``,
+			`Something moved it and nothing told the hits manager. Whatever does the moving must say`,
+			`so — hits.recalibrate() for a change of shape, hits.shift_inside() for a scroll, or`,
+			`hits.defer_recalibrate() to wait for the drawing first.`,
+		].join('\n');
+		debug.log(words);
+		alert(words);
+	}
+
 	private insert_into_rbush(target: S_Hit_Target, into_rbush: RBush<Target_RBRect>) {
 		const rect = target.rect;
 		if (!!rect) {
@@ -274,7 +370,16 @@ export default class Hits {
 	}
 
 	private set_asHovering(match: S_Hit_Target | null) {
+		// Said only when the answer changes: the cursor crossing one control would otherwise say
+		// the same thing on every move of the mouse.
+		const held = get(this.w_s_hover);
+		if (held === match) { return; }
+		// The one the cursor left and the one it reached are the only two elements that change, so
+		// they are the only two touched. Nothing else is told.
+		held?.html_element?.removeAttribute('data-hit');
+		match?.html_element?.setAttribute('data-hit', '');
 		this.w_s_hover.set(!match ? null : match);
+		this.watch_for_drift(match);
 		const autorepeating_target = get(this.w_autorepeat);
 		if (!!autorepeating_target && (!match || !match.hasSameID_as(autorepeating_target))) {
 			this.stop_autorepeat();

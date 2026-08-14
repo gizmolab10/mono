@@ -16,7 +16,7 @@
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
-	import type { Filtered_Guide } from '../../ts/types/File';
+	import type { Filtered_File } from '../../ts/types/File';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { show_status } from '../../ts/managers/Status';
 	import Separator from '../support/Separator.svelte';
@@ -24,6 +24,7 @@
 	import { Direction } from '../../ts/types/Angle';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { Point } from '../../ts/types/Coordinates';
 	import { hits } from '../../ts/events/Hits';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
@@ -49,12 +50,12 @@
 	// The mark in the name column's header points down while any collection is open, and a
 	// press on it shuts every folder or opens every folder — the same either-or the top
 	// heading's mark has while reading a file.
-	let tops_open = $derived($w_showing.some((row) => row.guide.is_folder && row.depth === 0 && !$w_shut.includes(row.key)));
+	let tops_open = $derived($w_showing.some((row) => row.file.is_folder && row.depth === 0 && !$w_shut.includes(row.key)));
 
 	function toggle_all_folders() {
 		if (tops_open) {
 			const every_folder = [...guides.hierarchy.all_guides.values()]
-				.filter((row) => row.guide.is_folder).map((row) => row.key);
+				.filter((row) => row.file.is_folder).map((row) => row.key);
 			w_shut.set(every_folder);
 			debug.log(`Every folder shut — ${every_folder.length} of them.`);
 			return;
@@ -75,11 +76,11 @@
 	// The whole row answers, not just the name: a file opens for reading, a folder opens or
 	// shuts. The row is a target of the middle kind, so the triangle standing in it — a control —
 	// takes the cursor first and the row never hears that press at all.
-	function click_row(row: Filtered_Guide, holding_command = false, holding_option = false) {
-		if (row.guide.is_folder) {
+	function click_row(row: Filtered_File, holding_command = false, holding_option = false) {
+		if (row.file.is_folder) {
 			// The command key shows the folder itself, on this machine, rather than opening it here.
 			if (holding_command) {
-				const where = folder_path_of(row.guide.bundle, row.guide.path);
+				const where = folder_path_of(row.file.bundle, row.file.path);
 				show_folder(where).then((answer) => {
 					if (answer.ok) { debug.log(`Row clicked with the command key: showing the folder ${where} in the Finder.`); return; }
 					show_status(`could not show ${where} — ${answer.why}`);
@@ -87,19 +88,19 @@
 				});
 				return;
 			}
-			debug.log(`Row clicked: the folder "${row.guide.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
-			toggle_folder(row.key, row.guide.name);
+			debug.log(`Row clicked: the folder "${row.file.name}" — it holds ${folder_count.get(row.key) ?? 0} matching file(s), so it is being ${$w_shut.includes(row.key) ? 'opened' : 'shut'}.`);
+			toggle_folder(row.key, row.file.name);
 			return;
 		}
 		// The command key alone hands the file to Obsidian; anything else opens it here.
 		if (holding_command && !holding_option) {
-			const where = file_path_of(row.guide.bundle, row.guide.path);
+			const where = file_path_of(row.file.bundle, row.file.path);
 			const link  = obsidian_link(VAULT, where);
 			window.open(link, '_self');
 			debug.log(`Row clicked with the command key: handing "${where}" to Obsidian, in the "${VAULT}" vault. This app stays where it is.`);
 			return;
 		}
-		debug.log(`Row clicked: opening the file "${row.guide.name}".`);
+		debug.log(`Row clicked: opening the file "${row.file.name}".`);
 		open_view(row.key);
 	}
 
@@ -110,15 +111,15 @@
 	// the file on disk. The app's own picture is put right straight after, so the list agrees
 	// with the disk without every file being read again.
 
-	let dragging   = $state<Filtered_Guide | null>(null);   // the file being carried
+	let dragging   = $state<Filtered_File | null>(null);   // the file being carried
 	let landing_on = $state<string | null>(null);           // the folder lit under the cursor
 
-	function start_drag(event: DragEvent, row: Filtered_Guide) {
-		if (!$w_show_folders || row.guide.is_folder) { return; }
+	function start_drag(event: DragEvent, row: Filtered_File) {
+		if (!$w_show_folders || row.file.is_folder) { return; }
 		dragging = row;
 		event.dataTransfer?.setData('text/plain', row.key);
 		if (event.dataTransfer) { event.dataTransfer.effectAllowed = 'move'; }
-		debug.log(`Picked up "${row.guide.name}" from ${row.key}. Drop it on a folder to move it there.`);
+		debug.log(`Picked up "${row.file.name}" from ${row.key}. Drop it on a folder to move it there.`);
 	}
 
 	function end_drag() {
@@ -127,39 +128,39 @@
 	}
 
 	/** Can this file land here? Only on a folder, and not the one it already sits in. */
-	function can_land(row: Filtered_Guide): boolean {
-		if (!dragging || !row.guide.is_folder) { return false; }
+	function can_land(row: Filtered_File): boolean {
+		if (!dragging || !row.file.is_folder) { return false; }
 		const holding = dragging.ancestor_keys[dragging.ancestor_keys.length - 1];
 		return row.key !== holding;
 	}
 
-	function drag_over(event: DragEvent, row: Filtered_Guide) {
+	function drag_over(event: DragEvent, row: Filtered_File) {
 		if (!can_land(row)) { return; }
 		event.preventDefault();                       // says "yes, it can land here"
 		if (event.dataTransfer) { event.dataTransfer.dropEffect = 'move'; }
 		landing_on = row.key;
 	}
 
-	function drop_on(event: DragEvent, row: Filtered_Guide) {
+	function drop_on(event: DragEvent, row: Filtered_File) {
 		event.preventDefault();
 		const carried = dragging;
 		const allowed = can_land(row);          // asked while the file is still being carried
 		end_drag();
 		if (!carried || !allowed) {
-			debug.log(`Dropped on "${row.guide.name}" but nothing moved — ${!carried ? 'nothing was being carried' : 'it cannot land there'}.`);
+			debug.log(`Dropped on "${row.file.name}" but nothing moved — ${!carried ? 'nothing was being carried' : 'it cannot land there'}.`);
 			return;
 		}
-		guides.move(carried.guide, row.guide);
+		guides.move(carried.file, row.file);
 	}
 
 	// What the hint over a row says, which depends on what clicking it would do.
-	function row_hint(row: Filtered_Guide, holding_command: boolean, holding_option: boolean): string {
-		if (!row.guide.is_folder) {
+	function row_hint(row: Filtered_File, holding_command: boolean, holding_option: boolean): string {
+		if (!row.file.is_folder) {
 			const what = !holding_command ? 'edit' : holding_option ? 'edit' : 'edit in obsidian';
-			return `${what} "${row.guide.name}"`;
+			return `${what} "${row.file.name}"`;
 		}
-		if (holding_command) { return `show "${row.guide.name}" in the finder`; }
-		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.guide.name}"`;
+		if (holding_command) { return `show "${row.file.name}" in the finder`; }
+		return `${$w_shut.includes(row.key) ? 'open' : 'shut'} "${row.file.name}"`;
 	}
 
 	// The rows on screen, worked out by the hierarchy: the filters and the folds already
@@ -201,10 +202,18 @@
 		debug.log(`List scroll: the top row is now "${tr.dataset.name}" (row ${tr.dataset.n}).`);
 	}
 
+	// Where the rows stood when the hits manager was last told. A scroll moves every row by the
+	// difference, and by exactly that — so the manager is handed the distance rather than asked to
+	// read every rectangle again, which would make the browser settle its layout on every event.
+	let told_scrolled_to = 0;
+
 	function on_scroll() {
 		measure_thumb();
-		// Every row moved, so every rectangle the hits manager holds for one is stale.
-		hits.recalibrate();
+		if (!!scroller) {
+			const now = scroller.scrollTop;
+			hits.shift_inside(scroller, new Point(0, told_scrolled_to - now));
+			told_scrolled_to = now;
+		}
 		if (save_wait !== null) { clearTimeout(save_wait); }
 		save_wait = setTimeout(remember_top, 150);       // save once the scrolling settles
 	}
@@ -294,7 +303,7 @@
 	// list is folders leading their contents, which nothing can sort. One file alone can't
 	// be sorted either, so the titles go quiet there too; what was picked is kept, and
 	// comes back the moment a second file does.
-	const can_sort = $derived(!$w_show_folders && shown.filter((r) => !r.guide.is_folder).length > 1);
+	const can_sort = $derived(!$w_show_folders && shown.filter((r) => !r.file.is_folder).length > 1);
 
 
 	// Where each sorted column sits in the order, so a title can say whether it decides or
@@ -355,7 +364,7 @@
 		// A folder opening or a filter narrowing moves every row below it, so every rectangle
 		// the hits manager holds is asked again once the browser has drawn them.
 		hits.defer_recalibrate();
-		const watcher = new ResizeObserver(() => { measure_scrollbar(); measure_thumb(); hits.recalibrate(); });
+		const watcher = new ResizeObserver(() => { measure_scrollbar(); measure_thumb(); hits.recalibrate_when_drawn(); });
 		watcher.observe(scroller);
 		const table = scroller.querySelector('table');
 		if (table) { watcher.observe(table); }
@@ -375,16 +384,16 @@
 </script>
 
 <!-- The three cells of a row: kind, name (with the open/shut triangle), and tags. -->
-{#snippet guide_row(row: Filtered_Guide)}
+{#snippet guide_row(row: Filtered_File)}
 	{#if shows_kind}
 		<!-- A folder shows how many matching files it holds. A file shows its kind, unless one
 		     kind is picked — then every file would read the same, so the cell stays blank. -->
 		<!-- A file that has never been labeled reads "---", the same three dashes a label block
 		     opens with — it is waiting for one, and gets it the first time it is opened. -->
-		<td class='kind'><span>{row.guide.is_folder ? (folder_count.get(row.key) ?? 0) : ($w_kind !== '' ? '' : (row.guide.kind || '---'))}</span></td>
+		<td class='kind'><span>{row.file.is_folder ? (folder_count.get(row.key) ?? 0) : ($w_kind !== '' ? '' : (row.file.kind || '---'))}</span></td>
 	{/if}
 	{#if shows_project}
-		<td class='project'><span>{row.guide.bundle}</span></td>
+		<td class='project'><span>{row.file.bundle}</span></td>
 	{/if}
 	<!-- With the folders hidden the rows are a flat run, so nothing is stepped in and no room
 	     is held back for a triangle that cannot appear. -->
@@ -399,14 +408,14 @@
 					     The row behind it opens the file on a press, so the press used to be stopped
 					     by hand; the manager hands a press to one target only. -->
 					<button class='tri' aria-label={`${prefix} folder`}
-						use:hit_target={{ id: `list.folder.${row.key}`, tip: `${prefix} "${row.guide.name}"`,
-							onpress: () => toggle_folder(row.key, row.guide.name) }}>
+						use:hit_target={{ id: `list.folder.${row.key}`, tip: `${prefix} "${row.file.name}"`,
+							onpress: () => toggle_folder(row.key, row.file.name) }}>
 						<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
 							<path d={triangle_path(open)} />
 						</svg>
 					</button>
 				{/if}
-			</span><span class='name-text'>{row.guide.name}</span>
+			</span><span class='name-text'>{row.file.name}</span>
 		</span>
 	</td>
 	<td class='tags-cell'><span class='tag-names'>{row.tag_names.join(', ')}</span></td>
@@ -470,11 +479,11 @@
 				<tbody>
 					{#each shown as row, row_number (row.key)}
 						<!-- svelte-ignore a11y_mouse_events_have_key_events a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
-						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.guide.is_folder}
-							class:opened={row.guide.is_folder && row.has_children && !$w_shut.includes(row.key)}
+						<tr class='file' class:hovered={hovered_row === row.key} class:folder={row.file.is_folder}
+							class:opened={row.file.is_folder && row.has_children && !$w_shut.includes(row.key)}
 							class:landing={landing_on === row.key}
-							data-key={row.key} data-n={row_number} data-name={row.guide.name}
-							draggable={$w_show_folders && !row.guide.is_folder}
+							data-key={row.key} data-n={row_number} data-name={row.file.name}
+							draggable={$w_show_folders && !row.file.is_folder}
 							use:hit_target={{ id: `list.row.${row.key}`, type: T_Hit_Target.section,
 								tip: row_hint(row, $w_command_down, $w_option_down),
 								onpress: () => click_row(row, $w_command_down, $w_option_down) }}

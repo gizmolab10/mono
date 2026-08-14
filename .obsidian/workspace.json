@@ -35,8 +35,7 @@
               "title": "hits manager"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -172,13 +171,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/hits manager.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of hits manager"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -210,22 +209,28 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "fd28867d8dc37ff3",
+  "active": "a932f7d0e39d14ca",
   "lastOpenFiles": [
+    "ov/notes/guides/project/index.md",
+    "ov/notes/guides/operations/index.md",
+    "ov/notes/guides/design/index.md",
+    "ji/notes/work/index.md",
+    "ji/notes/guides/setup/index.md",
+    "ji/notes/guides/project/index.md",
+    "ji/notes/designs/index.md",
+    "ov/notes/work/hits manager.md",
+    "ov/src/lib/ts/tests/coordinates.test.ts",
+    "ov/notes/work/code debt.md",
     "ov/src/lib/svelte/content/Editor_Filters.svelte",
     "ov/src/lib/svelte/content/Browse_Filters.svelte",
     "ov/src/lib/ts/tests/fitting.test.ts",
     "ov/src/lib/ts/utilities/Fitting.ts",
-    "ov/notes/work/code debt.md",
     "ov/notes/work/unnamed.md",
     "ov/src/lib/svelte/content/Status_Line.svelte.tmp.69970.c3c7b5ae5090",
     "ov/src/lib/svelte/main/Browse.svelte.tmp.69970.0fbb4675eb82",
     "ov/src/lib/ts/events/Hits.ts.tmp.69970.8b9c07007880",
     "ov/src/lib/ts/utilities/Tooltip.ts.tmp.69970.315e32f6db18",
     "ov/src/lib/svelte/main/Controls.svelte.tmp.69970.c9596d2545e8",
-    "ov/src/lib/ts/events/Hit_Target.ts",
-    "ov/notes/work/index.md.tmp.69970.4c83968386e9",
-    "ov/notes/work/hits manager.md",
     "ji/notes/work/code debt.md",
     "ov/notes/guides/design/action type.md",
     "ov/notes/work/action type.md",
@@ -242,11 +247,6 @@
     "ov/notes/work/handoff.md",
     "notes/guides/assessment of our guides.md",
     "notes/guides/pre-flight/always.md",
-    "notes/work/remember.md",
-    "notes/work/context.md",
-    "notes/work/claude agent skills.md",
-    "notes/guides/collaborate/tags hierarchy.md",
-    "notes/guides/develop/constants.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

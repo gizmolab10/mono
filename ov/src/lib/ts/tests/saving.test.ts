@@ -1,33 +1,33 @@
-import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_link, path_of_address, place_of_file, renamed_path } from '../utilities/Saving';
+import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_link, path_of_address, site_of_file, renamed_path } from '../utilities/Saving';
 import { describe, expect, it } from 'vitest';
 import { T_Bundle } from '../types/File';
 
 describe('reading a place in the repo back into a collection and a path', () => {
 	it('reads a shared guide', () => {
-		expect(place_of_file('notes/guides/pre-flight/always.md'))
+		expect(site_of_file('notes/guides/pre-flight/always.md'))
 			.toEqual({ bundle: T_Bundle.mono, path: 'pre-flight/always.md', is_design: false });
 	});
 
 	it('reads a project\'s guide', () => {
-		expect(place_of_file('di/notes/guides/core/units.md'))
+		expect(site_of_file('di/notes/guides/core/units.md'))
 			.toEqual({ bundle: T_Bundle.di, path: 'core/units.md', is_design: false });
 	});
 
 	it('keeps the designs folder in the path, so it can never collide with a guide', () => {
-		expect(place_of_file('ws/notes/designs/styles.md'))
+		expect(site_of_file('ws/notes/designs/styles.md'))
 			.toEqual({ bundle: T_Bundle.ws, path: 'designs/styles.md', is_design: true });
 	});
 
 	it('keeps the work folder in the path, the same as designs', () => {
-		expect(place_of_file('ov/notes/work/handoff.md'))
+		expect(site_of_file('ov/notes/work/handoff.md'))
 			.toEqual({ bundle: T_Bundle.ov, path: 'work/handoff.md', is_design: false });
-		expect(place_of_file('notes/work/learn.md'))
+		expect(site_of_file('notes/work/learn.md'))
 			.toEqual({ bundle: T_Bundle.mono, path: 'work/learn.md', is_design: false });
 	});
 
 	it('reads a work note sitting deeper than the top of the work folder as nothing', () => {
-		expect(place_of_file('di/notes/work/now/learn.md')).toBe(null);
-		expect(place_of_file('ji/notes/work/proposals/ov.md')).toBe(null);
+		expect(site_of_file('di/notes/work/now/learn.md')).toBe(null);
+		expect(site_of_file('ji/notes/work/proposals/ov.md')).toBe(null);
 	});
 
 	it('is the other way round from working out where a guide sits', () => {
@@ -37,14 +37,14 @@ describe('reading a place in the repo back into a collection and a path', () => 
 			[T_Bundle.ov, 'designs/a plan.md'],
 			[T_Bundle.ov, 'work/handoff.md'],
 		] as Array<[T_Bundle, string]>) {
-			expect(place_of_file(file_path_of(bundle, path))).toEqual({ bundle, path, is_design: path.startsWith('designs/') });
+			expect(site_of_file(file_path_of(bundle, path))).toEqual({ bundle, path, is_design: path.startsWith('designs/') });
 		}
 	});
 
 	it('reads anything that is not a guide as nothing', () => {
-		expect(place_of_file('ov/src/lib/main.css')).toBe(null);
-		expect(place_of_file('notes/guides/a folder')).toBe(null);
-		expect(place_of_file('')).toBe(null);
+		expect(site_of_file('ov/src/lib/main.css')).toBe(null);
+		expect(site_of_file('notes/guides/a folder')).toBe(null);
+		expect(site_of_file('')).toBe(null);
 	});
 });
 

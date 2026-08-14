@@ -22,6 +22,7 @@ export default class Constants {
 		fade		 : 200,						// something arriving or leaving its position
 		hover		 : 333,						// a fill arriving or leaving under the cursor — a third of a second
 		asking		 : 1500,					// how often the dispatcher is asked again while it is down
+		drift		 : 1000,					// how often the hits manager asks whether what it holds has gone stale
 	};
 
 	// How long the mouse has to do a thing before it counts as that thing, in milliseconds. ⟵di

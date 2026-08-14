@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Edge, USUAL_GAP, folded_height, gap_above, thickness_of } from '../../ts/utilities/Sectioning';
+	import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
@@ -42,7 +42,11 @@
 
 	// Said once here, so the line and the gap can never disagree about what this section is.
 	let bar = $derived(thickness_of(edge));
+	// Above its contents, half of this section's own line stands inside the gap, so half is given
+	// back. Below them, the line that bounds the gap belongs to whatever comes next and is not
+	// this section's to give back — so the whole gap is held.
 	let gap_under_line = $derived(gap_above(folded, gap, holds_subsections, bar));
+	let gap_below = $derived(gap_inside(folded, gap, holds_subsections));
 
 	// Folded, the line keeps only what stands at its ends — the word that brings the section back.
 	// Anything at the middle acts on what is now out of sight, so it goes with it.
@@ -89,7 +93,7 @@
 		class:folded
 		class:lit={fills_when_bare && !folded}
 		style:padding-top='{gap_under_line}px'
-		style:padding-bottom='{gap_under_line}px'
+		style:padding-bottom='{gap_below}px'
 		style:min-height='{folded ? folded_height(gap, bar) : 0}px'
 		role='presentation'
 		use:hit_target={{ id, type: T_Hit_Target.section, dormant: folded,

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { foot_is_all_folds, inverted, toggle_all_areas, w_areas_open, w_form_folded } from '../../ts/managers/Filters';
-	import { ALL_TAGS, T_Kind, in_order, type Guide } from '../../ts/types/File';
+	import { ALL_TAGS, T_Kind, in_order, type File } from '../../ts/types/File';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { names_ride_in, places_of } from '../../ts/utilities/Tag_Rows';
+	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
 	import { T_Edge, USUAL_GAP } from '../../ts/utilities/Sectioning';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
@@ -27,7 +27,7 @@
 		name, guide, tags, text = $bindable(''),
 		folded = $bindable(false), onclose, onsay,
 	}: {
-		guide       : Guide;                 	// the record of the file being read
+		guide       : File;                 	// the record of the file being read
 		name        : string;                	// what the file is called
 		text        : string;                	// the whole file, which a write here changes
 		folded      : boolean;               	// nothing stands open at the foot of this form, told outward so the words below draw no line of their own
@@ -110,9 +110,10 @@
 
 
 	function look_for_names() {
-		names_riding = tags_row === null ? false : names_ride_in(places_of(tags_row));
-		// The run just changed shape, so every tag in it stands somewhere new.
-		hits.recalibrate();
+		names_riding = tags_row === null ? false : names_ride_in(placements_of(tags_row));
+		// The run just changed shape, so every tag in it stands somewhere new. Asked at the next
+		// drawing, since a run re-wrapping says this many times over.
+		hits.recalibrate_when_drawn();
 	}
 
 	// Measured again whenever the picks change, and again whenever the run changes shape — it

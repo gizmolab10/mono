@@ -6,13 +6,14 @@
 	import { file_path_of, path_of_address, read_guide, save_file } from '../../ts/utilities/Saving';
 	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { Point } from '../../ts/types/Coordinates';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
 	import { offer_status, show_status } from '../../ts/managers/Status';
 	import { follow_link, halt_stepping, w_command_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
-	import { key_of, type Guide } from '../../ts/types/File';
+	import { key_of, type File } from '../../ts/types/File';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Files';
@@ -31,7 +32,7 @@
 	}: {
 		name       : string;                  // what the file is called
 		address    : string;                  // which file it is, so folds belong to one file at a time
-		guide      : Guide;                   // the record of the file being read
+		guide      : File;                   // the record of the file being read
 		text       : string;                  // the whole file, held only while it is on screen
 		page       : HTMLElement | null;      // the drawn words, so a search can look inside them
 		draws_line?: boolean;                 // draw the line that closes off the top; false while whatever stands above already has one there
@@ -56,6 +57,18 @@
 	// The thumb is never shorter than a fifth of its lane. Where the browser would have put it,
 	// left alone, is drawn as a thin strip over the real one, so both can be seen at once.
 	let free = $state<Free_Thumb>({ top: 0, length: 0, shows: false });
+
+	// Where the words stood when the hits manager was last told. A scroll moves everything drawn in
+	// them by the difference, and by exactly that — so the manager is handed the distance rather
+	// than asked to read every rectangle again, which makes the browser settle its layout.
+	let told_scrolled_to = 0;
+
+	function words_scrolled() {
+		if (!page) { return; }
+		const now = page.scrollTop;
+		hits.shift_inside(page, new Point(0, told_scrolled_to - now));
+		told_scrolled_to = now;
+	}
 
 	/** Look again at how tall the words are, and at both thumbs. */
 	function measure_page() {
@@ -155,9 +168,9 @@
 			return;
 		}
 		const found = guides.hierarchy.explore(guide, link);
-		if (found.guide) {
+		if (found.file) {
 			wanted_heading = found.heading;
-			follow_link(key_of(found.guide));
+			follow_link(key_of(found.file));
 			return;
 		}
 		if (found.why === 'a heading inside this same guide') { move_to_heading(found.heading); return; }
@@ -864,7 +877,7 @@
 			class='view-page'
 			onkeyup={() => {}}
 			onclick={on_page_click}
-			onscroll={() => hits.recalibrate()}
+			onscroll={words_scrolled}
 			class:selecting={$w_command_down}
 			onmousedown={watch_for_bar_press}
 			use:hit_target={{ id: 'page.words', type: T_Hit_Target.page,

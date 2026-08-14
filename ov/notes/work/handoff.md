@@ -11,24 +11,27 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## Register the hamburger with the hits manager
+## The details column's banners become lines with words on them
 
-The hits manager is ported and builds, and nothing calls it. One control goes first, so the whole road is walked once on something small: the hamburger at the top left. The four steps are already written down in [hits manager](hits%20manager.md) under "implement for a control".
+The details column has two things that fold: preferences and repair. Each wears a banner of its own — a full-width block with the title inside it, a fill that arrives under the cursor, and a rounded shape drawn behind — while every other folding thing in the app is a line across, with the word standing on it and masking it.
 
 ### Success
 
-1. The cursor is fed in once, at the top of the app, and nowhere else.
-2. The hamburger owns one target, made once, handed the drawn element when the browser makes it.
-3. Its own press handler, its own mouse-enter handler and its own `:hover` rule are all gone; what it does and whether it is lit both come from the manager.
-4. It is told when it moves or resizes, and told when it leaves the screen.
-5. Pressing it and pointing at it read on screen exactly as they do now.
+1. Both fold behind a word on a line, the same one every other section uses.
+2. Each holds its own gap the way a section does, so nothing in the column sets a margin of its own to line itself up.
+3. Which one is open is still remembered between visits, and the press still turns one over.
+4. The banner's own drawing goes — the block, the shape behind it, and its fill.
 
-### Where it stands today
+### Where it stands
 
-It is drawn at [Controls.svelte:18-21](../../src/lib/svelte/main/Controls.svelte#L18-L21), a press shows or hides the details, and it lights through a `:hover` rule on its own drawn shape at [Controls.svelte:63](../../src/lib/svelte/main/Controls.svelte#L63).
+Both are drawn by [Hideable.svelte](../../src/lib/svelte/support/Hideable.svelte), asked for twice by [Details.svelte:44-49](../../src/lib/svelte/main/Details.svelte#L44-L49). Its banner is a target of the manager already, named by its own title.
 
-### The one judgment call
+Every other folding thing in the app does this with a section and an action: the caller builds its own word out of sight and hands the line the made element with the end it stands at. [Search.svelte](../../src/lib/svelte/content/Search.svelte) is the smallest one to read.
 
-Feeding the cursor in at the top of the app hands every move to the manager, while every other control still answers for itself. Whether those two can run side by side for a while, or the wiring has to move all at once, is the thing to settle before it starts.
+### Settled
 
-**What will not get done.** The rest of the debt list, and the other five kinds of thing in the breakdown — sections, subsections, clickable titles, rows, segmented controls. This is one control.
+Both take the heavy line above their own word.
+
+Below the second one, the same question the filters' kinds and tags rows already answer: with both folded away, nothing stands open at the foot of the column, so the last one stands flat and whatever follows draws no line — two lines with nothing between them read as one thick one. With the first open, the second stands as it is, folded or not. That question is already written down and proved: `foot_is_all_folds` in [Filters.ts](../../src/lib/ts/managers/Filters.ts), with four tests.
+
+**What will not get done.** The rest of the debt list. This is its first unchecked item.

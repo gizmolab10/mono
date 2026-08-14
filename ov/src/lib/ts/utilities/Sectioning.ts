@@ -30,8 +30,9 @@ export function thickness_of(edge: T_Edge): number {
 export const USUAL_GAP = k.gap.normal;
 
 /**
- * The gap a section holds above and below whatever it shows. One number, used on both sides —
- * that evenness is the rule, and it is why nothing downstream has to correct anything.
+ * The gap a section holds below whatever it shows. Nothing is given back here: the line that
+ * bounds this gap is the next section's, drawn at its top, and no section knows how thick the next
+ * one draws its own.
  *
  * A folded section holds none: there is nothing inside to stand clear of, so its two lines meet
  * with only the one gap that stands in for the row that went.

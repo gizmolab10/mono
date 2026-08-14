@@ -11,12 +11,11 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [ ] register hamburger with hits manager
-- [x] 1/8 s fade the hover. too flashy,, annoying
+- [ ] convert details banners -> clickable titled seps
+- [ ] change repair links -> allow links into work notes
 - [ ] not show tt when mouse is swiping
 - [ ] replace '+' button with t-cross path
 - [ ] OPTION-click turns a tag red, search discards matches to it
-- [ ] change `type Guide` -> `File` in `File.ts`
 - [ ] overstrike -> fainter gray
 - [ ] add a list of back links to the editor
 - [ ] blank line following checkbox line is missing
@@ -25,11 +24,26 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
     - [ ] colon at the end of an H3
     - [ ] checkbox text when it has sub items
 - [ ] animate tag relayout during window resize and details hide <-> show
-- [ ] port Hits.ts from di
-    - [ ] replace nearly all of the on click and on hover wiring with hits logic
 
 ## done
 
+- [x] the record of one file is called a file
+    - [x] `Guide` -> `File`, `Filtered_Guide` -> `Filtered_File`, and the field on a row -> `file`
+    - [x] `Guide_Place` -> `File_Site`, `Pill_Place` -> `Pill_Placement`
+- [x] the hits manager pays its own way
+    - [x] the hover said only when it changes, and only the two elements that changed are stamped
+    - [x] a run of things arriving costs one rebuild, not one each
+    - [x] a scroll shifts rectangles by the distance scrolled, reading nothing from the browser
+    - [x] it checks itself: a rectangle that moved without saying so raises a box naming what to mend
+- [x] port Hits.ts from di
+    - [x] every control, every segment, every section and the two page areas hand it their press,
+        their hover and their words
+    - [x] the empty-space rule is gone: a control beats a section, which beats the page, and within
+        one kind the smaller area wins
+    - [x] a target says when it is out of sight, so a clipped thing holds no place at all
+    - [x] names follow one rule, and a repeat says so in the log
+- [x] register hamburger with hits manager
+- [x] 1/8 s fade the hover. too flashy,, annoying
 - [x] every gap around a line measured from the line's middle
     - [x] a section holds it above and below alike, whatever its own line is drawn at
     - [x] a folded section holds the one gap, and one asking for no gap stands flat
@@ -254,4 +268,3 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
     - [ ] ALL the kinds, tags, project 2-char names
     - [ ] and associated logic
 - [ ] when a link's target is an anchor, add the anchor to the fifo
-

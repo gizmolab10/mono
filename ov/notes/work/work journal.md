@@ -9,6 +9,72 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-13 — the manager pays its own way, and a file is called a file
+
+Reading the wiring back showed three costs it had added. The hovered target was written to a store
+on every move of the cursor, and every target listened, so ~75 callbacks ran where two elements
+changed. Scrolling rebuilt every rectangle, and each reading makes the browser settle its layout.
+And each target arriving asked for a full rebuild of its own, so forty rows cost forty rebuilds of
+forty rectangles.
+
+**All three are gone.** The hover is said only when the answer changes, and the manager stamps the
+two elements itself — nothing listens for it any more. A run of things arriving joins one waiting
+rebuild. A scroll hands over the distance scrolled and every rectangle inside that box is moved by
+exactly that, reading nothing from the browser: asking which targets sit inside walks up from each
+element, which forces no layout.
+
+**Against the old per-control wiring it is now about even** — better while the cursor moves, since
+the old code walked the page building class-name lists on every move in four places; slightly worse
+while scrolling, which used to cost nothing.
+
+**The manager checks itself.** Every rectangle is held rather than read, so anything that moves
+without saying so leaves a control answering for a strip of the page it no longer stands on — and
+nothing on screen shows it. While the cursor rests on a target, its rectangle is read afresh once a
+second; a difference raises a box naming the target, its kind, the element, both readings, how far
+off in each direction, and the three ways to tell the manager. All three faults in the wiring
+session were that one fault in different clothes.
+
+**A file is called a file.** The record for one guide was `Guide` and a filtered row was
+`Filtered_Guide`, in a folder called `File.ts`, held by a manager called `Files`, for a list that
+holds work notes as well as guides. Both are now `File` and `Filtered_File`, the field on a row is
+`file`, and two more names that had drifted went with them: where a file sits is a `File_Site`, and
+where a pill stands in a wrapping row is a `Pill_Placement`. The word *guide* stays wherever it
+means a guide.
+
+## 2026-08-13 — one manager decides what the cursor is on
+
+Every control used to watch the cursor for itself: its own press, its own hover rule, its own hint,
+and a rule walking up the page to work out whether a press had landed on something that answers.
+One manager decides now. The cursor is fed in once at the top of the app; it asks its own structure
+which targets hold that point and hands the press to one of them. A control beats a section, which
+beats the file's own words — and within one kind the one standing in the smaller area wins, since
+sections sit inside sections.
+
+**What moved over.** Twenty-two buttons, thirteen segments, both stepper pairs, every field, nine
+sections, every row of the list, and two whole areas — the file's words, and the count row with the
+rows under it. Each says its name, what a press does and what to show while the cursor is on it,
+and carries no handler, no `:hover` rule and no hint of its own. The rule that walked the page is
+gone, file and tests.
+
+**Three faults the wiring turned up, each found by measuring rather than guessing.** Pressing one
+tag reacted on another: a shut tag area keeps its tags at full size inside a box of no width, so
+four areas' tags stacked on one strip of the page. A target can now say it is out of sight and hold
+no place at all — the same thing `pointer-events: none` already tells the browser. Pressing a
+folder's triangle turned it over twice: the triangle handed its press to the manager and the row
+behind it never heard about that, so it fired its own. And the tags section answered nothing,
+because the whole filter form is a section too and covered it.
+
+**Every rectangle is measured once and remembered**, so everything that moves one says so: a word
+moved onto a line, a fold, a tag area finishing its slide, the list scrolling, the file's words
+scrolling, the window resizing. A target arriving among others is measured again one drawing later,
+since the first reading is taken before the browser has laid the run out.
+
+**Elsewhere.** A section's lower gap is the whole gap again — it was giving back half of a line it
+draws at its top, so the count row shrank whenever it drew one. The picked tags in the count row
+are cut to the space beside the count, at whole words, ending in an ellipsis. The editor's own
+folds are remembered between visits. And the two filter drawings were named for the screens they
+belong to: `Browse_Filters` and `Editor_Filters`.
+
 ## 2026-08-13 — a gap is measured from a line's middle, and nothing paints over a control
 
 A line has thickness, so its edges move whenever that thickness changes; its middle does not. Every gap around a line is now measured from there — half the line is given back — so the same gap reads the same under the hair and under the heavy one. A section holds it above and below alike. Folded, it holds the one gap and nothing else, whatever gap it holds when open; a section asking for no gap at all stands flat, and the editor's label form does exactly that, so the words below it draw no line of their own and two heavy lines never touch.

@@ -147,6 +147,19 @@ export class Rect {
 	set width(width: number)				{ this.size.width = width; }
 	set height(height: number)				{ this.size.height = height; }
 
+	/**
+	 * Does this stand somewhere else, or at another size, than the one given? A hair of difference
+	 * is no difference: a rectangle read from the page carries fractions of a pixel that move on
+	 * their own, and only a real move is worth reporting.
+	 */
+	differs_from(other: Rect | null, slack: number): boolean {
+		if (!other) { return true; }
+		return Math.abs(this.x - other.x) > slack
+			|| Math.abs(this.y - other.y) > slack
+			|| Math.abs(this.width - other.width) > slack
+			|| Math.abs(this.height - other.height) > slack;
+	}
+
 	get normalized(): Rect {			// make width and height positive
 		let width = this.width;
 		let height = this.height;

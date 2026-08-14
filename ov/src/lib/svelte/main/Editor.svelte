@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { w_file_place, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
+	import { w_file_site, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
-	import { T_Bundle, key_of, type Guide } from '../../ts/types/File';
+	import { T_Bundle, key_of, type File } from '../../ts/types/File';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { WAY_OUT } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
@@ -26,7 +26,7 @@
 	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the controls and call back.
 	let { name, address, tags, guide, onclose, can_back = false, can_forward = false, onprev = () => {}, onnext = () => {} }:
-		{ name: string; address: string; tags: string[]; guide: Guide; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void } = $props();
+		{ name: string; address: string; tags: string[]; guide: File; onclose: () => void; can_back?: boolean; can_forward?: boolean; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void } = $props();
 
 	// The whole file, held only while it is on screen. Two of the three below write to it: the
 	// labels at the top, and a piece of the words being changed. One place holds it, so neither
@@ -205,8 +205,8 @@
 		<div class='view-head'>
 			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
 				while reading off the list, on a run of files reached by links. -->
-			{#if $w_file_place}
-				<span class='file-count'>{$w_file_place.at} of {$w_file_place.of}</span>
+			{#if $w_file_site}
+				<span class='file-count'>{$w_file_site.at} of {$w_file_site.of}</span>
 			{/if}
 			<Steppers id='editor.step' {can_back} {can_forward} {onprev} {onnext}
 				back_says='previous file' forward_says='next file' />

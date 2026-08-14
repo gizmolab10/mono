@@ -20,13 +20,17 @@ describe('the line at a boundary', () => {
 	});
 });
 
-describe('the gap inside a section', () => {
-	it('is the same above and below, which is the whole rule', () => {
+describe('the gap below what a section shows', () => {
+	it('is the whole gap, whatever line this section draws at its own top', () => {
 		expect(gap_inside(false)).toBe(USUAL_GAP);
 	});
 
 	it('is nothing while folded — there is no content to stand clear of', () => {
 		expect(gap_inside(true)).toBe(0);
+	});
+
+	it('gives nothing back for a line, since the line below belongs to the next section', () => {
+		expect(gap_inside(false, k.gap.normal)).toBeGreaterThan(gap_above(false, k.gap.normal, false, k.thickness.huge));
 	});
 });
 

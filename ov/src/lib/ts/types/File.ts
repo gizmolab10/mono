@@ -76,7 +76,7 @@ export type Labels = {
 	labeled     : boolean;    // false for a file that carries no label block at all
 };
 
-export type Guide = Labels & {
+export type File = Labels & {
 	id        : string;      // unique within this launch
 	name      : string;      // the file's or folder's own name
 	bundle    : T_Bundle;    // which of the four collections it belongs to
@@ -89,8 +89,8 @@ export type Guide = Labels & {
 // A guide paired with the tags on it — what a listing hands back. A folder appears
 // too, so the shape of the folders shows. The tags are gathered once, here, so nothing
 // that shows a row ever has to go looking them up.
-export interface Filtered_Guide {
-	guide         : Guide;
+export interface Filtered_File {
+	file          : File;
 	key           : string;     // where it sits: its collection and its path, together
 	tag_names     : string[];
 	depth         : number;     // how many folders deep it sits (a root is 0)
@@ -99,6 +99,6 @@ export interface Filtered_Guide {
 }
 
 /** Where a guide sits — its collection and its path — which names it for good. */
-export function key_of(guide: Guide): string {
+export function key_of(guide: File): string {
 	return `${guide.bundle}/${guide.path}`;
 }

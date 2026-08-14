@@ -18,7 +18,7 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 
 Elsewhere:
 
-- [Working features](../guides/project/working%20features.md) — what the app can do, newest first.
+- [Working features](../../../ji/notes/work/working%20features.md) — what the app can do, newest first.
 - [Map of ov files](../guides/project/map%20of%20ov%20files.md) — read it instead of globbing.
 
 ## More

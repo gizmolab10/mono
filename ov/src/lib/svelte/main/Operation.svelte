@@ -24,15 +24,15 @@
 		<Report />
 	{:else if $w_operation === T_Operation.edit && $w_viewed}
 		<Editor
-			name={$w_viewed.guide.name}
-			address={$w_viewed.guide.address}
+			name={$w_viewed.file.name}
+			address={$w_viewed.file.address}
 			tags={$w_viewed.tag_names}
-			guide={$w_viewed.guide}
+			guide={$w_viewed.file}
 			can_back={$w_can_back}
 			can_forward={$w_can_forward}
 			onprev={(repeated) => step_view(-1, repeated)}
 			onnext={(repeated) => step_view(1, repeated)}
-			onclose={() => { debug.log(`Reading: closed "${$w_viewed?.guide.name}" — back to the guides.`); close_view(); }} />
+			onclose={() => { debug.log(`Reading: closed "${$w_viewed?.file.name}" — back to the guides.`); close_view(); }} />
 	{:else}
 		<Browse />
 	{/if}

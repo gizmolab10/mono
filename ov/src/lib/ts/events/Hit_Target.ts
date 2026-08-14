@@ -10,6 +10,10 @@ import { hits } from './Hits';
 // `data-hit` while the cursor is on it — so the styling asks the stamp rather than the browser's
 // own `:hover`, and the one manager is the only thing that decides which target is under the
 // cursor. Going off screen takes the target with it.
+//
+// The stamping is the manager's own doing: it knows which target the cursor left and which it
+// reached, and touches those two elements alone. Nothing here listens for it — a listener per
+// target would wake every one of them each time the answer changed.
 
 /**
  * The name every part of the way back to the list carries. It is two areas — the rows above the
@@ -38,23 +42,12 @@ export function hit_target(element: HTMLElement, options: Hit_Target_Options) {
 	wire(target, options);
 	settle(options);
 
-	// The manager holds one target — whichever the cursor is on. The stamp goes on while that is
-	// ours and comes off otherwise, so nothing in the styling has to know any of this.
-	const stop_watching = hits.w_s_hover.subscribe((hovering) => {
-		if (hovering?.hasSameID_as(target)) {
-			element.setAttribute('data-hit', '');
-		} else {
-			element.removeAttribute('data-hit');
-		}
-	});
-
 	return {
 		update(fresh: Hit_Target_Options) {
 			wire(target, fresh);
 			settle(fresh);
 		},
 		destroy() {
-			stop_watching();
 			hits.delete_hit_target(target);
 		},
 	};

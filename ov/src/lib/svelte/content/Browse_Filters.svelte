@@ -6,7 +6,7 @@
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { TAG_AREAS, tags_shown } from '../../ts/types/Tag_Areas';
 	import { fade } from 'svelte/transition';
-	import { names_ride_in, places_of } from '../../ts/utilities/Tag_Rows';
+	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
@@ -127,9 +127,10 @@
 
 
 	function look_for_names() {
-		names_riding = tags_row === null ? false : names_ride_in(places_of(tags_row));
-		// The run just changed shape, so every tag in it stands somewhere new.
-		hits.recalibrate();
+		names_riding = tags_row === null ? false : names_ride_in(placements_of(tags_row));
+		// The run just changed shape, so every tag in it stands somewhere new. Asked at the next
+		// drawing, since a run re-wrapping says this many times over.
+		hits.recalibrate_when_drawn();
 	}
 
 	// Measured again whenever the pills change, and again whenever the run changes shape — it
@@ -423,19 +424,35 @@
 	   line over the whole set and the first line inside it. */
 	.picking-rows {
 		flex-direction : column;
+		position       : relative;
 		display        : flex;
 		gap            : 0;
 	}
 
 	/* The strip between the line above and the first picking row's own line. It was bare space;
 	   it is a block of its own now so it can take the accent — reaching out to the box's edges the
-	   way a section's body does, and with no line down its middle, since nothing here is folded. */
+	   way a section's body does. */
 	.picking-rows::before {
 		margin     : 0 calc(var(--gap) * -1);
+		height     : calc(var(--gap-big) + var(--gap-faint));
 		background : var(--accent);
-		height     : var(--gap-big);
 		flex       : 0 0 auto;
 		content    : '';
+	}
+
+	/* A hairline across that strip, the same one a folded section wears. Half a pixel, pulled back
+	   half its own height, and standing one micro gap above the strip's middle. */
+	.picking-rows::after {
+		margin         : 0 calc(var(--gap) * -1);
+		top            : calc((var(--gap-big) + var(--gap-micro)) / 2 - var(--gap-micro));
+		background     : var(--black);
+		transform      : translateY(-50%);
+		pointer-events : none;
+		position       : absolute;
+		content        : '';
+		height         : 0.5px;
+		right          : 0;
+		left           : 0;
 	}
 
 	/* The clearing pill and the control it belongs to, centered together with one gap between

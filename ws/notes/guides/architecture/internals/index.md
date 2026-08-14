@@ -9,6 +9,6 @@ Internal implementation patterns and system-level mechanics.
 - [Persistable](./persistable.md)
 - [Reactivity](./reactivity.md)
 - [Recents](./recents.md)
-- [Styles](./styles.md)
+- [Styles](../core/styles.md)
 - [Timers](./timers.md)
 

@@ -29,13 +29,13 @@ export function file_path_of(bundle: T_Bundle, path: string): string {
 
 /**
  * The other way round: which collection a file belongs to, and where it sits inside that
- * collection, read off its place in the repo. A work note counts only where it sits at the very
- * top of the work folder — those are the ones a guide links to, and the app shows each of them
- * as a child of its own project. Anything else reads as nothing at all.
+ * collection, read off where it stands in the repo. A work note counts only where it sits at the
+ * very top of the work folder — those are the ones a guide links to, and the app shows each of
+ * them as a child of its own project. Anything else reads as nothing at all.
  */
-export type Guide_Place = { bundle: T_Bundle; path: string; is_design: boolean };
+export type File_Site = { bundle: T_Bundle; path: string; is_design: boolean };
 
-export function place_of_file(where: string): Guide_Place | null {
+export function site_of_file(where: string): File_Site | null {
 	if (!where.endsWith('.md')) { return null; }
 	for (const bundle of Object.values(T_Bundle)) {
 		const notes = `${notes_of(bundle)}/`;

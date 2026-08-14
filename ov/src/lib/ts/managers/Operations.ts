@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from './Preferences';
-import type { Filtered_Guide } from '../types/File';
+import type { Filtered_File } from '../types/File';
 import { derived, get, writable } from 'svelte/store';
 import { guides } from './Files';
 import { debug } from '../common/Debug';
@@ -64,13 +64,13 @@ export const w_viewed = derived([guides.w_showing, w_view_guide], ([rows, key]) 
 
 /** Is there a guide behind this one — the one below on the stack, or a place in the list? */
 export const w_can_back = derived([guides.w_showing, w_link_stack], ([rows, stack]) =>
-	stack.length > 0 || rows.filter((r) => !r.guide.is_folder).length > 1);
+	stack.length > 0 || rows.filter((r) => !r.file.is_folder).length > 1);
 
 /** Forward means the guide above on the stack; off the stack, it walks the list. */
 export const w_can_forward = derived([guides.w_showing, w_link_stack, w_stack_at], ([rows, stack, at]) =>
 	stack.length > 0
 		? at < stack.length - 1
-		: rows.filter((r) => !r.guide.is_folder).length > 1);
+		: rows.filter((r) => !r.file.is_folder).length > 1);
 
 // Is the command key held down right now? Watched at the app root. Clicking a file with it
 // held hands that file to Obsidian rather than opening it here, so the hover words say so
@@ -96,8 +96,8 @@ export const w_search_at = preferences.persistent<number>(T_Preference.search_at
  * since the stepping walks past folders. Nothing while the guide being read is not among them,
  * as happens off the list, on a stack of links.
  */
-export const w_file_place = derived([guides.w_showing, w_view_guide], ([rows, key]) => {
-	const files = rows.filter((r) => !r.guide.is_folder);
+export const w_file_site = derived([guides.w_showing, w_view_guide], ([rows, key]) => {
+	const files = rows.filter((r) => !r.file.is_folder);
 	const at = files.findIndex((r) => r.key === key);
 	return at < 0 ? null : { at: at + 1, of: files.length };
 });
@@ -108,16 +108,16 @@ export function open_view(key: string): void {
 	// Off the list first; failing that, among all of them — a guide the filters hide can still
 	// be opened when something else names it, such as a report of dead links.
 	const row = rows.find((r) => r.key === key) ?? guides.hierarchy.all_guides.get(key) ?? null;
-	if (!row || row.guide.is_folder) { debug.log(`Reading: nothing to open at "${key}".`); return; }
+	if (!row || row.file.is_folder) { debug.log(`Reading: nothing to open at "${key}".`); return; }
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
 	w_anchor.set(key);
 	w_view_guide.set(key);
 	w_operation.set(T_Operation.edit);
 	w_stepping_halted.set(false);              // opening from the list is a fresh start
-	const files = rows.filter((r) => !r.guide.is_folder);
+	const files = rows.filter((r) => !r.file.is_folder);
 	const at = files.findIndex((r) => r.key === key);
-	debug.log(`Opened "${row.guide.name}" — file ${at + 1} of ${files.length} on screen, among ${rows.length} rows${at < 0 ? '; it is not among them, so the count shows nothing' : ''}. The link stack starts empty.`);
+	debug.log(`Opened "${row.file.name}" — file ${at + 1} of ${files.length} on screen, among ${rows.length} rows${at < 0 ? '; it is not among them, so the count shows nothing' : ''}. The link stack starts empty.`);
 }
 
 /**
@@ -128,12 +128,12 @@ export function open_view(key: string): void {
  */
 export function follow_link(key: string): void {
 	const row = guides.hierarchy.all_guides.get(key);
-	if (!row || row.guide.is_folder) { debug.log(`Following a link: nothing to open at "${key}".`); return; }
+	if (!row || row.file.is_folder) { debug.log(`Following a link: nothing to open at "${key}".`); return; }
 	const stack = get(w_link_stack);
 	const already = stack.indexOf(key);
 	if (already >= 0) {
 		w_stack_at.set(already);
-		debug.log(`Following a link to "${row.guide.name}": already number ${already + 1} of ${stack.length} on the stack, so backing up to it — ${stack.length - already - 1} guide(s) still ahead.`);
+		debug.log(`Following a link to "${row.file.name}": already number ${already + 1} of ${stack.length} on the stack, so backing up to it — ${stack.length - already - 1} guide(s) still ahead.`);
 	} else {
 		const at = get(w_stack_at);
 		const kept = stack.slice(0, at + 1);
@@ -141,7 +141,7 @@ export function follow_link(key: string): void {
 		const next = [...kept, key];
 		w_link_stack.set(next);
 		w_stack_at.set(next.length - 1);
-		debug.log(`Following a link to "${row.guide.name}": pushed as number ${next.length} of ${next.length}${dropped > 0 ? `, dropping ${dropped} guide(s) that were ahead` : ''}.`);
+		debug.log(`Following a link to "${row.file.name}": pushed as number ${next.length} of ${next.length}${dropped > 0 ? `, dropping ${dropped} guide(s) that were ahead` : ''}.`);
 	}
 	w_view_guide.set(key);
 	w_operation.set(T_Operation.edit);
@@ -189,7 +189,7 @@ function step_stack(by: number): void {
 	w_stack_at.set(to);
 	w_view_guide.set(stack[to]);
 	const row = guides.hierarchy.all_guides.get(stack[to]);
-	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} on the stack, from number ${at + 1} to ${to + 1} of ${stack.length} — now reading "${row?.guide.name ?? stack[to]}".`);
+	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} on the stack, from number ${at + 1} to ${to + 1} of ${stack.length} — now reading "${row?.file.name ?? stack[to]}".`);
 }
 
 /**
@@ -198,7 +198,7 @@ function step_stack(by: number): void {
  */
 function step_list(by: number): void {
 	const rows = get(guides.w_showing);
-	const files = rows.filter((r) => !r.guide.is_folder);
+	const files = rows.filter((r) => !r.file.is_folder);
 	if (files.length < 2) { debug.log(`Step ignored — ${files.length} guide(s) on screen.`); return; }
 	const key = get(w_view_guide);
 	let at = rows.findIndex((r) => r.key === key);
@@ -208,12 +208,12 @@ function step_list(by: number): void {
 	// Walk one row at a time in the asked-for direction until a file turns up.
 	for (let tried = 0; tried < rows.length; tried++) {
 		to = ((to + by) % rows.length + rows.length) % rows.length;
-		if (!rows[to].guide.is_folder) { break; }
+		if (!rows[to].file.is_folder) { break; }
 		skipped += 1;
 	}
 	w_view_guide.set(rows[to].key);
 	w_anchor.set(rows[to].key);
-	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} from row ${at} to row ${to} of ${rows.length}, walking past ${skipped} folder(s) — now reading "${rows[to].guide.name}".`);
+	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} from row ${at} to row ${to} of ${rows.length}, walking past ${skipped} folder(s) — now reading "${rows[to].file.name}".`);
 }
 
 /** Close the reading view, back to the list. The stack ends with the reading. */
@@ -224,4 +224,4 @@ export function close_view(): void {
 	if (get(w_operation) === T_Operation.edit) { w_operation.set(T_Operation.browse); }
 }
 
-export type { Filtered_Guide };
+export type { Filtered_File };

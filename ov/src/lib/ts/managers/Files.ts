@@ -1,9 +1,9 @@
-import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type Guide, type Labels, type Filtered_Guide } from '../types/File';
+import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type File, type Labels, type Filtered_File } from '../types/File';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, place_of_file, read_guide, renamed_path, save_file } from '../utilities/Saving';
+import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, site_of_file, read_guide, renamed_path, save_file } from '../utilities/Saving';
 import { blank_guide, free_name, has_labels, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
@@ -92,7 +92,7 @@ class Guides {
 	// What the filters and the folds leave, in the order shown. The hierarchy keeps it;
 	// this hands out the very same rows, and only exists so that anything showing them
 	// hears about a change. Re-worked out whenever any filter or any fold moves.
-	w_showing = writable<Filtered_Guide[]>([]);
+	w_showing = writable<Filtered_File[]>([]);
 
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than
@@ -113,7 +113,7 @@ class Guides {
 	 * list out again, so what's on screen agrees with the file without every file being read
 	 * a second time.
 	 */
-	relabel(guide: Guide, labels: Labels, tag_names: string[]): void {
+	relabel(guide: File, labels: Labels, tag_names: string[]): void {
 		this.hierarchy.relabel(guide, labels, tag_names);
 		this.renarrow();
 		debug.log(`Guide "${key_of(guide)}" relabeled: kind "${labels.kind}", title "${labels.title}", ${tag_names.length} tag(s) — the list was worked out again.`);
@@ -125,7 +125,7 @@ class Guides {
 	 * didn't happen. Its words are read from where it now is, which the dev server will hand
 	 * over by full path — so no restart is needed to read it again.
 	 */
-	async move(guide: Guide, folder: Guide): Promise<void> {
+	async move(guide: File, folder: File): Promise<void> {
 		const name = guide.path.split('/').pop() ?? guide.name;
 		const to_path = moved_into(folder.path, name);
 		const from = file_path_of(guide.bundle, guide.path);
@@ -241,7 +241,7 @@ class Guides {
 	 * Answers with where the guide now sits, since a guide is named by that and anything reading
 	 * it has to follow. Nothing changed answers with nothing.
 	 */
-	async rename(guide: Guide, new_name: string): Promise<string> {
+	async rename(guide: File, new_name: string): Promise<string> {
 		const named = new_name.trim().replace(/\.md$/i, '');
 		const was_name = guide.name;
 		const was_key  = key_of(guide);       // where it sat, so anything reading it can follow
@@ -263,7 +263,7 @@ class Guides {
 			let how_many = 0;
 			for (const link of new Set(links_in(text))) {
 				const found = this.hierarchy.explore(other, link);
-				if (!found.guide || found.guide.id !== guide.id) { continue; }
+				if (!found.file || found.file.id !== guide.id) { continue; }
 				const whole_old = `](${link})`;
 				if (!changed.includes(whole_old)) { continue; }
 				const whole_new = `](${renamed_address(link, named)})`;
@@ -284,7 +284,7 @@ class Guides {
 		guide.name = named;
 		this.renarrow();
 		// Said at once, before the slow work of mending links: a guide is named by where it
-		// sits, and anything reading this one is still asking for the old place. Waiting until
+		// sits, and anything reading this one is still asking for the old site. Waiting until
 		// the end would leave it asking for a full second, which is long enough for the reading
 		// view to give up and shut itself.
 		this.moved_to?.(was_key, key_of(guide));
@@ -326,7 +326,7 @@ class Guides {
 	 * Links in other guides that named it are left alone: they now lead nowhere, and the dead
 	 * link report is what finds those.
 	 */
-	async delete_one(guide: Guide): Promise<boolean> {
+	async delete_one(guide: File): Promise<boolean> {
 		const where = file_path_of(guide.bundle, guide.path);
 		const answer = await delete_guide(where);
 		if (!answer.ok) {
@@ -363,7 +363,7 @@ class Guides {
 	 * hung under the same folder, given its tag, and named in the index beside it. Hands back
 	 * the new guide so the view can open it, or nothing when the file was refused.
 	 */
-	async create_beside(guide: Guide): Promise<Guide | null> {
+	async create_beside(guide: File): Promise<File | null> {
 		const folder = this.hierarchy.folder_holding(guide);
 		if (!folder) { show_status(`"${guide.name}" hangs under no folder, so nothing can be made beside it`); return null; }
 		const folder_path = guide.path.split('/').slice(0, -1).join('/');
@@ -448,7 +448,7 @@ class Guides {
 				if (ending !== '' && ending.toLowerCase() !== 'md') { continue; }
 				followed += 1;
 				const answer = this.hierarchy.explore(guide, link);
-				if (answer.guide) { continue; }
+				if (answer.file) { continue; }
 				if (answer.why === 'a heading inside this same guide') { continue; }
 				dead.push({ words: `${where} → ${link} (${answer.why})`, key: key_of(guide), link });
 			}
@@ -524,7 +524,7 @@ class Guides {
 	}
 
 	/** Every file, folders left out. */
-	get files(): Guide[] {
+	get files(): File[] {
 		return this.hierarchy.guides.filter((g) => !g.is_folder);
 	}
 
@@ -556,8 +556,8 @@ class Guides {
 		this.w_no_server.set(false);
 
 		for (const where of on_disk.paths) {
-			const place = place_of_file(where);
-			if (!place) { continue; }
+			const site = site_of_file(where);
+			if (!site) { continue; }
 			const name = where.split('/').pop()?.replace(/\.md$/, '') ?? '';
 
 			// An index file only lists what sits beside it — the folders here do that job, so it
@@ -565,9 +565,9 @@ class Guides {
 			// hidden, so the counts never include one.
 			if (name === 'index') { skipped += 1; continue; }
 
-			const top = this.hierarchy.folder_at(place.bundle, '', place.bundle);
-			if (place.bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
-			const done = await this.hang_one_file(place.bundle, place.path, address_of_file(`${on_disk.root}${where}`), place.is_design, top);
+			const top = this.hierarchy.folder_at(site.bundle, '', site.bundle);
+			if (site.bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
+			const done = await this.hang_one_file(site.bundle, site.path, address_of_file(`${on_disk.root}${where}`), site.is_design, top);
 			read      += done.read;
 			failed    += done.failed;
 			unlabeled += done.unlabeled;
@@ -587,7 +587,7 @@ class Guides {
 	 * the three purposes can never collide — and each of those two gets a folder of its own,
 	 * standing beside the guides inside its project.
 	 */
-	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: Guide): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
+	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: File): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
 		const under = is_design ? 'designs' : path.startsWith('work/') ? 'work' : '';
 		const inside = under === '' ? path : path.slice(under.length + 1);
 		const roof = under === '' ? top : this.hierarchy.folder_at(bundle, under, under);
@@ -636,7 +636,7 @@ class Guides {
 	 * row asks this question with its own filter left out, and the answer says which of its
 	 * words would still find something.
 	 */
-	private within_reach(without: 'project' | 'kind' | 'tags'): Guide[] {
+	private within_reach(without: 'project' | 'kind' | 'tags'): File[] {
 		const project  = get(w_project);
 		const kind     = get(w_kind);
 		const tags     = get(w_tags);

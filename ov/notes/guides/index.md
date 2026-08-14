@@ -2,5 +2,4 @@
 
 ## Contents
 
-- [Editing](./editing.md)
-- [Map](./map.md)
+- [Editing](./operations/editing.md)

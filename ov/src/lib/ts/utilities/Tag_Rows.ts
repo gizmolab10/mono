@@ -9,7 +9,7 @@
 // reasoned out — and it is measured here, over plain numbers, so it can be proved without a page.
 
 /** One pill in the run: how far its top sits from the top of the run, and whether it wears a name. */
-export type Pill_Place = { top: number; named: boolean };
+export type Pill_Placement = { top: number; named: boolean };
 
 /**
  * Two pills count as being on the same line when their tops are within this many pixels of each
@@ -19,14 +19,14 @@ export type Pill_Place = { top: number; named: boolean };
 const SAME_LINE = 1;
 
 /** Does any pill in the topmost line of this run wear a name? */
-export function names_ride_in(pills: Pill_Place[]): boolean {
+export function names_ride_in(pills: Pill_Placement[]): boolean {
 	if (pills.length === 0) { return false; }
 	const highest = Math.min(...pills.map((one) => one.top));
 	return pills.some((one) => one.named && one.top - highest < SAME_LINE);
 }
 
 /** The same, read off a drawn run: each pill's own top, and whether a name is drawn inside it. */
-export function places_of(row: HTMLElement): Pill_Place[] {
+export function placements_of(row: HTMLElement): Pill_Placement[] {
 	return ([...row.children] as HTMLElement[]).map((one) => ({
 		top   : one.offsetTop,
 		named : one.querySelector('.area-name') !== null,

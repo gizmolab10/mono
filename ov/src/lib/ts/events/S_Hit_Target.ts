@@ -78,4 +78,18 @@ export default class S_Hit_Target {
 		}
 	}
 
+	/**
+	 * Moved by a known amount, without asking the browser where it now stands. Scrolling a box
+	 * moves everything inside it by exactly the distance scrolled, and reading a rectangle makes
+	 * the browser settle its layout — so the distance is applied and nothing is read.
+	 *
+	 * Set straight onto the held rectangle: handing it to the setter would put this target into
+	 * the structure being rebuilt around it.
+	 */
+	shift_by(by: Point) {
+		if (!!this.element_rect) {
+			this.element_rect = new Rect(this.element_rect.origin.offsetBy(by), this.element_rect.size);
+		}
+	}
+
 }

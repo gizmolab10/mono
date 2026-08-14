@@ -8,6 +8,7 @@ Code style, patterns, and development practices.
 - [Aesthetics](./aesthetics.md)
 - [Build Notes](./build notes.md)
 - [Build](./build.md)
+- [Conceptual composition](./conceptual%20composition.md)
 - [Constants](./constants.md)
 - [Creating A Design](./create a design.md)
 - [Creating A Proposal](./create a proposal.md)
