@@ -425,11 +425,13 @@
 					{@const b = triangle_bounds(open)}
 					{@const prefix = open ? 'shut' : 'open'}
 					<!-- Named by the folder it opens, since the list holds one of these per folder.
-					     The row behind it opens the file on a press, so the press used to be stopped
-					     by hand; the manager hands a press to one target only. -->
+					     It acts when the press is let go, the same as the row behind it: the shape
+					     turns when the folder does, and its own rectangle turns with it — so acting
+					     on the way down moved the mark out from under the cursor, and the press was
+					     let go on the row, which turned the folder straight back. -->
 					<button class='tri' aria-label={`${prefix} folder`}
 						use:hit_target={{ id: `list.folder.${row.key}`, tip: `${prefix} "${row.file.name}"`,
-							onpress: () => toggle_folder(row.key, row.file.name) }}>
+							onrelease: () => toggle_folder(row.key, row.file.name) }}>
 						<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
 							<path d={triangle_path(open)} />
 						</svg>
@@ -463,7 +465,7 @@
 								{#if col.label === 'name' && $w_show_folders}
 									{@const b = triangle_bounds(tops_open)}
 									<button class='head-mark' aria-label={tops_open ? 'shut every folder' : 'open every folder'}
-										use:hit_target={{ id: 'list.folders.all', onpress: toggle_all_folders,
+										use:hit_target={{ id: 'list.folders.all', onrelease: toggle_all_folders,
 											tip: tops_open ? 'shut every folder' : 'open every folder' }}>
 										<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
 											<path d={triangle_path(tops_open)} />

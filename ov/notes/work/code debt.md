@@ -11,7 +11,6 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [ ] click down on a file in the browser should not go to the file. prevents being able to drag a file into another folder, breaking a needed feature
 - [ ] gap between sep and search in editor --gap
 - [ ] editor top row
     - [ ] allocate 80px for the N of M
@@ -25,6 +24,25 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## done
 
+- [x] one press is one act, wherever it ends
+    - [x] a row opens its file when the press is let go, so a file can be dragged into a folder
+    - [x] both folder marks act on release too — turning changes the mark's own shape, so acting on
+        the way down moved it out from under the cursor and the row turned the folder straight back
+    - [x] the manager says a press once: a control that repeats begins with a beat, and that beat
+        is the press
+- [x] the app lists the notes inside five folders of a work folder
+    - [x] `next`, `milestones`, `now`, `done`, `proposals` — 85 notes across four collections
+    - [x] the dispatcher walks them, its one door lets them be read and written, and the app places
+        them; all three said the same thing before any of it worked
+- [x] links to a work note resolve, and a report says what it cannot find
+    - [x] the double-bracket form is turned into the ordinary one before a link is judged
+    - [x] where a link points is worked out from the file it sits in, never from the words it spells
+    - [x] a dead link names the likeliest file of that name — most shared folder words, then the
+        fewest folder steps, and nothing at all where two are equal on both
+    - [x] pressing a row in a report looks for the words the link reads as, never its address
+- [x] a report is remembered whole, and says when it was made
+- [x] command with option on a file's row shows the folder it sits in, in the Finder
+- [x] the row number counts the file from one, the labels among the lines, the way Obsidian does
 - [x] the dead-link check follows links into work notes
     - [x] only what reaches deeper than a work folder's own top is passed over, the same line the
         reading of a place in the repo draws

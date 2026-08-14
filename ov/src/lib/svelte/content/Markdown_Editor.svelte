@@ -757,13 +757,14 @@
 		if (!page) { return; }
 		page.querySelectorAll('.blank-line').forEach((row) => row.remove());
 		const lines = text.split('\n').length;
-		// The labels at the top are not part of the words, so counting starts below them — and the
-		// number shown counts from the first row, while the two that put words back count the file.
+		// The words start below the labels, so that is where the rows begin — but the number on one
+		// counts the file itself from its very first line, the labels among them, the way Obsidian
+		// counts. The two that put words back count the same file from zero.
 		const skipped = body_of(text).skipped;
 		const row_for = (line: number, before: Element | null) => {
 			const row = document.createElement('div');
 			row.className = 'blank-line';
-			row.setAttribute('data-number', String(line - skipped + 1));
+			row.setAttribute('data-number', String(line + 1));
 			row.setAttribute('data-from', String(line));
 			row.setAttribute('data-to', String(line + 1));
 			page!.insertBefore(row, before);

@@ -317,15 +317,20 @@ def run_tests_async():
 def is_listed_note(where):
     """Whether the overview app may read this file's words and write them back.
 
-    Every guide and every design, at any depth. A work note only where it sits at the very top
-    of a work folder — those are the ones the app lists and the ones a guide links to. Anything
-    deeper stays out, the same rule the listing uses."""
+    Every guide and every design, at any depth. A work note where it sits at the very top of a
+    work folder, and inside any of WORK_FOLDERS — the same rule the listing uses, said here as
+    well because reading and writing pass through this one door."""
     if not where.endswith('.md'):
         return False
     if any(part in where for part in ('notes/guides/', 'notes/designs/')):
         return True
     at = where.find('notes/work/')
-    return at >= 0 and '/' not in where[at + len('notes/work/'):]
+    if at < 0:
+        return False
+    parts = where[at + len('notes/work/'):].split('/')
+    if len(parts) == 1:
+        return True
+    return len(parts) == 2 and parts[0].lower() in WORK_FOLDERS
 
 def is_skippable_deploy(deploy):
     """Check if a deploy should be skipped (canceled or failed build)."""

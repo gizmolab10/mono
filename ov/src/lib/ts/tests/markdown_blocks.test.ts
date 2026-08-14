@@ -39,7 +39,7 @@ describe('drawing a whole guide', () => {
 	it('names each heading after its own words, and stamps it too', () => {
 		const html = page_of(reader, file);
 		expect(html).toContain('id="a-title"');
-		expect(html).toMatch(/<h1 id="a-title" data-number="2" data-from="4" data-to="5" data-depth="1">/);
+		expect(html).toMatch(/<h1 id="a-title" data-number="5" data-from="4" data-to="5" data-depth="1">/);
 	});
 
 	it('gives every link its own hover words, naming where it goes', () => {
@@ -394,11 +394,11 @@ describe('stamping a block with its lines', () => {
 	});
 
 	// Beside the two numbers that put words back sits a third, the one shown in the left margin.
-	// It counts the rows shown, from one, with the labels at the top left out — so the first row
-	// on screen always reads 1 however many label lines sit above it.
-	it('counts the rows shown from one, whatever the labels took', () => {
-		expect([...stamp_blocks(reader, 'hello\n\nthere', 4).matchAll(/data-number="(\d+)"/g)].map((hit) => hit[1]))
-			.toEqual(['1', '3']);
+	// It counts the file itself from one, the labels at the top counted with everything else, so
+	// it reads the same as the line number Obsidian shows for that very line.
+	it('counts the file from one, the labels among the lines', () => {
+		expect([...stamp_blocks(reader, 'hello\n\nthere', 7).matchAll(/data-number="(\d+)"/g)].map((hit) => hit[1]))
+			.toEqual(['8', '10']);
 		expect([...stamp_blocks(reader, 'hello\n\nthere', 0).matchAll(/data-number="(\d+)"/g)].map((hit) => hit[1]))
 			.toEqual(['1', '3']);
 	});

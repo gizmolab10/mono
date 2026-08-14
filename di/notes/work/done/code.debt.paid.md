@@ -1,3 +1,10 @@
+---
+kind: refer
+title: "Code Debt --- Paid"
+description: ""
+tags: [stale]
+date: 2026-08-14
+---
 # Code Debt --- Paid
 
 - [x] on hover, draw a pill (rounded-rect) border around the hovered dimension's label, in the hover color — only the dim under the cursor (matched by part + axis)
@@ -350,7 +357,7 @@
 - [x] describe the complete dimensionals placement algorithm -> guides/architecture/graph/dimensionals.md
 - [x] make a new rules folder inside development
 - [x] proceed with dimensionals.work, record progress in handoff
-- [x] begin work on dimensions/[[uniface rules]]
+- [x] begin work on dimensions [[uniface rules]]
     - [x] what is missing?
     - [x] proposal for transition
 - [x] analyze dimensionals code and write a new file "now/dim.spec.md" with a complete, well organized description of what it does, written in the form of numbered rules

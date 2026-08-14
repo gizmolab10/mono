@@ -23,6 +23,7 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | gap                             | y      | y    | room                                   | empty space        |
 | highlighted                     | y      | y    | lit                                    | marked on screen   |
 | place, include, insert          | y      | y    | absorb                                 |                    |
+| content                         | y      |      | words                                  | what a file holds  |
 | register                        | y      |      | hand over, hand to                     | tell the manager   |
 | stub out                        | y      |      | scaffold                               |                    |
 | margin                          | y      | y    | band, bar, padding, gutter             |                    |

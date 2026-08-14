@@ -66,6 +66,7 @@ The [banned words](banned%20words.md) turned the right way round — the word to
 - **done**, **complete** — finished work. Never *ship*.
 - **write code** — producing code. Never *ship*.
 - **place**, **include** — putting a value where it goes. Never *absorb*.
+- **content** — everything a file holds. Never *words*, which means words and nothing else: the words looked for, the word on a line, the words a link reads as.
 - **register** — tell the hits manager about a thing, so it knows where that thing stands and what it says. Never *hand over*, never *hand to*.
 - **stub out** — empty bodies ready to fill. Never *scaffold*.
 - **gap** — empty space. Never *room*.

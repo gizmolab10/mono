@@ -9,6 +9,42 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-14 — one rule said in three places, and none of them agreed
+
+A link to `[[thin proxy proposal]]` would not open. The file is on disk; the app had never heard
+of it. Chasing that took the whole afternoon and turned up the same fault four times over.
+
+**The line between what the app lists and what it does not was written in three places.** The
+dispatcher's walk decided what to send. Its one door decided what could be read and written. And
+the app's own reading of a place decided what to place. Each said "a work note only at the top of
+its work folder", in its own words, in its own language — so widening one changed nothing, widening
+two left every file listed and unreadable, and only widening all three worked. Each now says it
+draws the same line as the others, and names them.
+
+**Five folders came in**: `next`, `milestones`, `now`, `done`, `proposals` — 85 notes across four
+collections. Anything deeper, and every other folder, stays out.
+
+**The dead-link check was wrong in four separate ways**, each found by pressing the button and
+reading what it said. It never saw Obsidian's own `[[name]]` form at all, since that is turned into
+an ordinary link only when drawing. It read a link as the words it spells, so one written inside a
+work folder named no work folder and slipped past the test meant to pass it over. It skipped
+anything that merely resolved to a spot under a work folder, whether or not a file stood there —
+119 dead links in one file, hidden. And a press on a row searched for the link's address, which
+lives in what the link points at and is never drawn on the page.
+
+**It now names the likeliest file** for anything it cannot find: most shared folder words first,
+ties broken by the fewest folder steps from the file the link sits in, and nothing at all offered
+where two are equal on both. That rule came out of mono's own link-mending tool, which had been
+sitting in `notes/tools/docs/` the whole time.
+
+**One press was doing two things.** The manager said the press and started the repeating, and the
+repeating begins with a beat at once — so every step mark stepped twice, and a back that went
+somewhere and then stepped again read as going nowhere. A row opened its file on the way down,
+which meant a drag could never begin. And a folder's mark acted on the way down while the row acted
+on the way up: the mark's shape turns when the folder does, so it moved out from under the cursor
+and the row turned the folder straight back. Everything in the list acts when the press is let go
+now.
+
 ## 2026-08-14 — a box that stands inside the piece it is changing
 
 Opening a piece for changing moved its words. A heading jumped bigger-to-smaller and light-to-heavy;

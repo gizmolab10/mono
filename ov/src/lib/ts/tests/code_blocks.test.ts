@@ -31,6 +31,6 @@ describe('a chunk of code is one piece', () => {
 
 	it('does the same on a whole drawn guide', () => {
 		const file = ['---', 'kind: rule', '---', '', '# a title', '', '```', 'code', '```'].join('\n');
-		expect(page_of(reader, file)).toContain('<pre data-number="4" data-from="6" data-to="9" data-depth="2">');
+		expect(page_of(reader, file)).toContain('<pre data-number="7" data-from="6" data-to="9" data-depth="2">');
 	});
 });

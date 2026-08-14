@@ -95,17 +95,18 @@ export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: numb
 		// whatever list it holds, since each item inside that carries its own.
 		if (token.type === 'list_item_open' && token.map) {
 			token.attrSet('data-line', String(token.map[0] + skipped));
-			token.attrSet('data-number', String(token.map[0] + 1));
+			token.attrSet('data-number', String(token.map[0] + skipped + 1));
 			token.attrSet('data-from', String(token.map[0] + skipped));
 			token.attrSet('data-to',   String(token.map[0] + skipped + 1));
 		}
 		// Only the outermost pieces, and only the ones that open something or stand alone —
 		// a closing tag has no words of its own to carry the numbers.
 		if (token.level !== 0 || token.nesting < 0 || !token.map) { continue; }
-		// The row the piece begins on, counted the way a person counts — from one, at the first
-		// row shown, with the labels at the top left out. The two below count the file itself,
-		// from zero, since they are what puts words back.
-		token.attrSet('data-number', String(token.map[0] + 1));
+		// The line the piece begins on, counted the way a person counts and the way Obsidian
+		// does — from one, at the very first line of the file, the labels at the top counted with
+		// everything else. The two below count the same file from zero, since they are what puts
+		// words back.
+		token.attrSet('data-number', String(token.map[0] + skipped + 1));
 		token.attrSet('data-from', String(token.map[0] + skipped));
 		token.attrSet('data-to',   String(token.map[1] + skipped));
 		if (token.type === 'heading_open') { under = Number(token.tag.slice(1)); }
