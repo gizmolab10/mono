@@ -2,6 +2,7 @@
 
 | Build | Date | Note |
 | ---- | ---- | ---- |
+| 9 | Aug 13, 2026 | fully adopt hits manager from di |
 | 8 | Aug 9, 2026 | new Sections component |
 | 7 | Aug 8, 2026 | eliminate purpose |
 | 6 | Aug 5, 2026 | hierarchal tags & UX |

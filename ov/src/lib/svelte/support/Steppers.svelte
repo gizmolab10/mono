@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { back_direction, forward_direction, make_holding, shows_mark } from '../../ts/utilities/Stepping';
+	import { back_direction, forward_direction, shows_mark } from '../../ts/utilities/Stepping';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { tip } from '../../ts/utilities/Tooltip';
 	import { k } from '../../ts/common/Constants';
 
 	// Two fat marks that step from one thing to the next. Ordinarily a mark that leads nowhere
@@ -11,9 +11,10 @@
 	// Holding a mark down keeps stepping: one step at once, a pause, then a steady patter until
 	// it is let go. Each pair keeps its own beat.
 
-	let { can_back = false, can_forward = false, onprev = () => {}, onnext = () => {},
+	let { id, can_back = false, can_forward = false, onprev = () => {}, onnext = () => {},
 		vertical = false, always_both = false, back_says = 'previous', forward_says = 'next' }:
 		{
+			id            : string;                  // what this pair is called; each mark adds its own end
 			can_back?     : boolean;                 // is there anything behind
 			can_forward?  : boolean;                 // is there anything ahead
 			onprev?       : (repeated?: boolean) => void;   // told whether this is the press or the patter after it
@@ -31,15 +32,16 @@
 	let back_bounds    = $derived(svg_paths.fat_polygon_bounds(SIZE, back_direction(vertical)));
 	let next_bounds    = $derived(svg_paths.fat_polygon_bounds(SIZE, forward_direction(vertical)));
 
-	const holding = make_holding();
-	$effect(() => holding.stop);        // let go if this leaves the screen mid-hold
 </script>
 
-{#snippet mark(live: boolean, path: string, bounds: { minX: number; minY: number; width: number; height: number }, says: string, step: (repeated?: boolean) => void)}
-	<button class='step' class:dead={!live} aria-label={says} use:tip={live ? says : false}
-		onmousedown={(e) => { e.stopPropagation(); if (live) { holding.start(step); } }}
-		onmouseup={holding.stop} onmouseleave={holding.stop}
-		onclick={(e) => { e.stopPropagation(); if (live && e.detail === 0) { step(false); } }}>
+{#snippet mark(which: string, live: boolean, path: string, bounds: { minX: number; minY: number; width: number; height: number }, says: string, step: (repeated?: boolean) => void)}
+	<!-- One press, then a patter while it is held — the manager's own, said as two callbacks:
+	     the press itself, and each repeat after the pause. A mark that leads nowhere hands over
+	     neither, so it stands there and answers nothing. -->
+	<button class='step' class:dead={!live} aria-label={says}
+		use:hit_target={{ id: `${id}.${which}`, tip: live ? says : null,
+			onpress: live ? () => step(false) : undefined,
+			onautorepeat: live ? () => step(true) : undefined }}>
 		<svg overflow='visible' width={bounds.width} height={bounds.height}
 			viewBox='{bounds.minX} {bounds.minY} {bounds.width} {bounds.height}'><path d={path} /></svg>
 	</button>
@@ -48,10 +50,10 @@
 {#if shows_mark(can_back, always_both) || shows_mark(can_forward, always_both)}
 	<div class='steppers' class:vertical>
 		{#if shows_mark(can_back, always_both)}
-			{@render mark(can_back, back_path, back_bounds, back_says, onprev)}
+			{@render mark('back', can_back, back_path, back_bounds, back_says, onprev)}
 		{/if}
 		{#if shows_mark(can_forward, always_both)}
-			{@render mark(can_forward, next_path, next_bounds, forward_says, onnext)}
+			{@render mark('forward', can_forward, next_path, next_bounds, forward_says, onnext)}
 		{/if}
 	</div>
 {/if}
@@ -86,7 +88,7 @@
 		stroke-width : 1;
 	}
 
-	.step:hover path {
+	.step:global([data-hit]) path {
 		fill : var(--hover);
 	}
 
@@ -96,7 +98,7 @@
 	}
 
 	.step.dead path,
-	.step.dead:hover path {
+	.step.dead:global([data-hit]) path {
 		stroke : var(--lightgray);
 		fill   : var(--white);
 	}

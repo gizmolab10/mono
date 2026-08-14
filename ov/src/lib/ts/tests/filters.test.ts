@@ -1,5 +1,23 @@
-import { T_Picking, inverted, kept_from, tags_match, words_match } from '../managers/Filters';
+import { T_Picking, foot_is_all_folds, inverted, kept_from, tags_match, words_match } from '../managers/Filters';
 import { describe, expect, it } from 'vitest';
+
+describe('the foot of a stack of rows', () => {
+	it('is all folds only when both the kinds and the tags are folded away', () => {
+		expect(foot_is_all_folds(true, true)).toBe(true);
+	});
+
+	it('is not, while the kinds stand open', () => {
+		expect(foot_is_all_folds(false, true)).toBe(false);
+	});
+
+	it('is not, while the tags stand open', () => {
+		expect(foot_is_all_folds(true, false)).toBe(false);
+	});
+
+	it('is not, with neither folded', () => {
+		expect(foot_is_all_folds(false, false)).toBe(false);
+	});
+});
 
 // What the search field looks in: a file's own name as well as its title and its brief. The
 // three disagree often enough — a file called "assessment of our guides" whose title still

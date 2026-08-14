@@ -2,15 +2,17 @@
 	import { w_file_place, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of, type Guide } from '../../ts/types/File';
-	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { WAY_OUT } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/events/Hits';
 	import File_Content from '../content/File_Content.svelte';
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
-	import File_Filters from '../content/File_Filters.svelte';
+	import Editor_Filters from '../content/Editor_Filters.svelte';
 	import { guides } from '../../ts/managers/Files';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import Search from '../content/Search.svelte';
@@ -40,12 +42,12 @@
 
 	// A press on the empty part of either top row goes back to the list; the things in those
 	// rows that answer for themselves are left alone. The Escape key does the same.
-	// The whole block above the heavy line lights as the cursor crosses any empty part of it,
-	// so what a press would do is visible before it is made. It is followed by hand, since a
-	// block lighting on its own would light while the cursor sat on one of its controls too.
 	// The way back to the list is every bare piece of the two top rows and of the label rows, and
-	// the whole of it lights at once — one flag, so pointing at either end lights both.
-	let way_out_lit = $state(false);
+	// the whole of it lights at once. Both are targets of the middle kind, so anything in them
+	// that answers for itself takes the cursor first; whichever of the two the manager names,
+	// both light — one name for the pair, asked here.
+	const w_s_hover = hits.w_s_hover;
+	let way_out_lit = $derived(($w_s_hover?.id ?? '').includes(WAY_OUT));
 
 	// Whether the label form is put away. Folded, it stands flat, so the words below draw no line
 	// of their own — the form's own line is already standing there.
@@ -59,11 +61,6 @@
 		return () => clearTimeout(soon);
 	});
 
-	function leave_if_empty(event: MouseEvent) {
-		if (!over_empty(event)) { return; }
-		debug.log(`Editing "${name}": pressed the empty part of a top row — back to the list.`);
-		onclose();
-	}
 
 	// The title says where the file sits as well as what it is called: every folder above it,
 	// from the top down. A file in a project starts with that project; one belonging to no
@@ -203,16 +200,15 @@
 	     list, and the whole of it lights while the cursor is on any of them. -->
 	<div class='view-top' role='button' tabindex='-1' onkeyup={() => {}}
 		class:lit={way_out_lit}
-		onmousemove={(e) => { way_out_lit = over_empty(e); }}
-		onmouseleave={() => { way_out_lit = false; }}
-		use:tip={'back to browse'} onclick={leave_if_empty}>
+		use:hit_target={{ id: `${WAY_OUT}.top`, type: T_Hit_Target.section,
+			onpress: onclose, tip: 'back to browse' }}>
 		<div class='view-head'>
 			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
 				while reading off the list, on a run of files reached by links. -->
 			{#if $w_file_place}
 				<span class='file-count'>{$w_file_place.at} of {$w_file_place.of}</span>
 			{/if}
-			<Steppers {can_back} {can_forward} {onprev} {onnext}
+			<Steppers id='editor.step' {can_back} {can_forward} {onprev} {onnext}
 				back_says='previous file' forward_says='next file' />
 			<!-- The folders above the file follow the steppers at the left. -->
 			<span class='view-ancestry'>{sits_at}</span>
@@ -228,7 +224,7 @@
 				class='view-name'
 				size={Math.max(1, typed_name.length)}
 				bind:value={typed_name}
-				use:tip={'change the file\'s name'}
+				use:hit_target={{ id: 'editor.field.name', tip: 'change the file\'s name' }}
 				onclick={(e) => (e.currentTarget as HTMLInputElement).focus()}
 				onblur={handle_rename}
 				onkeydown={(e) => {
@@ -241,10 +237,13 @@
 			<!-- Asking in words rather than in a box of its own: the trash mark asks, and the
 				question that takes its place is the thing that answers. -->
 			{#if asking_to_delete}
-				<button class='asking-yes' use:tip={'throw it away for good'}
-					onclick={(e) => { e.stopPropagation(); handle_delete(); }}>delete "{name}"</button>
-				<button class='row-button' aria-label='keep it' use:tip={'keep this file'}
-					onclick={(e) => { e.stopPropagation(); asking_to_delete = false; }}>
+				<!-- The row behind these goes back to the list on a press, so each stopped the press
+				     reaching it. The manager hands a press to one target only, so nothing is stopped
+				     by hand any more. -->
+				<button class='asking-yes'
+					use:hit_target={{ id: 'editor.delete.yes', onpress: handle_delete, tip: 'throw it away for good' }}>delete "{name}"</button>
+				<button class='row-button' aria-label='keep it'
+					use:hit_target={{ id: 'editor.delete.no', onpress: () => { asking_to_delete = false; }, tip: 'keep this file' }}>
 					<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
 						<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 					</svg>
@@ -255,14 +254,14 @@
 					throwing away last, so the one that cannot be undone stands furthest from the
 					one taken most often. -->
 				<span class='row-pair'>
-					<button class='row-button' aria-label='new' use:tip={'make a new file in this folder'}
-						onclick={(e) => { e.stopPropagation(); handle_create(); }}>+</button>
-					<button class='row-button lifted' aria-label='obsidian' use:tip={'open this file in Obsidian'}
-						onclick={(e) => { e.stopPropagation(); handle_obsidian(); }}>o</button>
-					<button class='row-button' aria-label='send' use:tip={'compose an email containing this file'}
-						onclick={(e) => { e.stopPropagation(); handle_send(); }}>⤴</button>
-					<button class='row-button' aria-label='delete' use:tip={'throw this file away'}
-						onclick={(e) => { e.stopPropagation(); asking_to_delete = true; }}>
+					<button class='row-button' aria-label='new'
+						use:hit_target={{ id: 'editor.new', onpress: handle_create, tip: 'make a new file in this folder' }}>+</button>
+					<button class='row-button lifted' aria-label='obsidian'
+						use:hit_target={{ id: 'editor.obsidian', onpress: handle_obsidian, tip: 'open this file in Obsidian' }}>o</button>
+					<button class='row-button' aria-label='send'
+						use:hit_target={{ id: 'editor.send', onpress: handle_send, tip: 'compose an email containing this file' }}>⤴</button>
+					<button class='row-button' aria-label='delete'
+						use:hit_target={{ id: 'editor.delete', onpress: () => { asking_to_delete = true; }, tip: 'throw this file away' }}>
 						<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
 							<path d={binPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' stroke-linejoin='round' />
 						</svg>
@@ -270,10 +269,10 @@
 				</span>
 			{/if}
 		</div>
-		<Search bind:this={find} {name} {page} hovered={way_out_lit} />
+		<Search bind:this={find} {name} {page} {onclose} hovered={way_out_lit} />
 	</div>
-	<File_Filters {name} {guide} {tags} {onclose} onsay={say}
-		bind:text={text_of_file} bind:way_out_lit bind:folded={filters_folded} />
+	<Editor_Filters {name} {guide} {tags} {onclose} onsay={say}
+		bind:text={text_of_file} bind:folded={filters_folded} />
 	<File_Content {name} {address} {guide} onsay={say} draws_line={!filters_folded}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />
@@ -386,7 +385,7 @@
 		line-height     : 1;
 	}
 
-	.row-button:hover {
+	.row-button:global([data-hit]) {
 		background : var(--hover);
 	}
 
@@ -421,7 +420,7 @@
 		cursor        : pointer;
 	}
 
-	.asking-yes:hover {
+	.asking-yes:global([data-hit]) {
 		background : var(--hover);
 	}
 

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_status, w_offer, hide_status, show_status_as_report, take_the_offer } from '../../ts/managers/Status';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
@@ -54,10 +54,12 @@
 	<span class='status-words' bind:this={words_element}>{$w_status}</span>
 	<!-- Something the app will do only if asked. Dismissing the line is the answer "no". -->
 	{#if $w_offer}
-		<button class='status-offer' use:tip={'do this'} onclick={take_the_offer}>{$w_offer.says}</button>
+		<button class='status-offer'
+			use:hit_target={{ id: 'status.offer', onpress: take_the_offer, tip: 'do this' }}>{$w_offer.says}</button>
 	{/if}
 	<button class='status-close' aria-label='dismiss'
-		use:tip={$w_offer ? 'leave it as it is' : 'dismiss this'} onclick={hide_status}>
+		use:hit_target={{ id: 'status.close', onpress: hide_status,
+			tip: $w_offer ? 'leave it as it is' : 'dismiss this' }}>
 		<svg class='status-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
 			<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 		</svg>
@@ -106,7 +108,7 @@
 		flex          : 0 0 auto;
 	}
 
-	.status-offer:hover {
+	.status-offer:global([data-hit]) {
 		background : var(--hover);
 	}
 
@@ -127,7 +129,7 @@
 		top             : var(--gap);
 	}
 
-	.status-close:hover {
+	.status-close:global([data-hit]) {
 		background : var(--hover);
 	}
 

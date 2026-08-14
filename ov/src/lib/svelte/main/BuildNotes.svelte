@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { Direction } from '../../ts/types/Angle';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import buildsRaw from '../../md/builds.md?raw';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
@@ -114,14 +114,16 @@
 	<!-- Both steppers are always placed (their slots pinned); the current show/hide logic just makes
 	     them visible or not, so hiding one never shifts the other. -->
 	<div class='steppers'>
-		<button class='stepper' aria-label='newer builds' use:tip={'newer builds'}
+		<!-- The box behind these closes on a press, so each stops the press reaching it. The
+		     manager hands a press to one target only, so nothing has to be stopped by hand. -->
+		<button class='stepper' aria-label='newer builds'
 			style:visibility={show_up ? 'visible' : 'hidden'}
-			onclick={(e) => { e.stopPropagation(); hit_closure(true); }}>
+			use:hit_target={{ id: 'builds.newer', onpress: () => hit_closure(true), tip: 'newer builds' }}>
 			<svg overflow='visible' width={up_bounds.width} height={up_bounds.height} viewBox='{up_bounds.minX} {up_bounds.minY} {up_bounds.width} {up_bounds.height}'><path d={up_path} /></svg>
 		</button>
-		<button class='stepper' aria-label='older builds' use:tip={'older builds'}
+		<button class='stepper' aria-label='older builds'
 			style:visibility={show_down ? 'visible' : 'hidden'}
-			onclick={(e) => { e.stopPropagation(); hit_closure(false); }}>
+			use:hit_target={{ id: 'builds.older', onpress: () => hit_closure(false), tip: 'older builds' }}>
 			<svg overflow='visible' width={down_bounds.width} height={down_bounds.height} viewBox='{down_bounds.minX} {down_bounds.minY} {down_bounds.width} {down_bounds.height}'><path d={down_path} /></svg>
 		</button>
 	</div>
@@ -197,7 +199,7 @@
 		stroke-width : 1;
 	}
 
-	.stepper:hover path {
+	.stepper:global([data-hit]) path {
 		fill         : var(--hover);
 	}
 

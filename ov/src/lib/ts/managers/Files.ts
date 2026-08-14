@@ -3,7 +3,7 @@ import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project,
 import { writable, get } from 'svelte/store';
 import { Hierarchy } from './Hierarchy';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, place_of_file, read_guide, renamed_path, save_guide } from '../utilities/Saving';
+import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, place_of_file, read_guide, renamed_path, save_file } from '../utilities/Saving';
 import { blank_guide, free_name, has_labels, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
 import { links_in } from '../utilities/Markdown_Blocks';
 import { show_status, type Finding } from './Status';
@@ -199,7 +199,7 @@ class Guides {
 			const text = await this.read_file(`${root}${index_at}`);
 			if (text === null) {
 				const fresh = fresh_index(folder.name, beside);
-				const wrote = await save_guide(index_at, fresh, '');
+				const wrote = await save_file(index_at, fresh, '');
 				if (!wrote.ok) { refused += 1; odd.push(`${index_at} could not be made — ${wrote.why}`); debug.log(`Repair: ${index_at} could not be made — ${wrote.why}.`); continue; }
 				made += 1;
 				debug.log(`Repair: made ${index_at}, naming ${beside.length} file(s).`);
@@ -208,7 +208,7 @@ class Guides {
 
 			const put_right = repaired_index(text, beside, known);
 			if (put_right.text === text) { untouched += 1; continue; }
-			const wrote = await save_guide(index_at, put_right.text, text);
+			const wrote = await save_file(index_at, put_right.text, text);
 			if (!wrote.ok) { refused += 1; odd.push(`${index_at} was not written — ${wrote.why}`); debug.log(`Repair: ${index_at} was NOT written — ${wrote.why}.`); continue; }
 			mended += 1;
 			for (const line of put_right.removed) { odd.push(`${index_at} named something that is nowhere: ${line.trim()}`); }
@@ -292,7 +292,7 @@ class Guides {
 
 		let mended = 0, refused = 0;
 		for (const mend of mends) {
-			const wrote = await save_guide(mend.where, mend.changed, mend.text);
+			const wrote = await save_file(mend.where, mend.changed, mend.text);
 			if (wrote.ok) { mended += 1; debug.log(`Renaming: ${mend.where} now names "${named}" in ${mend.how_many} link(s).`); }
 			else { refused += 1; debug.log(`Renaming: ${mend.where} was NOT written — ${wrote.why}. It still names "${was_name}".`); }
 		}
@@ -308,7 +308,7 @@ class Guides {
 			} else {
 				const line = taken.line.replace(/\(([^)]+)\)/, (_whole, address: string) => `(${renamed_address(address, named)})`);
 				const put_back = with_line_added(taken.text, line);
-				const wrote = await save_guide(index_at, put_back.text, index_text);
+				const wrote = await save_file(index_at, put_back.text, index_text);
 				if (wrote.ok) { debug.log(`Renaming: ${index_at} now names "${named}".`); }
 				else { debug.log(`Renaming: ${index_at} was NOT written — ${wrote.why}. It still names "${was_name}".`); }
 			}
@@ -342,7 +342,7 @@ class Guides {
 			if (taken.line === '') {
 				debug.log(`Deleting: ${index_at} never named "${guide.name}", so nothing was changed there.`);
 			} else {
-				const wrote = await save_guide(index_at, taken.text, index_text);
+				const wrote = await save_file(index_at, taken.text, index_text);
 				if (wrote.ok) { debug.log(`Deleting: ${index_at} no longer names "${guide.name}".`); }
 				else { debug.log(`Deleting: ${index_at} was NOT written — ${wrote.why}. It still names "${guide.name}".`); }
 			}
@@ -386,7 +386,7 @@ class Guides {
 		const text = blank_guide(name, today(), kind, tags);
 		// Nothing on disk is what the app expects to find, which is how the server is told to
 		// make the file rather than change one.
-		const wrote = await save_guide(where, text, '');
+		const wrote = await save_file(where, text, '');
 		if (!wrote.ok) {
 			show_status(`"${name}" was not made — ${wrote.why}`);
 			debug.log(`Making "${name}" at ${where} was refused — ${wrote.why}. Nothing changed.`);
@@ -410,7 +410,7 @@ class Guides {
 		const index_text = root === '' ? null : await this.read_file(`${root}${index_at}`);
 		if (index_text !== null) {
 			const added = with_line_added(index_text, line_for(`${name}.md`));
-			const said = await save_guide(index_at, added.text, index_text);
+			const said = await save_file(index_at, added.text, index_text);
 			if (said.ok) { debug.log(`Making: ${index_at} now names "${name}".`); }
 			else { debug.log(`Making: ${index_at} was NOT written — ${said.why}. It does not name "${name}".`); }
 		}
@@ -500,7 +500,7 @@ class Guides {
 
 		if (to_text !== null) {
 			const { text, into_more } = with_line_added(to_text, line);
-			const wrote = await save_guide(to_index, text, to_text);
+			const wrote = await save_file(to_index, text, to_text);
 			if (!wrote.ok) {
 				show_status(`"${file_name}" moved, but ${to_index} was not mended — ${wrote.why}`);
 				debug.log(`Index files: ${to_index} was NOT written — ${wrote.why}. It still does not name "${file_name}".`);
@@ -513,7 +513,7 @@ class Guides {
 		}
 
 		if (from_text !== null && from_without !== from_text) {
-			const wrote = await save_guide(from_index, from_without, from_text);
+			const wrote = await save_file(from_index, from_without, from_text);
 			if (!wrote.ok) {
 				show_status(`"${file_name}" moved, but ${from_index} still names it — ${wrote.why}`);
 				debug.log(`Index files: ${from_index} was NOT written — ${wrote.why}. It still names "${file_name}".`);

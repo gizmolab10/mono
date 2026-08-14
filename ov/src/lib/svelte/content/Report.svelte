@@ -2,7 +2,7 @@
 	import { w_status, w_findings, hide_status, type Finding } from '../../ts/managers/Status';
 	import { open_view, w_search_for } from '../../ts/managers/Operations';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 
@@ -24,7 +24,8 @@
 
 <div class='report'>
 	<div class='report-head'>
-		<button class='report-close' aria-label='dismiss' use:tip={'dismiss this report'} onclick={hide_status}>
+		<button class='report-close' aria-label='dismiss'
+			use:hit_target={{ id: 'report.close', onpress: hide_status, tip: 'dismiss this report' }}>
 			<svg class='report-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
 				<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
 			</svg>
@@ -37,7 +38,10 @@
 			<div class='findings'>
 				{#each $w_findings as found, n (n)}
 					{#if found.key && found.link}
-						<button class='finding' use:tip={'open this guide and light the link'} onclick={() => handleDeadLink(found)}>{found.words}</button>
+						<!-- Named by the guide it points at, since a report holds many of these at once. -->
+					<button class='finding'
+						use:hit_target={{ id: `report.finding.${found.key}`, onpress: () => handleDeadLink(found),
+							tip: 'open this guide and light the link' }}>{found.words}</button>
 					{:else}
 						<div class='finding plain'>{found.words}</div>
 					{/if}
@@ -87,7 +91,7 @@
 		flex            : 0 0 auto;
 	}
 
-	.report-close:hover {
+	.report-close:global([data-hit]) {
 		background : var(--hover);
 	}
 
@@ -124,16 +128,15 @@
 		width         : 100%;
 	}
 
-	.finding:hover {
+	.finding:global([data-hit]) {
 		background : var(--hover);
 	}
 
+	/* One that points nowhere is not a button at all, so nothing stamps it; the rule stays
+	   only to say plainly that it takes no fill. */
 	.finding.plain {
-		cursor : default;
-	}
-
-	.finding.plain:hover {
 		background : transparent;
+		cursor     : default;
 	}
 
 	/* The words themselves, wrapping and scrolling as far as they need. */

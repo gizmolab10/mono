@@ -2,7 +2,7 @@
 	// The two colors that are chosen: the accent, and the page behind everything. Each drives
 	// Colors' subscribers, which re-work the hover color, the text color and the rest.
 	import { colors } from '../../ts/utilities/Colors';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
 
 	const { w_accent_color, w_background_color } = colors;
@@ -38,8 +38,12 @@
 <div class='color-row'>
 	<div class='color-group'>
 		<span class='label'>accent</span>
+		<!-- The field itself is out of sight; this is what is seen and pointed at, so this is what
+		     the manager is told about. The press opens the browser's own picker, which only a real
+		     press on the field can do — so that stays where it is. -->
 		<label class='picker accent-face' class:picking={picking === 'accent'}
-			use:tip={picking === '' ? 'pick the accent color' : false}>
+			use:hit_target={{ id: 'details.color.accent',
+				tip: picking === '' ? 'pick the accent color' : null }}>
 			<input class='hidden-input' type='color' value={$w_accent_color} oninput={pick}
 				onclick={() => open_picker('accent')} onchange={close_picker} onblur={close_picker} />
 		</label>
@@ -47,7 +51,8 @@
 	<div class='color-group'>
 		<span class='label'>page</span>
 		<label class='picker page-face' class:picking={picking === 'page'}
-			use:tip={picking === '' ? 'pick the color behind everything' : false}>
+			use:hit_target={{ id: 'details.color.page',
+				tip: picking === '' ? 'pick the color behind everything' : null }}>
 			<input class='hidden-input' type='color' value={$w_background_color} oninput={pick_background}
 				onclick={() => open_picker('page')} onchange={close_picker} onblur={close_picker} />
 		</label>

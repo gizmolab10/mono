@@ -105,6 +105,28 @@ export const w_show_folders = preferences.persistent<boolean>(T_Preference.show_
 // is no heavy line for the count to stand under.
 export const w_show_filters = preferences.persistent<boolean>(T_Preference.show_filters, true);
 
+// Which of the picking rows are folded away, named rather than numbered. Held here for the same
+// reason: the count row reads it too, since with the tags folded there is nothing above it for a
+// heavy line to close off.
+export const w_filters_folded = preferences.persistent<string[]>(T_Preference.filters_folded, []);
+
+// The same, for the label form in the editor: which of its rows are folded away. Held here beside
+// the list's own, so leaving a guide and coming back finds them as they were left.
+export const w_form_folded = preferences.persistent<string[]>(T_Preference.form_folded, []);
+
+/**
+ * Is the foot of a stack of rows nothing but folded lines? The tags are the last row and the kinds
+ * the one above them; with both folded away, the last thing standing open is higher up and its own
+ * line already closes it off. So the tags stand flat and whatever follows draws no line — two lines
+ * with nothing between them read as one thick one.
+ *
+ * With the kinds open, the tags stand as they are, folded or not, and the line below is drawn.
+ * Both the list's filters and the editor's label form are stacked this way and ask this.
+ */
+export function foot_is_all_folds(kinds_folded: boolean, tags_folded: boolean): boolean {
+	return kinds_folded && tags_folded;
+}
+
 // Which areas of tags are open, named rather than numbered so renaming or adding one cannot
 // shift the meaning of what was saved. Both the filters and the label form read the same list,
 // so an area left open in one is open in the other.

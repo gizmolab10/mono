@@ -31,36 +31,5 @@ export function mark_is_live(can_go: boolean): boolean {
 	return can_go;
 }
 
-/**
- * Holding a mark down keeps stepping: one step at once, a pause, then a steady patter until
- * it is let go. Made fresh for each pair, so two pairs on screen never share a beat.
- */
-export const HOLD_PAUSE = 400;
-export const HOLD_TICK = 120;
-
-/**
- * Each step is told whether it is the press itself or one of the patter that follows, so
- * whatever is being stepped through can refuse to be carried past something it wants looked at.
- */
-export type Holding = {
-	start : (step: (repeated: boolean) => void) => void;
-	stop  : () => void;
-};
-
-export function make_holding(pause = HOLD_PAUSE, tick = HOLD_TICK): Holding {
-	let wait: ReturnType<typeof setTimeout> | null = null;
-	let beat: ReturnType<typeof setInterval> | null = null;
-
-	function stop(): void {
-		if (wait !== null) { clearTimeout(wait); wait = null; }
-		if (beat !== null) { clearInterval(beat); beat = null; }
-	}
-
-	function start(step: (repeated: boolean) => void): void {
-		stop();                                   // never two runs at once
-		step(false);                              // the press itself, right away
-		wait = setTimeout(() => { beat = setInterval(() => step(true), tick); }, pause);
-	}
-
-	return { start, stop };
-}
+// Holding a mark down to keep stepping is the hits manager's now: a target hands it the press
+// itself and each repeat after the pause, and the manager keeps the beat.

@@ -4,6 +4,7 @@ import type { Dictionary } from '../types/Types';
 import { Point } from '../types/Coordinates';
 import { writable, get } from 'svelte/store';
 import S_Hit_Target from './S_Hit_Target';
+import { debug } from '../common/Debug';
 import S_Mouse from './S_Mouse';
 import { tick } from 'svelte';
 import RBush from 'rbush';
@@ -71,6 +72,15 @@ export default class Hits {
 	handle_s_mouse_at(point: Point, s_mouse: S_Mouse): boolean {
 		const matches = this.targets_atPoint(point);
 		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
+		// TEMPORARY measurement — what a press found, and what it handed the press to.
+		debug.log(`PRESS at ${Math.round(point.x)},${Math.round(point.y)} ${s_mouse.isDown ? 'down' : 'up'}:`
+			+ ` ${matches.length} target(s) — ${matches.map((one) => {
+				const held = one.rect;
+				const now = one.html_element?.getBoundingClientRect();
+				return `${one.id} [held ${held ? `${Math.round(held.x)},${Math.round(held.y)} ${Math.round(held.size.width)}x${Math.round(held.size.height)}` : 'none'}`
+					+ ` drawn ${now ? `${Math.round(now.x)},${Math.round(now.y)} ${Math.round(now.width)}x${Math.round(now.height)}` : 'none'}]`;
+			}).join(', ') || 'none'};`
+			+ ` handed to ${target?.id ?? 'nobody'}, which ${target?.handle_s_mouse ? 'has' : 'has no'} handler.`);
 		if (!target) { return false; }
 
 		if (s_mouse.isDown) {
@@ -167,6 +177,11 @@ export default class Hits {
 		} else {
 			const existing = this.targets_dict_byType[type].find(t => t.id == id);
 			if (!!existing) {
+				// Two things claiming one name: the older goes, and whatever it answered for
+				// answers nothing from here on. Said out loud, since nothing on screen shows it.
+				if (existing.html_element !== target.html_element) {
+					debug.log(`Hits: two targets are called "${id}" — the older one is gone, and whatever it answered for now answers nothing.`);
+				}
 				this.delete_hit_target(existing);
 			}
 		}
@@ -204,12 +219,33 @@ export default class Hits {
 		return targets.filter(target => (target.contains_point?.(point) ?? true));
 	}
 
-	/** Where two overlap, the smaller thing wins: a control, then a section, then the page. */
+	/**
+	 * Where two overlap, the smaller thing wins: a control, then a section, then the page — and
+	 * within one kind, the one standing in the smaller area. Sections sit inside sections, so
+	 * without that last part the tags row inside the whole filter form would be answered for by
+	 * the form, whichever of the two the tree happened to hand over first.
+	 */
 	private targetOf_highest_precedence(matches: Array<S_Hit_Target>): S_Hit_Target | null {
-		return matches.find(s => s.type == T_Hit_Target.control)
-			?? matches.find(s => s.type == T_Hit_Target.section)
-			?? matches.find(s => s.type == T_Hit_Target.page)
+		return this.smallest_of(matches, T_Hit_Target.control)
+			?? this.smallest_of(matches, T_Hit_Target.section)
+			?? this.smallest_of(matches, T_Hit_Target.page)
 			?? matches[0];
+	}
+
+	/** The one of this kind standing in the smallest area, or nothing where none is of this kind. */
+	private smallest_of(matches: Array<S_Hit_Target>, type: T_Hit_Target): S_Hit_Target | null {
+		let smallest: S_Hit_Target | null = null;
+		let least = Infinity;
+		for (const one of matches) {
+			if (one.type !== type) { continue; }
+			const rect = one.rect;
+			const area = !rect ? Infinity : rect.size.width * rect.size.height;
+			if (area < least) {
+				smallest = one;
+				least = area;
+			}
+		}
+		return smallest;
 	}
 
 	private insert_into_rbush(target: S_Hit_Target, into_rbush: RBush<Target_RBRect>) {

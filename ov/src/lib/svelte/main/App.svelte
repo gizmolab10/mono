@@ -80,6 +80,9 @@
 	function handleResize() {
 		width  = Math.max(k.width.normal, window.innerWidth);
 		height = window.innerHeight;
+		// Everything on screen has moved, and every rectangle the hits manager holds was measured
+		// once. They are asked again after the browser has drawn at the new size.
+		hits.defer_recalibrate();
 	}
 
 	// The latest build number, read from the build-notes table.

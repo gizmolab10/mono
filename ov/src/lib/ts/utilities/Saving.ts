@@ -217,7 +217,7 @@ export function obsidian_link(vault: string, where: string): string {
 }
 
 // Write a changed guide. Says whether it was written, and if not, why in plain words.
-export async function save_guide(where: string, whole: string, as_opened: string): Promise<Saved> {
+export async function save_file(where: string, whole: string, as_opened: string): Promise<Saved> {
 	const url = `http://localhost:5171/save-guide?where=${encodeURIComponent(where)}`;
 	try {
 		const answer = await fetch(url, {

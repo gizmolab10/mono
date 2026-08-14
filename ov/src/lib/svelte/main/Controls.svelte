@@ -2,7 +2,6 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { k } from '../../ts/common/Constants';
-	import { tip } from '../../ts/utilities/Tooltip';
 
 	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
 	// left shows or hides details; at its right the dispatcher starts over, and the build number
@@ -22,17 +21,21 @@
 
 <div class='controls-row layer-controls'>
 	<button class='hamburger-button' aria-label='toggle details'
-		use:hit_target={{ id: 'hamburger', onpress: onclick, tip: `${detailsShown ? 'hide' : 'show'} details` }}>
+		use:hit_target={{ id: 'controls.hamburger', onpress: onclick, tip: `${detailsShown ? 'hide' : 'show'} details` }}>
 		<svg class='hamburger-icon' viewBox='0 0 {size} {size}' width={size} height={size}>
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
 	<span class='spacer'></span>
-	<button class='build-button' onclick={onRestart} disabled={restarting}
-		use:tip={'start the dispatcher over, so changed code is the code answering'}>
+	<!-- While it is starting over it answers nothing, so it hands the manager no press and no
+	     words — the same as being disabled, said the one way a target can say it. -->
+	<button class='build-button' disabled={restarting}
+		use:hit_target={{ id: 'controls.dispatcher', onpress: restarting ? undefined : onRestart,
+			tip: restarting ? null : 'start the dispatcher over, so changed code is the code answering' }}>
 		{restarting ? 'restarting...' : 'dispatcher'}
 	</button>
-	<button class='build-button' onclick={onBuildOpen} use:tip={'show build notes'}>
+	<button class='build-button'
+		use:hit_target={{ id: 'controls.build', onpress: onBuildOpen, tip: 'show build notes' }}>
 		build {buildNumber}
 	</button>
 </div>
@@ -91,14 +94,14 @@
 		cursor        : pointer;
 	}
 
-	.build-button:hover {
+	.build-button:global([data-hit]) {
 		background : var(--hover);
 	}
 
 	/* While the dispatcher is starting over there is nothing to press, so it stays white
 	   under the pointer and the pointer stays an arrow. */
 	.build-button:disabled,
-	.build-button:disabled:hover {
+	.build-button:disabled:global([data-hit]) {
 		background : var(--white);
 		cursor     : default;
 	}

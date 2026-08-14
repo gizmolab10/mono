@@ -1,20 +1,22 @@
 <script lang='ts'>
-	import { with_labels_replaced } from '../../ts/utilities/Labels';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { foot_is_all_folds, inverted, toggle_all_areas, w_areas_open, w_form_folded } from '../../ts/managers/Filters';
 	import { ALL_TAGS, T_Kind, in_order, type Guide } from '../../ts/types/File';
-	import { file_path_of, save_guide } from '../../ts/utilities/Saving';
-	import { over_empty } from '../../ts/utilities/Hit_Empty_Space';
-	import { smooth_height } from '../../ts/utilities/Smooth_Height';
-	import { inverted, toggle_all_areas, w_areas_open } from '../../ts/managers/Filters';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { names_ride_in, places_of } from '../../ts/utilities/Tag_Rows';
+	import { file_path_of, save_file } from '../../ts/utilities/Saving';
+	import { T_Edge, USUAL_GAP } from '../../ts/utilities/Sectioning';
+	import { with_labels_replaced } from '../../ts/utilities/Labels';
+	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import Action, { T_Position } from '../../ts/types/Action';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { WAY_OUT } from '../../ts/events/Hit_Target';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
-	import Section from '../support/Section.svelte';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import Big_Pill from '../support/Big_Pill.svelte';
 	import { guides } from '../../ts/managers/Files';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import Section from '../support/Section.svelte';
 	import { debug } from '../../ts/common/Debug';
+	import { hits } from '../../ts/events/Hits';
 
 	// What a guide is labeled: its title, its date, the line saying what it is for, its one kind,
 	// and its tags. The labels are never on the page — they are taken off before the words are
@@ -22,22 +24,21 @@
 	// where it matters: the kind and the tags are picked from the only lists the app accepts.
 
 	let {
-		name, guide, tags, text = $bindable(''), way_out_lit = $bindable(false),
+		name, guide, tags, text = $bindable(''),
 		folded = $bindable(false), onclose, onsay,
 	}: {
-		name        : string;                // what the file is called
-		guide       : Guide;                 // the record of the file being read
-		tags        : string[];              // the tags it wears right now
-		text        : string;                // the whole file, which a write here changes
-		way_out_lit : boolean;               // the way back to the list is lit, here and in the row above
-		folded      : boolean;               // the whole form is put away, told outward so the words below know their line has nothing to stand under
-		onclose     : () => void;            // back to the list
+		guide       : Guide;                 	// the record of the file being read
+		name        : string;                	// what the file is called
+		text        : string;                	// the whole file, which a write here changes
+		folded      : boolean;               	// nothing stands open at the foot of this form, told outward so the words below draw no line of their own
+		tags        : string[];              	// the tags it wears right now
+		onclose     : () => void;            	// back to the list
 		onsay       : (words: string) => void;  // something to tell the reader, briefly
 	} = $props();
 
-	let form_kind        = $state('');
-	let form_title       = $state('');
 	let form_description = $state('');
+	let form_title       = $state('');
+	let form_kind        = $state('');
 	let form_date        = $state('');
 	let form_tags        = $state<string[]>([]);
 	let tags_lit         = $state(false);   // the cursor is among the tag areas, so their own word lights
@@ -47,21 +48,36 @@
 	// working rather than something about one guide.
 	const w_show_filters = preferences.persistent<boolean>(T_Preference.show_filters, true);
 
-	// Said outward, so whoever stacks this knows the form is away and its own line would stand
-	// on the line above with nothing between them.
-	$effect(() => { folded = !$w_show_filters; });
+	// Said outward, so whoever stacks this knows its own line would stand on the line above with
+	// nothing between them. That is so with the whole form away, and equally with the kinds and
+	// the tags both folded — the tags then stand flat and the kinds' line is the last thing.
+	$effect(() => {
+		folded = !$w_show_filters || foot_is_all_folds(!show_form_kinds, !show_form_tags);
+	});
+
+	// The way back to the list is two areas — these label rows and the two rows above the heavy
+	// line — and they light as one. Both carry the one name, so whichever the manager has under
+	// the cursor lights both.
+	const w_s_hover = hits.w_s_hover;
+	let way_out_lit = $derived(($w_s_hover?.id ?? '').includes(WAY_OUT));
 
 	// The tag areas take four rows of their own, so the word above them folds them away — and
-	// says what the guide wears while they are gone, as the filters' own lines do.
-	let show_form_tags = $state(true);
+	// says what the guide wears while they are gone, as the filters' own lines do. Which rows are
+	// folded is remembered between visits, named rather than numbered, the same as the list's.
+	let show_form_tags = $derived(!$w_form_folded.includes('tags'));
 	let form_tags_word = $derived(show_form_tags ? 'tags'
 		: `tags ➜ ${form_tags.length === 0 ? 'none' : [...form_tags].sort(in_order).join(', ')}`);
 
 	// The seven kinds take a row of their own, folded away the same way — and folded, the word
 	// says which one the guide is, so a kind is never hidden without a sign of it.
-	let show_form_kinds = $state(true);
+	let show_form_kinds = $derived(!$w_form_folded.includes('kinds'));
 	let form_kinds_word = $derived(show_form_kinds ? 'kinds'
 		: `kinds ➜ ${form_kind === '' ? 'none' : form_kind}`);
+
+	/** Fold one of the form's rows away, or bring it back. */
+	function fold_form(name: string, away: boolean) {
+		w_form_folded.update((names) => away ? [...names, name] : names.filter((one) => one !== name));
+	}
 
 	// The word on the line above the form folds the whole form away. With the form on screen it
 	// is just the one word; folded, it says what the file is filtered, since that is the only
@@ -82,10 +98,10 @@
 	// middle, beside the word that folds the areas rather than inside what that word folds away.
 	let picking_control = $state<HTMLElement | null>(null);
 
+	const picking_action = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
 	const filters_action = $derived(Object.assign(new Action(), { element: filters_button, position: T_Position.left }));
 	const kinds_action   = $derived(Object.assign(new Action(), { element: kinds_button,   position: T_Position.left }));
 	const tags_action    = $derived(Object.assign(new Action(), { element: tags_button,    position: T_Position.left }));
-	const picking_action = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
 
 	// Does a name ride above a pill in the topmost row of tags? Only then does the row hold a gap
 	// above itself, so that name stands clear of the line overhead.
@@ -95,6 +111,8 @@
 
 	function look_for_names() {
 		names_riding = tags_row === null ? false : names_ride_in(places_of(tags_row));
+		// The run just changed shape, so every tag in it stands somewhere new.
+		hits.recalibrate();
 	}
 
 	// Measured again whenever the picks change, and again whenever the run changes shape — it
@@ -119,30 +137,25 @@
 
 	/** Put the kinds row away, or bring it back. */
 	function toggle_kinds() {
-		show_form_kinds = !show_form_kinds;
-		debug.log(`Editing "${name}": the kinds row is now ${show_form_kinds ? 'shown' : 'folded away'}.`);
+		fold_form('kinds', show_form_kinds);
+		debug.log(`Editing "${name}": the kinds row is now ${show_form_kinds ? 'folded away' : 'shown'}.`);
 	}
 
 	/** Put the tag areas away, or bring them back. */
 	function toggle_tags() {
-		show_form_tags = !show_form_tags;
-		debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'shown' : 'folded away'}.`);
+		fold_form('tags', show_form_tags);
+		debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'folded away' : 'shown'}.`);
 	}
 
 	// Whenever another guide comes on screen, the form starts from what that guide says.
 	$effect(() => {
-		form_kind        = guide.kind;
-		form_title       = guide.title;
 		form_description = guide.description;
+		form_title       = guide.title;
+		form_kind        = guide.kind;
 		form_date        = guide.date;
 		form_tags        = [...tags];
 	});
 
-	function leave_if_empty(event: MouseEvent) {
-		if (!over_empty(event)) { return; }
-		debug.log(`Editing "${name}": pressed the empty part of a top row — back to the list.`);
-		onclose();
-	}
 
 	/** Write the five filters back, if any of them changed. */
 	function save_filters() {
@@ -154,7 +167,7 @@
 		const where = file_path_of(guide.bundle, guide.path);
 		debug.log(`Editing "${name}": the filters changed — writing them to ${where}.`);
 		text = whole;                         // the words below are untouched, so no redraw
-		save_guide(where, whole, was).then((answer) => {
+		save_file(where, whole, was).then((answer) => {
 			debug.log(`Editing "${name}": the answer came back — ${answer.ok ? 'written' : `refused, ${answer.why}`}.`);
 			if (!answer.ok) {
 				text = was;
@@ -207,28 +220,30 @@
      on. Each is written out of sight, since the moment the browser has made it, it is taken and
      put on its line instead. -->
 <div class='out_of_sight'>
-	<button type='button' class='fold-word' class:forced={way_out_lit}
-		bind:this={filters_button} onclick={toggle_filters}>{filter_rows_word}</button>
-	<button type='button' class='fold-word' class:forced={way_out_lit}
-		bind:this={kinds_button} onclick={toggle_kinds}>{form_kinds_word}</button>
-	<button type='button' class='fold-word' class:forced={tags_lit || way_out_lit}
-		bind:this={tags_button} onclick={toggle_tags}>{form_tags_word}</button>
+	<button type='button' class='fold-word' class:forced={way_out_lit} bind:this={filters_button}
+		use:hit_target={{ id: 'editor.fold.filters', onpress: toggle_filters }}>{filter_rows_word}</button>
+	<button type='button' class='fold-word' class:forced={way_out_lit} bind:this={kinds_button}
+		use:hit_target={{ id: 'editor.fold.kinds', onpress: toggle_kinds }}>{form_kinds_word}</button>
+	<button type='button' class='fold-word' class:forced={tags_lit || way_out_lit} bind:this={tags_button}
+		use:hit_target={{ id: 'editor.fold.tags', onpress: toggle_tags }}>{form_tags_word}</button>
 	<!-- Two presses. Neither is a state — a guide wears the tags it wears — so neither ever reads
 	     as picked; they answer under the cursor only. -->
 	<span class='picking' bind:this={picking_control}>
-		<button class='segment press' onclick={clear_tags}
-			use:tip={'take every tag off this guide'}>clear</button>
-		<button class='segment press' onclick={invert_tags}
-			use:tip={'give it exactly the tags it does not wear'}>invert</button>
+		<button class='segment press'
+			use:hit_target={{ id: 'editor.picking.clear', onpress: clear_tags,
+				tip: 'take every tag off this guide' }}>clear</button>
+		<button class='segment press'
+			use:hit_target={{ id: 'editor.picking.invert', onpress: invert_tags,
+				tip: 'give it exactly the tags it does not wear' }}>invert</button>
 	</span>
 </div>
 
+<!-- Folded, this whole block is bare space above the file's words, so it is another way back to
+     the list. Open, the form fills it and only the label rows inside are. -->
 <div class='filter-block' class:lit={way_out_lit && !$w_show_filters}
 	role='button' tabindex='-1' onkeyup={() => {}}
-	onmousemove={(e) => { if (!$w_show_filters) { way_out_lit = over_empty(e); } }}
-	onmouseleave={() => { if (!$w_show_filters) { way_out_lit = false; } }}
-	use:tip={$w_show_filters ? false : 'back to browse'}
-	onclick={(e) => { if (!$w_show_filters) { leave_if_empty(e); } }}>
+	use:hit_target={{ id: `${WAY_OUT}.block`, type: T_Hit_Target.section,
+		dormant: $w_show_filters, onpress: onclose, tip: 'back to browse' }}>
 <!-- What the guide is labeled, as a section of its own: its line carries the word that folds
      the whole form away, and holds three subsections — the words, the kinds, the tags.
 
@@ -236,6 +251,7 @@
      words below come straight up under its line, and the line that would have stood under it is
      left undrawn. Its own children hold the gap while it is open, so the number is unused then. -->
 <Section
+	id='editor.filters'
 	holds_subsections
 	gap={0}
 	edge={T_Edge.thick}
@@ -247,35 +263,51 @@
 	     line above the tags: a press on the tags' own bare space already means something. -->
 	<div class='filter-form'>
 		<div class='label-rows' role='button' tabindex='-1' onkeyup={() => {}}
-			onmousemove={(e) => { way_out_lit = over_empty(e); }}
-			onmouseleave={() => { way_out_lit = false; }}
 			class:lit={way_out_lit}
-			use:tip={'back to browse'} onclick={leave_if_empty}>
+			use:hit_target={{ id: `${WAY_OUT}.labels`, type: T_Hit_Target.section,
+				onpress: onclose, tip: 'back to browse' }}>
 			<!-- What a guide says about itself in words: its title, its date, and one line
 			     saying what it is for. They sit closer together than sections do, since they
 			     are rows of one thing rather than things of their own. -->
+			<!-- Each field is a control the manager knows about, so the way out standing behind
+			     them never answers for the space one of them occupies. Typing in it is the
+			     browser's own business; the manager is only told it is there. -->
 			<div class='word-rows'>
 				<div class='filter-row'>
 					<span class='filter-word'>title</span>
-					<input class='filter-field' bind:value={form_title} onblur={save_filters} />
+					<input class='filter-field' bind:value={form_title} onblur={save_filters}
+						use:hit_target={{ id: 'editor.field.title', tip: 'what this guide is called' }} />
 					<span class='filter-word'>date</span>
-					<input class='filter-field date' bind:value={form_date} onblur={save_filters} />
+					<input class='filter-field date' bind:value={form_date} onblur={save_filters}
+						use:hit_target={{ id: 'editor.field.date', tip: 'when it was last worked on' }} />
 				</div>
 				<div class='filter-row'>
 					<span class='filter-word'>brief</span>
-					<input class='filter-field' bind:value={form_description} onblur={save_filters} />
+					<input class='filter-field' bind:value={form_description} onblur={save_filters}
+						use:hit_target={{ id: 'editor.field.brief', tip: 'one sentence saying what it is for' }} />
 				</div>
 			</div>
 			<!-- The kinds, as a section of their own: its line carries the word that folds them
-			     away and then says which kind the guide is. -->
+			     away and then says which kind the guide is.
+
+			     It stands inside the label rows, and the smaller area wins the cursor — so it
+			     carries the way out's own name and press. Without that, the bare space among the
+			     kinds would be the one part of this block that answered nothing. -->
 			<Section
+				id={`${WAY_OUT}.kinds`}
+				onbare={onclose}
 				actions={[kinds_action]}
 				folded={!show_form_kinds}>
 				{#snippet holds()}
 					<!-- No word beside them: the line above already says what they are. -->
 					<div class='filter-row wrapping'>
 						{#each KINDS as one (one)}
-							<button class='filter-pick' class:on={form_kind === one} onclick={() => { form_kind = one; save_filters(); }}>{one}</button>
+							<!-- A guide wears one kind, so pressing the one it wears takes it off and
+							     pressing any other puts that one on in its place. -->
+							<button class='filter-pick' class:on={form_kind === one}
+								use:hit_target={{ id: `editor.kind.${one}`,
+									tip: `${form_kind === one ? 'remove' : 'add'} "${one}" kind`,
+									onpress: () => { form_kind = form_kind === one ? '' : one; save_filters(); } }}>{one}</button>
 						{/each}
 					</div>
 				{/snippet}
@@ -285,7 +317,12 @@
 		     away, and the section holds the gap around them. The word lights with every
 		     other one that can be pressed — while the way back to the list is lit, and while
 		     the cursor is among the tags themselves. -->
+		<!-- Folded under a folded kinds row, it asks for no gap at all and stands flat, and the
+		     file's own words below draw no line — the kinds' line is already closing what stands
+		     above it. With the kinds open it stands as it is, folded or not. -->
 		<Section
+			id='editor.tags'
+			gap={foot_is_all_folds(!show_form_kinds, !show_form_tags) ? 0 : USUAL_GAP}
 			actions={[tags_action, picking_action]}
 			fills_when_bare
 			onbare={() => toggle_all_areas(TAG_AREAS.map((one) => one.name))}
@@ -339,7 +376,7 @@
 
 	/* The edge appears under the cursor, or because the area around it says so. Told to light
 	   from outside, it takes white — it reads as marked without claiming the cursor. */
-	.fold-word:hover {
+	.fold-word:global([data-hit]) {
 		border-color : var(--darkgray);
 		background   : var(--hover);
 	}
@@ -437,15 +474,11 @@
 		border-right : var(--thick) solid var(--black);
 	}
 
-	/* Neither is a state, so each takes the fill only under the cursor and a stronger one
-	   while it is held. */
-	.picking .segment.press:hover {
+	/* Neither is a state, so each takes the fill only under the cursor. The stronger fill it wore
+	   while held is gone: the manager says pressed and released and nothing between, so nothing
+	   knows when a button is being held down. */
+	.picking .segment.press:global([data-hit]) {
 		background : var(--hover);
-	}
-
-	.picking .segment.press:active {
-		color      : var(--text-on-accent);
-		background : var(--accent);
 	}
 
 	.filter-row {
@@ -523,7 +556,7 @@
 		white-space   : nowrap;
 	}
 
-	.filter-pick:hover {
+	.filter-pick:not(.on):global([data-hit]) {
 		background : var(--hover);
 	}
 

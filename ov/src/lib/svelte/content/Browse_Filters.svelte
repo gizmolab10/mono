@@ -1,13 +1,14 @@
 <script lang='ts'>
-	import { w_project, w_kind, w_show_filters, w_tags, w_tag_picking, w_words } from '../../ts/managers/Filters';
-	import { inverted, T_Picking } from '../../ts/managers/Filters';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
+	import { w_project, w_kind, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_words } from '../../ts/managers/Filters';
+	import { foot_is_all_folds, inverted, T_Picking } from '../../ts/managers/Filters';
 	import { toggle_all_areas, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { TAG_AREAS, tags_shown } from '../../ts/types/Tag_Areas';
 	import { fade } from 'svelte/transition';
 	import { names_ride_in, places_of } from '../../ts/utilities/Tag_Rows';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/events/Hits';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import Section from '../support/Section.svelte';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
@@ -103,11 +104,9 @@
 	// of the top two folded they take separate bars, since one word over two halves would
 	// point at the wrong place. Which rows are folded is remembered between visits, named
 	// rather than numbered so adding a row later cannot shift the meaning of what was saved.
-	const w_folded = preferences.persistent<string[]>(T_Preference.filters_folded, []);
-
-	let show_projects = $derived(!$w_folded.includes('projects'));
-	let show_kinds = $derived(!$w_folded.includes('kinds'));
-	let show_tags = $derived(!$w_folded.includes('tags'));
+	let show_projects = $derived(!$w_filters_folded.includes('projects'));
+	let show_kinds = $derived(!$w_filters_folded.includes('kinds'));
+	let show_tags = $derived(!$w_filters_folded.includes('tags'));
 
 	let project_word = $derived($w_project === '' ? 'all' : $w_project);
 	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
@@ -129,6 +128,8 @@
 
 	function look_for_names() {
 		names_riding = tags_row === null ? false : names_ride_in(places_of(tags_row));
+		// The run just changed shape, so every tag in it stands somewhere new.
+		hits.recalibrate();
 	}
 
 	// Measured again whenever the pills change, and again whenever the run changes shape — it
@@ -152,7 +153,7 @@
 	}
 
 	function fold(name: string, away: boolean) {
-		w_folded.update((names) => away ? [...names, name] : names.filter((one) => one !== name));
+		w_filters_folded.update((names) => away ? [...names, name] : names.filter((one) => one !== name));
 		debug.log(`Filters: the ${name} row is now ${away ? 'folded away' : 'shown'}.`);
 	}
 
@@ -198,13 +199,13 @@
      put on its line instead. -->
 <div class='out_of_sight'>
 	<button type='button' class='fold-word' bind:this={all_button}
-		onclick={toggle_filters}>{all_word}</button>
+		use:hit_target={{ id: 'list.fold.all', onpress: toggle_filters }}>{all_word}</button>
 	<button type='button' class='fold-word' bind:this={projects_button}
-		onclick={() => fold('projects', show_projects)}>{heading('projects', show_projects, project_word)}</button>
+		use:hit_target={{ id: 'list.fold.projects', onpress: () => fold('projects', show_projects) }}>{heading('projects', show_projects, project_word)}</button>
 	<button type='button' class='fold-word' bind:this={kinds_button}
-		onclick={() => fold('kinds', show_kinds)}>{heading('kinds', show_kinds, kind_word)}</button>
+		use:hit_target={{ id: 'list.fold.kinds', onpress: () => fold('kinds', show_kinds) }}>{heading('kinds', show_kinds, kind_word)}</button>
 	<button type='button' class='fold-word' bind:this={tags_button}
-		onclick={() => fold('tags', show_tags)}>{heading('tags', show_tags, tags_word)}</button>
+		use:hit_target={{ id: 'list.fold.tags', onpress: () => fold('tags', show_tags) }}>{heading('tags', show_tags, tags_word)}</button>
 	<!-- One control holding two kinds: the three on the left are states, saying how the picked
 	     tags narrow; the ones on the right are presses that change what is picked and leave the
 	     state alone, so neither ever reads as picked — they answer under the cursor only.
@@ -215,29 +216,32 @@
 	     picked, and there is more than one to pick from. With a single choice on offer there is
 	     nowhere to go back to, so nothing is made and the line is given none. -->
 	{#if $w_project !== '' && shown_projects.length > 1}
-		<button class='clear' bind:this={projects_clear} onclick={() => w_project.set('')}
-			use:tip={'show every project\'s guides'}>clear</button>
+		<button class='clear' bind:this={projects_clear}
+			use:hit_target={{ id: 'list.clear.projects', onpress: () => w_project.set(''),
+				tip: 'show every project\'s guides' }}>clear</button>
 	{/if}
 	{#if $w_kind !== '' && kinds_offered > 1}
-		<button class='clear' bind:this={kinds_clear} onclick={() => w_kind.set('')}
-			use:tip={'show every kind of guide'}>clear</button>
+		<button class='clear' bind:this={kinds_clear}
+			use:hit_target={{ id: 'list.clear.kinds', onpress: () => w_kind.set(''),
+				tip: 'show every kind of guide' }}>clear</button>
 	{/if}
 	<span class='picking' bind:this={picking_control}>
+		<!-- A picked one answers nothing: it is already what it says. -->
 		<button class='segment' class:current={$w_tag_picking === T_Picking.any}
-			onclick={() => pick_way(T_Picking.any)}
-			use:tip={'a file shows if it wears any one of the picked tags'}>any of</button>
+			use:hit_target={{ id: 'list.picking.any', tip: 'a file shows if it wears any one of the picked tags',
+				onpress: $w_tag_picking === T_Picking.any ? undefined : () => pick_way(T_Picking.any) }}>any of</button>
 		<button class='segment' class:current={$w_tag_picking === T_Picking.all}
-			onclick={() => pick_way(T_Picking.all)}
-			use:tip={'a file shows only if it wears every picked tag'}>all of</button>
+			use:hit_target={{ id: 'list.picking.all', tip: 'a file shows only if it wears every picked tag',
+				onpress: $w_tag_picking === T_Picking.all ? undefined : () => pick_way(T_Picking.all) }}>all of</button>
 		<button class='segment' class:current={$w_tag_picking === T_Picking.but}
-			onclick={() => pick_way(T_Picking.but)}
-			use:tip={'a file shows only if it wears none of the picked tags'}>any but</button>
+			use:hit_target={{ id: 'list.picking.but', tip: 'a file shows only if it wears none of the picked tags',
+				onpress: $w_tag_picking === T_Picking.but ? undefined : () => pick_way(T_Picking.but) }}>any but</button>
 		{#if $w_tags.length > 0}
-			<button class='segment press' onclick={clear_tags}
-				use:tip={'stop filtering by tag'}>clear</button>
+			<button class='segment press'
+				use:hit_target={{ id: 'list.picking.clear', onpress: clear_tags, tip: 'stop filtering by tag' }}>clear</button>
 		{/if}
-		<button class='segment press' onclick={invert_tags}
-			use:tip={'pick exactly the tags that are not picked'}>invert</button>
+		<button class='segment press'
+			use:hit_target={{ id: 'list.picking.invert', onpress: invert_tags, tip: 'pick exactly the tags that are not picked' }}>invert</button>
 	</span>
 </div>
 
@@ -248,9 +252,13 @@
 	<div class='kinds' use:tip={'show just one project\'s guides'}>
 		{#each shown_projects as project}
 			{@const held = counts.get(project) ?? 0}
+			<!-- One that would leave nothing still holds its place in the run, so it registers with
+			     no press: the ones beside it must not answer for the space it stands in. -->
 			<button class='segment' class:current={$w_project === project} class:empty={held === 0}
-				use:tip={held === 0 ? `nothing in ${project} is left by the other filters` : false}
-				onclick={() => { if (held > 0) { choose_project(project); } }}>{project}</button>
+				use:hit_target={{ id: `list.project.${project}`,
+					tip: held === 0 ? `nothing in "${project}" is left by the other filters`
+						: $w_project === project ? 'show all project files' : `show only "${project}" files`,
+					onpress: held > 0 ? () => choose_project(project) : undefined }}>{project}</button>
 		{/each}
 	</div>
 	{/if}
@@ -267,13 +275,14 @@
 			class='search'
 			bind:value={$w_words}
 			placeholder='search titles and descriptions'
-			use:tip={'type a word to look for'} />
+			use:hit_target={{ id: 'list.field.search', tip: 'type a word to look for' }} />
 	</div>
 
 	<!-- The whole set of picking rows, as one section: its line carries the word that folds them
 	     all away, and it holds three subsections — the projects, the kinds, the tags. It holds no
 	     gap of its own, since each of those holds the gap at its own boundaries. -->
 	<Section
+		id='list.filters'
 		holds_subsections
 		gap={0}
 		edge={T_Edge.thick}
@@ -286,6 +295,7 @@
 			<!-- Each section's line names what sits under it, so the word reads as a heading for
 			     the row that follows. -->
 			<Section
+				id='list.projects'
 				gap={k.gap.big}
 				actions={[projects_action, projects_clearer]}
 				folded={!show_projects}>
@@ -297,6 +307,7 @@
 			</Section>
 
 			<Section
+				id='list.kinds'
 				gap={k.gap.big}
 				actions={[kinds_action, kinds_clearer]}
 				folded={!show_kinds}>
@@ -309,14 +320,16 @@
 						     for it to leave, so it goes rather than standing there unanswering. -->
 						{#if bare > 0 || $w_kind === UNLABELED}
 							<button class='segment' class:current={$w_kind === UNLABELED}
-								use:tip={'show only the files that carry no labels'}
-								onclick={() => choose_kind(UNLABELED)}>none</button>
+								use:hit_target={{ id: `list.kind.${UNLABELED}`, onpress: () => choose_kind(UNLABELED),
+									tip: 'show only the files that carry no labels' }}>none</button>
 						{/if}
 						{#each shown_kinds as kind}
 							{@const in_reach = kinds.includes(kind)}
 							<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
-								use:tip={in_reach ? false : `nothing of that kind is left by the other filters`}
-								onclick={() => { if (in_reach) { choose_kind(kind); } }}>{kind}</button>
+								use:hit_target={{ id: `list.kind.${kind}`,
+									tip: in_reach ? `${$w_kind === kind ? 'remove' : 'add'} "${kind}" kind`
+										: `nothing of that kind is left by the other filters`,
+									onpress: in_reach ? () => choose_kind(kind) : undefined }}>{kind}</button>
 						{/each}
 					</div>
 					{/if}
@@ -324,8 +337,13 @@
 				{/snippet}
 			</Section>
 
+			<!-- Folded under a folded kinds row, it asks for no gap at all — which is how a section
+			     says it stands flat. Its line is then the last thing in the picking rows and the
+			     count row below draws none, so nothing stands between that line and the list. With
+			     the kinds open it stands as it is, folded or not. -->
 			<Section
-				gap={k.gap.big}
+				id='list.tags'
+				gap={foot_is_all_folds(!show_kinds, !show_tags) ? 0 : k.gap.big}
 				actions={[tags_action, picking_action]}
 				fills_when_bare
 				onbare={() => toggle_all_areas(showing_areas.map((one) => one.name))}
@@ -378,7 +396,7 @@
 		white-space   : nowrap;
 	}
 
-	.fold-word:hover {
+	.fold-word:global([data-hit]) {
 		border-color : var(--darkgray);
 		background   : var(--hover);
 	}
@@ -404,10 +422,20 @@
 	/* The three picking rows, taken as one run. Its own gap above is what stands between the
 	   line over the whole set and the first line inside it. */
 	.picking-rows {
-		padding-top    : var(--gap-big);
 		flex-direction : column;
 		display        : flex;
 		gap            : 0;
+	}
+
+	/* The strip between the line above and the first picking row's own line. It was bare space;
+	   it is a block of its own now so it can take the accent — reaching out to the box's edges the
+	   way a section's body does, and with no line down its middle, since nothing here is folded. */
+	.picking-rows::before {
+		margin     : 0 calc(var(--gap) * -1);
+		background : var(--accent);
+		height     : var(--gap-big);
+		flex       : 0 0 auto;
+		content    : '';
 	}
 
 	/* The clearing pill and the control it belongs to, centered together with one gap between
@@ -454,7 +482,7 @@
 		cursor     : default;
 	}
 
-	.segment:not(.current):not(.empty):hover {
+	.segment:not(.current):not(.empty):global([data-hit]) {
 		background : var(--hover);
 	}
 
@@ -478,14 +506,10 @@
 		flex-shrink   : 0;
 	}
 
-	.clear:hover {
+	.clear:global([data-hit]) {
 		background : var(--hover);
 	}
 
-	.clear:active {
-		color      : var(--text-on-accent);
-		background : var(--accent);
-	}
 
 	/* A collection with no guides yet: grayed and dead to the touch. */
 	.segment.empty {
@@ -549,15 +573,11 @@
 		padding   : 0 var(--gap);
 	}
 
-	/* A press is never a state, so it takes the fill only while the cursor is on it and a
-	   stronger one while it is held. */
-	.picking .segment.press:hover {
+	/* A press is never a state, so it takes the fill only while the cursor is on it. The stronger
+	   fill it wore while held is gone: the manager says pressed and released and nothing between,
+	   so nothing knows when a button is being held down. */
+	.picking .segment.press:global([data-hit]) {
 		background : var(--hover);
-	}
-
-	.picking .segment.press:active {
-		color      : var(--text-on-accent);
-		background : var(--accent);
 	}
 
 	.search {

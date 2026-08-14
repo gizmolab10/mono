@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { T_Edge, USUAL_GAP, folded_height, gap_above, thickness_of } from '../../ts/utilities/Sectioning';
-	import { over_nothing } from '../../ts/utilities/Hit_Empty_Space';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/events/Hits';
 	import Action, { T_Position } from '../../ts/types/Action';
-	import { tip } from '../../ts/utilities/Tooltip';
 	import Separator from './Separator.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -14,6 +15,7 @@
 	// their own arithmetic and drifting apart.
 
 	let {
+		id,
 		edge               = T_Edge.thin,
 		gap                = USUAL_GAP,
 		onhover            = undefined,
@@ -25,6 +27,7 @@
 		actions            = null,
 		holds,
 	}: {
+		id                 : string;                  // what this section is called, said once by whoever draws it
 		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
 		onbare?            : (() => void) | undefined;               // a press landed on the bare background, on nothing that answers for itself
 		bare_says?         : string;                  // what a press on the bare background would do, shown while the cursor is on it
@@ -47,19 +50,23 @@
 		? (actions ?? []).filter((one) => one.position !== T_Position.center)
 		: actions);
 
-	// Is the cursor on this section's own bare space right now? The whole background is what a
-	// press there acts on, so the whole background is what fills — the gap it holds above and
-	// below its contents included, since that gap is bare space too.
-	let bare_lit = $state(false);
+	// Folding or opening moves everything below this section, and every rectangle the hits manager
+	// holds was measured where its control stood then. They are all asked again once the browser
+	// has drawn at the new height.
+	$effect(() => {
+		folded;
+		hits.defer_recalibrate();
+	});
+
 </script>
 
 <!-- The line and what it bounds are one thing, so whatever stacks these sections puts its own
      spacing between whole sections rather than between a section's line and its content. -->
-<!-- What color this section is standing on, said as a value anything inside it can read. Whatever
-     paints itself to mask the line behind it — a word on the line, a name above a pill — reads
-     this rather than the page color, so it still matches while the section is lit. It is only set
-     when lit, so a section inside a lit one inherits the lit color rather than overriding it. -->
-<div class='section' style:--section-bg={bare_lit && fills_when_bare && !folded ? 'var(--hover)' : undefined}>
+<!-- What color this section is standing on is said as a value anything inside it can read — see
+     the rule below. Whatever paints itself to mask the line behind it — a word on the line, a name
+     above a pill — reads that rather than the page color, so it still matches while the section
+     is filled. -->
+<div class='section' class:fills={fills_when_bare}>
 	<!-- An edge of the view has no line to draw, so nothing is put there at all. -->
 	{#if edge !== T_Edge.view}
 		<div class='section-bar'>
@@ -73,19 +80,23 @@
 	     Folded, it also answers the cursor with nothing at all — no fill, no tip, no press, and
 	     nothing said to whoever asked to hear about the cursor. What a press there would act on
 	     is out of sight, so offering it would be a lie. -->
+	<!-- The section itself is a target, of the kind that stands behind controls: anything inside it
+	     that answers for itself wins the cursor, and what is left is this section's bare space. So
+	     the fill and the press both come from the one manager, and nothing here walks the page
+	     asking what was pressed. -->
 	<div
 		class='section-body'
 		class:folded
-		class:lit={fills_when_bare && bare_lit && !folded}
+		class:lit={fills_when_bare && !folded}
 		style:padding-top='{gap_under_line}px'
 		style:padding-bottom='{gap_under_line}px'
 		style:min-height='{folded ? folded_height(gap, bar) : 0}px'
 		role='presentation'
-		use:tip={bare_says !== '' && bare_lit && !folded ? bare_says : false}
+		use:hit_target={{ id, type: T_Hit_Target.section, dormant: folded,
+			onpress: folded ? undefined : onbare,
+			tip: folded || bare_says === '' ? null : bare_says }}
 		onmouseenter={() => { if (!folded) { onhover?.(true); } }}
-		onmousemove={(event) => { if (fills_when_bare && !folded) { bare_lit = over_nothing(event); } }}
-		onmouseleave={() => { onhover?.(false); bare_lit = false; }}
-		onclick={(event) => { if (!folded && over_nothing(event)) { onbare?.(); } }}
+		onmouseleave={() => { onhover?.(false); }}
 		onkeyup={() => {}}>
 		{#if !folded}{@render holds()}{/if}
 	</div>
@@ -143,9 +154,17 @@
 	}
 
 	/* The bare space here does something when pressed, so the whole background fills while the
-	   cursor is on it — the only thing the filling changes, so it fades rather than jumping. */
-	.section-body.lit {
+	   cursor is on it — the only thing the filling changes, so it fades rather than jumping. The
+	   stamp comes from the manager, which hands the cursor to a control inside this section before
+	   it ever reaches the section itself. */
+	.section-body.lit:global([data-hit]) {
 		background : var(--hover);
 		cursor     : pointer;
+	}
+
+	/* And the color it is standing on, said to everything inside it — the line above included,
+	   which is why this is on the whole section rather than on the body that carries the stamp. */
+	.section.fills:global(:has(> .section-body[data-hit])) {
+		--section-bg : var(--hover);
 	}
 </style>

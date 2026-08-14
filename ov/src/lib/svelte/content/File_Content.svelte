@@ -3,8 +3,11 @@
 	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
-	import { file_path_of, path_of_address, read_guide, save_guide } from '../../ts/utilities/Saving';
+	import { file_path_of, path_of_address, read_guide, save_file } from '../../ts/utilities/Saving';
 	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/events/Hits';
 	import { offer_status, show_status } from '../../ts/managers/Status';
 	import { follow_link, halt_stepping, w_command_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
@@ -14,7 +17,6 @@
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { Direction } from '../../ts/types/Angle';
-	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import MarkdownIt from 'markdown-it';
@@ -189,7 +191,7 @@
 		const where = file_path_of(guide.bundle, guide.path);
 		debug.log(`Editing "${name}": line ${at} turned over — "${line}" becoming "${flipped}". Writing it to ${where}.`);
 		redraw(whole);
-		save_guide(where, whole, was).then((answer) => {
+		save_file(where, whole, was).then((answer) => {
 			if (answer.ok) { debug.log(`Editing "${name}": ${where} written.`); return; }
 			onsay(`not saved — ${answer.why}`);
 			debug.log(`Editing "${name}": ${where} was NOT written — ${answer.why}. Putting the words back the way the file has them.`);
@@ -450,7 +452,7 @@
 		// Drawn again at once, so the words on screen are the words being written. If the
 		// write is refused, the old text goes back up and the page says why.
 		redraw(whole);
-		save_guide(where, whole, was).then((answer) => {
+		save_file(where, whole, was).then((answer) => {
 			if (answer.ok) { debug.log(`Editing "${name}": ${where} written.`); return; }
 			onsay(`not saved — ${answer.why}`);
 			debug.log(`Editing "${name}": ${where} was NOT written — ${answer.why}. Putting the words back the way the file has them.`);
@@ -730,7 +732,7 @@
 		if (has_labels(whole)) { return whole; }
 		const where = file_path_of(guide.bundle, guide.path);
 		const with_block = with_labels_added(whole, `${name}.md`, today(), guide.path);
-		const answer = await save_guide(where, with_block, whole);
+		const answer = await save_file(where, with_block, whole);
 		if (!answer.ok) {
 			debug.log(`Editing "${name}": it carries no labels and could not be given any — ${answer.why}. It is shown as it is.`);
 			return whole;
@@ -757,7 +759,7 @@
 
 	/** Take out what sits above the heading. A refused write leaves the file exactly as it was. */
 	async function clear_above_heading(cleared: string, whole: string): Promise<void> {
-		const answer = await save_guide(file_path_of(guide.bundle, guide.path), cleared, whole);
+		const answer = await save_file(file_path_of(guide.bundle, guide.path), cleared, whole);
 		if (!answer.ok) {
 			show_status(`"${name}" was not changed — ${answer.why}`);
 			debug.log(`Editing "${name}": the characters above its top heading could not be taken out — ${answer.why}. It is shown as it is.`);
@@ -852,6 +854,9 @@
 		     the list, the same as the close button — so getting out never means aiming at
 		     the small circle. Holding the command key suspends all of that, so the words can
 		     be dragged over and picked up instead. -->
+		<!-- The file's own words are a target of the third kind, standing behind everything drawn
+		     in them: anything inside that answers for itself wins the cursor first. Its own press
+		     is left where it is, since which piece was pressed is worked out from the press. -->
 		<div
 			role='button'
 			tabindex='-1'
@@ -859,9 +864,11 @@
 			class='view-page'
 			onkeyup={() => {}}
 			onclick={on_page_click}
+			onscroll={() => hits.recalibrate()}
 			class:selecting={$w_command_down}
 			onmousedown={watch_for_bar_press}
-			use:tip={$w_command_down ? 'drag to select' : 'click a paragraph to edit it'}>
+			use:hit_target={{ id: 'page.words', type: T_Hit_Target.page,
+				tip: $w_command_down ? 'drag to select' : 'click a paragraph to edit it' }}>
 			{@html words}
 		</div>
 	</div>

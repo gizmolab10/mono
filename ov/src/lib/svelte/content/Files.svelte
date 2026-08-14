@@ -22,7 +22,9 @@
 	import Separator from '../support/Separator.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { Direction } from '../../ts/types/Angle';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/events/Hits';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
 	import { get } from 'svelte/store';
@@ -71,8 +73,8 @@
 	}
 
 	// The whole row answers, not just the name: a file opens for reading, a folder opens or
-	// shuts. The triangle keeps its own click, and stops it from reaching the row, so hitting
-	// the triangle on a folder doesn't toggle it twice.
+	// shuts. The row is a target of the middle kind, so the triangle standing in it — a control —
+	// takes the cursor first and the row never hears that press at all.
 	function click_row(row: Filtered_Guide, holding_command = false, holding_option = false) {
 		if (row.guide.is_folder) {
 			// The command key shows the folder itself, on this machine, rather than opening it here.
@@ -201,6 +203,8 @@
 
 	function on_scroll() {
 		measure_thumb();
+		// Every row moved, so every rectangle the hits manager holds for one is stale.
+		hits.recalibrate();
 		if (save_wait !== null) { clearTimeout(save_wait); }
 		save_wait = setTimeout(remember_top, 150);       // save once the scrolling settles
 	}
@@ -348,7 +352,10 @@
 		if (!scroller) { return; }
 		measure_scrollbar();
 		measure_thumb();
-		const watcher = new ResizeObserver(() => { measure_scrollbar(); measure_thumb(); });
+		// A folder opening or a filter narrowing moves every row below it, so every rectangle
+		// the hits manager holds is asked again once the browser has drawn them.
+		hits.defer_recalibrate();
+		const watcher = new ResizeObserver(() => { measure_scrollbar(); measure_thumb(); hits.recalibrate(); });
 		watcher.observe(scroller);
 		const table = scroller.querySelector('table');
 		if (table) { watcher.observe(table); }
@@ -388,7 +395,12 @@
 					{@const open = !$w_shut.includes(row.key)}
 					{@const b = triangle_bounds(open)}
 					{@const prefix = open ? 'shut' : 'open'}
-					<button class='tri' aria-label={`${prefix} folder`} use:tip={`${prefix} "${row.guide.name}"`} onclick={(e) => { e.stopPropagation(); toggle_folder(row.key, row.guide.name); }}>
+					<!-- Named by the folder it opens, since the list holds one of these per folder.
+					     The row behind it opens the file on a press, so the press used to be stopped
+					     by hand; the manager hands a press to one target only. -->
+					<button class='tri' aria-label={`${prefix} folder`}
+						use:hit_target={{ id: `list.folder.${row.key}`, tip: `${prefix} "${row.guide.name}"`,
+							onpress: () => toggle_folder(row.key, row.guide.name) }}>
 						<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
 							<path d={triangle_path(open)} />
 						</svg>
@@ -422,8 +434,8 @@
 								{#if col.label === 'name' && $w_show_folders}
 									{@const b = triangle_bounds(tops_open)}
 									<button class='head-mark' aria-label={tops_open ? 'shut every folder' : 'open every folder'}
-										use:tip={tops_open ? 'shut every folder' : 'open every folder'}
-										onclick={(e) => { e.stopPropagation(); toggle_all_folders(); }}>
+										use:hit_target={{ id: 'list.folders.all', onpress: toggle_all_folders,
+											tip: tops_open ? 'shut every folder' : 'open every folder' }}>
 										<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
 											<path d={triangle_path(tops_open)} />
 										</svg>
@@ -432,12 +444,14 @@
 								<!-- A column with no title of its own draws nothing here, so the line
 								     behind runs unbroken. -->
 								{#if col.label !== '' || place}
+									<!-- Named by its own column, since the header holds one per column. -->
 									<button
 										class='head-label'
 										class:sortable={can_sort}
 										class:sorted={!!place}
-										use:tip={can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `sort by ${col.label}`) : false}
-										onclick={() => sort_by_column(col.sort)}><span class='head-words'>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</span></button>
+										use:hit_target={{ id: `list.head.${col.sort}`,
+											tip: can_sort ? (place ? `turn ${col.label} around, or click again to stop sorting by it` : `sort by ${col.label}`) : null,
+											onpress: can_sort ? () => sort_by_column(col.sort) : undefined }}><span class='head-words'>{col.label}{#if place}{place.up ? ' ▼' : ' ▲'}{#if $w_sorts.length > 1}<span class='order'>{place.at}</span>{/if}{/if}</span></button>
 								{/if}
 							</th>
 						{/each}
@@ -461,8 +475,9 @@
 							class:landing={landing_on === row.key}
 							data-key={row.key} data-n={row_number} data-name={row.guide.name}
 							draggable={$w_show_folders && !row.guide.is_folder}
-							use:tip={row_hint(row, $w_command_down, $w_option_down)}
-							onclick={(e) => click_row(row, e.metaKey, e.altKey)}
+							use:hit_target={{ id: `list.row.${row.key}`, type: T_Hit_Target.section,
+								tip: row_hint(row, $w_command_down, $w_option_down),
+								onpress: () => click_row(row, $w_command_down, $w_option_down) }}
 							ondragstart={(e) => start_drag(e, row)}
 							ondragend={end_drag}
 							ondragover={(e) => drag_over(e, row)}
@@ -655,7 +670,7 @@
 		stroke-width : 1;
 	}
 
-	.head-mark:hover path {
+	.head-mark:global([data-hit]) path {
 		fill : var(--hover);
 	}
 
@@ -712,13 +727,13 @@
 		opacity : var(--opacity-header);
 	}
 
-	.head-label.sortable:hover .head-words,
+	.head-label.sortable:global([data-hit]) .head-words,
 	.head-label.sorted .head-words {
 		opacity : 1;
 	}
 
 	/* Under the cursor a title fills as an outlined pill, so it reads as the button it is. */
-	.head-label.sortable:hover {
+	.head-label.sortable:global([data-hit]) {
 		border-color : var(--black);
 		background   : var(--hover);
 	}
@@ -819,7 +834,7 @@
 		stroke-width : 1;
 	}
 
-	.tri:hover path {
+	.tri:global([data-hit]) path {
 		fill : var(--hover);
 	}
 

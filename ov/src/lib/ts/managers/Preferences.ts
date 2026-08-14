@@ -44,6 +44,7 @@ export enum T_Preference {
 
 	// Reading one guide
 	show_labels     = 'show_labels',
+	form_folded     = 'form_folded',
 	fold_titles     = 'fold_titles',
 	show_search     = 'show_search',
 	search_at       = 'search_at',

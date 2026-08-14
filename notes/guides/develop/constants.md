@@ -1,11 +1,11 @@
 ---
-kind: design
+kind: specify
 title: "UX terms and concepts"
 description: ""
-tags: [done, refactor, stale]
+tags: [active, done, proposal]
 date: 2026-08-07
 ---
-# Subtypes of constants
+# Constants and subtypes
 
 ## constants
 

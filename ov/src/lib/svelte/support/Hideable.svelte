@@ -1,4 +1,7 @@
 <script lang='ts'>
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/events/Hits';
+
 	// A titled banner that toggles a body open and closed.
 	let { title, children, open = $bindable(true) } : {
 		title    : string;
@@ -9,10 +12,18 @@
 	function toggle() {
 		open = !open;
 	}
+
+	// Opening or closing moves everything below this banner, so every rectangle the hits manager
+	// holds is asked again once the browser has drawn at the new height.
+	$effect(() => {
+		open;
+		hits.defer_recalibrate();
+	});
 </script>
 
 <div class='hideable'>
-	<button class='banner' class:open onclick={toggle}>
+	<!-- Named by its own title, since the details column holds more than one of these. -->
+	<button class='banner' class:open use:hit_target={{ id: `details.${title}` , onpress: toggle }}>
 		<span class='banner-title layer-hideable'>{title}</span>
 	</button>
 	{#if open}
@@ -56,7 +67,7 @@
 		inset      : 0;
 	}
 
-	.banner:hover::before {
+	.banner:global([data-hit])::before {
 		background : var(--hover);
 		opacity    : 1;
 	}

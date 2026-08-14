@@ -2,7 +2,8 @@
 	import { type Tag_Area, area_reads, tags_shown } from '../../ts/types/Tag_Areas';
 	import { w_areas_open, toggle_area } from '../../ts/managers/Filters';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { hits } from '../../ts/events/Hits';
 	import { k } from '../../ts/common/Constants';
 
 	// One area of tags, standing as a single pill. Shut, it shows the tagset name — or the names
@@ -85,7 +86,15 @@
 		was_open = open;
 		moving = true;
 		if (settled_at !== null) { clearTimeout(settled_at); }
-		settled_at = setTimeout(() => { moving = false; settled_at = null; }, SLIDE + REST);
+		// An area opening or shutting slides its neighbours along the row for the whole of the
+		// slide, so every rectangle in that row is wrong from the moment it turns over until it
+		// stops. The manager is told at both ends of that.
+		hits.defer_recalibrate();
+		settled_at = setTimeout(() => {
+			moving = false;
+			settled_at = null;
+			hits.recalibrate();
+		}, SLIDE + REST);
 		return () => { if (settled_at !== null) { clearTimeout(settled_at); settled_at = null; } };
 	});
 
@@ -113,8 +122,11 @@
 		role='button'
 		tabindex='-1'
 		onkeyup={() => {}}
-		use:tip={open && lone === '' ? false : lone !== '' ? `show files tagged "${lone}"` : `choose ➜ ${shown.join(', ')}`}
-		onclick={() => { if (open && lone === '') { return; } if (lone !== '') { ontoggle(lone); return; } toggle_area(area.name); }}>
+		use:hit_target={{ id: `pill.${area.name}`,
+			dormant: open && lone === '',
+			tip: lone !== '' ? `${chosen.includes(lone) ? 'remove' : 'add'} "${lone}" tag`
+				: `choose ➜ ${shown.join(', ')}`,
+			onpress: lone !== '' ? () => ontoggle(lone) : () => toggle_area(area.name) }}>
 		<!-- The area's own name straddles the top edge whenever the words below it are not the
 		     area's name — open, or shut with something picked, or standing in for a lone tag. -->
 		{#if open || lone !== '' || area.tags.some((tag) => chosen.includes(tag))}
@@ -126,8 +138,10 @@
 			style:--takes='{lead_time}ms'
 			style:--starts='{open ? 0 : run_time}ms'
 			style:--shows='{open ? lead_time : run_time}ms'>
-			<button class='shut-me' bind:this={cross} aria-label={`shut ${area.name}`} use:tip={`hide ${area.name} tags`}
-				onclick={(event) => { event.stopPropagation(); toggle_area(area.name); }}>
+			<!-- Named by its own area, since a row holds one of these per area. -->
+			<button class='shut-me' bind:this={cross} aria-label={`shut ${area.name}`}
+				use:hit_target={{ id: `pill.shut.${area.name}`, onpress: () => toggle_area(area.name),
+					dormant: !open || moving, tip: `hide ${area.name} tags` }}>
 				<svg overflow='visible' viewBox='0 0 {CROSS} {CROSS}' width={CROSS} height={CROSS}>
 					<path d={cross_path} />
 				</svg>
@@ -142,10 +156,14 @@
 			<div class='inner'>
 				<div class='segments' bind:this={run}>
 					{#each shown as tag, at}
+						<!-- Named by its area and its own word, since every area holds a run of these.
+						     A press turns one tag on or off, so a picked one answers as readily as
+						     an unpicked one — a state that can be taken back is not a dead end. -->
 						<button class='segment' class:current={chosen.includes(tag)}
 							style:--waits='{waits_for(at)}ms'
-							use:tip={`show files tagged "${tag}"`}
-							onclick={(event) => { event.stopPropagation(); ontoggle(tag); }}>{tag}</button>
+							use:hit_target={{ id: `pill.${area.name}.${tag}`, onpress: () => ontoggle(tag),
+								dormant: !open || moving,
+								tip: `${chosen.includes(tag) ? 'remove' : 'add'} "${tag}" tag` }}>{tag}</button>
 					{/each}
 				</div>
 			</div>
@@ -314,7 +332,7 @@
 	}
 
 	/* The whole shut pill answers to the cursor, so its inside lights up. */
-	.big:hover .inner.shut {
+	.big:global([data-hit]) .inner.shut {
 		background : var(--hover);
 		color      : var(--text);
 	}
@@ -327,7 +345,7 @@
 		background : var(--hover);
 	}
 
-	.big.holding:hover {
+	.big.holding:global([data-hit]) {
 		background : var(--white);
 	}
 
@@ -389,7 +407,7 @@
 		stroke-width : 1.2;
 	}
 
-	.shut-me:hover {
+	.shut-me:global([data-hit]) {
 		background : var(--hover);
 	}
 
@@ -432,7 +450,7 @@
 
 	/* Every tag answers to the cursor the same way, picked or not — so pointing at one already
 	   on still shows that a click would do something. */
-	.segment:hover {
+	.segment:global([data-hit]) {
 		background : var(--hover);
 		color      : var(--text);
 	}

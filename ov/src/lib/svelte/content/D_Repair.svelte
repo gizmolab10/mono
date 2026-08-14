@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { guides } from '../../ts/managers/Files';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
 
 	// Putting things right that nothing on screen would show as wrong. One button so far: the
@@ -18,8 +18,11 @@
 </script>
 
 <div class='repair-shop'>
-	<button class='repair' use:tip={'clean index files'} onclick={handle_repair}>index files</button>
-	<button class='repair' use:tip={'look through every guide for links that lead nowhere'} onclick={handle_links}>dead links</button>
+	<button class='repair'
+		use:hit_target={{ id: 'repair.indexes', onpress: handle_repair, tip: 'clean index files' }}>index files</button>
+	<button class='repair'
+		use:hit_target={{ id: 'repair.links', onpress: handle_links,
+			tip: 'look through every guide for links that lead nowhere' }}>dead links</button>
 </div>
 
 <style>
@@ -45,7 +48,7 @@
 		cursor          : pointer;
 	}
 
-	.repair:hover {
+	.repair:global([data-hit]) {
 		background      : var(--hover);
 	}
 </style>

@@ -33,8 +33,9 @@ export function start_tips(): () => void {
 	let at_x = 0, at_y = 0;                    // where the cursor was last seen
 
 	// A control that has moved over to the hits manager carries no words of its own: the manager
-	// holds which target the cursor is on, and that target holds the words. Asked only where no
-	// element carries its own, so the two never fight over what is shown.
+	// holds which target the cursor is on, and that target holds the words. It is asked first,
+	// since it names the one thing under the cursor while the walk up the page finds the nearest
+	// thing that happens to carry words — often a whole row standing behind the control.
 	function said_by_the_manager(): string | null {
 		return get(hits.w_s_hover)?.tip ?? null;
 	}
@@ -48,17 +49,15 @@ export function start_tips(): () => void {
 		}
 		at_x = event.clientX;
 		at_y = event.clientY;
-		const message = el?.dataset.tip ?? said_by_the_manager();
-		w_tip.set({ message, x: at_x, y: at_y, appearance });
+		w_tip.set({ message: said_by_the_manager() ?? el?.dataset.tip ?? null, x: at_x, y: at_y, appearance });
 	}
 
 	// The manager is told the cursor after this watcher is, so its answer arrives one move late.
 	// This says it again the moment it changes, which is what makes the hint show on the way in
 	// rather than on the move after.
 	const stop_watching = hits.w_s_hover.subscribe((hovering) => {
-		if (current) { return; }
 		appearance++;
-		w_tip.set({ message: hovering?.tip ?? null, x: at_x, y: at_y, appearance });
+		w_tip.set({ message: hovering?.tip ?? current?.dataset.tip ?? null, x: at_x, y: at_y, appearance });
 	});
 
 	// Some hints say something different while a key is held — hovering a guide with the

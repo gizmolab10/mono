@@ -1,12 +1,14 @@
 <script lang='ts'>
-	import { w_show_folders, w_show_filters, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { foot_is_all_folds, w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
 	import Files, { w_first_column, w_scrollbar_showing } from '../content/Files.svelte';
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
+	import { words_that_fit } from '../../ts/utilities/Fitting';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import List_Filters from '../content/List_Filters.svelte';
+	import Browse_Filters from '../content/Browse_Filters.svelte';
 	import { guides } from '../../ts/managers/Files';
-	import { tip } from '../../ts/utilities/Tooltip';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import Section from '../support/Section.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
@@ -23,6 +25,46 @@
 	let matching = $derived.by(() => { $w_showing; return guides.hierarchy.matched_count; });
 	// How many there are to be had at all.
 	let total = $derived(guides.files.length);
+
+	// The picked tags hug the right end of the count row, and the count keeps its middle — so the
+	// space for the tags is what is left between the count's right edge and the row's, less the
+	// gap the tags hold off that edge. The count's own width changes with the numbers in it, so
+	// this is measured rather than reckoned.
+	let count_row = $state<HTMLElement | null>(null);
+	let count_words = $state<HTMLElement | null>(null);
+	let tags_words = $state<HTMLElement | null>(null);
+	let shown_tags = $state('');
+
+	/** How wide a string is drawn in the tags' own typeface, asked of a canvas rather than the page. */
+	let ruler: CanvasRenderingContext2D | null = null;
+	function width_of(text: string): number {
+		if (!ruler) { ruler = document.createElement('canvas').getContext('2d'); }
+		if (!ruler || !tags_words) { return text.length; }
+		const look = getComputedStyle(tags_words);
+		ruler.font = `${look.fontWeight} ${look.fontSize} ${look.fontFamily}`;
+		return ruler.measureText(text).width;
+	}
+
+	function fit_the_tags() {
+		if (!count_row || !count_words || !tags_words) { return; }
+		const row = count_row.getBoundingClientRect();
+		const count = count_words.getBoundingClientRect();
+		const held_off = parseFloat(getComputedStyle(tags_words).marginRight) || 0;
+		const room = row.right - count.right - held_off;
+		shown_tags = words_that_fit($w_tags, room, width_of);
+	}
+
+	// Measured again whenever the words change, and whenever the row changes size — the count
+	// grows and shrinks with its own numbers, and the window carries the row's right edge.
+	$effect(() => {
+		$w_tags; matching; total; $w_scrollbar_showing;
+		if (!count_row) { return; }
+		fit_the_tags();
+		const watcher = new ResizeObserver(fit_the_tags);
+		watcher.observe(count_row);
+		if (count_words) { watcher.observe(count_words); }
+		return () => watcher.disconnect();
+	});
 
 	// What the stack of lines is holding, said to the log once the browser has drawn them. It is
 	// read again whenever a fold changes, since that is what moves them.
@@ -49,15 +91,23 @@
 <!-- The three parts stack flush against each other: each already holds its own gap above and
      below what it shows, so a gap here would be a second helping of the same thing. -->
 <div class='browse'>
-<List_Filters />
+<Browse_Filters />
 <!-- How many the filters leave, as a section of its own. The heavy line above it is what closes
-     the picking rows off from the list; with those rows folded away there is nothing for it to
-     close, so this section stands at an edge of the view instead and draws no line at all. -->
+     the picking rows off from the list; with nothing standing open above it there is nothing for
+     it to close, so this section stands at an edge of the view instead and draws no line at all.
+     That is so with the whole set of rows folded away, and equally with the tags folded — the tags
+     are the last row, and their own line is already closing what stands above them. -->
+<!-- The count and the rows under it are one area to the cursor — the third kind of target, standing
+     behind everything drawn in them. Anything inside that answers for itself wins the cursor
+     first: the count row's own section, the folders button, a row's triangle. -->
+<div class='rows-area' use:hit_target={{ id: 'list.rows', type: T_Hit_Target.page }}>
 <Section
+	id='browse.count'
 	gap={k.gap.normal}
-	edge={$w_show_filters ? T_Edge.thick : T_Edge.view}>
+	edge={$w_show_filters && !foot_is_all_folds($w_filters_folded.includes('kinds'), $w_filters_folded.includes('tags'))
+		? T_Edge.thick : T_Edge.view}>
 	{#snippet holds()}
-		<div class='count-row'>
+		<div class='count-row' bind:this={count_row}>
 			<!-- With nothing left after the filters there are no folders to show or hide, so the
 				button has nothing to act on. -->
 			{#if matching > 0}
@@ -72,7 +122,8 @@
 						back into view. -->
 					<button class='folders-button eye'
 						class:crowded={$w_kind !== ''}
-						onclick={toggle_folders} use:tip={$w_show_folders ? 'hide the folders' : 'show the folders'}>
+							use:hit_target={{ id: 'browse.folders', onpress: toggle_folders,
+							tip: $w_show_folders ? 'hide the folders' : 'show the folders' }}>
 						📁
 						{#if !$w_show_folders}
 							<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
@@ -94,20 +145,33 @@
 			{#if $w_kind !== ''}
 				<span class='chosen-kind'>{$w_kind}</span>
 			{/if}
-			<span class='count'>{matching} files (of {total})</span>
+			<span class='count' bind:this={count_words}>{matching} files (of {total})</span>
 			<!-- The picked tags hug the far right, the folders button the far left, and the count
-				keeps the middle of the whole row. -->
+				keeps the middle of the whole row. The tags are cut to what is left beside the
+				count — whole words, ending in an ellipsis where any were dropped. -->
 			{#if $w_tags.length > 0}
-				<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}>{$w_tags.join(', ')}</span>
+				<span class='chosen-tags' class:has-bar={$w_scrollbar_showing}
+					bind:this={tags_words}>{shown_tags}</span>
 			{/if}
 		</div>
 	{/snippet}
 </Section>
 <Files />
 </div>
+</div>
 
 <style>
 	.browse {
+		flex-direction : column;
+		display        : flex;
+		min-height     : 0;
+		flex           : 1;
+		gap            : 0;
+	}
+
+	/* The count row and the rows below it, held together only so the two read as one area to the
+	   cursor. It stacks exactly as they did on their own. */
+	.rows-area {
 		flex-direction : column;
 		display        : flex;
 		min-height     : 0;
@@ -213,7 +277,7 @@
 		transform : translateX(var(--gap-fat));
 	}
 
-	.folders-button:hover {
+	.folders-button:global([data-hit]) {
 		background : var(--hover);
 	}
 
@@ -229,7 +293,7 @@
 		padding         : 0;
 	}
 
-	.folders-button.eye:hover {
+	.folders-button.eye:global([data-hit]) {
 		border-color : var(--black);
 		background   : var(--hover);
 	}

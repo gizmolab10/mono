@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import Action, { T_Position } from '../../ts/types/Action';
+	import { hits } from '../../ts/events/Hits';
 	import { k } from '../../ts/common/Constants';
 
 	// A colored divider — a thin accent bar, horizontal or vertical — with little rounded
@@ -34,10 +35,20 @@
 	 * Put a given element inside its holder, and take it out again when the holder goes. The
 	 * element belongs to whoever built it — it is only being lent a place to stand — so it is
 	 * never made, changed or thrown away here.
+	 *
+	 * A thing arriving here was built out of sight, so wherever it told the hits manager it stood
+	 * is where it stood then: nowhere. Every target is asked again once the browser has drawn it
+	 * in its new place, and again when it leaves.
 	 */
 	function holds_element(holder: HTMLElement, element: HTMLElement) {
 		holder.append(element);
-		return { destroy() { if (element.parentNode === holder) { holder.removeChild(element); } } };
+		hits.defer_recalibrate();
+		return {
+			destroy() {
+				if (element.parentNode === holder) { holder.removeChild(element); }
+				hits.defer_recalibrate();
+			},
+		};
 	}
 
 	const r         = $derived(radius);

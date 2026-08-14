@@ -2,11 +2,11 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { what_to_open } from '../../ts/utilities/Searching';
 	import { w_search_at } from '../../ts/managers/Operations';
+	import { hit_target, WAY_OUT } from '../../ts/events/Hit_Target';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
-	import { tip } from '../../ts/utilities/Tooltip';
 	import Section from '../support/Section.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { get } from 'svelte/store';
@@ -17,10 +17,11 @@
 	// This drawing owns neither; it only reads and writes them, so both carry across the list, the
 	// next guide, and a refresh.
 
-	let { name, page, hovered = false }: {
+	let { name, page, hovered = false, onclose }: {
 		name    : string;                  // what the file is called, for the log
 		page    : HTMLElement | null;      // the drawn words, which is what is looked through
 		hovered?: boolean;                 // force the word's edge on, because a surrounding area says so
+		onclose : () => void;              // back to the list, since this row's bare space is part of the way out
 	} = $props();
 
 	// Whether the search row is on screen at all. Folded away, the words below take its gap,
@@ -172,12 +173,17 @@
      the moment the browser has made it, it is taken and put on the line instead. -->
 <div class='out_of_sight'>
 	<button type='button' class='fold-word' class:forced={hovered} bind:this={fold_word}
-		onclick={toggle_search}>{search_word}</button>
+		use:hit_target={{ id: 'search.fold', onpress: toggle_search, tip: 'search this file' }}>{search_word}</button>
 </div>
 
 <!-- Looking through the file on screen, as a section of its own: its line carries the word
-     that folds it away, and the section holds the gap around it. -->
+     that folds it away, and the section holds the gap around it.
+
+     The bare space beside the field is part of the way back to the list, so it carries that
+     name and press and lights with the rest of it. -->
 <Section
+	id={`${WAY_OUT}.search`}
+	onbare={onclose}
 	actions={[to_do]}
 	edge={T_Edge.thick}
 	folded={!$w_show_search}>
@@ -190,7 +196,7 @@
 			{#if $w_words !== ''}
 				<div class='view-steps hits'>
 					<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
-					<Steppers can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
+					<Steppers id='search.step' can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
 				</div>
 			{/if}
 			<input
@@ -198,7 +204,7 @@
 				class='search'
 				oninput={find_first}
 				bind:value={$w_words}
-				use:tip={'search this file'}
+				use:hit_target={{ id: 'search.field', tip: 'search this file' }}
 				placeholder='search the contents of this file' />
 		</div>
 	{/snippet}
@@ -229,7 +235,7 @@
 
 	/* The edge appears under the cursor, or because the area around it says so. Told to light
 	   from outside, it takes white — it reads as marked without claiming the cursor. */
-	.fold-word:hover {
+	.fold-word:global([data-hit]) {
 		border-color : var(--darkgray);
 		background   : var(--hover);
 	}
