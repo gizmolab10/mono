@@ -45,6 +45,11 @@ export default class Hits {
 	click_timer: Mouse_Timer = new Mouse_Timer('hits-click');
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
 	autorepeat_timer: Mouse_Timer = new Mouse_Timer('hits-autorepeat');
+	// What the cursor was on when the button went down. A press is two facts — the thing pressed
+	// and the place it was let go — and each is wanted by something different: a button asks
+	// whether they agree, a drag asks only where it ended. Held by name rather than by the target
+	// itself, since a drawing between the two can replace the very element that was pressed.
+	pressed_id: string | null = null;
 
 	w_s_hover	 = writable<S_Hit_Target | null>(null);
 	w_longClick	 = writable<S_Hit_Target | null>(null);
@@ -75,10 +80,31 @@ export default class Hits {
 
 	handle_s_mouse_at(point: Point, s_mouse: S_Mouse): boolean {
 		const matches = this.targets_atPoint(point);
-		const target = this.targetOf_highest_precedence(matches) ?? matches[0];
-		if (!target) { return false; }
+		const under = this.targetOf_highest_precedence(matches) ?? matches[0];
+
+		// Letting go somewhere other than the thing pressed does nothing at all — the same as every
+		// other app on the machine. The thing pressed is remembered on the way down and asked for
+		// here; a drag never comes through this at all, so it still ends where the cursor is.
+		if (s_mouse.isUp) {
+			const pressed = this.pressed_id;
+			this.pressed_id = null;
+			this.cancel_longClick();
+			this.stop_autorepeat();
+			if (pressed === null) { return false; }
+			if (!under || under.id !== pressed) {
+				debug.log(`Press let go on "${under?.id ?? 'nothing'}" while "${pressed}" was pressed — they differ, so nothing happens.`);
+				this.longClick_fired = false;
+				this.doubleClick_fired = false;
+				return false;
+			}
+			return this.finish_press(under, s_mouse);
+		}
+
+		if (!under) { this.pressed_id = null; return false; }
+		const target = under;
 
 		if (s_mouse.isDown) {
+			this.pressed_id = target.id;
 			target.clicks += 1;
 			if (target.respondsTo_autorepeat) {
 				// The repeating begins with one beat at once, and that beat is the press. Saying
@@ -102,24 +128,27 @@ export default class Hits {
 			} else {
 				target.handle_s_mouse?.(s_mouse);
 			}
-		} else if (s_mouse.isUp) {
-			this.cancel_longClick();
-			this.stop_autorepeat();
-			if (this.longClick_fired || this.doubleClick_fired) {
-				this.doubleClick_fired = false;
-				this.longClick_fired = false;
-				target.clicks = 0;
-			} else {
-				const waitingForDoubleClick = target.respondsTo_doubleClick &&
-					this.click_timer.hasTimer_forID(T_Timer.double) &&
-					this.pending_singleClick_target === target;
-				if (!waitingForDoubleClick) {
-					target.clicks = 0;
-					return target.handle_s_mouse?.(s_mouse) ?? false;
-				}
-			}
 		}
 		return true;
+	}
+
+	/**
+	 * The press let go on the very thing it began on. Whatever a long press or a double press
+	 * already did stands, and is not done again; anything else hears its release.
+	 */
+	private finish_press(target: S_Hit_Target, s_mouse: S_Mouse): boolean {
+		if (this.longClick_fired || this.doubleClick_fired) {
+			this.doubleClick_fired = false;
+			this.longClick_fired = false;
+			target.clicks = 0;
+			return true;
+		}
+		const waiting_for_a_second = target.respondsTo_doubleClick &&
+			this.click_timer.hasTimer_forID(T_Timer.double) &&
+			this.pending_singleClick_target === target;
+		if (waiting_for_a_second) { return true; }
+		target.clicks = 0;
+		return target.handle_s_mouse?.(s_mouse) ?? false;
 	}
 
 	// ===== MOVEMENT =====
@@ -138,6 +167,7 @@ export default class Hits {
 
 	reset() {
 		this.rbush.clear();
+		this.pressed_id = null;
 		this.stop_autorepeat();
 		this.cancel_longClick();
 		this.set_asHovering(null);
@@ -415,10 +445,11 @@ export default class Hits {
 		match?.html_element?.setAttribute('data-hit', '');
 		this.w_s_hover.set(!match ? null : match);
 		this.watch_for_drift(match);
-		const autorepeating_target = get(this.w_autorepeat);
-		if (!!autorepeating_target && (!match || !match.hasSameID_as(autorepeating_target))) {
-			this.stop_autorepeat();
-		}
+		// The repeating is left alone here. It runs only while a press is held, and letting that
+		// press go always stops it — so nothing else needs to. Stopping it on a change of hover
+		// killed every patter before it began: stepping to another file draws the mark afresh, the
+		// old element leaves the page, the manager lets its target go and says nothing is hovered,
+		// and that arrived long before the 800ms wait was over.
 		const longClick_target = get(this.w_longClick);
 		if (!!longClick_target && (!match || !match.hasSameID_as(longClick_target))) {
 			this.cancel_longClick();

@@ -57,7 +57,7 @@ export class Hierarchy {
 	indexes = new Indexes();
 
 	// One instant lookup per kind of question: a node by its id, and a folder by the
-	// place it sits, so building the structure never scans the whole list.
+	// path it sits at, so building the structure never scans the whole list.
 	private folders_byPath = new Map<string, File>();
 	private files_byID    = new Map<string, File>();
 
@@ -91,7 +91,7 @@ export class Hierarchy {
 		});
 	}
 
-	/** The folder at this place inside a collection, made the first time it is asked for. */
+	/** The folder at this path inside a collection, made the first time it is asked for. */
 	folder_at(bundle: T_Bundle, path: string, name: string): File {
 		const where = `${bundle}/${path}`;
 		const found = this.folders_byPath.get(where);
@@ -324,7 +324,7 @@ export class Hierarchy {
 			// out to a work note — which the app never lists — ends on whichever guide happens to
 			// share its last word, and pressing it opens the very file it was written in.
 			//
-			// Asked of the file's whole place, counting from the top of the repo. A file's place
+			// Asked of the file's whole path, counting from the top of the repo. A file's path
 			// inside its own collection has the project and the notes and guides folders stripped
 			// off it, so a link written the long way round — `../../../di/notes/guides/…` — could
 			// never agree with anything, and every one of them read as dead.
@@ -353,20 +353,20 @@ export class Hierarchy {
 	 * share as many, the closer one wins, counted in folder steps from the file the link is written
 	 * in. Where two are equal on both, nothing comes back and the report says how many there were.
 	 */
-	likely_meant(from: File, link: string): { place: string | null; of: number; name: string } {
+	likely_meant(from: File, link: string): { path: string | null; of: number; name: string } {
 		const wanted = decodeURIComponent(link.split('#')[0].trim()).replace(/\.md$/i, '');
 		const parts = parts_of_link(wanted);
 		const name = parts[parts.length - 1] ?? '';
-		if (name === '') { return { place: null, of: 0, name }; }
-		const places: string[] = [];
+		if (name === '') { return { path: null, of: 0, name }; }
+		const paths: string[] = [];
 		for (const row of this.all_guides.values()) {
 			if (row.file.is_folder || row.file.name !== name) { continue; }
-			places.push(file_path_of(row.file.bundle, row.file.path));
+			paths.push(file_path_of(row.file.bundle, row.file.path));
 		}
 		const here = file_path_of(from.bundle, from.path);
-		const place = likeliest(parts, here, places);
-		debug.log(`Link from "${from.name}" to "${wanted}": ${places.length} file(s) named "${name}" — ${place === null ? (places.length === 0 ? 'none to offer' : 'two of them equally likely, so none is offered') : `the likeliest is ${place}`}.`);
-		return { place, of: places.length, name };
+		const path = likeliest(parts, here, paths);
+		debug.log(`Link from "${from.name}" to "${wanted}": ${paths.length} file(s) named "${name}" — ${path === null ? (paths.length === 0 ? 'none to offer' : 'two of them equally likely, so none is offered') : `the likeliest is ${path}`}.`);
+		return { path, of: paths.length, name };
 	}
 
 	// --- narrowing ------------------------------------------------------------

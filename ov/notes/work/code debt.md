@@ -11,19 +11,41 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## work
 
-- [ ] gap between sep and search in editor --gap
-- [ ] editor top row
-    - [ ] allocate 80px for the N of M
-    - [ ] right justify it so it hugs the back/forward buttons
-- [ ] editor, steppers should but don't autorepeat
 - [ ] remember the scroll position in the fifo
+- [ ] fix the folder no folder button at width.tiny (50px)
 - [ ] placeholder text and overstrike -> --lightgray
 - [ ] compose an email does not work on Windows
 - [ ] add a list of back links to the editor
+- [ ] write installation instructions in
+    - [ ] [[ov installer]]
 - [ ] 1340 occurrences of 'guide' -> many should be 'file'
 
 ## done
 
+- [x] every row of a table shows the line it came from
+    - [x] the number hangs off the row's first cell — anything drawn against a row becomes a cell of
+        its own, which pushes every real cell one column along
+    - [x] a table wears no number itself, since a table's own drawing goes wherever the browser
+        decides, which is down beside the second row and over the number already there
+    - [x] the line of dashes under the headings is drawn as nothing, so it carries no number
+- [x] where a file sits is called its path
+    - [x] `place` -> `path` wherever it means a file's location, in nine files
+    - [x] the everyday noun and verb keep the word — said in one place, holds its place in the run
+    - [x] on disk it is a path, on the web a url, and address is either one
+- [x] a file with no labels is marked as the one being worked on
+    - [x] the composed block wears `active` beside `stale`
+- [x] the editor's step marks repeat while held
+    - [x] a press and the first beat of the repeating are the same act, said once
+    - [x] the hover changing no longer stops the patter, so a mark redrawn under the cursor keeps
+        beating
+    - [x] [[mouse ux]] — the pressed thing is remembered, and letting go elsewhere does nothing
+- [x] the count in the editor's top row holds one width, its words to the right
+    - [x] `width.tiny` — 80 — added to the one ladder of sizes, so nothing writes a number alone
+- [x] every picking row holds the same gap under its own line
+    - [x] the editor's search, kinds and tags rows asked for none, so they took the usual gap while
+        browse's three asked for the big one — six rows, two different gaps
+    - [x] the search field is drawn two pixels lower, so it sits square under the line
+    - [x] one call says every section's gap below its own line, to its box and to its first ink
 - [x] one press is one act, wherever it ends
     - [x] a row opens its file when the press is let go, so a file can be dragged into a folder
     - [x] both folder marks act on release too — turning changes the mark's own shape, so acting on

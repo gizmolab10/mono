@@ -39,7 +39,11 @@ Never ask Jonathan to paste a log. Every app writes its own into `logs/`, and re
 
 And read it FIRST, before touching a single file. The log holds everything since he last loaded the page; my first edit sends a reload through the dev server, and the reload wipes it. i lost a whole alert that way — every detail i needed, gone, because i started fixing before i started reading.
 
-## 8. Say it once
+## 8. Half, then a quarter
+
+Whatever the draft is, send half of it. A quarter where the answer still stands. This is a cap on prose, and only prose: the evidence line — the quoted line and its file — is never what gets cut. Short and unproved is worse than long.
+
+## 9. Say it once
 
 This is the one source for it. It governs replies and prose written into files alike; the voice guide points here rather than repeating it.
 

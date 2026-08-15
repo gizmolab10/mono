@@ -2,7 +2,7 @@
 kind: arch
 title: "Hits (ws)"
 description: "One spatial index decides which single element reacts to the mouse."
-tags: [program, UX]
+tags: [active, program, UX]
 date: 2026-01-12
 ---
 # Hits Design
@@ -12,31 +12,32 @@ Only one element in the app can react to the mouse. The **Hits** spatial index k
 For timing logic (autorepeat, long-click, double-click), see [timers.md](../internals/timers.md).
 
 ## Table of Contents
+
 - [Overview & Status](#overview--status)
-  - [Overview](#overview)
-  - [Status](#status)
-  - [Benefits](#benefits)
+    - [Overview](#overview)
+    - [Status](#status)
+    - [Benefits](#benefits)
 - [Architecture](#architecture)
-  - [Hits Manager](#hits-manager)
-  - [Click Detection Flow](#click-detection-flow)
-  - [S_Hit_Target](#s_hit_target)
-  - [Component Pattern](#component-pattern)
-  - [S_Mouse](#s_mouse)
+    - [Hits Manager](#hits-manager)
+    - [Click Detection Flow](#click-detection-flow)
+    - [S_Hit_Target](#s_hit_target)
+    - [Component Pattern](#component-pattern)
+    - [S_Mouse](#s_mouse)
 - [Migration Guide](#migration-guide)
-  - [Step 1: Add S_Element](#step-1-add-s_element-for-components-without-one)
-  - [Step 2: Set handle_s_mouse](#step-2-set-handle_s_mouse-for-components-with-existing-s_element)
-  - [Step 3: Remove DOM handlers](#step-3-remove-dom-handlers)
+    - [Step 1: Add S_Element](#step-1-add-s_element-for-components-without-one)
+    - [Step 2: Set handle_s_mouse](#step-2-set-handle_s_mouse-for-components-with-existing-s_element)
+    - [Step 3: Remove DOM handlers](#step-3-remove-dom-handlers)
 - [Component Status](#component-status)
-  - [Migrated](#migrated-)
-  - [Pending](#pending)
+    - [Migrated](#migrated-)
+    - [Pending](#pending)
 - [Rubberband](#rubberband)
 - [Testing](#testing)
-  - [Setup](#setup)
-  - [Terms](#terms)
-  - [Regression](#regression)
+    - [Setup](#setup)
+    - [Terms](#terms)
+    - [Regression](#regression)
 - [Reference](#reference)
-  - [Hit Target Type Getters](#hit-target-type-getters)
-  - [Component Complexity](#component-complexity)
+    - [Hit Target Type Getters](#hit-target-type-getters)
+    - [Component Complexity](#component-complexity)
 
 ---
 
@@ -51,9 +52,9 @@ Centralized click handling using the Hits spatial index to dispatch `handle_s_mo
 - [x] **Complete** — Core hit detection and dispatch
 - [x] **Complete** — All mouse timing centralized (see [timers.md](../internals/timers.md))
 - [ ] Remaining work
-  - [ ] `Search_Results.svelte` — complex (dynamic rows, may be too granular)
-  - [ ] breadcrumb button — not yet migrated to centralized autorepeat
-  - [ ] close button — does not yet use Button
+    - [ ] `Search_Results.svelte` — complex (dynamic rows, may be too granular)
+    - [ ] breadcrumb button — not yet migrated to centralized autorepeat
+    - [ ] close button — does not yet use Button
 
 ### Benefits
 
@@ -75,12 +76,13 @@ Some elements have a shape very different than a rectangle. `S_Hit_Target` provi
 ### Click Detection Flow
 
 On `mousedown`/`mouseup` at the document level (Events.ts):
+
 1. Call `hits.targets_atPoint(point)` to find targets under cursor
 2. Select topmost target using priority: dot → widget → ring → control → other
 3. Invoke `target.handle_s_mouse(s_mouse)` if defined
 4. Hits handles timing centrally (see [timers.md](../internals/timers.md))
 
-```
+```text
 mousedown → Events.ts → hits.handle_click_at(point, s_mouse)
                               ↓
                      targets_atPoint(point)
@@ -101,6 +103,7 @@ Hits uses a highly performant RBush index that takes a mouse position (x, y) and
 **Registration:**
 
 The `rect` setter **always** calls `hits.add_hit_target(this)` unconditionally:
+
 ```ts
 set rect(value: Rect | null) {
     this.element_rect = value;
@@ -111,6 +114,7 @@ set rect(value: Rect | null) {
 **Clipping:**
 
 Hit rects for graph elements (dots, widgets, rings) are clipped to the visible graph view:
+
 ```ts
 update_rect() {
     if (!!this.html_element) {
@@ -129,6 +133,7 @@ update_rect() {
 #### Click Handler
 
 Optional `handle_s_mouse` method:
+
 ```ts
 handle_s_mouse?: (s_mouse: S_Mouse) => boolean;
 ```
@@ -136,6 +141,7 @@ handle_s_mouse?: (s_mouse: S_Mouse) => boolean;
 ### Component Pattern
 
 Components register a handler on their hit target:
+
 ```ts
 s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
     // handle click, return true if consumed
@@ -154,6 +160,7 @@ A **transient value object** encapsulating current mouse-relevant information:
 - **Raw data**: `event` (the original MouseEvent)
 
 Static factories:
+
 ```ts
 S_Mouse.down(event, element)    // user pressed
 S_Mouse.up(event, element)      // user released
@@ -164,11 +171,11 @@ S_Mouse.repeat(event, element)  // autorepeat tick
 
 **Deprecated patterns:**
 
-| Old | New |
-|----|-----|
+| Old                              | New                                 |
+| -------------------------------- | ----------------------------------- |
 | `elements.s_mouse_forName(name)` | Fresh `S_Mouse` instances each time |
-| `S_Mouse.clicks` | `S_Hit_Target.clicks` |
-| `detect_autorepeat` boolean | `mouse_detection` enum |
+| `S_Mouse.clicks`                 | `S_Hit_Target.clicks`               |
+| `detect_autorepeat` boolean      | `mouse_detection` enum              |
 
 ---
 
@@ -215,31 +222,31 @@ s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
 
 ### Migrated ✅
 
-| Component | Notes |
-|-----------|-------|
-| `Button.svelte` | S_Element + handle_s_mouse, supports all timing modes |
-| `Glow_Button.svelte` | S_Element + handle_s_mouse + hover via hits |
-| `Next_Previous.svelte` | Array of S_Elements for multiple buttons |
-| `Widget_Title.svelte` | s_title + s_widget handle_s_mouse |
-| `Radial_Rings.svelte` | s_rotation + s_resizing handle_s_mouse |
-| `Cluster_Pager.svelte` | s_pager handle_s_mouse for thumbs |
-| `Radial_Cluster.svelte` | s_paging handle_s_mouse for paging arcs |
-| `Rubberband.svelte` | Catch-all for empty graph space |
-| `Close_Button.svelte` | Fixed handler setup and RBush entry management |
-| `Widget_Drag.svelte` | Responds on `isDown` |
-| `Widget_Reveal.svelte` | Responds on `isDown` |
-| `Segmented.svelte` | Changed to `on:mousedown` |
-| `Breadcrumb_Button.svelte` | Responds on `isDown` |
-| `D_Actions.svelte` | All actions autorepeat |
-| `Steppers.svelte` | Passed to `Triangle_Button` |
-| `Triangle_Button.svelte` | Wraps Button |
-| `Buttons_Row.svelte` | Uses Button |
-| `Buttons_Table.svelte` | Uses `Buttons_Row` |
+| Component                  | Notes                                                 |
+| -------------------------- | ----------------------------------------------------- |
+| `Button.svelte`            | S_Element + handle_s_mouse, supports all timing modes |
+| `Glow_Button.svelte`       | S_Element + handle_s_mouse + hover via hits           |
+| `Next_Previous.svelte`     | Array of S_Elements for multiple buttons              |
+| `Widget_Title.svelte`      | s_title + s_widget handle_s_mouse                     |
+| `Radial_Rings.svelte`      | s_rotation + s_resizing handle_s_mouse                |
+| `Cluster_Pager.svelte`     | s_pager handle_s_mouse for thumbs                     |
+| `Radial_Cluster.svelte`    | s_paging handle_s_mouse for paging arcs               |
+| `Rubberband.svelte`        | Catch-all for empty graph space                       |
+| `Close_Button.svelte`      | Fixed handler setup and RBush entry management        |
+| `Widget_Drag.svelte`       | Responds on `isDown`                                  |
+| `Widget_Reveal.svelte`     | Responds on `isDown`                                  |
+| `Segmented.svelte`         | Changed to `on:mousedown`                             |
+| `Breadcrumb_Button.svelte` | Responds on `isDown`                                  |
+| `D_Actions.svelte`         | All actions autorepeat                                |
+| `Steppers.svelte`          | Passed to `Triangle_Button`                           |
+| `Triangle_Button.svelte`   | Wraps Button                                          |
+| `Buttons_Row.svelte`       | Uses Button                                           |
+| `Buttons_Table.svelte`     | Uses `Buttons_Row`                                    |
 
 ### Pending
 
-| Component | Issue |
-|-----------|-------|
+| Component               | Issue                                                |
+| ----------------------- | ---------------------------------------------------- |
 | `Search_Results.svelte` | Each row would need its own S_Element — too granular |
 
 ---
@@ -249,6 +256,7 @@ s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
 Rubberband handles clicks on "empty" graph space. Registers directly as a catch-all hit target instead of Graph.svelte delegating.
 
 **Why Rubberband, not Graph?**
+
 - Rubberband actually needs the click
 - Graph just passes through — unnecessary middleman
 - Rubberband already has `bounds` prop
@@ -281,22 +289,22 @@ All tests assume a **widget is selected** in the graph or list view.
 
 ### Terms
 
-| Term | Definition |
-|------|------------|
+| Term              | Definition                                                                          |
+| ----------------- | ----------------------------------------------------------------------------------- |
 | **details panel** | Stack of buttons opening panels. Tap details toggle (three bars, top left) to show. |
-| **actions panel** | Details panel showing action buttons in seven categories. |
-| **re-render** | Svelte destroys/recreates component. `S_Hit_Target` persists. |
+| **actions panel** | Details panel showing action buttons in seven categories.                           |
+| **re-render**     | Svelte destroys/recreates component. `S_Hit_Target` persists.                       |
 
 ### Regression
 
 1. **Normal-click buttons work normally**
-   - [x] Single click works, no delays or repeats
-   - [x] breadcrumbs — fixed (responds on `isDown`)
-   - [x] details toggle — fixed (responds on `isDown`)
-   - [x] search — fixed (handler setup improved)
-   - [x] close search — fixed (handler setup, removed stale RBush entries)
-   - [x] widget drag/reveal buttons — fixed (respond on `isDown`)
-   - [x] segmented controls — fixed (changed to `on:mousedown`)
+    - [x] Single click works, no delays or repeats
+    - [x] breadcrumbs — fixed (responds on `isDown`)
+    - [x] details toggle — fixed (responds on `isDown`)
+    - [x] search — fixed (handler setup improved)
+    - [x] close search — fixed (handler setup, removed stale RBush entries)
+    - [x] widget drag/reveal buttons — fixed (respond on `isDown`)
+    - [x] segmented controls — fixed (changed to `on:mousedown`)
 
 For timing tests (autorepeat, double-click, long-click), see [timers.md](../internals/timers.md#testing).
 
@@ -306,17 +314,17 @@ For timing tests (autorepeat, double-click, long-click), see [timers.md](../inte
 
 ### Hit Target Type Getters
 
-| Getter | Includes |
-|--------|----------|
+| Getter       | Includes                                      |
+| ------------ | --------------------------------------------- |
 | `isAControl` | `T_Hit_Target.control`, `T_Hit_Target.button` |
-| `isAWidget` | `T_Hit_Target.widget`, `T_Hit_Target.title` |
-| `isRing` | `T_Hit_Target.ring`, `T_Hit_Target.paging` |
-| `isADot` | `T_Hit_Target.dot` |
+| `isAWidget`  | `T_Hit_Target.widget`, `T_Hit_Target.title`   |
+| `isRing`     | `T_Hit_Target.ring`, `T_Hit_Target.paging`    |
+| `isADot`     | `T_Hit_Target.dot`                            |
 
 ### Component Complexity
 
-| Component | Notes |
-|-----------|-------|
-| `Rubberband.svelte` | Catch-all, lowest priority |
-| `Search_Results.svelte` | Too granular for per-row S_Element |
+| Component                  | Notes                                                                  |
+| -------------------------- | ---------------------------------------------------------------------- |
+| `Rubberband.svelte`        | Catch-all, lowest priority                                             |
+| `Search_Results.svelte`    | Too granular for per-row S_Element                                     |
 | `Breadcrumb_Button.svelte` | Dual state: `S_Widget` for colors, separate `S_Element` for hit target |

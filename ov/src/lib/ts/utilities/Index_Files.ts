@@ -73,7 +73,7 @@ export function renamed_address(address: string, new_name: string): string {
 }
 
 // How one file is named from inside a folder: "./" and down for something below, "../" for
-// each folder that has to be climbed first. Both places are named from the top of the repo.
+// each folder that has to be climbed first. Both paths are named from the top of the repo.
 export function relative_address(from_folder: string, to_file: string): string {
 	const here = from_folder.split('/').filter((p) => p !== '');
 	const there = to_file.split('/');
@@ -135,7 +135,7 @@ export function repaired_index(
 			else { removed.push(line); }
 			continue;
 		}
-		// It points somewhere else. Only a name the app knows, at a different place, is put right;
+		// It points somewhere else. Only a name the app knows, at a different path, is put right;
 		// anything it doesn't know about is left exactly as it is.
 		if (elsewhere && elsewhere !== address) { kept.push(line.replace(address, elsewhere)); rewritten.push(name); }
 		else { kept.push(line); }

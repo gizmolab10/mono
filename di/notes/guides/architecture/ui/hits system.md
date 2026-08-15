@@ -2,7 +2,7 @@
 kind: arch
 title: "Hits System (di)"
 description: "One spatial index decides which single element the mouse is talking to."
-tags: [program, UX]
+tags: [active, program, UX]
 date: 2026-05-20
 ---
 # Hits System Design
@@ -10,18 +10,19 @@ date: 2026-05-20
 Only one element in the app can react to the mouse. The **Hits** spatial index knows which one. It's the **single source of truth** for hover and click dispatch. Consistent behavior everywhere.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Architecture](#architecture)
-  - [Hits Manager](#hits-manager)
-  - [Click Detection Flow](#click-detection-flow)
-  - [S_Hit_Target](#s_hit_target)
-  - [use:hit_target Action](#usehit_target-action)
-  - [S_Mouse](#s_mouse)
+    - [Hits Manager](#hits-manager)
+    - [Click Detection Flow](#click-detection-flow)
+    - [S_Hit_Target](#s_hit_target)
+    - [use:hit_target Action](#usehit_target-action)
+    - [S_Mouse](#s_mouse)
 - [Patterns](#patterns)
-  - [Hover Detection in Components](#hover-detection-in-components)
-  - [Component Pattern](#component-pattern)
+    - [Hover Detection in Components](#hover-detection-in-components)
+    - [Component Pattern](#component-pattern)
 - [Reference](#reference)
-  - [Hit-target types](#hit-target-types)
+    - [Hit-target types](#hit-target-types)
 
 ---
 
@@ -49,6 +50,7 @@ Some elements have a shape very different than a rectangle. `S_Hit_Target` provi
 ### Click Detection Flow
 
 On `mousedown`/`mouseup` at the document level (Events.ts):
+
 1. Call `hits.targets_atPoint(point)` to find targets under cursor
 2. Select topmost target using priority: control > banner > graph > other
 3. Invoke `target.handle_s_mouse(s_mouse)` if defined
@@ -75,6 +77,7 @@ Hits uses a highly performant RBush index that takes a mouse position (x, y) and
 **Registration:**
 
 The `rect` setter **always** calls `hits.add_hit_target(this)`:
+
 ```ts
 set rect(value: Rect | null) {
     this.element_rect = value;
@@ -85,6 +88,7 @@ set rect(value: Rect | null) {
 #### ID Prefixing
 
 The constructor prefixes the id with the target type:
+
 ```ts
 constructor(type: T_Hit_Target, id: string) {
     this.id = type + '-' + id;
@@ -97,6 +101,7 @@ This means if you pass `id: 'close-button'` with `type: T_Hit_Target.control`, t
 #### Click Handler
 
 Optional `handle_s_mouse` method:
+
 ```ts
 handle_s_mouse?: (s_mouse: S_Mouse) => boolean;
 ```
@@ -106,6 +111,7 @@ handle_s_mouse?: (s_mouse: S_Mouse) => boolean;
 The Svelte action in `Hit_Target.ts` is the standard way to register hit targets. It handles everything: creates `S_Hit_Target`, wires callbacks, registers the element rect, subscribes to hover, and cleans up on destroy.
 
 **Configuration:**
+
 ```ts
 use:hit_target={{ id: 'some-id', onpress: fn, onrelease: fn, onlong: fn, ondouble: fn, onautorepeat: fn, hoverCursor: '...', type: T_Hit_Target.control }}
 ```
@@ -113,6 +119,7 @@ use:hit_target={{ id: 'some-id', onpress: fn, onrelease: fn, onlong: fn, ondoubl
 Only `id` is required. `type` defaults to `T_Hit_Target.control`.
 
 **What it does on mount:**
+
 1. Creates `S_Hit_Target(type, id)` — prefixes the id as `type + '-' + id`
 2. Wires callbacks: sets `mouse_detection` flags based on which callbacks are provided, wires `handle_s_mouse` to call `onpress`/`onrelease`
 3. Calls `target.set_html_element(element)` — grabs bounding rect, inserts into rbush
@@ -145,6 +152,7 @@ A **transient value object** encapsulating current mouse-relevant information:
 - **Raw data**: `event` (the original MouseEvent)
 
 Static factories:
+
 ```ts
 S_Mouse.down(event, element)    // user pressed
 S_Mouse.up(event, element)      // user released
@@ -170,6 +178,7 @@ Do **not** create a separate `S_Hit_Target` instance just to get the id — that
 ### Component Pattern
 
 Components register a handler on their hit target:
+
 ```ts
 s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
     return handle_s_mouse(s_mouse);

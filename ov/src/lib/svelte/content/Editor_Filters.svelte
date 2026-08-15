@@ -4,7 +4,8 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
-	import { T_Edge, USUAL_GAP } from '../../ts/utilities/Sectioning';
+	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import { k } from '../../ts/common/Constants';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import Action, { T_Position } from '../../ts/types/Action';
@@ -295,8 +296,9 @@
 			     carries the way out's own name and press. Without that, the bare space among the
 			     kinds would be the one part of this block that answered nothing. -->
 			<Section
-				id={`${WAY_OUT}.kinds`}
+				gap={k.gap.huge}
 				onbare={onclose}
+				id={`${WAY_OUT}.kinds`}
 				actions={[kinds_action]}
 				folded={!show_form_kinds}>
 				{#snippet holds()}
@@ -323,7 +325,7 @@
 		     above it. With the kinds open it stands as it is, folded or not. -->
 		<Section
 			id='editor.tags'
-			gap={foot_is_all_folds(!show_form_kinds, !show_form_tags) ? 0 : USUAL_GAP}
+			gap={foot_is_all_folds(!show_form_kinds, !show_form_tags) ? 0 : k.gap.big}
 			actions={[tags_action, picking_action]}
 			fills_when_bare
 			onbare={() => toggle_all_areas(TAG_AREAS.map((one) => one.name))}

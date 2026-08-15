@@ -158,6 +158,12 @@ while IFS=$'\037' read -r use same never; do
 done <<< "$PAIRS"
 
 # Substitute: whole-word, case-insensitive, first-letter case preserved.
+#
+# Anything inside backticks is left exactly as written — a fenced block, and a
+# snippet inside a sentence. Several of the banned words are also the names of
+# real things: "p a d d i n g" is a CSS property, and swapping it inside a quoted
+# line shows a line of code that does not match the file it came from. Prose is
+# still corrected; what is quoted arrives untouched.
 NEW=$(DELTA="$DELTA" MAP="$MAP" perl -e '
   my $delta = $ENV{DELTA};
   my %map;
@@ -166,12 +172,27 @@ NEW=$(DELTA="$DELTA" MAP="$MAP" perl -e '
     next unless defined $from && length $from && defined $to && length $to;
     $map{lc $from} = $to unless exists $map{lc $from};
   }
-  for my $k (sort { length($b) <=> length($a) } keys %map) {
-    my $to = $map{$k};
-    my $re = quotemeta($k);
-    $delta =~ s/\b($re)\b/ my $m=$1; ($m =~ \/^[A-Z]\/) ? ucfirst($to) : $to /gie;
+  my @keys = sort { length($b) <=> length($a) } keys %map;
+  sub swap {
+    my ($text) = @_;
+    for my $k (@keys) {
+      my $to = $map{$k};
+      my $re = quotemeta($k);
+      $text =~ s/\b($re)\b/ my $m=$1; ($m =~ \/^[A-Z]\/) ? ucfirst($to) : $to /gie;
+    }
+    return $text;
   }
-  print $delta;
+  # A run of three backticks opens or shuts a block; one backtick opens or shuts
+  # a snippet, unless a block is already open. A block left open at the end of
+  # this chunk keeps everything after it untouched, since the words it holds are
+  # code whether or not the closing fence arrives in the same chunk.
+  my ($fence, $inline, $out) = (0, 0, q{});
+  for my $part (split /(`{3}|`)/, $delta) {
+    if    ($part eq q{```}) { $fence  = !$fence;  $out .= $part; }
+    elsif ($part eq q{`})   { $inline = $fence ? $inline : !$inline; $out .= $part; }
+    else                    { $out .= ($fence || $inline) ? $part : swap($part); }
+  }
+  print $out;
 ')
 
 if [ -n "$NEW" ] && [ "$NEW" != "$DELTA" ]; then

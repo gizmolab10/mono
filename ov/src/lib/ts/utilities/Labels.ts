@@ -168,7 +168,7 @@ export function labels_for(text: string, file_name: string, today: string, where
 			date        : today,
 			labeled     : true,
 		},
-		tags: [NEEDS_A_LOOK],
+		tags: [TAG_WHEN_NEW, NEEDS_A_LOOK],
 	};
 }
 

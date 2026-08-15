@@ -1252,6 +1252,12 @@
 		position : relative;
 	}
 
+	/* A table wears no number of its own — its rows carry them — but it still has to hold a place,
+	   since every one of those numbers is measured from the table's own left edge. */
+	.view-page :global(> table) {
+		position : relative;
+	}
+
 	/* A line of the file the reader draws as nothing — a blank line, a rule — still gets a row,
 	   one line of the words tall and holding the same gap a paragraph holds, so its number stands
 	   the same distance from its neighbours as every other number. */
@@ -1277,6 +1283,17 @@
 		line-height  : inherit;
 		white-space  : nowrap;
 		right        : 100%;
+	}
+
+	/* A table's rows each carry their own number, drawn against the row's first cell and measured
+	   from the table's left edge — the cell holds no place of its own, exactly like an item inside
+	   a list. It goes on the cell because anything drawn against a row becomes a cell of its own,
+	   which would push every real cell one column along.
+	   It sits level with its words with no nudge at all — the cell's own gap above its words
+	   already puts it there, and the hair that suits a paragraph puts it a hair too low. */
+	.view-page :global(th[data-number])::before,
+	.view-page :global(td[data-number])::before {
+		margin-top : 0;
 	}
 
 	/* A paragraph's own words, and a list's, sit a hair lower than a heading's — so their numbers

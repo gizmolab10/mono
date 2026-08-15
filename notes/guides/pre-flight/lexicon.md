@@ -66,6 +66,10 @@ The [banned words](banned%20words.md) turned the right way round — the word to
 - **done**, **complete** — finished work. Never *ship*.
 - **write code** — producing code. Never *ship*.
 - **place**, **include** — putting a value where it goes. Never *absorb*.
+- **are built** — code that exists. Never *stands*, which is a metaphor.
+- **sits**, **is drawn at** — where a thing is on screen. Never *stands* there either.
+- **path** — where a file is, counting from the top of the repo. Never *place*, which keeps its everyday sense: said in one place, holds its place in the run.
+- **url** — a target on the web. **address** — either one, when a link could carry either.
 - **content** — everything a file holds. Never *words*, which means words and nothing else: the words looked for, the word on a line, the words a link reads as.
 - **register** — tell the hits manager about a thing, so it knows where that thing stands and what it says. Never *hand over*, never *hand to*.
 - **stub out** — empty bodies ready to fill. Never *scaffold*.

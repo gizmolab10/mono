@@ -1,4 +1,4 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
 import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/File';
@@ -40,9 +40,9 @@ describe('labeling a file that has none', () => {
 		expect(labels_for('# only a title', 'x.md', TODAY).labels.description).toBe('');
 	});
 
-	it('marks every one for a person to look at, and starts at one kind', () => {
+	it('marks every one as the one being worked on and for a person to look at, and starts at one kind', () => {
 		const { labels, tags } = labels_for('# a title\n\nwords.', 'x.md', TODAY);
-		expect(tags).toEqual([NEEDS_A_LOOK]);
+		expect(tags).toEqual([TAG_WHEN_NEW, NEEDS_A_LOOK]);
 		expect(labels.kind).toBe(KIND_UNTIL_TOLD);
 		expect(labels.date).toBe(TODAY);
 	});
@@ -74,7 +74,7 @@ describe('putting a composed block at the top of a file', () => {
 		const done = with_labels_added(text, 'x.md', TODAY);
 		expect(done.endsWith(text)).toBe(true);
 		expect(done.startsWith(`---\nkind: ${KIND_UNTIL_TOLD}\n`)).toBe(true);
-		expect(done).toContain(`tags: [${NEEDS_A_LOOK}]`);
+		expect(done).toContain(`tags: [${TAG_WHEN_NEW}, ${NEEDS_A_LOOK}]`);
 	});
 
 	it('hands back a file that already has labels, untouched', () => {

@@ -3,23 +3,26 @@ kind: specify
 title: "Agency"
 description: "How the work itself is done: what to touch, what to prove, and what never to change unasked."
 tags: [always, session, team, style]
-date: 2026-08-01
+date: 2026-08-14
 ---
 # Agency
 
- 1. **All file paths:** `~/GitHub/mono/` — NEVER use the worktree working directory.
- 2. NEVER use `npm` — use yarn.
- 3. NEVER preview — do not use preview_\* tools or start preview servers UNLESS Jonathan approves it (ask, then WAIT for approval).
- 4. **Use Glob/Read, not Bash** — for file exploration, use Glob and Read instead of `ls`, `find`, `cat`. Avoids permission prompts.
- 5. **Exact match** — names, paths, requirements: character-by-character.
- 6. **Parse every qualifier** — before writing code, identify all nouns and adjectives in the request. Each one constrains the solution. If you skip one, you solve the wrong problem.
- 7. **Read before act** — re-read the file or input before editing, claiming, or disagreeing. A copy of a file already in this conversation may be stale, and a stale copy reads exactly like a fresh one; never answer from it. When Jonathan says a file differs from what you said, re-read it before replying.
- 8. **Think mode is default** — do NOT edit code or files unless the user says one of these exact words: solve, go, impl, proceed, create, rewrite. Default is think/show/discuss/propose.
- 9. **Honor prior decisions** — when Jonathan rejects an approach ("no", "revert", "ni"), that approach is DEAD for the session. Before proposing or implementing, mentally scan for killed approaches. Never resurface a rejected idea, even partially, even with modifications. If stuck, say so — don't recycle.
-10. **Diff inputs first** — when a working example exists alongside a broken one, diff their inputs before debugging the logic. The bug is usually in the data, not the renderer.
-11. **Diagnostic logging with every new code path** — for every decision the code makes (filter, threshold, branch), the log carries the actual values behind it — the measured number, the input, the result — not just a name. Then every claim about why can be answered by reading the log.
-12. **Test before done** — code written is not code working; verify before checking off. Fix every error anything surfaces, even a pre-existing one, before moving on.
-13. **ALWAYS fix warnings** — editor and checker warnings count as errors to fix, not to excuse as existing style. When one surfaces on a file you touch, fix it in the same pass; never report a task done while leaving warnings behind. EXCEPT indentation — the next rule wins over any checker that disagrees with it.
-14. **Indenting — code files use tab, markdown files use four spaces.** This keeps files from being visually mangled by the various tools Jonathan uses. Never reformat indentation you were not asked to change, and never run a range or line-number based whitespace pass — it cannot tell a right line from a wrong one, and it has silently mangled correct lines twice. A checker that wants something else is the thing that's wrong: say so and leave the file alone, or change its setting.
-15. **Update all tracking files** — when completing work, check off the item in every file that tracks it, not just one. Update written proposals with what was finally decided.
-16. **After a mistake or correction** — re-read `pitfalls.md` before responding.
+Each rule ends with what following it wins.
+
+ 1. **Paths** — every one starts at `~/GitHub/mono/`. Never the worktree. *The file you edit is the file he opens.*
+ 2. **Yarn** — never npm. *One lockfile, one set of versions.*
+ 3. **No preview** — never start one unless Jonathan says yes. Ask, then wait. *His screen stays his.*
+ 4. **Glob and Read, not Bash** — for finding and reading files. *No permission prompt standing in the way.*
+ 5. **Exact match** — names, paths and requirements, character for character. *The name you type is the name that exists.*
+ 6. **Every qualifier counts** — each noun and adjective in the request narrows the answer. *You solve the problem he asked about.*
+ 7. **Read before acting** — re-read a file before editing it, saying what it holds, or disagreeing. A copy from earlier in the session may be stale, and stale reads exactly like fresh. *What you say about a file is true when you say it.*
+ 8. **Think first** — change nothing until Jonathan says go, solve, impl, proceed, create or rewrite. Until then: read, describe, propose. *He decides what changes.*
+ 9. **A rejected idea is dead** — for the whole session, in part as well as in whole. Stuck is worth saying. *Every proposal is new ground.*
+10. **Diff the inputs first** — when one case works and its twin does not, compare what goes in before reading the code. *The fault turns up in minutes, and it is usually in the data.*
+11. **Log the values** — every branch writes the number, the input and the result it acted on. *Any question about why is answered by reading the log.*
+12. **Test before done** — written is not working. Fix every error that surfaces, whoever caused it. *Done means working.*
+13. **Fix every warning** — in any file you write to, whatever you changed and whoever wrote the line. Formatting counts: indentation, blank lines around headings, lists and fences, a language on every fence, table alignment. Never ask first. *A clean file stays clean.*
+14. **Never sweep** — fix the line the checker names, one line at a time. *Prevents mangling.*
+15. **Indent** — code with tabs, markdown with four spaces. Never reformat indentation nobody asked you to change. A checker that wants something else has the wrong setting. *Every file looks the same in every tool he uses.*
+16. **Update every tracking file** — not just one. Write into a proposal what was finally decided. *Any one of them tells the truth on its own.*
+17. **After a correction** — re-read [pitfalls](pitfalls.md) before replying. *The same mistake happens once.*

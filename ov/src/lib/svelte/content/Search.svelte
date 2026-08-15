@@ -5,6 +5,8 @@
 	import { hit_target, WAY_OUT } from '../../ts/events/Hit_Target';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import { k } from '../../ts/common/Constants';
+	import { gap_below_line } from '../../ts/utilities/Separator_Spacing';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
 	import Section from '../support/Section.svelte';
@@ -27,6 +29,16 @@
 	// Whether the search row is on screen at all. Folded away, the words below take its gap,
 	// and the word on the line above brings it back. Remembered across visits.
 	const w_show_search = preferences.persistent<boolean>(T_Preference.show_search, true);
+
+	// How far the field stands below the line above it, said in the log once the browser has drawn.
+	// Every other section is measured the same way from the editor, so the four numbers can be read
+	// side by side.
+	let field = $state<HTMLInputElement | null>(null);
+	$effect(() => {
+		if (!field || !$w_show_search) { return; }
+		const seen = field;
+		requestAnimationFrame(() => gap_below_line(seen, 'the editor\'s search field'));
+	});
 
 	// Shown, the word is just "search". Folded away with something typed, it says what is being
 	// looked for, so a search left running is never invisible.
@@ -182,10 +194,11 @@
      The bare space beside the field is part of the way back to the list, so it carries that
      name and press and lights with the rest of it. -->
 <Section
-	id={`${WAY_OUT}.search`}
+	gap={k.gap.big}
 	onbare={onclose}
 	actions={[to_do]}
 	edge={T_Edge.thick}
+	id={`${WAY_OUT}.search`}
 	folded={!$w_show_search}>
 	{#snippet holds()}
 		<!-- Its type is "search", so the browser draws its own clear cross at the right end
@@ -202,6 +215,7 @@
 			<input
 				type='search'
 				class='search'
+				bind:this={field}
 				oninput={find_first}
 				bind:value={$w_words}
 				use:hit_target={{ id: 'search.field', tip: 'search this file' }}
@@ -226,11 +240,11 @@
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
 		padding       : 0 var(--gap);
-		background    : var(--bg);
 		box-sizing    : border-box;
+		background    : var(--bg);
 		font-family   : inherit;
-		white-space   : nowrap;
 		cursor        : pointer;
+		white-space   : nowrap;
 	}
 
 	/* The edge appears under the cursor, or because the area around it says so. Told to light
@@ -275,15 +289,19 @@
 		white-space : nowrap;
 	}
 
+	/* Drawn two pixels below where it stands, so it sits square under the line above. That is
+	   drawing only — its place in the row is unchanged, and nothing around it moves. */
 	.search {
 		border        : var(--thick) solid var(--black);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
+		top           : var(--gap-faint);
 		height        : var(--height);
 		background    : var(--white);
 		font-size     : var(--font);
 		color         : var(--text);
 		box-sizing    : border-box;
+		position      : relative;
 		width         : 100%;
 	}
 
@@ -292,8 +310,8 @@
 	   curve nor its width. The edge is drawn inside, so nothing moves. */
 	.search:focus,
 	.search:focus-visible {
-		border-color : var(--accent);
 		box-shadow   : inset 0 0 0 var(--thick) var(--accent);
+		border-color : var(--accent);
 		outline      : none;
 	}
 </style>

@@ -30,7 +30,7 @@ export default class Constants {
 		autorepeat	 : 150,						// between one repeat and the next, while a press is held
 		double_click : 400,						// how long a second press has to arrive within
 		alteration	 : 500,						// between one flip and the next, while something blinks
-		long_click	 : 800,						// how long a press has to be held to be a long one
+		long_click	 : 600,						// how long a press has to be held to be a long one
 	};
 
 	// The empty string, said once so nothing has to write two quote marks and mean something by it.
@@ -89,6 +89,7 @@ export default class Constants {
 
 	// Smallest first, so the list itself reads as a ladder.
 	width = {
+		tiny		 : 50,						// the count of files in the editor's top row, so the step marks beside it never move
 		small		 : common_size * 7,			// 245 — the details column
 		normal		 : 300,						// the window
 		big			 : 350,						// the smallest useful width for the region beside details

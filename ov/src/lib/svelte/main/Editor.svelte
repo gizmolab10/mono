@@ -6,7 +6,7 @@
 	import { WAY_OUT } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
 	import Markdown_Editor from '../content/Markdown_Editor.svelte';
-	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
+	import { report_gaps_below_lines, report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
@@ -57,7 +57,7 @@
 	// read again whenever a fold changes or another file opens, since those are what move them.
 	$effect(() => {
 		filters_folded; address;
-		const soon = setTimeout(() => report_line_spacing('the editor'), k.timeout.slide);
+		const soon = setTimeout(() => { report_line_spacing('the editor'); report_gaps_below_lines('the editor'); }, k.timeout.slide);
 		return () => clearTimeout(soon);
 	});
 
@@ -336,10 +336,14 @@
 
 	/* The folders above the file, just right of the steppers at the left of the button row. */
 	/* Which file of the run is on screen, reading like the folders beside it. */
+	/* One width whatever it says, with its words held to its right end — so they finish against
+	   the step marks, and the marks stand in one place however many digits the count runs to. */
 	.file-count {
 		opacity     : var(--opacity-header);
 		font-size   : var(--font-tiny);
 		color       : var(--text);
+		width       : var(--width-tiny);
+		text-align  : right;
 		flex        : 0 0 auto;
 		white-space : nowrap;
 	}

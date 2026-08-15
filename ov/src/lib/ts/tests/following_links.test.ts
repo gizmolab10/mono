@@ -44,12 +44,12 @@ describe('whether the guide found really answers the link', () => {
 	});
 });
 
-// The question is asked of a file's whole place, counting from the top of the repo. A file's place
+// The question is asked of a file's whole path, counting from the top of the repo. A file's path
 // inside its own collection has the project and the notes and guides folders stripped off it, so a
 // link written the long way round could never agree with anything — and every one read as dead.
 
 describe('a link written the long way round', () => {
-	it('takes a file named by its whole place in the repo', () => {
+	it('takes a file named by its whole path in the repo', () => {
 		expect(link_agrees(parts_of_link('../../../notes/guides/pre-flight/always.md'),
 			'notes/guides/pre-flight/always.md')).toBe(true);
 		expect(link_agrees(parts_of_link('../../../di/notes/guides/pre-flight/lexicon.md'),
@@ -61,7 +61,7 @@ describe('a link written the long way round', () => {
 			'ji/notes/guides/pre-flight/lexicon.md')).toBe(true);
 	});
 
-	it('takes a work note named by its whole place', () => {
+	it('takes a work note named by its whole path', () => {
 		expect(link_agrees(parts_of_link('../../ov/notes/work/code%20debt.md'.replace(/%20/g, ' ')),
 			'ov/notes/work/code debt.md')).toBe(true);
 	});
@@ -124,7 +124,7 @@ describe('how far apart two files stand', () => {
 	});
 });
 
-describe('how many words a link and a place share', () => {
+describe('how many words a link and a path share', () => {
 	it('counts the words that turn up in both', () => {
 		expect(words_shared(['pre-flight', 'always'], 'notes/guides/pre-flight/always.md')).toBe(2);
 		expect(words_shared(['work', 'handoff'], 'ov/notes/work/handoff.md')).toBe(2);

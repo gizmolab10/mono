@@ -158,6 +158,10 @@ What it found on its first run, which is the check on this whole plan: 165 files
 
 That last count is the argument for closing the tag list: overview shows the tags as a row of pills, and a list that drifts into synonyms becomes a row nobody can read.
 
+## Why no database
+
+One question decides where the truth lives: can a person change this thing without the app running? For guides the answer is yes, every day, in Obsidian and in an editor — so the file is the truth and the labels belong in it. A database would hold the same five labels a second time, and two places that can both be authored will disagree, with nothing able to say which is right. Put the labels in the file instead and the app is one reader among many; losing it costs nothing, and there is no schema, no migration, and no second copy to keep true. The trade is that every question is answered by walking what was read at launch — 175 files and 1.4 million characters, of which only the labels are kept. Size never flips this: when that read starts to hurt, the answer is a store that mirrors the files and can be thrown away, never one that owns them. ji is the other case, and that is why the same code came over here with its storage deliberately left behind.
+
 ## Encapsulate for opensourcing
 
 Everything this proposal defines — the five kinds, the twenty-four tags, the short names of the collections, and the handling that goes with them — is spread across overview's files today. The idea is to gather it into one file of its own, at `ov/src/lib/ts/common/okf`, so that the format has a single home in the code.

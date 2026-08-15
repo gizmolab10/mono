@@ -20,14 +20,14 @@ export function parts_of_link(link: string): string[] {
  * Does the guide found for this link really answer it? True when the link names only a word, or
  * when the guide sits under exactly the folders the link names.
  *
- * `where` is the guide's own place inside its collection, ending in its own name.
+ * `where` is the guide's own path inside its collection, ending in its own name.
  */
 export function link_agrees(link_parts: string[], where: string): boolean {
 	if (link_parts.length <= 1) { return true; }
-	const place = where.replace(/\.md$/i, '').split('/').filter((one) => one !== '');
-	if (link_parts.length > place.length) { return false; }
-	const from = place.length - link_parts.length;
-	return link_parts.every((one, at) => one.toLowerCase() === place[from + at].toLowerCase());
+	const path = where.replace(/\.md$/i, '').split('/').filter((one) => one !== '');
+	if (link_parts.length > path.length) { return false; }
+	const from = path.length - link_parts.length;
+	return link_parts.every((one, at) => one.toLowerCase() === path[from + at].toLowerCase());
 }
 
 /**
@@ -39,9 +39,9 @@ export function link_agrees(link_parts: string[], where: string): boolean {
  * These two answer that second question, and nothing else asks them.
  */
 
-/** The folder words of a place, its own name left off. */
-function folders_of(place: string): string[] {
-	return place.split('/').filter((one) => one !== '').slice(0, -1);
+/** The folder words of a path, its own name left off. */
+function folders_of(path: string): string[] {
+	return path.split('/').filter((one) => one !== '').slice(0, -1);
 }
 
 /**
@@ -53,8 +53,8 @@ function folders_of(place: string): string[] {
  * Without this a link is read as the words it happens to spell, and a link written from inside a
  * work folder — `proposals/one.md` — names no work folder at all.
  */
-export function resolved_from(from_place: string, link: string): string {
-	const at = folders_of(from_place);
+export function resolved_from(from_path: string, link: string): string {
+	const at = folders_of(from_path);
 	let where = link.split('#')[0].trim();
 	try { where = decodeURIComponent(where); } catch { /* a stray percent sign; the words as written will do */ }
 	for (const word of where.split('/')) {
@@ -65,9 +65,9 @@ export function resolved_from(from_place: string, link: string): string {
 	return at.join('/');
 }
 
-/** How many of the words a link names turn up in a file's place. */
-export function words_shared(link_parts: string[], place: string): number {
-	const words = place.replace(/\.md$/i, '').split('/').filter((one) => one !== '').map((one) => one.toLowerCase());
+/** How many of the words a link names turn up in a file's path. */
+export function words_shared(link_parts: string[], path: string): number {
+	const words = path.replace(/\.md$/i, '').split('/').filter((one) => one !== '').map((one) => one.toLowerCase());
 	return link_parts.filter((one) => words.includes(one.toLowerCase())).length;
 }
 
@@ -76,9 +76,9 @@ export function words_shared(link_parts: string[], place: string): number {
  * one holding the second. The folders they share at the front are dropped, then what is left on
  * each side is counted — up out of the one, down into the other.
  */
-export function steps_between(from_place: string, to_place: string): number {
-	const from = folders_of(from_place);
-	const to   = folders_of(to_place);
+export function steps_between(from_path: string, to_path: string): number {
+	const from = folders_of(from_path);
+	const to   = folders_of(to_path);
 	let same = 0;
 	while (same < from.length && same < to.length && from[same].toLowerCase() === to[same].toLowerCase()) { same += 1; }
 	return (from.length - same) + (to.length - same);
@@ -90,16 +90,16 @@ export function steps_between(from_place: string, to_place: string): number {
  * Most shared words first; where two share as many, the closer one wins. Where two are equal on
  * both, nothing comes back — naming one of them would be a coin toss said as an answer.
  */
-export function likeliest(link_parts: string[], from_place: string, places: string[]): string | null {
-	if (places.length === 0) { return null; }
-	if (places.length === 1) { return places[0]; }
-	const scored = places.map((place) => ({
-		place,
-		shared: words_shared(link_parts, place),
-		steps: steps_between(from_place, place),
+export function likeliest(link_parts: string[], from_path: string, paths: string[]): string | null {
+	if (paths.length === 0) { return null; }
+	if (paths.length === 1) { return paths[0]; }
+	const scored = paths.map((path) => ({
+		path,
+		shared: words_shared(link_parts, path),
+		steps: steps_between(from_path, path),
 	}));
 	scored.sort((a, b) => b.shared - a.shared || a.steps - b.steps);
 	const [first, second] = scored;
 	if (first.shared === second.shared && first.steps === second.steps) { return null; }
-	return first.place;
+	return first.path;
 }

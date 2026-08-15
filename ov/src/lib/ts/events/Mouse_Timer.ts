@@ -1,4 +1,5 @@
 import { k } from '../common/Constants';
+import { debug } from '../common/Debug';
 
 // The clocks a press runs against. ⟵di
 //
@@ -43,13 +44,17 @@ export default class Mouse_Timer {
 		this.autorepeat_stop();
 		this.autorepeat_ID = id;
 		callback();
+		debug.log(`Repeating "${this.name}": one beat at once, then waiting ${k.threshold.long_click}ms before the patter begins.`);
 		this.autorepeat_start_timer = setTimeout(() => {
 			this.autorepeat_timer = setInterval(callback, k.threshold.autorepeat);
 			this.autorepeat_start_timer = null;
+			debug.log(`Repeating "${this.name}": the wait is over, so the patter begins, one beat every ${k.threshold.autorepeat}ms.`);
 		}, k.threshold.long_click);
 	}
 
 	autorepeat_stop() {
+		const waiting = !!this.autorepeat_start_timer;
+		const pattering = !!this.autorepeat_timer;
 		if (this.autorepeat_start_timer) {
 			clearTimeout(this.autorepeat_start_timer);
 			this.autorepeat_start_timer = null;
@@ -59,6 +64,9 @@ export default class Mouse_Timer {
 			this.autorepeat_timer = null;
 		}
 		this.autorepeat_ID = -1;
+		if (waiting || pattering) {
+			debug.log(`Repeating "${this.name}": stopped while ${waiting ? 'still waiting for the patter to begin' : 'pattering'}.`);
+		}
 	}
 
 	/** Something that flips back and forth until it is stopped, told which way it is each time. */

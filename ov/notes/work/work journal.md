@@ -9,6 +9,67 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-15 — a table stopped counting, and then counted twice
+
+A table was one piece wearing one number, so the column beside the words skipped every row of it.
+Each row carries its own line now, and pressing anywhere along a row opens that one line.
+
+**The number hangs off the row's first cell**, never off the row. Anything drawn against a row
+becomes a cell of its own, which pushed every real cell one column along and left the headings
+standing over the wrong words.
+
+**A table wears no number itself.** A table's own drawing goes wherever the browser decides — which
+turned out to be down beside the second row, over the number already standing there.
+
+**The line of dashes under the headings has no number**, since the reader draws it as nothing and
+there is no row to hang one on.
+
+## 2026-08-15 — one word for where a file sits
+
+`place` meant a file's location in some of the code and an ordinary spot in the rest — 195 uses, and
+about 70 of them the first kind. A link's target settled it: on disk it is a **path**, on the web a
+**url**, and **address** is the word for either.
+
+**Nine files renamed**, the everyday noun and verb left alone. Said in one place, holds its place in
+the run — those keep the word.
+
+## 2026-08-15 — the words hook rewrote code on its way to the screen
+
+Several banned words are also the names of real things. The hook that swaps them ran over the whole
+reply with no exception, so a quoted CSS line arrived saying something the file does not say — a
+line read as wrong when the code was right.
+
+**Anything between backticks is left exactly as written**, a fenced block and a snippet alike. Prose
+is still corrected, and the ban still holds for the words I choose in code: names, comments, log
+lines.
+
+## 2026-08-14 — the count holds a width of its own
+
+`4 of 10` at the far left of the editor's top row took exactly the width of its own characters, so
+the two step marks beside it moved as the numbers changed. It holds one width now, with its words
+at the right end — they finish against the marks, and the marks stand in one place from `1 of 9` to
+`218 of 218`.
+
+**The width went on the ladder** as `width.tiny`, and onto the page like every other size, so
+nothing writes a lone number. Jonathan set it at 50.
+
+## 2026-08-14 — six picking rows, two different gaps
+
+The gap under the editor's search line read smaller than the others. It measured 7.77 below that
+line's middle, which is exactly the gap a section takes when it asks for none — and browse's three
+picking rows each ask for the big one, 9.72. Six rows doing the same job, two numbers between them.
+
+**All six ask for the big one now.** The editor's search, kinds and tags rows join browse's
+projects, kinds and tags.
+
+**The field is drawn two pixels lower**, so it sits square under the line. That is drawing only:
+its place in the row is unchanged, and nothing around it moves.
+
+**One call now measures every section against the line above it**, two numbers each — to the top of
+its own box, and to the first ink inside it. A pill-shaped field draws its edge at its very top
+while a line of words holds empty space above the letters, so the same measured gap can read as two
+different gaps. Any next argument about a gap is now one press and a look at the log.
+
 ## 2026-08-14 — one rule said in three places, and none of them agreed
 
 A link to `[[thin proxy proposal]]` would not open. The file is on disk; the app had never heard

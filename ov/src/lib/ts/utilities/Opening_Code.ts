@@ -32,7 +32,7 @@ function line_named_by(link: string): number {
 }
 
 /**
- * The full place a link points at, from the file doing the pointing. Every step of the link is
+ * The full path a link points at, from the file doing the pointing. Every step of the link is
  * walked: two dots climb out of a folder, one dot or nothing stays in it. Stand-in codes in a
  * name (a space written as %20) are read back to the character they stand for.
  */

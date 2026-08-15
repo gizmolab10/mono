@@ -2,7 +2,7 @@ import { address_of_file, file_path_of, folder_path_of, moved_into, obsidian_lin
 import { describe, expect, it } from 'vitest';
 import { T_Bundle } from '../types/File';
 
-describe('reading a place in the repo back into a collection and a path', () => {
+describe('reading a path in the repo back into a collection and a folder', () => {
 	it('reads a shared guide', () => {
 		expect(site_of_file('notes/guides/pre-flight/always.md'))
 			.toEqual({ bundle: T_Bundle.mono, path: 'pre-flight/always.md', is_design: false });
@@ -98,7 +98,7 @@ describe('a link reaching under a work folder', () => {
 		expect(reaches_under_work('homework/a/b.md')).toBe(false);
 	});
 
-	it('agrees with the line drawn by reading a place in the repo', () => {
+	it('agrees with the line drawn by reading a path in the repo', () => {
 		for (const where of ['ov/notes/work/handoff.md', 'notes/work/learn.md',
 			'di/notes/work/now/learn.md', 'ji/notes/work/proposals/ov.md']) {
 			expect(site_of_file(where)).not.toBe(null);
@@ -145,12 +145,12 @@ describe('working out where a guide sits', () => {
 });
 
 describe('working out where a folder sits', () => {
-	it('answers with a collection\'s own guides folder when the folder has no place inside it', () => {
+	it('answers with a collection\'s own guides folder when the folder has no path inside it', () => {
 		expect(folder_path_of(T_Bundle.mono, '')).toBe('notes/guides');
 		expect(folder_path_of(T_Bundle.di, '')).toBe('di/notes/guides');
 	});
 
-	it('adds the folder\'s place inside its collection', () => {
+	it('adds the folder\'s path inside its collection', () => {
 		expect(folder_path_of(T_Bundle.di, 'architecture/core')).toBe('di/notes/guides/architecture/core');
 		expect(folder_path_of(T_Bundle.mono, 'pre-flight')).toBe('notes/guides/pre-flight');
 	});
@@ -171,7 +171,7 @@ describe('where a guide lands when dropped into a folder', () => {
 		expect(moved_into('architecture/core', 'units.md')).toBe('architecture/core/units.md');
 	});
 
-	it('puts it at the top of a collection when the folder has no place of its own', () => {
+	it('puts it at the top of a collection when the folder has no path of its own', () => {
 		expect(moved_into('', 'roadmap.md')).toBe('roadmap.md');
 	});
 
@@ -181,8 +181,8 @@ describe('where a guide lands when dropped into a folder', () => {
 });
 
 // A rename gives a file a different name and leaves it exactly where it sits. Building the new
-// place out of the folder it hangs under sends a work note into the guides folder, since a work
-// note hangs straight off its project — so the new place is built out of its own old place.
+// path out of the folder it hangs under sends a work note into the guides folder, since a work
+// note hangs straight off its project — so the new path is built out of its own old path.
 
 describe('where a file sits after it is given a different name', () => {
 	it('keeps a guide in its folder', () => {
@@ -223,7 +223,7 @@ describe('the address a file\'s words are read from', () => {
 		expect(address_of_file('/a/b/c.md')).not.toContain('%2F');
 	});
 
-	it('reads back as the very place it was built from', () => {
+	it('reads back as the very path it was built from', () => {
 		for (const full of ['/x/always.md', '/x/worth it?.md', '/x/why #2.md', '/x/100% done.md', '/a b/c d/e.md']) {
 			expect(path_of_address(address_of_file(full))).toBe(full);
 		}
@@ -231,10 +231,10 @@ describe('the address a file\'s words are read from', () => {
 });
 
 // Typing in the search field works the whole list out again, which hands the viewer a fresh
-// record of the very same file on every letter. The place that record names is the same text as
+// record of the very same file on every letter. The path that record names is the same text as
 // before, so the words on screen are left alone; reading and drawing them again is what blinked.
 
-describe('the place a file sits, from one record of it to the next', () => {
+describe('the path a file sits at, from one record of it to the next', () => {
 	it('reads as the very same text, so a fresh record of one file says nothing new', () => {
 		expect(file_path_of(T_Bundle.ov, 'notes/guides/always.md'))
 			.toBe(file_path_of(T_Bundle.ov, 'notes/guides/always.md'));

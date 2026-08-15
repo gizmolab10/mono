@@ -87,9 +87,9 @@ class Guides {
 	// Every markdown file the dispatcher found, counting from the top of the repo — including the
 	// ones the app never lists. Only the dead-link check reads it, and only to tell a link naming
 	// a real file it cannot open from a link naming nothing at all.
-	places_on_disk = new Set<string>();
+	paths_on_disk = new Set<string>();
 
-	// Said whenever a guide moves from one place to another, with where it sat and where it now
+	// Said whenever a guide moves from one path to another, with where it sat and where it now
 	// sits. Whatever keeps track of which guide is being read hands in its own answer here, so
 	// this file never has to know about the reading view — which would be a circle, since the
 	// reading view already knows about the guides.
@@ -148,7 +148,7 @@ class Guides {
 		// A guide is named by where it sits, so anything reading this one has to follow it.
 		this.moved_to?.(was_key, key_of(guide));
 		debug.log(`Moved "${guide.name}" from ${from} to ${to}. It now hangs under "${folder.name}", and its words are read from ${answer.full_path}.`);
-		// Where the repo begins on this machine, worked out from the one full place the server
+		// Where the repo begins on this machine, worked out from the one full path the server
 		// gave back — everything else is named from the top of the repo.
 		const root = answer.full_path.slice(0, answer.full_path.length - to.length);
 		await this.mend_indexes(root, from, to, name);
@@ -158,7 +158,7 @@ class Guides {
 	/**
 	 * Where the repo begins on this machine, read off any guide's own address. The addresses
 	 * are settled when the app's code is prepared and name the file in full, so taking the
-	 * guide's place in the repo off the end leaves the top of the repo.
+	 * guide's path in the repo off the end leaves the top of the repo.
 	 */
 	private get repo_root(): string {
 		const file = this.files.find((g) => g.address !== '');
@@ -259,7 +259,7 @@ class Guides {
 		const to_path = renamed_path(guide.path, named);
 		const to = file_path_of(guide.bundle, to_path);
 
-		// Every place another guide names this one, found while the old name still answers.
+		// Every path at which another guide names this one, found while the old name still answers.
 		const mends: Array<{ where: string; address: string; text: string; changed: string; how_many: number }> = [];
 		for (const other of this.files) {
 			const at = path_of_address(other.address);
@@ -462,7 +462,7 @@ class Guides {
 				// work note as though it sat among the guides, `collaborate/organize.md`, points at
 				// a spot under that work folder where nothing is, and that is dead like any other.
 				const points_at = resolved_from(where, named);
-				if (reaches_under_work(points_at) && this.places_on_disk.has(points_at)) { deeper += 1; continue; }
+				if (reaches_under_work(points_at) && this.paths_on_disk.has(points_at)) { deeper += 1; continue; }
 				const ending = named.split('/').pop()?.split('.').slice(1).pop() ?? '';
 				if (ending !== '' && ending.toLowerCase() !== 'md') { continue; }
 				followed += 1;
@@ -473,7 +473,7 @@ class Guides {
 				// beside it. Nothing is opened by that and nothing written — it is a suggestion for
 				// a person to judge, which is why a guess is welcome here and refused on a press.
 				const guess = this.hierarchy.likely_meant(guide, link);
-				const says = guess.place !== null ? `did you mean "${guess.place}"?`
+				const says = guess.path !== null ? `did you mean "${guess.path}"?`
 					: guess.of > 1 ? `${guess.of} files carry that name, none of them likelier than another`
 					: `cannot find "${guess.name}"`;
 				// Where the two say the same thing, only one of them is written.
@@ -592,7 +592,7 @@ class Guides {
 		// Every markdown file the dispatcher found, whether or not the app lists it. The dead-link
 		// check needs the ones it does not list — those below the top of a work folder — so it can
 		// tell a link naming a real file it cannot open from a link naming nothing at all.
-		this.places_on_disk = new Set(on_disk.paths);
+		this.paths_on_disk = new Set(on_disk.paths);
 
 		for (const where of on_disk.paths) {
 			const site = site_of_file(where);

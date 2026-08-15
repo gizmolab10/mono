@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/guides/pre-flight/banned words.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "code debt"
+              "title": "banned words"
             }
           },
           {
@@ -184,13 +184,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ov/notes/guides/pre-flight/banned words.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of code debt"
+              "title": "Outline of banned words"
             }
           },
           {
@@ -208,7 +208,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 237.5
+    "width": 237.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -224,6 +225,15 @@
   },
   "active": "395e60cacfd407d2",
   "lastOpenFiles": [
+    "notes/guides/pre-flight/banned words.md",
+    "ov/notes/work/ov installer.md",
+    "ov/notes/work/new gaps.md",
+    "ov/notes/work/code debt.md",
+    "ov/notes/work/ai music land.md",
+    "ov/notes/work/a.md",
+    "ov/notes/work/unnamed.md",
+    "ov/notes/work/mouse ux.md",
+    "notes/guides/develop/constants.md",
     "di/notes/guides/project/research/3D.primer.md",
     "di/notes/work/done/code.debt.paid.md",
     "di/notes/work/milestones/done/34.dimensionals/done/uniface rules.md",
@@ -244,17 +254,8 @@
     "ws/notes/guides/manuals",
     "notes/work/learn.md.tmp.13635.2a87c8c403b3",
     "spatial.md",
-    "ov/notes/work/code debt.md",
     "ov/notes/guides/design/editing.md",
-    "ji/notes/guides/project/map of ji files.md",
-    "di/notes/guides/project/philosophy/update guides.md",
-    "guides.layout.md",
-    "ov/notes/work/handoff.md",
-    "ji/notes/work/code debt.md",
-    "ov/notes/work/hits manager.md",
     "ov/src/lib/svelte/content/Markdown_Editor.svelte",
-    "ov/notes/guides/project/index.md",
-    "ov/notes/guides/operations/index.md",
     "ov/src/lib/ts/tests/coordinates.test.ts",
     "ov/src/lib/svelte/content/Editor_Filters.svelte",
     "ov/src/lib/svelte/content/Browse_Filters.svelte",

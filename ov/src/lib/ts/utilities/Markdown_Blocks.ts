@@ -87,6 +87,8 @@ export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: numb
 	// sits one deeper than it. Before the first heading, a piece counts as sitting under the
 	// title. What that depth means on screen is decided where the page is drawn.
 	let under = 1;
+	// The line a table row began on, held from the row until its first cell arrives.
+	let number_for_cell: number | null = null;
 	for (const token of tokens) {
 		// One exception to the outermost-only rule: every list item carries the one line it begins
 		// on, three times over. Pressing a thing-to-be-done's box writes that single line back;
@@ -99,6 +101,25 @@ export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: numb
 			token.attrSet('data-from', String(token.map[0] + skipped));
 			token.attrSet('data-to',   String(token.map[0] + skipped + 1));
 		}
+		// And every row of a table carries the one line it came from, the same way. A table is
+		// drawn as one piece, so without this the whole of it wears a single number and the
+		// column beside the words stops counting until the table ends. The line of dashes under
+		// the headings is drawn as nothing at all, so no row carries its number.
+		//
+		// The number goes on the row's first cell, never on the row itself: anything drawn
+		// against a row becomes a cell of its own, which pushes every real cell one column
+		// along and leaves the headings standing over the wrong words. The lines the row came
+		// from stay on the row, so pressing anywhere along it opens that one line.
+		if (token.type === 'tr_open' && token.map) {
+			token.attrSet('data-line', String(token.map[0] + skipped));
+			token.attrSet('data-from', String(token.map[0] + skipped));
+			token.attrSet('data-to',   String(token.map[0] + skipped + 1));
+			number_for_cell = token.map[0] + skipped + 1;
+		}
+		if (number_for_cell !== null && (token.type === 'th_open' || token.type === 'td_open')) {
+			token.attrSet('data-number', String(number_for_cell));
+			number_for_cell = null;
+		}
 		// Only the outermost pieces, and only the ones that open something or stand alone —
 		// a closing tag has no words of its own to carry the numbers.
 		if (token.level !== 0 || token.nesting < 0 || !token.map) { continue; }
@@ -106,7 +127,10 @@ export function stamp_blocks(reader: MarkdownIt, markdown: string, skipped: numb
 		// does — from one, at the very first line of the file, the labels at the top counted with
 		// everything else. The two below count the same file from zero, since they are what puts
 		// words back.
-		token.attrSet('data-number', String(token.map[0] + skipped + 1));
+		// A table wears no number of its own. Its rows carry them, and a number drawn against the
+		// table itself is put wherever the browser decides a table's own drawing goes — which is
+		// down beside the second row, over the number already standing there.
+		if (token.type !== 'table_open') { token.attrSet('data-number', String(token.map[0] + skipped + 1)); }
 		token.attrSet('data-from', String(token.map[0] + skipped));
 		token.attrSet('data-to',   String(token.map[1] + skipped));
 		if (token.type === 'heading_open') { under = Number(token.tag.slice(1)); }

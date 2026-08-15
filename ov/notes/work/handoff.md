@@ -3,7 +3,7 @@ kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
 tags: [proposal]
-date: 2026-08-14
+date: 2026-08-15
 ---
 # Handoff
 
@@ -11,25 +11,40 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## The gap between the editor's line and its search field
+## Going back should come back to where you were
 
-The search field in the editor sits under a heavy line, and the distance between them is wrong. It should be one gap — the same one every other section holds under its own line.
+Following a link puts a file on a stack, and the back mark walks it. Coming back draws the file
+again from its top, so a link pressed halfway down a long guide costs the reader their place — they
+have to find it again by eye.
 
 ### Success
 
-1. The distance from the middle of that line down to the top of the search field is one gap.
-2. Nothing else in the editor moves: the label rows and the file's own content begin where they did.
-3. Folding the search away leaves the line standing where it stands now.
-4. Whatever sets the distance is the section's, said once — nothing beside the field sets a margin of its own to line itself up.
+1. Following a link and coming straight back puts the words exactly where they stood.
+2. Walking back several steps does the same at every one of them.
+3. Going forward again returns to where that file was left, not to its top.
+4. Coming back to the list from a file still lands on the row that file sits in, as it does today.
+5. Opening a file fresh from the list still starts at its top.
 
 ### Where it stands
 
-The field is held by a section of its own, bounded above by the heavy line: [Search.svelte:184-211](../../src/lib/svelte/content/Search.svelte#L184-L211). It asks for no gap of its own, so it takes the usual one, and the arithmetic behind that lives in [Sectioning.ts](../../src/lib/ts/utilities/Sectioning.ts) — the gap under a line gives back half the line's thickness, since a gap is measured from a line's middle.
+The stack holds where each file sits and nothing else, and the walk sets which file is being read:
+[Operations.ts:38-44](../../src/lib/ts/managers/Operations.ts#L38-L44).
 
-The row inside it is `.view-search`, which holds a minimum height of one control and its own gap between the step marks and the field: [Search.svelte:253-259](../../src/lib/svelte/content/Search.svelte#L253-L259).
+The list already does this for itself, and does it the right way: it remembers the row at the top of
+the scrolled area by name, not by a number of pixels, so a list of a different length still comes
+back to the same row: [Files.svelte:193-238](../../src/lib/svelte/content/Files.svelte#L193-L238).
+
+A file's own words scroll in their own box, and that box already reports its scrolling to the hits
+manager: [Markdown_Editor.svelte](../../src/lib/svelte/content/Markdown_Editor.svelte).
 
 ### Open
 
-Whether the distance is wrong because the section holds the wrong gap, or because the row inside it holds one of its own on top. Measure both before changing either — the two-sources-of-gap fault is the one this whole piece exists to prevent, and `report_line_spacing` already says where every line in the editor stands, middle to middle, in the log.
+1. What to remember for a file — the same trick the list uses, naming the piece at the top by the
+   line it came from, or the plain distance scrolled. The line survives an edit that adds lines
+   above it; the distance does not.
+2. Where it is kept. The stack is a list of paths today, so each step would grow a second field —
+   or a separate map from path to where it was left, which also serves a file reached twice.
+3. Whether a reload comes back scrolled. The stack itself is forgotten on reload, so this would
+   only matter for the one file being read.
 
 **What will not get done.** The rest of the debt list. This is its first unchecked item.
