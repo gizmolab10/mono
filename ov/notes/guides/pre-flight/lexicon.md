@@ -2,7 +2,7 @@
 kind: specify
 title: "Lexicon (ov)"
 description: "The exact words overview uses in prose, comments, log lines, and test names."
-tags: [prose, session]
+tags: [always, session, team]
 date: 2026-08-09
 ---
 # Lexicon
@@ -15,35 +15,37 @@ The shared [banned words](../../../../notes/guides/pre-flight/banned%20words.md)
 
 The words every project says — guide, work note, collection, labels, kind, tag, brief — are not repeated here.
 
-## The two screens
+## Three views (details, browser, editor)
 
-- **the list** — the screen showing every guide the filters leave. Never *browse*, never *the table*.
-- **the editor** — the screen showing one guide. Never *the viewer*.
-- **the filters** — the four things that narrow the list: words looked for, one collection, one kind, any number of tags.
-- **the count row** — the row above the list, holding the folders button, how many files are left, and what is picked.
-- **the header row** — the row at the top of the list naming its columns. Never *the titles row*.
+- **files list** — the screen showing every guide the filters leave. Never *the table*.
+- **editor** — the screen showing one guide. Never *viewer*.
+- **filters** — the four things that narrow the list: search text, one project, one kind, any number of tags.
+- **count row** — the row above the files list, holding the folders button, how many files are left, and what is picked.
+- **header row** — the row at the top of the files list naming its columns. Never *the titles row*.
 
-## The parts a screen is built from
+## The elements
 
-- **section** — a line across the top, then whatever it holds, with equal gap above and below it. Stacks of these make a screen.
-- **line** — the drawn divider between things. Never *separator* in prose, never *divider*.
-- **the word on a line** — the one word riding a line, which folds away whatever the line bounds.
+- **stack** — a run of sections, a gap between each pair, a separator standing centred in every gap. The gap belongs to the stack, and the stack owns every measurement in the app's spacing.
+- **section** — one thing in a stack: plain markup, the word riding the separator above it, and whether it is folded. It names no gap and no separator of its own.
+- **subsection** — a section of a stack that is itself a section of another stack.
+- **separator** — the drawn divider between things. Never *line* in prose, never *divider*. Drawn with flares at each end.
+- **title on a sep** — the one word riding a line, clicking it folds away the section below it.
 - **pill** — a control shaped as a rounded lozenge.
 - **tagset** — one area of tags standing as a single pill. Never *area pill*.
-- **seg control** — the run of tags inside an open tagset, each tag its own segment.
+- **seg control** — the run of elements inside an elongated pill.
 - **soft pointer** — the small triangle that folds a thing away. Never *mark*, never *arrow*, never *triangle*.
-- **steppers** — the pair of fat marks that step from one thing to the next.
-- **gap** — empty space. Never *room*, and never *padding* in prose.
+- **steppers** — the pair of fat triangles that step from one thing to the next.
+- **gap** — empty space. Never *room*.
 
-## The words of a guide on screen
+## Presenting a file
 
-- **the drawn page** — a guide's markdown turned into something readable. Never *the html*, never *the rendered page*.
-- **piece** — one outermost block of the drawn page: a paragraph, a heading, a table, a chunk of code. Never *block*, never *element*.
-- **the box** — the plain field that stands in for a piece while that piece is being changed.
-- **fold** — to put a section's own pieces out of sight. Its opposite is **unfold**. Never *collapse*, never *hide*.
+- **the html** — a guide's markdown turned into something readable. Never *the drawn page*, never *the rendered page*.
+- **div** — one outermost div of the html: a paragraph, a heading, a table, a chunk of code. Never *block*, never *piece*, never *element*.
+
+- **fold** — to hide a section's content. Its opposite is **unfold**. Never *collapse*, never *hide*.
 - **highlighted** — marked on screen. Never *lit*.
 
 ## Everything else
 
-- **the dispatcher** — the small server that reads and writes files on this machine. Never *the local server*, never *the backend*.
-- **the ladder** — the nine steps every measurement uses, smallest first: micro, faint, tiny, small, normal, big, fat, huge, pill. A kind of measurement leaves out any step it has no use for.
+- **dispatcher** — the small server that reads and writes files on this machine. Never *local server*, never *backend*.
+- **ladder** — the nine increments every set of constants can define, smallest first: micro, faint, tiny, small, normal, big, fat, huge, pill. Sets can define only some of the increments.

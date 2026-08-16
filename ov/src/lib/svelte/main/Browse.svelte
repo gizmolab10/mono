@@ -105,7 +105,7 @@
 	id='browse.count'
 	gap={k.gap.normal}
 	edge={$w_show_filters && !$w_filters_folded.includes('tags') ? T_Edge.thick : T_Edge.view}>
-	{#snippet holds()}
+	{#snippet contents()}
 		<div class='count-row' bind:this={count_row}>
 			<!-- With nothing left after the filters there are no folders to show or hide, so the
 				button has nothing to act on. -->

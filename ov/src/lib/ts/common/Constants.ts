@@ -42,30 +42,30 @@ export default class Constants {
 		faint		 : common_font * 0.7,		// 8.75 — the credit line
 		tiny		 : common_font * 0.8,		// 10.4 — labels
 		small		 : common_font * 0.9,		// 11.7 — controls
-		normal		 : common_font,				// 13 — body
-		big			 : common_font * 1.1,		// 14 — the collapsible banner
+		normal		 : common_font,				// 13   — body
+		big			 : common_font * 1.1,		// 14   — the collapsible banner
 		fat			 : common_font * 1.4,		// 17.5
 		huge		 : common_font * 1.9,		// 24.5
 		em           : {
-			tiny	 : 0.03,					// em — the banner letter-spacing
+			tiny	 : 0.03,					// em   — the banner letter-spacing
 			small	 : 1.4,
 			normal	 : 2,						// the setting-up words, shown before anything else
 			big		 : 8,
 		},
 		weight       : {
-			normal	 : bold,					// 550 — body + controls
-			big		 : bold + 100,				// 650 — the collapsible banner
-			huge	 : bold + 200,				// 750 — the popup title
+			normal	 : bold,					// 550  — body + controls
+			big		 : bold + 100,				// 650  — the collapsible banner
+			huge	 : bold + 200,				// 750  — the popup title
 		},
 	};
 
 	pad = {
 		hamburger	 : { y: 2, x: 6 },
 		stepper		 : { y: 0, x: 4 },
-		control		 : { top: 1, bottom: 3, x: 10 },		// top-light: lifts control text ~2px off the low baseline
+		control		 : { top: 1, bottom: 3, x: 10 },			// top-light: lifts control text ~2px off the low baseline
 		modal		 : { y: 16, x: 20 },
 		view		 : { top: 52, x: 24 },
-		cell		 : { y: common_gap / 2, x: common_gap },		// left is 0
+		cell		 : { y: common_gap / 2, x: common_gap },	// left is 0
 	};
 
 	inset = {
@@ -79,9 +79,9 @@ export default class Constants {
 
 	radius = {
 		corner		 : {
-			tiny	 : common_size / 3.5,		// 10 — the collapsible banner
+			tiny	 : common_size / 3.5,		// 10    — the collapsible banner
 			small	 : common_size / 3,			// 11.67 — the build notes
-			normal	 : common_size / 2,			// 17.5 — also for Add drop box
+			normal	 : common_size / 2,			// 17.5  — also for Add drop box
 			pill	 : 999,
 		},
 		percent		 : 50,
@@ -106,12 +106,12 @@ export default class Constants {
 	gap = {
 		huge		 : common_gap * 5,			// 38.89 — how far a bar's word is held off the left end
 		fat	         : common_gap * 2.1,		// 16.33
-		big			 : common_gap * 1.25,		// 9.72 — a normal gap and a faint one
+		big			 : common_gap * 1.25,		// 9.72  — a normal gap and a faint one
 		normal       : common_gap,				// 7.78
 		small		 : common_gap / 1.8,		// 4.32
 		tiny		 : common_gap / 2,			// 3.89
 		faint		 : common_gap / 4,			// 1.94
-		micro		 : common_gap / 6,			// 1.3 — the hairline between a double border's two edges
+		micro		 : common_gap / 6,			// 1.3   — the hairline between a double border's two edges
 	}
 
 	// Every drawn line, whether an edge or a separator.
@@ -126,18 +126,18 @@ export default class Constants {
 
 	// Smallest first, the same as the widths.
 	height = {
-		small        : control_height * 0.1,	// 15.31 — one row of the words: a blank line, a rule
+		tiny 		 : control_height * 0.1,	// 2.19  — 
+		small        : control_height * 0.8,	// 17.5  — folded section height
 		normal		 : control_height,			// 21.88 — one control
 		big			 : control_height * 1.3,	// 28.44 — a row that can be hidden
-		fat			 : common_size	  * 1.2,	// 42 — the banner
+		fat			 : common_size	  * 1.2,	// 42    — the banner
 	};
 
 	size = {
-		small		 : control_height * 0.9,	// 19.69 — the shared drawn-cross size
-		pointer		 : control_height * 0.945,	// 20.67 — the soft pointer beside a heading
+		small		 : control_height * 0.945,	// 20.67 — the soft pointer beside a heading
 		normal		 : control_height,			// 21.88 — one control
-		big			 : common_size * 0.7,		// 24.5 — the hamburger
-		fat			 : common_size / 1.25,		// 28 — a round button
+		big			 : common_size * 0.7,		// 24.5  — the hamburger
+		fat			 : common_size * 0.8,		// 28    — a round button
 	};
 
 	margin = {

@@ -37,15 +37,15 @@
 
 	.repair {
 		border          : var(--thick) solid var(--black);
-		height          : var(--height);
 		padding         : var(--pad-control);
 		border-radius   : var(--radius-pill);
 		font-size       : var(-font-control);
+		height          : var(--height);
 		background      : var(--white);
 		color           : var(--text);
 		box-sizing      : border-box;
-		white-space     : nowrap;
 		cursor          : pointer;
+		white-space     : nowrap;
 	}
 
 	.repair:global([data-hit]) {

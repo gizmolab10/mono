@@ -201,7 +201,7 @@
 	edge={T_Edge.thick}
 	id={`${WAY_OUT}.search`}
 	folded={!$w_show_search}>
-	{#snippet holds()}
+	{#snippet contents()}
 		<!-- Its type is "search", so the browser draws its own clear cross at the right end
 		     once there is text. -->
 		<div class='view-search'>

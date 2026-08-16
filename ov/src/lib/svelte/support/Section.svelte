@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
+	import Action, { T_Position } from '../../ts/types/Action';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
-	import Action, { T_Position } from '../../ts/types/Action';
 	import Separator from './Separator.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -18,27 +18,27 @@
 		id,
 		edge               = T_Edge.thin,
 		gap                = USUAL_GAP,
-		gap_at_foot        = undefined,
-		extra_when_folded  = 0,
-		onhover            = undefined,
 		onbare             = undefined,
-		bare_says          = '',
-		folded             = false,
+		onhover            = undefined,
+		gap_at_foot        = undefined,
 		holds_subsections  = false,
 		fills_when_bare    = false,
+		folded             = false,
 		actions            = null,
-		holds,
+		bare_says          = '',
+		extra_when_folded  = 0,
+		contents,
 	}: {
-		id                 : string;                  // what this section is called, said once by whoever draws it
 		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
 		onbare?            : (() => void) | undefined;               // a press landed on the bare background, on nothing that answers for itself
-		bare_says?         : string;                  // what a press on the bare background would do, shown while the cursor is on it
 		actions?           : Action[] | null;         // things to sit on the line, each at its own end or middle
-		holds              : Snippet;                 // what it shows
+		contents           : Snippet;                 // what it shows
 		holds_subsections? : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
 		fills_when_bare?   : boolean;                 // its whole background fills while the cursor is on bare space, because a press there does something
 		folded?            : boolean;                 // its content is put away, so it holds no gap
 		edge?              : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
+		id                 : string;                  // what this section is called, said once by whoever draws it
+		bare_says?         : string;                  // what a press on the bare background would do, shown while the cursor is on it
 		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
 		gap_at_foot?       : number;                  // a different number below its content, where the two sides are drawn against different things
 		extra_when_folded? : number;                  // more than the one folded height, for the one section that needs it
@@ -106,7 +106,7 @@
 		onmouseenter={() => { if (!folded) { onhover?.(true); } }}
 		onmouseleave={() => { onhover?.(false); }}
 		onkeyup={() => {}}>
-		{#if !folded}{@render holds()}{/if}
+		{#if !folded}{@render contents()}{/if}
 	</div>
 </div>
 

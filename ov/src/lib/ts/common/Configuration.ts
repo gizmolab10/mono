@@ -50,7 +50,6 @@ class Configuration {
 		root.setProperty('--height-fat',         `${k.height.fat}px`);
 		root.setProperty('--width-tiny',         `${k.width.tiny}px`);
 		root.setProperty('--size-small',         `${k.size.small}px`);
-		root.setProperty('--size-pointer',       `${k.size.pointer}px`);
 		root.setProperty('--size',               `${k.size.normal}px`);
 		root.setProperty('--size-fat',           `${k.size.fat}px`);
 		root.setProperty('--font-faint',         `${k.font.faint}px`);
@@ -74,7 +73,7 @@ class Configuration {
 		root.setProperty('--fw-huge',            `${k.font.weight.huge}`);
 		root.setProperty('--inset-cluster',      `${k.inset.cluster}px`);
 		root.setProperty('--inset-numbers',      `${k.inset.numbers}px`);
-		root.setProperty('--inset-list',        `${k.inset.list}px`);
+		root.setProperty('--inset-list',         `${k.inset.list}px`);
 		root.setProperty('--inset-pill-top',     `${k.inset.pill.top}px`);
 		root.setProperty('--inset-pill-left',    `${k.inset.pill.left}px`);
 		root.setProperty('--inset-popup-edge',   `${k.inset.popup.edge}px`);

@@ -14,8 +14,12 @@
 	// Opening one area leaves the others as they are, and picking a tag leaves the area open,
 	// since picking two tags of a kind is the ordinary thing to want.
 
-	let { area, in_reach, chosen, ontoggle }:
-		{ area: Tag_Area; in_reach: string[]; chosen: string[]; ontoggle: (tag: string) => void } = $props();
+	// Two rows of these are on screen at once — the list's own, and the label form's — so each
+	// says which row it belongs to and every name here begins with it. Without that both rows
+	// register the same names, the older of each pair is let go, and whichever tag they had in
+	// common answers nothing on the row that lost it.
+	let { area, in_reach, chosen, ontoggle, row }:
+		{ area: Tag_Area; in_reach: string[]; chosen: string[]; ontoggle: (tag: string) => void; row: string } = $props();
 
 	// Which areas are open is remembered between visits, and kept in one place so an area left
 	// open among the filters is open in the label form too.
@@ -122,7 +126,7 @@
 		role='button'
 		tabindex='-1'
 		onkeyup={() => {}}
-		use:hit_target={{ id: `pill.${area.name}`,
+		use:hit_target={{ id: `${row}.pill.${area.name}`,
 			dormant: open && lone === '',
 			tip: lone !== '' ? `${chosen.includes(lone) ? 'remove' : 'add'} "${lone}" tag`
 				: `choose ➜ ${shown.join(', ')}`,
@@ -140,7 +144,7 @@
 			style:--shows='{open ? lead_time : run_time}ms'>
 			<!-- Named by its own area, since a row holds one of these per area. -->
 			<button class='shut-me' bind:this={cross} aria-label={`shut ${area.name}`}
-				use:hit_target={{ id: `pill.shut.${area.name}`, onpress: () => toggle_area(area.name),
+				use:hit_target={{ id: `${row}.pill.shut.${area.name}`, onpress: () => toggle_area(area.name),
 					dormant: !open || moving, tip: `hide ${area.name} tags` }}>
 				<svg overflow='visible' viewBox='0 0 {CROSS} {CROSS}' width={CROSS} height={CROSS}>
 					<path d={cross_path} />
@@ -161,7 +165,7 @@
 						     an unpicked one — a state that can be taken back is not a dead end. -->
 						<button class='segment' class:current={chosen.includes(tag)}
 							style:--waits='{waits_for(at)}ms'
-							use:hit_target={{ id: `pill.${area.name}.${tag}`, onpress: () => ontoggle(tag),
+							use:hit_target={{ id: `${row}.pill.${area.name}.${tag}`, onpress: () => ontoggle(tag),
 								dormant: !open || moving,
 								tip: `${chosen.includes(tag) ? 'remove' : 'add'} "${tag}" tag` }}>{tag}</button>
 					{/each}

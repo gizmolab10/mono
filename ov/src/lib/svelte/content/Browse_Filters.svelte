@@ -313,7 +313,7 @@
 		<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
 			{#each showing_areas as area (area.name)}
 				<span class='pill-slot' transition:fade={{ duration: FADE }}>
-					<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
+					<Big_Pill row='list' {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
 				</span>
 			{/each}
 		</div>
@@ -344,13 +344,13 @@
 	     all away, and it holds three subsections — the projects, the kinds, the tags. It holds no
 	     gap of its own, since each of those holds the gap at its own boundaries. -->
 	<Section
+		gap={0}
 		id='list.filters'
 		holds_subsections
-		gap={0}
 		edge={T_Edge.thick}
 		actions={[all_action]}
 		folded={!$w_show_filters}>
-		{#snippet holds()}
+		{#snippet contents()}
 		<!-- The three picking rows are one stack of subsections: a gap between each pair, and a line
 		     standing centred in every gap. Each line carries the word that names what sits under it,
 		     so the word reads as a heading for the subsection that follows.
@@ -361,9 +361,9 @@
 		     itself a stack and draws its own line in its own gap. -->
 		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge}
 			leads={[projects_action, projects_clearer]} sections={[
-			{ holds: projects_row, folded: !show_projects },
-			{ holds: kinds_picker, rides: [kinds_action, kinds_clearer],       folded: !show_kinds },
-			{ holds: tags_picker,  rides: [tags_action, picking_action],       folded: !show_tags },
+			{ subsection: projects_row, folded: !show_projects },
+			{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_kinds },
+			{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_tags },
 		]} />
 		{/snippet}
 	</Section>
@@ -381,12 +381,12 @@
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.fold-word {
 		border        : var(--thick-small) solid var(--black);
+		background    : var(--section-bg, var(--bg));
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
 		padding       : 0 var(--gap);
 		box-sizing    : border-box;
-		background    : var(--section-bg, var(--bg));
 		font-family   : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
@@ -486,9 +486,9 @@
 	.clear {
 		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
-		padding       : 0 var(--gap);
 		font-size     : var(--font-faint);
 		background    : var(--white);
+		padding       : 0 var(--gap);
 		color         : var(--text);
 		box-sizing    : border-box;
 		align-self    : center;

@@ -591,7 +591,7 @@
 	// The top heading is the exception — whether a file's title has its own words folded away
 	// is one setting for the whole app, so every file opens the way the last one was left, and
 	// it is remembered between visits.
-	const FOLD_MARK = k.size.pointer;
+	const FOLD_MARK = k.size.small;
 	const w_fold_titles = preferences.persistent<boolean>(T_Preference.fold_titles, false);
 	let folded_at = $state<number[]>([]);
 	let folds_for = '';                             // which file the folds above belong to
@@ -790,6 +790,10 @@
 			if (drawn.has(says)) { one.removeAttribute('data-number'); continue; }
 			drawn.add(says);
 		}
+		// TEMPORARY — how many numbers the page ended up wearing, and what the browser makes of the
+		// two lengths every one of them is measured from.
+		const style = getComputedStyle(page);
+		debug.log(`Reading "${name}": ${drawn.size} row number(s) drawn, ${page.querySelectorAll('.blank-line').length} of them on rows nothing else covers. The page steps in "${style.paddingLeft}", the numbers end "${style.getPropertyValue('--inset-numbers')}" in, the pointer is "${style.getPropertyValue('--size-small')}" wide.`);
 	}
 
 	// --- the links, registered with the hits manager --------------------------
@@ -960,11 +964,6 @@
 
      With the label form folded away it stands flat, so its own line is already at this very
      spot and nothing is drawn here — two lines touching read as one thick one. -->
-{#if draws_line}
-	<div class='section-bar'>
-		<Separator thickness={k.thickness.huge}/>
-	</div>
-{/if}
 <!-- Nothing is said while the words are being read: the wait is too short to see, and a
      line that flashes and goes reads as a fault. -->
 {#if !loaded}
@@ -1078,8 +1077,8 @@
 	   on the page by hand rather than drawn from here, so it is named as reaching outside this
 	   component. */
 	:global(.fold-mark) {
-		margin-left     : calc(0px - var(--gap) - var(--size-pointer));
-		width           : var(--size-pointer);
+		margin-left     : calc(0px - var(--gap) - var(--size-small));
+		width           : var(--size-small);
 		margin-right    : var(--gap);
 		background      : transparent;
 		/* Each mark is painted on a surface of its own, so filling one under the cursor cannot
@@ -1165,7 +1164,7 @@
 		   in it, and anything outside a box that scrolls is clipped away. The left inset is
 		   built up rather than picked: the row numbers end at the one number that says so, then
 		   a gap, then the pointer, then a gap — and there the words begin. */
-		padding      : 0 var(--gap-fat) 0 calc(var(--inset-numbers) + var(--gap) * 2 + var(--size-pointer));
+		padding      : 0 var(--gap-fat) 0 calc(var(--inset-numbers) + var(--gap) * 2 + var(--size-small));
 		top          : var(--gap-fat);
 		font-size    : var(--font);
 		color        : var(--text);
@@ -1275,7 +1274,7 @@
 	   place of its own, so its number is measured from that piece's left edge, the same edge every
 	   other number is measured from — and a list stepped in does not step its numbers in. */
 	.view-page :global([data-number])::before {
-		margin-right : calc(var(--gap) * 2 + var(--size-pointer));
+		margin-right : calc(var(--gap) * 2 + var(--size-small));
 		font-size    : var(--font-faint);
 		content      : attr(data-number);
 		color        : var(--gray);
@@ -1354,8 +1353,8 @@
 	   own words: a word standing on the line above hangs down into this area, and the one that can
 	   be pressed is the one that has to be whole. */
 	.view-page :global(> h1[data-number]) {
-		margin     : 0 calc(var(--gap-fat) * -1) 0 calc(0px - var(--inset-numbers) - var(--gap) * 2 - var(--size-pointer));
-		padding    : var(--gap-tiny) var(--gap-big) 0 calc(var(--gap-big) + var(--size-pointer) + var(--inset-numbers));
+		margin     : 0 calc(var(--gap-fat) * -1) 0 calc(0px - var(--inset-numbers) - var(--gap) * 2 - var(--size-small));
+		padding    : var(--gap-tiny) var(--gap-big) 0 calc(var(--gap-big) + var(--size-small) + var(--inset-numbers));
 		z-index    : var(--z-hideable);
 		height     : var(--title-slot);
 		box-sizing : border-box;
@@ -1442,7 +1441,7 @@
 	   it stand where they always did — and its item holds no place of its own, which is what lets
 	   that item's number be measured from the outermost piece. */
 	:global(.fold-mark.task-fold) {
-		margin-left    : calc(0px - var(--size-pointer) - var(--gap));
+		margin-left    : calc(0px - var(--size-small) - var(--gap));
 		height         : var(--size-small);
 		display        : inline-flex;
 		margin-right   : var(--gap);

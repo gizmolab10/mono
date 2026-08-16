@@ -1,24 +1,24 @@
 <script lang='ts'>
 	import { foot_is_all_folds, inverted, toggle_all_areas, w_areas_open, w_form_folded } from '../../ts/managers/Filters';
 	import { ALL_TAGS, T_Kind, in_order, type File } from '../../ts/types/File';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import { k } from '../../ts/common/Constants';
 	import { with_labels_replaced } from '../../ts/utilities/Labels';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { WAY_OUT } from '../../ts/events/Hit_Target';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
 	import Big_Pill from '../support/Big_Pill.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import Section from '../support/Section.svelte';
-	import Stack from '../support/Stack.svelte';
+	import { k } from '../../ts/common/Constants';
 	import { debug } from '../../ts/common/Debug';
 	import { hits } from '../../ts/events/Hits';
+	import Stack from '../support/Stack.svelte';
 
 	// What a guide is labeled: its title, its date, the line saying what it is for, its one kind,
 	// and its tags. The labels are never on the page — they are taken off before the words are
@@ -310,7 +310,7 @@
 			bind:this={tags_row} use:smooth_height>
 			{#each TAG_AREAS as area (area.name)}
 				<span class='pill-slot'>
-					<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
+					<Big_Pill row='editor' {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
 				</span>
 			{/each}
 		</div>
@@ -336,15 +336,15 @@
 	edge={T_Edge.thick}
 	actions={[filters_action]}
 	folded={!$w_show_filters}>
-	{#snippet holds()}
+	{#snippet contents()}
 	<!-- The form is one stack of three subsections: what the guide says about itself in words, its
 	     one kind, and its tags. The heavy line carrying the word that folds the whole form away is
 	     drawn by the section holding us, so we say how thick it is and the stack measures from its
 	     middle like every other separator. -->
 	<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} sections={[
-		{ holds: word_rows },
-		{ holds: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
-		{ holds: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },
+		{ subsection: word_rows },
+		{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
+		{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },
 	]} />
 	{/snippet}
 </Section>
