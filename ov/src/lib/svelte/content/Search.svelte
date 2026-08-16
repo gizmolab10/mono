@@ -196,6 +196,7 @@
 <Section
 	gap={k.gap.big}
 	onbare={onclose}
+	bare_says='resume browse'
 	actions={[to_do]}
 	edge={T_Edge.thick}
 	id={`${WAY_OUT}.search`}

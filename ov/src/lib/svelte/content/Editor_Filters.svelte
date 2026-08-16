@@ -16,6 +16,7 @@
 	import Big_Pill from '../support/Big_Pill.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import Section from '../support/Section.svelte';
+	import Stack from '../support/Stack.svelte';
 	import { debug } from '../../ts/common/Debug';
 	import { hits } from '../../ts/events/Hits';
 
@@ -240,6 +241,82 @@
 	</span>
 </div>
 
+<!-- What a guide says about itself in words: its title, its date, and one line saying what it is
+     for. They sit closer together than sections do, since they are rows of one thing rather than
+     things of their own.
+
+     The bare space among them is another way back to the list, the same as the two rows above the
+     heavy line — and the two light together, since they are one way out. Each field is a control
+     the manager knows about, so the way out standing behind them never answers for the space one
+     of them occupies. -->
+{#snippet word_rows()}
+	<div class='label-rows first' role='button' tabindex='-1' onkeyup={() => {}}
+		class:lit={way_out_lit}
+		use:hit_target={{ id: `${WAY_OUT}.labels`, type: T_Hit_Target.section,
+			onpress: onclose, tip: 'resume browse' }}>
+		<div class='word-rows'>
+			<div class='filter-row'>
+				<span class='filter-word'>title</span>
+				<input class='filter-field' bind:value={form_title} onblur={save_filters}
+					use:hit_target={{ id: 'editor.field.title', tip: 'what this guide is called' }} />
+				<span class='filter-word'>date</span>
+				<input class='filter-field date' bind:value={form_date} onblur={save_filters}
+					use:hit_target={{ id: 'editor.field.date', tip: 'when it was last worked on' }} />
+			</div>
+			<div class='filter-row'>
+				<span class='filter-word'>brief</span>
+				<input class='filter-field' bind:value={form_description} onblur={save_filters}
+					use:hit_target={{ id: 'editor.field.brief', tip: 'one sentence saying what it is for' }} />
+			</div>
+		</div>
+	</div>
+{/snippet}
+
+<!-- The kinds. No word beside them: the separator above already says what they are. Their own bare
+     space carries the way out's name and press, so it lights and acts with the rows above it. -->
+{#snippet kinds_picker()}
+	<div class='label-rows kinds-rows' role='button' tabindex='-1' onkeyup={() => {}}
+		class:lit={way_out_lit}
+		use:hit_target={{ id: `${WAY_OUT}.kinds`, type: T_Hit_Target.section,
+			onpress: onclose, tip: 'resume browse' }}>
+		<div class='filter-row wrapping'>
+			{#each KINDS as one (one)}
+				<!-- A guide wears one kind, so pressing the one it wears takes it off and pressing
+				     any other puts that one on in its place. -->
+				<button class='filter-pick' class:on={form_kind === one}
+					use:hit_target={{ id: `editor.kind.${one}`,
+						tip: `${form_kind === one ? 'remove' : 'add'} "${one}" kind`,
+						onpress: () => { form_kind = form_kind === one ? '' : one; save_filters(); } }}>{one}</button>
+			{/each}
+		</div>
+	</div>
+{/snippet}
+
+<!-- The same areas the filters use. Every tag is within reach here, since this is where a file's
+     own tags are set rather than where files are narrowed. A press on the bare space among them
+     shuts them all; a press on an area itself is that area's own.
+
+     Each area is wrapped so it can be slid: opening one grows it from a word to a run of segments,
+     and the pills after it move a long way at once. -->
+{#snippet tags_picker()}
+	<div class='bare-answers' role='presentation'
+		use:hit_target={{ id: 'editor.tags', type: T_Hit_Target.section,
+			onrelease: () => toggle_all_areas(TAG_AREAS.map((one) => one.name)),
+			tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' }}
+		onmouseenter={() => { tags_lit = true; }}
+		onmouseleave={() => { tags_lit = false; }}
+		onkeyup={() => {}}>
+		<div class='filter-row wrapping tags-row' class:named={names_riding}
+			bind:this={tags_row} use:smooth_height>
+			{#each TAG_AREAS as area (area.name)}
+				<span class='pill-slot'>
+					<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
+				</span>
+			{/each}
+		</div>
+	</div>
+{/snippet}
+
 <!-- Folded, this whole block is bare space above the file's words, so it is another way back to
      the list. Open, the form fills it and only the label rows inside are. -->
 <div class='filter-block' class:lit={way_out_lit && !$w_show_filters}
@@ -260,96 +337,15 @@
 	actions={[filters_action]}
 	folded={!$w_show_filters}>
 	{#snippet holds()}
-	<!-- The bare space among the label rows is another way back to the list, the same as the
-	     top block — and the two light together, since they are one way out. It stops at the
-	     line above the tags: a press on the tags' own bare space already means something. -->
-	<div class='filter-form'>
-		<div class='label-rows' role='button' tabindex='-1' onkeyup={() => {}}
-			class:lit={way_out_lit}
-			use:hit_target={{ id: `${WAY_OUT}.labels`, type: T_Hit_Target.section,
-				onpress: onclose, tip: 'resume browse' }}>
-			<!-- What a guide says about itself in words: its title, its date, and one line
-			     saying what it is for. They sit closer together than sections do, since they
-			     are rows of one thing rather than things of their own. -->
-			<!-- Each field is a control the manager knows about, so the way out standing behind
-			     them never answers for the space one of them occupies. Typing in it is the
-			     browser's own business; the manager is only told it is there. -->
-			<div class='word-rows'>
-				<div class='filter-row'>
-					<span class='filter-word'>title</span>
-					<input class='filter-field' bind:value={form_title} onblur={save_filters}
-						use:hit_target={{ id: 'editor.field.title', tip: 'what this guide is called' }} />
-					<span class='filter-word'>date</span>
-					<input class='filter-field date' bind:value={form_date} onblur={save_filters}
-						use:hit_target={{ id: 'editor.field.date', tip: 'when it was last worked on' }} />
-				</div>
-				<div class='filter-row'>
-					<span class='filter-word'>brief</span>
-					<input class='filter-field' bind:value={form_description} onblur={save_filters}
-						use:hit_target={{ id: 'editor.field.brief', tip: 'one sentence saying what it is for' }} />
-				</div>
-			</div>
-			<!-- The kinds, as a section of their own: its line carries the word that folds them
-			     away and then says which kind the guide is.
-
-			     It stands inside the label rows, and the smaller area wins the cursor — so it
-			     carries the way out's own name and press. Without that, the bare space among the
-			     kinds would be the one part of this block that answered nothing. -->
-			<Section
-				gap={k.gap.huge}
-				onbare={onclose}
-				id={`${WAY_OUT}.kinds`}
-				actions={[kinds_action]}
-				folded={!show_form_kinds}>
-				{#snippet holds()}
-					<!-- No word beside them: the line above already says what they are. -->
-					<div class='filter-row wrapping'>
-						{#each KINDS as one (one)}
-							<!-- A guide wears one kind, so pressing the one it wears takes it off and
-							     pressing any other puts that one on in its place. -->
-							<button class='filter-pick' class:on={form_kind === one}
-								use:hit_target={{ id: `editor.kind.${one}`,
-									tip: `${form_kind === one ? 'remove' : 'add'} "${one}" kind`,
-									onpress: () => { form_kind = form_kind === one ? '' : one; save_filters(); } }}>{one}</button>
-						{/each}
-					</div>
-				{/snippet}
-			</Section>
-		</div>
-		<!-- The tags, as a section of their own: its line carries the word that folds them
-		     away, and the section holds the gap around them. The word lights with every
-		     other one that can be pressed — while the way back to the list is lit, and while
-		     the cursor is among the tags themselves. -->
-		<!-- Folded under a folded kinds row, it asks for no gap at all and stands flat, and the
-		     file's own words below draw no line — the kinds' line is already closing what stands
-		     above it. With the kinds open it stands as it is, folded or not. -->
-		<Section
-			id='editor.tags'
-			gap={foot_is_all_folds(!show_form_kinds, !show_form_tags) ? 0 : k.gap.big}
-			actions={[tags_action, picking_action]}
-			fills_when_bare
-			onbare={() => toggle_all_areas(TAG_AREAS.map((one) => one.name))}
-			bare_says={$w_areas_open.length === 0 ? 'expand tags' : 'collapse tags'}
-			folded={!show_form_tags}
-			onhover={(over) => { tags_lit = over; }}>
-			{#snippet holds()}
-				<!-- The same areas the filters use. Every tag is within reach here, since this
-				     is where a file's own tags are set rather than where files are narrowed.
-				     A press on the bare space among them shuts them all; a press on an area
-				     itself is that area's own. -->
-				<!-- Each area is wrapped so it can be slid: opening one grows it from a word to a
-				     run of segments, and the pills after it move a long way at once. -->
-				<div class='filter-row wrapping tags-row' class:named={names_riding}
-					bind:this={tags_row} use:smooth_height>
-					{#each TAG_AREAS as area (area.name)}
-						<span class='pill-slot'>
-							<Big_Pill {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
-						</span>
-					{/each}
-				</div>
-			{/snippet}
-		</Section>
-	</div>
+	<!-- The form is one stack of three subsections: what the guide says about itself in words, its
+	     one kind, and its tags. The heavy line carrying the word that folds the whole form away is
+	     drawn by the section holding us, so we say how thick it is and the stack measures from its
+	     middle like every other separator. -->
+	<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} sections={[
+		{ holds: word_rows },
+		{ holds: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
+		{ holds: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },
+	]} />
 	{/snippet}
 </Section>
 </div>
@@ -405,32 +401,38 @@
 		cursor     : pointer;
 	}
 
-	.filter-form {
-		flex-direction : column;
-		display        : flex;
-		gap            : 0;
-	}
-
-	/* The label rows, taken as one block — the part of the form that is a way back to the list. It
-	   reaches out to the box's left and right edges and up to the line above it, so the lit color
-	   covers the gap the box holds around its contents rather than stopping short. It ends at the
-	   line above the tags, which is where the way out ends. */
-	/* Below its last row it holds the gap that stands between it and the tags line — the set's own
-	   spacing plus the line's — and gives that gap straight back, so the color reaches the line
-	   while the line itself stays where it is. */
+	/* A part of the form that is a way back to the list. It reaches out to the box's left and right
+	   edges and holds that width back as its own step-in, so what it shows stands exactly where it
+	   did and the lit color covers the gap the box holds around its contents. */
 	.label-rows {
-		margin         : 0 calc(var(--gap) * -1);
-		padding        : var(--gap) var(--gap) 0;
+		margin         : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
+		padding        : var(--over) var(--gap) var(--under);
 		flex-direction : column;
 		cursor         : pointer;
 		display        : flex;
 		gap            : 0;
 	}
 
-	/* Rows of one thing, so they sit closer together than sections do. Not a section itself, so
-	   it holds its own gap below — the gap a section's line would otherwise stand clear of. */
+	/* The first section stands under the heavy line the section holding us draws, and holds its own
+	   small gap below it — the stack measures from that line's middle but holds nothing above its
+	   own first section. The last one holds the same below its content. */
+	.label-rows.first {
+		padding-top : var(--gap-small);
+	}
+
+	/* The bare space among the tag pills answers its own press, and reaches out the same way. */
+	.bare-answers {
+		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
+		padding : var(--over) var(--gap) calc(var(--under) + var(--gap-small));
+	}
+
+	.bare-answers:global([data-hit]) {
+		background : var(--hover);
+		cursor     : pointer;
+	}
+
+	/* Rows of one thing, so they sit closer together than sections do. */
 	.word-rows {
-		padding-bottom : var(--gap);
 		gap            : var(--gap-tiny);
 		flex-direction : column;
 		display        : flex;

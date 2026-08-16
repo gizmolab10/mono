@@ -88,6 +88,17 @@
 	// both of the last two are folded and nothing is left down there to stand clear of.
 	const foot_gap = $derived(both_folded ? -k.gap.normal : k.gap.faint);
 
+	// Half the space above a section and half the space below it — the part of each gap that
+	// belongs to this section rather than to its neighbour. A section that answers a press reads
+	// these and reaches out over them, so the whole slot answers rather than the content alone.
+	function over_of(at: number): number {
+		return at === 0 ? (leads ? spacing(0) / 2 : 0) : spacing(at) / 2;
+	}
+
+	function under_of(at: number): number {
+		return at === sections.length - 1 ? Math.max(0, foot_gap) : spacing(at + 1) / 2;
+	}
+
 	// A folded section shows nothing, and stands whatever height puts the line below it exactly the
 	// folded distance from the line above it. The line below sits half a space up from the next
 	// section, which is this section's own height plus the space between them.
@@ -122,6 +133,8 @@
 	{/if}
 	{#each sections as section, at (at)}
 		<div class='stacked' class:folded={section.folded}
+			style:--over='{over_of(at)}px'
+			style:--under='{under_of(at)}px'
 			style:margin-top={at > 0 ? `${spacing(at)}px` : undefined}
 			style:height={section.folded ? `${height_of(at)}px` : undefined}>
 			{#if section.folded && !(both_folded && at === sections.length - 1)}

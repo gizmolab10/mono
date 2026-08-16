@@ -308,7 +308,7 @@
 	<div class='bare-answers' role='presentation'
 		use:hit_target={{ id: 'list.tags', type: T_Hit_Target.section,
 			onrelease: () => toggle_all_areas(showing_areas.map((one) => one.name)),
-			tip: $w_areas_open.length === 0 ? 'expand tags' : 'collapse tags' }}
+			tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' }}
 		onkeyup={() => {}}>
 		<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
 			{#each showing_areas as area (area.name)}
@@ -415,14 +415,13 @@
 		display        : flex;
 	}
 
-	/* The bare space beside the tag pills answers its own press: it reaches out to the box's own
-	   edges and holds that width back as its own step-in, so the pills stand exactly where they
-	   did, and the whole background fills while the cursor is on it. */
+	/* The bare space beside the tag pills answers its own press. It reaches out to the box's own
+	   edges and up and down over half of each gap around it — the part of those gaps that belongs
+	   to this section — and holds all of that back as its own step-in, so the pills stand exactly
+	   where they did while the whole slot answers. */
 	.bare-answers {
-		margin-left   : calc(var(--gap) * -1);
-		margin-right  : calc(var(--gap) * -1);
-		padding-left  : var(--gap);
-		padding-right : var(--gap);
+		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
+		padding : var(--over) var(--gap) var(--under);
 	}
 
 	.bare-answers:global([data-hit]) {

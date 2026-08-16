@@ -10,7 +10,7 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Current context](current%20context.md) — what you can't read off the code.
 - [Hits manager](hits%20manager.md) — the ported manager, and the road to wiring one control to it.
 - [Mouse UX](mouse%20ux.md) — what a press means when the thing under the cursor changes between pressing and letting go.
-- [New gaps](new%20gaps.md) — the gap belongs to the stack, not to the section, and a line stands centred in it.
+- [Sections](sections.md) — a stack owns the gaps between its sections, and a separator stands centred in each one.
 - [Murk](murk.md) — why replies come out murky, and what is measured about it.
 - [Assessment of our guides](assessment%20of%20our%20guides.md) — every mono guide, listed under its real folder.
 - [Organize](organize.md) — what is actually in the repo, counted.
