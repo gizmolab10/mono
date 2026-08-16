@@ -382,3 +382,55 @@
 {"timestamp":"2026-08-15T20:47:57Z","action":"reply","word":"","murky":"","plain":""}
 {"timestamp":"2026-08-15T20:51:18Z","action":"reply","word":"","murky":"","plain":""}
 {"timestamp":"2026-08-15T20:54:40Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T20:55:22Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T20:55:22Z","action":"complaint","word":"t","murky":"5 August.\n- **Working features** — rows 71 and 72; the table repadded, only spacing moved.\n- **Handoff** — next item proposed: *going back should come back to where you were*, with success, where it stands, and three open questions.\n- **Map** — no change; no files added, moved or removed.\n\nAlso still open: the words file wears the `always` tag but never arrives with the others. Take it off?","plain":"`notes/guides/pre-flight/banned words.md` — the table of what to write instead.\n\nIts labels say it should arrive with the always files each turn, and it never does. Take the tag off, or make it arrive?"}
+{"timestamp":"2026-08-15T20:56:00Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T20:56:41Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T20:57:09Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T20:58:11Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T20:58:12Z","action":"complaint","word":"t","murky":"They do different jobs.\n\n- The screen swap only handles the rows that are always wrong, and only fixes what you see.\n- The warning reads the whole reply — including the rows banned in one meaning only, which need a judgment a swap cannot make — and writes them to the log.","plain":"**swap** — putting the right word in where I wrote a wrong one, before the reply reaches your screen.\n\n**row** — one line of the table in the words file: a word to use, the words never to use, and when."}
+{"timestamp":"2026-08-15T21:05:39Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:08:15Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:13:43Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:19:43Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:22:39Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:24:47Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:28:39Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:32:28Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:35:20Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:36:24Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:38:33Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:41:40Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:45:52Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:47:35Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:47:35Z","action":"complaint","word":"t","murky":"Added, with the five as built and what each defaults to.\n\n[new gaps.md:38](ov/notes/work/new%20gaps.md#L38)\n\nThe last of them, `above`, is named as the one that should not exist — it is only there while the thing holding the picking rows is still a section drawing its own heavy line.","plain":"The thickest line in the ladder — 7.78 across. It is the one carrying the word \"filters\", drawn above the picking rows."}
+{"timestamp":"2026-08-15T21:51:04Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:53:12Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T21:54:34Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:02:43Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:04:40Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:06:44Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:09:38Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:10:49Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:13:33Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:14:31Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:17:12Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:20:55Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:22:52Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:24:08Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:29:35Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:30:17Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:30:17Z","action":"complaint","word":"t","murky":"Reload.\n\nEach pair now carries its own spacing rather than the run carrying one: a line with something at its middle takes `--gap-big` above and below it, every other line takes the stack's own gap split in half. The tags line and the projects line both have a centre control, so both widen.\n\n[Stack.svelte:40-46](ov/src/lib/svelte/support/Stack.svelte#L40-L46)","plain":"Two rows standing one above the other, with one line between them. Each such pair now sets its own spacing."}
+{"timestamp":"2026-08-15T22:30:42Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:33:13Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:35:01Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:39:18Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:41:58Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T22:44:13Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-15T23:08:12Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-16T00:14:25Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-16T00:18:58Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-16T00:34:40Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-16T00:36:56Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-16T00:40:38Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-08-16T00:48:36Z","action":"reply","word":"","murky":"","plain":""}

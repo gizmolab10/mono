@@ -7,7 +7,7 @@ date: 2026-08-14
 ---
 # New gaps
 
-A section owns a line and the gaps on both sides of what it shows, and every gap is measured from that line's middle — so every gap gives back half a thickness. Ten props, four measurements, twelve tests, and a whole afternoon of arguing about one row that read too tall.
+A section owns a separator line and the gaps on both sides of what it shows, and every gap is measured from that separator line's middle — so every gap gives back half a thickness. Goal: replace 10 props, 4 measurements, 12 tests, and in the future avoid a whole afternoon of arguing about one row that read too tall.
 
 ## The one idea
 
@@ -34,6 +34,32 @@ A child is plain markup. A child that answers a press does so itself, the way ev
 Lines go between children and nowhere else — never above the first, never below the last. Whatever holds a stack draws its own boundary. A line at an end has one side, so it cannot be centred in anything, and the whole rule falls over.
 
 A folded child is drawn as nothing, and the two lines around it become one, in the accent and thicker. That is exactly what is on screen today: a gap of accent with a half-pixel hair down its exact middle.
+
+## Configuration variables
+
+What a stack is told, as built. Four of the five have an answer already, so most callers say one thing or nothing at all.
+
+```text
+sections    the sections, in the order they stand. Each names what it shows, the word
+            riding the line above it, and whether it is put away — nothing else.
+            A section that is itself a stack holds subsections.
+
+gap         how far apart two sections stand, said once for all of them.
+            The usual gap unless the caller says otherwise.
+
+thickness   how thick the line in each gap is drawn. The heavy one unless said
+            otherwise; browse's picking rows ask for the ordinary one.
+
+leads       words for a line above the first section, where whatever holds the stack
+            draws no boundary there. Nothing, unless the caller hands them over.
+
+over        how thick the line is that whatever holds this stack draws above it.
+            Nothing, where it draws none.
+```
+
+`over` is the one that should not exist. It is there because the thing holding browse's picking rows is still an old section drawing its own heavy line, and everything here is measured middle to middle. It goes the moment what holds a stack is itself a stack.
+
+A line carrying something at its middle takes `--gap-big` above and below it, since that thing hangs past the line on both sides. Every other line takes the stack's own gap, split in half.
 
 ## What that removes, and why each one goes
 

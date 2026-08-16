@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { foot_is_all_folds, w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
 	import Files, { w_first_column, w_scrollbar_showing } from '../content/Files.svelte';
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { words_that_fit } from '../../ts/utilities/Fitting';
@@ -104,8 +104,7 @@
 <Section
 	id='browse.count'
 	gap={k.gap.normal}
-	edge={$w_show_filters && !foot_is_all_folds($w_filters_folded.includes('kinds'), $w_filters_folded.includes('tags'))
-		? T_Edge.thick : T_Edge.view}>
+	edge={$w_show_filters && !$w_filters_folded.includes('tags') ? T_Edge.thick : T_Edge.view}>
 	{#snippet holds()}
 		<div class='count-row' bind:this={count_row}>
 			<!-- With nothing left after the filters there are no folders to show or hide, so the

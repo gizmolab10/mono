@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_project, w_kind, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_words } from '../../ts/managers/Filters';
-	import { foot_is_all_folds, inverted, T_Picking } from '../../ts/managers/Filters';
+	import { inverted, T_Picking } from '../../ts/managers/Filters';
 	import { toggle_all_areas, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
 	import Action, { T_Position } from '../../ts/types/Action';
@@ -11,7 +11,9 @@
 	import { hits } from '../../ts/events/Hits';
 	import { smooth_height } from '../../ts/utilities/Smooth_Height';
 	import Section from '../support/Section.svelte';
+	import Stack from '../support/Stack.svelte';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import Big_Pill from '../support/Big_Pill.svelte';
 	import { guides } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
@@ -265,6 +267,65 @@
 	{/if}
 {/snippet}
 
+{#snippet kinds_picker()}
+	<div class='paired-rows'>
+	{#if kinds_offered > 0}
+	<div class='kinds' use:tip={'show particular kinds of guide'}>
+		<!-- The files carrying no labels at all — how they are found, so they can be opened and
+		     given some. With every file already labeled there is nothing for it to leave, so it
+		     goes rather than standing there unanswering. -->
+		{#if bare > 0 || $w_kind === UNLABELED}
+			<button class='segment' class:current={$w_kind === UNLABELED}
+				use:hit_target={{ id: `list.kind.${UNLABELED}`, onpress: () => choose_kind(UNLABELED),
+					tip: 'show only the files that carry no labels' }}>none</button>
+		{/if}
+		{#each shown_kinds as kind}
+			{@const in_reach = kinds.includes(kind)}
+			<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
+				use:hit_target={{ id: `list.kind.${kind}`,
+					tip: in_reach ? `${$w_kind === kind ? 'remove' : 'add'} "${kind}" kind`
+						: `nothing of that kind is left by the other filters`,
+					onpress: in_reach ? () => choose_kind(kind) : undefined }}>{kind}</button>
+		{/each}
+	</div>
+	{/if}
+	</div>
+{/snippet}
+
+<!-- Twenty-four words in one row is more than an eye can scan, so the tags are gathered into six
+     areas, each folding away behind its own name. Stopping filtering by tag keeps its own plain
+     pill at the front.
+
+     A press on the bare space beside the pills shuts every area at once, so getting back to six
+     words never means pressing six crosses. The child answers that press itself: the whole
+     background fills while the cursor is on it, and it reaches out to the box's own edges.
+
+     Each area is wrapped so it can be slid: opening one grows it from a word to a run of segments,
+     and the pills after it move a long way at once. The wrapper is what carries the slide, and
+     areas with nothing left to show are left out here rather than inside — an empty wrapper would
+     still take a gap. -->
+{#snippet tags_picker()}
+	<div class='bare-answers' role='presentation'
+		use:hit_target={{ id: 'list.tags', type: T_Hit_Target.section,
+			onrelease: () => toggle_all_areas(showing_areas.map((one) => one.name)),
+			tip: $w_areas_open.length === 0 ? 'expand tags' : 'collapse tags' }}
+		onkeyup={() => {}}>
+		<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
+			{#each showing_areas as area (area.name)}
+				<span class='pill-slot' transition:fade={{ duration: FADE }}>
+					<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
+				</span>
+			{/each}
+		</div>
+	</div>
+{/snippet}
+
+{#snippet projects_row()}
+	<div class='paired-rows'>
+		{@render projects_picker()}
+	</div>
+{/snippet}
+
 <div class='filters'>
 
 	<!-- The search field takes the whole row, so the words looked for stay in reach whether or
@@ -290,88 +351,20 @@
 		actions={[all_action]}
 		folded={!$w_show_filters}>
 		{#snippet holds()}
-		<!-- The gap above the first line inside is this run's own: a section that holds
-		     subsections holds none, and the first of them has nothing above it to stand clear of. -->
-		<div class='picking-rows'>
-			<!-- Each section's line names what sits under it, so the word reads as a heading for
-			     the row that follows. -->
-			<Section
-				id='list.projects'
-				gap={k.gap.big}
-				actions={[projects_action, projects_clearer]}
-				folded={!show_projects}>
-				{#snippet holds()}
-					<div class='paired-rows'>
-						{@render projects_picker()}
-					</div>
-				{/snippet}
-			</Section>
+		<!-- The three picking rows are one stack of subsections: a gap between each pair, and a line
+		     standing centred in every gap. Each line carries the word that names what sits under it,
+		     so the word reads as a heading for the subsection that follows.
 
-			<Section
-				id='list.kinds'
-				gap={k.gap.big}
-				actions={[kinds_action, kinds_clearer]}
-				folded={!show_kinds}>
-				{#snippet holds()}
-					<div class='paired-rows'>
-					{#if kinds_offered > 0}
-					<div class='kinds' use:tip={'show particular kinds of guide'}>
-						<!-- The files carrying no labels at all — how they are found, so they can be
-						     opened and given some. With every file already labeled there is nothing
-						     for it to leave, so it goes rather than standing there unanswering. -->
-						{#if bare > 0 || $w_kind === UNLABELED}
-							<button class='segment' class:current={$w_kind === UNLABELED}
-								use:hit_target={{ id: `list.kind.${UNLABELED}`, onpress: () => choose_kind(UNLABELED),
-									tip: 'show only the files that carry no labels' }}>none</button>
-						{/if}
-						{#each shown_kinds as kind}
-							{@const in_reach = kinds.includes(kind)}
-							<button class='segment' class:current={$w_kind === kind} class:empty={!in_reach}
-								use:hit_target={{ id: `list.kind.${kind}`,
-									tip: in_reach ? `${$w_kind === kind ? 'remove' : 'add'} "${kind}" kind`
-										: `nothing of that kind is left by the other filters`,
-									onpress: in_reach ? () => choose_kind(kind) : undefined }}>{kind}</button>
-						{/each}
-					</div>
-					{/if}
-					</div>
-				{/snippet}
-			</Section>
-
-			<!-- Folded under a folded kinds row, it asks for no gap at all — which is how a section
-			     says it stands flat. Its line is then the last thing in the picking rows and the
-			     count row below draws none, so nothing stands between that line and the list. With
-			     the kinds open it stands as it is, folded or not — and folded, it takes one small gap
-			     more than the one folded height, since it is the last band before the list. -->
-			<Section
-				id='list.tags'
-				extra_when_folded={k.gap.small}
-				gap={foot_is_all_folds(!show_kinds, !show_tags) ? 0 : k.gap.big}
-				actions={[tags_action, picking_action]}
-				fills_when_bare
-				onbare={() => toggle_all_areas(showing_areas.map((one) => one.name))}
-				bare_says={$w_areas_open.length === 0 ? 'expand tags' : 'collapse tags'}
-				folded={!show_tags}>
-				{#snippet holds()}
-					<!-- Twenty-four words in one row is more than an eye can scan, so the tags are
-					     gathered into six areas, each folding away behind its own name. Stopping
-					     filtering by tag keeps its own plain pill at the front. -->
-					<!-- A click on the bare space beside the pills shuts every area at once, so getting
-					     back to six words never means pressing six crosses. -->
-					<!-- Each area is wrapped so it can be slid: opening one grows it from a word to a
-					     run of segments, and the pills after it move a long way at once. The wrapper
-					     is what carries the slide, and areas with nothing left to show are left out
-					     here rather than inside — an empty wrapper would still take a gap. -->
-					<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
-						{#each showing_areas as area (area.name)}
-							<span class='pill-slot' transition:fade={{ duration: FADE }}>
-								<Big_Pill {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
-							</span>
-						{/each}
-					</div>
-				{/snippet}
-			</Section>
-		</div>
+		     The line above this stack is the heavy one carrying the word that folds every picking
+		     row away, and it is drawn by whatever holds us — so we say how thick it is, and the
+		     stack measures from its middle like every other line. This goes when what holds us is
+		     itself a stack and draws its own line in its own gap. -->
+		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge}
+			leads={[projects_action, projects_clearer]} sections={[
+			{ holds: projects_row, folded: !show_projects },
+			{ holds: kinds_picker, rides: [kinds_action, kinds_clearer],       folded: !show_kinds },
+			{ holds: tags_picker,  rides: [tags_action, picking_action],       folded: !show_tags },
+		]} />
 		{/snippet}
 	</Section>
 </div>
@@ -422,39 +415,19 @@
 		display        : flex;
 	}
 
-	/* The three picking rows, taken as one run. Its own gap above is what stands between the
-	   line over the whole set and the first line inside it. */
-	.picking-rows {
-		flex-direction : column;
-		position       : relative;
-		display        : flex;
-		gap            : 0;
+	/* The bare space beside the tag pills answers its own press: it reaches out to the box's own
+	   edges and holds that width back as its own step-in, so the pills stand exactly where they
+	   did, and the whole background fills while the cursor is on it. */
+	.bare-answers {
+		margin-left   : calc(var(--gap) * -1);
+		margin-right  : calc(var(--gap) * -1);
+		padding-left  : var(--gap);
+		padding-right : var(--gap);
 	}
 
-	/* The strip between the line above and the first picking row's own line. It was bare space;
-	   it is a block of its own now so it can take the accent — reaching out to the box's edges the
-	   way a section's body does. */
-	.picking-rows::before {
-		margin     : 0 calc(var(--gap) * -1);
-		height     : calc(var(--gap-big) + var(--gap-faint));
-		background : var(--accent);
-		flex       : 0 0 auto;
-		content    : '';
-	}
-
-	/* A hairline across that strip, the same one a folded section wears. Half a pixel, pulled back
-	   half its own height, and standing one micro gap above the strip's middle. */
-	.picking-rows::after {
-		margin         : 0 calc(var(--gap) * -1);
-		top            : calc((var(--gap-big) + var(--gap-micro)) / 2 - var(--gap-micro));
-		background     : var(--black);
-		transform      : translateY(-50%);
-		pointer-events : none;
-		position       : absolute;
-		content        : '';
-		height         : 0.5px;
-		right          : 0;
-		left           : 0;
+	.bare-answers:global([data-hit]) {
+		background : var(--hover);
+		cursor     : pointer;
 	}
 
 	/* The clearing pill and the control it belongs to, centered together with one gap between

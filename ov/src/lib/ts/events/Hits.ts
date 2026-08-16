@@ -100,10 +100,15 @@ export default class Hits {
 			return this.finish_press(under, s_mouse);
 		}
 
-		if (!under) { this.pressed_id = null; return false; }
+		if (!under) {
+			if (s_mouse.isDown) { debug.log(`Press at ${Math.round(point.x)},${Math.round(point.y)} found nothing at all among ${matches.length} overlapping target(s).`); }
+			this.pressed_id = null;
+			return false;
+		}
 		const target = under;
 
 		if (s_mouse.isDown) {
+			debug.log(`Press at ${Math.round(point.x)},${Math.round(point.y)} went to "${target.id}", out of ${matches.length} overlapping: ${matches.map((one) => one.id).join(', ')}.`);
 			this.pressed_id = target.id;
 			target.clicks += 1;
 			if (target.respondsTo_autorepeat) {

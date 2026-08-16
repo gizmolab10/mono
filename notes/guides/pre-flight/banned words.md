@@ -16,7 +16,7 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | Use                             | hooked | same | Never                                  | Meaning            |
 | ------------------------------- | :----: | :--: | -------------------------------------- | ------------------ |
 | place, include, insert          |   y    |  y   | absorb                                 |                    |
-| margin                          |   y    |  y   | band, bar, padding, gutter             |                    |
+| margin                          |   y    |  y   | band, bar, gutter             |                    |
 | more work, a lot of work        |   y    |      | bigger lift, heavy lift, heavy lifting |                    |
 | move                            |   y    |  y   | copy                                   |                    |
 | main                            |   y    |      | cross-project                          |                    |
