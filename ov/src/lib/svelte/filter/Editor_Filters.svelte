@@ -12,8 +12,9 @@
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { WAY_OUT } from '../../ts/events/Hit_Target';
 	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
+	import Separator from '../support/Separator.svelte';
 	import Big_Pill from '../support/Big_Pill.svelte';
-	import { guides } from '../../ts/managers/Files';
+	import { files } from '../../ts/managers/Files';
 	import Section from '../support/Section.svelte';
 	import { k } from '../../ts/common/Constants';
 	import { debug } from '../../ts/common/Debug';
@@ -182,7 +183,7 @@
 			// waiting for every file to be read again. A fault here would leave the file
 			// written and the app still holding the old labels, so it is said out loud.
 			try {
-				guides.relabel(guide, filters, form_tags);
+				files.relabel(guide, filters, form_tags);
 			} catch (trouble) {
 				onsay('written, but the list was not told');
 				debug.log(`Editing "${name}": ${where} was written, but telling the list failed — ${String(trouble)}. The app still holds the old labels.`);
@@ -330,22 +331,29 @@
      words below come straight up under its line, and the line that would have stood under it is
      left undrawn. Its own children hold the gap while it is open, so the number is unused then. -->
 <Section
-	id='editor.filters'
-	holds_subsections
 	gap={0}
+	holds_subsections
+	id='editor.filters'
 	edge={T_Edge.thick}
-	actions={[filters_action]}
-	folded={!$w_show_filters}>
+	folded={!$w_show_filters}
+	actions={[filters_action]}>
 	{#snippet contents()}
 	<!-- The form is one stack of three subsections: what the guide says about itself in words, its
 	     one kind, and its tags. The heavy line carrying the word that folds the whole form away is
 	     drawn by the section holding us, so we say how thick it is and the stack measures from its
 	     middle like every other separator. -->
-	<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} sections={[
+	<Stack gap={k.gap.big} thickness={k.thickness.normal} sections={[
 		{ subsection: word_rows },
 		{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
 		{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },
 	]} />
+	<!-- What closes the form off from the file's words below. Folded, the tags end against the
+	     stack's own closing line and there is nothing more to draw here. -->
+	{#if show_form_tags}
+		<div class='foot'>
+			<Separator thickness={k.thickness.huge} />
+		</div>
+	{/if}
 	{/snippet}
 </Section>
 </div>
@@ -355,6 +363,12 @@
 	   here on the very next drawing, so nothing is ever seen in this spot. */
 	.out_of_sight {
 		display : none;
+	}
+
+	/* The line closing the form off at the foot. The gap above it is the stack's own, so nothing
+	   is held here. */
+	.foot {
+		flex : 0 0 auto;
 	}
 
 	/* A word that folds its section away, standing on the line above it. Its page-colored

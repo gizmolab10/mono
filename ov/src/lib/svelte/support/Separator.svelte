@@ -41,11 +41,18 @@
 	 * in its new place, and again when it leaves.
 	 */
 	function holds_element(holder: HTMLElement, element: HTMLElement) {
+		// Where it was built. Taken away without being put back it would be off the page, and the
+		// hits manager lets go of any target whose element has left — for good, since nothing
+		// registers it a second time. A word on a line that folds would then answer nothing ever
+		// again once it was folded once.
+		const built_in = element.parentNode;
 		holder.append(element);
 		hits.defer_recalibrate();
 		return {
 			destroy() {
-				if (element.parentNode === holder) { holder.removeChild(element); }
+				if (element.parentNode === holder) {
+					if (built_in) { built_in.appendChild(element); } else { holder.removeChild(element); }
+				}
 				hits.defer_recalibrate();
 			},
 		};

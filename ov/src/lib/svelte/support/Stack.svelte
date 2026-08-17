@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import type { Stacked } from '../../ts/types/Stacked';
+	import type { Stacked, T_Foot } from '../../ts/types/Stacked';
 	import { T_Position } from '../../ts/types/Action';
 	import type Action from '../../ts/types/Action';
 	import { debug } from '../../ts/common/Debug';
@@ -22,14 +22,14 @@
 		thickness  = k.thickness.huge,
 		gap        = k.gap.normal,
 		leads      = null,
-		closes     = true,
+		foot       = 'stack',
 		over       = 0,
 		sections,
 	}: {
 		thickness? : number;             // how thick the separator in each gap is drawn
 		gap?       : number;             // how far apart two sections stand, said once for all of them
 		over?      : number;             // how thick the separator is that whatever holds this stack draws above it; nothing, where it draws none
-		closes?    : boolean;            // whether the stack may draw a separator of its own at the foot; false where whatever holds it draws every boundary down there
+		foot?      : T_Foot;             // who draws the separator at the stack's foot
 		sections   : Stacked[];          // the sections, in the order they stand
 		leads?     : Action[] | null;    // a separator above the first section, where whatever holds this stack draws no boundary of its own
 	} = $props();
@@ -39,8 +39,18 @@
 	//
 	// Only a thing that was actually built counts. A caller names every thing its line could carry,
 	// and hands over nothing where that thing is not there — a clearing pill with nothing to clear.
-	function centered(section: Stacked | null): boolean {
-		return (section?.rides ?? []).some((one) => one.position === T_Position.center && one.element !== null);
+	function centered(rides: Action[] | null): boolean {
+		return (rides ?? []).some((one) => one.position === T_Position.center && one.element !== null);
+	}
+
+	// What a section's separator actually carries. Folded, it carries nothing at its middle: a thing
+	// there hangs into the fold below it, which is a run of accent and no longer a place to stand.
+	// The ends keep whatever they had, the fold word among them.
+	function actions_at(at: number): Action[] | null {
+		const rides = at === 0 ? leads : (sections[at].rides ?? null);
+		return (rides && sections[at]?.folded)
+			? rides.filter((one) => one.position !== T_Position.center)
+			: rides;
 	}
 
 	// How much space stands between this section and whatever is above it, middle to middle. The
@@ -51,8 +61,7 @@
 	// A separator carrying something at its middle takes two big gaps, since that thing hangs past
 	// the separator on both sides; every other one takes the stack's own gap.
 	function spacing(at: number): number {
-		const rides = at === 0 ? { rides: leads } as Stacked : sections[at];
-		return (centered(rides ?? null) ? k.gap.fat : gap) + thickness;
+		return (centered(actions_at(at)) ? k.gap.fat : gap) + thickness;
 	}
 
 	// Where the leading line stands, measured from the stack's own top. Everything here is
@@ -75,25 +84,7 @@
 		const bands = sections.map((one, at) => one.folded
 			? `${at} folded ${height_of(at).toFixed(2)} tall, its separator at ${line_at(at).toFixed(2)} and the next ${FOLDED.toFixed(2)} below it`
 			: `${at} open`).join('; ');
-		debug.log(`Stack of ${sections.length}: ${folds}. Gap ${gap.toFixed(2)}, spacings [${sections.map((_, at) => spacing(at).toFixed(2)).join(', ')}], leading line ${leads ? `${lead_at.toFixed(2)} down under a ${over.toFixed(2)}-thick one` : 'none'}, closing separator ${add_end_separator ? 'drawn' : 'not drawn'}. Folds: ${bands}.`);
-	});
-
-	// TEMPORARY — where every line and every accent actually ended up on the page, read back off
-	// the browser once it has drawn, so what was asked for can be set beside what was done.
-	let mine = $state<HTMLElement | null>(null);
-
-	$effect(() => {
-		sections.map((one) => one.folded);
-		const box = mine;
-		if (!box) { return; }
-		requestAnimationFrame(() => {
-			const top = box.getBoundingClientRect().top;
-			const said = (what: string) => Array.from(box.querySelectorAll(what)).map((one) => {
-				const its = (one as HTMLElement).getBoundingClientRect();
-				return `${(its.top + its.height / 2 - top).toFixed(2)} (${its.height.toFixed(2)} tall)`;
-			}).join(', ');
-			debug.log(`Stack of ${sections.length} as drawn, from its own top: lines at ${said('.gap-line')}; hairs at ${said('.hair')}; accents at ${said('.band')}.`);
-		});
+		debug.log(`Stack of ${sections.length}: ${folds}. Gap ${gap.toFixed(2)}, spacings [${sections.map((_, at) => spacing(at).toFixed(2)).join(', ')}], leading line ${leads ? `${lead_at.toFixed(2)} down under a ${over.toFixed(2)}-thick one` : 'none'}, closing separator ${add_end_separator ? 'drawn by the stack' : (foot === 'below' ? 'drawn below it' : 'not drawn')}. Folds: ${bands}.`);
 	});
 
 	// Where the line above a section stands, measured from that section's own top edge — half the
@@ -106,16 +97,24 @@
 	// The last section folded with the one above it open: that lone fold needs a separator to end
 	// against, so the stack draws the heavy one exactly where the fold's accent ends. Two folds
 	// running to the foot need none — the run of accent is boundary enough. Nor does any stack
-	// whose caller says it draws every boundary down there itself.
-	const add_end_separator = $derived(closes
+	// whose caller says the line down there is drawn by somebody else, or by nobody.
+	const add_end_separator = $derived(foot === 'stack'
 		&&   sections.length > 1
 		&&  !sections[sections.length - 2].folded
 		&& !!sections[sections.length - 1].folded);
 
+	// Whether a separator is drawn at the foot at all, by the stack or by whatever stands below it.
+	// A fold is the span between two separators, so this is what says whether the last one has a
+	// span to fill: with nothing down there it comes down to its own separator and nothing else.
+	const line_at_foot = $derived(add_end_separator || foot === 'below');
+
 	// What the stack leaves below its last section: half the gap, the same empty space that stands
 	// above every other separator — whether the separator down there is the stack's own or one
 	// drawn by whatever holds it.
-	const foot_gap = $derived(gap / 2);
+	//
+	// A fold ends exactly on the separator below it, so a folded last section leaves nothing at
+	// all: the space would show as a strip of page color between that fold's accent and the line.
+	const foot_gap = $derived(sections[sections.length - 1]?.folded ? 0 : gap / 2);
 
 	// Half the space above a section and half the space below it — the part of each gap that
 	// belongs to this section rather than to its neighbour. A section that answers a press reads
@@ -139,12 +138,12 @@
 	// A folded section shows nothing and takes whatever height puts that next separator exactly the
 	// folded distance below its own. Half the space above it and half the space below already
 	// stand between the two, so the height is what is left of the folded distance once both come
-	// out. The last section closes against the stack's own separator, drawn on its bottom edge, so
+	// out. The last section closes against the separator drawn on the stack's bottom edge, so
 	// nothing at all is below it — and with no separator drawn down there it takes no height at all,
 	// since there is nothing for the folded distance to reach.
 	function height_of(at: number): number {
 		const last = isLast(at);
-		if (last && !add_end_separator) { return 0; }
+		if (last && !line_at_foot) { return 0; }
 		return FOLDED - spacing(at) / 2 - (last ? 0 : spacing(at + 1) / 2);
 	}
 </script>
@@ -163,7 +162,7 @@
 
      Nothing is set on the whole run: how far one section stands from the one above it is that
      pair's own, since a line carrying something at its middle takes more space than a plain one. -->
-<div class='stack' bind:this={mine}
+<div class='stack'
 	style:padding-top={leads ? `${lead_at + spacing(0) / 2}px` : undefined}
 	style:margin-bottom='{foot_gap}px'>
 	{#if leads}
@@ -171,7 +170,7 @@
 		     there is none, so the band above its first separator wears no hair. -->
 		{@render band(lead_at + over / 2, (lead_at - over / 2) / 2, over > 0)}
 		<div class='gap-line' style:top='{lead_at}px'>
-			<Separator {thickness} actions={leads} />
+			<Separator {thickness} actions={actions_at(0)} />
 		</div>
 	{/if}
 	{#each sections as section, at (at)}
@@ -184,12 +183,12 @@
 			<!-- The accent fills the whole span between the two separators, so no page color is left
 			     showing anywhere in it, and the hairline is drawn down the exact middle of that span
 			     — which puts it exactly halfway between the two separators' own middles. -->
-			{#if section.folded && (!isLast(at) || add_end_separator)}
+			{#if section.folded && (!isLast(at) || line_at_foot)}
 				{@render band(FOLDED, line_at(at) + FOLDED / 2)}
 			{/if}
 			{#if at > 0}
 				<div class='gap-line' style:top='{line_at(at)}px'>
-					<Separator {thickness} actions={section.rides ?? null} />
+					<Separator {thickness} actions={actions_at(at)} />
 				</div>
 			{/if}
 			{#if !section.folded}{@render section.subsection()}{/if}
@@ -230,7 +229,7 @@
 		left      : 0;
 	}
 
-	/* The line the stack add_end_separator itself with, its middle on the stack's own bottom edge. */
+	/* The line the stack closes itself off with, its middle on the stack's own bottom edge. */
 	.gap-line.foot {
 		transform : translateY(50%);
 		top       : auto;

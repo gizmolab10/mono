@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { guides } from '../../ts/managers/Files';
+	import { files } from '../../ts/managers/Files';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
 
@@ -8,12 +8,12 @@
 
 	function handle_repair() {
 		debug.log('Repair: the index files were asked for.');
-		guides.repair_indexes();
+		files.repair_indexes();
 	}
 
 	function handle_links() {
 		debug.log('Repair: the dead links were asked for.');
-		guides.find_dead_links();
+		files.find_dead_links();
 	}
 </script>
 

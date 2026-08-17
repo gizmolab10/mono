@@ -1,6 +1,6 @@
 import App from '../svelte/main/App.svelte';
 import { w_app, S_App } from './types/App';
-import { guides } from './managers/Files';
+import { files } from './managers/Files';
 import { c } from './common/Configuration';
 import { debug } from './common/Debug';
 import { mount } from 'svelte';
@@ -21,7 +21,7 @@ debug.log(`Startup: pushed the layer numbers, the sizes and the fixed inks onto 
 // Read every guide file once, for its labels only. Nothing but the setting-up words
 // shows until this finishes, so no part of the app ever draws itself against a
 // structure that isn't there yet.
-guides.load().then(() => {
+files.load().then(() => {
 	w_app.set(S_App.ready);
 	debug.log(`Startup: the guides are read and the app is showing itself.`);
 });

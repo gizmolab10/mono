@@ -1,7 +1,7 @@
 import { preferences, T_Preference } from './Preferences';
 import type { Filtered_File } from '../types/File';
 import { derived, get, writable } from 'svelte/store';
-import { guides } from './Files';
+import { files } from './Files';
 import { debug } from '../common/Debug';
 
 /**
@@ -50,7 +50,7 @@ export const w_anchor = writable<string | null>(null);
 // A guide is named by where it sits, so renaming or moving one leaves anything reading it
 // asking for a place that no longer holds anything — and the view shuts itself. Following the
 // move keeps it open on the very file it was already showing.
-guides.moved_to = (was, now) => {
+files.moved_to = (was, now) => {
 	if (get(w_view_guide) === was) { w_view_guide.set(now); }
 	if (get(w_anchor) === was)     { w_anchor.set(now); }
 	w_link_stack.update((stack) => stack.map((one) => (one === was ? now : one)));
@@ -58,20 +58,20 @@ guides.moved_to = (was, now) => {
 };
 
 /** The row being read right now — from the list if it is there, otherwise from all of them. */
-export const w_viewed = derived([guides.w_showing, w_view_guide], ([rows, key]) =>
+export const w_viewed = derived([files.w_showing, w_view_guide], ([rows, key]) =>
 	rows.find((r) => r.key === key)
-	?? (key === null ? null : guides.hierarchy.all_guides.get(key) ?? null));
+	?? (key === null ? null : files.hierarchy.all_guides.get(key) ?? null));
 
 // Reading that began in a report. Backing up then goes to the report rather than stepping the
 // list, since a report is where the reader was and the list is not.
 export const w_from_report = writable(false);
 
 /** Is there a guide behind this one — the report it was opened from, the one below on the stack, or a place in the list? */
-export const w_can_back = derived([guides.w_showing, w_link_stack, w_from_report], ([rows, stack, from_report]) =>
+export const w_can_back = derived([files.w_showing, w_link_stack, w_from_report], ([rows, stack, from_report]) =>
 	from_report || stack.length > 0 || rows.filter((r) => !r.file.is_folder).length > 1);
 
 /** Forward means the guide above on the stack; off the stack, it walks the list. */
-export const w_can_forward = derived([guides.w_showing, w_link_stack, w_stack_at], ([rows, stack, at]) =>
+export const w_can_forward = derived([files.w_showing, w_link_stack, w_stack_at], ([rows, stack, at]) =>
 	stack.length > 0
 		? at < stack.length - 1
 		: rows.filter((r) => !r.file.is_folder).length > 1);
@@ -100,18 +100,18 @@ export const w_search_at = preferences.persistent<number>(T_Preference.search_at
  * since the stepping walks past folders. Nothing while the guide being read is not among them,
  * as happens off the list, on a stack of links.
  */
-export const w_file_site = derived([guides.w_showing, w_view_guide], ([rows, key]) => {
-	const files = rows.filter((r) => !r.file.is_folder);
-	const at = files.findIndex((r) => r.key === key);
-	return at < 0 ? null : { at: at + 1, of: files.length };
+export const w_file_site = derived([files.w_showing, w_view_guide], ([rows, key]) => {
+	const just_files = rows.filter((r) => !r.file.is_folder);
+	const at = just_files.findIndex((r) => r.key === key);
+	return at < 0 ? null : { at: at + 1, of: just_files.length };
 });
 
 /** Open one guide by where it sits. Opening from the list starts a fresh, empty stack. */
 export function open_view(key: string): void {
-	const rows = get(guides.w_showing);
+	const rows = get(files.w_showing);
 	// Off the list first; failing that, among all of them — a guide the filters hide can still
 	// be opened when something else names it, such as a report of dead links.
-	const row = rows.find((r) => r.key === key) ?? guides.hierarchy.all_guides.get(key) ?? null;
+	const row = rows.find((r) => r.key === key) ?? files.hierarchy.all_guides.get(key) ?? null;
 	if (!row || row.file.is_folder) { debug.log(`Reading: nothing to open at "${key}".`); return; }
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
@@ -120,9 +120,9 @@ export function open_view(key: string): void {
 	w_from_report.set(false);
 	w_operation.set(T_Operation.edit);
 	w_stepping_halted.set(false);              // opening from the list is a fresh start
-	const files = rows.filter((r) => !r.file.is_folder);
-	const at = files.findIndex((r) => r.key === key);
-	debug.log(`Opened "${row.file.name}" — file ${at + 1} of ${files.length} on screen, among ${rows.length} rows${at < 0 ? '; it is not among them, so the count shows nothing' : ''}. The link stack starts empty.`);
+	const just_files = rows.filter((r) => !r.file.is_folder);
+	const at = just_files.findIndex((r) => r.key === key);
+	debug.log(`Opened "${row.file.name}" — file ${at + 1} of ${just_files.length} on screen, among ${rows.length} rows${at < 0 ? '; it is not among them, so the count shows nothing' : ''}. The link stack starts empty.`);
 }
 
 /**
@@ -142,7 +142,7 @@ export function open_from_report(key: string): void {
  * which is what keeps a guide from being on it twice.
  */
 export function follow_link(key: string): void {
-	const row = guides.hierarchy.all_guides.get(key);
+	const row = files.hierarchy.all_guides.get(key);
 	if (!row || row.file.is_folder) { debug.log(`Following a link: nothing to open at "${key}".`); return; }
 	// Which file the reading began at is forgotten by a reload, while the file being read is
 	// remembered — so a link followed after a reload had nowhere to back out to, and the mark did
@@ -223,7 +223,7 @@ function step_stack(by: number): void {
 	}
 	w_stack_at.set(to);
 	w_view_guide.set(stack[to]);
-	const row = guides.hierarchy.all_guides.get(stack[to]);
+	const row = files.hierarchy.all_guides.get(stack[to]);
 	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} on the stack, from number ${at + 1} to ${to + 1} of ${stack.length} — now reading "${row?.file.name ?? stack[to]}".`);
 }
 
@@ -232,9 +232,9 @@ function step_stack(by: number): void {
  * both ends. Nothing to do when there is one file or none.
  */
 function step_list(by: number): void {
-	const rows = get(guides.w_showing);
-	const files = rows.filter((r) => !r.file.is_folder);
-	if (files.length < 2) { debug.log(`Step ignored — ${files.length} guide(s) on screen.`); return; }
+	const rows = get(files.w_showing);
+	const just_files = rows.filter((r) => !r.file.is_folder);
+	if (just_files.length < 2) { debug.log(`Step ignored — ${just_files.length} guide(s) on screen.`); return; }
 	const key = get(w_view_guide);
 	let at = rows.findIndex((r) => r.key === key);
 	if (at < 0) { at = 0; }

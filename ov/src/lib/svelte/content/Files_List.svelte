@@ -16,28 +16,28 @@
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import type { Filtered_File } from '../../ts/types/File';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { hit_target } from '../../ts/events/Hit_Target';
 	import { show_status } from '../../ts/managers/Status';
 	import Separator from '../support/Separator.svelte';
-	import { guides } from '../../ts/managers/Files';
-	import { Direction } from '../../ts/types/Angle';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
-	import { hit_target } from '../../ts/events/Hit_Target';
 	import { Point } from '../../ts/types/Coordinates';
-	import { hits } from '../../ts/events/Hits';
+	import { Direction } from '../../ts/types/Angle';
+	import { files } from '../../ts/managers/Files';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
+	import { hits } from '../../ts/events/Hits';
 	import { get } from 'svelte/store';
 
-	// The guide list: every folder and file, folders leading their contents, each row
+	// The file list: every folder and file, folders leading their contents, each row
 	// indented by how deep it sits. Ported from ji's document list — same open and shut
 	// behaviour, same way a filter pulls a matched file's folders back on screen, same
 	// remembered scroll place. What ji's version does with tag editing, deleting and
 	// dropping is gone: nothing here is editable.
 	//
 	// The narrowing is not done here: the hierarchy works out what shows, and this draws it.
-	const w_showing = guides.w_showing;
+	const w_showing = files.w_showing;
 
 	// The open/shut triangle: pointing down when the folder is open, right when shut.
 	const TRIANGLE = k.size.small;
@@ -54,7 +54,7 @@
 
 	function toggle_all_folders() {
 		if (tops_open) {
-			const every_folder = [...guides.hierarchy.all_guides.values()]
+			const every_folder = [...files.hierarchy.all_guides.values()]
 				.filter((row) => row.file.is_folder).map((row) => row.key);
 			w_shut.set(every_folder);
 			debug.log(`Every folder shut — ${every_folder.length} of them.`);
@@ -167,7 +167,7 @@
 			debug.log(`Dropped on "${row.file.name}" but nothing moved — ${!carried ? 'nothing was being carried' : 'it cannot land there'}.`);
 			return;
 		}
-		guides.move(carried.file, row.file);
+		files.move(carried.file, row.file);
 	}
 
 	// What the hint over a row says, which depends on what clicking it would do.
@@ -188,7 +188,7 @@
 	const shown = $derived($w_showing);
 
 	// How many matching files sit under each folder — worked out alongside the rows.
-	const folder_count = $derived.by(() => { $w_showing; return guides.hierarchy.folder_counts; });
+	const folder_count = $derived.by(() => { $w_showing; return files.hierarchy.folder_counts; });
 
 	// --- remembering where the list was scrolled ------------------------------
 
@@ -404,7 +404,7 @@
 </script>
 
 <!-- The three cells of a row: kind, name (with the open/shut triangle), and tags. -->
-{#snippet guide_row(row: Filtered_File)}
+{#snippet file_row(row: Filtered_File)}
 	{#if shows_kind}
 		<!-- A folder shows how many matching files it holds. A file shows its kind, unless one
 		     kind is picked — then every file would read the same, so the cell stays blank. -->
@@ -453,7 +453,7 @@
 			<div class='head-line'>
 				<Separator thickness={k.thickness.fat} />
 			</div>
-			<table class='guides-table'>
+			<table class='files-table'>
 				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<thead>
 					<tr class='head'>
@@ -496,7 +496,7 @@
 			<div class='free-thumb' style:top='{free.top}px' style:height='{free.length}px'></div>
 		{/if}
 		<div class='table-scroll' class:has-bar={scrollbar_showing} bind:this={scroller} onscroll={on_scroll}>
-			<table class='guides-table'>
+			<table class='files-table'>
 				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<tbody>
 					{#each shown as row, row_number (row.key)}
@@ -520,7 +520,7 @@
 							ondrop={(e) => drop_on(e, row)}
 							onmouseenter={() => hovered_row = row.key}
 							onmouseleave={() => { if (hovered_row === row.key) { hovered_row = null; } }}>
-							{@render guide_row(row)}
+							{@render file_row(row)}
 						</tr>
 					{/each}
 				</tbody>
@@ -649,7 +649,7 @@
 		padding-right    : var(--gap);
 	}
 
-	.guides-table {
+	.files-table {
 		border-collapse : collapse;
 		table-layout    : fixed;             /* honor the column widths, so a long name can be capped */
 		position        : relative;
@@ -782,13 +782,13 @@
 	}
 
 	/* A faint accent line under each row. */
-	.guides-table .file td {
+	.files-table .file td {
 		border-bottom : var(--thick-faint) solid var(--accent);
 	}
 
 	/* The line starts well in from the left edge. Under the first cell it is painted rather than
 	   drawn as an edge, so it can begin part-way across without the words moving. */
-	.guides-table .file td:first-child {
+	.files-table .file td:first-child {
 		background-size     : calc(100% - var(--gap)) var(--thick-faint);
 		background-image    : linear-gradient(var(--accent), var(--accent));
 		background-position : right bottom;
@@ -797,11 +797,11 @@
 	}
 
 	/* ...but not under the last row. */
-	.guides-table .file:last-child td {
+	.files-table .file:last-child td {
 		border-bottom-color : transparent;
 	}
 
-	.guides-table .file:last-child td:first-child {
+	.files-table .file:last-child td:first-child {
 		background-image : none;
 	}
 
@@ -885,18 +885,18 @@
 	}
 
 	/* The whole row answers to a click — a file opens, a folder opens or shuts. */
-	.guides-table .file {
+	.files-table .file {
 		cursor : pointer;
 	}
 
 	/* A folder's name reads heavier than the files under it. */
-	.guides-table .file.folder .name-text {
+	.files-table .file.folder .name-text {
 		font-weight : var(--fw-big);
 	}
 
 	/* A folder standing open reads gray — its contents are on screen, so the folder itself
 	   is no longer the thing to look at. */
-	.guides-table .file.folder.opened .name-text {
+	.files-table .file.folder.opened .name-text {
 		color : var(--lightgray);
 	}
 
@@ -914,12 +914,12 @@
 	}
 
 	/* Hovering a row lights it as a row-sized pill. */
-	.guides-table .file.hovered td {
+	.files-table .file.hovered td {
 		background          : var(--hover);
 		border-bottom-color : transparent;
 	}
 
-	.guides-table .file.hovered td:first-child {
+	.files-table .file.hovered td:first-child {
 		border-top-left-radius    : var(--radius-pill);
 		border-bottom-left-radius : var(--radius-pill);
 	}
@@ -927,7 +927,7 @@
 	/* At the right the pill reaches a gap further, drawn as a strip hanging off the last cell.
 	   The rounding lives on the strip, so the two read as one pill and nothing inside the row
 	   moves. The left end is unchanged. */
-	.guides-table .file.hovered td:last-child::after {
+	.files-table .file.hovered td:last-child::after {
 		border-top-right-radius    : var(--radius-pill);
 		border-bottom-right-radius : var(--radius-pill);
 		right                      : calc(var(--gap) * -1);
@@ -941,18 +941,18 @@
 
 	/* The folder a carried file would land in, lit on the accent so there is no doubt where
 	   letting go would put it. */
-	.guides-table .file.landing td {
+	.files-table .file.landing td {
 		background          : var(--accent);
 		color               : var(--text-on-accent);
 		border-bottom-color : transparent;
 	}
 
-	.guides-table .file.landing td:first-child {
+	.files-table .file.landing td:first-child {
 		border-top-left-radius    : var(--radius-pill);
 		border-bottom-left-radius : var(--radius-pill);
 	}
 
-	.guides-table .file.landing td:last-child {
+	.files-table .file.landing td:last-child {
 		border-top-right-radius    : var(--radius-pill);
 		border-bottom-right-radius : var(--radius-pill);
 	}

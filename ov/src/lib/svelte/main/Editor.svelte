@@ -1,21 +1,21 @@
 <script lang='ts'>
+	import { report_gaps_below_lines, report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { w_file_site, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of, type File } from '../../ts/types/File';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
-	import { WAY_OUT } from '../../ts/events/Hit_Target';
-	import { hits } from '../../ts/events/Hits';
 	import Markdown_Editor from '../content/Markdown_Editor.svelte';
-	import { report_gaps_below_lines, report_line_spacing } from '../../ts/utilities/Separator_Spacing';
+	import Editor_Filters from '../filter/Editor_Filters.svelte';
+	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { hit_target } from '../../ts/events/Hit_Target';
+	import { WAY_OUT } from '../../ts/events/Hit_Target';
 	import { w_words } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
-	import Editor_Filters from '../content/Editor_Filters.svelte';
-	import { guides } from '../../ts/managers/Files';
-	import { hit_target } from '../../ts/events/Hit_Target';
+	import { files } from '../../ts/managers/Files';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
-	import Search from '../content/Search.svelte';
+	import Search from '../filter/Search.svelte';
+	import { hits } from '../../ts/events/Hits';
 	import { get } from 'svelte/store';
 
 	// Show one file. This is the frame: the top row that says which file it is and what can be
@@ -168,14 +168,14 @@
 	 */
 	function handle_create() {
 		debug.log(`Editing "${name}": making a new file beside it.`);
-		guides.create_beside(guide).then((made) => { if (made) { open_view(key_of(made)); } });
+		files.create_beside(guide).then((made) => { if (made) { open_view(key_of(made)); } });
 	}
 
 	/** Throw this file away. Only if the file itself goes does the view go back to the list. */
 	function handle_delete() {
 		asking_to_delete = false;
 		debug.log(`Editing "${name}": throwing it away.`);
-		guides.delete_one(guide).then((gone) => { if (gone) { onclose(); } });
+		files.delete_one(guide).then((gone) => { if (gone) { onclose(); } });
 	}
 
 	/**
@@ -191,7 +191,7 @@
 		debug.log(`Editing "${name}": renaming it to "${said}".`);
 		// The view follows the file to its new place on its own; a rename that was refused puts
 		// the old name back in the field.
-		guides.rename(guide, said).then((now_at) => { if (now_at === '') { typed_name = name; } });
+		files.rename(guide, said).then((now_at) => { if (now_at === '') { typed_name = name; } });
 	}
 </script>
 
@@ -273,7 +273,7 @@
 	</div>
 	<Editor_Filters {name} {guide} {tags} {onclose} onsay={say}
 		bind:text={text_of_file} bind:folded={filters_folded} />
-	<Markdown_Editor {name} {address} {guide} onsay={say} draws_line={!filters_folded}
+	<Markdown_Editor {name} {address} {guide} onsay={say}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->

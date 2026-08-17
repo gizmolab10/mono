@@ -2,7 +2,7 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
-	import { guides } from '../../ts/managers/Files';
+	import { files } from '../../ts/managers/Files';
 	import { guides_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
 	import { colors } from '../../ts/utilities/Colors';
 	import { Point } from '../../ts/types/Coordinates';
@@ -22,7 +22,7 @@
 	import Details from './Details.svelte';
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
-	const w_no_server = guides.w_no_server;
+	const w_no_server = files.w_no_server;
 
 	// The dispatcher is asked once, as the page arrives. Restarted after that, it has no way to
 	// say so — which left the screen holding "start it, then reload" until someone did. So while

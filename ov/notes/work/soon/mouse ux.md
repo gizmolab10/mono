@@ -52,7 +52,7 @@ The pressed thing **and** where the button came up, each reported, each caller s
 
 **Against.** Every caller must know which it wants, so silence becomes a choice. The three controls changed today should go back to acting on the press — a second pass over the very code just changed. And nothing on screen says which a control uses: a press that acts and a press that cancels look the same until it happens.
 
-[Files.svelte:427-437](../../src/lib/svelte/content/Files.svelte#L427-L437), [Steppers.svelte:43-49](../../src/lib/svelte/support/Steppers.svelte#L43-L49)
+[Files_List.svelte:427-437](../../src/lib/svelte/content/Files_List.svelte#L427-L437), [Steppers.svelte:43-49](../../src/lib/svelte/support/Steppers.svelte#L43-L49)
 
 ## Undecided
 

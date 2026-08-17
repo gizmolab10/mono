@@ -44,7 +44,7 @@ Separators go between sections and nowhere else — never below the last. One ab
 
 ## Properties
 
-Four of the five have an answer already, so most callers say one thing or nothing at all.
+Five of the six have an answer already, so most callers say one thing or nothing at all.
 
 ```text
 sections    the sections, in the order they stand.
@@ -61,9 +61,17 @@ leads       words for a separator above the first section, where whatever holds 
 over        how thick the separator is that whatever holds this stack draws above it.
             Nothing, where it draws none.
 
-closes      whether the stack may draw a separator of its own at the foot. It may,
-            unless the caller says otherwise; the details column says otherwise,
-            since it draws every boundary down there itself.
+foot        who draws the separator at the stack's foot.
+
+            'stack'  the stack itself, and only where its last fold needs
+                     something to end against. The default.
+            'below'  whatever stands under the stack, always. The stack draws
+                     none, and its last fold still gets its accent and hairline.
+            'none'   nobody. A last fold has nothing to end against, so it comes
+                     down to its own separator and nothing else.
+
+            The details column says 'below', since it draws that line itself
+            whether its last section is open or folded.
 ```
 
 And two the stack says back, on every section: how much of the gap above it and how much of the gap below it belong to that section. A section that answers a press reads those and reaches out over them, so the whole slot answers rather than the content alone.
@@ -76,17 +84,31 @@ And two the stack says back, on every section: how much of the gap above it and 
 
 - **A pair of sections** stands the stack's own gap apart, plus the separator's own thickness — its body takes the middle of that space, so the gap a caller asks for is the empty space it sees on each side.
 - **A separator carrying something at its middle** takes `--gap-fat` above and below, since that thing hangs past the separator on both sides. Only a thing actually built counts: a clearing pill with nothing to clear is named but never made, and the gap stays ordinary.
-- **The foot** — the stack closes itself with the heavy separator when its last section is folded and the one above it is open, and leaves half a gap below its last section either way. Two folds running to the foot need no separator, and a caller can say the stack never draws one.
+- **The foot** — the stack closes itself with the heavy separator when its last section is folded and the one above it is open, and leaves half a gap below its last section either way. Two folds running to the foot need no separator, and a caller can say the stack never draws one. Where a run ends with nothing folded, whatever holds the stack draws that boundary itself.
 
 ### A folded section
 
 Three rules, and nothing else decides it.
 
 1. The distance between the centre of a folded section's own separator and the centre of the next one is always `k.height.small`. The section's height is whatever makes that so — the folded distance with the half gap above and the half gap below taken out of it — and no caller names it.
-2. A hairline appears exactly halfway between those two centres, so it is drawn `k.size.small ÷ 2` below the fold's own separator.
-3. The last folded section closes against the separator the stack draws on its own bottom edge, so nothing at all is below it and only the half gap above comes out of its height. Where no separator is drawn down there, the fold has no span at all: it comes down to its own separator and nothing else — no content, no accent, no hairline, no height.
+2. A hairline appears exactly halfway between those two centres, so it is drawn half of `k.height.small` below the fold's own separator.
+3. The last folded section closes against the separator on the stack's bottom edge — the stack's own or one drawn below it — so nothing at all is below it and only the half gap above comes out of its height. Where no separator is drawn down there at all, the fold has no span: it comes down to its own separator and nothing else — no content, no accent, no hairline, no height.
 
 The accent fills the whole span between the two separators, with the hairline down its exact middle.
+
+In code, one function says the height and one says whether the fold vanishes:
+
+```ts
+function height_of(at: number): number {
+    if (vanishes(at)) { return 0; }
+    const last = at === sections.length - 1;
+    return FOLDED - spacing(at) / 2 - (last ? 0 : spacing(at + 1) / 2);
+}
+
+function vanishes(at: number): boolean {
+    return at === sections.length - 1 && !!sections[at].folded && !add_end_separator;
+}
+```
 
 ### Variants
 
@@ -130,7 +152,7 @@ Five sections do it, and each grows its own: one outer element in its own file, 
 
 Done: browse's tags, and the editor's three — its words, its kinds, its tags. Each reaches out over its own half of the gaps around it, so the whole slot answers.
 
-Still on its section: [Search.svelte:198](../../src/lib/svelte/content/Search.svelte#L198), which carries the way out's press and now says so.
+Still on its section: [Search.svelte:198](../../src/lib/svelte/filter/Search.svelte#L198), which carries the way out's press and now says so.
 
 ## Eliminations, and why
 
@@ -146,21 +168,21 @@ fills_when_bare     the section fills itself
 onhover             the section says so
 ```
 
-Eleven props become five, four of which have an answer already.
+Eleven props become six, five of which have an answer already.
 
 ## What is built
 
 [Stack.svelte](../../src/lib/svelte/support/Stack.svelte) and [Stacked.ts](../../src/lib/ts/types/Stacked.ts). Three stacks so far:
 
-- **Browse's three picking rows** — [Browse_Filters.svelte:298](../../src/lib/svelte/content/Browse_Filters.svelte#L298). Browse's count row now draws its own separator only while the tags row is open.
-- **The editor's label form** — [Editor_Filters.svelte:317](../../src/lib/svelte/content/Editor_Filters.svelte#L317). Three sections: the words, the kinds, the tags. The kinds no longer stand inside the label rows; each answers for itself.
-- **The details column** — [Details.svelte:88](../../src/lib/svelte/main/Details.svelte#L88). Two sections, and `Hideable.svelte` is gone: it built a fold word and handed it to its own section, which the stack does now.
+- **Browse's three picking rows** — [Browse_Filters.svelte:298](../../src/lib/svelte/filter/Browse_Filters.svelte#L298). Browse's count row now draws its own separator only while the tags row is open.
+- **The editor's label form** — [Editor_Filters.svelte:317](../../src/lib/svelte/filter/Editor_Filters.svelte#L317). Three sections: the words, the kinds, the tags. The kinds no longer stand inside the label rows; each answers for itself. With its tags open the stack draws no closing line, so the form draws its own — the same as the details column does.
+- **The details column** — [Details.svelte:88](../../src/lib/svelte/main/Details.svelte#L88). Two sections, and `Hideable.svelte` is gone: it built a fold word and handed it to its own section, which the stack does now. It says `foot='below'` and draws that boundary itself, open or folded.
 
 ## Still on the old section
 
 Four of the ten: the search, browse's count row, and the two whole-block sections that hold the picking rows and the label form. `Sectioning.ts`, its four measurements and its twelve tests all stand until those are converted.
 
-[Search.svelte](../../src/lib/svelte/content/Search.svelte), [Browse.svelte](../../src/lib/svelte/main/Browse.svelte), [Sectioning.ts](../../src/lib/ts/utilities/Sectioning.ts), [Section.svelte](../../src/lib/svelte/support/Section.svelte)
+[Search.svelte](../../src/lib/svelte/filter/Search.svelte), [Browse.svelte](../../src/lib/svelte/main/Browse.svelte), [Sectioning.ts](../../src/lib/ts/utilities/Sectioning.ts), [Section.svelte](../../src/lib/svelte/support/Section.svelte)
 
 ## Porting to other projects (ws, di and ji)
 
@@ -178,7 +200,7 @@ They lean on four things every project already has, and on nothing else:
 ```text
 Separator.svelte     the drawn line, with words at its ends or middle
 Action.ts            what a word riding a separator is
-Constants.ts         k.gap.* and k.thickness.*
+Constants.ts         k.gap.*, k.thickness.*, k.height.small and k.layer.*
 Hits.ts              told to measure again whenever a fold moves
 Debug.ts             the one diagnostic line
 ```
@@ -186,8 +208,8 @@ Debug.ts             the one diagnostic line
 ### Steps
 
 1. **Move both files across**, keeping the same two folders. Mend the five imports at the top of `Stack.svelte` to the receiving project's own paths.
-2. **Check the ladder.** `k.gap.normal`, `k.gap.big`, `k.gap.faint` and `k.thickness.huge` must all exist. Where a project's ladder uses other names, change the four uses in `Stack.svelte` and nothing else.
-3. **Check the page variables.** The styling reads `--gap`, `--accent`, `--black`, `--z-controls`, `--z-common` and `--z-hideable`. Any that a project does not push onto the page has to be added where it pushes the rest.
+2. **Check the ladder.** `k.gap.normal`, `k.gap.fat`, `k.thickness.huge` and `k.height.small` must all exist. Where a project's ladder uses other names, change the four uses in `Stack.svelte` and nothing else.
+3. **Check the page variables.** The styling reads `--gap`, `--accent`, `--black`, `--z-controls`, `--z-common` and `--z-frontmost`. Any that a project does not push onto the page has to be added where it pushes the rest — and a name that is missing kills the whole declaration it stands in, not just itself.
 4. **Find every run of sections.** One place where two or more things stand one above another with a line between them. That is a stack; anything standing alone is not, and stays as it is.
 5. **Convert one run**, and only one, before looking at the screen. For each thing in the run write a snippet, then one array: what it shows, the word riding the separator above it, whether it is folded.
 6. **Say what is above.** Where the thing holding the stack draws its own line, hand over how thick it is. Where nothing is drawn above, hand over the words for a separator of the stack's own instead.
@@ -198,6 +220,7 @@ Debug.ts             the one diagnostic line
 ### What to expect
 
 - The gap a caller asks for is the empty space it sees, and the separator's own thickness is added on top. A stack drawn with the heavy line and a small gap has almost no space at all until this is right.
-- A folded section is `k.height.small` from its own separator to the next, whatever the gaps around it measure. The accent fills that span, with a hairline down its middle.
-- The stack closes itself with the heavy separator when its last section is folded and the one above it is open. Where something below already draws that boundary, hand over `closes={false}` and leave it to draw its own.
+- A folded section is `k.height.small` from its own separator to the next, whatever the gaps around it measure. The accent fills that span, with a hairline down its middle. A last fold with no separator below it shows only its own separator.
+- The stack closes itself with the heavy separator when its last section is folded and the one above it is open. Where something below already draws that boundary, hand over `foot='below'` and leave it to draw its own — never let both, and never leave a last fold with nothing to end against.
 - Two rows of the same control on one screen must not register the same names. Every target name wants the row it belongs to at the front.
+- A word handed to a separator is only lent to it. When the fold takes that separator away, the word has to go back to where it was built — off the page altogether, the hits manager lets its target go for good, and nothing ever registers it a second time. That word then sits on screen answering nothing.

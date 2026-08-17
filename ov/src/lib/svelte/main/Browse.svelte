@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
-	import Files, { w_first_column, w_scrollbar_showing } from '../content/Files.svelte';
+	import Files_List, { w_first_column, w_scrollbar_showing } from '../content/Files_List.svelte';
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { words_that_fit } from '../../ts/utilities/Fitting';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import Browse_Filters from '../content/Browse_Filters.svelte';
-	import { guides } from '../../ts/managers/Files';
+	import Browse_Filters from '../filter/Browse_Filters.svelte';
+	import { files } from '../../ts/managers/Files';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import Section from '../support/Section.svelte';
@@ -18,13 +18,13 @@
 
 	// Looking through the guides: the three filters across the top, how many they leave,
 	// and the list itself. The narrowing happens in the hierarchy; this only shows it.
-	const w_showing = guides.w_showing;
+	const w_showing = files.w_showing;
 
 	// How many guides the filters leave — counted before the folds, so shutting a folder
 	// hides its files from the list without changing what the count says.
-	let matching = $derived.by(() => { $w_showing; return guides.hierarchy.matched_count; });
+	let matching = $derived.by(() => { $w_showing; return files.hierarchy.matched_count; });
 	// How many there are to be had at all.
-	let total = $derived(guides.files.length);
+	let total = $derived(files.files.length);
 
 	// The picked tags hug the right end of the count row, and the count keeps its middle — so the
 	// space for the tags is what is left between the count's right edge and the row's, less the
@@ -155,7 +155,7 @@
 		</div>
 	{/snippet}
 </Section>
-<Files />
+<Files_List />
 </div>
 </div>
 

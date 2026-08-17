@@ -32,7 +32,7 @@ The stack holds where each file sits and nothing else, and the walk sets which f
 
 The list already does this for itself, and does it the right way: it remembers the row at the top of
 the scrolled area by name, not by a number of pixels, so a list of a different length still comes
-back to the same row: [Files.svelte:193-238](../../src/lib/svelte/content/Files.svelte#L193-L238).
+back to the same row: [Files_List.svelte:193-238](../../src/lib/svelte/content/Files_List.svelte#L193-L238).
 
 A file's own words scroll in their own box, and that box already reports its scrolling to the hits
 manager: [Markdown_Editor.svelte](../../src/lib/svelte/content/Markdown_Editor.svelte).

@@ -71,7 +71,7 @@ function labels_from(text: string, where: string): { labels: Labels; tags: strin
 	return { labels: { kind, title, description, date, labeled: block.length > 0 }, tags };
 }
 
-class Guides {
+class Files {
 
 	hierarchy = new Hierarchy();
 
@@ -736,4 +736,4 @@ class Guides {
 
 }
 
-export const guides = new Guides();
+export const files = new Files();

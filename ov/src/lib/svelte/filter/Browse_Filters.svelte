@@ -15,7 +15,7 @@
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import Big_Pill from '../support/Big_Pill.svelte';
-	import { guides } from '../../ts/managers/Files';
+	import { files } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
@@ -43,17 +43,17 @@
 	// What each row offers is worked out against every other filter — no row judges itself,
 	// so picking a kind never grays out the other kinds. Every filter is named below so the
 	// rows are worked out again whenever any of them moves.
-	const w_ready = guides.w_ready;
-	let kinds = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? guides.kinds_present() : []; });
-	let bare = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? guides.unlabeled_within_reach() : 0; });
+	const w_ready = files.w_ready;
+	let kinds = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? files.kinds_present() : []; });
+	let bare = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? files.unlabeled_within_reach() : 0; });
 	// The tags row names the picked tags and which way they pick, unlike the other two rows: with
 	// every picked tag required, it cannot set its own filter aside, so what it offers changes as
 	// the picks do.
-	let tags_in_use = $derived.by(() => { $w_project; $w_kind; $w_words; $w_tags; $w_tag_picking; return $w_ready ? guides.tags_present() : []; });
+	let tags_in_use = $derived.by(() => { $w_project; $w_kind; $w_words; $w_tags; $w_tag_picking; return $w_ready ? files.tags_present() : []; });
 	const projects = Object.values(T_Bundle);
 	let counts = $derived.by(() => {
 		$w_kind; $w_tags; $w_words;
-		return $w_ready ? new Map(projects.map((p) => [p, guides.files_in(p)])) : new Map();
+		return $w_ready ? new Map(projects.map((p) => [p, files.files_in(p)])) : new Map();
 	});
 
 	// What each row actually draws: everything on the closed lists one way, only what is

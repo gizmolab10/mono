@@ -16,7 +16,7 @@
 	import { key_of, type File } from '../../ts/types/File';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Separator from '../support/Separator.svelte';
-	import { guides } from '../../ts/managers/Files';
+	import { files } from '../../ts/managers/Files';
 	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
@@ -28,14 +28,13 @@
 
 	let {
 		name, address, guide, text = $bindable(''), page = $bindable<HTMLElement | null>(null),
-		onsay, ondrawn, onredrawn, draws_line = true,
+		onsay, ondrawn, onredrawn,
 	}: {
 		name       : string;                  // what the file is called
 		address    : string;                  // which file it is, so folds belong to one file at a time
 		guide      : File;                   // the record of the file being read
 		text       : string;                  // the whole file, held only while it is on screen
 		page       : HTMLElement | null;      // the drawn words, so a search can look inside them
-		draws_line?: boolean;                 // draw the line that closes off the top; false while whatever stands above already has one there
 		onsay      : (words: string) => void; // something to tell the reader, briefly
 		ondrawn    : () => void;              // a file has just been read and drawn
 		onredrawn  : () => void;              // the page was built afresh from changed words
@@ -167,7 +166,7 @@
 			debug.log(`Link out of "${name}" to code: ${link} — handed to VSCode as ${opens}.`);
 			return;
 		}
-		const found = guides.hierarchy.explore(guide, link);
+		const found = files.hierarchy.explore(guide, link);
 		if (found.file) {
 			wanted_heading = found.heading;
 			follow_link(key_of(found.file));
@@ -790,10 +789,6 @@
 			if (drawn.has(says)) { one.removeAttribute('data-number'); continue; }
 			drawn.add(says);
 		}
-		// TEMPORARY — how many numbers the page ended up wearing, and what the browser makes of the
-		// two lengths every one of them is measured from.
-		const style = getComputedStyle(page);
-		debug.log(`Reading "${name}": ${drawn.size} row number(s) drawn, ${page.querySelectorAll('.blank-line').length} of them on rows nothing else covers. The page steps in "${style.paddingLeft}", the numbers end "${style.getPropertyValue('--inset-numbers')}" in, the pointer is "${style.getPropertyValue('--size-small')}" wide.`);
 	}
 
 	// --- the links, registered with the hits manager --------------------------
@@ -878,7 +873,7 @@
 		}
 		debug.log(`Editing "${name}": opened for the first time with no labels, so a block was composed from its own words and written to ${where}. Its kind came from the folder it sits in, and it is marked stale for a person to look at.`);
 		const made = labels_for(whole, `${name}.md`, today(), guide.path);
-		guides.relabel(guide, made.labels, made.tags);
+		files.relabel(guide, made.labels, made.tags);
 		return with_block;
 	}
 
@@ -1123,12 +1118,6 @@
 		overflow-x    : auto;
 		white-space   : pre;
 		text-indent   : 0;
-	}
-
-	/* The line bounding a section, drawn here rather than by a Section. It holds nothing of its
-	   own — the gap is the section's. */
-	.section-bar {
-		flex : 0 0 auto;
 	}
 
 	/* Holds the words and the line that lies over them.

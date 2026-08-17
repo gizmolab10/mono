@@ -85,17 +85,15 @@
 			over the first section, carrying that section's word. -->
 		<!-- Twice the small gap, since a stack's gap is the whole space between two sections and the
 			separator takes its middle — so each side of every separator holds the small gap. -->
-		<Stack gap={k.gap.big} closes={false} leads={[preferences_action]} sections={[
+		<Stack gap={k.gap.big} foot='below' leads={[preferences_action]} sections={[
 			{ subsection: shows_preferences, folded: !$w_preferences_open },
 			{ subsection: shows_repair, rides: [repair_action], folded: !$w_repair_open },
 		]} />
-		<!-- What closes the last section off from the foot of the column. Folded, there is nothing
-			below its own separator to close off, so nothing is drawn here at all. -->
-		{#if $w_repair_open}
-			<div class='foot'>
-				<Separator thickness={k.thickness.huge} />
-			</div>
-		{/if}
+		<!-- What closes the last section off from the foot of the column, drawn here whether that
+			section is open or folded — so a fold down there always has a line to end against. -->
+		<div class='foot'>
+			<Separator thickness={k.thickness.huge} />
+		</div>
 	</div>
 </div>
 

@@ -108,7 +108,6 @@ export default class Hits {
 		const target = under;
 
 		if (s_mouse.isDown) {
-			debug.log(`Press at ${Math.round(point.x)},${Math.round(point.y)} went to "${target.id}", out of ${matches.length} overlapping: ${matches.map((one) => one.id).join(', ')}.`);
 			this.pressed_id = target.id;
 			target.clicks += 1;
 			if (target.respondsTo_autorepeat) {
