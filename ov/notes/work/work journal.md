@@ -9,6 +9,48 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-17 — the sections design settled, and a word that answered nothing
+
+A stack owns the gaps between its sections and draws a line centred in each one. Every distance is
+middle to middle, and a folded section is one number — `k.height.small` — from its own line to the
+next, with the accent filling that span and a hairline down its exact middle.
+
+**The folded distance has a floor.** The two half gaps around a fold come out of it, so it can never
+be smaller than the widest pair's spacing on any screen. Below the floor a fold's height goes
+negative, the browser draws it at nothing, and that one pair reads wider than the rest — which looks
+like a spacing fault and is not.
+
+**A line drawn below a stack must be pulled up half its own thickness.** The stack leaves its bottom
+edge exactly where that line's middle belongs; a line drawn below starts there instead.
+
+**`closes` became `foot`** — who draws that line: the stack, whatever stands below it, or nobody.
+Nobody means a last fold has nothing to end against, so it comes down to its own line and nothing
+else.
+
+**A word lent to a line was never given back.** A caller builds its fold word out of sight and the
+line takes it. When that line went, the word was taken off the page and left there — so the hits
+manager let its target go for good, and the word sat on screen answering nothing. It goes back to
+where it was built now.
+
+[sections](sections.md) holds the design. [sections spec](../../../notes/guides/develop/sections%20spec.md)
+holds the instructions for putting it into di, ji and ws.
+
+## 2026-08-17 — five words for how soon
+
+`active` said a file was being worked on and nothing more. It is now **now**, and it stands in a
+tagset of its own beside **next**, **soon**, **later** and **tabled** — eight tagsets, thirty-four
+tags. Eighteen files' labels were rewritten, across four collections.
+
+## 2026-08-16 — three filters found a folder of their own
+
+Browse's filters, the editor's label form and the search moved into `src/lib/svelte/filter/`, and
+the list component became `Files_List.svelte` — the manager beside it is `files` now, so the two
+stopped sharing a name.
+
+**The row numbers had vanished from the reader.** One page variable was never pushed —
+`--size-pointer` — and a `calc()` naming an undefined variable makes the browser drop the whole
+declaration. The page's left step-in fell back to nothing and every number was pushed off the edge.
+
 ## 2026-08-15 — a table stopped counting, and then counted twice
 
 A table was one piece wearing one number, so the column beside the words skipped every row of it.

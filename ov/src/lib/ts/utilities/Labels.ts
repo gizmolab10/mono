@@ -59,7 +59,7 @@ export function kind_from_where(path: string): T_Kind {
 export const NAME_UNTIL_TOLD = 'unnamed';
 
 /** The tag a new guide wears: it is the one being worked on. */
-export const TAG_WHEN_NEW = 'active';
+export const TAG_WHEN_NEW = 'now';
 
 /**
  * The whole of a brand new guide: a full block of labels and a heading holding its name.

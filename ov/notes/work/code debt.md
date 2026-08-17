@@ -2,19 +2,22 @@
 kind: specify
 title: "Code debt"
 description: "write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff"
-tags: [active, journal, plans, proposal]
+tags: [now, journal, plans, proposal]
 date: 2026-08-10
 ---
 # Code debt
 
 write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff. success criteria at the top.
 
+sooner or later every project creates a knowledge base and a work manager. this one is free, or is it? can it be made to be easily deployed? plug and play?
+
 ## work
 
-- [ ] remember the scroll position in the fifo
-- [ ] fix the folder no folder button at width.tiny (50px)
 - [ ] placeholder text and overstrike -> --lightgray
 - [ ] compose an email does not work on Windows
+- [ ] strip of icons to switch between my many apps
+    - [ ] localhost only
+- [ ] remember the scroll position in the fifo
 - [ ] add a list of back links to the editor
 - [ ] write installation instructions in
     - [ ] [[ov installer]]
@@ -22,6 +25,8 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 ## done
 
+- [x] tagset active-- now, next, soon, later, tabled
+- [x] fix the folder no folder button at width.tiny (50px)
 - [x] every row of a table shows the line it came from
     - [x] the number hangs off the row's first cell — anything drawn against a row becomes a cell of
         its own, which pushes every real cell one column along
@@ -325,7 +330,7 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
     - [ ] propose to remove material that is no longer relevant
 - [ ] work on murky
 
-## postpone
+## tabled
 
 - [ ] encapsulate in a new file ts/common/okf.md
     - [ ] for open source

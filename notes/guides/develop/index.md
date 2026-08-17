@@ -19,6 +19,7 @@ Code style, patterns, and development practices.
 - [Keep Shop](./keep shop.md)
 - [Lessons](./lessons.md)
 - [Refactoring](./refactor.md)
+- [Sections spec](./sections%20spec.md)
 - [Specification Driven Development](./specification driven development.md)
 - [Style](./style%20guide.md)
 

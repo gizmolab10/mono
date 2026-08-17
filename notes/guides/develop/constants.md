@@ -2,7 +2,7 @@
 kind: specify
 title: "UX terms and concepts"
 description: ""
-tags: [active, data, done, program, proposal]
+tags: [now, data, done, program, proposal]
 date: 2026-08-07
 ---
 # Constants and subtypes

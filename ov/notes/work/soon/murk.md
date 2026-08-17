@@ -2,7 +2,7 @@
 kind: refer
 title: "Murk"
 description: "Why the replies come out murky: six causes in the hooks, six in the guides, four now closed and one counted."
-tags: [active, notes, prose, team]
+tags: [now, notes, prose, team]
 date: 2026-08-11
 ---
 # Murk

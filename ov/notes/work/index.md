@@ -11,6 +11,7 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Hits manager](hits%20manager.md) — the ported manager, and the road to wiring one control to it.
 - [Mouse UX](mouse%20ux.md) — what a press means when the thing under the cursor changes between pressing and letting go.
 - [Sections](sections.md) — a stack owns the gaps between its sections, and a separator stands centred in each one.
+- [Sections spec](../../../notes/guides/develop/sections%20spec.md) — everything needed to build the stack in another project, in the order it has to be done. **mono**
 - [Murk](murk.md) — why replies come out murky, and what is measured about it.
 - [Assessment of our guides](assessment%20of%20our%20guides.md) — every mono guide, listed under its real folder.
 - [Organize](organize.md) — what is actually in the repo, counted.
@@ -25,6 +26,7 @@ Elsewhere:
 
 ## More
 
+- [Unnamed](./creativity.md)
 - [Unnamed](./hits%20system.md)
 - [Unnamed](./ov%20installer.md)
 - [Rewrite guides](./rewrite%20guides.md)

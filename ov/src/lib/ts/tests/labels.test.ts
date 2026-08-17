@@ -151,10 +151,10 @@ describe('putting the labels back into a file', () => {
 
 describe('a brand new guide', () => {
 	it('opens with a full block and its own heading', () => {
-		const made = blank_guide('unnamed', TODAY, T_Kind.refer, ['active']);
+		const made = blank_guide('unnamed', TODAY, T_Kind.refer, ['now']);
 		expect(made.startsWith('---\n')).toBe(true);
 		expect(made).toContain(`kind: ${T_Kind.refer}`);
-		expect(made).toContain('tags: [active]');
+		expect(made).toContain('tags: [now]');
 		expect(made).toContain(`date: ${TODAY}`);
 		expect(made.endsWith('---\n# unnamed\n')).toBe(true);   // no blank line between them
 	});
@@ -166,13 +166,13 @@ describe('a brand new guide', () => {
 	});
 
 	it('is read back as labeled, with the name as its title', () => {
-		const made = blank_guide('a second try', TODAY, T_Kind.refer, ['active']);
+		const made = blank_guide('a second try', TODAY, T_Kind.refer, ['now']);
 		expect(has_labels(made)).toBe(true);
 		expect(made).toContain('title: "a second try"');
 	});
 
 	it('marks a quote mark in the name as standing for itself', () => {
-		expect(blank_guide('the "one"', TODAY, T_Kind.refer, ['active'])).toContain('title: "the \\"one\\""');
+		expect(blank_guide('the "one"', TODAY, T_Kind.refer, ['now'])).toContain('title: "the \\"one\\""');
 	});
 });
 

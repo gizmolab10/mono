@@ -2,7 +2,7 @@
 kind: design
 title: "Stale guides"
 description: "The ten guides furthest out of date, worst first"
-tags: [active, journal, stale]
+tags: [now, journal, stale]
 date: 2026-08-08
 ---
 # Stale guides

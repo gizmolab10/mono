@@ -2,7 +2,7 @@
 kind: design
 title: "Assessment of our Guides"
 description: "A hand-kept rundown of every shared guide, what is thin, and what is missing."
-tags: [active, journal, notes, session, team]
+tags: [now, journal, notes, session, team]
 date: 2026-07-08
 ---
 # Assessment of mono's guide files

@@ -2,7 +2,7 @@
 kind: design
 title: "How many md files? 531"
 description: "What is actually in the repo, in markdown"
-tags: [active, plans, proposal]
+tags: [now, plans, proposal]
 date: 2026-08-08
 ---
 # How many md files? 531

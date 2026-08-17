@@ -2,7 +2,7 @@
 kind: arch
 title: "Hits System (di)"
 description: "One spatial index decides which single element the mouse is talking to."
-tags: [active, program, UX]
+tags: [now, program, UX]
 date: 2026-05-20
 ---
 # Hits System Design

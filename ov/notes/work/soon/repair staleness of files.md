@@ -2,7 +2,7 @@
 kind: design
 title: "Repair staleness"
 description: "runs in, and there is none — asking it answers \\\"no key for the model is set on this machine\\\""
-tags: [active, journal]
+tags: [now, journal]
 date: 2026-08-08
 ---
 # Repair staleness
