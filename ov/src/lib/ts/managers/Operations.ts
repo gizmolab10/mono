@@ -43,6 +43,31 @@ w_operation.subscribe((op) => { if (op !== T_Operation.edit) { w_view_guide.set(
 export const w_link_stack = writable<string[]>([]);
 export const w_stack_at   = writable<number>(-1);
 
+// --- where each guide was left ---------------------------------------------
+//
+// Coming back to a guide comes back to the words that were on screen, not to its top. What is
+// remembered is the line the piece at the top of the words began on, never a distance down the
+// page: a line survives an edit that adds lines above it, and every piece already carries the
+// line it began on. It is the same trick the list uses on its rows, which names the row rather
+// than measuring to it.
+//
+// One line per guide, kept by where that guide sits — so a guide reached twice down two
+// different paths keeps a place for each of them, and the stack itself stays a list of paths.
+// Held with the settings, since the guide being read survives a reload while the stack does not.
+export const w_left_at = preferences.persistent<Record<string, number>>(T_Preference.left_at, {});
+
+/** Say which line stood at the top of a guide's words as it was left. */
+export function leaving_file(key: string | null, line: number): void {
+	if (key === null) { return; }
+	w_left_at.update((all) => ({ ...all, [key]: line }));
+}
+
+/** Which line to come back to in a guide, or nothing where it has never been left. */
+export function left_at_of(key: string | null): number | null {
+	if (key === null) { return null; }
+	return get(w_left_at)[key] ?? null;
+}
+
 // Where the reading began — the guide the list opened. Backing out of the bottom of the
 // stack lands here. A page refresh forgets it, along with the stack.
 export const w_anchor = writable<string | null>(null);

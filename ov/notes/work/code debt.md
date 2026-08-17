@@ -13,18 +13,28 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## work
 
-- [ ] placeholder text and overstrike -> --lightgray
-- [ ] compose an email does not work on Windows
+- [ ] fix github vulnerabilities
+- [ ] adding a tag by hand does not work
+- [ ] add a list of back links to the editor
 - [ ] strip of icons to switch between my many apps
     - [ ] localhost only
-- [ ] remember the scroll position in the fifo
-- [ ] add a list of back links to the editor
 - [ ] write installation instructions in
     - [ ] [[ov installer]]
 - [ ] 1340 occurrences of 'guide' -> many should be 'file'
+- [ ] compose-an-email does not work on Windows
 
 ## done
 
+- [x] remember the scroll position in the fifo
+    - [x] a line is remembered, never a distance — it survives an edit that adds lines above it
+    - [x] one line per guide, so a guide reached twice down two paths keeps a place for each
+    - [x] written as the scrolling settles, never on the way out: by then the box is back at its top
+    - [x] the title stays at the box's top, so it was always the line at the top and had to be passed over
+- [x] scroll md -> soft pointers not clipped by title row
+    - [x] every button is put on the controls layer, and a fold mark is a button — so it and the
+        title row held the same layer, and the mark came later in the page
+- [x] placeholder text and overstrike -> --lightgray
+    - [x] the two search fields, and a finished thing's struck-through words
 - [x] tagset active-- now, next, soon, later, tabled
 - [x] fix the folder no folder button at width.tiny (50px)
 - [x] every row of a table shows the line it came from

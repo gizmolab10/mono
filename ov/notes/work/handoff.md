@@ -2,7 +2,7 @@
 kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
-tags: [proposal]
+tags: [journal, now, proposal, session]
 date: 2026-08-17
 ---
 # Handoff
@@ -11,34 +11,34 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## Placeholder words and struck-through words read as ink
+## What GitHub says is unsafe
 
-A field with nothing typed in it shows what it is for, and a done item's words are drawn with a line
-through them. Both are meant to read as quieter than real words, and neither says so — they take
-whatever color the words around them take.
+GitHub is raising warnings against this repo's dependencies. Nothing has been read yet — what they
+are, how many, and whether any of them can actually be reached from the app is all still unknown.
 
 ### Success
 
-1. A field showing what it is for draws that in the light gray, and the words typed into it stay the
-   text color.
-2. A done item's words and the line through them both draw in the light gray.
-3. Every place doing this reads one name from the ladder; no file writes a color of its own.
-4. Nothing else on screen changes color.
+1. Every warning GitHub raises is named, with what it is in and how bad it says it is.
+2. Each one is judged for whether it can be reached at all from what we build, and that judgement is
+   written down beside it — a warning against something only the build machinery uses is not the
+   same as one against something a reader's browser runs.
+3. The ones worth mending are mended, and the app still passes its own checks: 531 files clean, 406
+   tests.
+4. Any left standing say why, in the debt list, so the next look does not start over.
 
 ### Where it stands
 
-The light gray is already pushed to the page as `--lightgray`, beside the other fixed inks:
-[Configuration.ts:109](../../src/lib/ts/common/Configuration.ts#L109).
+Overview holds two dependencies of its own — the color maths and the markdown reader:
+[package.json](../../package.json).
 
-The fields are the editor's own — the title, the brief, the date, and the file's name in the top
-row: [Editor_Filters.svelte](../../src/lib/svelte/filter/Editor_Filters.svelte).
-
-The strike is drawn by the reader, on a done item: [Markdown_Editor.svelte](../../src/lib/svelte/content/Markdown_Editor.svelte).
+Everything else comes in below them, and the whole repo shares one lockfile at its top, so a warning
+is as likely to be against a tool as against anything the app runs.
 
 ### Open
 
-1. Whether the placeholder and the strike want the same gray, or the strike wants something darker
-   so the words can still be read.
-2. Whether browse's search field counts — it shows what it is for too, and it is not the editor's.
+1. **Where the list is.** GitHub keeps it on the repo's own security page. Nothing in the repo holds
+   it, so the first step is to read it there and write it down here.
+2. Whether any of it wants a version raised, which changes the lockfile every project shares — so
+   the other three collections have to be checked after, not just overview.
 
 **What will not get done.** The rest of the debt list. This is its first unchecked item.

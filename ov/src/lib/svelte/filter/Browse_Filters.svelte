@@ -583,6 +583,11 @@
 		width         : 100%;
 	}
 
+	/* What a field is for reads quieter than what is typed into it. */
+	.search::placeholder {
+		color : var(--lightgray);
+	}
+
 	/* With the cursor in it, the field's own edge thickens in the accent rather than the
 	   browser drawing a ring of its own — which sat outside the pill and followed neither its
 	   curve nor its width. The edge is drawn inside, so nothing moves. */

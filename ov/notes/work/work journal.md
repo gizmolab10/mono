@@ -9,6 +9,66 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-17 — coming back comes back to where you were
+
+A guide left partway down opens where it was left, not at its top. That holds walking the link
+stack, stepping back to the list, and across a reload for the one guide being read. A link naming a
+heading still wins — the link says where to be.
+
+**A line is remembered, never a distance.** The topmost piece names the line of the file it began
+on, and coming back looks for the piece carrying that line. A line survives an edit that adds lines
+above it; a distance does not. One line per guide, so a guide reached twice down two different paths
+keeps a place for each.
+
+Two things had to be found on screen, neither visible from the code:
+
+**The line is written as the scrolling settles, never on the way out.** By the time a guide is
+leaving, its box has already gone back to the top, and every reading taken there said the file's
+first line.
+
+**The title stays at the box's top however far the words scroll**, so it was always the first piece
+at the top and answered every reading. Anything that stays put is passed over now.
+
+## 2026-08-17 — a fold mark drawn over the row that had covered its words
+
+Scrolled up, a heading's words went under the title row and its soft pointer was drawn whole across
+it. Both are covered by the same row, so the two disagreed.
+
+**Every button is put on the controls layer**, and a fold mark is a button — so the mark and the
+title row held the same layer, and the mark, coming later in the page, won. The marks are on the
+common layer now and the title row is back on its own.
+
+I guessed twice before measuring, and both guesses were wrong. What settled it was reading the
+computed layer off the browser: the mark said 2, the same as the row, where I had assumed `auto`.
+
+## 2026-08-17 — handing a file on, and why Windows never could
+
+The ⤴ mark hands the browser a `mailto:` address. Windows hands that to a program it knows about,
+and a browser tab is not one — so Gmail never sees it unless two separate things are set: Windows
+pointing `mailto:` at Chrome, and Chrome holding Gmail as its own handler. With Outlook holding the
+registration, the press works as designed and opens Outlook, which is a failure to whoever never
+uses it.
+
+**ji proved the content is not the cause** — its ⤴ sends a bare address, 27 characters, and fails
+just the same.
+
+**Overview has a second wall behind that one.** Gmail's handler caps at about 4,096 characters after
+encoding, and Chrome reaches Gmail by putting the whole `mailto:` inside a second address, so every
+escape is escaped again. Every guide in the repo is past the ceiling before the doubling —
+handoff.md alone comes to 4,289. Carrying a whole file to Gmail needs another way altogether.
+
+The steps for a Windows machine are written into [ov installer](soon/ov%20installer.md).
+
+**Nine dead links found in the work index.** Eight rows named files that had moved into `soon/`, and
+one sat under "More" with a top-level path. That folder has an index of its own now, and the parent
+goes through one row for it.
+
+## 2026-08-17 — what a field is for, and what is already finished
+
+Both read quieter than real words now, in the light gray. Two fields in the whole app carry
+placeholder words — browse's search and the editor's — and a finished thing's struck-through words
+were a shade too dark to read as done.
+
 ## 2026-08-17 — the sections design settled, and a word that answered nothing
 
 A stack owns the gaps between its sections and draws a line centred in each one. Every distance is

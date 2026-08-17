@@ -1,12 +1,8 @@
 ---
 kind: specify
-title: Sections spec
-description: Everything needed to build the stack in another project, in the order it has to be done.
-tags:
-  - port
-  - refactor
-  - UX
-  - soon
+title: "Sections spec"
+description: "Everything needed to build the stack in another project, in the order it has to be done."
+tags: [port, refactor, soon]
 date: 2026-08-16
 ---
 # Sections spec

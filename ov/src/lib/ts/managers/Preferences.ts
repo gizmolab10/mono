@@ -48,6 +48,7 @@ export enum T_Preference {
 	fold_titles     = 'fold_titles',
 	show_search     = 'show_search',
 	search_at       = 'search_at',
+	left_at         = 'left_at',
 
 	// Putting things right
 	includes_work   = 'includes_work',

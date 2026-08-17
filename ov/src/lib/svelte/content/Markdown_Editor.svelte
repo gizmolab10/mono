@@ -10,7 +10,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
 	import { offer_status, show_status } from '../../ts/managers/Status';
-	import { follow_link, halt_stepping, w_command_down } from '../../ts/managers/Operations';
+	import { follow_link, halt_stepping, leaving_file, left_at_of, w_command_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { key_of, type File } from '../../ts/types/File';
@@ -62,11 +62,71 @@
 	// than asked to read every rectangle again, which makes the browser settle its layout.
 	let told_scrolled_to = 0;
 
+	// Where the words stood is written as the scrolling settles, never on the way out: by the time
+	// this guide is leaving, the box has already gone back to its top and every reading of it says
+	// the first line of the file.
+	let saving_wait: ReturnType<typeof setTimeout> | null = null;
+
 	function words_scrolled() {
 		if (!page) { return; }
 		const now = page.scrollTop;
 		hits.shift_inside(page, new Point(0, told_scrolled_to - now));
 		told_scrolled_to = now;
+		if (saving_wait !== null) { clearTimeout(saving_wait); }
+		saving_wait = setTimeout(remember_scrolling, 150);
+	}
+
+	/** Say which line stands at the top of the words now, so coming back comes back here. */
+	function remember_scrolling() {
+		const line = line_at_top();
+		if (line === null) { return; }
+		leaving_file(key_of(guide), line);
+	}
+
+	// --- coming back to where the reading was -----------------------------------
+	//
+	// A guide left partway down comes back to the very words that were on screen. What is
+	// remembered is the line the topmost piece began on, never a distance down the page: a line
+	// survives an edit that adds lines above it.
+
+	/**
+	 * The line the piece at the top of the words began on — the first one fully inside the box.
+	 *
+	 * The title stays at the box's top however far the words are scrolled, so it is always the
+	 * first piece there and would answer this every time. Anything that stays put is passed over:
+	 * what is wanted is the first piece that actually scrolled to the top.
+	 */
+	function line_at_top(): number | null {
+		if (!page) { return null; }
+		const cutoff = page.getBoundingClientRect().top;
+		for (const one of page.querySelectorAll('[data-from]')) {
+			if (getComputedStyle(one).position === 'sticky') { continue; }
+			if (one.getBoundingClientRect().top >= cutoff - 1) {
+				const from = Number((one as HTMLElement).dataset.from);
+				return Number.isNaN(from) ? null : from;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Put the words back where they stood. Nothing is moved where this guide has never been left,
+	 * or where the line it was left at no longer begins a piece — a piece taken out since is not
+	 * worth guessing at, and the top is where a guide starts anyway.
+	 */
+	function come_back_to_where_it_was() {
+		if (!page) { return; }
+		const line = left_at_of(key_of(guide));
+		if (line === null || line === 0) { return; }
+		const piece = page.querySelector(`[data-from='${line}']`) as HTMLElement | null;
+		if (!piece) {
+			debug.log(`Reading "${name}": it was left at line ${line}, which no longer begins a piece — so it opens at its top.`);
+			return;
+		}
+		page.scrollTop += piece.getBoundingClientRect().top - page.getBoundingClientRect().top;
+		told_scrolled_to = page.scrollTop;
+		hits.defer_recalibrate();
+		debug.log(`Reading "${name}": back at line ${line}, ${Math.round(page.scrollTop)} down the page.`);
 	}
 
 	/** Look again at how tall the words are, and at both thumbs. */
@@ -935,11 +995,18 @@
 				offer_to_clear_above_heading(whole);
 				ondrawn();
 				// A link can name a heading in the guide it opens; the words have to be drawn
-				// before there is anything to move down to.
+				// before there is anything to move down to. A named heading outranks wherever
+				// the guide was last left — the link says where to be.
+				//
+				// Two frames, not one: the first draws the pieces, and the folds are applied on
+				// it, which moves everything below them. A line looked for on the first frame is
+				// found somewhere it is about to leave.
 				if (wanted_heading !== '') {
 					const named = wanted_heading;
 					wanted_heading = '';
 					requestAnimationFrame(() => move_to_heading(decodeURIComponent(named)));
+				} else {
+					requestAnimationFrame(() => requestAnimationFrame(come_back_to_where_it_was));
 				}
 			})
 			.catch((e) => {
@@ -948,8 +1015,14 @@
 				debug.log(`Viewer: could not read "${name}" from ${where} — ${failed}.`);
 				halt_stepping(`"${name}" could not be read — ${failed}`);
 			});
-		// Let it all go the moment this one is off screen, box included.
-		return () => { close_box(false); words = null; text = ''; };
+		// Let it all go the moment this one is off screen, box included. Where it was left is
+		// already written — the scrolling said so as it settled.
+		return () => {
+			if (saving_wait !== null) { clearTimeout(saving_wait); saving_wait = null; }
+			close_box(false);
+			words = null;
+			text = '';
+		};
 	});
 </script>
 
@@ -1071,7 +1144,11 @@
 	   gives all of that width back, so the words beside it start where they always did. It is put
 	   on the page by hand rather than drawn from here, so it is named as reaching outside this
 	   component. */
+	/* Below the title row, which the words beside it already run under. A mark is a button, and
+	   every button is put on the controls layer — the same one the title row holds — so the mark,
+	   coming later in the page, was drawn whole across a row that had already covered its words. */
 	:global(.fold-mark) {
+		z-index         : var(--z-common);
 		margin-left     : calc(0px - var(--gap) - var(--size-small));
 		width           : var(--size-small);
 		margin-right    : var(--gap);
@@ -1139,7 +1216,7 @@
 	   reach carries it out to the box's edges the way every other separator does. It takes no gap,
 	   so nothing the title does moves it. */
 	.title-sep {
-		z-index  : var(--z-controls);
+		z-index  : var(--z-frontmost);
 		top      : var(--title-slot);
 		position : absolute;
 		left     : 0;
@@ -1407,7 +1484,7 @@
 	   list a finished thing holds is drawn as one: its own items then read as they are. */
 	.view-page :global(li.task.done) {
 		text-decoration : line-through;
-		color           : var(--gray);
+		color           : var(--lightgray);
 	}
 
 	/* Standing on the text baseline would leave the line's own drop below it, which shows as a
