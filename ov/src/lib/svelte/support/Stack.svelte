@@ -64,11 +64,15 @@
 		return (centered(actions_at(at)) ? k.gap.fat : gap) + thickness;
 	}
 
+	// How far the separator below a fold is drawn from the fold's own separator, middle to middle.
+	// One number for every fold on every screen, whether it folded one field or a run of tag rows.
+	const FOLDED = k.height.small;
+
 	// Where the leading line stands, measured from the stack's own top. Everything here is
 	// measured middle to middle, and the middle of the line above sits half its own thickness
 	// higher than the stack — so that half comes off, and the two lines stand the same distance
 	// apart as every other pair.
-	const lead_at = $derived(gap * 1.5 - over / 2);
+	const lead_at = $derived(FOLDED - over / 2);
 
 	// Folding or opening moves everything below, and every rectangle the hits manager holds was
 	// measured where its control stood then. They are all asked again once the browser has drawn.
@@ -130,10 +134,6 @@
 	function under_of(at: number): number {
 		return isLast(at) ? Math.max(0, foot_gap) : spacing(at + 1) / 2;
 	}
-
-	// How far the separator below a fold is drawn from the fold's own separator, middle to middle.
-	// One number for every fold on every screen, whether it folded one field or a run of tag rows.
-	const FOLDED = k.height.small;
 
 	// A folded section shows nothing and takes whatever height puts that next separator exactly the
 	// folded distance below its own. Half the space above it and half the space below already

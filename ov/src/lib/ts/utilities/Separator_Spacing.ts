@@ -24,16 +24,20 @@ export function distances_between(centers: number[]): number[] {
 	return distances;
 }
 
-/** Every line across the view on screen right now, in the order they stand. */
-export function lines_on_screen(): DOMRect[] {
-	return [...document.querySelectorAll('.separator.horizontal')]
+/**
+ * Every line across the view on screen right now, in the order they stand. Two columns stand side
+ * by side, so a caller wanting its own lines alone hands over the box that holds them; the whole
+ * page otherwise, where the two would be read as one run and every distance between them wrong.
+ */
+export function lines_on_screen(within: Element | null = null): DOMRect[] {
+	return [...(within ?? document).querySelectorAll('.separator.horizontal')]
 		.map((one) => one.getBoundingClientRect())
 		.filter((one) => one.width > 0);
 }
 
 /** Say what the lines on screen are holding, middle to middle. Nothing is said for one line alone. */
-export function report_line_spacing(where: string) {
-	const centers = centers_of(lines_on_screen());
+export function report_line_spacing(where: string, within: Element | null = null) {
+	const centers = centers_of(lines_on_screen(within));
 	if (centers.length < 2) { return; }
 	const apart = distances_between(centers).map((one) => one.toFixed(2));
 	debug.log(`Lines in ${where}: ${centers.length} of them, middle to middle — ${apart.join(', ')}.`);

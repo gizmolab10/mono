@@ -44,8 +44,8 @@ class Configuration {
 		root.setProperty('--radius',             `${k.radius.corner.normal}px`);
 		root.setProperty('--radius-pill',        `${k.radius.corner.pill}px`);
 		root.setProperty('--radius-percent',     `${k.radius.percent}%`);
-		root.setProperty('--height-small',       `${k.height.small}px`);
 		root.setProperty('--height',             `${k.height.normal}px`);
+		root.setProperty('--height-small',       `${k.height.small}px`);
 		root.setProperty('--height-big',         `${k.height.big}px`);
 		root.setProperty('--height-fat',         `${k.height.fat}px`);
 		root.setProperty('--width-tiny',         `${k.width.tiny}px`);
@@ -71,15 +71,15 @@ class Configuration {
 		root.setProperty('--fw',                 `${k.font.weight.normal}`);
 		root.setProperty('--fw-big',             `${k.font.weight.big}`);
 		root.setProperty('--fw-huge',            `${k.font.weight.huge}`);
-		root.setProperty('--inset-cluster',      `${k.inset.cluster}px`);
 		root.setProperty('--inset-numbers',      `${k.inset.numbers}px`);
 		root.setProperty('--inset-list',         `${k.inset.list}px`);
 		root.setProperty('--inset-pill-top',     `${k.inset.pill.top}px`);
 		root.setProperty('--inset-pill-left',    `${k.inset.pill.left}px`);
 		root.setProperty('--inset-popup-edge',   `${k.inset.popup.edge}px`);
 		root.setProperty('--inset-popup-side',   `${k.inset.popup.side}px`);
-		root.setProperty('--inset-credit-bottom',`${k.inset.credit.bottom}px`);
 		root.setProperty('--inset-credit-left',  `${k.inset.credit.left}px`);
+		root.setProperty('--inset-show-folders', `${k.inset.show_folders}px`);
+		root.setProperty('--inset-credit-bottom',`${k.inset.credit.bottom}px`);
 		root.setProperty('--pad-hamburger',      `${k.pad.hamburger.y}px ${k.pad.hamburger.x}px`);
 		root.setProperty('--pad-control',        `${k.pad.control.top}px ${k.pad.control.x}px ${k.pad.control.bottom}px`);
 		root.setProperty('--pad-modal',          `${k.pad.modal.y}px ${k.pad.modal.x}px`);

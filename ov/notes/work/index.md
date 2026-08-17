@@ -27,3 +27,4 @@ Elsewhere:
 
 - [Unnamed](./hits%20system.md)
 - [Unnamed](./ov%20installer.md)
+- [Rewrite guides](./rewrite%20guides.md)

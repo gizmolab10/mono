@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { hit_target } from '../../ts/events/Hit_Target';
@@ -47,9 +48,15 @@
 	const preferences_action = $derived(Object.assign(new Action(), { element: preferences_word, position: T_Position.left }));
 	const repair_action      = $derived(Object.assign(new Action(), { element: repair_word,      position: T_Position.left }));
 
+	// The column's own lines, and nothing from the column beside it. Read once the browser has
+	// drawn, since a fold moves every line below it.
+	let column = $state<HTMLElement | null>(null);
+
 	$effect(() => {
 		const open = $w_details_open;
 		debug.log(`Details sections open: ${open.length === 0 ? 'none — all shut' : `[${open.join(', ')}]`}.`);
+		const soon = setTimeout(() => report_line_spacing('the details', column), k.timeout.slide);
+		return () => clearTimeout(soon);
 	});
 
 	// The column is given its width from outside, and it changes without the window changing —
@@ -75,7 +82,7 @@
 {#snippet shows_preferences()}<D_Preferences />{/snippet}
 {#snippet shows_repair()}<D_Repair />{/snippet}
 
-<div class='region details' style:width='{width}px'>
+<div class='region details' bind:this={column} style:width='{width}px'>
 	<!-- Everything from the first separator down to the last stands on the page color; the column's
 	     own gap above it and whatever is left below it stand on the accent. It reaches out to the
 	     column's edges and holds that width back as its own step-in, so the page color runs the
@@ -130,9 +137,12 @@
 		overflow      : hidden;
 	}
 
-	/* The closing separator's own gap is its own; nothing is added here. */
+	/* The closing separator, pulled up half its own thickness. Every distance in a stack is measured
+	   middle to middle, and the stack leaves its bottom edge exactly where this line's middle
+	   belongs — but a line drawn below it starts there instead, which is half a thickness too low. */
 	.foot {
-		flex : 0 0 auto;
+		margin-top : calc(var(--thick-huge) / -2);
+		flex       : 0 0 auto;
 	}
 
 	/* The separators and what they hold. It reaches out to the column's edges and holds that width

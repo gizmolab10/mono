@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: specify
 title: "unnamed"
 description: ""
 tags: [active, program]

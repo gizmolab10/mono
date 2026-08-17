@@ -84,7 +84,6 @@ button {
      --fw-big                 one step heavier — the collapsible banner
      --fw-huge                  two steps heavier — a popup title
      --em-tiny                  the banner letter-spacing (em)
-     --inset-cluster             the corner offset for a cluster of controls
      --inset-pill-top / --inset-pill-left          a pill's position
      --inset-popup-edge / --inset-popup-side       a popup's corner controls
      --inset-credit-bottom / --inset-credit-left   the bottom-left corner

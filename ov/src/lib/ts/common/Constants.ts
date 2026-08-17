@@ -72,9 +72,9 @@ export default class Constants {
 		popup		 : { edge: common_size * 0.3,    side: common_size * 0.375 },		// 10.5, 13.13
 		pill		 : { top: common_size * 0.48,    left: common_size * 1.6 },			// 16.8, 56
 		credit		 : { bottom: common_size * 0.35, left: common_size * 0.35 },		// 12.25, 15.75
-		cluster		 : common_size / 4,													// 8.75
+		list		 : common_size / 1.75,												// how far a list steps its items in; the browser's own is 40
 		numbers		 : common_gap * 2.4,												// where the right edge of every row number stands, from the page's left edge
-		list		 : 15,																// how far a list steps its items in; the browser's own is 40
+		show_folders : common_size * 1.5,
 	};
 
 	radius = {
@@ -127,7 +127,8 @@ export default class Constants {
 	// Smallest first, the same as the widths.
 	height = {
 		tiny 		 : control_height * 0.1,	// 2.19  — 
-		small        : control_height * 0.8,	// 17.5  — folded section height
+		small        : control_height * 0.8,	// 17.5  — folded section height; below this the
+												//         details' own half gaps no longer fit inside it
 		normal		 : control_height,			// 21.88 — one control
 		big			 : control_height * 1.3,	// 28.44 — a row that can be hidden
 		fat			 : common_size	  * 1.2,	// 42    — the banner

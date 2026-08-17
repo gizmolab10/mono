@@ -365,10 +365,12 @@
 		display : none;
 	}
 
-	/* The line closing the form off at the foot. The gap above it is the stack's own, so nothing
-	   is held here. */
+	/* The line closing the form off at the foot, pulled up half its own thickness. Every distance in
+	   a stack is measured middle to middle, and the stack leaves its bottom edge exactly where this
+	   line's middle belongs — but a line drawn below it starts there instead. */
 	.foot {
-		flex : 0 0 auto;
+		margin-top : calc(var(--thick-huge) / -2);
+		flex       : 0 0 auto;
 	}
 
 	/* A word that folds its section away, standing on the line above it. Its page-colored

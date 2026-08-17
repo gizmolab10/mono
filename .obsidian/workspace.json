@@ -63,8 +63,7 @@
               "title": "constants"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -238,8 +237,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "0eb4a7145712d58a",
+  "active": "395e60cacfd407d2",
   "lastOpenFiles": [
+    "ov/notes/work/rewrite guides.md",
+    "ov/notes/work/code debt.md",
+    "notes/guides/develop/constants.md",
     "ov/src/lib/svelte/content/Files_List.svelte",
     "ov/src/lib/svelte/filter/Search.svelte",
     "ov/src/lib/svelte/filter/Editor_Filters.svelte",
@@ -249,9 +251,7 @@
     "ov/src/lib/svelte/untitled folder",
     "ov/notes/work/sections.md.tmp.7892.2fb7a8b14fad",
     "ov/notes/work/sections.md",
-    "ov/notes/work/code debt.md",
     "ji/notes/guides/project/map of ji files.md",
-    "notes/guides/develop/constants.md",
     "ov/notes/guides/pre-flight/banned words.md",
     "notes/guides/pre-flight/banned words.md",
     "ov/notes/work/hits system.md",
@@ -269,7 +269,6 @@
     "ov/notes/work/New Folder With Items/new gaps.md",
     "ov/notes/work/New Folder With Items/mouse ux.md",
     "ov/notes/work/New Folder With Items/hits manager.md",
-    "ov/notes/work/New Folder With Items",
     "ov/notes/work/soon/stale guides.md",
     "ov/notes/work/soon/repair staleness of files.md",
     "ov/notes/work/soon/ov installer.md",

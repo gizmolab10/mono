@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
-	import Files_List, { w_first_column, w_scrollbar_showing } from '../content/Files_List.svelte';
+	import Files_List, { w_scrollbar_showing } from '../content/Files_List.svelte';
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { words_that_fit } from '../../ts/utilities/Fitting';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
@@ -110,17 +110,11 @@
 			<!-- With nothing left after the filters there are no folders to show or hide, so the
 				button has nothing to act on. -->
 			{#if matching > 0}
-				<!-- It stands in a lane as wide as the list's first column, held to that lane's right
-					end and inset by the same gap the first title holds — so the button's right edge
-					falls exactly where the first title's words end. With no fixed first column there
-					is nothing to line up with, so the lane collapses and it hugs the far left. -->
-				<span class='folders-lane' style:width='{$w_first_column}px'>
+				<!-- It stands in a lane that holds its left edge a fixed distance in from the row's
+					own left, whatever the list's columns are doing. -->
+				<span class='folders-lane'>
 					<!-- A drawn bar while the folders show; a folder while they are hidden. -->
-					<!-- With a project and a kind both picked and the folders hidden, the lane is too
-						narrow to hold the button and its left end runs off the edge, so it is moved
-						back into view. -->
 					<button class='folders-button eye'
-						class:crowded={$w_kind !== ''}
 							use:hit_target={{ id: 'browse.folders', onpress: toggle_folders,
 							tip: $w_show_folders ? 'hide the folders' : 'show the folders' }}>
 						📁
@@ -246,12 +240,12 @@
 		margin-right : calc(var(--thick-fat) + var(--gap));
 	}
 
-	/* The lane the folders button sits in, as wide as the list's first column. The button is held
-	   to its right end and inset by the gap the first title holds, so the two right edges agree. */
+	/* The lane the folders button sits in. It holds the button's left edge a fixed distance in
+	   from the row's own left, whatever the list's columns are doing. */
 	.folders-lane {
-		padding-right   : var(--gap-fat);
+		padding-left    : var(--inset-show-folders);
+		justify-content : flex-start;
 		box-sizing      : border-box;
-		justify-content : flex-end;
 		flex            : 0 0 auto;
 		align-items     : center;
 		display         : flex;
@@ -268,12 +262,6 @@
 		box-sizing    : border-box;
 		cursor        : pointer;
 		white-space   : nowrap;
-	}
-
-	/* Moved rather than given space: the lane holds the button to its right end, so anything that
-	   changes the button's own size leaves its left end exactly where it was. */
-	.folders-button.crowded {
-		transform : translateX(var(--gap-fat));
 	}
 
 	.folders-button:global([data-hit]) {
