@@ -2,7 +2,7 @@
 kind: refer
 title: "working features"
 description: ""
-tags: [stow]
+tags: [journal, now, stow]
 date: 2026-08-11
 ---
 # working features

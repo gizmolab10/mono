@@ -39,7 +39,7 @@ export enum T_Preference {
 	show_folders    = 'show_folders',
 	sorts           = 'sorts',
 	scroll_files_to = 'scroll_files_to',
-	view_guide      = 'view_guide',
+	view_file      = 'view_file',
 	current_op      = 'current_op',
 
 	// Reading one guide

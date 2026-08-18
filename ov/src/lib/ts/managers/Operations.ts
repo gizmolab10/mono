@@ -22,10 +22,10 @@ export const w_operation = preferences.persistent<T_Operation>(T_Preference.curr
 
 // Which guide is being read, named by where it sits. Remembered, so a reload comes back
 // to the same one; if it is gone from the list, reading falls back to browsing.
-export const w_view_guide = preferences.persistent<string | null>(T_Preference.view_guide, null);
+export const w_view_file = preferences.persistent<string | null>(T_Preference.view_file, null);
 
 // Leaving the reading view drops what it pointed at.
-w_operation.subscribe((op) => { if (op !== T_Operation.edit) { w_view_guide.set(null); } });
+w_operation.subscribe((op) => { if (op !== T_Operation.edit) { w_view_file.set(null); } });
 
 // --- stepping through the guides on screen ---------------------------------
 //
@@ -76,14 +76,14 @@ export const w_anchor = writable<string | null>(null);
 // asking for a place that no longer holds anything — and the view shuts itself. Following the
 // move keeps it open on the very file it was already showing.
 files.moved_to = (was, now) => {
-	if (get(w_view_guide) === was) { w_view_guide.set(now); }
+	if (get(w_view_file) === was) { w_view_file.set(now); }
 	if (get(w_anchor) === was)     { w_anchor.set(now); }
 	w_link_stack.update((stack) => stack.map((one) => (one === was ? now : one)));
 	debug.log(`Reading: the guide being read moved from "${was}" to "${now}", so the view followed it rather than shutting.`);
 };
 
 /** The row being read right now — from the list if it is there, otherwise from all of them. */
-export const w_viewed = derived([files.w_showing, w_view_guide], ([rows, key]) =>
+export const w_viewed = derived([files.w_showing, w_view_file], ([rows, key]) =>
 	rows.find((r) => r.key === key)
 	?? (key === null ? null : files.hierarchy.all_files.get(key) ?? null));
 
@@ -125,11 +125,11 @@ function file_a_step_away(by: number): string | null {
 }
 
 export const w_file_back = derived(
-	[files.w_showing, w_link_stack, w_stack_at, w_view_guide, w_from_report],
+	[files.w_showing, w_link_stack, w_stack_at, w_view_file, w_from_report],
 	() => file_a_step_away(-1));
 
 export const w_file_forward = derived(
-	[files.w_showing, w_link_stack, w_stack_at, w_view_guide, w_from_report],
+	[files.w_showing, w_link_stack, w_stack_at, w_view_file, w_from_report],
 	() => file_a_step_away(1));
 
 // Is the command key held down right now? Watched at the app root. Clicking a file with it
@@ -156,7 +156,7 @@ export const w_search_at = preferences.persistent<number>(T_Preference.search_at
  * since the stepping walks past folders. Nothing while the guide being read is not among them,
  * as happens off the list, on a stack of links.
  */
-export const w_file_site = derived([files.w_showing, w_view_guide], ([rows, key]) => {
+export const w_file_site = derived([files.w_showing, w_view_file], ([rows, key]) => {
 	const just_files = rows.filter((r) => !r.file.is_folder);
 	const at = just_files.findIndex((r) => r.key === key);
 	return at < 0 ? null : { at: at + 1, of: just_files.length };
@@ -172,7 +172,7 @@ export function open_view(key: string): void {
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
 	w_anchor.set(key);
-	w_view_guide.set(key);
+	w_view_file.set(key);
 	w_from_report.set(false);
 	w_operation.set(T_Operation.edit);
 	w_stepping_halted.set(false);              // opening from the list is a fresh start
@@ -204,7 +204,7 @@ export function follow_link(key: string): void {
 	// remembered — so a link followed after a reload had nowhere to back out to, and the mark did
 	// nothing at all. The file standing on screen when the stack starts is where it began.
 	if (get(w_anchor) === null) {
-		const here = get(w_view_guide);
+		const here = get(w_view_file);
 		w_anchor.set(here);
 		debug.log(`Following a link: nothing said where this reading began — a reload forgets it — so "${here ?? 'nothing'}", the file on screen, is taken as the beginning.`);
 	}
@@ -222,7 +222,7 @@ export function follow_link(key: string): void {
 		w_stack_at.set(next.length - 1);
 		debug.log(`Following a link to "${row.file.name}": pushed as number ${next.length} of ${next.length}${dropped > 0 ? `, dropping ${dropped} guide(s) that were ahead` : ''}.`);
 	}
-	w_view_guide.set(key);
+	w_view_file.set(key);
 	w_operation.set(T_Operation.edit);
 }
 
@@ -286,13 +286,13 @@ function step_stack(by: number): void {
 		const home = get(w_anchor);
 		w_link_stack.set([]);
 		w_stack_at.set(-1);
-		if (home) { w_view_guide.set(home); }
+		if (home) { w_view_file.set(home); }
 		// Where the marks go back to depends on where the reading began: a report, or the list.
 		debug.log(`Backed out past the bottom of the stack — ${stack.length} visit(s) forgotten, back to "${home ?? 'nothing, so nothing moved'}" and ${get(w_from_report) ? 'the report it was opened from' : 'the list\'s own stepping'}.`);
 		return;
 	}
 	w_stack_at.set(to);
-	w_view_guide.set(stack[to]);
+	w_view_file.set(stack[to]);
 	const row = files.hierarchy.all_files.get(stack[to]);
 	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} on the stack, from number ${at + 1} to ${to + 1} of ${stack.length} — now reading "${row?.file.name ?? stack[to]}".`);
 }
@@ -308,7 +308,7 @@ function row_list_step(by: number): { at: number; to: number; skipped: number } 
 	const rows = get(files.w_showing);
 	const just_files = rows.filter((r) => !r.file.is_folder);
 	if (just_files.length < 2) { return null; }
-	const key = get(w_view_guide);
+	const key = get(w_view_file);
 	let at = rows.findIndex((r) => r.key === key);
 	if (at < 0) { at = 0; }
 	let skipped = 0;
@@ -331,14 +331,14 @@ function step_list(by: number): void {
 	const step = row_list_step(by);
 	if (!step) { debug.log(`Step ignored — ${rows.filter((r) => !r.file.is_folder).length} guide(s) on screen.`); return; }
 	const { at, to, skipped } = step;
-	w_view_guide.set(rows[to].key);
+	w_view_file.set(rows[to].key);
 	w_anchor.set(rows[to].key);
 	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} from row ${at} to row ${to} of ${rows.length}, walking past ${skipped} folder(s) — now reading "${rows[to].file.name}".`);
 }
 
 /** Close the reading view, back to the list. The stack ends with the reading. */
 export function close_view(): void {
-	w_view_guide.set(null);
+	w_view_file.set(null);
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
 	w_from_report.set(false);

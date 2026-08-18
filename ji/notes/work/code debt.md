@@ -2,26 +2,18 @@
 kind: specify
 title: "Code debt"
 description: "write a proposal for the first unchecked item to the top of handoff"
-tags: [journal, plans, proposal]
+tags: [journal, now, plans, proposal]
 date: 2026-08-11
 ---
 # Code debt
 
 write a proposal for the first unchecked item to the top of handoff.
 
-## from jeff
-
-1.  Messaging: I couldn't get the messaging feature to work. It briefly seemed to connect to Outlook, but I use Gmail.
-
-2.  Tagging: The tagging feature could use some of your UI expertise. I couldn't find a way to add a tag after a document was already loaded.  
-
-3.  Upload Feedback: What do you think about adding an animated icon (like the old hourglass) or a notification to let the user know their document is uploading or has been received?
-
 ## work
 
-- [x] second color picker in preferences -> bg
-- [ ] when opening a file, if the first character is a return, remove it
-- [ ] maps -> actual clickable links to source files
+- [x] when opening a file, if the first character is a return, remove it
+- [x] maps -> actual clickable links to source files
+- [ ] implement [[sections spec]]
 - [ ] move the gear in chat to the area below the question-in-flight (ie, where the reply will go)
 - [ ] port Hits.ts from di (not 3D!)
     - [ ] so tooltips & hover work more reliably (leave events often do not happen)
@@ -86,8 +78,17 @@ write a proposal for the first unchecked item to the top of handoff.
         - [ ] give me the signals that repeat over time or across multiple people — this is a stronger signal.
         - [ ] present me with these signals in a way that I can sense into each one, and decide if I want to keep them, highlight them or discard them as unimportant.
 
+## from jeff
+
+1.  Messaging: I couldn't get the messaging feature to work. It briefly seemed to connect to Outlook, but I use Gmail.
+
+2.  Tagging: The tagging feature could use some of your UI expertise. I couldn't find a way to add a tag after a document was already loaded.  
+
+3.  Upload Feedback: What do you think about adding an animated icon (like the old hourglass) or a notification to let the user know their document is uploading or has been received?
+
 ## done
 
+- [x] second color picker in preferences -> bg
 - [x] add the rest of the spreadsheet endings — every one from this list is now taken
     - [x] **Excel:** xls, xlsx, xlsm, xlsb, xlt, xltx, xltm — plus gnumeric, packed like these: raw bytes, never showable, heavy, and each needs its sheets read out before the model can take it
     - [x] tsv (also spelled tab), psv, dif, slk — rows of words, so stored as words, ready to read, no converting

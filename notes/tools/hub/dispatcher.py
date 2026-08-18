@@ -484,8 +484,8 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif urllib.parse.urlparse(self.path).path == '/list-guides':
-            # Every guide and design on disk right now, for the overview app: /list-guides
+        elif urllib.parse.urlparse(self.path).path == '/list-files':
+            # Every file on disk right now, for the overview app: /list-files
             #
             # Overview settles its own list of files when its code is prepared, so a file added
             # since then is invisible to it. Asking here instead means a new file shows up

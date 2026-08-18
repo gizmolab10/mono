@@ -58,7 +58,7 @@ def check(what, got, wanted):
 # --- the dispatcher is up at all ---------------------------------------------
 
 try:
-    code, said = ask('/list-guides')
+    code, said = ask('/list-files')
 except Exception as e:
     print(f'the dispatcher is not answering on {WHERE} — start it and run this again ({e})')
     sys.exit(1)

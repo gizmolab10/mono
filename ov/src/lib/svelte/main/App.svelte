@@ -3,7 +3,7 @@
 	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
 	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
 	import { files } from '../../ts/managers/Files';
-	import { guides_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
+	import { files_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
 	import { colors } from '../../ts/utilities/Colors';
 	import { Point } from '../../ts/types/Coordinates';
 	import S_Mouse from '../../ts/events/S_Mouse';
@@ -31,7 +31,7 @@
 	$effect(() => {
 		if (!$w_no_server) { return; }
 		const asking = setInterval(async () => {
-			const on_disk = await guides_on_disk();
+			const on_disk = await files_on_disk();
 			if (on_disk.paths.length === 0) { return; }
 			debug.log(`Guides: the dispatcher is answering again — ${on_disk.paths.length} file(s) on disk, so the page starts itself over.`);
 			window.location.reload();

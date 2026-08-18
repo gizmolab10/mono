@@ -1,7 +1,7 @@
-import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, reaches_under_work, site_of_file, read_guide, renamed_path, save_file } from '../utilities/Saving';
+import { address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, move_file, moved_into, path_of_address, reaches_under_work, site_of_file, read_file, renamed_path, save_file } from '../utilities/Saving';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { blank_guide, free_name, has_labels, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
+import { blank_file, free_name, has_labels, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
 import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type File, type Labels, type Filtered_File } from '../types/File';
 import { links_in, plain_links } from '../utilities/Markdown_Blocks';
 import { resolved_from } from '../utilities/Following_Links';
@@ -150,7 +150,7 @@ class Files {
 	/** Work the list out again from what the filters say right now. */
 	renarrow(): void {
 		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts), get(w_tag_picking));
-		this.w_showing.set(this.hierarchy.filtered_guides);
+		this.w_showing.set(this.hierarchy.filtered_files);
 	}
 
 	/**
@@ -175,7 +175,7 @@ class Files {
 		const to_path = moved_into(folder.path, name);
 		const from = file_path_of(guide.bundle, guide.path);
 		const to   = file_path_of(folder.bundle, to_path);
-		const answer = await move_guide(from, to);
+		const answer = await move_file(from, to);
 		if (!answer.ok) {
 			show_status(`"${guide.name}" was not moved — ${answer.why}`);
 			debug.log(`Moving "${guide.name}" from ${from} to ${to} was refused — ${answer.why}. Nothing changed.`);
@@ -244,7 +244,7 @@ class Files {
 			}
 
 			const index_at = `${where}/index.md`;
-			const text = await this.read_file(`${root}${index_at}`);
+			const text = await this.content_of(`${root}${index_at}`);
 			if (text === null) {
 				const fresh = fresh_index(folder.name, beside);
 				const wrote = await save_file(index_at, fresh, '');
@@ -305,7 +305,7 @@ class Files {
 		const mends: Array<{ where: string; address: string; text: string; changed: string; how_many: number }> = [];
 		for (const other of this.files) {
 			const at = path_of_address(other.address);
-			const text = await this.read_file(at);
+			const text = await this.content_of(at);
 			if (text === null) { continue; }
 			let changed = text;
 			let how_many = 0;
@@ -322,7 +322,7 @@ class Files {
 			if (how_many > 0) { mends.push({ where: file_path_of(other.bundle, other.path), address: at, text, changed, how_many }); }
 		}
 
-		const answer = await move_guide(from, to);
+		const answer = await move_file(from, to);
 		if (!answer.ok) {
 			show_status(`"${was_name}" was not renamed — ${answer.why}`);
 			debug.log(`Renaming "${was_name}" to "${named}" was refused — ${answer.why}. Nothing changed.`);
@@ -349,7 +349,7 @@ class Files {
 		// points at changed, so any description written by hand stays.
 		const root = answer.full_path.slice(0, answer.full_path.length - to.length);
 		const index_at = `${to.split('/').slice(0, -1).join('/')}/index.md`;
-		const index_text = await this.read_file(`${root}${index_at}`);
+		const index_text = await this.content_of(`${root}${index_at}`);
 		if (index_text !== null) {
 			const taken = without_line_for(index_text, `${was_name}.md`);
 			if (taken.line === '') {
@@ -377,7 +377,7 @@ class Files {
 	 */
 	async delete_one(guide: File): Promise<boolean> {
 		const where = file_path_of(guide.bundle, guide.path);
-		const answer = await delete_guide(where);
+		const answer = await delete_file(where);
 		if (!answer.ok) {
 			show_status(`"${guide.name}" was not thrown away — ${answer.why}`);
 			debug.log(`Deleting "${guide.name}" was refused — ${answer.why}. Nothing changed.`);
@@ -385,7 +385,7 @@ class Files {
 		}
 		const root = this.repo_root;
 		const index_at = `${where.split('/').slice(0, -1).join('/')}/index.md`;
-		const index_text = root === '' ? null : await this.read_file(`${root}${index_at}`);
+		const index_text = root === '' ? null : await this.content_of(`${root}${index_at}`);
 		if (index_text !== null) {
 			const taken = without_line_for(index_text, `${guide.name}.md`);
 			if (taken.line === '') {
@@ -433,7 +433,7 @@ class Files {
 
 		const path = renamed_path(guide.path, name);
 		const where = file_path_of(guide.bundle, path);
-		const text = blank_guide(name, today(), kind, tags);
+		const text = blank_file(name, today(), kind, tags);
 		// Nothing on disk is what the app expects to find, which is how the server is told to
 		// make the file rather than change one.
 		const wrote = await save_file(where, text, '');
@@ -444,7 +444,7 @@ class Files {
 		}
 
 		const address = address_of_file(renamed_path(path_of_address(guide.address), name));
-		const made = this.hierarchy.add_guide(guide.bundle, path, name, address, {
+		const made = this.hierarchy.add_file(guide.bundle, path, name, address, {
 			kind, title: name, description: '', date: today(), labeled: true,
 		}, guide.is_design);
 		this.hierarchy.add_relationship(folder.id, made.id);
@@ -457,7 +457,7 @@ class Files {
 		// The index beside it names every file in the folder, so it names this one too.
 		const index_at = `${where.split('/').slice(0, -1).join('/')}/index.md`;
 		const root = this.repo_root;
-		const index_text = root === '' ? null : await this.read_file(`${root}${index_at}`);
+		const index_text = root === '' ? null : await this.content_of(`${root}${index_at}`);
 		if (index_text !== null) {
 			const added = with_line_added(index_text, line_for(`${name}.md`));
 			const said = await save_file(index_at, added.text, index_text);
@@ -483,7 +483,7 @@ class Files {
 		for (const guide of files) {
 			const where = file_path_of(guide.bundle, guide.path);
 			show_status(`looking through ${where}`);
-			const text = await this.read_file(path_of_address(guide.address));
+			const text = await this.content_of(path_of_address(guide.address));
 			if (text === null) { unreadable += 1; debug.log(`Dead links: could not read ${where}.`); continue; }
 			looked += 1;
 			// Obsidian's own `[[name]]` is turned into the ordinary form first, exactly as the
@@ -543,8 +543,8 @@ class Files {
 	 * than the dev server: the dev server will not accept a name holding a question mark, however
 	 * that mark is written, and answers with the app's own page instead of the file.
 	 */
-	private async read_file(full_path: string): Promise<string | null> {
-		const answer = await read_guide(full_path);
+	private async content_of(full_path: string): Promise<string | null> {
+		const answer = await read_file(full_path);
 		return answer.text;
 	}
 
@@ -558,8 +558,8 @@ class Files {
 		const index_beside = (where: string) => `${where.split('/').slice(0, -1).join('/')}/index.md`;
 		const from_index = index_beside(from);
 		const to_index   = index_beside(to);
-		const from_text  = await this.read_file(`${root}${from_index}`);
-		const to_text    = await this.read_file(`${root}${to_index}`);
+		const from_text  = await this.content_of(`${root}${from_index}`);
+		const to_text    = await this.content_of(`${root}${to_index}`);
 		if (from_text === null && to_text === null) {
 			debug.log(`Index files: neither ${from_index} nor ${to_index} exists, so there is nothing to mend.`);
 			return;
@@ -624,7 +624,7 @@ class Files {
 		// what a link between two collections needs in order to be followed.
 		const shared_top = this.hierarchy.folder_at(T_Bundle.mono, '', T_Bundle.mono);
 
-		const on_disk = await guides_on_disk();
+		const on_disk = await files_on_disk();
 		if (on_disk.paths.length === 0) {
 			this.w_no_server.set(true);
 			debug.log('Guides: the dispatcher did not answer, so there are no guides to show — it is the only thing that knows what is on disk.');
@@ -702,7 +702,7 @@ class Files {
 			debug.log(`Guides: "${bundle}/${path}" carries no labels. It is left as it is and will be given some the first time it is opened for editing.`);
 		}
 		const { labels, tags } = labels_from(text, `${bundle}/${path}`);
-		const guide = this.hierarchy.add_guide(bundle, path, name, address, {
+		const guide = this.hierarchy.add_file(bundle, path, name, address, {
 			...labels,
 			title: labels.title || name,
 		}, is_design);
@@ -778,7 +778,7 @@ class Files {
 			.join(', ');
 		const folders = this.hierarchy.files.filter((g) => g.is_folder).length;
 		const roots = this.hierarchy.indexes.roots_among(this.hierarchy.files.map((g) => g.id));
-		const root_names = roots.map((id) => this.hierarchy.guide_byID(id)?.name ?? id).join(', ');
+		const root_names = roots.map((id) => this.hierarchy.file_byID(id)?.name ?? id).join(', ');
 		debug.log(`Shape: ${roots.length} top folder(s) — ${root_names}. One means the four project folders hang under the shared one, so going up from a guide can reach another project.`);
 		debug.log(`Guides read: ${read} files (${per_bundle}), ${skipped} index files left out, ${failed} could not be read, hung under ${folders} folders. ${unlabeled} carry no labels at all. Kinds found: ${this.kinds_present().join(', ') || 'none'}. Tags found: ${this.tags_present().length} of the ${ALL_TAGS.length} on the closed list, across ${this.hierarchy.taggings.length} tag placements. ${bytes} characters of text passed through and none of it was kept.`);
 	}

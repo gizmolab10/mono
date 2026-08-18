@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ji/notes/work/code debt.md",
                 "mode": "source",
                 "source": false
               },
@@ -170,7 +170,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/code debt.md",
+                "file": "ji/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -210,6 +210,11 @@
   },
   "active": "a932f7d0e39d14ca",
   "lastOpenFiles": [
+    "ov/notes/work/code debt.md",
+    "ov/notes/work/creativity.md",
+    "ji/notes/work/code debt.md",
+    "notes/guides/develop/sections spec.md",
+    "ji/notes/guides/specifications/sections spec.md",
     "notes/guides/pre-flight/banned words.md",
     "di/notes/guides/pre-flight/banned words.md",
     "ov/notes/work/handoff.md",
@@ -220,7 +225,6 @@
     "ov/notes/guides/design/compose an email.md",
     "ov/notes/work/soon/ov installer.md",
     "di/notes/work/now/learn.md",
-    "ov/notes/work/code debt.md",
     "ov/notes/work/compose an email.md",
     "ov/notes/work/ov installer.md",
     "2026-08-17.md",
@@ -229,7 +233,6 @@
     "notes/work/done/index.md",
     "ji/notes/work/proposals/index.md",
     "ji/notes/work/done/index.md",
-    "ov/notes/work/creativity.md",
     "ws/node_modules/vite/node_modules",
     "ws/node_modules/code-red/node_modules",
     "ws/node_modules/@sveltejs/vite-plugin-svelte/node_modules",
@@ -239,10 +242,7 @@
     "notes/guides/develop/constants.md",
     "ov/notes/work/sections.md",
     "ov/notes/work/soon/index.md",
-    "notes/guides/develop/sections spec.md",
     "ov/notes/guides/pre-flight/banned words.md",
-    "ov/notes/work/sections spec.md",
-    "notes/sections spec.md",
     "ov/src/lib/svelte/content/Files_List.svelte",
     "ov/src/lib/svelte/filter/Search.svelte",
     "ov/src/lib/svelte/filter/Editor_Filters.svelte",

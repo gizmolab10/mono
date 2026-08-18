@@ -3,7 +3,7 @@
 	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
-	import { file_path_of, path_of_address, read_guide, save_file } from '../../ts/utilities/Saving';
+	import { file_path_of, path_of_address, read_file, save_file } from '../../ts/utilities/Saving';
 	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { Point } from '../../ts/types/Coordinates';
@@ -991,7 +991,7 @@
 		// The words already on screen stay there until the next one's are ready. Blanking them
 		// first put an empty box on screen for an instant, which read as a flash.
 		failed = '';
-		read_guide(where)
+		read_file(where)
 			.then((answer) => {
 				if (answer.text === null) { throw new Error(answer.why); }
 				return answer.text;

@@ -70,7 +70,7 @@ export const TAG_WHEN_NEW = 'now';
  * The kind and the tags come from outside, since what a new guide should wear is decided by
  * what the list is filtered by — a guide labeled otherwise would be made and then hidden.
  */
-export function blank_guide(name: string, date: string, kind: string, tags: string[]): string {
+export function blank_file(name: string, date: string, kind: string, tags: string[]): string {
 	const labels: Labels = { kind, title: name, description: '', date, labeled: true };
 	return `${label_block(labels, tags)}\n# ${name}\n`;
 }

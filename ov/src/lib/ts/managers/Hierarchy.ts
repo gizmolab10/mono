@@ -34,7 +34,7 @@ export class Hierarchy {
 	// carries its guide together with the tags on it, how deep it sits, and the folder
 	// chain above it — so the tag lookup is done once, as the row is built, and never
 	// again by whoever shows it.
-	filtered_guides: Filtered_File[] = [];
+	filtered_files: Filtered_File[] = [];
 
 	// How many matching files sit under each folder, by where that folder sits. Counted
 	// over everything, so a shut folder still shows its full tally.
@@ -85,7 +85,7 @@ export class Hierarchy {
 	}
 
 	/** A file, carrying whatever labels were read off its top. */
-	add_guide(bundle: T_Bundle, path: string, name: string, address: string, labels: Labels, is_design = false): File {
+	add_file(bundle: T_Bundle, path: string, name: string, address: string, labels: Labels, is_design = false): File {
 		return this.register({
 			id: this.fresh_id(), name, bundle, path, address, is_folder: false, is_design, ...labels,
 		});
@@ -140,10 +140,10 @@ export class Hierarchy {
 	}
 
 	/** Place a tag on a guide. Find-or-create: the same pair is one link, never two. */
-	add_tagging(tag_id: string, guide_id: string): Tagging {
-		const found = this.taggings.find((t) => t.tag_id === tag_id && t.guide_id === guide_id);
+	add_tagging(tag_id: string, file_id: string): Tagging {
+		const found = this.taggings.find((t) => t.tag_id === tag_id && t.file_id === file_id);
 		if (found) { return found; }
-		const tagging: Tagging = { id: this.fresh_id(), tag_id, guide_id };
+		const tagging: Tagging = { id: this.fresh_id(), tag_id, file_id };
 		this.taggings.push(tagging);
 		return tagging;
 	}
@@ -158,7 +158,7 @@ export class Hierarchy {
 		guide.description = labels.description;
 		guide.date        = labels.date;
 		guide.labeled     = true;
-		this.taggings = this.taggings.filter((t) => t.guide_id !== guide.id);
+		this.taggings = this.taggings.filter((t) => t.file_id !== guide.id);
 		for (const name of tag_names) { this.add_tagging(this.add_tag(name).id, guide.id); }
 		this.reindex();
 	}
@@ -187,7 +187,7 @@ export class Hierarchy {
 		this.files = this.files.filter((one) => one.id !== guide.id);
 		this.files_byID.delete(guide.id);
 		this.relationships = this.relationships.filter((r) => r.child_id !== guide.id && r.parent_id !== guide.id);
-		this.taggings = this.taggings.filter((t) => t.guide_id !== guide.id);
+		this.taggings = this.taggings.filter((t) => t.file_id !== guide.id);
 		this.reindex();
 	}
 
@@ -198,12 +198,12 @@ export class Hierarchy {
 
 	// --- the reads ------------------------------------------------------------
 
-	guide_byID(id: string): File | null { return this.files_byID.get(id) ?? null; }
+	file_byID(id: string): File | null { return this.files_byID.get(id) ?? null; }
 
 	/** The name of every tag on one guide. */
-	tag_names_of(guide_id: string): string[] {
+	tag_names_of(file_id: string): string[] {
 		const by_id = new Map(this.tags.map((t) => [t.id, t.name]));
-		return this.indexes.tags_of(guide_id).map((id) => by_id.get(id) ?? '').filter((n) => n !== '');
+		return this.indexes.tags_of(file_id).map((id) => by_id.get(id) ?? '').filter((n) => n !== '');
 	}
 
 	/**
@@ -211,7 +211,7 @@ export class Hierarchy {
 	 * chain above it. The one thing the walk must never do is follow a node back into
 	 * itself, so the guard is "already on the chain I'm walking now" — a real loop.
 	 */
-	list_guides(): Filtered_File[] {
+	list_files(): Filtered_File[] {
 		const by_id = new Map(this.tags.map((t) => [t.id, t.name]));
 		const listed: Filtered_File[] = [];
 
@@ -228,11 +228,11 @@ export class Hierarchy {
 
 		const walk = (id: string, depth: number, ancestors: string[]): void => {
 			if (ancestors.includes(id)) {
-				const guide = this.guide_byID(id);
+				const guide = this.file_byID(id);
 				debug.log(`Walk: "${guide?.name ?? id}" already sits above itself on this branch (depth ${depth}) — a loop, so not following it deeper.`);
 				return;
 			}
-			const guide = this.guide_byID(id);
+			const guide = this.file_byID(id);
 			const children = this.indexes.children_of(id);
 			if (guide) {
 				listed.push({
@@ -240,7 +240,7 @@ export class Hierarchy {
 					key: key_of(guide),
 					tag_names: this.indexes.tags_of(id).map((t) => by_id.get(t) ?? '').filter((n) => n !== '').sort(in_order),
 					depth,
-					ancestor_keys: ancestors.map((a) => { const up = this.guide_byID(a); return up ? key_of(up) : ''; }),
+					ancestor_keys: ancestors.map((a) => { const up = this.file_byID(a); return up ? key_of(up) : ''; }),
 					has_children: children.length > 0,
 				});
 			}
@@ -262,7 +262,7 @@ export class Hierarchy {
 	folder_holding(guide: File): File | null {
 		const up = this.indexes.relationships_by_child.get(guide.id);
 		if (!up || up.length === 0) { return null; }
-		return this.guide_byID(up[0].parent_id);
+		return this.file_byID(up[0].parent_id);
 	}
 
 	private ancestry_of(id: string): string[] {
@@ -292,7 +292,7 @@ export class Hierarchy {
 		while (waiting.length > 0) {
 			const at = waiting.shift()!;
 			for (const edge of this.indexes.children_of(at)) {
-				const child = this.guide_byID(edge.child_id);
+				const child = this.file_byID(edge.child_id);
 				if (!child) { continue; }
 				if (!child.is_folder && child.name === name) { answers.push(child); }
 				if (child.is_folder && !seen.has(child.id)) { seen.add(child.id); waiting.push(child.id); }
@@ -414,7 +414,7 @@ export class Hierarchy {
 	 * Work out what shows, and keep it. The whole walk is looked through, so a match
 	 * inside a shut folder is still found and every folder on the way to it is kept —
 	 * shutting a folder hides what is inside it, never the folder itself. What survives
-	 * both the filters and the folds is kept in `filtered_guides`, in the order shown,
+	 * both the filters and the folds is kept in `filtered_files`, in the order shown,
 	 * folders included, and the tally of matching files under each folder beside it.
 	 */
 	/**
@@ -432,7 +432,7 @@ export class Hierarchy {
 	}
 
 	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = ''): void {
-		const all = this.list_guides();
+		const all = this.list_files();
 		this.all_files = new Map(all.map((r) => [r.key, r]));
 		const closed = new Set(shut);
 		// A shut folder only hides things while the folders are on screen. With them off the
@@ -450,7 +450,7 @@ export class Hierarchy {
 		// With the folders turned off the list is a flat run of files, every one at the far
 		// left — there is nothing left to indent under. The folders still decide what a shut
 		// fold hides; they just aren't drawn, and nothing steps in from the edge.
-		this.filtered_guides = open_rows
+		this.filtered_files = open_rows
 			.filter((r) => keep.has(r.key))
 			.filter((r) => show_folders || !r.file.is_folder)
 			.map((r) => show_folders ? r : { ...r, depth: 0 });
@@ -468,7 +468,7 @@ export class Hierarchy {
 		// decides, and each one after it only breaks a tie in the ones before it. A blank
 		// goes to the bottom of its column whichever way that column runs.
 		if (!show_folders && sorts.length > 0) {
-			this.filtered_guides = [...this.filtered_guides].sort((a, b) => {
+			this.filtered_files = [...this.filtered_files].sort((a, b) => {
 				for (const sort of sorts) {
 					const one = this.sort_key(a, sort.by);
 					const two = this.sort_key(b, sort.by);
@@ -480,12 +480,12 @@ export class Hierarchy {
 				return 0;
 			});
 			const said = sorts.map((s) => `${s.by} ${s.up ? 'smallest' : 'largest'} first`).join(', then ');
-			const blanks = sorts.map((s) => `${this.filtered_guides.filter((r) => this.sort_key(r, s.by) === '').length} with no ${s.by}`).join(', ');
-			debug.log(`Sorted by ${said} — ${this.filtered_guides.length} rows (${blanks}; blanks go to the bottom).`);
+			const blanks = sorts.map((s) => `${this.filtered_files.filter((r) => this.sort_key(r, s.by) === '').length} with no ${s.by}`).join(', ');
+			debug.log(`Sorted by ${said} — ${this.filtered_files.length} rows (${blanks}; blanks go to the bottom).`);
 		}
 
-		const folders_shown = this.filtered_guides.filter((r) => r.file.is_folder).length;
-		debug.log(`Narrowed: project "${project || 'all'}", kind "${kind || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_guides.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
+		const folders_shown = this.filtered_files.filter((r) => r.file.is_folder).length;
+		debug.log(`Narrowed: project "${project || 'all'}", kind "${kind || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_files.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
 	}
 
 	/** The guides wearing one tag. */

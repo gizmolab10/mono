@@ -10,7 +10,7 @@ export interface Tag {
 export interface Tagging {
 	id       : string;
 	tag_id   : string;
-	guide_id : string;
+	file_id : string;
 }
 
 // A parent→child edge in an ordered graph. A node may have many parents.

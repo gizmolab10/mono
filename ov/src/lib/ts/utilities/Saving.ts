@@ -126,9 +126,9 @@ export function path_of_address(address: string): string {
 	return decodeURIComponent(address.replace(/^\/@fs/, '').split('?')[0]);
 }
 
-export async function guides_on_disk(): Promise<On_Disk> {
+export async function files_on_disk(): Promise<On_Disk> {
 	try {
-		const answer = await fetch('http://localhost:5171/list-guides');
+		const answer = await fetch('http://localhost:5171/list-files');
 		const said = await answer.json().catch(() => ({}));
 		if (answer.ok && said.success && Array.isArray(said.paths) && typeof said.root === 'string') {
 			return { root: said.root.endsWith('/') ? said.root : `${said.root}/`, paths: said.paths as string[] };
@@ -154,7 +154,7 @@ export async function restart_dispatcher(tries = 10): Promise<Saved> {
 	}
 	for (let at = 0; at < tries; at++) {
 		await new Promise((done) => setTimeout(done, k.timeout.asking));
-		const on_disk = await guides_on_disk();
+		const on_disk = await files_on_disk();
 		if (on_disk.paths.length > 0) { return { ok: true, why: '' }; }
 	}
 	return { ok: false, why: `it did not answer within ${Math.round((tries * k.timeout.asking) / 1000)} seconds` };
@@ -191,7 +191,7 @@ export function moved_into(folder_path: string, file_name: string): string {
 // Move a guide's file from one path in the repo to another. Says whether it moved, and if
 // not, why in plain words. On success it also says where the file now is on this machine, so
 // the app can read it again without waiting for a restart.
-export async function move_guide(from: string, to: string): Promise<Moved> {
+export async function move_file(from: string, to: string): Promise<Moved> {
 	const url = `http://localhost:5171/move-guide?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
 	try {
 		const answer = await fetch(url, { method: 'POST' });
@@ -207,7 +207,7 @@ export type Moved = { ok: boolean; why: string; full_path: string };
 
 // Throw one guide's file away. Says whether it went, and if not, why in plain words. The same
 // two guards as everything else: it must be a guide, and it must sit inside the repo.
-export async function delete_guide(where: string): Promise<Saved> {
+export async function delete_file(where: string): Promise<Saved> {
 	const url = `http://localhost:5171/delete-guide?where=${encodeURIComponent(where)}`;
 	try {
 		const answer = await fetch(url, { method: 'POST' });
@@ -229,7 +229,7 @@ export async function delete_guide(where: string): Promise<Saved> {
  *
  * Nothing at all comes back when the file cannot be read, and why is said in plain words.
  */
-export async function read_guide(where: string): Promise<{ text: string | null; why: string }> {
+export async function read_file(where: string): Promise<{ text: string | null; why: string }> {
 	const url = `http://localhost:5171/read-guide?where=${encodeURIComponent(where)}`;
 	try {
 		const answer = await fetch(url);

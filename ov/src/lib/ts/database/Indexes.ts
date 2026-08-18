@@ -6,20 +6,20 @@ import type { Tagging, Relationship } from '../types/DB_Records';
 
 export class Indexes {
 	tagging_by_tag:          Map<string, string[]>       = new Map();  // tag id → guide ids
-	tagging_by_guide:        Map<string, string[]>       = new Map();  // guide id → tag ids
+	tagging_by_file:        Map<string, string[]>       = new Map();  // guide id → tag ids
 	relationships_by_parent: Map<string, Relationship[]> = new Map();  // parent id → child edges (sorted)
 	relationships_by_child:  Map<string, Relationship[]> = new Map();  // child id → parent edges
 
 	// Rebuild every lookup from the current record lists.
 	rebuild(taggings: Tagging[], relationships: Relationship[]): void {
 		this.tagging_by_tag.clear();
-		this.tagging_by_guide.clear();
+		this.tagging_by_file.clear();
 		this.relationships_by_parent.clear();
 		this.relationships_by_child.clear();
 
 		for (const t of taggings) {
-			this.push(this.tagging_by_tag, t.tag_id, t.guide_id);
-			this.push(this.tagging_by_guide, t.guide_id, t.tag_id);
+			this.push(this.tagging_by_tag, t.tag_id, t.file_id);
+			this.push(this.tagging_by_file, t.file_id, t.tag_id);
 		}
 		for (const r of relationships) {
 			this.push(this.relationships_by_parent, r.parent_id, r);
@@ -37,8 +37,8 @@ export class Indexes {
 	}
 
 	// The tag ids on one guide.
-	tags_of(guide_id: string): string[] {
-		return this.tagging_by_guide.get(guide_id) ?? [];
+	tags_of(file_id: string): string[] {
+		return this.tagging_by_file.get(file_id) ?? [];
 	}
 
 	// The guide ids wearing one tag.
@@ -52,8 +52,8 @@ export class Indexes {
 	}
 
 	// The given ids with no tagging record.
-	untagged_among(guide_ids: string[]): string[] {
-		return guide_ids.filter((id) => !this.tagging_by_guide.has(id));
+	untagged_among(file_ids: string[]): string[] {
+		return file_ids.filter((id) => !this.tagging_by_file.has(id));
 	}
 
 	private push<V>(map: Map<string, V[]>, key: string, value: V): void {

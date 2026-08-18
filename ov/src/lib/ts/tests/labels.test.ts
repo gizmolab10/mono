@@ -1,4 +1,4 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, labels_from, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_file, free_name, has_labels, kind_from_where, label_block, labels_for, labels_from, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
 import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/File';
@@ -151,7 +151,7 @@ describe('putting the labels back into a file', () => {
 
 describe('a brand new guide', () => {
 	it('opens with a full block and its own heading', () => {
-		const made = blank_guide('unnamed', TODAY, T_Kind.refer, ['now']);
+		const made = blank_file('unnamed', TODAY, T_Kind.refer, ['now']);
 		expect(made.startsWith('---\n')).toBe(true);
 		expect(made).toContain(`kind: ${T_Kind.refer}`);
 		expect(made).toContain('tags: [now]');
@@ -160,19 +160,19 @@ describe('a brand new guide', () => {
 	});
 
 	it('wears whatever kind and tags it is given', () => {
-		const made = blank_guide('unnamed', TODAY, T_Kind.howto, ['prose', 'team']);
+		const made = blank_file('unnamed', TODAY, T_Kind.howto, ['prose', 'team']);
 		expect(made).toContain(`kind: ${T_Kind.howto}`);
 		expect(made).toContain('tags: [prose, team]');
 	});
 
 	it('is read back as labeled, with the name as its title', () => {
-		const made = blank_guide('a second try', TODAY, T_Kind.refer, ['now']);
+		const made = blank_file('a second try', TODAY, T_Kind.refer, ['now']);
 		expect(has_labels(made)).toBe(true);
 		expect(made).toContain('title: "a second try"');
 	});
 
 	it('marks a quote mark in the name as standing for itself', () => {
-		expect(blank_guide('the "one"', TODAY, T_Kind.refer, ['now'])).toContain('title: "the \\"one\\""');
+		expect(blank_file('the "one"', TODAY, T_Kind.refer, ['now'])).toContain('title: "the \\"one\\""');
 	});
 });
 
