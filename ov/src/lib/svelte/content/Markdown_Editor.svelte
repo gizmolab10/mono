@@ -625,6 +625,9 @@
 		const was_at = page?.scrollTop ?? 0;
 		text  = whole;
 		words = page_of(reader, whole);
+		// An edit can write a link or take one away, so what points at what is worked out again.
+		// Only this file is read for it; every other guide's links were gathered at launch.
+		files.links_changed(key_of(guide), whole);
 		onredrawn();                               // anything highlighted belongs to the old drawing
 		requestAnimationFrame(() => { if (page) { page.scrollTop = was_at; } refresh_marks(); });
 		debug.log(`Editing "${name}": drew the guide again from its changed words — back at ${Math.round(was_at)} down the page.`);
@@ -961,6 +964,7 @@
 		}
 		text  = cleared;
 		words = page_of(reader, cleared);
+		files.links_changed(key_of(guide), cleared);
 		debug.log(`Editing "${name}": took out the ${whole.length - cleared.length} character(s) that sat between the labels and the top heading.`);
 	}
 

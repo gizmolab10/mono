@@ -9,6 +9,53 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-17 — the steppers name the file they would open
+
+Pointing at either stepper said only which way it went — "previous file", "next file" — so the only
+way to learn which file was to press, which is the very thing the reader was deciding about. Each
+says the name now, on the list and on the stack of guides reached by links alike.
+
+**One piece of code both picked the next file and opened it; that is two now.** One says which file
+lies that way, the other goes there and asks the first. So the name shown and the file opened are
+one answer, and the walking rule is written once.
+
+The split settled a case the note had not: **backing out past the bottom of the stack goes to where
+the reading began**, which is a file like any other — so it names that file rather than falling back
+to the plain words. Stepping back to a report keeps them, since a report is not a file.
+
+## 2026-08-17 — which guides point at this one
+
+A guide said what it pointed at and nothing said what pointed at it, so one could be rewritten,
+moved or thrown away without ever seeing who was relying on it. A section below the words now names
+them, each one openable, and is drawn only where something points here.
+
+**The links come out of each file's own text at launch**, in the moment its labels are read — the
+one moment that text is in hand, and it is let go straight after. Nothing is kept but the addresses.
+The dead-link walk could not fill this: it reads every file and runs only when asked.
+
+Two faults, both silent, both found by measuring rather than reading:
+
+**The double-bracket form has to be turned into the ordinary one first.** A guide written the short
+way, naming only `[[a name]]`, holds no ordinary link at all — so reading its raw text found nothing
+and said nothing.
+
+**Answering a link needs every guide findable by where it sits, and that map is filled by the
+narrowing.** Asked before it, every lookup found nothing — and it was silent, since a guide that
+cannot be found is skipped before any link is counted. It read `0 of 0` rather than naming a failure.
+
+## 2026-08-17 — a tag typed by hand went unread, and nothing said so
+
+A file's tags can be written two ways. This app writes them all on one line; **Obsidian writes them
+one name to a line, and rewrites a file into that shape the moment its tags are touched there.** The
+reading knew only the first, found nothing after the colon, and gave the file no tags at all.
+
+**Nothing was dropped, so nothing was said.** The reading names by name every tag it turns away, and
+that silence was itself the clue — the file was not being half read, it was not being read.
+
+The reading of the labels moved out of the manager and into the label utility, where the writing
+already lived. Both are plain work on text; in the manager the reading could not be tested without
+starting the whole app, which is why it had no test to fail.
+
 ## 2026-08-17 — coming back comes back to where you were
 
 A guide left partway down opens where it was left, not at its top. That holds walking the link

@@ -2,7 +2,7 @@
 kind: specify
 title: "Code debt"
 description: "write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff"
-tags: [now, journal, plans, proposal]
+tags: [journal, now, proposal]
 date: 2026-08-10
 ---
 # Code debt
@@ -13,9 +13,8 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## work
 
-- [ ] fix github vulnerabilities
-- [ ] adding a tag by hand does not work
-- [ ] add a list of back links to the editor
+- [ ] too many ts files are class-less
+    - [ ] require LOOONG import statements
 - [ ] strip of icons to switch between my many apps
     - [ ] localhost only
 - [ ] write installation instructions in
@@ -25,6 +24,27 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## done
 
+- [x] tt for steppers -> name the file
+    - [x] both walks split in two — one says which file lies that way, the other goes there and
+        asks the first, so what a stepper says and what pressing it opens are one answer
+    - [x] backing out past the bottom of the stack goes to where the reading began, a file like any
+        other, so it names that file
+    - [x] a report is not a file, so stepping back to one keeps the plain words
+- [x] add a list of back links to the editor
+    - [x] every guide's links come out of the very text its labels are read from, at launch — one
+        more look at words already in hand, and nothing kept but the addresses
+    - [x] the double-bracket form has to be turned into the ordinary one first, or a guide written
+        the short way holds no link at all
+    - [x] answering a link needs every guide findable by where it sits, and that map is the
+        narrowing's — asked before it, every lookup found nothing and said nothing
+    - [x] a section of its own below the words, drawn only where something points here
+- [x] adding a tag by hand does not work
+    - [x] Obsidian writes the tags one name to a line, and rewrites a file into that shape the
+        moment its tags are touched there; the reading knew only the one-line shape
+    - [x] nothing was dropped and nothing was said, since nothing was read at all
+    - [x] the reading of the labels moved out of the manager into the label utility, where the
+        writing already lived — in the manager it could not be tested without the whole app
+- [x] fix github vulnerabilities
 - [x] remember the scroll position in the fifo
     - [x] a line is remembered, never a distance — it survives an edit that adds lines above it
     - [x] one line per guide, so a guide reached twice down two paths keeps a place for each

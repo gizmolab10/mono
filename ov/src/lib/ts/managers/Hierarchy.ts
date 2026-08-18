@@ -42,7 +42,7 @@ export class Hierarchy {
 
 	// Every guide, filters or no filters, by where it sits. A guide reached by following
 	// a link may be one the filters hide, and the reading view has to show it all the same.
-	all_guides: Map<string, Filtered_File> = new Map();
+	all_files: Map<string, Filtered_File> = new Map();
 
 	// How many files the filters leave, counted before the folds have their say — so a shut
 	// folder hides files from the list without changing what the count says.
@@ -51,7 +51,7 @@ export class Hierarchy {
 	relationships:   Relationship[] = [];
 	predicates:      Predicate[]    = [];
 	taggings:        Tagging[]      = [];
-	guides:          File[]        = [];
+	files:           File[]         = [];
 	tags:            Tag[]          = [];
 
 	indexes = new Indexes();
@@ -71,7 +71,7 @@ export class Hierarchy {
 	}
 
 	private register(guide: File): File {
-		this.guides.push(guide);
+		this.files.push(guide);
 		this.files_byID.set(guide.id, guide);
 		return guide;
 	}
@@ -184,7 +184,7 @@ export class Hierarchy {
 	 * left holding nothing simply shows as empty.
 	 */
 	forget(guide: File): void {
-		this.guides = this.guides.filter((one) => one.id !== guide.id);
+		this.files = this.files.filter((one) => one.id !== guide.id);
 		this.files_byID.delete(guide.id);
 		this.relationships = this.relationships.filter((r) => r.child_id !== guide.id && r.parent_id !== guide.id);
 		this.taggings = this.taggings.filter((t) => t.guide_id !== guide.id);
@@ -220,11 +220,11 @@ export class Hierarchy {
 		// can be answered in another — but on screen shutting the shared folder must not take
 		// the projects with it, so the walk starts at all five and the shared one does not
 		// lead them.
-		const tops = this.guides.filter((g) => g.is_folder && g.path === '');
+		const tops = this.files.filter((g) => g.is_folder && g.path === '');
 		const top_ids = new Set(tops.map((g) => g.id));
 		const roots = tops.length > 0
 			? tops.map((g) => g.id)
-			: this.indexes.roots_among(this.guides.map((g) => g.id));
+			: this.indexes.roots_among(this.files.map((g) => g.id));
 
 		const walk = (id: string, depth: number, ancestors: string[]): void => {
 			if (ancestors.includes(id)) {
@@ -359,7 +359,7 @@ export class Hierarchy {
 		const name = parts[parts.length - 1] ?? '';
 		if (name === '') { return { path: null, of: 0, name }; }
 		const paths: string[] = [];
-		for (const row of this.all_guides.values()) {
+		for (const row of this.all_files.values()) {
 			if (row.file.is_folder || row.file.name !== name) { continue; }
 			paths.push(file_path_of(row.file.bundle, row.file.path));
 		}
@@ -407,7 +407,7 @@ export class Hierarchy {
 
 	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = ''): void {
 		const all = this.list_guides();
-		this.all_guides = new Map(all.map((r) => [r.key, r]));
+		this.all_files = new Map(all.map((r) => [r.key, r]));
 		const closed = new Set(shut);
 		// A shut folder only hides things while the folders are on screen. With them off the
 		// list is a flat run of every file, so which folders were left shut is set aside —
@@ -465,12 +465,12 @@ export class Hierarchy {
 	/** The guides wearing one tag. */
 	filter_by_tag(tag_id: string): File[] {
 		const wanted = new Set(this.indexes.files_withTag(tag_id));
-		return this.guides.filter((g) => wanted.has(g.id));
+		return this.files.filter((g) => wanted.has(g.id));
 	}
 
 	/** The guides that carry no tag at all. */
 	untagged(): File[] {
-		const ids = new Set(this.indexes.untagged_among(this.guides.filter((g) => !g.is_folder).map((g) => g.id)));
-		return this.guides.filter((g) => ids.has(g.id));
+		const ids = new Set(this.indexes.untagged_among(this.files.filter((g) => !g.is_folder).map((g) => g.id)));
+		return this.files.filter((g) => ids.has(g.id));
 	}
 }

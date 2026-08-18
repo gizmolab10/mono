@@ -11,34 +11,46 @@ My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
 
-## What GitHub says is unsafe
+## Nineteen import lines to open one file
 
-GitHub is raising warnings against this repo's dependencies. Nothing has been read yet — what they
-are, how many, and whether any of them can actually be reached from the app is all still unknown.
+Most of the utility files hand out loose functions rather than one thing that holds them, so every
+caller has to name each function it wants, one by one. The editor's frame opens with nineteen import
+lines before a word of its own, and the two managers that lean hardest on the utilities are worse.
+
+Two of the nineteen utilities hold a class and hand out one thing: the colors and the drawn shapes.
+The other seventeen hand out loose functions.
 
 ### Success
 
-1. Every warning GitHub raises is named, with what it is in and how bad it says it is.
-2. Each one is judged for whether it can be reached at all from what we build, and that judgement is
-   written down beside it — a warning against something only the build machinery uses is not the
-   same as one against something a reader's browser runs.
-3. The ones worth mending are mended, and the app still passes its own checks: 531 files clean, 406
-   tests.
-4. Any left standing say why, in the debt list, so the next look does not start over.
+1. A caller names the file it wants, not every function inside it.
+2. Every import line in the app is shorter, and the longest is a handful of names rather than a
+   dozen.
+3. Nothing about what the functions do changes, and every test still passes.
+4. The two that already hold a class are left exactly as they are.
 
 ### Where it stands
 
-Overview holds two dependencies of its own — the color maths and the markdown reader:
-[package.json](../../package.json).
+```text
+utilities/  19 files, 2 with a class     Colors, SVG_Paths
+managers/    7 files, all with a class
+types/       plain shapes, no functions to gather
+```
 
-Everything else comes in below them, and the whole repo shares one lockfile at its top, so a warning
-is as likely to be against a tool as against anything the app runs.
+The two that hold a class show the shape this would take: [Colors.ts](../../src/lib/ts/utilities/Colors.ts)
+hands out one made thing, and every caller says `colors.` before the name it wants.
+
+The editor's frame is the worst caller: [Editor.svelte:2-20](../../src/lib/svelte/main/Editor.svelte#L2-L20).
 
 ### Open
 
-1. **Where the list is.** GitHub keeps it on the repo's own security page. Nothing in the repo holds
-   it, so the first step is to read it there and write it down here.
-2. Whether any of it wants a version raised, which changes the lockfile every project shares — so
-   the other three collections have to be checked after, not just overview.
+1. **A class, or one gathered object.** A class is what the managers use, and it can hold state; a
+   utility holds none. One object naming the same functions would do the same for the import lines
+   without inventing state that nothing needs. The two that already hold a class hold no state
+   either, so whichever is chosen, those two should end up the same shape as the rest.
+2. **Whether the name is worth the reading.** `labels_from(text)` says what it does; `labels.from(text)`
+   says the same in fewer characters, and `Labels.labels_from(text)` says it twice. The gathering is
+   worth having only where the caller's line gets shorter and no clearer.
+3. **How far to go.** Seventeen files is the whole of it, and each one touches every caller of it.
+   One file first, looked at, before the rest.
 
 **What will not get done.** The rest of the debt list. This is its first unchecked item.

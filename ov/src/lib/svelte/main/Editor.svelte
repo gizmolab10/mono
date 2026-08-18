@@ -1,9 +1,10 @@
 <script lang='ts'>
 	import { report_gaps_below_lines, report_line_spacing } from '../../ts/utilities/Separator_Spacing';
-	import { w_file_site, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
+	import { w_file_back, w_file_forward, w_file_site, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of, type File } from '../../ts/types/File';
 	import Markdown_Editor from '../content/Markdown_Editor.svelte';
+	import Back_Links from '../content/Back_Links.svelte';
 	import Editor_Filters from '../filter/Editor_Filters.svelte';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
@@ -209,7 +210,7 @@
 				<span class='file-count'>{$w_file_site.at} of {$w_file_site.of}</span>
 			{/if}
 			<Steppers id='editor.step' {can_back} {can_forward} {onprev} {onnext}
-				back_says='previous file' forward_says='next file' />
+				back_says={$w_file_back ?? 'previous file'} forward_says={$w_file_forward ?? 'next file'} />
 			<!-- The folders above the file follow the steppers at the left. -->
 			<span class='view-ancestry'>{sits_at}</span>
 			<!-- An empty run on either side, so the name sits at the middle of whatever the folders
@@ -276,6 +277,9 @@
 	<Markdown_Editor {name} {address} {guide} onsay={say}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />
+	<!-- Which guides point at this one. Below the words and above whatever the bottom line has to
+	     say, in the frame rather than in the words — so it is there without scrolling to it. -->
+	<Back_Links key={key_of(guide)} {name} />
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->
 	{#if note !== ''}
 		<div class='view-note-line'>{note}</div>

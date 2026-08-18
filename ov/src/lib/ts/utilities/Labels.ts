@@ -1,10 +1,11 @@
-import { T_Kind, type Labels } from '../types/File';
+import { ALL_TAGS, T_Kind, type Labels } from '../types/File';
+import { debug } from '../common/Debug';
 
-// The five labels at the top of every guide, written back into the file.
+// The five labels at the top of every guide — read off a file's text, and written back into it.
 //
-// Reading them happens where the guides are gathered; this is the other direction. They
-// are the one part of a guide the app itself reads, so they are never typed as free text —
-// what is written here is built from what a small form was given.
+// Both directions live here, since both are plain work on text and neither needs anything else
+// to be on screen. They are the one part of a guide the app itself reads, so they are never
+// typed as free text — what is written here is built from what a small form was given.
 
 // A title or a description sits inside quote marks, so a quote mark of its own is marked
 // as standing for itself, and a stray line break is taken out.
@@ -192,4 +193,78 @@ export function with_labels_replaced(text: string, labels: Labels, tags: string[
 		: -1;
 	if (ends_at < 1) { return `${block}\n${text}`; }
 	return [block, ...lines.slice(ends_at + 1)].join('\n');
+}
+// Pull one label's value off a line, with the surrounding quotes taken off if it has them.
+function value_after(line: string): string {
+	const at = line.indexOf(':');
+	if (at < 0) { return ''; }
+	let value = line.slice(at + 1).trim();
+	if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+		value = value.slice(1, -1);
+	}
+	return value;
+}
+
+/**
+ * The tags a file names, whichever of the two shapes it writes them in.
+ *
+ * `tags: [one, two]` on one line is what this app writes. Obsidian writes the other shape, one
+ * name to a line under a bare `tags:` — and it rewrites a file into that shape the moment the
+ * tags are touched there. A reader that knew only the first found nothing after the colon and
+ * gave the file no tags at all, silently, since nothing was dropped: nothing was read.
+ *
+ * Anything not on the closed list is dropped, and said so — an invented tag is exactly what the
+ * closed list exists to catch.
+ */
+function tags_from(lines: string[], at: number, where: string): string[] {
+	const inside = value_after(lines[at]).replace(/^\[/, '').replace(/\]$/, '');
+	const named = inside.length > 0
+		? inside.split(',').map((t) => t.trim()).filter((t) => t.length > 0)
+		: names_below(lines, at);
+	const kept = named.filter((t) => ALL_TAGS.includes(t));
+	const dropped = named.filter((t) => !ALL_TAGS.includes(t));
+	if (dropped.length > 0) {
+		debug.log(`Guide "${where}" names ${dropped.length} tag(s) that are not on the closed list of ${ALL_TAGS.length}: ${dropped.join(', ')}. They are ignored.`);
+	}
+	return kept;
+}
+
+/**
+ * The names written one to a line under a bare `tags:`, each beginning with a dash and standing
+ * further in than the label itself. It stops at the first line that is neither — the next label,
+ * or the end of the block.
+ */
+function names_below(lines: string[], at: number): string[] {
+	const named: string[] = [];
+	for (let on = at + 1; on < lines.length; on += 1) {
+		const line = lines[on];
+		if (!/^\s+-\s/.test(line)) { break; }
+		const name = line.replace(/^\s+-\s*/, '').trim();
+		if (name.length > 0) { named.push(name); }
+	}
+	return named;
+}
+
+/**
+ * Read the labels off one file's text. The block is the lines between the first row
+ * of three dashes and the next one. Everything below is dropped on the floor here —
+ * this is the only place a file's text is ever seen, and it does not survive the call.
+ */
+export function labels_from(text: string, where: string): { labels: Labels; tags: string[] } {
+	const lines = text.split('\n');
+	const has_block = lines[0]?.trim() === '---';
+	const ends_at = has_block ? lines.findIndex((line, i) => i > 0 && line.trim() === '---') : -1;
+	const block = (has_block && ends_at > 0) ? lines.slice(1, ends_at) : [];
+
+	let kind = '', title = '', description = '', date = '';
+	let tags: string[] = [];
+	for (let at = 0; at < block.length; at += 1) {
+		const line = block[at];
+		if (line.startsWith('kind:'))        { kind        = value_after(line); }
+		if (line.startsWith('title:'))       { title       = value_after(line); }
+		if (line.startsWith('description:')) { description = value_after(line); }
+		if (line.startsWith('date:'))        { date        = value_after(line); }
+		if (line.startsWith('tags:'))        { tags        = tags_from(block, at, where); }
+	}
+	return { labels: { kind, title, description, date, labeled: block.length > 0 }, tags };
 }

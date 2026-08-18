@@ -1,4 +1,4 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_guide, free_name, has_labels, kind_from_where, label_block, labels_for, labels_from, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
 import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/File';
@@ -211,5 +211,38 @@ describe('a moment written out for reading', () => {
 	it('says midnight and midday as twelve, never as nothing', () => {
 		expect(moment_written_out(new Date(2026, 5, 2, 0, 0))).toBe('2 June, 2026 at 12:00 AM');
 		expect(moment_written_out(new Date(2026, 5, 2, 12, 0))).toBe('2 June, 2026 at 12:00 PM');
+	});
+});
+
+// The tags a file names, in either of the two shapes one can be written in. This app writes them
+// all on one line; Obsidian writes them one to a line, and rewrites a file into that shape the
+// moment its tags are touched there.
+
+describe('reading the tags off a file', () => {
+	it('reads them from one line, in brackets', () => {
+		const text = ['---', 'kind: specify', 'tags: [journal, now, proposal]', '---', '# A'].join('\n');
+		expect(labels_from(text, 'a').tags).toEqual(['journal', 'now', 'proposal']);
+	});
+
+	it('reads them one to a line, under a bare label', () => {
+		const text = ['---', 'kind: specify', 'tags:', '  - journal', '  - now', '  - proposal', '---', '# A'].join('\n');
+		expect(labels_from(text, 'a').tags).toEqual(['journal', 'now', 'proposal']);
+	});
+
+	it('stops at the next label rather than reading on', () => {
+		const text = ['---', 'tags:', '  - now', 'date: 2026-08-17', '---', '# A'].join('\n');
+		const read = labels_from(text, 'a');
+		expect(read.tags).toEqual(['now']);
+		expect(read.labels.date).toBe('2026-08-17');
+	});
+
+	it('drops a name that is not on the closed list, keeping the rest', () => {
+		const text = ['---', 'tags:', '  - now', '  - invented', '  - proposal', '---', '# A'].join('\n');
+		expect(labels_from(text, 'a').tags).toEqual(['now', 'proposal']);
+	});
+
+	it('gives a file no tags where it names none', () => {
+		const text = ['---', 'kind: specify', 'tags:', '---', '# A'].join('\n');
+		expect(labels_from(text, 'a').tags).toEqual([]);
 	});
 });

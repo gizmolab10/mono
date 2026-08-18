@@ -1,13 +1,13 @@
-import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type File, type Labels, type Filtered_File } from '../types/File';
-import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
-import { writable, get } from 'svelte/store';
-import { CANNOT_FIND, Hierarchy } from './Hierarchy';
-import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { address_of_file, delete_guide, file_path_of, folder_path_of, guides_on_disk, move_guide, moved_into, path_of_address, reaches_under_work, site_of_file, read_guide, renamed_path, save_file } from '../utilities/Saving';
-import { blank_guide, free_name, has_labels, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
+import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
+import { blank_guide, free_name, has_labels, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
+import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type File, type Labels, type Filtered_File } from '../types/File';
 import { links_in, plain_links } from '../utilities/Markdown_Blocks';
 import { resolved_from } from '../utilities/Following_Links';
 import { show_status, type Finding } from './Status';
+import { CANNOT_FIND, Hierarchy } from './Hierarchy';
+import { writable, get } from 'svelte/store';
 import { debug } from '../common/Debug';
 
 /**
@@ -19,56 +19,18 @@ import { debug } from '../common/Debug';
  * kept, and everything else is let go — nothing is held on to and nothing is saved.
  */
 
-// Which files exist is asked of the dispatcher, never scanned at build time. Scanning
-// put every guide into the dev server's own watched set, so writing to one — a rename, a move,
+// Which files exist is asked of the dispatcher, never scanned at build time. ScanningF
 // even mending an index — reloaded the whole page under you. Nothing here is settled when the
 // app's code is prepared, so a file added, moved or thrown away shows straight away.
 
-// Pull one label's value off a line, with the surrounding quotes taken off if it has them.
-function value_after(line: string): string {
-	const at = line.indexOf(':');
-	if (at < 0) { return ''; }
-	let value = line.slice(at + 1).trim();
-	if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
-		value = value.slice(1, -1);
-	}
-	return value;
-}
-
-// The tags line reads like [one, two]. Anything not on the closed list is dropped, and
-// said so — an invented tag is exactly what the closed list exists to catch.
-function tags_from(line: string, where: string): string[] {
-	const inside = value_after(line).replace(/^\[/, '').replace(/\]$/, '');
-	const named = inside.split(',').map((t) => t.trim()).filter((t) => t.length > 0);
-	const kept = named.filter((t) => ALL_TAGS.includes(t));
-	const dropped = named.filter((t) => !ALL_TAGS.includes(t));
-	if (dropped.length > 0) {
-		debug.log(`Guide "${where}" names ${dropped.length} tag(s) that are not on the closed list of ${ALL_TAGS.length}: ${dropped.join(', ')}. They are ignored.`);
-	}
-	return kept;
-}
 
 /**
- * Read the labels off one file's text. The block is the lines between the first row
- * of three dashes and the next one. Everything below is dropped on the floor here —
- * this is the only place a file's text is ever seen, and it does not survive the call.
+ * Every address one file's words point at, the double-bracket form turned into the ordinary one
+ * first — the same order the dead-link check reads them in. A guide written the short way, naming
+ * only `[[a name]]`, holds no ordinary link at all, so reading the raw text finds nothing in it.
  */
-function labels_from(text: string, where: string): { labels: Labels; tags: string[] } {
-	const lines = text.split('\n');
-	const has_block = lines[0]?.trim() === '---';
-	const ends_at = has_block ? lines.findIndex((line, i) => i > 0 && line.trim() === '---') : -1;
-	const block = (has_block && ends_at > 0) ? lines.slice(1, ends_at) : [];
-
-	let kind = '', title = '', description = '', date = '';
-	let tags: string[] = [];
-	for (const line of block) {
-		if (line.startsWith('kind:'))        { kind        = value_after(line); }
-		if (line.startsWith('title:'))       { title       = value_after(line); }
-		if (line.startsWith('description:')) { description = value_after(line); }
-		if (line.startsWith('date:'))        { date        = value_after(line); }
-		if (line.startsWith('tags:'))        { tags        = tags_from(line, where); }
-	}
-	return { labels: { kind, title, description, date, labeled: block.length > 0 }, tags };
+function addresses_in(text: string): string[] {
+	return links_in(plain_links(text)).map((one) => one.address);
 }
 
 class Files {
@@ -99,6 +61,83 @@ class Files {
 	// this hands out the very same rows, and only exists so that anything showing them
 	// hears about a change. Re-worked out whenever any filter or any fold moves.
 	w_showing = writable<Filtered_File[]>([]);
+
+	// --- which guides point at which ------------------------------------------
+	//
+	// A guide says what it points at, and nothing says what points at it — so one can be
+	// rewritten, moved or thrown away without ever seeing who was relying on it.
+	//
+	// The links are gathered at launch, out of the very text each file's labels are read from:
+	// that text is in hand for one moment and let go straight after, so taking the links out of
+	// it there costs one more look at words already read. Nothing of the text is kept but the
+	// addresses. The dead-link check cannot fill this — it reads every file and runs only when
+	// asked, so a guide would say nothing points at it whenever nobody had asked lately.
+	//
+	// Where each link points is worked out once loading has finished, since answering a link
+	// needs every guide already hung on the structure.
+	links_from = new Map<string, string[]>();
+
+	// Which guides point at each one, by where they sit. Worked out from the above, and again
+	// whenever one file's own links change.
+	w_pointing_at = writable(new Map<string, string[]>());
+
+	/** The guides that point at this one, in the order they were read. */
+	pointing_at(key: string): string[] {
+		return get(this.w_pointing_at).get(key) ?? [];
+	}
+
+	/**
+	 * Work out afresh which guides point at which, from the links every one of them holds.
+	 * Each link is answered by the same following that answers a press, so a link naming a file
+	 * the app never lists counts for nothing here, exactly as it does there.
+	 */
+	relate_the_links(): void {
+		const pointing = new Map<string, string[]>();
+		let answered = 0, unanswered = 0;
+		let nowhere = 0;
+		for (const [from, links] of this.links_from) {
+			const guide = this.hierarchy.all_files.get(from)?.file;
+			// Every guide is findable by where it sits once the narrowing has run. One that is not
+			// says this was asked too early, which is silent otherwise: no link is followed, no
+			// link fails, and every guide simply has nothing pointing at it.
+			if (!guide) { nowhere += 1; continue; }
+			for (const link of links) {
+				const found = this.hierarchy.explore(guide, link).file;
+				if (!found) { unanswered += 1; continue; }
+				answered += 1;
+				const at = key_of(found);
+				if (at === from) { continue; }                    // a guide pointing at itself says nothing
+				const already = pointing.get(at) ?? [];
+				if (!already.includes(from)) { pointing.set(at, [...already, from]); }
+			}
+		}
+		this.w_pointing_at.set(pointing);
+		debug.log(`Links: ${this.links_from.size} guide(s) hold links${nowhere > 0 ? `, ${nowhere} of which could not be found by where they sit — asked too early` : ''}. ${answered} of ${answered + unanswered} link(s) name a guide the app lists, so ${pointing.size} guide(s) have something pointing at them.`);
+	}
+
+	/**
+	 * One guide's own words have changed, so the links it holds are gathered again and everything
+	 * worked out afresh. Only this one file is read — the rest are already gathered.
+	 */
+	links_changed(key: string, text: string): void {
+		this.links_from.set(key, addresses_in(text));
+		this.relate_the_links();
+	}
+
+	/** One guide now sits somewhere else, so its links are filed under where it now is. */
+	moved(was: string, now: string): void {
+		const links = this.links_from.get(was);
+		if (links === undefined) { return; }
+		this.links_from.delete(was);
+		this.links_from.set(now, links);
+		this.relate_the_links();
+	}
+
+	/** One guide is gone, so nothing it pointed at hears from it any more. */
+	forget_links(key: string): void {
+		if (!this.links_from.delete(key)) { return; }
+		this.relate_the_links();
+	}
 
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than
@@ -145,7 +184,10 @@ class Files {
 		const was_key = key_of(guide);
 		this.hierarchy.rehang(guide, folder, to_path, address_of_file(answer.full_path));
 		this.renarrow();
-		// A guide is named by where it sits, so anything reading this one has to follow it.
+		// A guide is named by where it sits, so anything reading this one has to follow it. The
+		// links it holds are named by where it sits too, and every link written relative to it
+		// now points somewhere else, so both are worked out again.
+		this.moved(was_key, key_of(guide));
 		this.moved_to?.(was_key, key_of(guide));
 		debug.log(`Moved "${guide.name}" from ${from} to ${to}. It now hangs under "${folder.name}", and its words are read from ${answer.full_path}.`);
 		// Where the repo begins on this machine, worked out from the one full path the server
@@ -177,7 +219,7 @@ class Files {
 		const root = this.repo_root;
 		if (root === '') { show_status('cannot repair — the guides have no addresses to read'); return; }
 
-		const folders = this.hierarchy.guides.filter((g) => g.is_folder);
+		const folders = this.hierarchy.files.filter((g) => g.is_folder);
 		const files   = this.files;
 		let made = 0, mended = 0, untouched = 0, refused = 0;
 		let rewritten_total = 0, removed_total = 0, added_total = 0;
@@ -354,6 +396,7 @@ class Files {
 				else { debug.log(`Deleting: ${index_at} was NOT written — ${wrote.why}. It still names "${guide.name}".`); }
 			}
 		}
+		this.forget_links(key_of(guide));
 		this.hierarchy.forget(guide);
 		this.renarrow();
 		show_status(`"${guide.name}" was thrown away.`);
@@ -560,7 +603,7 @@ class Files {
 
 	/** Every file, folders left out. */
 	get files(): File[] {
-		return this.hierarchy.guides.filter((g) => !g.is_folder);
+		return this.hierarchy.files.filter((g) => !g.is_folder);
 	}
 
 	/**
@@ -616,6 +659,9 @@ class Files {
 		this.hierarchy.reindex();
 		this.say_what_was_found(read, failed, unlabeled, bytes, skipped);
 		this.renarrow();
+		// Answering a link needs every guide findable by where it sits, and that map is filled by
+		// the narrowing — so this comes after it, never before.
+		this.relate_the_links();
 		this.w_ready.set(true);
 	}
 
@@ -664,6 +710,9 @@ class Files {
 		for (const tag of tags) {
 			this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, guide.id);
 		}
+		// The one moment this file's whole text is in hand. What it points at is taken out of it
+		// here; where those links lead is worked out once every guide is hung on the structure.
+		this.links_from.set(key_of(guide), addresses_in(text));
 		return { read: 1, failed: 0, unlabeled: labels.labeled ? 0 : 1, bytes: text.length };
 	}
 
@@ -727,8 +776,8 @@ class Files {
 		const per_bundle = Object.values(T_Bundle)
 			.map((bundle) => `${bundle} ${this.files.filter((g) => g.bundle === bundle).length}`)
 			.join(', ');
-		const folders = this.hierarchy.guides.filter((g) => g.is_folder).length;
-		const roots = this.hierarchy.indexes.roots_among(this.hierarchy.guides.map((g) => g.id));
+		const folders = this.hierarchy.files.filter((g) => g.is_folder).length;
+		const roots = this.hierarchy.indexes.roots_among(this.hierarchy.files.map((g) => g.id));
 		const root_names = roots.map((id) => this.hierarchy.guide_byID(id)?.name ?? id).join(', ');
 		debug.log(`Shape: ${roots.length} top folder(s) — ${root_names}. One means the four project folders hang under the shared one, so going up from a guide can reach another project.`);
 		debug.log(`Guides read: ${read} files (${per_bundle}), ${skipped} index files left out, ${failed} could not be read, hung under ${folders} folders. ${unlabeled} carry no labels at all. Kinds found: ${this.kinds_present().join(', ') || 'none'}. Tags found: ${this.tags_present().length} of the ${ALL_TAGS.length} on the closed list, across ${this.hierarchy.taggings.length} tag placements. ${bytes} characters of text passed through and none of it was kept.`);

@@ -54,7 +54,7 @@
 
 	function toggle_all_folders() {
 		if (tops_open) {
-			const every_folder = [...files.hierarchy.all_guides.values()]
+			const every_folder = [...files.hierarchy.all_files.values()]
 				.filter((row) => row.file.is_folder).map((row) => row.key);
 			w_shut.set(every_folder);
 			debug.log(`Every folder shut — ${every_folder.length} of them.`);

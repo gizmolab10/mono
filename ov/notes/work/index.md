@@ -9,8 +9,6 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Work journal](work%20journal.md) — what's been finished, newest first.
 - [Current context](current%20context.md) — what you can't read off the code.
 - [Sections](sections.md) — a stack owns the gaps between its sections, and a separator stands centred in each one.
-- [Hits system](hits%20system.md) — how a press finds what it was aimed at.
-- [Rewritten guides](rewrite%20guides.md) — which guides have been rewritten, and what changed.
 - [Creativity](creativity.md) — notes on how the work itself is done.
 
 One folder down:
@@ -20,5 +18,10 @@ One folder down:
 Elsewhere:
 
 - [Sections spec](../../../notes/guides/develop/sections%20spec.md) — everything needed to build the stack in another project, in the order it has to be done. **mono**
-- [Working features](../../../ji/notes/work/working%20features.md) — what the app can do, newest first. **ji**
+- [Working features](../../../di/notes/work/now/working%20features.md) — what the app can do, newest first. **ji**
 - [Map of ov files](../guides/project/map%20of%20ov%20files.md) — read it instead of globbing.
+
+## More
+
+- [Ov installer](compose%20an%20email.md)
+- [Unnamed](ov%20installer.md)

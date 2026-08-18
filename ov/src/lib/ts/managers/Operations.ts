@@ -1,8 +1,8 @@
 import { preferences, T_Preference } from './Preferences';
-import type { Filtered_File } from '../types/File';
 import { derived, get, writable } from 'svelte/store';
-import { files } from './Files';
+import type { Filtered_File } from '../types/File';
 import { debug } from '../common/Debug';
+import { files } from './Files';
 
 /**
  * Operations — which of the two things the content box is doing.
@@ -13,8 +13,8 @@ import { debug } from '../common/Debug';
  */
 
 export enum T_Operation {
-	browse = 'browse the guides',
 	edit   = 'edit one guide',
+	browse = 'browse the guides',
 	report = 'read a long report',
 }
 
@@ -85,7 +85,7 @@ files.moved_to = (was, now) => {
 /** The row being read right now — from the list if it is there, otherwise from all of them. */
 export const w_viewed = derived([files.w_showing, w_view_guide], ([rows, key]) =>
 	rows.find((r) => r.key === key)
-	?? (key === null ? null : files.hierarchy.all_guides.get(key) ?? null));
+	?? (key === null ? null : files.hierarchy.all_files.get(key) ?? null));
 
 // Reading that began in a report. Backing up then goes to the report rather than stepping the
 // list, since a report is where the reader was and the list is not.
@@ -100,6 +100,37 @@ export const w_can_forward = derived([files.w_showing, w_link_stack, w_stack_at]
 	stack.length > 0
 		? at < stack.length - 1
 		: rows.filter((r) => !r.file.is_folder).length > 1);
+
+/**
+ * What each stepper would open, by name — so pointing at one says which file it goes to rather
+ * than only which way it goes.
+ *
+ * Both ask the same walk the pressing asks, so the name shown and the file opened are one answer.
+ * Nothing where a step leads nowhere: the stepper is grayed there and says only what it is.
+ *
+ * Worked out afresh whenever the list, the stack or the guide being read changes — which is every
+ * time either answer could differ.
+ */
+function name_of(key: string | null): string | null {
+	if (key === null) { return null; }
+	return files.hierarchy.all_files.get(key)?.file.name ?? null;
+}
+
+function file_a_step_away(by: number): string | null {
+	// A report is not a file, so stepping back to one has no name to give.
+	if (by < 0 && get(w_link_stack).length === 0 && get(w_from_report)) { return null; }
+	if (get(w_link_stack).length > 0) { return name_of(file_stack_step(by)); }
+	const step = row_list_step(by);
+	return step === null ? null : get(files.w_showing)[step.to].file.name;
+}
+
+export const w_file_back = derived(
+	[files.w_showing, w_link_stack, w_stack_at, w_view_guide, w_from_report],
+	() => file_a_step_away(-1));
+
+export const w_file_forward = derived(
+	[files.w_showing, w_link_stack, w_stack_at, w_view_guide, w_from_report],
+	() => file_a_step_away(1));
 
 // Is the command key held down right now? Watched at the app root. Clicking a file with it
 // held hands that file to Obsidian rather than opening it here, so the hover words say so
@@ -136,7 +167,7 @@ export function open_view(key: string): void {
 	const rows = get(files.w_showing);
 	// Off the list first; failing that, among all of them — a guide the filters hide can still
 	// be opened when something else names it, such as a report of dead links.
-	const row = rows.find((r) => r.key === key) ?? files.hierarchy.all_guides.get(key) ?? null;
+	const row = rows.find((r) => r.key === key) ?? files.hierarchy.all_files.get(key) ?? null;
 	if (!row || row.file.is_folder) { debug.log(`Reading: nothing to open at "${key}".`); return; }
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
@@ -167,7 +198,7 @@ export function open_from_report(key: string): void {
  * which is what keeps a guide from being on it twice.
  */
 export function follow_link(key: string): void {
-	const row = files.hierarchy.all_guides.get(key);
+	const row = files.hierarchy.all_files.get(key);
 	if (!row || row.file.is_folder) { debug.log(`Following a link: nothing to open at "${key}".`); return; }
 	// Which file the reading began at is forgotten by a reload, while the file being read is
 	// remembered — so a link followed after a reload had nowhere to back out to, and the mark did
@@ -231,6 +262,20 @@ function back_to_report(): void {
 	debug.log('Backed out of a file opened from a report — the report is on screen again.');
 }
 
+/**
+ * Which guide lies one step that way on the stack, or nothing where the step leads off the end.
+ *
+ * Backing out past the bottom is a step to where the reading began, which is a guide like any
+ * other — so it answers here too, and what a stepper says never differs from what pressing it opens.
+ */
+function file_stack_step(by: number): string | null {
+	const stack = get(w_link_stack);
+	const to = get(w_stack_at) + (by > 0 ? 1 : -1);
+	if (to >= stack.length) { return null; }
+	if (to < 0) { return get(w_anchor); }
+	return stack[to];
+}
+
 /** Walk the stack of guides reached by links. Backing out of the bottom empties it. */
 function step_stack(by: number): void {
 	const stack = get(w_link_stack);
@@ -248,18 +293,21 @@ function step_stack(by: number): void {
 	}
 	w_stack_at.set(to);
 	w_view_guide.set(stack[to]);
-	const row = files.hierarchy.all_guides.get(stack[to]);
+	const row = files.hierarchy.all_files.get(stack[to]);
 	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} on the stack, from number ${at + 1} to ${to + 1} of ${stack.length} — now reading "${row?.file.name ?? stack[to]}".`);
 }
 
 /**
- * Step to the guide before or after in the list, walking past folders and wrapping at
- * both ends. Nothing to do when there is one file or none.
+ * Which row the list holds one step that way, walking past folders and wrapping at both ends.
+ * Nothing where one file is on screen or none, since there is nowhere to step to.
+ *
+ * Where a step lands is the whole of the walking rule, said once here. Going there asks this, and
+ * so does whatever wants to say which file a step would open — so the two can never differ.
  */
-function step_list(by: number): void {
+function row_list_step(by: number): { at: number; to: number; skipped: number } | null {
 	const rows = get(files.w_showing);
 	const just_files = rows.filter((r) => !r.file.is_folder);
-	if (just_files.length < 2) { debug.log(`Step ignored — ${just_files.length} guide(s) on screen.`); return; }
+	if (just_files.length < 2) { return null; }
 	const key = get(w_view_guide);
 	let at = rows.findIndex((r) => r.key === key);
 	if (at < 0) { at = 0; }
@@ -271,6 +319,18 @@ function step_list(by: number): void {
 		if (!rows[to].file.is_folder) { break; }
 		skipped += 1;
 	}
+	return { at, to, skipped };
+}
+
+/**
+ * Step to the guide before or after in the list, walking past folders and wrapping at
+ * both ends. Nothing to do when there is one file or none.
+ */
+function step_list(by: number): void {
+	const rows = get(files.w_showing);
+	const step = row_list_step(by);
+	if (!step) { debug.log(`Step ignored — ${rows.filter((r) => !r.file.is_folder).length} guide(s) on screen.`); return; }
+	const { at, to, skipped } = step;
 	w_view_guide.set(rows[to].key);
 	w_anchor.set(rows[to].key);
 	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} from row ${at} to row ${to} of ${rows.length}, walking past ${skipped} folder(s) — now reading "${rows[to].file.name}".`);

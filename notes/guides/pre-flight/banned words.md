@@ -27,9 +27,11 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | do, perform, can be done        |   y    |      | land                                   | complete an action |
 | implement, write                |   y    |      | land                                   | build a thing      |
 | bug, problem, issue             |   y    |  y   | liar                                   |                    |
-| highlighted                     |   y    |  y   | lit                                    | marked on screen   |
+| highlight, highlighted          |   y    |  y   | lit, mark, marked                      | shown as picked    |
 | useless cruft                   |   y    |      | padded                                 |                    |
 | details                         |   y    |      | panel                                  |                    |
+| button                          |   y    |  y   | mark                                   | a thing to press   |
+| decoration                      |   y    |  y   | mark                                   | a stamp on a thing |
 | mock                            |   y    |  y   | repro, reproduction                    |                    |
 | gap                             |   y    |  y   | room                                   | empty space        |
 | stub out                        |   y    |      | scaffold                               |                    |

@@ -73,9 +73,11 @@ The [banned words](banned%20words.md) turned the right way round — the word to
 - **content** — everything a file holds. Never *words*, which means words and nothing else: the words looked for, the word on a line, the words a link reads as.
 - **register** — tell the hits manager about a thing, so it knows where that thing stands and what it says. Never *hand over*, never *hand to*.
 - **stub out** — empty bodies ready to fill. Never *scaffold*.
+- **button** — a thing on screen that can be pressed. Never *mark*.
+- **decoration** — something stamped on a thing to say what it is: a number beside a row, a slash across a folder. Never *mark*.
 - **gap** — empty space. Never *room*.
 - **margin** — the empty strip at an edge. Never *band*, *bar*, *padding*, *gutter*.
-- **highlighted** — marked on screen. Never *lit*.
+- **highlight**, **highlighted** — shown as picked, or shown as under the cursor. Never *lit*, never *mark*. Between these three, *mark* has no use left at all.
 - **hierarchy** — how things sit inside each other. Never *tree*.
 - **details** — the column at the side. Never *panel*.
 - **mock** — a small made-up case that shows the fault. Never *repro*.

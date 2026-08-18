@@ -2,4 +2,4 @@
 
 ## Contents
 
-- [Editing](./operations/editing.md)
+- [Editing](./design/editing.md)
