@@ -126,7 +126,7 @@ export default class Constants {
 
 	// Smallest first, the same as the widths.
 	height = {
-		tiny 		 : control_height * 0.1,	// 2.19  — 
+		tiny 		 : common_thickness / 2,	// 2.19  — 
 		small        : control_height * 0.8,	// 17.5  — folded section height; below this the
 												//         details' own half gaps no longer fit inside it
 		normal		 : control_height,			// 21.88 — one control

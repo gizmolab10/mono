@@ -31,7 +31,7 @@ export function file_path_of(bundle: T_Bundle, path: string): string {
  * The folders inside a work folder whose notes the app lists, beside the notes standing at that
  * folder's own top. Every other folder there holds work of a kind nothing links to.
  */
-export const WORK_FOLDERS = ['next', 'milestones', 'now', 'done', 'proposals'];
+export const WORK_FOLDERS = ['next', 'milestones', 'now', 'soon', 'done', 'proposals'];
 
 /** How far below a work folder a path sits: nothing at its top, one for a note inside a folder. */
 function under_work(parts: string[], at: number): number {

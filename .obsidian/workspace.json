@@ -22,21 +22,20 @@
             }
           },
           {
-            "id": "4b595973c58e729f",
+            "id": "22ba0d7b26b48b70",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/handoff.md",
+                "file": "notes/guides/pre-flight/banned words.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handoff"
+              "title": "banned words"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -171,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/handoff.md",
+                "file": "ov/notes/work/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of handoff"
+              "title": "Outline of code debt"
             }
           },
           {
@@ -195,8 +194,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 237.5,
-    "collapsed": true
+    "width": 237.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -210,10 +208,19 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "4b595973c58e729f",
+  "active": "a932f7d0e39d14ca",
   "lastOpenFiles": [
-    "ov/notes/work/code debt.md",
+    "notes/guides/pre-flight/banned words.md",
+    "di/notes/guides/pre-flight/banned words.md",
     "ov/notes/work/handoff.md",
+    "di/notes/guides/pre-flight/banned.md",
+    "ov/notes/work/soon/murk journal.md",
+    "notes/guides/collaborate/murk.md",
+    "ov/notes/guides/design/sections.md",
+    "ov/notes/guides/design/compose an email.md",
+    "ov/notes/work/soon/ov installer.md",
+    "di/notes/work/now/learn.md",
+    "ov/notes/work/code debt.md",
     "ov/notes/work/compose an email.md",
     "ov/notes/work/ov installer.md",
     "2026-08-17.md",
@@ -233,21 +240,12 @@
     "ov/notes/work/sections.md",
     "ov/notes/work/soon/index.md",
     "notes/guides/develop/sections spec.md",
-    "notes/guides/pre-flight/banned words.md",
     "ov/notes/guides/pre-flight/banned words.md",
     "ov/notes/work/sections spec.md",
     "notes/sections spec.md",
-    "ov/notes/work/c.md",
-    "ov/notes/work/soon/rewrite guides.md",
     "ov/src/lib/svelte/content/Files_List.svelte",
     "ov/src/lib/svelte/filter/Search.svelte",
     "ov/src/lib/svelte/filter/Editor_Filters.svelte",
-    "ji/notes/guides/project/map of ji files.md",
-    "ov/notes/work/hits system.md",
-    "ov/notes/work/soon/mouse ux.md",
-    "ov/notes/work/soon/hits manager.md",
-    "ov/notes/work/new gaps.md",
-    "ov/notes/work/soon/murk.md",
     "ji/src/assets/icon.png",
     "ji/dist/assets/icon-DQ-Yu_V3.png",
     "di/notes/work/now/bugs/001 dim is inside silho/screenshot.png",

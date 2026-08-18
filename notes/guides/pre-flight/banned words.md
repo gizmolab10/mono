@@ -7,9 +7,9 @@ date: 2026-07-27
 ---
 # Substitutions for banned words — every project
 
-These banned words have caused friction, in every project. Use the left column, never the right. Plural, past-tense and gerund forms of the words in the right column are also banned, and should be substituted using the same form.
+These banned words have caused friction, in every project. Use the 'use' column, never the 'never'. Plural, past-tense and gerund forms of the words in the right column are also banned, and should be substituted using the same form.
 
-di's own vocabulary (smart objects, unifaces, placement, measurements) stays in `di/notes/guides/pre-flight/banned words.md`.
+di's own vocabulary (smart objects, unifaces, placement, measurements) stays in [banned words](di/notes/guides/pre-flight/banned%20words).
 
 The **same** column marks a row whose two sides are the same kind of word, so an ending can carry across: mark it `y` and "copies" becomes "moves", "copied" becomes "moved". Leave it blank when the pair is a change of wording rather than a like-for-like word — "ship" to "done" is not a verb swapped for a verb, and carrying the ending over would invent "doned". A blank row swaps to the plain replacement, as it always has.
 

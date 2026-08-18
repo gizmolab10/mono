@@ -2,7 +2,7 @@
 kind: refer
 title: "Library Versioning"
 description: "What happens to already-placed instances when the saved original changes."
-tags: [data, done, plans, research]
+tags: [data, plans, research, stow]
 date: 2026-05-10
 ---
 # Versions

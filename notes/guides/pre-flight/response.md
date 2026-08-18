@@ -43,7 +43,21 @@ And read it FIRST, before touching a single file. The log holds everything since
 
 Whatever the draft is, send half of it. A quarter where the answer still stands. This is a cap on prose, and only prose: the evidence line — the quoted line and its file — is never what gets cut. Short and unproved is worse than long.
 
-## 9. Say it once
+## 9. Never end a turn without words
+
+Every turn ends with a reply, whatever happened — work finished, work blocked, or nothing to do. A
+refused tool call is a message: adjust and say so in one line. A long run of edits is no licence to
+go quiet partway; if one step blocks, name it and carry on with the rest.
+
+Silence reads as a crash, and costs him a whole turn saying so. Before ending, check the reply
+exists.
+
+## 10. Explain a notation the moment you use one
+
+Any non-obvious notation in a reply — a defused word, a placeholder, a shorthand — is explained
+inline, in that same reply, upfront. Never make him ask what a thing means.
+
+## 11. Say it once
 
 This is the one source for it. It governs replies and prose written into files alike; the voice guide points here rather than repeating it.
 

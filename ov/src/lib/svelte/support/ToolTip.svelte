@@ -1,10 +1,13 @@
 <script lang='ts'>
+	import { k } from '../../ts/common/Constants';
+
 	// A hover hint that shows the instant the cursor arrives — the browser's own
 	// hover text waits about a second first, and that wait can't be shortened, so
 	// this is drawn ourselves. Any element can use it: hand it the thing being
 	// pointed at and the words to show, and it sits just below that thing. It runs
 	// as wide as it needs and only nudges back when it would run off the window's
-	// right edge. Passing no message (or no anchor) shows nothing.
+	// right edge. Near the window's bottom it sits above the thing instead. Passing
+	// no message (or no anchor) shows nothing.
 
 	// Two ways to place it: give it the mouse position (`mouseX`/`mouseY`) and it sits
 	// centered just under the cursor; or give it the `anchor` element and it sits just below
@@ -28,6 +31,16 @@
 	const MARGIN = 8;         // how far to hold off the window's edges
 	const BELOW_MOUSE = 20;   // how far under the cursor the tooltip sits, in mouse mode
 
+	// How near the window's bottom a thing has to be before its words go above it rather than
+	// below. Below the bottom edge there is nowhere to draw, so words placed there are cut in
+	// half and the half that says which thing this is goes first.
+	const NEAR_BOTTOM = k.height.fat;
+
+	/** Whether something at this height is near enough the bottom that its words go above it. */
+	function is_near_bottom(at: number): boolean {
+		return at > window.innerHeight - NEAR_BOTTOM;
+	}
+
 	const has_mouse = $derived(mouseX != null && mouseY != null);
 
 	// Place it whenever the words, the mouse, or the anchor change. Measured after the label
@@ -40,8 +53,9 @@
 			// Centered on the cursor, a little below it, pulled back from either window edge.
 			let x = (mouseX as number) - own.width / 2;
 			x = Math.max(MARGIN, Math.min(x, window.innerWidth - MARGIN - own.width));
+			const y = mouseY as number;
 			left = x;
-			top  = (mouseY as number) + BELOW_MOUSE;
+			top  = is_near_bottom(y) ? y - BELOW_MOUSE - own.height : y + BELOW_MOUSE;
 			return;
 		}
 		if (anchor == null) { return; }
@@ -51,7 +65,9 @@
 			x = Math.max(MARGIN, window.innerWidth - MARGIN - own.width);
 		}
 		left = x;
-		top  = at.bottom + MARGIN / 2;
+		top  = is_near_bottom(at.bottom)
+			? at.top - own.height - MARGIN / 2
+			: at.bottom + MARGIN / 2;
 	});
 </script>
 

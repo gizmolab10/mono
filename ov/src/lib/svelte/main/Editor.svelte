@@ -98,6 +98,14 @@
 		note_wait = setTimeout(() => { note = ''; }, 4000);
 	}
 
+	// The line takes its height from the words in it, and everything above it is that much
+	// shorter. Arriving, leaving, and running to a second line each move the words above, so
+	// each says so — measured once the drawing is done, when the new height is known.
+	$effect(() => {
+		note;
+		hits.defer_recalibrate();
+	});
+
 	/**
 	 * A file has just been read and drawn. Anything highlighted belonged to the drawing before
 	 * it, and the words in the field are looked for again in this one — so coming back from the
@@ -280,9 +288,12 @@
 	<!-- Which guides point at this one. Below the words and above whatever the bottom line has to
 	     say, in the frame rather than in the words — so it is there without scrolling to it. -->
 	<Back_Links key={key_of(guide)} {name} />
-	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds. -->
+	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds.
+	     Registered while it is showing, as a section, so the manager knows the cursor is on it and
+	     nothing underneath answers instead. -->
 	{#if note !== ''}
-		<div class='view-note-line'>{note}</div>
+		<div class='view-note-line'
+			use:hit_target={{ id: 'editor.note', type: T_Hit_Target.section }}>{note}</div>
 	{/if}
 </div>
 
@@ -471,14 +482,18 @@
 	/* The line a dead link leaves behind, along the bottom of the reading area. */
 	/* Both stand in the same white area as the words themselves — everything under the heavy
 	   line is one field, whether it holds the file, a complaint, or a passing message. */
+	/* The words can be picked up and copied. The page as a whole is not selectable, so this says
+	   so for itself — what went wrong is said here, and a fault worth reading is worth pasting. */
 	.view-note-line {
-		border-top : var(--thick-faint) solid var(--accent);
-		opacity    : var(--opacity-label);
-		font-size  : var(--font-tiny);
-		padding-top: var(--gap-tiny);
-		background : var(--white);
-		color      : var(--text);
-		flex       : 0 0 auto;
-		text-align : center;
+		border-top  : var(--thick-faint) solid var(--accent);
+		opacity     : var(--opacity-label);
+		font-size   : var(--font-tiny);
+		padding-top : var(--gap-tiny);
+		background  : var(--white);
+		color       : var(--text);
+		user-select : text;
+		cursor      : text;
+		flex        : 0 0 auto;
+		text-align  : center;
 	}
 </style>

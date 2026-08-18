@@ -47,6 +47,9 @@ The editor's frame is the worst caller: [Editor.svelte:2-20](../../src/lib/svelt
    utility holds none. One object naming the same functions would do the same for the import lines
    without inventing state that nothing needs. The two that already hold a class hold no state
    either, so whichever is chosen, those two should end up the same shape as the rest.
+
+    `export const labels = { labels_from, label_block, has_labels, blank_guide };`
+
 2. **Whether the name is worth the reading.** `labels_from(text)` says what it does; `labels.from(text)`
    says the same in fewer characters, and `Labels.labels_from(text)` says it twice. The gathering is
    worth having only where the caller's line gets shorter and no clearer.

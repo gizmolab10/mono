@@ -2,7 +2,7 @@
 kind: design
 title: "hits manager"
 description: ""
-tags: [now, program]
+tags: [soon, program]
 date: 2026-08-12
 ---
 # hits manager

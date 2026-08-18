@@ -46,6 +46,7 @@ class Configuration {
 		root.setProperty('--radius-percent',     `${k.radius.percent}%`);
 		root.setProperty('--height',             `${k.height.normal}px`);
 		root.setProperty('--height-small',       `${k.height.small}px`);
+		root.setProperty('--height-tiny',        `${k.height.tiny}px`);
 		root.setProperty('--height-big',         `${k.height.big}px`);
 		root.setProperty('--height-fat',         `${k.height.fat}px`);
 		root.setProperty('--width-tiny',         `${k.width.tiny}px`);

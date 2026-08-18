@@ -1,4 +1,5 @@
 <script lang='ts'>
+	import { file_path_of } from '../../ts/utilities/Saving';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { open_view } from '../../ts/managers/Operations';
@@ -23,10 +24,20 @@
 	const w_pointing_at = files.w_pointing_at;
 
 	// Named by where each one sits, which is what opens it; what is drawn is its own name.
-	const pointing = $derived(($w_pointing_at.get(key) ?? []).map((at) => ({
-		at,
-		name: files.hierarchy.all_files.get(at)?.file.name ?? at,
-	})));
+	//
+	// Four files are called lexicon, one to a collection, and a pill carries the name alone — so
+	// two of them read as the same button. The folders above each one are carried alongside, for
+	// the words shown while the cursor is on it, which is the only place there is space to say
+	// which is which.
+	const pointing = $derived(($w_pointing_at.get(key) ?? []).map((at) => {
+		const found = files.hierarchy.all_files.get(at)?.file;
+		const whole = found ? file_path_of(found.bundle, found.path) : at;
+		return {
+			at,
+			name    : found?.name ?? at,
+			ancestry: whole.slice(0, whole.lastIndexOf('/')),
+		};
+	}));
 
 	function open(at: string) {
 		debug.log(`Back links: opening "${at}", one of the ${pointing.length} guide(s) that point at "${name}".`);
@@ -50,7 +61,7 @@
 				{#each pointing as one (one.at)}
 					<button type='button' class='points'
 						use:hit_target={{ id: `backlink.${one.at}`, onpress: () => open(one.at),
-							tip: `open "${one.name}"` }}>{one.name}</button>
+							tip: `open "${one.name}" in ${one.ancestry}` }}>{one.name}</button>
 				{/each}
 			</div>
 		{/snippet}
@@ -61,12 +72,12 @@
 	/* The run of pills. The section holds the gap above and below them; this holds only the gap
 	   between one and the next, and wraps where there are more than a line's worth. */
 	.back-links {
-		gap             : var(--gap-normal);
+		gap             : var(--gap);
 		justify-content : center;
 		align-items     : center;
 		flex-wrap       : wrap;
 		display         : flex;
-	}    
+	}
 
 	/* Each one a pill, the same as every other word that can be pressed. */
 	.points {

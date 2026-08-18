@@ -23,7 +23,7 @@ UPDATE_DOCS = os.path.join(GITHUB_DIR, 'notes/tools/docs/update-project-docs.sh'
 # The folders inside a work folder whose notes go out with the guides, beside the notes standing at
 # that folder's own top. Overview draws the same line in `ov/src/lib/ts/utilities/Saving.ts`, and
 # the two lists have to agree — a file sent from here that it will not place is read and thrown away.
-WORK_FOLDERS = ('next', 'milestones', 'now', 'done', 'proposals')
+WORK_FOLDERS = ('next', 'milestones', 'now', 'soon', 'done', 'proposals')
 
 # Load ports.json — single source of truth
 with open(os.path.join(SCRIPT_DIR, 'ports.json'), 'r') as f:

@@ -233,7 +233,9 @@
 			return;
 		}
 		if (found.why === 'a heading inside this same guide') { move_to_heading(found.heading); return; }
-		onsay(`"${link}" is ${found.why}`);
+		// The whole account, the same one the log gets. A short phrase — "a file outside the
+		// guides" — says which kind of refusal it was and nothing about which file or where.
+		onsay(found.says || `"${link}" is ${found.why}`);
 	}
 
 	/**
@@ -314,11 +316,18 @@
 		debug.log(`Editing "${name}": ${says} was pressed on ${done.to - done.from} character(s).`);
 	}
 
-	/** Grow the box to hold everything typed into it. */
+	/**
+	 * Grow the box to hold everything typed into it.
+	 *
+	 * A key that takes the words onto another line makes the box taller and moves every piece
+	 * below it down, so the hits manager is asked again here — the height is set on the line
+	 * above, which makes the browser settle its layout, so what it reads is the new placement.
+	 */
 	function fit_box() {
 		if (!box) { return; }
 		box.style.height = 'auto';
 		box.style.height = `${box.scrollHeight}px`;
+		hits.recalibrate();
 	}
 
 	/** The first piece after this one that is actually on screen, skipping any put away by a fold. */
@@ -1332,7 +1341,7 @@
 	   the same distance from its neighbours as every other number. */
 	.view-page :global(> .blank-line),
 	.view-page :global(> .rule) {
-		height : var(--height-small);
+		height : var(--height-tiny);
 		margin : var(--gap) 0;
 	}
 

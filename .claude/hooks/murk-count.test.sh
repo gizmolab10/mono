@@ -93,7 +93,31 @@ done
 check "firing twice for one reply counts once" \
 	"$(wc -l < "$WORK/murk.jsonl" | tr -d ' ')" "2"
 
-# 8. It never blocks and never prints — a hook that speaks would double the reply.
+# 8. A reply that looked a file up first is several entries, and all but one of them hold no
+# words. The reply he could not read has to be found past those, never counted as one of them.
+rm -f "$WORK/murk.jsonl" "${TMPDIR:-/tmp}"/murk-count-*
+sed "s#^HOOK_DIR=.*#HOOK_DIR=\"$WORK\"#" "$HOOK" > "$WORK/murk-count.sh"
+chmod +x "$WORK/murk-count.sh"
+CHAT="$WORK/tools.jsonl"
+: > "$CHAT"
+jq -nc --arg t "the fill stopped 13px short of the left edge" \
+	'{type:"assistant",message:{content:[{type:"text",text:$t}]}}' >> "$CHAT"
+jq -nc --arg t "t" '{type:"user",message:{content:[{type:"text",text:$t}]}}' >> "$CHAT"
+jq -nc '{type:"assistant",message:{content:[{type:"thinking",thinking:"which file holds it"}]}}' >> "$CHAT"
+jq -nc '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:"grep fill"}}]}}' >> "$CHAT"
+jq -nc '{type:"assistant",message:{content:[{type:"tool_use",name:"Read",input:{file_path:"Title.svelte"}}]}}' >> "$CHAT"
+jq -nc --arg t "the title left a gap on its left where rows showed through" \
+	'{type:"assistant",message:{content:[{type:"text",text:$t}]}}' >> "$CHAT"
+jq -nc --arg p "$CHAT" '{transcript_path:$p}' | "$WORK/murk-count.sh" > /dev/null
+OUT=$(cat "$WORK/murk.jsonl")
+check "tool calls between the two replies are passed over" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .murky')" \
+	"the fill stopped 13px short of the left edge"
+check "the reply that replaced it is still the last one with words" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .plain')" \
+	"the title left a gap on its left where rows showed through"
+
+# 9. It never blocks and never prints — a hook that speaks would double the reply.
 SAID=$(jq -nc --arg p "$WORK/chat.jsonl" '{transcript_path:$p}' | "$WORK/murk-count.sh")
 check "it says nothing" "$SAID" ""
 

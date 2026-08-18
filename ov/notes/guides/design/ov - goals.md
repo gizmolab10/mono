@@ -2,7 +2,7 @@
 kind: design
 title: "ov — overview"
 description: "A new project, ov — short for overview — that starts life as an empty room with good bones"
-tags: [done, proposal]
+tags: [proposal, stow]
 date: 2026-08-08
 ---
 # ov — overview

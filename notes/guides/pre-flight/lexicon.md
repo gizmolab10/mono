@@ -11,6 +11,11 @@ The words used across every project. Use them exactly, even when a near synonym 
 
 Reaching for a word that is not here, say so and stop. Do not invent one.
 
+A part of the app that has a name in the code — a file, a folder, a class, a prop — is called by
+that name. Plain english says what a thing **does**; it never renames what a thing **is**. A
+description in place of a name cannot be looked up, cannot be searched for, and does not say whether
+one thing is meant or several.
+
 Each project keeps its own lexicon for its own things — [di](../../../di/notes/guides/pre-flight/lexicon.md), [ji](../../../ji/notes/guides/pre-flight/lexicon.md), [ov](../../../ov/notes/guides/pre-flight/lexicon.md). Nothing here is repeated there.
 
 ## Who

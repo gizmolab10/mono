@@ -9,6 +9,22 @@ date: 2026-08-10
 
 What's been finished, newest first.
 
+## 2026-08-17 — a link no longer stops at the wrong file of that name
+
+Following a link took the first file of that name found while climbing, and refused outright if its
+path disagreed with what the link said. Where two files share a name — a work note and the guide
+drawn out of it — the nearer one is often the file being read, so a link to the other opened
+nothing and named the file itself as the reason.
+
+The climb passes over a file standing in the wrong place now and keeps going, and only refuses once
+every folder above has been looked in. The first one passed over is held for the message, so a
+refusal says where the file of that name does sit rather than saying it was not found.
+
+**The note line at the bottom of the reader says the whole thing.** It used to say which kind of
+refusal it was — "a file outside the guides" — and nothing about which file or where. Its words can
+be picked up and copied, it is registered while it is showing, and its arriving and leaving now say
+so, since it takes its height from the words in it and everything above it moves.
+
 ## 2026-08-17 — the steppers name the file they would open
 
 Pointing at either stepper said only which way it went — "previous file", "next file" — so the only

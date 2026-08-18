@@ -8,7 +8,6 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Code debt](code%20debt.md) — everything still owed, and everything finished.
 - [Work journal](work%20journal.md) — what's been finished, newest first.
 - [Current context](current%20context.md) — what you can't read off the code.
-- [Sections](sections.md) — a stack owns the gaps between its sections, and a separator stands centred in each one.
 - [Creativity](creativity.md) — notes on how the work itself is done.
 
 One folder down:
@@ -23,5 +22,3 @@ Elsewhere:
 
 ## More
 
-- [Ov installer](compose%20an%20email.md)
-- [Unnamed](ov%20installer.md)

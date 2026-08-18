@@ -278,8 +278,15 @@ export class Hierarchy {
 		return chain;
 	}
 
-	/** The first file named this, anywhere under one folder. Folders are not answers. */
-	private file_named_under(folder_id: string, name: string): File | null {
+	/**
+	 * Every file named this, anywhere under one folder, nearest first. Folders are not answers.
+	 *
+	 * All of them rather than the first, since two files can share a name under one folder and
+	 * only one of them stands where the link says. Handing back the first would give a link
+	 * pointing at the far one the near one, and refuse.
+	 */
+	private files_named_under(folder_id: string, name: string): File[] {
+		const answers: File[] = [];
 		const waiting = [folder_id];
 		const seen = new Set<string>([folder_id]);
 		while (waiting.length > 0) {
@@ -287,19 +294,24 @@ export class Hierarchy {
 			for (const edge of this.indexes.children_of(at)) {
 				const child = this.guide_byID(edge.child_id);
 				if (!child) { continue; }
-				if (!child.is_folder && child.name === name) { return child; }
+				if (!child.is_folder && child.name === name) { answers.push(child); }
 				if (child.is_folder && !seen.has(child.id)) { seen.add(child.id); waiting.push(child.id); }
 			}
 		}
-		return null;
+		return answers;
 	}
 
 	/**
 	 * Follow a link written inside one guide. Ascending the ancestry is the same as
 	 * going up a folder, so the nearest folder that holds a guide of that name wins —
 	 * first match, no further looking.
+	 *
+	 * A refusal comes back twice over: `why` names the kind of refusal in a few words, and
+	 * `says` is the whole account — the same sentence the log gets, naming the link, the file
+	 * of that name that does exist and where it sits. A press shows `says`, since a person
+	 * looking at a link that will not open wants the reason, not the category.
 	 */
-	explore(from: File, link: string): { file: File | null; heading: string; why: string } {
+	explore(from: File, link: string): { file: File | null; heading: string; why: string; says: string } {
 		const [before, ...rest] = link.split('#');
 		const heading = rest.join('#');
 		// Step zero: a guide is named without its ending everywhere else in the app, so the
@@ -309,39 +321,53 @@ export class Hierarchy {
 		const name = parts[parts.length - 1] ?? '';
 
 		if (wanted_path === '') {
-			return { file: null, heading, why: 'a heading inside this same guide' };
+			return { file: null, heading, why: 'a heading inside this same guide', says: '' };
 		}
 		if (name.toLowerCase() === 'index') {
-			debug.log(`Link from "${from.name}" names an index file ("${wanted_path}") — those are left out of the picture, so nothing opens.`);
-			return { file: null, heading, why: 'an index file, which is left out of the picture' };
+			const says = `Link from "${from.name}" names an index file ("${wanted_path}") — those are left out of the picture, so nothing opens.`;
+			debug.log(says);
+			return { file: null, heading, why: 'an index file, which is left out of the picture', says };
 		}
 
+		// A link naming folders has to land under exactly those folders. Without this, a link out
+		// to a work note — which the app never lists — ends on whichever guide happens to share its
+		// last word, and pressing it opens the very file it was written in.
+		//
+		// Asked of the file's whole path, counting from the top of the repo. A file's path inside
+		// its own collection has the project and the notes and guides folders stripped off it, so a
+		// link written the long way round — `../../../di/notes/guides/…` — could never agree with
+		// anything, and every one of them read as dead.
+		//
+		// A file of that name whose path disagrees is passed over, never taken as the answer. Two
+		// files can share a name — a work note and the guide drawn out of it, say — and the nearer
+		// one is often the file being read. Stopping at it would refuse a link to the other and
+		// name the file itself as the reason. The first one passed over is held for the message,
+		// which is worth more than "not found" when a file of that name plainly exists.
 		const chain = this.ancestry_of(from.id);
+		let elsewhere: string | null = null;
 		for (let step = 0; step < chain.length; step++) {
-			const found = this.file_named_under(chain[step], name);
-			if (!found) { continue; }
-			// A link naming folders has to land under exactly those folders. Without this, a link
-			// out to a work note — which the app never lists — ends on whichever guide happens to
-			// share its last word, and pressing it opens the very file it was written in.
-			//
-			// Asked of the file's whole path, counting from the top of the repo. A file's path
-			// inside its own collection has the project and the notes and guides folders stripped
-			// off it, so a link written the long way round — `../../../di/notes/guides/…` — could
-			// never agree with anything, and every one of them read as dead.
-			const whole = file_path_of(found.bundle, found.path);
-			if (!link_agrees(parts, whole)) {
-				debug.log(`Link from "${from.name}" to "${wanted_path}": the only guide named "${name}" sits at ${whole}, which is not where the link says — nothing opens.`);
-				return { file: null, heading, why: 'a file outside the guides' };
+			for (const found of this.files_named_under(chain[step], name)) {
+				const whole = file_path_of(found.bundle, found.path);
+				if (!link_agrees(parts, whole)) {
+					if (elsewhere === null) { elsewhere = whole; }
+					continue;
+				}
+				debug.log(`Link from "${from.name}" to "${wanted_path}": found "${found.name}" in ${found.bundle} after climbing ${step + 1} folder(s) of the ${chain.length} above it.`);
+				return { file: found, heading, why: '', says: '' };
 			}
-			debug.log(`Link from "${from.name}" to "${wanted_path}": found "${found.name}" in ${found.bundle} after climbing ${step + 1} folder(s) of the ${chain.length} above it.`);
-			return { file: found, heading, why: '' };
+		}
+		if (elsewhere !== null) {
+			const says = `Link from "${from.name}" to "${wanted_path}": nothing named "${name}" stands where the link says. The nearest of that name sits at ${elsewhere} — nothing opens.`;
+			debug.log(says);
+			return { file: null, heading, why: 'a file outside the guides', says };
 		}
 		// Nothing of that name stands under any folder above this file. A link that says outright
 		// it is on the web never reaches here — a press opens one of those in a new tab — so every
 		// link that gets this far names a file, and the honest answer is that it was not found.
 		const points_at = resolved_from(file_path_of(from.bundle, from.path), before);
-		debug.log(`Link from "${from.name}" to "${wanted_path}": no file named "${name}" under any of the ${chain.length} folders above it. It points at ${points_at}${reaches_under_work(points_at) ? ', which sits below the top of a work folder — this app lists none of those' : ''}. Nothing opens.`);
-		return { file: null, heading, why: CANNOT_FIND };
+		const says = `Link from "${from.name}" to "${wanted_path}": no file named "${name}" under any of the ${chain.length} folders above it. It points at ${points_at}${reaches_under_work(points_at) ? ', which sits below the top of a work folder — this app lists none of those' : ''}. Nothing opens.`;
+		debug.log(says);
+		return { file: null, heading, why: CANNOT_FIND, says };
 	}
 
 	/**

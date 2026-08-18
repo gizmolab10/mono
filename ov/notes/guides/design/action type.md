@@ -2,7 +2,7 @@
 kind: design
 title: "new Action type"
 description: "pass Separator more than one title"
-tags: [done]
+tags: [stow]
 date: 2026-08-12
 ---
 # Action type

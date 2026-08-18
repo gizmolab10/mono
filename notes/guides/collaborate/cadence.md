@@ -2,7 +2,7 @@
 kind: explain
 title: "Cadence"
 description: "How Jonathan and co actually work together"
-tags: [done, proposal, team]
+tags: [proposal, stow, team]
 date: 2026-08-09
 ---
 # Cadence

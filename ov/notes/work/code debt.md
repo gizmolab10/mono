@@ -13,13 +13,13 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## work
 
+- [ ] 1127 occurrences of 'guide' -> many should be 'file'
 - [ ] too many ts files are class-less
     - [ ] require LOOONG import statements
 - [ ] strip of icons to switch between my many apps
     - [ ] localhost only
 - [ ] write installation instructions in
     - [ ] [[ov installer]]
-- [ ] 1340 occurrences of 'guide' -> many should be 'file'
 - [ ] compose-an-email does not work on Windows
 
 ## done
