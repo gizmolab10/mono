@@ -30,7 +30,9 @@
 </div>
 
 <style>
+	/* A gap above and below, so what this section shows stands clear of the two lines around it. */
 	.color-row {
+		padding     : var(--gap) 0;
 		align-items : center;
 		display     : flex;
 		gap         : var(--gap-fat);

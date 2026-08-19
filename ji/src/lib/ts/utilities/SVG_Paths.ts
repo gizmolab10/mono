@@ -100,7 +100,7 @@ export class SVG_Paths {
 	private soft_pointer_points(size: number, direction: number): Point[] {
 		const offset = Point.square(size / 2);
 		const radius = Point.x(size / 2);
-		const half   = (90 * Math.PI / 180) / 1.75;   // half the 90° gap between the two back corners
+		const half   = (90 * Math.PI / 180) / 2.25;   // half the 90° gap between the two back corners
 		const point  = direction + Math.PI;        // the tip points opposite the given direction
 		const angles = [point, point + Math.PI - half, point + Math.PI + half];
 		return angles.map(a => this.rotated(radius, a).offsetBy(offset));

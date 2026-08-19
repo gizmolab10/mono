@@ -3,6 +3,9 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import Show_Operation from '../operations/Show_Operation.svelte';
 	import { w_hierarchy } from '../../ts/database/Databases';
+	import { hits } from '../../ts/events/Hits';
+	import S_Mouse from '../../ts/events/S_Mouse';
+	import { Point } from '../../ts/types/Coordinates';
 	import Details from '../details/Details.svelte';
 	import buildsRaw from '../../md/builds.md?raw';
 	import { debug } from '../../ts/common/Debug';
@@ -34,8 +37,8 @@
 	// Layout numbers ported from di's Constants (common_size 33): the inset/gap,
 	// the corner radius, the fixed width of the details region, the smallest
 	// window we allow, and the window width below which details wraps full-width.
-	const gap   = k.gap.default;
-	const inset = k.gap.default;   // the margin at the window's four edges — the same number the frame is actually drawn with, so what we measure and what we draw agree
+	const gap   = k.gap.normal;
+	const inset = k.gap.normal;   // the margin at the window's four edges — the same number the frame is actually drawn with, so what we measure and what we draw agree
 
 	let width = $state(Math.max(k.width.window, window.innerWidth));
 	let height = $state(window.innerHeight);
@@ -92,7 +95,14 @@
 	});
 </script>
 
-<svelte:window onresize={handleResize} />
+<!-- The cursor is fed to the manager here and nowhere else: it asks which targets hold that point
+     and hands the press to the one of highest precedence. A control that has moved over to it
+     watches nothing itself. -->
+<svelte:window
+	onresize={handleResize}
+	onmousemove={(event) => hits.handle_mouse_movement_at(new Point(event.clientX, event.clientY))}
+	onmousedown={(event) => hits.handle_s_mouse_at(new Point(event.clientX, event.clientY), S_Mouse.down(event, null))}
+	onmouseup={(event) => hits.handle_s_mouse_at(new Point(event.clientX, event.clientY), S_Mouse.up(event, null))} />
 
 
 {#if $w_app_mode === 'help'}

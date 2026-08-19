@@ -10,6 +10,24 @@ const control_height = common_size / 1.6;	// 21.875
 // missing: 50% circles
 
 export default class Constants {
+	// The empty string, said once so nothing has to write two quote marks and mean something by it.
+	empty = '';
+
+	cursor_default = 'default';
+
+	// How often something happens on its own, in milliseconds. ⟵ov
+	timeout = {
+		drift		 : 1000,					// how often the hits manager asks whether what it holds has gone stale
+	};
+
+	// How long the mouse has to do a thing before it counts as that thing, in milliseconds. ⟵ov
+	threshold = {
+		autorepeat	 : 150,						// between one repeat and the next, while a press is held
+		double_click : 400,						// how long a second press has to arrive within
+		alteration	 : 500,						// between one flip and the next, while something blinks
+		long_click	 : 600,						// how long a press has to be held to be a long one
+	};
+
 	font = {
 		credit		 : common_size * 0.25,		// 8.75
 		label		 : common_size * 0.35,		// 12.25
@@ -63,11 +81,11 @@ export default class Constants {
 
 	gap = {
 		huge         : common_gap * 4,
-		fat	         : common_gap * 2.1,
+		fat	         : common_gap * 2.1,		// 16.33 — the wider gap around a line carrying something at its middle
 		small		 : common_gap / 1.5,
 		tight		 : common_gap / 2,
 		details		 : common_gap / 4,
-		default      : common_gap,
+		normal       : common_gap,				// 7.78  — the ordinary gap between two sections
 	}
 
 	inset = {
@@ -78,6 +96,7 @@ export default class Constants {
 	};
 
 	thickness = {
+		huge		 : common_gap,				// 7.78 — the heavy line, the one a stack draws between its sections
 		bold		 : common_thickness * 1.5,
 		fat			 : common_thickness * 2,
 		faint		 : common_thickness / 2,
@@ -87,9 +106,16 @@ export default class Constants {
 	separator = {
 		normal : common_separator,
 		fat    : common_separator * 2,
+		huge   : common_separator * 4,
 	};
 
 	height = {
+		// 24.11 — a folded section's own line to the next one, always. The two half gaps around
+		// the fold come out of it, so it can never be smaller than the widest pair's spacing on
+		// any screen here: gap.fat 16.33 + thickness.huge 7.78, which is what this is. Below that
+		// a fold's height comes out negative, the browser draws it at nothing, and that one pair
+		// reads wider than every other — which looks like a spacing fault and is not.
+		small		 : common_gap * 3.1,
 		hideable	 : control_height * 1.3,
 		banner		 : common_size * 1.2,
 		control		 : control_height,

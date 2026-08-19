@@ -3,7 +3,9 @@
 	import { anything_llm, w_llm_reachable } from '../../ts/database/AnythingLLM';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import Separator from '../support/Separator.svelte';
+	import Stack from '../support/Stack.svelte';
+	import Action, { T_Position } from '../../ts/types/Action';
+	import { k } from '../../ts/common/Constants';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import type { Exchange } from '../../ts/types/DB_Records';
 	import { debug } from '../../ts/common/Debug';
@@ -132,6 +134,12 @@
 	const all_collapsed = $derived(exchanges.length > 0 && collapsed.size === exchanges.length);
 	function toggle_all() { if (all_collapsed) { expand_all(); } else { collapse_all(); } }
 
+	// The word that shows or hides every answer at once, built here rather than by the separator it
+	// stands on. The browser makes a button one drawing after we ask, so this holds nothing on the
+	// first drawing and the made button on the next — which is itself a change, so the stack is told.
+	let all_word = $state<HTMLElement | null>(null);
+	const all_action = $derived(Object.assign(new Action(), { element: all_word, position: T_Position.center }));
+
 	// A stored second turned into a short, readable stamp.
 	function when(time: number): string {
 		return time ? new Date(time * 1000).toLocaleString() : '';
@@ -175,41 +183,50 @@
 
 </script>
 
-<div class='chat'>
-	<!-- The chat is always here, whether or not the AI is answering. It used to be replaced by
-	     a note while the connection was lost — which left nothing on screen that would call the
-	     AI, so nothing ever noticed it come back. Now the note sits above the chat, and asking
-	     a question is itself what finds out. -->
-	{#if !$w_llm_reachable}
-		<div class='starting'>
-			<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'>
-				<path d={gearPath} fill-rule='evenodd' />
-			</svg>
-			<span>waiting for the AI — ask anyway to try it</span>
-		</div>
-	{/if}
-	<div class='ask-row'>
-		{#if asking}
-			<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'><path d={gearPath} fill-rule='evenodd' /></svg>
-		{:else}
-			<button class='ask-go' onclick={ask} disabled={!question.trim()} use:tip={question.trim() ? 'post my question' : false}>ask</button>
+<!-- The word, written out of sight: the moment the browser has made it, the stack takes it and
+     puts it on the line above the conversation instead. -->
+<div class='out_of_sight'>
+	<button type='button' class='all-word' bind:this={all_word}
+		onclick={toggle_all}>{all_collapsed ? 'show' : 'hide'} all responses</button>
+</div>
+
+<!-- The question box, with whatever note stands above it. -->
+{#snippet shows_asking()}
+	<div class='asking'>
+		<!-- The chat is always here, whether or not the AI is answering. It used to be replaced by
+		     a note while the connection was lost — which left nothing on screen that would call the
+		     AI, so nothing ever noticed it come back. Now the note sits above the chat, and asking
+		     a question is itself what finds out. -->
+		{#if !$w_llm_reachable}
+			<div class='starting'>
+				<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'>
+					<path d={gearPath} fill-rule='evenodd' />
+				</svg>
+				<span>waiting for the AI — ask anyway to try it</span>
+			</div>
 		{/if}
-		<input class='ask-input' type='search' placeholder='enter a question'
-			bind:value={question} onkeydown={on_key} disabled={asking} />
+		<div class='ask-row'>
+			{#if asking}
+				<svg class='gear' viewBox='0 0 {GEAR_BOX} {GEAR_BOX}' aria-hidden='true'><path d={gearPath} fill-rule='evenodd' /></svg>
+			{:else}
+				<button class='ask-go' onclick={ask} disabled={!question.trim()} use:tip={question.trim() ? 'post my question' : false}>ask</button>
+			{/if}
+			<input class='ask-input' type='search' placeholder='enter a question'
+				bind:value={question} onkeydown={on_key} disabled={asking} />
+		</div>
+
+		{#if error}
+			<div class='chat-error'>{error}</div>
+		{:else if missing_model}
+			<!-- Stays up once a missing model is known: no ask can work until it is installed,
+			     so the note outlives the one failure that found it. -->
+			<div class='chat-error'>the model "{missing_model}" is not installed — no question can be answered until it is</div>
+		{/if}
 	</div>
+{/snippet}
 
-	{#if error}
-		<div class='chat-error'>{error}</div>
-	{:else if missing_model}
-		<!-- Stays up once a missing model is known: no ask can work until it is installed,
-		     so the note outlives the one failure that found it. -->
-		<div class='chat-error'>the model "{missing_model}" is not installed — no question can be answered until it is</div>
-	{/if}
-
-	{#if exchanges.length > 0}
-		<div class='replies-sep'><Separator title='{all_collapsed ? "show" : "hide"} all responses' onclick={toggle_all} /></div>
-	{/if}
-
+<!-- The running conversation, newest first, the only part that scrolls. -->
+{#snippet shows_conversation()}
 	<div class='conversation' class:flush-right={!overflowing} bind:this={convo_el}>
 		{#if pending}
 			<div class='exchange'>
@@ -233,6 +250,22 @@
 			</div>
 		{/each}
 	</div>
+{/snippet}
+
+<div class='chat'>
+	{#if exchanges.length > 0}
+		<!-- Two sections, a line centred in the gap between them carrying the word that shows or
+		     hides every answer at once. -->
+		<Stack thickness={k.thickness.huge} gap_at_center={k.gap.fat} foot='none' sections={[
+			{ subsection: shows_asking },
+			{ subsection: shows_conversation, rides: [all_action] },
+		]} />
+	{:else}
+		<!-- Nothing stored: nothing to show or hide, so there is no word and nothing for a line to
+		     stand between. The two stand one above the other, as they did before. -->
+		{@render shows_asking()}
+		{@render shows_conversation()}
+	{/if}
 </div>
 
 <style>
@@ -331,9 +364,53 @@
 	}
 
 	/* A --gap of space above and below the show/hide-responses divider. */
-	.replies-sep {
-		margin      : var(--gap) 0;
-		flex-shrink : 0;
+	/* Where the word is written before the stack takes it. It is taken out of here on the very next
+	   drawing, so nothing is ever seen in this spot. */
+	.out_of_sight {
+		display : none;
+	}
+
+	/* The word that shows or hides every answer at once, standing at the middle of the line above
+	   the conversation. Its page-colored background masks the line behind it. */
+	.all-word {
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-label);
+		color         : var(--darkgray);
+		padding       : 0 var(--gap);
+		background    : var(--bg);
+		font-family   : inherit;
+		white-space   : nowrap;
+		border        : none;
+		cursor        : pointer;
+	}
+
+	.all-word:hover {
+		border     : 0.5px solid var(--darkgray);
+		background : var(--hover);
+	}
+
+	/* The question box and whatever note stands above it. */
+	.asking {
+		gap            : var(--gap);
+		flex-direction : column;
+		display        : flex;
+		flex-shrink    : 0;
+	}
+
+	/* A stack holds only what its sections need, and every section holds only its own content —
+	   which is right everywhere except here, where the conversation has to take whatever height is
+	   left and scroll inside it. So the stack and its last section are told to grow, from out here,
+	   since neither knows anything about the box it stands in. */
+	.chat :global(.stack) {
+		flex       : 1 1 auto;
+		min-height : 0;
+	}
+
+	.chat :global(.stack > .stacked:last-child) {
+		flex-direction : column;
+		display        : flex;
+		flex           : 1 1 auto;
+		min-height     : 0;
 	}
 
 	/* The running conversation scrolls; the question box and controls stay put. The

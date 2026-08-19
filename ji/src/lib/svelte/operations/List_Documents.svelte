@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { w_filter_tags, w_filter_text, w_filter_mode, w_filter_families, filter_rows } from '../../ts/managers/Filter_Documents';
-	import { w_folders_shut } from '../../ts/managers/Folds';
 	import { w_operation, w_view_document, T_Operation, w_viewable_run, open_view, close_view } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Document, T_DocumentFamily } from '../../ts/types/Document';
+	import Action, { T_Position } from '../../ts/types/Action';
 	import { w_hierarchy } from '../../ts/database/Databases';
+	import { w_folders_shut } from '../../ts/managers/Folds';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Select_Tags from '../support/Select_Tags.svelte';
 	import { w_db_changed } from '../../ts/types/Signal';
@@ -14,6 +15,7 @@
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Constants';
+	import Stack from '../support/Stack.svelte';
 	import { get } from 'svelte/store';
 
 	const crossPath = svg_paths.x_cross(k.size.cross, k.size.cross / 6);
@@ -342,6 +344,18 @@
 		w_operation.set(T_Operation.drop);
 	}
 
+	// The "drop files below" tab, built here rather than by the separator it stands on. The browser
+	// makes a button one drawing after we ask, so this holds nothing on the first drawing and the
+	// made button on the next — which is itself a change, so the stack is told.
+	let drop_tab = $state<HTMLElement | null>(null);
+	const drop_action = $derived(Object.assign(new Action(), { element: drop_tab, position: T_Position.center }));
+
+	// How thick the stack draws every one of its lines, and half of that. The zone that opens the
+	// drop box reaches out over its own half gaps and this much further at each end, which puts
+	// its edges exactly where the two lines' outer edges are — the same rectangle it covered when
+	// it wrapped both lines itself.
+	const LINE = k.thickness.huge;
+
 	// One click handler for every header, told which column it was. The two middle
 	// headers switch the content area to their add view; format and edit-tags do
 	// nothing.
@@ -458,10 +472,16 @@
 	</td>
 {/snippet}
 
-<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-<div class='documents' class:dragging onclick={background_click}
-	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
-	{#if rows.length > 0}
+<!-- The tab, written out of sight: the moment the browser has made it, the stack takes it and
+     puts it on the line above the column header instead. -->
+<div class='out_of_sight'>
+	<button type='button' class='drop-tab' bind:this={drop_tab}
+		class:forced={drop_opener_hovered} onclick={open_drop}>drop files below</button>
+</div>
+
+<!-- What the filters narrow the list by: the tags, the families, and the typed name. -->
+{#snippet shows_filters()}
+	<div class='filters'>
 		{#if tag_count > 0}
 			<div class='tags'>
 				<Select_Tags
@@ -479,28 +499,23 @@
 			{/each}
 		</div>
 		<input class='search-text' type='search' placeholder='search file names' bind:value={$w_filter_text} />
-	{/if}
-	{#if rows.length === 0}
-		<div class='top-sep'>
-			<Separator thickness={k.separator.fat} title='drop files below' onclick={open_drop} />
-		</div>
-		<div class='empty'>no documents yet</div>
-	{:else}
-		<div class='table-region'>
-		<!-- The two dividers and the column header between them form one zone: pointing anywhere in
-		     here lights the "drop files below" tab, and clicking anywhere in it opens the drop box —
-		     the same action the tab runs. The zone sits in a layer in front of the rows. -->
-		<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
-		<div class='drop-opener'
-			onclick={open_drop}
-			use:tip={'click to drop files'}
-			onmouseenter={() => set_drop_opener_hover(true)}
-			onmouseleave={() => set_drop_opener_hover(false)}>
-		<div class='top-sep'>
-			<Separator thickness={k.separator.fat} title='drop files below' hovered={drop_opener_hovered} onclick={open_drop} />
-		</div>
-		<!-- The header is its own table, sitting still above the scroller, so the
-		     scrollbar runs only beside the document rows — not past the title row. -->
+	</div>
+{/snippet}
+
+<!-- The column header, its own table, sitting still above the scroller so the scrollbar runs only
+     beside the document rows — not past the title row.
+
+     It reaches out over the two half gaps the stack names on it and half a line further at each
+     end, which puts its edges exactly on the two lines' outer edges. Pointing anywhere in that
+     rectangle lights the tab, and clicking anywhere in it opens the drop box. -->
+{#snippet shows_header()}
+	<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
+	<div class='drop-opener'
+		style:--line='{LINE}px'
+		onclick={open_drop}
+		use:tip={'click to drop files'}
+		onmouseenter={() => set_drop_opener_hover(true)}
+		onmouseleave={() => set_drop_opener_hover(false)}>
 		<div class='table-head'>
 			<table class='files-table'>
 				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
@@ -520,25 +535,46 @@
 				</thead>
 			</table>
 		</div>
-			<div class='head-sep'><Separator /></div>
-			</div>
-			<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
-				<table class='files-table'>
-					<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
-					<tbody>
-						{#each shown as row, row_number (row.place_key)}
-							<!-- svelte-ignore a11y_mouse_events_have_key_events -->
-							<tr class='file' class:hovered={hovered_row === row.id} class:dedup={row.is_dedup}
-								data-key={row.place_key} data-n={row_number} data-name={row.display_name}
-								onmouseenter={() => { if (row.viewable) { hovered_row = row.id; } }}
-								onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
-								{@render document_row(row)}
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+	</div>
+{/snippet}
+
+<!-- The document rows, the only part that scrolls. -->
+{#snippet shows_rows()}
+	<div class='table-scroll' bind:this={scroller} onscroll={on_scroll}>
+		<table class='files-table'>
+			<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
+			<tbody>
+				{#each shown as row, row_number (row.place_key)}
+					<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+					<tr class='file' class:hovered={hovered_row === row.id} class:dedup={row.is_dedup}
+						data-key={row.place_key} data-n={row_number} data-name={row.display_name}
+						onmouseenter={() => { if (row.viewable) { hovered_row = row.id; } }}
+						onmouseleave={() => { if (hovered_row === row.id) { hovered_row = null; } }}>
+						{@render document_row(row)}
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+{/snippet}
+
+<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+<div class='documents' class:dragging onclick={background_click}
+	ondrop={documents_drop} ondragover={documents_dragover} ondragleave={documents_dragleave}>
+	{#if rows.length === 0}
+		<div class='top-sep'>
+			<Separator thickness={k.separator.huge} title='drop files below' onclick={open_drop} />
 		</div>
+		<div class='empty'>no documents yet</div>
+	{:else}
+		<!-- Three sections, a line centred in each of the two gaps. The wide gap holds the tab,
+		     which hangs past its line on both sides. Nothing stands below the last section, so
+		     nobody draws a line at the foot. -->
+		<Stack gap={k.gap.fat} thickness={LINE} foot='none' sections={[
+			{ subsection: shows_filters },
+			{ subsection: shows_header, rides: [drop_action] },
+			{ subsection: shows_rows },
+		]} />
 	{/if}
 </div>
 
@@ -555,14 +591,46 @@
 		min-height     : 0;
 	}
 
-	/* Holds the scrolling rows. */
-	.table-region {
-		flex           : 1 1 auto;
-		position       : relative;
+	/* Where the tab is written before the stack takes it. It is taken out of here on the very next
+	   drawing, so nothing is ever seen in this spot. */
+	.out_of_sight {
+		display : none;
+	}
+
+	/* A stack holds only what its sections need, and every section holds only its own content —
+	   which is right everywhere except here, where the rows have to take whatever height is left
+	   and scroll inside it. So the stack and its last section are told to grow, from out here,
+	   since neither knows anything about the box it stands in. */
+	.documents :global(.stack) {
+		flex       : 1 1 auto;
+		min-height : 0;
+	}
+
+	.documents :global(.stack > .stacked:last-child) {
 		flex-direction : column;
 		display        : flex;
-		width          : 100%;
+		flex           : 1 1 auto;
 		min-height     : 0;
+	}
+
+	/* The tab that opens the drop box, standing at the middle of the line above the column header.
+	   Its page-colored background masks the line behind it, the same way a title does. */
+	.drop-tab {
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-label);
+		color         : var(--darkgray);
+		padding       : 0 var(--gap);
+		background    : var(--bg);
+		font-family   : inherit;
+		white-space   : nowrap;
+		border        : none;
+		cursor        : pointer;
+	}
+
+	.drop-tab:hover,
+	.drop-tab.forced {
+		background : var(--hover);
+		border     : 0.5px solid var(--darkgray);
 	}
 
 	/* The header table sits still above the scroller. It reserves the same 20px on the
@@ -603,6 +671,16 @@
 	.documents.dragging {
 		outline        : var(--thickness-fat) var(--accent);
 		outline-offset : calc(-1 * var(--gap));
+	}
+
+	/* The three filters, stacked and centred. They each ask to be centred themselves, which only a
+	   flex parent answers — and the section they now stand in is a plain block, so this is what
+	   answers it. Without it the family pill runs the whole width and its last segment takes
+	   whatever is left over. */
+	.filters {
+		align-items    : center;
+		flex-direction : column;
+		display        : flex;
 	}
 
 	/* Wraps the filter (toggle + chips); the bottom space sets it off the rule. */
@@ -679,13 +757,19 @@
 		flex-shrink   : 0;
 	}
 
-	/* The two dividers plus the header between them. Sits in a layer in front of the rows so its
-	   whole area is one target: hovering lights the "drop files below" tab, clicking opens the
-	   drop box. */
+	/* The header, reaching out over the half gap above it and the half gap below — the parts of
+	   the two gaps the stack says belong to this section — and half a line further at each end,
+	   which puts its edges exactly on the two lines' outer edges. Sits in a layer in front of the
+	   rows so its whole area is one target: hovering lights the "drop files below" tab, clicking
+	   opens the drop box. */
 	.drop-opener {
+		margin      : calc((var(--over) + var(--line) / 2) * -1) calc(var(--gap) * -1)
+		              calc((var(--under) + var(--line) / 2) * -1);
+		padding     : calc(var(--over) + var(--line) / 2) var(--gap)
+		              calc(var(--under) + var(--line) / 2);
 		position    : relative;
-		z-index     : 2;
 		cursor      : pointer;
+		z-index     : 2;
 		flex-shrink : 0;
 	}
 
@@ -714,13 +798,6 @@
 		background  : var(--bg);
 		position    : sticky;
 		z-index     : 1;
-	}
-
-	/* The divider under the header — a title-less Separator where the old rule sat,
-	   with a --gap of space below it before the rows, matching what was there. */
-	.head-sep {
-		margin-bottom : var(--gap);
-		flex-shrink   : 0;
 	}
 
 	/* A faint accent line under each row. */

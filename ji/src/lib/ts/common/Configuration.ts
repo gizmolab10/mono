@@ -29,13 +29,14 @@ class Configuration {
 		root.setProperty('--gap-huge',           `${k.gap.huge}px`);
 		root.setProperty('--gap-small',          `${k.gap.small}px`);
 		root.setProperty('--gap-tight',          `${k.gap.tight}px`);
-		root.setProperty('--gap',                `${k.gap.default}px`);
+		root.setProperty('--gap',                `${k.gap.normal}px`);
 		root.setProperty('--gap-details',        `${k.gap.details}px`);
 		root.setProperty('--radius',             `${k.radius.corner.main}px`);
 		root.setProperty('--radius-banner',      `${k.radius.corner.banner}px`);
 		root.setProperty('--radius-build',       `${k.radius.corner.build}px`);
 		root.setProperty('--radius-pill',        `${k.radius.corner.pill}px`);
 		root.setProperty('--radius-percent',     `${k.radius.percent}%`);
+		root.setProperty('--height-small',       `${k.height.small}px`);
 		root.setProperty('--height-hideable',    `${k.height.hideable}px`);
 		root.setProperty('--height-control',     `${k.height.control}px`);
 		root.setProperty('--height-banner',      `${k.height.banner}px`);
@@ -60,6 +61,7 @@ class Configuration {
 		root.setProperty('--inset-popup-side',   `${k.inset.popup.side}px`);
 		root.setProperty('--inset-credit-bottom',`${k.inset.credit.bottom}px`);
 		root.setProperty('--inset-credit-left',  `${k.inset.credit.left}px`);
+		root.setProperty('--thickness-huge',     `${k.thickness.huge}px`);
 		root.setProperty('--thickness-normal',   `${k.thickness.normal}px`);
 		root.setProperty('--thickness-faint',    `${k.thickness.faint}px`);
 		root.setProperty('--thickness-fat',      `${k.thickness.fat}px`);

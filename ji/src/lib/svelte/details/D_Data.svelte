@@ -5,7 +5,9 @@
 	import { w_db_changed } from '../../ts/types/Signal';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { tip } from '../../ts/utilities/Tooltip';
-	import Separator from '../support/Separator.svelte';
+	import Stack from '../support/Stack.svelte';
+	import Action, { T_Position } from '../../ts/types/Action';
+	import { k } from '../../ts/common/Constants';
 
 	const binPath = svg_paths.trashcan();
 
@@ -49,6 +51,12 @@
 		w_show_others.update((shown) => !shown);
 	}
 
+	// The word that folds the storage controls away, built here rather than by the separator it
+	// stands on. The browser makes a button one drawing after we ask, so this holds nothing on the
+	// first drawing and the made button on the next — which is itself a change, so the stack is told.
+	let fold_word = $state<HTMLElement | null>(null);
+	const fold_action = $derived(Object.assign(new Action(), { element: fold_word, position: T_Position.center }));
+
 	// Erasing asks first, then wipes only the active store.
 	let confirming = $state(false);
 	function ask_erase()    { confirming = true; }
@@ -70,52 +78,100 @@
 	}
 </script>
 
-<div class='data'>
-	<div class='row'><span class='label'>documents</span><span class='count'>{documents}</span></div>
-	<div class='row'><span class='label'>tags</span><span class='count'>{tags}</span></div>
+<!-- The fold word, written out of sight: the moment the browser has made it, the stack takes it
+     and puts it on the line above the storage controls instead. -->
+<div class='out_of_sight'>
+	<button type='button' class='fold-word' bind:this={fold_word}
+		onclick={toggle_others}>{$w_show_others ? 'less' : 'more'}</button>
+</div>
 
-	<!-- The divider's title doubles as the more / less toggle for the storage controls.
-	     Wrapped to add a --gap of space below the divider. -->
-	<div class='sep-wrap'>
-		<Separator title={$w_show_others ? 'less' : 'more'} onclick={toggle_others} />
+<!-- What this store holds. -->
+{#snippet shows_counts()}
+	<div class='counts'>
+		<div class='row'><span class='label'>documents</span><span class='count'>{documents}</span></div>
+		<div class='row'><span class='label'>tags</span><span class='count'>{tags}</span></div>
 	</div>
+{/snippet}
 
-	{#if $w_show_others}
-		<div class='db-controls'>
-			{#if confirming}
-				<div class='confirm'>
-					<button class='no' use:tip={'keep the data'} onclick={cancel_erase}>no</button>
-					<button class='yes' use:tip={'erase everything for good'} onclick={do_erase}>yes</button>
-					<span class='sure'>erase {db_adjective} data?</span>
-				</div>
-			{:else}
-				{#if local_documents > 0}
-					<button class='erase' aria-label='erase all data' use:tip={`erase all ${derive_adjective()} files`} onclick={ask_erase}>
-						<svg class='erase-bin' viewBox='0 0 24 24'>
-							<path d={binPath}
-								fill='none' stroke='currentColor' stroke-width='1.6'
-								stroke-linecap='round' stroke-linejoin='round' />
-						</svg>
-					</button>
-				{/if}
-				<div class='db-storage'>
-					{#each storages as storage}
-						<button
-							class='segment'
-							class:disabled={!built.has(storage)}
-							class:current={$w_storage === storage}
-							use:tip={$w_storage === storage ? false : (built.has(storage) ? `explore ${derive_adjective_from(storage)} data` : 'not built yet')}
-							onclick={() => choose(storage)}>{storage}</button>
-					{/each}
-				</div>
+<!-- Which store is being read, and the way to erase it. -->
+{#snippet shows_storage()}
+	<div class='db-controls'>
+		{#if confirming}
+			<div class='confirm'>
+				<button class='no' use:tip={'keep the data'} onclick={cancel_erase}>no</button>
+				<button class='yes' use:tip={'erase everything for good'} onclick={do_erase}>yes</button>
+				<span class='sure'>erase {db_adjective} data?</span>
+			</div>
+		{:else}
+			{#if local_documents > 0}
+				<button class='erase' aria-label='erase all data' use:tip={`erase all ${derive_adjective()} files`} onclick={ask_erase}>
+					<svg class='erase-bin' viewBox='0 0 24 24'>
+						<path d={binPath}
+							fill='none' stroke='currentColor' stroke-width='1.6'
+							stroke-linecap='round' stroke-linejoin='round' />
+					</svg>
+				</button>
 			{/if}
-		</div>
-	{/if}
+			<div class='db-storage'>
+				{#each storages as storage}
+					<button
+						class='segment'
+						class:disabled={!built.has(storage)}
+						class:current={$w_storage === storage}
+						use:tip={$w_storage === storage ? false : (built.has(storage) ? `explore ${derive_adjective_from(storage)} data` : 'not built yet')}
+						onclick={() => choose(storage)}>{storage}</button>
+				{/each}
+			</div>
+		{/if}
+	</div>
+{/snippet}
+
+<!-- Two sections, a line centred in the gap between them, carrying the word that folds the lower
+     one away. Nothing stands below, so nobody draws a line at the foot — a fold down there comes
+     down to its own line and nothing else, which is what was drawn here before. -->
+<div class='data'>
+	<Stack thickness={k.separator.normal} foot='none' sections={[
+		{ subsection: shows_counts },
+		{ subsection: shows_storage, rides: [fold_action], folded: !$w_show_others },
+	]} />
 </div>
 
 <style>
 
+	/* A gap above and below, so what this section shows stands clear of the two lines around it. */
 	.data {
+		padding        : var(--gap) 0;
+		flex-direction : column;
+		display        : flex;
+	}
+
+	/* Where the fold word is written before the stack takes it. It is taken out of here on the
+	   very next drawing, so nothing is ever seen in this spot. */
+	.out_of_sight {
+		display : none;
+	}
+
+	/* The word that folds the storage controls away, standing at the middle of the line above them.
+	   Its page-colored background masks the line behind it, the same way a title does. */
+	.fold-word {
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-label);
+		color         : var(--darkgray);
+		padding       : 0 var(--gap);
+		background    : var(--bg);
+		font-family   : inherit;
+		cursor        : pointer;
+		white-space   : nowrap;
+		border        : none;
+	}
+
+	.fold-word:hover {
+		border     : 0.5px solid var(--darkgray);
+		background : var(--hover);
+	}
+
+	/* The two counts, one under the other. */
+	.counts {
 		gap            : var(--gap);
 		flex-direction : column;
 		display        : flex;
@@ -142,14 +198,12 @@
 		text-align : center;                   /* ...and center the question within it */
 	}
 
-	/* A --gap of space below the divider. */
-	.sep-wrap {
-		margin-bottom : var(--gap);
-	}
-
-	/* The db-storage is centered in the row; the erase control is pinned to the left. */
+	/* The db-storage is centered in the row; the erase control is pinned to the left.
+	   Nudged down a gap so it stands clear of the word on the line above it. Nudged, not stepped
+	   in: this moves what is drawn and leaves the section's own height where it was. */
 	.db-controls {
 		height          : var(--height-control);
+		top             : var(--gap-small);
 		position        : relative;
 		justify-content : center;
 		align-items     : center;
