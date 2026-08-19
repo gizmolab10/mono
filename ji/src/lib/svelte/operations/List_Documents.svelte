@@ -354,7 +354,10 @@
 	// drop box reaches out over its own half gaps and this much further at each end, which puts
 	// its edges exactly where the two lines' outer edges are — the same rectangle it covered when
 	// it wrapped both lines itself.
-	const LINE = k.thickness.huge;
+	// The two lines around the column header, each drawn at its own thickness: the heavy one that
+	// carries the "drop files below" tab, and the fine one that closes the header off from the rows.
+	const OVER_HEADER  = k.separator.huge;
+	const UNDER_HEADER = k.separator.normal;
 
 	// One click handler for every header, told which column it was. The two middle
 	// headers switch the content area to their add view; format and edit-tags do
@@ -511,8 +514,9 @@
 {#snippet shows_header()}
 	<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
 	<div class='drop-opener'
-		style:--line='{LINE}px'
 		onclick={open_drop}
+		style:--line-over='{OVER_HEADER}px'
+		style:--line-under='{UNDER_HEADER}px'
 		use:tip={'click to drop files'}
 		onmouseenter={() => set_drop_opener_hover(true)}
 		onmouseleave={() => set_drop_opener_hover(false)}>
@@ -570,10 +574,10 @@
 		<!-- Three sections, a line centred in each of the two gaps. The wide gap holds the tab,
 		     which hangs past its line on both sides. Nothing stands below the last section, so
 		     nobody draws a line at the foot. -->
-		<Stack gap={k.gap.fat} thickness={LINE} foot='none' sections={[
+		<Stack gap={k.gap.tight} thickness={k.separator.fat} foot='none' sections={[
 			{ subsection: shows_filters },
-			{ subsection: shows_header, rides: [drop_action] },
-			{ subsection: shows_rows },
+			{ subsection: shows_header, rides: [drop_action], thickness: OVER_HEADER },
+			{ subsection: shows_rows, thickness: UNDER_HEADER },
 		]} />
 	{/if}
 </div>
@@ -607,9 +611,9 @@
 	}
 
 	.documents :global(.stack > .stacked:last-child) {
+		flex           : 1 1 auto;
 		flex-direction : column;
 		display        : flex;
-		flex           : 1 1 auto;
 		min-height     : 0;
 	}
 
@@ -622,9 +626,9 @@
 		padding       : 0 var(--gap);
 		background    : var(--bg);
 		font-family   : inherit;
+		cursor        : pointer;
 		white-space   : nowrap;
 		border        : none;
-		cursor        : pointer;
 	}
 
 	.drop-tab:hover,
@@ -703,7 +707,6 @@
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
-		margin-bottom : var(--gap);
 		align-self    : center;
 		width         : 200px;
 		flex-shrink   : 0;                     /* hold full height; a full table must not squeeze it */
@@ -742,8 +745,8 @@
 	}
 
 	.families .segment.current {
-		background : var(--accent);
 		color      : var(--text-on-accent);
+		background : var(--accent);
 	}
 
 	.families .segment:not(.current):hover {
@@ -763,10 +766,10 @@
 	   rows so its whole area is one target: hovering lights the "drop files below" tab, clicking
 	   opens the drop box. */
 	.drop-opener {
-		margin      : calc((var(--over) + var(--line) / 2) * -1) calc(var(--gap) * -1)
-		              calc((var(--under) + var(--line) / 2) * -1);
-		padding     : calc(var(--over) + var(--line) / 2) var(--gap)
-		              calc(var(--under) + var(--line) / 2);
+		margin      : calc((var(--over) + var(--line-over) / 2) * -1) calc(var(--gap) * -1)
+		              calc((var(--under) + var(--line-under) / 2) * -1);
+		padding     : calc(var(--over) + var(--line-over) / 2) var(--gap)
+		              calc(var(--under) + var(--line-under) / 2);
 		position    : relative;
 		cursor      : pointer;
 		z-index     : 2;
@@ -818,7 +821,6 @@
 	/* The cell is transparent so the rule shows through; only the label pill
 	   below masks it. Each label is centered in its column. */
 	.head th {
-		padding    : 0 0 var(--gap);   /* content, then a --gap of pinned space down to the divider below */
 		text-align : center;
 	}
 
@@ -849,9 +851,8 @@
 	/* The document header reads as a real button: control height, solid black edge. */
 	.head-label.interactive {
 		border     : var(--thickness-normal) solid var(--black);
-		height     : var(--height-control);
-		box-sizing : border-box;
 		background : var(--white);
+		box-sizing : border-box;
 		position   : relative;
 		top        : 1px;                      /* nudge down so its text lines up with the other headings */
 	}
@@ -887,19 +888,19 @@
 	/* The open/close triangle: page-colored inside with an accent outline, filling
 	   to the hover color under the cursor. */
 	.tri {
-		border          : none;
 		background      : transparent;
-		padding         : 0;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
+		border          : none;
+		padding         : 0;
 	}
 
 	.tri path {
-		fill         : var(--accent);
 		stroke       : var(--accent);
-		stroke-width : 1;
+		fill         : var(--bg);
+		stroke-width : 2;
 	}
 
 	.tri:hover path {
@@ -910,12 +911,12 @@
 	   (not the table cell — cell-level ellipsis is unreliable), so both file and
 	   folder names cut off with an ellipsis, full text on hover. */
 	.name-text {
-		flex          : 1;
-		min-width     : 0;
 		margin-left   : var(--gap);
+		text-overflow : ellipsis;
 		white-space   : nowrap;
 		overflow      : hidden;
-		text-overflow : ellipsis;
+		min-width     : 0;
+		flex          : 1;
 	}
 
 	.name.viewable {

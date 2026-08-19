@@ -52,6 +52,12 @@
 		return at === 0 ? leads : (sections[at].rides ?? null);
 	}
 
+	// How thick the separator above this section is drawn: the stack's own, unless that section
+	// names one of its own. Read from one place, since the thickness is part of every distance.
+	function thickness_at(at: number): number {
+		return sections[at]?.thickness ?? thickness;
+	}
+
 	// How much space stands between this section and whatever is above it, middle to middle. The
 	// separator's own body stands in the middle of that space, so its thickness is added on: the
 	// gap a caller asks for is the empty space it sees on each side, never the distance between
@@ -61,7 +67,7 @@
 	// the separator on both sides; every other one takes the stack's own gap. A stack whose middle
 	// thing is small enough to need no extra space says its own wider gap.
 	function spacing(at: number): number {
-		return (centered(actions_at(at)) ? gap_at_center : gap) + thickness;
+		return (centered(actions_at(at)) ? gap_at_center : gap) + thickness_at(at);
 	}
 
 	// How far the separator below a fold is drawn from the fold's own separator, middle to middle.
@@ -170,7 +176,7 @@
 		     there is none, so the band above its first separator wears no hair. -->
 		{@render band(lead_at + over / 2, (lead_at - over / 2) / 2, over > 0)}
 		<div class='gap-line' style:top='{lead_at}px'>
-			<Separator {thickness} actions={actions_at(0)} />
+			<Separator thickness={thickness_at(0)} actions={actions_at(0)} />
 		</div>
 	{/if}
 	{#each sections as section, at (at)}
@@ -188,7 +194,7 @@
 			{/if}
 			{#if at > 0}
 				<div class='gap-line' style:top='{line_at(at)}px'>
-					<Separator {thickness} actions={actions_at(at)} />
+					<Separator thickness={thickness_at(at)} actions={actions_at(at)} />
 				</div>
 			{/if}
 			{#if !section.folded}{@render section.subsection()}{/if}
