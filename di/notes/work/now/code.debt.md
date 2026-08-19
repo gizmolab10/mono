@@ -1,3 +1,10 @@
+---
+kind: 
+title: "Code Debt"
+description: "Running a project according to code debt changes the dynamic"
+tags: [now]
+date: 2026-08-19
+---
 # Code Debt
 
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
@@ -7,7 +14,7 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 ## resume
 
 - [ ] **Move** di's `road.map.md` out of `work/now/` into `guides/` (a roadmap is reference).
-- [ ] **Create** a notes-map for di — it has none, unlike ji's.
+- [ ] **Create** a 'map of di filess' — it has none
 - [ ] **Rename/revise** (marked _I AM GUESSING_ — Jonathan's call, not settled): shallow di's `map.md` from the deep `guides/project/overview/` to `guides/`, and reconcile di's dotted filenames against ji's spaced style.
 
 ## bugs

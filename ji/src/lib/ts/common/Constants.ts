@@ -115,7 +115,7 @@ export default class Constants {
 		// any screen here: gap.fat 16.33 + thickness.huge 7.78, which is what this is. Below that
 		// a fold's height comes out negative, the browser draws it at nothing, and that one pair
 		// reads wider than every other — which looks like a spacing fault and is not.
-		small		 : common_gap * 3.1,
+		folded		 : common_gap * 3.1,
 		hideable	 : control_height * 1.3,
 		banner		 : common_size * 1.2,
 		control		 : control_height,

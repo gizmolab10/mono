@@ -36,7 +36,7 @@ class Configuration {
 		root.setProperty('--radius-build',       `${k.radius.corner.build}px`);
 		root.setProperty('--radius-pill',        `${k.radius.corner.pill}px`);
 		root.setProperty('--radius-percent',     `${k.radius.percent}%`);
-		root.setProperty('--height-small',       `${k.height.small}px`);
+		root.setProperty('--height-folded',      `${k.height.folded}px`);
 		root.setProperty('--height-hideable',    `${k.height.hideable}px`);
 		root.setProperty('--height-control',     `${k.height.control}px`);
 		root.setProperty('--height-banner',      `${k.height.banner}px`);

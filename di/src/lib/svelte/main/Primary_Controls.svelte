@@ -233,6 +233,7 @@
 		font-size     : var(--font-common);
 		z-index       : var(--z-frontmost);
 		border-radius : var(--r-common);
+		padding       : 0 var(--l-padding);
 		background    : var(--white);
 		box-sizing    : border-box;
 		cursor        : pointer;
@@ -256,7 +257,7 @@
 
 	.help-button {
 		font-size : var(--font-large);
-		padding   : 1px 10px 0 9px;
+		padding   : 1px var(--l-padding) 0 var(--l-padding);
 		right     : -10px;
 	}
 

@@ -16,11 +16,11 @@ export enum T_Timer {
 }
 
 export default class Mouse_Timer {
-	autorepeat_start_timer: null | number | NodeJS.Timeout = null;
-	doubleClick_timer: null | number | NodeJS.Timeout = null;
-	autorepeat_timer: null | number | NodeJS.Timeout = null;
-	alteration_timer: null | number | NodeJS.Timeout = null;
-	longClick_timer: null | number | NodeJS.Timeout = null;
+	autorepeat_start_timer: ReturnType<typeof setTimeout> | null = null;
+	doubleClick_timer: ReturnType<typeof setTimeout> | null = null;
+	autorepeat_timer: ReturnType<typeof setTimeout> | null = null;
+	alteration_timer: ReturnType<typeof setTimeout> | null = null;
+	longClick_timer: ReturnType<typeof setTimeout> | null = null;
 	timer_ID: number = Mouse_Timer.get_next_ID();
 	static debug_ID: number = 0;
 	autorepeat_ID: number = -1;

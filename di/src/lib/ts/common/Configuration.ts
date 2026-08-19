@@ -98,7 +98,6 @@ export class Configuration {
 		root.setProperty('--th-border',        `${k.thickness.border}px`);
 		root.setProperty('--th-sep',           `${k.thickness.separator.main}px`);
 		root.setProperty('--th-thin-sep',      `${k.thickness.separator.content}px`);
-		root.setProperty('--th-banners-sep',   `${k.thickness.separator.banners}px`);
 		root.setProperty('--th-content-sep',   `${k.thickness.separator.content}px`);
 
 		root.setProperty('--h-button-tiny',    `${k.height.button.tiny}px`);

@@ -146,7 +146,9 @@ export class Colors {
 	}
 
 	blend(color : string, background : string, saturation : number = 7) : string {
-		let blended : string | null = 'offwhite';
+		// What a background that already matches the app's own blends to. It has to be a color the
+		// browser knows: 'offwhite' stood here and is not one, so every such blend drew nothing.
+		let blended : string | null = 'lightgray';
 		if (!this.colors_areIdentical(background, get(this.w_background_color))) {
 			if (this.isGray(background)) {
 				blended = this.darkerBy(background, 1 / saturation);

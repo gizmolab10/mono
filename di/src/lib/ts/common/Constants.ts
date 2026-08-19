@@ -81,7 +81,6 @@ export default class Constants {
 	threshold = {
 		autorepeat:	  150,
 		double_click: 400,
-		alteration:	  500,
 		long_click:	  800,
 	};
 
@@ -115,7 +114,7 @@ export default class Constants {
 	thickness = {
 		separator: {
 			content: Math.round(common_size / 15),
-			banners: Math.round(common_size / 9),
+			details: Math.round(common_size / 6),
 			main:	 Math.round(common_size / 5),
 		},
 		thumb:       Math.round(common_size / 6),
@@ -142,6 +141,12 @@ export default class Constants {
 	};
 
 	height = {
+		// 17 — a folded section's own separator to the next one, always. The two half gaps around
+		// the fold come out of it, so it can never be smaller than the widest pair's spacing on any
+		// screen here: gap.large 10 + thickness.separator.main 7, which is what this is. Below that
+		// a fold's height comes out negative, the browser draws it at nothing, and that one pair
+		// reads wider than every other — which looks like a spacing fault and is not.
+		folded:      Math.round(common_size / 1.3),
 		controls:    Math.round(common_size * 1.1),
 		slider:      Math.round(common_size * 0.9),
 		collapse:    Math.round(common_size * 0.56),
@@ -149,11 +154,11 @@ export default class Constants {
 		banner:      common_size,
 		font: {
 			tiny:    Math.round(common_size / 4),
-			graph:   Math.round(common_size / 2.6),
 			reset:   Math.round(common_size / 2.75),
+			graph:   Math.round(common_size / 2.6),
 			small:   Math.round(common_size / 2.5),
-			large:   Math.round(common_size / 1.5),
 			common:  Math.round(common_size / 2),
+			large:   Math.round(common_size / 1.5),
 			huge:    Math.round(common_size),
 			monster: Math.round(common_size * 1.5),
 		},

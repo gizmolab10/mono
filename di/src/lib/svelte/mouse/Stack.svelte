@@ -19,18 +19,20 @@
 	// could not be centred in anything.
 
 	let {
-		thickness      = k.thickness.huge,
-		gap            = k.gap.normal,
-		gap_at_center  = k.gap.fat,
+		thickness      = k.thickness.separator.main,
+		gap            = k.gap.main,
+		gap_at_center  = k.gap.large,
 		foot           = 'stack',
 		leads          = null,
 		over           = 0,
+		overhang       = null,
 		sections,
 	}: {
 		thickness?     : number;             // how thick the separator in each gap is drawn
 		gap?           : number;             // how far apart two sections stand, said once for all of them
 		gap_at_center? : number;             // how far apart a pair stands where the separator between them carries something at its middle
 		over?          : number;             // how thick the separator is that whatever holds this stack draws above it; nothing, where it draws none
+		overhang?      : number | null;      // how far each separator reaches past this stack at its two ends; each separator's own kind decides otherwise
 		foot?          : T_Foot;             // who draws the separator at the stack's foot
 		sections       : Stacked[];          // the sections, in the order they stand
 		leads?         : Action[] | null;    // a separator above the first section, where whatever holds this stack draws no boundary of its own
@@ -41,15 +43,15 @@
 	//
 	// Only a thing that was actually built counts. A caller names every thing its line could carry,
 	// and hands over nothing where that thing is not there — a clearing pill with nothing to clear.
-	function centered(rides: Action[] | null): boolean {
-		return (rides ?? []).some((one) => one.position === T_Position.center && one.element !== null);
+	function centered(actions: Action[] | null): boolean {
+		return (actions ?? []).some((one) => one.position === T_Position.center && one.element !== null);
 	}
 
 	// What a section's separator carries — everything the caller handed it, folded or open. A thing
 	// at the middle hangs down into the fold below it, which is a run of accent; its own page-colored
 	// pill masks that accent, so it reads as standing on the line exactly as it does anywhere else.
 	function actions_at(at: number): Action[] | null {
-		return at === 0 ? leads : (sections[at].rides ?? null);
+		return at === 0 ? leads : (sections[at].actions ?? null);
 	}
 
 	// How thick the separator above this section is drawn: the stack's own, unless that section
@@ -176,7 +178,7 @@
 		     there is none, so the band above its first separator wears no hair. -->
 		{@render band(lead_at + over / 2, (lead_at - over / 2) / 2, over > 0)}
 		<div class='gap-line' style:top='{lead_at}px'>
-			<Separator thickness={thickness_at(0)} actions={actions_at(0)} />
+			<Separator thickness={thickness_at(0)} {overhang} actions={actions_at(0)} />
 		</div>
 	{/if}
 	{#each sections as section, at (at)}
@@ -194,7 +196,7 @@
 			{/if}
 			{#if at > 0}
 				<div class='gap-line' style:top='{line_at(at)}px'>
-					<Separator thickness={thickness_at(at)} actions={actions_at(at)} />
+					<Separator thickness={thickness_at(at)} {overhang} actions={actions_at(at)} />
 				</div>
 			{/if}
 			{#if !section.folded}{@render section.subsection()}{/if}
@@ -202,7 +204,7 @@
 	{/each}
 	{#if add_end_separator}
 		<div class='gap-line foot'>
-			<Separator thickness={k.thickness.huge} />
+			<Separator thickness={k.thickness.separator.main} {overhang} />
 		</div>
 	{/if}
 </div>
@@ -228,7 +230,7 @@
 	   sets inside it cannot rise above anything outside. The layer is said here instead, on the
 	   thing that actually stands among the bands. */
 	.gap-line {
-		z-index   : var(--z-controls);
+		z-index   : var(--z-action);
 		transform : translateY(-50%);
 		position  : absolute;
 		right     : 0;
@@ -246,7 +248,7 @@
 	   behind everything: the word riding the line above it hangs down into this space, and a band
 	   drawn over that word would cut it in half. */
 	.band {
-		margin         : 0 calc(var(--gap) * -1);
+		margin         : 0 calc(var(--l-gap) * -1);
 		z-index        : var(--z-common);
 		background     : var(--accent);
 		position       : absolute;
@@ -258,10 +260,10 @@
 	/* A hairline down its exact middle, so it reads as a line rather than as a stripe of color.
 	   Half a pixel, pulled back half of its own height. */
 	.hair {
-		margin         : 0 calc(var(--gap) * -1);
+		margin         : 0 calc(var(--l-gap) * -1);
 		z-index        : var(--z-frontmost);
 		transform      : translateY(-50%);
-		background     : var(--black);
+		background     : var(--text);
 		position       : absolute;
 		height         : 0.5px;
 		pointer-events : none;
