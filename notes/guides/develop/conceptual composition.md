@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: explain
 title: "UX terms and concepts"
 description: ""
 tags: [proposal]

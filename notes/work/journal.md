@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: explain
 title: "Journal"
 description: ""
 tags: [journal]

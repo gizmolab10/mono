@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Proposal — a thin proxy"
+description: "Allow a deployed ji reach into the mac's AnythingLLM safely"
+tags: [proposal, stale]
+date: 2026-08-19
+---
 # Proposal — a thin proxy
 
 Allow a deployed ji reach into the mac's AnythingLLM safely

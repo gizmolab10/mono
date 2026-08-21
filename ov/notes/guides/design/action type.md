@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: explain
 title: "new Action type"
 description: "pass Separator more than one title"
 tags: [stow]

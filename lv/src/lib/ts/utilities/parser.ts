@@ -41,6 +41,17 @@ function preprocessObsidianSyntax(md: string): string {
     return `<blockquote class="callout center"><div class="callout-content">\n\n${text}\n\n</div></blockquote>`;
   });
 
+  // A gallery: `![[gallery: the-vineyard]]` on a line of its own, or
+  // `![[gallery: the-vineyard|400]]` to draw every photo in it 400 tall. It
+  // leaves an empty box carrying the folder's name and that height; the
+  // renderer builds the photo component inside each one. Caught before the
+  // image-embed rewrite below, so that rewrite never sees it — every other
+  // `![[...]]` is still an image.
+  md = md.replace(/!\[\[ *gallery: *([^\]\n|]+)(?:\| *(\d+) *)?\]\]/gi, (_m, folder: string, tall?: string) => {
+    const height = tall ? ` data-height="${tall}"` : '';
+    return `<div class="gallery" data-folder="${folder.trim()}"${height}></div>`;
+  });
+
   // Image embeds first so the `!` prefix gets consumed before the link regex
   // can grab the surrounding `[[...]]`. The part after the bar is a size when
   // it reads as a number (width) or number-by-number (width by height); the

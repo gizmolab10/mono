@@ -2,7 +2,7 @@
 kind: specify
 title: "Always (di)"
 description: "The standing rules that apply only to di, read alongside the shared always file."
-tags: [session]
+tags: [always, prose, session, team]
 date: 2026-07-15
 ---
 # Always (di)

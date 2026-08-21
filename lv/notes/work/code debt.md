@@ -1,26 +1,22 @@
-# Coding needed
+---
+kind: explain
+title: "Code debt"
+description: "write a proposal for the first unchecked item to the top of handoff"
+tags: [journal, now, plans, proposal]
+date: 2026-08-19
+---
+# Code debt
 
-- [x] expand hub UX
-  - [x] add 'lv' to the projects row
-  - [x] wire up local, netlify, and public buttons for lv project
-- [x] change page title: Design Intuition → Little Cloud Vineyard
-- [x] center text on main page
-- [x] proposal to create content in Main.svelte from files in /src/md
-    - [x] images live in /src/assets
-- [x] sidebar needs folder support
-    - [x] add folders to md
-    - [x] triangle for unfold is way too small
-    - [x] indent foldaway files 
-- [x] sidebar toggle button
-    - [x] image too small
-    - [x] needs hover action
-- [x] sidebar hr is invisible
-- [x] persistence.ts
-    - [x] use local storage for:
-    - [x] which sidebar folder is unfolded
-    - [x] the state of the sidebar toggle
-- [x] borrow svg from di project
-    - [x] hamburger
-    - [x] fat triangle
-- [x] can images be sized?
-- [ ] hover changes color of fat triangle -> lightgrey
+write a proposal for the first unchecked item to the top of handoff.
+
+## work
+
+- [ ] bring tom up to speed
+
+## done
+
+- [x] [[photo gallery]]
+- [x] <http://littlecloudvineyard.com/>
+    - [x] wiki builder
+    - [x] netlify
+    - [x] mono/lv

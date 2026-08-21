@@ -2,15 +2,14 @@
 // Overview never keeps a file's text — only where it is and the five labels off
 // its top.
 
-// The kinds a guide can be. Five say how a guide reads; design says what it is about — a record
-// of how something was built. A file is one of the six, said in its own labels rather than worked
-// out from the folder it sits in.
+// The kinds a guide can be. Four say how a guide reads; analyze says what it is about — a taking
+// apart of something to find out how it works. A file is one of the five, said in its own labels
+// rather than worked out from the folder it sits in.
 export enum T_Kind {
+	analyze    = 'analyze',
 	arch       = 'arch',
-	design     = 'design',
 	explain    = 'explain',
 	howto      = 'howto',
-	refer      = 'refer',
 	specify    = 'specify',
 }
 
@@ -61,13 +60,14 @@ export function in_order(one: string, two: string): number {
 	return one.localeCompare(two, undefined, { sensitivity: 'base' });
 }
 
-// The four collections the guides live in, each named for the folder that holds it.
+// The six collections the guides live in, each named for the folder that holds it.
 // The shared guides sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
 	mono = 'mo',
 	ws   = 'ws',
 	di   = 'di',
 	ji   = 'ji',
+	lv   = 'lv',
 	ov   = 'ov',
 }
 

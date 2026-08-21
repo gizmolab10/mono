@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Full family support"
+description: "Everything ji now decides about a file the moment it arrives, what changed to get here, and what's still owed"
+tags: [stale]
+date: 2026-08-19
+---
 # Full family support
 
 Everything ji now decides about a file the moment it arrives, what changed to get here, and what's still owed. Written after the session that added spreadsheets and books.

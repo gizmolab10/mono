@@ -38,7 +38,7 @@
 
 **Other project work:**
 
-- journal.md, revisit.mo.md, code.debt.md, propagating value changes.md, data schema for wendy.md, collaboration priorities.md, working features.md
+- journal.md, revisit.mo.md, code debt.md, propagating value changes.md, data schema for wendy.md, collaboration priorities.md, working features.md
 
 ---
 
@@ -100,7 +100,7 @@ Current code: [topology.md](../topology.md)
 
 **3. Loose ongoing files stay loose.**
 
-- code.debt.md, propagating value changes.md — these aren't milestones, they're running lists. Fine where they are.
+- code debt.md, propagating value changes.md — these aren't milestones, they're running lists. Fine where they are.
 
 **4. Update milestones/index.md** to add milestone 33.
 

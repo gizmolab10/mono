@@ -48,7 +48,12 @@ export function hit_target(element: HTMLElement, options: Hit_Target_Options) {
 			settle(fresh);
 		},
 		destroy() {
+			// A thing leaving the page moves whatever stood below it, and every rectangle held for
+			// those was measured where they stood before. Arriving says so; leaving has to say so
+			// too, or the things above answer for a strip they no longer stand on. A run of them
+			// going together joins the one rebuild already waiting.
 			hits.delete_hit_target(target);
+			hits.defer_recalibrate();
 		},
 	};
 

@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: explain
 title: "Learn (di)"
 description: "Mistakes made in di's own workings, never to be repeated"
 tags: [journal]

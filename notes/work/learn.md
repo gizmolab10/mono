@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: explain
 title: "Learn"
 description: "Collaborator errors → distilled into guide updates"
 tags: [journal]

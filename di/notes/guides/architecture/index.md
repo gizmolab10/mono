@@ -26,7 +26,7 @@ Where things live, what they do.
     - [Details](./components/Details.md) — sidebar: preferences, library, parts, part
 - [UI](./ui/) — what the user sees
     - [Panel layout](./ui/panel.layout.md) — three regions, CSS, separators
-    - [Hits](./ui/hits%20system.md) — click and hover dispatch
+    - [Hits](../../../../notes/guides/develop/hits%20system.md) — click and hover dispatch
     - [Key paths](./ui/key%20paths.md) — keyboard shortcuts grouped by context
     - [Style](./ui/style.md) — CSS conventions and design tokens
 

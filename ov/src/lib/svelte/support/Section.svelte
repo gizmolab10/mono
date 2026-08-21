@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
-	import Action, { T_Position } from '../../ts/types/Action';
+	import type Action from '../../ts/types/Action';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
@@ -52,11 +52,10 @@
 	let gap_under_line = $derived(gap_above(folded, gap, holds_subsections, bar));
 	let gap_below = $derived(gap_inside(folded, gap_at_foot ?? gap, holds_subsections));
 
-	// Folded, the line keeps only what stands at its ends — the word that brings the section back.
-	// Anything at the middle acts on what is now out of sight, so it goes with it.
-	let on_the_line = $derived(folded
-		? (actions ?? []).filter((one) => one.position !== T_Position.center)
-		: actions);
+	// The line carries everything the caller handed it, folded or open. A thing at the middle hangs
+	// down past the line, and below a folded section that is a run of accent; its own page-colored
+	// pill masks that accent, so it reads as sitting on the line exactly as it does anywhere else.
+	let on_the_line = $derived(actions);
 
 	// Folding or opening moves everything below this section, and every rectangle the hits manager
 	// holds was measured where its control stood then. They are all asked again once the browser

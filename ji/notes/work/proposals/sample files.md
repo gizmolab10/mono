@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Sample files — what a fair one is, and where to get one"
+description: "Testing builds a file of every kind out of a handful of bytes"
+tags: [stale]
+date: 2026-08-19
+---
 # Sample files — what a fair one is, and where to get one
 
 Testing builds a file of every kind out of a handful of bytes. That is enough while nothing in ji looks inside a file. It stops being enough the day ji starts extracting words: a picture that is only the few bytes saying "I am a picture" has no writing on it to find, and a book with no chapters proves nothing about reading a book.

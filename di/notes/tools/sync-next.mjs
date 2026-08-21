@@ -2,7 +2,7 @@
 // sync-next.mjs
 //
 // Keeps the "Next" section of the code-debt handoff in lock-step with the
-// first unchecked item in code.debt.md. Reads the debt list, finds the first
+// first unchecked item in code debt.md. Reads the debt list, finds the first
 // "- [ ]" line at any depth (skipping code-fenced blocks), and rewrites the
 // handoff's Next section. The block is bounded by HTML markers so re-running
 // the script is idempotent.
@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT      = resolve(__dirname, '../..');
-const CODE_DEBT = join(ROOT, 'notes/work/now/code.debt.md');
+const CODE_DEBT = join(ROOT, 'notes/work/now/code debt.md');
 const HANDOFF   = join(ROOT, 'notes/work/now/handoff.md');
 
 function find_first_unchecked(text) {
@@ -63,7 +63,7 @@ function rewrite_next(handoff, replacement) {
 const debt    = readFileSync(CODE_DEBT, 'utf-8');
 const item    = find_first_unchecked(debt);
 if (!item) {
-	process.stderr.write('sync-next: no unchecked items found in code.debt.md\n');
+	process.stderr.write('sync-next: no unchecked items found in code debt.md\n');
 	process.exit(0);
 }
 

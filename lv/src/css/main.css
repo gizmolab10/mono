@@ -220,3 +220,40 @@ textarea:focus {
 .callout.center .callout-content {
   text-align: center;
 }
+
+/* ----- Gallery ----- */
+/* One folder of photos, one showing. The photo is the button, so a click
+   anywhere on it steps to the next; the button itself draws nothing. */
+.gallery {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.gallery-photo {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-block;
+  max-width: 100%;
+}
+
+video.gallery-photo {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.gallery-photo img {
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.gallery-caption {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}

@@ -494,7 +494,7 @@ class APIHandler(BaseHTTPRequestHandler):
             try:
                 root = os.path.realpath(GITHUB_DIR)
                 found = []
-                for collection in ('', 'di', 'ws', 'ji', 'ov'):
+                for collection in ('', 'di', 'ws', 'ji', 'lv', 'ov'):
                     for purpose in ('guides', 'designs'):
                         inside = os.path.join(collection, 'notes', purpose) if collection else os.path.join('notes', purpose)
                         start = os.path.join(root, inside)

@@ -6,6 +6,53 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ---
 
+## Session — 2026-08-19 — The details column becomes a stack
+
+- **The sections spec is built in di.** A run of sections with a separator centred in every gap,
+  ported the same way it was ported into ji. `Action` is new, the separator now carries what a
+  caller builds, and `Stacked` and `Stack` came across mended to di's own names throughout —
+  `k.gap.main`, `k.gap.large`, `k.thickness.separator.main`, and one new rung, `k.height.folded`,
+  which is the floor a fold can never go below.
+- **`Hideable` is gone.** Each of its five uses is a section of one stack. A section's word rides
+  the middle of the separator above it and folds that section when pressed; its buttons ride the
+  two ends, where they stood inside the banner. The banner's own height, its radial fill and its
+  two pinned corners went with it.
+- **A separator can now say two things it could not.** How thick to draw it, and how far it reaches
+  past whatever holds it. The details column says zero for the second, so a line's ends — and the
+  flares drawn on them — stand inside the column instead of past the edge that clips it.
+- **The accent moved off the ground and into the folds.** The column behind the stack stood in the
+  accent, and so did every line drawn on it, so a 1px line and the gap around it read as one 11px
+  band. The ground is the page color now and the accent shows only where a section is folded.
+- **The three add buttons draw their mark.** `x_cross` turned a quarter turn, so one path serves
+  both the X elsewhere and the plus here. Each carries its own name, since a button holding only a
+  drawing has nothing to say what it is.
+- **One padding for every button that carries words** — `--l-padding`, left and right. Seven
+  buttons in the primary row had been taking whatever the browser gives a button, since
+  `.toolbar-button` set none at all.
+- **Two faults mended that nothing asked about.** `blend` answered `offwhite`, which is not a color
+  the browser knows, so every blend down that path drew nothing; its test had been failing. And
+  `NodeJS.Timeout` was named in three projects with no project asking for `@types/node` — it
+  resolved only because something else happened to install it. All fourteen now ask `setTimeout`
+  what it answers with.
+
+### Files touched
+
+- di/src/lib/ts/types/Action.ts (new), types/Stacked.ts (new)
+- di/src/lib/svelte/mouse/Stack.svelte (new), mouse/Separator.svelte (actions, thickness, overhang)
+- di/src/lib/svelte/details/Details.svelte (the column is one stack), details/Hideable.svelte (deleted)
+- di/src/lib/ts/common/Constants.ts (k.height.folded), common/Configuration.ts (dropped a name for a rung that no longer exists)
+- di/src/lib/ts/utilities/Colors.ts (blend answers a real color)
+- di/src/lib/svelte/main/Primary_Controls.svelte (one padding on every toolbar button)
+- events/Mouse_Timer.ts in di, ji and ov (no `@types/node` needed)
+
+### Verification
+
+- svelte-check: 598 files, 0 errors, 0 warnings.
+- vitest: 868 tests, 0 failing — including the colors one, which had been failing before this.
+- Visual confirmation from Jonathan on each step of the look as it was built.
+
+---
+
 ## Session — 2026-07-04 — Root dimensions, hover tag, and pure-number constants
 
 - **Root part now gets dimensions.** The dimension pass used to exclude the root outright (it required every part to have a parent). Now the root flows through the same rules as any part and wins duplicate-text ties (it is depth 0, so it shows the overall span). It is also dimensioned even when the root itself is invisible — its own visible flag no longer gates it.
@@ -303,9 +350,9 @@ Fixed three broken references in di/CLAUDE.md (the file assumed di lived at mono
 - COMMON "../../CLAUDE.MD" → "../CLAUDE.md" (shared file is one level up, not two).
 - REPO "~/GitHub/mono/projects/di" → "~/GitHub/mono/di".
 - di learn path "di/notes/work/now/learn.md" → "di/notes/work/ai/learn.md".
-- Added a MAP line naming di's real map: notes/guides/project/overview/map.md.
+- Added a MAP line naming di's real map: notes/guides/project/map of di files.md.
 
-Map convention (decided: one map each, per project). Checked all eight projects — none used the shared root's generic `<X>/notes/map.md`: di's map is at notes/guides/project/overview/map.md, ga's at notes/work/map.md, the other six have none. Reworded the shared root CLAUDE map line to "one per project, at the path that project's own CLAUDE names (locations vary; not every project has one)". di names its map; ga has a map but no CLAUDE, so its map is unnamed until ga is next worked.
+Map convention (decided: one map each, per project). Checked all eight projects — none used the shared root's generic `<X>/notes/map.md`: di's map is at notes/guides/project/map of di files.md, ga's at notes/work/map.md, the other six have none. Reworded the shared root CLAUDE map line to "one per project, at the path that project's own CLAUDE names (locations vary; not every project has one)". di names its map; ga has a map but no CLAUDE, so its map is unnamed until ga is next worked.
 
 Also added two learn entries (answer honestly when asked if hung, with a prevention; say "needs your visual confirmation") and lexicon terms ("part", "subpart", a Trust section with "mistrust point"/"mistrust issue").
 
@@ -320,7 +367,7 @@ Same day, more:
 
 - CLAUDE.md (shared root), di/CLAUDE.md
 - di/notes/guides/pre-flight/lexicon.md, di/notes/work/ai/learn.md
-- di/notes/guides/project/overview/map.md
+- di/notes/guides/project/map of di files.md
 
 ### Verification
 
@@ -350,7 +397,7 @@ A long UI-and-fixes session driven by visual checks, working the code-debt list 
 - Events_3D.ts (locked hover/pick, COMMAND-C, cursor tracking, tumble-regression fix)
 - Names.ts and Names.test.ts (new), Debug.ts (now calls the shared builder)
 - Dimension_Renderer.ts (edit highlight), Stores.ts and Dimension_Placement.ts (count slider)
-- lexicon.md, learn.md, code.debt.md, handoff.md
+- lexicon.md, learn.md, code debt.md, handoff.md
 
 ### Verification
 
@@ -1029,7 +1076,7 @@ After visual review, Jonathan decided the reversal was not an improvement — it
 
 Files: [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) — reverted to the original stylesheet (no functional change).
 
-Decision logged in [code.debt.paid.md](code.debt.paid.md) so the item does not resurface.
+Decision logged in [code debt paid.md](code%20debt%20paid.md) so the item does not resurface.
 
 ---
 
@@ -1366,7 +1413,7 @@ A new "cut" button sits to the left of the existing "duplicate" button on the se
 
 - The "leave the invariant formula alone" rule in the spec is honored case by case in the routine. For invariant-on-length, only end and start are written. For invariant-on-start, length and end are written on the original (the new sibling's start derives from its end and the halved length). For invariant-on-end, length is written on both halves and start is written on the new sibling (the original's end derives from its start and the halved length).
 - The geometry assumes no user-typed formula on the derived (invariant) attribute. If the user types a formula on the derived attribute, the formula evaluates and may pin the value away from the geometric expectation — this matches the design choice the user made on 2026-05-05 about the contradiction in the length-invariant case.
-- The code-debt item still shows the sub-bullets unchecked in [code.debt.md](di/notes/work/now/code.debt.md). The user marks them off when they're satisfied.
+- The code-debt item still shows the sub-bullets unchecked in [code debt.md](di/notes/work/now/code%20debt.md). The user marks them off when they're satisfied.
 
 ---
 
@@ -1504,7 +1551,7 @@ Four new browser-driven test entries went into the test index — for the editin
 
 - New tools: [extract-adherence.mjs](extract-adherence.mjs), [build-with-status.mjs](build-with-status.mjs), [validate-adherence.mjs](validate-adherence.mjs).
 - New guides: [adherence dashboard.md](adherence%20dashboard.md) (generated), [adherence log.md](adherence%20log.md), [dashboard guide.md](dashboard%20guide.md).
-- Edited: [stipulations.md](di/notes/guides/development/rules/stipulations.md), [testing.md](di/notes/guides/project/philosophy/testing.md), [logic driven design.md](logic%20driven%20design.md), `notes/guides/project/development/areas.json`, [development index](di/notes/guides/development/index.md), [project index](di/notes/guides/project/index.md), [guides.layout.md](guides.layout.md), [overview map.md](di/notes/guides/project/overview/map.md), `.vitepress/config.mts`, `package.json`.
+- Edited: [stipulations.md](di/notes/guides/development/rules/stipulations.md), [testing.md](di/notes/guides/project/philosophy/testing.md), [logic driven design.md](logic%20driven%20design.md), `notes/guides/project/development/areas.json`, [development index](di/notes/guides/development/index.md), [project index](di/notes/guides/project/index.md), [guides.layout.md](guides.layout.md), [overview map.md](di/notes/guides/project/map%20of%20di%20files.md), `.vitepress/config.mts`, `package.json`.
 
 ### Verification — 2026-05-04
 
@@ -1659,7 +1706,7 @@ When a formula error overlay appears, the attributes table is split into two phy
 - Toolbar unused-import cleanup: [Controls.svelte](di/src/lib/svelte/main/Controls.svelte).
 - Formula token-joiner extension for multi-word names: [Tokenizer.ts](di/src/lib/ts/algebra/Tokenizer.ts).
 - Attributes-table split-row letter column: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte).
-- Code-debt list: [code.debt.md](di/notes/work/now/code.debt.md) — parts-table drag-and-drop is now off the list.
+- Code-debt list: [code debt.md](di/notes/work/now/code%20debt.md) — parts-table drag-and-drop is now off the list.
 
 ### Verification — 2026-04-30
 
@@ -1702,7 +1749,7 @@ The drawing area no longer carries any slider markup, any slider styles, or any 
 - Resolver write-path lock check: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts).
 - Toolbar additions: [Controls.svelte](di/src/lib/svelte/main/Controls.svelte).
 - Drawing-area removals: [Graph.svelte](di/src/lib/svelte/main/Graph.svelte).
-- Code-debt list: [code.debt.md](di/notes/work/now/code.debt.md) — the slider-move item is now off the list.
+- Code-debt list: [code debt.md](di/notes/work/now/code%20debt.md) — the slider-move item is now off the list.
 
 ### Verification — 2026-04-29 (continued, fifth)
 
@@ -2052,8 +2099,8 @@ Investigation, fixed: Jonathan reported that typing a new formula on a cell did 
 
 - Eyeball coupling: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Working features: [working features.md](working%20features.md).
-- Dead-link fixes (first pass): [work index](di/notes/work/index.md), [milestones index](di/notes/work/milestones/index.md), [code-debt list](di/notes/work/now/code.debt.md).
-- Dead-link sweep (second pass): docs config `di/.vitepress/config.mts`, [26.lacemaker.md](26.lacemaker.md), [32.facets.md](32.facets.md), [theory.md](theory.md), [32.facets handoff](di/notes/work/milestones/done/32.facets/handoff.md), [32.facets history](di/notes/work/milestones/done/32.facets/history.md), [bottlenecks](bottlenecks.md), [slow handoff](di/notes/work/milestones/done/32.facets/slow/handoff.md), [current work handoff](di/notes/work/now/handoff.md), [road map](road.map.md).
+- Dead-link fixes (first pass): [work index](di/notes/work/index.md), [milestones index](di/notes/work/milestones/index.md), [code-debt list](di/notes/work/now/code%20debt.md).
+- Dead-link sweep (second pass): docs config `di/.vitepress/config.mts`, [26.lacemaker.md](26.lacemaker.md), [32.facets.md](32.facets.md), [theory.md](theory.md), [32.facets handoff](di/notes/work/milestones/done/32.facets/handoff.md), [32.facets history](di/notes/work/milestones/done/32.facets/history.md), [bottlenecks](bottlenecks.md), [slow handoff](di/notes/work/milestones/done/32.facets/slow/handoff.md), [current work handoff](di/notes/work/now/handoff.md), [road map](di%20road%20map.md).
 - Tracing logs (still wired): [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte), [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Render.ts](di/src/lib/ts/render/Render.ts).
 - Propagate-skip guard removed: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts) — the loop in propagate no longer skips the edited object. Useful side fix during the investigation.
 - Length-syncing helper deleted along with its six call sites: [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts). The invariant pass alone keeps each axis consistent.
@@ -2110,7 +2157,7 @@ A two-column table of every keyboard binding in the app, grouped by the context 
 - Sibling-only name rule and its tests: [di/src/lib/ts/algebra/Errors.ts](di/src/lib/ts/algebra/Errors.ts), [di/src/lib/ts/tests/Errors.test.ts](di/src/lib/ts/tests/Errors.test.ts).
 - Token-rename helper: [di/src/lib/ts/algebra/Tokenizer.ts](di/src/lib/ts/algebra/Tokenizer.ts). Constraints helper that uses it: [di/src/lib/ts/algebra/Constraints.ts](di/src/lib/ts/algebra/Constraints.ts). Called from: [di/src/lib/svelte/details/D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - New reference doc: [key paths.md](key%20paths.md).
-- Code-debt list: [code.debt.md](di/notes/work/now/code.debt.md).
+- Code-debt list: [code debt.md](di/notes/work/now/code%20debt.md).
 
 ### Verification — 2026-04-20
 
@@ -2165,7 +2212,7 @@ A small shared font-size constant for these buttons was added in the constants t
 - Triangle hit area: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Banner left slot: [Hideable.svelte](di/src/lib/svelte/details/Hideable.svelte), [Details.svelte](di/src/lib/svelte/details/Details.svelte). Removed buttons from [D_Preferences.svelte](di/src/lib/svelte/details/D_Preferences.svelte) and [D_Library.svelte](di/src/lib/svelte/details/D_Library.svelte). Helper added in [Scenes.ts](di/src/lib/ts/managers/Scenes.ts).
 - Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
-- Code-debt list: [code.debt.md](di/notes/work/now/code.debt.md).
+- Code-debt list: [code debt.md](di/notes/work/now/code%20debt.md).
 
 ### Verification — 2026-04-19
 
@@ -2212,13 +2259,13 @@ A couple of small clean-ups along the way: removed an unused separator import fr
 
 ### Files touched — 2026-04-19 (continued)
 
-- File rename: [Dirty.ts](di/src/lib/ts/common/Dirty.ts) (was Stale_Writable.ts). Imports updated in [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Units.ts](di/src/lib/ts/types/Units.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts). File map: [map.md](di/notes/guides/project/overview/map.md).
+- File rename: [Dirty.ts](di/src/lib/ts/common/Dirty.ts) (was Stale_Writable.ts). Imports updated in [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Units.ts](di/src/lib/ts/types/Units.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Selection.ts](di/src/lib/ts/managers/Selection.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts). File map: [map.md](di/notes/guides/project/map%20of%20di%20files.md).
 - Face label font: [Render.ts](di/src/lib/ts/render/Render.ts).
 - Undo/redo fix: [Engine.ts](di/src/lib/ts/render/Engine.ts). New test: [History.test.ts](di/src/lib/ts/tests/History.test.ts).
 - Cross thickness: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte). Unused import removed in the same file.
 - Build notes: [builds.md](../../../src/lib/md/builds.md).
 - Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
-- Code-debt list: [code.debt.md](di/notes/work/now/code.debt.md).
+- Code-debt list: [code debt.md](di/notes/work/now/code%20debt.md).
 
 ### Verification — 2026-04-19 (continued)
 
@@ -2268,7 +2315,7 @@ Instrumentation was wired in so we could see where the paint actually spends its
 - Parts table component (triangle click, hide-children count, parts-count): [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
 - Events (keyboard arrows defer to generational helpers): [Events.ts](di/src/lib/ts/events/Events.ts).
 - Bottlenecks write-up: [bottlenecks.md](bottlenecks.md).
-- Code-debt list ticking items off: [code.debt.md](di/notes/work/now/code.debt.md).
+- Code-debt list ticking items off: [code debt.md](di/notes/work/now/code%20debt.md).
 
 ### Verification
 

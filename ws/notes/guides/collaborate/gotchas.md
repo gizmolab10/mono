@@ -1,8 +1,8 @@
 ---
-kind: refer
+kind: explain
 title: "Svelte Gotchas (ws)"
 description: "Cryptic Svelte failures and what actually caused each one."
-tags: [platform, debug]
+tags: [debug, platform]
 date: 2026-01-12
 ---
 # Lessons about svelte

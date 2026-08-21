@@ -9,6 +9,6 @@
   - do NOT convert pre-flight gates (always.md, pitfalls.md) — they need to be automatic
   - convert navigational shorthands to skills: `/cd`, `/revisit-di`, `/revisit-ws`
   - each skill is a `.md` file whose contents become the prompt when invoked
-  - example: `mono/.claude/commands/cd.md` → `Read ~/GitHub/mono/di/notes/work/code.debt.md and propose the first unchecked item.`
+  - example: `mono/.claude/commands/cd.md` → `Read ~/GitHub/mono/di/notes/work/code debt.md and propose the first unchecked item.`
 - [x] i want to learn about \[\[Agent Skills\]\] (visit [agentskills](http://agentskills.io)
 - [x] ws at the same time

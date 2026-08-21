@@ -1,0 +1,575 @@
+---
+kind: specify
+title: "Code Debt"
+description: "Running a project according to code debt changes the dynamic"
+tags: [now]
+date: 2026-08-19
+---
+# Code Debt
+
+Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
+
+offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
+
+
+## bugs
+
+- [x] stop -> Jeff
+- [x] SHIFT arrows browse the parts list even when it is closed
+    - [ ] strange behavior left, up, right, down
+- [ ] two door cabinet
+    - [ ] stretch top drawer up -> fubar!
+- [ ] drawer
+    - [ ] can't edit a dimensional -> fubar!
+- [ ] ref -> target is also a formula
+    - [ ] disappear on relaunch -> kitchen wall
+- [ ] select a part, undo -> fucks with many parts. relaunch fixes
+    - [ ] HINT: problem is with snapshot/load_scene
+- [ ] cannot rotate basement around z axis
+    - [ ] rear wall -> funky location
+- [ ] two blocks
+- [ ] buy a lot of AI generated most common misspellings of highest SEO ranking domains
+    - [ ] ask ai to build an ai that will sell them at a slight markup
+
+---
+
+### small
+
+- [x] title of parts -> root so name, keep number in parentheses
+    - [ ]  ellipsis in name
+- [ ] selection dots
+    - [x] solid
+    - [x] painted on top
+    - [ ] place on face -> largest screen area?
+        - [ ] drag dots move in THAT face's plane
+- [ ] print
+    - [ ] should not print
+        - [ ] visible shelves when option is down
+        - [ ] secondary controls
+    - [ ] wrong when zoomed in (clipped)
+    - [ ] blurry, need the other solution
+- [ ] measure my basement -> then mod the scene
+- [ ] mobile
+    - [ ] thinner gaps
+    - [ ] still too wide
+    - [ ] css craziness -> css configurator -> common_size
+    - [ ] edit always disabled
+- [ ] [[27.selection.algorithm]]
+    - [ ] create new group around selected objects
+    - [ ] ability to combine multiple SOs
+- [ ] previous milestones
+    - [ ] [[21.css.engine]]
+    - [ ] [[16.formulas]]
+    - [ ] [[19.angles]]
+    - [ ] [[25.errors]]
+    - [ ] [[8.dimensionals]]
+    - [ ] [[18.givens]]
+    - [ ] help
+        - [ ] complete & excellent
+
+---
+
+### sell
+
+- [ ] sell di subscription/license
+    - [ ] [[30.licensing]] 
+
+---
+
+### next version
+
+- [ ] arrow keys nudge SO position
+- [ ] COMMAND drag -> translate camera
+    - [ ] mouse wheel zoom in
+    - [ ] pan = wheel and command
+- [ ] dimension slider with toggle
+    - [ ] band / cutoff
+- [ ] givens for angles
+- [ ] re-pause item 3.6 of 'open items.md' line 133
+- [ ] ability to export an SO -> file
+    - [ ] export button below part name, with duplicate and divide
+    - [ ] when the selection is the root, change it to save
+- [ ] move swap x y to p attributes
+    - [ ] needs careful thinking about x/z and y/z
+- [ ] sliders have two modes --
+    - [ ] (1) option click moves one increment in the direction towards the location of the click
+    - [ ] (2) click moves the thumb to that position
+- [ ] ability to wander through a design
+- [ ] convert button 'create a template' -> stud/joist / stair segmented
+- [ ] layers -> wall, beam, post, stairs, generic
+    - [ ] layer tag
+        - [ ] in SO
+        - [ ] list
+        - [ ] custom creator
+- [ ] draw a wall from point to point
+
+---
+
+### AI
+
+- [ ] read article. analyze code -> write according to it
+- [ ] read the app code base and write a formal, machine-readable specification, that when followed by you can reproduce the app
+- [ ] clean up guides again
+    - [ ] does our current organization make sense?
+- [ ] move logic driven design -> alongside always
+    - [ ] convert to instructions that can do the heavy lifting
+- [ ] read all the work md files and summarize the organization
+- [ ] [[cadence]]
+- [ ] Gemini pro is only $20
+- [ ] AI coolness: <https://medium.com/@gaddamnaveen192/ai-replaced-80-of-coding-only-these-7-skills-are-left-128e13d3020d>
+- [ ] what went wrong with [[s3]]?
+- [ ] collaboration
+    - [ ] log files for memory
+        - [ ] single source of truth
+        - [ ] proof of cause
+            - [ ] all we have is "it was done before i woke just now"
+        - [ ] impossible gob of file memory
+- [ ] write a claude forum article
+- [ ] [great conversation with Pete](https://jonathan-and-pete-2026-02-19.peterkaminski.wiki/Conversation_Flow)
+
+---
+
+## paid
+
+- [x] **Move** the road map out of `work/now/` into `notes/designs/`, where ji keeps its own.
+- [x] **Create** [map of di notes](../../guides/project/map%20of%20di%20notes.md) — di had none.
+- [x] **Move** both maps from `guides/project/overview/` up to `guides/project/`, and **rename** `code.debt.md` and `code.debt.paid.md` to `code debt.md` and `code debt paid.md`.
+
+### 2026-08-19 — The details column becomes a stack
+
+- [x] implement the sections spec in di — a run of sections with a separator centred in every gap. `Action` and `Stacked` are new, the separator carries what a caller builds at three places, and `Stack` came across mended to di's own ladder throughout, with one new rung: `k.height.folded`, the floor a fold can never go below.
+- [x] `Hideable` folded into the stack — each of its five uses is now a section. A section's word rides the middle of the separator above it and folds that section when pressed; its buttons ride the two ends, where they stood inside the banner. The banner element is gone, and with it its height, its radial fill and its two pinned corners.
+- [x] a separator can be told how thick to draw and how far to reach — the details column says zero for the reach, so a line's ends and their flares stand inside the column instead of past the edge that clips it.
+- [x] the accent moved off the ground and into the folds — the column behind the stack and every line on it were both accent, so a 1px line and its gap read as one 11px band. The ground is page color now, and the accent shows only where a section is folded.
+- [x] the three add buttons draw their mark — `x_cross` turned a quarter turn, so one path serves both the X elsewhere and the plus here. Each carries its own name.
+- [x] one padding for every button that carries words, `--l-padding` left and right. The seven in the primary row had been taking the browser's own, since `.toolbar-button` set none.
+- [x] `blend` answered `offwhite`, which is not a color the browser knows — every blend down that path drew nothing, and its test had been failing. It answers `lightgray` now.
+- [x] `NodeJS.Timeout` was named in di, ji and ov with no project asking for `@types/node`; it resolved only because something else happened to install it. All fourteen ask `setTimeout` what it answers with instead.
+
+### 2026-07-04 — Root dimensions, hover tag, pure-number constants
+
+- [x] dimensionals for root should appear — the root part now gets dimensions like any part, and shows them even when the root is invisible; the hover tag reads the root's own name at full size.
+- [x] hover tag missing "width (x)" — the tag now names the axis and length whenever the cursor is over any part of a dimensional (its label or a line), even when a part sits behind it and even with edit locked.
+- [x] constants can be pure numbers — a bare number is kept as a plain scalar (0.23 stays 0.23, usable in formulas), anything with a unit stays a measurement. Fixed: a leading-dot number (.23) used to fail to parse and silently discard the edit; the pure-number kind is preserved through propagation, save, and both scene-load paths. A scalar whose decimal repeats (1/3, 2/3, 1/6) shows as a fraction; a terminating decimal stays decimal.
+- [x] save/edit buttons moved into the parts banner — save on the banner's left, edit on the right just before the plus; both removed from the top toolbar. Phone layout (which never showed them) now has them too.
+- [x] hover a midpoint → the floating tag names its axis (the axis that edge runs along), the same way a dimensional's tag does. COMMAND-C over a midpoint puts the part name plus the short axis letter (name.w / .d / .h) on the clipboard, matching the dimensional COMMAND-C.
+- [x] selection dots → drawn on top — the selection and hover dots now render after the dimensions and angulars, so they sit above those too, not just the part geometry. (Sub-item of "selection dots"; the rest of that item stays open.)
+- [x] with edit locked, nothing in the details is editable — every edit path across the details refuses and every control shows disabled/greyed when the lock is on: the angles editor (typed value, slider thumb, ±90, swap, reset, rotation-order arrow, and its hover), the attributes table (formula/number inputs, invariant marker, lock toggle, and its hover), the selection name field, the constants table (name/value, lock, remove), the repeat editor (repeat/unrepeat, run/rise axes, spacing and gap sliders, firewall, wall/stairs, add-master), the dimensional hover pill, the parts/constants plus buttons, the selection's divide-in-half and duplicate buttons, the unrepeat button, and drag-and-drop reparenting in the parts list. The shared slider gained a disabled state (thumb can't drag, no hover highlight).
+- [x] banner button text was not black — the banner was a `<button>` holding the action `<button>`s (invalid nesting), so the browser reparented them and their `color: inherit` picked up the wrong ancestor. The banner is now a `<div>` (toggle still runs through the position-based hit system), so the action buttons nest validly and inherit the banner's black.
+- [x] plus (add-child) button moved from the parts banner to the selection banner.
+
+### 2026-07-03 — Attributes editor
+
+- [x] option to group attributes by axis — a persisted "sle" ↔ "xyz" toggle sits between the segmented control and the table. In sle it groups by start/length/end (left key s/l/e, name column the axis letters). In xyz it regroups the nine rows by axis (left key x/y/z, name column start/length/end repeating down each group). Root and invariant cell-merging reworked to hold under either grouping. Visual-confirmed by Jonathan.
+
+### 2026-07-01 — Dimensionals
+
+- [x] dimensions redraw on hover — hover no longer clears the prior valid list, so nothing repositions; the hovered part only adds/removes its own dimensions.
+- [x] hover and select included in dimension slider count — the count now draws the largest N of the whole valid list (selected/hovered among the largest count as one of the N; below the cut they still draw). Moving the slider re-picks without repositioning.
+
+### previous
+
+- [x] on hover, draw a pill (rounded-rect) border around the hovered dimension's label, in the hover color — only the dim under the cursor (matched by part + axis)
+- [x] selection / dimension / hover colors derived from the edge color, contrasting it and white
+    - [x] edge is the single source; colors rotate around the wheel from it: selection +90°, dimensionals -90°, hover +180°, each darkened if too light for white
+    - note: final design used the edge color as source (not the part color) with three rotations; the accent/polygon and angle variants were not pursued
+- [x] display the current quot in the status strip, when not showing something else
+- [x] create tests for the new dimensionals rules
+- [x] when option key is down, only show invisible SOs and their dimensionals
+- [x] suggest tests for recent work
+- [x] add more ticks to logarithmic scaling slider (EVERY multiple of 10)
+    - [x] multiply the label values by 10
+- [x] primary controls -> put all the segmented together at the right
+- [x] narrow window -> extra rows in secondary controls
+- [x] eliminate breadcrumbs
+- [x] add undo redo horizontal Stepper buttons (size = 33) in Controls, to immediate right of edit button
+- [x] thumb buttons always white, not depend on accent color
+- [x] rename Controls -> Primary_Controls
+    - [x] create a new component Secondary_Controls
+        - [x] move both bands from Main into Secondary_Controls
+- [x] cannot read guides or scaling when accent is too dark
+    - [x] in Colors.ts, compute luminance of accent
+        - [x] make thumb, track and focus depend on accent
+        - [x] when light, make thumb, track and focus darker
+        - [x] vice-versa (when light, make dark)
+- [x] in parts table, when a row title is focus, the row height changes
+- [x] add count of parts to parts banner title (eg, '52 parts')
+- [x] remove first column of parts table
+- [x] cannot edit Z in 2D
+    - [x] movement in the z axis seems to be disabled
+        - [x] i can adjust position in x or in y, but not z
+- [x] scene tumble in 2D is very very very slow
+    - [x] grid!
+- [x] add glow to + buttons
+- [x] v scroll appears a bit too early (everything still fits)
+- [x] replace _ with space in UI, restore it internally
+- [x] insert -> not write .l into inserted child's l formulas
+    - [x] test: add a 2-drawar cabinet to wacka
+- [x] bring the \[\[working features\]\] table up to date
+- [x] add a sep
+    - [x] below att/ang/rep set control in p selected
+    - [x] above show constants
+- [x] selecting often fails
+- [x] rename test -> hit_test
+- [x] convert Stores into a class
+- [x] ability to export/import to/from file
+- [x] new children spontaneously appear
+- [x] steppers hop up and down in build notes
+- [x] convert Orientation functions into a class
+- [x] SO should use its internal id for hierarchy/formulas
+- [x] add child should apply to current selection
+    - [x] **bug:** click on button -> selects root
+- [x] add new child -> wrong dimensions
+    - [x] algorithm: using smallest length of parent, divide that in half, use that for all dimensions
+    - [x] assure that the child axes all align with the parent's axes
+    - [x] after adding, select the parent
+- [x] cruft
+    - [x] consolidate redundancy
+    - [x] simplify over-engineering
+    - [x] remove inconsistencies
+    - [x] ameliorate structural risks
+- [x] delete selected SO
+- [x] hover/click should hit the front most SO
+- [x] hide occluded dimensionals
+- [x] performance analysis -- app is VERY unresponsive
+- [x] build number button -> bottom left of canvas
+- [x] remove "Details" label from details
+- [x] background color picker -> details same row as edge color, and make it the left most
+- [x] add details hamburger (copy from ws project)
+- [x] use hit target for ALL buttons and segments
+- [x] research scene model
+- [x]  move all Angle and Polar code from Coordinates to Angle
+    - [x] including thin delegates
+- [x] pac: combine all *\*Rect* interfaces
+- [x] find all the build numbers (milestones) and dates -> build notes
+- [x] rebuild SO with 2 single-axis rotations
+    - [x] from which, quaternion is derived
+- [x] **ABANDON:** see through -> all, add "back"
+- [x] organize architecture notes
+- [x] version 4: attr serial -> orig, ext, len, angle
+- [x] interpretation -> wait until approved
+- [x] delete -> delete selected AND its entire subtree of SO
+- [x] integrate \[\[simplicity\]\] -> \[\[workflow\]\]
+- [x] \[\[17.library\]\]
+- [x] get claude vscode == plugin
+- [x] tumble ALWAYS applies to root SO
+    - [x] OPTION tumble -> applies to selected SO
+- [x] values in attr tables should be offsets, not absolutes
+- [x] choose an SO (buttons at top of graph) -> select most front facing face
+    - [x] as root tumbles -> update selection to select (possibly different) most front facing face
+- [x] save button should use SO's name for file name
+- [x] remove all children button should also remove all sd constants that are no longer referenced
+- [x] rename standard dimensions -> user constants
+- [x] not all user constants got removed by delete all children
+    - [x] verify that those that remain are NOT referenced !!! but do NOT remove them
+    - [x] debug delete all children
+- [x] hover -> enabled cells
+- [x] pac: in all code files, use tabs that are 4 (not 2) spaces
+- [x] show computed count (not funky equation)
+- [x] segmented control attributes / repeater (only appears for repeaters or on clicking repeat)
+- [x] when resizing root change = 2 times mouse drag
+- [x] change "selection" to "smart object" and D_Selection -> D_Smart_Object
+- [x] move instructions (above) for configuring repeaters -> mono/di/notes/user manual/repeaters.md
+- [x] rename list -> hierarchy
+- [x] backward compatibility -- describe current design reading a file that is v1 → \[\[di/notes/architecture/core/migration|migration
+- [x] preferences
+    - [x] move units system button to top far right
+    - [x] move reset button to bottom right
+    - [x] separator directly above line thickness slider
+- [x] red dots for occluded and disabled
+- [x] set_invariant synced length from raw .value instead of get_bound(), corrupting child SO geometry
+    - [x] BUG: open the drawer from the library. selected the front SO. click the cross box in row d. the correct formula appeared (Y - y) with the formula for Y blanked, the values unchanged. the drawing looked fine. THEN, check the cross box in row Y. the value for y changed (to a large negative number, and the value for Y to an even larger negative number) and the drawing not so nice. explain
+- [x] row span for root disallowed formulas and "s" values (they are always 0)
+- [x] details rename banners -> parts, selected parts (from assembly and selection)
+- [x] re-enable stretching origin (for any given axis) of root
+    - [x] -> by adjusting length such that end remains fixed (for that axis)
+    - [x] dragging the end point -- disallow making the length negative -> at the moment of length == 0, switch to dragging the start point
+- [x] the root face selection dots that are red -> blue
+- [x] cannot insert stretch into a new SO
+    - [x] was working
+    - [x] click + in library banner
+    - [x] option click on stretch in library
+    - [x] red dots appear on hover over nothing
+    - [x] relaunch stretch appears
+- [x] always draw the root's bottom rect (faint stroke = grid's selected SO stroke)
+- [x] resizing the window makes the drawing blink a lot. surely it does NOT need to re-render, only shift what is already rendered?
+- [x] straighten & orientation controls -> favor bottom at bottom OR front at bottom
+- [x] select root SO on click a library item (replaces the root) AND on launch if nothing is currently selected
+- [x] shrink to fit broken
+    - [x] relaunch increases depth much farther than farthest SO
+        - [x] fix: `set_bound` on compiled attrs stored absolute value; `get_bound` added parent offset again (double-count)
+    - [x] enhancements moved to \[\[7.edit.drags\]\] § Enhancements
+- [x] rewrite rotation code
+    - [x] add proposal to \[\[di/notes/work/done/rotation\]\] for rotating (leave swapping alone)
+    - [x] manual test fails: rotate drawer -> dreadful
+        - [x] only some of the children of the rotated SO actually rotate
+- [x] put all "<->" on right side of buttons
+- [x] guide files:
+    - [x] rename versions.md -> references.md
+    - [x] rename migration.md -> versions.md
+    - [x] merge enlarged.algebra.md into notes/architecture/core/algebra.md
+        - [x] remove cruft
+- [x] algebra cannot parse ".l - top_drawer.l"
+- [x] constants -> values
+- [x] the invariant formulas are distracting. hide them
+- [x] rename user constants -> givens
+- [x] \[\[version.9\]\] portable format
+- [x] file name
+    - [x] take root object name it
+    - [x] no underscore (-> space) in them
+- [x] cyclic formula refs -> default to 0
+    - [x] want: "capture the last user choice"
+    - [x] a new kind of idea: "these two are the same"
+        - [x] ref a constant
+            - [x] drag does not update the constant
+- [x] invert the order of the breadcrumb buttons
+- [x] add another col to attr table before first col: s, l, e
+- [x] change the order of axis rotations (eg y then x)
+    - [x] sphere symmetry bug
+    - [x] UX to reorder axes
+        - [x] show the current rotation order
+        - [x] new column with a down pointing triangle
+        - [x] add action to click ->
+        - [x] buttons with the order
+            - [x] swap first two
+            - [x] swap last two
+            - [x] swap first and last
+        - [x] permutation
+            - [x] three things taken three at a time
+            - [x] nine buttons, ick
+- [x] after drag, mouse up -> repositions / jumps / unintuitive / unexpected / feels unreliable & inconsistent
+- [x] duplicate button -> recursive
+- [x] visible children button -> new column, before eye column
+- [x] add "3 of 24" at right of edit title when not showing parts
+    - [x] move to left of title input, when not showing parts
+    - [x] add new first column to parts table, for sibling number, when showing parts
+- [x] alter the text of the hide-show toggle in the parts table title row
+    - [x] show / hide xxx parts (xxx = total number of SOs, not including clones)
+    - [x] The count of non-clone parts is: `$w_all_sos.filter(s => !is_clone(s, $w_all_sos, $w_tick)).length`. I also need to subtract 1 for the root (since the root is not really a "part" users think of). Let me check if the parts table shows the root.
+- [x] in the root row of the parts table, make the first eyeball cell blank (root always shows children)
+- [x] hierarchal triangles
+    - [x] larger
+    - [x] generational -> each click hides a generation, depth first
+        - [x] **click** computes the deepest, then reveals (**OPTION** hides) those
+        - [x] triangle points right only for all hidden
+- [x] when children are hidden -> show number of progeny in place of hyphen
+- [x] move "factory reset" and "reinstall" to their respective glow banner, at the left, without moving the title
+- [x] layout of separators needs larger/uniform gaps
+- [x] increase font size for face labels
+- [x] hover color
+    - [x] lines
+        - [x] lines fatter and colored red
+        - [x] hue shift from lines color
+- [x] redo for undo
+- [x] cross is too faint in attributes table
+- [x] to convert an SO into a repeater:
+    - [x] in empty repeat area (SO has no child), add button to add child for template
+        - [x] identical to SO
+- [x] edit formula -> immediately recompute value
+- [x] parent is-visible eyeball -> toggles both self and children
+- [x] eliminate position/size columns from parts table
+- [x] \[\[16.formulas\]\]
+- [x] stipulations -> tests -> code
+- [x] attributes table -> "-" cell -> lock (value)
+- [x] new implicit 'c' -> exact center between start and end
+- [x] add a new stipulation and new tests for givens
+    - [x] givens can be locked. locked givens cannot be target of reverse propagation
+- [x] lock ignored on givens AND attributes
+- [x] move scaling slider to controls. layout for:
+    - [x] desktop: two control rows:
+        - [x] first row same as current
+        - [x] second row guides slider horizontal left justified, scale right justified
+    - [x] mobile: two rows:
+        - [x] first has hamburger,
+- [x] controls have too much separation
+- [x] v scroll in details -> update hit rects
+- [x] parts table
+    - [x] drag and drop
+- [x] collapse parts tree not stuck on selected -> select the collapsed SO
+- [x] bring guides up to date
+- [x] launch with editing enabled and "straightening" magnet turned off
+- [x] add screenshots of first steps
+- [x] analyze how ws reads and captures query strings
+    - [x] add that capability to managers/Configuration.ts
+    - [x] query strings "clear preferences"
+    - [x] move the App on mount code -> Configuration "configure_css"
+- [x] rename user manual -> reference guide
+    - [x] create new folder "user guide"
+    - [x] move first.steps into it
+    - [x] update index
+- [x] incorporate user guide into app
+    - [x] move md files and images into /src
+    - [x] "?" button in lower right corner of graph
+- [x] stipulations <-> code
+    - [x] distribute -> components?
+- [x] help
+    - [x] move reference guide -> src/manual
+    - [x] keep hamburger visible
+    - [x] hamburger -> sidebar visibility toggle
+    - [x] new preferences\`
+        - [x] hamburger help visibility
+        - [x] deploy help page id in preferences so revisit help goes to last-visited help content
+- [x] white thumbs on all sliders
+- [x] click plus button in parts banner -> opens (if closed), selects new part
+    - [x] do not create a child if selected SO is a repeater or a clone
+    - [x] hide plus button in parts banner when selected SO is a repeater or a clone
+- [x] ability to cut an SO in half
+    - [x] a "cut" button to the left of the existing "duplicate" button
+    - [x] cut longest (plain length value) dimension
+        - [x] refuse if two longest dimensions are equal
+        - [x] show error in status strip
+    - [x] repeaters -> duplicate the template (so both halves have an identical copy)
+        - [x] produces two repeaters (each with its own template)
+    - [x] a clone or a template or any part that has children -> refuse
+        - [x] hide the cut button
+    - [x] formulas -> duplicated except on axis being cut
+        - [x] each half gets a revised formula such that their values are exactly half the original's length on that axis
+            - [x] leave the invariant formula alone. it is, ahem! invariant
+            - [x] if the invariant is 'l' alter the 'e' of the original and the 's' of the new, to place them exactly half way
+            - [x] if the invariant is 's' divide the 'l' in half and set 'e' in the original to be half way
+            - [x] if the invariant is 'e' divide the 'l' in half and set 's' in the new to be half way
+            - [x] "half way" means: "alter the formula such that the value is half way"
+                - [x] if no formula, "compute and set the value to be half way
+    - [x] expand "duplicate" helper
+        - [x] original keeps its current name and the new sibling gets a numeric-suffix name (matching the duplicate routine's naming)
+    - [x] new half becomes the selected part
+- [x] add a separator between
+    - [x] attributes table and show/hide givens button
+    - [x] parts table and duplicate button row
+- [x] new 'part' banner
+    - [x] mentions-> when nothing is selected
+    - [x] attributes angles repeats
+- [x] remove first column of parts table
+- [x] shrink gab below show givens button
+- [x] on clicking '+' button in givens row -> focus on new given's title cell
+- [x] convert givens into a hideable (D_Givens)
+    - [x] move givens '+' button into banner
+    - [x] givens plus button should end editing (and commit the change)
+- [x] **hover** on left-side banner button should change background to white (not --bg)
+- [x] trash, eyeball, lock
+    - [x] hover -> change **icon** color to white
+    - [x] vertically center in table cell
+    - [x] add a 'x' column at the right side of parts table  -> click deletes that part, undo restores it
+- [x] vertical scroll bar -> should widen details so content width stays constant
+- [x] print just the graph, scaled to fit
+- [x] area below last details -> accent color and remove fillets from under last hideable
+    - [x] convert all the hideables (content) into having rounded corners
+        - [x] exactly preserving the current look
+        - [x] remove the separators from the details
+- [x] move the '?' to the right, and the 'return to design intuition' button
+- [x] on launch, none of the `face_buttons` are selected
+- [x] move the guides slider into the graph, bottom right corner, vertical slider
+- [x] `<button class='toolbar-button' onclick={onclose}>← Back</button>` in user guide -> Close Button svelte component
+- [x] reverse appearance (including hover) of banners when hideable is visible — **decided: not needed** (tried it, looked worse than current; reverted)
+- [x] move axis indicator decorations to the frontmost three faces
+- [x] selection banner
+    - [x] name of selected SO
+        - [x] dynamically reacts to editing
+    - [x] 'nothing selected'
+        - [x] ignore click / hover
+        - [x] automatically hides when last selected item is unselected
+- [x] when nothing selected -> automatically hide selection banner
+    - [x] revert the "automatically hides when last selected item is unselected"
+- [x] parts table
+    - [x] rounded corners on background of selected part
+    - [x] same rounded shape on hover (added on completion)
+- [x] i want an "are you sure" popup to appear when user clicks or taps delete (anywhere)
+- [x] divide the graph into three views: 1) at top the scaling slider, 2) graph in the middle 3) at bottom a row with build at left and guides slider (horizontal) at right. 1 and 3 should have --accent as background color and 2 should still have rounded corners
+    - [x] move scaling slider to top of graph
+    - [x] add a dark band at the bottom for build button and guides slider
+- [x] hover on an SO in the graph -> name popup
+    - [x] hover popup also appears on the selected SO (added on completion)
+    - [x] ~~ignore if names is selected in view-mode segmented control~~ (reversed: popup shows regardless of the names decoration)
+- [x] crowded dimensionals — 25-rule force-directed placement system
+    - [x] hand-rolled spring/repulsion/damping simulation with persistence across paints
+    - [x] dedup by text everywhere in the drawing
+    - [x] hover behavior: bold text, thicker witness and dimension lines, smart object highlight, name popup with ancestry path and axis
+    - [x] silhouette is the convex outline of all visible leaf smart objects' projected vertices
+    - [x] push each dimension outside the silhouette plus a margin, cap at 80 pixels, only use directions within 30 degrees of perpendicular to the camera, pick the one with the smallest clearance, and only if the resulting witness line fits 120 pixels
+    - [x] drop unfit dimensionals (off-canvas label, witness too long after the force simulation moves it)
+    - [x] stop-when-settled to remove background flicker
+    - [x] diagnostic statistics: rolling averages of collected / duplicate / exceed / off-canvas / drawn, console line on change, status strip showing dropped average
+    - [x] full rule set lives in [[di/notes/work/now/dimensionals]]
+- [x] move status line into bottom bar, white text for status, red for warning or error
+- [x] simplify crowded dimensionals
+- [x] hide givens too when nothing selected
+- [x] highlight the parts row when hovering on an SO in the drawing
+- [x] make the hover color a light version of accent
+    - [x] new live hover color value derived from accent (about halfway between accent and white)
+    - [x] dark-accent guardrail (fallback to soft light gray if lightener returns the null string)
+    - [x] wired as a fifth color through the styling pipeline; replaces accent in the hover slot
+- [x] when hovering on a part, highlight that SO in the drawing
+    - [x] mouse enter on parts row → drawing's hover signal set to that row's object's front-most face
+    - [x] mouse leave → hover signal cleared
+    - [x] reuses existing drawing-side highlight and name-popup machinery
+- [x] rewrite rule 10 from crowded dims
+    - [x] show dimensions for invisible smart objects only while OPTION is held
+    - [x] drop the leading period in the hover popup when the ancestry path is empty (root smart object)
+- [x] move the scaling slider row to the bottom above the build / guides row
+- [x] make top and bottom band the full window width
+    - [x] move from Graph.svelte to Main.svelte
+- [x] OPTION key shows invisible SOs using x-ray
+    - [x] wireframe paint for invisible objects is fully opaque while OPTION is held (instead of fading with grid)
+    - [x] invisible root shows ALL its edges while OPTION is held (instead of only the bottom-face floor rectangle)
+    - [x] hit-test no longer skips invisible objects while OPTION is held; hovering a revealed object produces the name popup
+    - [x] dimensions sub-bullet was already done during the rule-10 rewrite
+- [x] Steppers -> bigger and horizontally laid out (pointing left and right)
+- [x] create tests for the new dimensionals rules
+- [x] display the current quot in the status strip, when not showing something else
+- [x] describe the complete dimensionals placement algorithm -> guides/architecture/graph/dimensionals.md
+- [x] make a new rules folder inside development
+- [x] proceed with dimensionals.work, record progress in handoff
+- [x] begin work on dimensions [[uniface rules]]
+    - [x] what is missing?
+    - [x] proposal for transition
+- [x] analyze dimensionals code and write a new file "now/dim.spec.md" with a complete, well organized description of what it does, written in the form of numbered rules
+    - [x] clean it up, dead wood, open issues, lexicon, tests
+- [x] controls -> segs first
+- [x] scan all notes in di and mono and update all links and file name references
+- [x] major filename overhaul -> remove the 'di ' wherever it was added, updating all refs
+- [x] rewrite the banned words hook to read the md file
+- [x] pause work on "simplify and perfect the flag-off case"
+- [x] implement 'open items' line 111
+- [x] add a new slider -> controls, default = 2
+    - [x] remove dimensions from the segmented control
+- [x] slide thumb all the way right, slide it back to original position -> canvas is blank. refresh -> drawing reappears
+- [x] for parts -> hover and select should work with edit turned off
+- [x] paste buffer, COMMAND-C puts
+    - [x] when a dimensional is hovered -> the full name from root to {width, depth, height}
+    - [x] when a part is hovered -> the full name from root to part name
+- [x] slider for how many dimensionals appear
+- [x] on hover over a part or a dimensional
+    - [x] OPTION-C copies the label to the paste buffer
+    - [x] change the dimensional color to red
+    - [x] over a part -> also highlight all its dimensionals
+- [x] when a dimensional is being edited, also highlight its SO and its other dimensionals
+- [x] rename x ray -> wireframe
+- [x] sliders: scaling -> eliminate triangles
+- [x] mouse hover should be turned off when mouse leaves canvas
+- [x] move all paused, open and proposals from handoff to open items
+- [x] app.svelte has stale cruft (browser DOES invoke it via Cmd+P)
+    - [x] move the print code into a new Print manager (managers/Print.ts), wired by print.register()
+    - [x] move all App.svelte global styles into css/app.css, imported by main.ts
+    - [x] App.svelte now holds only the color effect, print registration, and the layout component
+- [x] width constants need to depend on browser's zoom factor (the layout now re-flows on browser zoom)
+    - [x] the limits compare the plain measured width, which already shrinks on zoom, so zoom-in crosses the limit and re-flows
+    - [x] visually confirmed re-flow on zoom
+- [x] move from managers to utilities: Print, Status, and Versions
+    - [x] moved Print and Versions into utilities (files, both index barrels, all importers repointed)
+    - [x] Status kept in managers by decision — it owns a writable store (Status.ts:12)
+    - [x] svelte-check clean, all 842 tests pass
+- [x] rename Testworthy_Utilities -> Utilities
+    - [x] file and class renamed; export renamed tu -> u; test renamed; index and Units.ts repointed
+    - [x] svelte-check clean, all tests pass
+- [x] **DISAPPROVED:** arrowheads should be drawn in perspective, not flat relative to the screen
+    - [x] built it (3D triangle in the dim line's plane, near-constant ~6px); Jonathan disapproved — the arrowheads took on too many different triangle variations and the effect was not worth it
+    - [x] reverted to the original flat arrowheads; svelte-check clean, 842 tests pass
+- [x] thicknesses for lines, see [[di/notes/work/now/handoff]]
+    - [x] The code has lots of thicknesses hand coded. Let's use Constants line 114
+- [x] edit dimension labels
+    - [x] retain font size
+    - [x] pill border -> dashed
+    - [x] can grow/shrink as text changes
+- [x] allow constants to be pure numbers
+    - [x] convert decimals to fractions
+- [x] dimensionals for root should appear

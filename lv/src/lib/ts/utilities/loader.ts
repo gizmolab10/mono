@@ -10,9 +10,9 @@ const rawMdModules = import.meta.glob<string>('/src/md/**/*.md', {
   eager: true,
 });
 
-// images: load every image under src/assets as a bundled URL.
+// images and movies: load every one under src/assets as a bundled URL.
 const assetModules = import.meta.glob<string>(
-  '/src/assets/**/*.{png,jpg,jpeg,gif,svg,webp,avif}',
+  '/src/assets/**/*.{png,jpg,jpeg,gif,svg,webp,avif,mov,mp4,m4v,webm}',
   {
     query: '?url',
     import: 'default',
@@ -23,11 +23,15 @@ const assetModules = import.meta.glob<string>(
 export type MdMap = Map<string, string>;    // file name (no .md) -> contents
 export type AssetMap = Map<string, string>; // file name (with extension) -> URL
 
+// One photo in a gallery: the file's own name, and the address the build gave it.
+export type Photo = { name: string; url: string };
+
 // One page on disk: its name (no .md), the folder it sits in ('' at the top
 // level), and its raw text.
 export type MdEntry = { name: string; folder: string; text: string };
 
 const MD_ROOT = '/src/md/';
+const ASSET_ROOT = '/src/assets/';
 
 function basename(path: string): string {
   return path.substring(path.lastIndexOf('/') + 1);
@@ -64,6 +68,45 @@ export function loadMdEntries(): MdEntry[] {
     entries.push({ name: stripMdExt(basename(path)), folder: folderOf(path), text });
   }
   return entries;
+}
+
+// Returns a map from folder name to that folder's photos, in name order. The
+// folder is the one directly under `src/assets/`; images sitting at the top of
+// assets belong to no folder and are left out. This is what a gallery reads:
+// `loadAssets` keys every image by its own name alone and forgets where it sat.
+export function loadAssetFolders(): Map<string, Photo[]> {
+  const folders = new Map<string, Photo[]>();
+  for (const [path, url] of Object.entries(assetModules)) {
+    const rel = path.startsWith(ASSET_ROOT) ? path.slice(ASSET_ROOT.length) : path;
+    const slash = rel.indexOf('/');
+    if (slash === -1) { continue; }
+    const folder = rel.slice(0, slash);
+    const name = basename(path);
+    const photos = folders.get(folder) ?? [];
+    photos.push({ name, url });
+    folders.set(folder, photos);
+  }
+  for (const photos of folders.values()) {
+    photos.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  }
+  return folders;
+}
+
+// A folder name, flattened for matching: case ignored, and a space, a hyphen
+// and an underscore all read as the same character. A folder on disk cannot
+// hold a space, so a page asking for "The Vineyard" finds "the-vineyard".
+function flatten(folder: string): string {
+  return folder.trim().toLowerCase().replace(/[ _-]+/g, '-');
+}
+
+// The photos in one folder, in name order. Nothing at all for a folder that is
+// not there.
+export function photosInFolder(folder: string): Photo[] {
+  const want = flatten(folder);
+  for (const [name, photos] of loadAssetFolders()) {
+    if (flatten(name) === want) { return photos; }
+  }
+  return [];
 }
 
 // Returns a map from image file name (with extension) to bundled URL.

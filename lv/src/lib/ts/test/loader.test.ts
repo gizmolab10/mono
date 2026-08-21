@@ -23,7 +23,7 @@ describe('md file loader', () => {
   });
 
   it('hands back the actual text of a file', () => {
-    expect(map.get('Page 1')).toContain('another photo');
+    expect(map.get('Page 1')).toContain('Another page');
   });
 });
 

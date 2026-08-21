@@ -68,7 +68,7 @@ These corrections have not been applied to the file. They are queued.
 - Two pre-existing type-check errors fixed (unused import, moved field reference).
 - One linter blank-line cleanup in the project map file.
 - The new work file `bottlenecks.md` itself (created, populated, restructured several times).
-- The map file updated to include the new work file: [map.md](di/notes/guides/project/overview/map.md)
+- The map file updated to include the new work file: [map.md](di/notes/guides/project/map%20of%20di%20files.md)
 - One memory update: the feedback rule for pre-existing errors now says "always fix" instead of "report and ask."
 
 ---
@@ -102,7 +102,7 @@ Jonathan reorganized everything under `di/notes/work` into new top-level folders
 
 ### What I did
 
-**Updated the project map** ([map.md](di/notes/guides/project/overview/map.md)). The "Notes — Work" section was a flat list of files that no longer existed. I rewrote it into seven groupings that mirror the new folder layout: plan, now-slow, now-facets, next, milestones (open), milestones (done), and done. Every file currently in the new structure is now listed under its correct grouping.
+**Updated the project map** ([map.md](di/notes/guides/project/map%20of%20di%20files.md)). The "Notes — Work" section was a flat list of files that no longer existed. I rewrote it into seven groupings that mirror the new folder layout: plan, now-slow, now-facets, next, milestones (open), milestones (done), and done. Every file currently in the new structure is now listed under its correct grouping.
 
 **Updated the shorthand file** ([notes/guides/pre-flight/shorthand.md](notes/guides/pre-flight/shorthand.md)). Three table rows pointed at paths that no longer existed:
 
@@ -113,7 +113,7 @@ Jonathan reorganized everything under `di/notes/work` into new top-level folders
 **Updated the two slash command files**:
 
 - [.claude/commands/di.md](.claude/commands/di.md) — `revisit.di.md` is now under the `plan/` folder.
-- [.claude/commands/cd.md](.claude/commands/cd.md) — `code.debt.md` is now under the `plan/` folder.
+- [.claude/commands/cd.md](.claude/commands/cd.md) — `code debt.md` is now under the `plan/` folder.
 
 **Updated this handoff file's own self-reference**. The "files touched this session" line for the bottlenecks file pointed at the old path. Updated to the new path with a parenthetical note about where it used to live.
 

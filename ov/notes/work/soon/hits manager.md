@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: explain
 title: "hits manager"
 description: ""
 tags: [soon, program]

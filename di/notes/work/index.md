@@ -9,7 +9,7 @@ Top-level index for everything in this folder.
 * [AI](./ai/) — collaborator cadence, technique, learn file.
 ## Quick jumps
 * [Current handoff](di/notes/work/now/handoff.md) — what was done in the most recent session and what is next.
-* [Code debt](di/notes/work/now/code.debt.md) — running list of small items.
+* [Code debt](di/notes/work/now/code%20debt.md) — running list of small items.
 * [Revisit list](revisit.di.md) — items to return to.
 * [Working features](working%20features.md) — current feature status.
 * [Learn](di/notes/work/ai/learn.md) — lessons from mistakes and corrections.

@@ -29,7 +29,7 @@ Each project keeps its own lexicon for its own things — [di](../../../di/notes
 - **work note** — a file in `notes/work/`. What is being done now.
 - **collection** — one project's whole set of files: mono, di, ji, ov, ga, me.
 - **labels** — the five lines at the top of a file: kind, title, description, tags, date.
-- **kind** — the first label, saying what sort of file it is. Six exist: howto, specify, refer, design, explain, arch.
+- **kind** — the first label, saying what sort of file it is. Five exist: howto, specify, explain, arch, analyze.
 - **tag** — a word in the labels saying what the file is about.
 - **brief** — the description label. One sentence.
 - **map** — a project's file map. Read it instead of globbing; update it when files move.

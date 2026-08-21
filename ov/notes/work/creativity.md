@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: analyze
 title: "unnamed"
 description: ""
 tags: [now]

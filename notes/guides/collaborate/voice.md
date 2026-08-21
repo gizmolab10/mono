@@ -123,7 +123,7 @@ When naming sections or concepts, favor warmth over mechanics:
 
 ### Before/After — Technical Prose
 
-Claude's draft (explaining why cross-axis named refs don't use agnostic notation):
+Claude's draft (explaining why cross-axis named references don't use agnostic notation):
 
 > cross-axis named refs are the one limitation. the tokenizer only supports a two-part reference token (`object.attribute`) — there's no third slot for an axis qualifier, so `A.y.l` can't be expressed. cross-axis named refs stay explicit (`A.d`) and are left as-is during translation.
 
@@ -132,6 +132,38 @@ Jonathan's rewrite:
 > when an attribute is on one axis (say x), and its formula grabs a value (say d) on a different axis (y), it could use something like `A.y.l` (length on the y axis of A). to support that, our compiler would need more complexity. NOPE! since `A.d` is fine, we keep the explicit tokens around, and our compiler is simpler and more robust.
 
 the difference: Claude catalogues constraints ("the tokenizer only supports…", "there's no third slot…"). Jonathan states the situation, makes a judgment call, and moves on. the reasoning is a decision, not a spec.
+
+### Before/After — the cutting pass
+
+i handed Jonathan a page about storing app data inside AnythingLLM. He edited the first 44 lines and every single edit was a cut. Six rules come out of it, each with what he actually did.
+
+**1. Cut the road that led to the conclusion.** Four bullets said what the tool can and cannot do; he kept the one that says where the payload goes and deleted the other three. Those three were how i worked it out. He does not need to re-walk it.
+
+**2. One line per point, and nothing after the point.** My three plain-words bullets each ran three lines: a bold lead, the mechanism, the consequence, and some advice. His:
+
+> 1. To change a file, delete and re-add it
+> 2. Cannot write part of the description
+> 3. If someone else writes during the entire window between my read and my write, theirs is destroyed
+
+No bold, no reason, no advice. Notice the third one is *longer* than mine was — because it names the exact window and says which side loses. Short is not the goal. Only saying it once is.
+
+**3. Cut the worked example, keep the rule.** A whole paragraph of Browser A hides exchange 5, Browser B hides exchange 9 went. The bolded rule below it stayed untouched.
+
+**4. Cut the second telling.** A paragraph explaining why there is so much space went, because the measured number appears further down the same file.
+
+**5. Give the verdict, not the walk to it.** Three clauses about parsed files, a cache folder and which row the API reads became: *"Each document's actual text is a parsed file on disk, not accessible."*
+
+**6. Break a run of things out of the sentence, and point at the one that matters.** Six items listed inside a paragraph became a numbered list, with an arrow on the one the whole page is about:
+
+> 2. one row per document (its name, its on-disk path, its details, whether it's pinned) <- **description**
+
+Two smaller habits from the same pass: an aside goes in parentheses, never between dashes. And the thing we are building on is **ours** — *"This is our spot."*, where i had written *"This is the one field ji can store into."*
+
+Two more, from his rewrite of [agency](../pre-flight/agency.md)'s opening line:
+
+- **Two sentences about the same thing become one.** Join the second with "which", never by naming the subject again. Mine: "Each rule ends with Jonathan's preferred wording. Each rule's preferred wording must not be improved any further."* His: *"Each rule ends with Jonathan's preferred wording, which MUST not be improved any further."*
+- **A prohibition wears capitals.** MUST, NEVER — seen without reading the line.
+- **One line per paragraph.** Never wrap prose at a column. Markdown joins the lines when it renders, so the page looks the same either way — but in the editor a wrapped sentence sits on two lines, and every edit has to work around the break. Fenced code keeps its own line breaks.
 
 ### Anti-Examples
 

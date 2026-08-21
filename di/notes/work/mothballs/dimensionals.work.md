@@ -2,7 +2,7 @@
 
 The full work needed to replace the running force-driven placement code with the four-degrees-of-freedom search specified in [guides/development/rules/dimensionals.md](old%20dimensionals%20rules.md). Tasks are ordered by dependency. Every effort number is a guess (range, not a point), and every risk is named so it can be retired or escalated as work progresses.
 
-*Refresh this file as tasks finish. Move done items into [code.debt.paid.md](code.debt.paid.md) and check this file off in [code.debt.md](./code.debt.md).*
+*Refresh this file as tasks finish. Move done items into [code debt paid.md](code%20debt%20paid.md) and check this file off in [code debt.md](./code%20debt.md).*
 
 ## Phase 1 — Test infrastructure (must come first)
 
@@ -362,9 +362,9 @@ Rewrite [guides/architecture/graph/dimensionals.md](../../guides/architecture/gr
 - **Effort guess.** One day.
 - **Risk.** Low.
 
-### Task 4.3 — Check the dimensionals item off in [code.debt.md](./code.debt.md)
+### Task 4.3 — Check the dimensionals item off in [code debt.md](./code%20debt.md)
 
-And add an entry to [code.debt.paid.md](code.debt.paid.md) summarising the redesign.
+And add an entry to [code debt paid.md](code%20debt%20paid.md) summarising the redesign.
 
 - **Dependencies.** Task 4.2.
 - **Effort guess.** Ten minutes.

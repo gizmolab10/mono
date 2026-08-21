@@ -49,22 +49,18 @@ describe('labeling a file that has none', () => {
 });
 
 describe('what the folders above a file say it is', () => {
-	it('calls it a design under a folder named design or designs', () => {
-		expect(kind_from_where('designs/roadmap.md')).toBe(T_Kind.design);
-		expect(kind_from_where('design/constants.md')).toBe(T_Kind.design);
-		expect(kind_from_where('project/design/notes.md')).toBe(T_Kind.design);
-	});
-
-	it('falls back when no folder says anything', () => {
+	it('says nothing, whatever the folder is called', () => {
+		// A designs folder used to make its files designs. That kind is gone, so every one of
+		// these falls back and the stale mark asks for a real answer.
+		expect(kind_from_where('designs/roadmap.md')).toBe(KIND_UNTIL_TOLD);
+		expect(kind_from_where('design/constants.md')).toBe(KIND_UNTIL_TOLD);
+		expect(kind_from_where('project/design/notes.md')).toBe(KIND_UNTIL_TOLD);
 		expect(kind_from_where('develop/add a file.md')).toBe(KIND_UNTIL_TOLD);
-		// A word that merely starts the same is not the folder it names.
-		expect(kind_from_where('designers/notes.md')).toBe(KIND_UNTIL_TOLD);
-		// The work folder says nothing about how a file reads, so it falls back too.
 		expect(kind_from_where('work/handoff.md')).toBe(KIND_UNTIL_TOLD);
 	});
 
 	it('reaches the composed labels', () => {
-		expect(labels_for('# a title\n\nwords.', 'x.md', TODAY, 'design/x.md').labels.kind).toBe(T_Kind.design);
+		expect(labels_for('# a title\n\nwords.', 'x.md', TODAY, 'design/x.md').labels.kind).toBe(KIND_UNTIL_TOLD);
 	});
 });
 
@@ -151,9 +147,9 @@ describe('putting the labels back into a file', () => {
 
 describe('a brand new guide', () => {
 	it('opens with a full block and its own heading', () => {
-		const made = blank_file('unnamed', TODAY, T_Kind.refer, ['now']);
+		const made = blank_file('unnamed', TODAY, T_Kind.analyze, ['now']);
 		expect(made.startsWith('---\n')).toBe(true);
-		expect(made).toContain(`kind: ${T_Kind.refer}`);
+		expect(made).toContain(`kind: ${T_Kind.analyze}`);
 		expect(made).toContain('tags: [now]');
 		expect(made).toContain(`date: ${TODAY}`);
 		expect(made.endsWith('---\n# unnamed\n')).toBe(true);   // no blank line between them
@@ -166,13 +162,13 @@ describe('a brand new guide', () => {
 	});
 
 	it('is read back as labeled, with the name as its title', () => {
-		const made = blank_file('a second try', TODAY, T_Kind.refer, ['now']);
+		const made = blank_file('a second try', TODAY, T_Kind.analyze, ['now']);
 		expect(has_labels(made)).toBe(true);
 		expect(made).toContain('title: "a second try"');
 	});
 
 	it('marks a quote mark in the name as standing for itself', () => {
-		expect(blank_file('the "one"', TODAY, T_Kind.refer, ['now'])).toContain('title: "the \\"one\\""');
+		expect(blank_file('the "one"', TODAY, T_Kind.analyze, ['now'])).toContain('title: "the \\"one\\""');
 	});
 });
 

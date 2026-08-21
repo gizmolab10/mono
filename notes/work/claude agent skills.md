@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: explain
 title: "Agent Skills"
 description: "AI generated in dialogue with humans"
 tags: [proposal]

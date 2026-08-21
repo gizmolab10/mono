@@ -1,11 +1,11 @@
 ---
-kind: refer
+kind: explain
 title: "Map (ji)"
 description: "Every source file in ji, updated whenever files are added, moved, or removed."
 tags: [journal, notes, program]
 date: 2026-07-29
 ---
-# Map — ji source
+# Map of ji source files
 
 The intersection project's files. Update this when files are added, moved, or removed.
 

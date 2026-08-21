@@ -136,6 +136,14 @@
 	// Whenever another file comes on screen, the field starts from that file's own name.
 	$effect(() => { typed_name = name; });
 
+	// The field is as wide as what is typed in it, so every key moves everything standing beside
+	// it in the row. Each one says so — measured once the drawing is done, when the new width is
+	// known.
+	$effect(() => {
+		typed_name;
+		hits.defer_recalibrate();
+	});
+
 	// Throwing this file away is asked about first: the trash mark at the right of the row
 	// gives way to a cross, and the question stands over the words until it is answered.
 	let asking_to_delete = $state(false);

@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: explain
 title: "working features"
 description: ""
 tags: [journal, now, stow]

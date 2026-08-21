@@ -43,14 +43,11 @@
 		return (rides ?? []).some((one) => one.position === T_Position.center && one.element !== null);
 	}
 
-	// What a section's separator actually carries. Folded, it carries nothing at its middle: a thing
-	// there hangs into the fold below it, which is a run of accent and no longer a place to stand.
-	// The ends keep whatever they had, the fold word among them.
+	// What a section's separator carries — everything the caller handed it, folded or open. A thing
+	// at the middle hangs down into the fold below it, which is a run of accent; its own page-colored
+	// pill masks that accent, so it reads as standing on the line exactly as it does anywhere else.
 	function actions_at(at: number): Action[] | null {
-		const rides = at === 0 ? leads : (sections[at].rides ?? null);
-		return (rides && sections[at]?.folded)
-			? rides.filter((one) => one.position !== T_Position.center)
-			: rides;
+		return at === 0 ? leads : (sections[at].rides ?? null);
 	}
 
 	// How much space stands between this section and whatever is above it, middle to middle. The

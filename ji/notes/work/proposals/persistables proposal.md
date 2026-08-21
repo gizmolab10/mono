@@ -1,3 +1,10 @@
+---
+kind: analyze
+title: "Plan — records as Persistables"
+description: "Make every stored record a real object with an identity and a dirty flag, the way ws does: a base Identifiable (its id), a base Persistable that extends it (..."
+tags: [now, stale]
+date: 2026-08-19
+---
 # Plan — records as Persistables
 
 Make every stored record a real object with an identity and a dirty flag, the way ws does: a base **Identifiable** (its id), a base **Persistable** that extends it (its dirty flag), and the five record kinds extending Persistable. Nothing is built yet — this is the plan and the one decision it reverses.

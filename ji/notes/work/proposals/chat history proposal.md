@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "chat history feature"
+description: "Keep each ask exchange — the question, its answer, and the relevant documents it drew from — so the chat operation can show the running conversation"
+tags: [proposal, stale]
+date: 2026-08-19
+---
 # chat history feature
 
 Keep each ask exchange — the question, its answer, and the relevant documents it drew from — so the chat operation can show the running conversation.

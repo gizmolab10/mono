@@ -1,13 +1,26 @@
+---
+kind: specify
+title: "Handoff"
+description: "The details column is one stack (2026-08-19 work-journal entry; moved to [[code debt paid]])"
+tags: [now, proposal]
+date: 2026-08-19
+---
 # Handoff
 
-**Date:** 2026-07-04
+**Date:** 2026-08-19
 **Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.
 
 ## Current thread
 
-Edit-lock hardening extended and a banner colour fix (2026-07-04/05 work-journal entry; moved to [[code.debt.paid]]): the lock now also covers divide/duplicate, unrepeat, and parts-list drag-and-drop; and the banner is now a `<div>` (was a `<button>` wrapping the action buttons — invalid), so the banner button text reads black again. Earlier: whole-details lock coverage, plus-button move, selection dots on top, root dimensions, pure-number constants (all visual-confirmed).
+The details column is one stack (2026-08-19 work-journal entry; moved to [[code debt paid]]). The sections spec is built in di the same way it was built in ji: `Action`, `Stacked` and `Stack` are new, the separator carries what a caller builds at three places and takes its thickness and its reach from whoever draws it, and `Hideable` is gone — each of its five uses is a section whose word rides the middle of the separator above it. Two faults were mended on the way that nothing had asked about: `blend` was answering a color the browser does not know, and `NodeJS.Timeout` was named in three projects with no project asking for the package that defines it.
 
-**Proposed next (from code.debt):** the first bug line reads "stop → Jeff" — that looks like a personal note, not a code task; skip it. The first code bug is **"two door cabinet — stretch top drawer up → fubar."** A stretch bug in a specific scene. First reproduce: build a two-door cabinet, stretch the top drawer upward, capture what breaks (which bound goes wrong, drag-solve vs invariant pass). Diagnose from the drag path (try_solve_given / reverse propagation) with logging before any fix. Needs the failing scene first.
+**Proposed next (from code debt):** three of the first four items are about where files sit, and one of them is already done — di has a file map, at `guides/project/map of di files.md`, and this session updated it. So:
+
+1. **Check off "Create a map of di files"** — it exists.
+2. **Move `road.map.md` out of `work/now/` into `guides/`** — a roadmap is reference, and `work/now/` is what is being done now.
+3. **Leave the third alone until you say.** It is marked _I AM GUESSING_ and asks two questions at once: whether the map should sit at `guides/` instead of three folders down, and whether di's dotted filenames should become ji's spaced ones. The second would rename most of `work/now/`.
+
+The first code bug after those is **"two door cabinet — stretch top drawer up → fubar."** It needs the failing scene built before anything can be read.
 
 ## Paused threads
 
@@ -20,7 +33,7 @@ Dimension placement. Paused threads in [[open items]]:
 ## Reference material
 
 - [[open items]]
-- [[di/notes/work/now/code.debt]]
+- [[di/notes/work/now/code debt]]
 - [[di/notes/work/now/work journal]]
 - [[dimensions.latest.spec]]
 - [[lexicon]]

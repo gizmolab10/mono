@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: explain
 title: "Mouse UX"
 description: "What a press means when the thing under the cursor changes between pressing and letting go."
 tags: [soon, proposal, UX, program]

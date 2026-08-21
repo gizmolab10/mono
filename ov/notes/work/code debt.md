@@ -24,6 +24,21 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## done
 
+- [x] the kinds are five — analyze in, design and refer out
+    - [x] analyze added: a taking apart of something to find out how it works
+    - [x] fourteen files wearing design moved to explain, then design taken out of the list
+    - [x] refer taken out, and the kind a composed file starts at became analyze
+    - [x] a folder no longer decides a kind — a designs folder used to make its files designs, and
+        with that kind gone no folder name says how a file reads
+- [x] a link no longer stops at the wrong file of that name
+    - [x] the climb passes over a file standing where the link does not say, and keeps going
+    - [x] a refusal names where the file of that name does sit
+- [x] the note line at the bottom of the reader says the whole account, not which kind of refusal
+    - [x] its words can be picked up and copied
+    - [x] it is registered while it is showing, and says so when it arrives and when it leaves
+- [x] the counting hook lost half of every complaint that followed a reply with a tool call
+    - [x] it counted entries, and every tool call is an entry of its own
+    - [x] it now passes over the ones holding no words, and a test proves the pair comes back whole
 - [x] tt for steppers -> name the file
     - [x] both walks split in two — one says which file lies that way, the other goes there and
         asks the first, so what a stepper says and what pressing it opens are one answer

@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: explain
 title: "Faster Session Starts"
 description: "an improved workflow and hooks design"
 tags: [always, session, speed, team]

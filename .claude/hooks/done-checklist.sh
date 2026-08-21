@@ -41,14 +41,14 @@ done <<< "$PROMPT"
 if [ "$SHOULD_FIRE" = "true" ]; then
   CHECKLIST='DONE COMMAND CHECKLIST (from shorthand.md "done"):
 
-- [ ] move the done item from code.debt.md to code.debt.paid.md
+- [ ] move the done item from code debt.md to code debt paid.md
 - [ ] tighten handoff.md
     - [ ] move all completed proposal blocks to new session entries in work journal.md
     - [ ] keep open items and active proposals
 - [ ] update working features.md -> add anything important from what got done
 - [ ] update map.md if files were added or moved
 - [ ] update file layout.md if file paths changed
-- [ ] re-read code.debt.md for the next item
+- [ ] re-read code debt.md for the next item
 - [ ] propose the next item in handoff.md'
   echo "$CHECKLIST" | jq -Rs '{hookSpecificOutput: {hookEventName: "UserPromptSubmit", additionalContext: .}}'
 fi

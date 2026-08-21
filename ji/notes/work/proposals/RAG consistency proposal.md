@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Consistency check — find discrepancies across the store"
+description: "The ask box pulls the top few most-similar passages for one question"
+tags: [now, proposal]
+date: 2026-08-19
+---
 # Consistency check — find discrepancies across the store
 
 > A whole-collection sweep that reads every document and flags statements that disagree. The ask box answers one question from the few passages it retrieves; this walks all of them, so a contradiction can't hide just because it looked unrelated to a query.

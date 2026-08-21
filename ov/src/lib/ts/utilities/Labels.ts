@@ -34,23 +34,21 @@ export function label_block(labels: Labels, tags: string[]): string {
 // one tag that means a person still has to look at it. Nothing is ever written to a file nobody
 // asked about.
 //
-// The kind is guessed from where the file sits: under a designs folder it is a design, under a
-// work folder it is work, and anywhere else there is nothing in the path to go on, so it starts
-// at refer and the stale mark says to check.
+// The kind is not guessed from where the file sits: no folder name says how a file reads, so a
+// composed block starts at refer and the stale mark says to check.
 
 /** The tag that says these labels were composed rather than written. */
 export const NEEDS_A_LOOK = 'stale';
 
-/** The kind a composed block starts at when its folder says nothing. */
-export const KIND_UNTIL_TOLD = T_Kind.refer;
+/** The kind a composed block starts at when its folder says nothing, which every folder does. */
+export const KIND_UNTIL_TOLD = T_Kind.analyze;
 
 /**
- * What the folders above a file say it is, when they say anything at all. One folder speaks:
- * design or designs makes its files designs. Every other folder, the work folder included, says
- * nothing about how a file reads, so the fallback stands.
+ * What the folders above a file say it is: nothing. A designs folder used to make its files
+ * designs, and that kind is gone — every folder now says nothing about how a file reads, so the
+ * fallback stands for all of them and the stale mark asks for a real answer.
  */
-export function kind_from_where(path: string): T_Kind {
-	if (/(^|\/)designs?(\/|$)/.test(path)) { return T_Kind.design; }
+export function kind_from_where(_path: string): T_Kind {
 	return KIND_UNTIL_TOLD;
 }
 

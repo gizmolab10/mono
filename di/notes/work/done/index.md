@@ -7,7 +7,7 @@ Completed work items.
 - [Article First Draft](article.first.draft.md)
 - [Chat](di/notes/work/done/chat.md)
 - [Chat](./chat.md)
-- [Code Debt (done)](code.debt.paid.md)
+- [Code Debt (done)](code%20debt%20paid.md)
 - [Cruft](cruft.md)
 - [Invisible Root](invisible.root.md)
 - [Layout Algorithm](layout-algorithm.md)

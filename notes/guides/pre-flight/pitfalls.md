@@ -1,8 +1,8 @@
 ---
-kind: specify
+kind: analyze
 title: "Pitfalls"
 description: "Edge cases that have caused mistakes, mostly failures to read before acting."
-tags: [session, debug]
+tags: [debug, session]
 date: 2026-05-10
 ---
 # Pitfalls

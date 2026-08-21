@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: explain
 title: "Map (ov)"
 description: "Every source file in overview, updated whenever files are added, moved, or removed."
 tags: [journal, notes, program]
@@ -66,7 +66,7 @@ Overview's files. Update this when files are added, moved, or removed.
 - `managers/Status.ts` — whether there is anything to say along the bottom, and what. One call says a line and starts the few seconds after which it clears itself. What a report found is remembered along with those words, so a reload comes back to the whole report rather than its first line with nothing under it.
 - `managers/Preferences.ts` — what the browser remembers between visits. Every name reads `ov_` then the parts joined by underscores, and the name in the code is the name in the browser. None of ji's renaming and sweeping code came over: overview has no old names to bring forward.
 - `database/Indexes.ts` — the instant lookups (tags by file, files by tag, children by folder, parents by file), rebuilt whenever the records change. **⟵ji**
-- `types/File.ts` — what a file is: the seven kinds, the closed list of thirty-four tags, the five collections, the five labels off a file's top, and a listed row — a file together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything. The record is called a file rather than a guide, since the list holds work notes too.
+- `types/File.ts` — what a file is: the five kinds, the closed list of thirty-four tags, the five collections, the five labels off a file's top, and a listed row — a file together with the tags on it, how deep it sits, the folder chain above it, and whether it holds anything. The record is called a file rather than a guide, since the list holds work notes too.
 - `types/Tag_Areas.ts` — the tags gathered into eight areas, so thirty-four words can be read a handful at a time. Six gather by what a guide is about; `progress` gathers by where a guide stands in its own life — put forward, finished, written up — and `active` by how soon it is wanted: now, next, soon, later, or set aside. The areas are only a way of reading the list, not a second thing to filter by: every tag belongs to exactly one, and the tests prove the two lists agree. Also answers which of an area's tags are still worth showing, and what a shut area reads.
 - `types/App.ts` — the two states the app can be in: setting up, and ready.
 - `types/Stacked.ts` — one section of a stack: what it shows, the word riding the separator above it, and whether it is folded. Nothing else — the gap belongs to the stack.

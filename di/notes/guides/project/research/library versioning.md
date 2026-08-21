@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: analyze
 title: "Library Versioning"
 description: "What happens to already-placed instances when the saved original changes."
 tags: [data, plans, research, stow]

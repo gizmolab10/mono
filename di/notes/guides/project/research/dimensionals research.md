@@ -1,8 +1,8 @@
 ---
-kind: refer
+kind: analyze
 title: "Dimensionals Research"
 description: "Whether any existing constraint library beats the custom search, inside the time budget."
-tags: [research, geometry]
+tags: [geometry, research]
 date: 2026-06-12
 ---
 # Dimensionals — library research (2026-05-20)

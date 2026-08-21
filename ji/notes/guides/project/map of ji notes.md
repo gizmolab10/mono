@@ -1,11 +1,11 @@
 ---
-kind: refer
+kind: explain
 title: "Notes Map (ji)"
 description: "Every file under the ji notes folder, updated whenever notes are added, moved, or removed."
 tags: [journal, notes]
 date: 2026-07-30
 ---
-# Notes map — ji
+# Map of ji notes
 
 Every file under `notes/`. Update when notes files are added, moved, or removed.
 

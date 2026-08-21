@@ -57,7 +57,12 @@ exists.
 Any non-obvious notation in a reply — a defused word, a placeholder, a shorthand — is explained
 inline, in that same reply, upfront. Never make him ask what a thing means.
 
-## 11. Say it once
+## 11. A translation replaces the original
+
+`t` asks for a plain version. Write it into the file the murky words came from, not only into the
+reply — the translation is the text (the original words are gone).
+
+## 12. Say it once
 
 This is the one source for it. It governs replies and prose written into files alike; the voice guide points here rather than repeating it.
 

@@ -14,7 +14,7 @@
 - [Migrations](./migrations.md)
 - [Monorepo](./monorepo.md)
 - [Repo-old](./repo-old.md)
+- [Single.project](./single%20project.md)
 - [Single-line-progress](./single-line-progress.md)
-- [Single.project](./single.project.md)
 - [Sites-hub](./sites-hub.md)
 - [Tools-sites](./tools-sites.md)

@@ -1,8 +1,8 @@
 ---
-kind: specify
+kind: howto
 title: "ov installer"
 description: "What a new machine needs before overview works on it."
-tags: [later]
+tags: [setup]
 date: 2026-08-17
 ---
 # compose an email

@@ -9,6 +9,5 @@
 - [Pacing](./pacing.md)
 - [Punch List](./punch list.md)
 - [Roots](./roots.md)
-- [Separators](./separators.md)
 - [Snap.pin](./snap.pin.md)
 

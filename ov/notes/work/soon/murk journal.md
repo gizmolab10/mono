@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: explain
 title: "Murk record"
 description: "The use case behind the murk guide: twelve causes found in one rule set, six now closed, and the daily rate they were measured against."
 tags: [journal, notes, now, prose, stow, team]
@@ -7,7 +7,7 @@ date: 2026-08-17
 ---
 # Murk journal
 
-Murk is bad news. We may have conquered it — see [murk.md](../../../../notes/guides/collaborate/murk.md). Our journey so far...
+Murk is bad news. We may have conquered it — see [murk.md](../../../../notes/guides/collaborate/avoid%20murk.md). Our journey so far...
 
 ## afternote ...
 

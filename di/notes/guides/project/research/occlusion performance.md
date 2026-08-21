@@ -1,8 +1,8 @@
 ---
-kind: refer
+kind: analyze
 title: "Spatial Acceleration"
 description: "Ways to speed up working out what hides what."
-tags: [research, geometry]
+tags: [geometry, research]
 date: 2026-05-10
 ---
 # Occlusion — Spatial Acceleration
@@ -42,7 +42,7 @@ No drop-in JS/TS library does HLR with intersecting objects without a GPU.
 
 ### Recommendation
 
-**flatbush** as a spatial index for the existing algorithm. We already have the core logic — the brute force is just the broad phase. Flatbush turns it from O(n) to O(log n) per edge query. That's the "tiled bins" idea from code.debt, essentially.
+**flatbush** as a spatial index for the existing algorithm. We already have the core logic — the brute force is just the broad phase. Flatbush turns it from O(n) to O(log n) per edge query. That's the "tiled bins" idea from code debt, essentially.
 
 opencascade.js is the "right" answer but it's bringing a crane to hang a picture.
 

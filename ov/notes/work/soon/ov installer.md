@@ -2,7 +2,7 @@
 kind: specify
 title: "ov installer"
 description: ""
-tags: [now]
+tags: [soon]
 date: 2026-08-17
 ---
 # ov installer

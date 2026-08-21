@@ -1,5 +1,5 @@
 ---
-kind: refer
+kind: explain
 title: "Work journal"
 description: "Reverse chronological log of finished work on ji (the Jeff intersection project)"
 tags: [journal]

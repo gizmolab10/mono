@@ -1,5 +1,5 @@
 ---
-kind: design
+kind: analyze
 title: "Assessment of our Guides"
 description: "A hand-kept rundown of every shared guide, what is thin, and what is missing."
 tags: [journal, notes, now, proposal, session, team]
@@ -67,7 +67,7 @@ A rule in three files is three wordings, and no reader can tell whether they dif
 
 ### Thin — a topic named without the content
 
-- [exclude](collaborate/exclude.md) (8 lines of body) — three folder names and one sentence. Missing: why each is skipped, and what breaks when one is not.
+- [exclude](collaborate/exclude%20from%20maps.md) (8 lines of body) — three folder names and one sentence. Missing: why each is skipped, and what breaks when one is not.
 - [port](develop/port.md) — the three steps and a template. Missing: a worked example from a real port, what went wrong in it, and how to tell the port matches the original.
 - [limitations](philosophy/limitations.md) — names three failure modes and says outright, in its own last section, that naming is not enough to catch one in the act. Missing: the symptom each one shows on the surface.
 - [constants](develop/constants.md) and [conceptual composition](develop/conceptual%20composition.md) — both carry an empty brief, so neither says what it is for before it is opened.
@@ -135,7 +135,7 @@ Seven, each holding one kind of guidance.
 - [chat](collaborate/chat.md) — who does what, and what co must do to stay reliable.
 - [composition](collaborate/composition.md) — props down, events up, slots for flexible content.
 - [context filters](collaborate/context%20filters.md) — the habit of leaving out what does not fit the current task, named so it can be refused.
-- [exclude](collaborate/exclude.md) — the folders a map file skips.
+- [exclude](collaborate/exclude%20from%20maps.md) — the folders a map file skips.
 - [expectations](collaborate/expectations.md) — how to get co's best work and avoid its worst.
 - [hooks](collaborate/hooks.md) — what hooks are, how they differ from memory, and which are live.
 - [jonathan](collaborate/jonathan.md) — the phrases Jonathan uses to steer a debugging session, and what each asks for.
@@ -163,7 +163,7 @@ Seven, each holding one kind of guidance.
 - [migrate](develop/migrate.md) — writing a migration document that breaks a big change into safe phases.
 - [port](develop/port.md) — moving a capability between projects: read the source, describe it, write a spec.
 - [refactor](develop/refactor.md) — the guardrails for letting co refactor a temperamental codebase.
-- [specification driven development](develop/specification%20driven%20development.md) — what di is meant to do, from a drawing to a lumber list.
+- [specification driven development](develop/early%20di%20spec.md) — what di is meant to do, from a drawing to a lumber list.
 - [style guide](develop/style%20guide.md) — naming, formatting and organization, followed strictly across projects.
 
 ### philosophy — why the work is shaped this way
@@ -203,4 +203,4 @@ Seven, each holding one kind of guidance.
 - [git](tools/git.md) — undoing common mistakes in the change history.
 - [hub-app](tools/hub-app.md) — what the Hub app is, how it is put together, what its screens do.
 - [single line of progress](tools/single%20line%20of%20progress.md) — a build script that reports on one line that updates in place.
-- [try both](tools/try%20both.md) — build two ways of showing something at once, behind one word you flip.
+- [try both](tools/visual%20inspection.md) — build two ways of showing something at once, behind one word you flip.

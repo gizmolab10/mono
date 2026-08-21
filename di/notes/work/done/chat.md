@@ -8,7 +8,7 @@ Let me chronologically analyze the conversation:
 
   
 
-1. **Session Start**: User invoked `/cd` skill which reads `.working_project` (got "di") and then reads `code.debt.md` to propose first unchecked item.
+1. **Session Start**: User invoked `/cd` skill which reads `.working_project` (got "di") and then reads `code debt.md` to propose first unchecked item.
 
   
 
@@ -20,7 +20,7 @@ Let me chronologically analyze the conversation:
 
   
 
-4. **Back to /cd**: User said `/cd` again. I read code.debt.md, proposed "new root -> invisible" as next item. User checked it off themselves, told me to read the NEXT item.
+4. **Back to /cd**: User said `/cd` again. I read code debt.md, proposed "new root -> invisible" as next item. User checked it off themselves, told me to read the NEXT item.
 
   
 
@@ -86,7 +86,7 @@ Key files modified:
 
 - `di/src/lib/svelte/details/Details.svelte` - updated new-scene button
 
-- `di/notes/work/code.debt.md` - checked off completed items
+- `di/notes/work/code debt.md` - checked off completed items
 
   
 
@@ -104,7 +104,7 @@ Summary:
 
 1. Primary Request and Intent:
 
-   - User started by running `/cd` to read code.debt.md and work through unchecked items
+   - User started by running `/cd` to read code debt.md and work through unchecked items
 
    - Checked off "table cell editing" items (already implemented)
 
@@ -230,7 +230,7 @@ Summary:
 
   
 
-   - **`di/notes/work/code.debt.md`** — Checked off: table editing items, Portable_SO visible prop, load scenes without reloading
+   - **`di/notes/work/code debt.md`** — Checked off: table editing items, Portable_SO visible prop, load scenes without reloading
 
   
 
@@ -296,7 +296,7 @@ Summary:
 
    - Investigate and fix the `duplicate_selected()` bug (geometry corruption on cloned subtrees)
 
-   - code.debt.md has many remaining unchecked items (parts position/size button, rotation work, library work, aesthetics, etc.)
+   - code debt.md has many remaining unchecked items (parts position/size button, rotation work, library work, aesthetics, etc.)
 
   
 

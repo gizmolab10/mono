@@ -1,13 +1,46 @@
 ---
-kind: refer
+kind: explain
 title: "Work"
 description: "What's been finished, newest first"
 tags: [journal]
 date: 2026-08-10
 ---
-# Work
+# Work Journal
 
 What's been finished, newest first.
+
+## 2026-08-19 — the kinds are five
+
+`analyze` is a kind now: a taking apart of something to find out how it works. Two went out. Every
+screen reads the whole list off the one place it is written, so adding and removing reached the
+browse filters, the editor filters and the filter's own list with no further change.
+
+**`design` moved to `explain`.** Fourteen files across the five collections wore it. Taking the kind
+out took something with it: a file's kind used to be guessed from the folders above it, and the only
+folder that ever spoke was `design` or `designs`. No folder name says how a file reads any more, so
+every path falls back and the stale mark asks for a real answer. Four test cases became one saying so.
+
+**`refer` went too, and it was the fallback.** A composed file starts at `analyze` now.
+
+### Also this session
+
+- **The murk hook was keeping half of every complaint.** It took the second-to-last thing I had said
+  and called it the reply that could not be read — but every tool call is an entry of its own, so for
+  any reply that looked a file up first, that was a tool call holding no words. It wrote an empty
+  string and said nothing about it. It passes over the wordless entries now, and a new test builds a
+  conversation with thinking and two tool calls between the two replies to prove the pair comes back
+  whole. Run against the old line, that test fails exactly the way the record did.
+- **`stow` replaced `done` as a tag**, in the closed list, in the progress tagset, and on the twelve
+  files wearing it. The `done` work folder and the `done` shorthand are untouched — neither is a tag.
+- **The dispatcher's `/list-guides` route is `/list-files`**, on both sides and in its test.
+- **The murk work split in two:** the nine strategies are a guide at
+  `notes/guides/collaborate/murk.md`; the case they came from stays as a record in `soon/`.
+
+### Verification
+
+- svelte-check: 532 files, 0 errors, 0 warnings.
+- vitest: 410 tests, 0 failing. One fewer than before — three cases about what a folder says
+  collapsed into one saying it says nothing.
 
 ## 2026-08-17 — a link no longer stops at the wrong file of that name
 

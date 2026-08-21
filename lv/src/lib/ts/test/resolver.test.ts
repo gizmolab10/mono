@@ -35,7 +35,7 @@ describe('does a page exist', () => {
 
 describe('getting a page body', () => {
   it('hands back the text of a real page', () => {
-    expect(getMdText('Page 1')).toContain('another photo');
+    expect(getMdText('Page 1')).toContain('Another page');
   });
 
   it('hands back nothing for a missing page', () => {
