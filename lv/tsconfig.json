@@ -18,10 +18,11 @@
     "skipLibCheck": true,
     "noEmit": true,
     "strict": true,
-    "types": []
+    "types": ["node"]
   },
   "include": [
     "src/**/*.svelte",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "plugins/**/*.ts"
   ]
 }

@@ -17,10 +17,13 @@ describe('going to a page', () => {
     expect(window.location.pathname).toBe('/');
   });
 
+  // Any name but the home one, since the home page is the root address. This
+  // one need not be a page on disk: what is proved is that the name and the
+  // address move together.
   it('changes the current name and the address together', () => {
-    navigate('Page 1');
-    expect(router.name).toBe('Page 1');
-    expect(window.location.pathname).toBe('/Page%201');
+    navigate('The Vineyard');
+    expect(router.name).toBe('The Vineyard');
+    expect(window.location.pathname).toBe('/The%20Vineyard');
   });
 
   it('sends an empty name to the home page', () => {
@@ -32,7 +35,7 @@ describe('going to a page', () => {
 
 describe('the status message', () => {
   it('is blank when the page exists', () => {
-    navigate('Page 1');
+    navigate('Little Cloud Vineyard');
     expect(router.status).toBe('');
   });
 

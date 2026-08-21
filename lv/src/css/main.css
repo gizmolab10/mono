@@ -75,12 +75,27 @@ textarea:focus {
   padding: calc(3rem + 12px) 1rem 1rem 1rem;
   grid-area: sidebar;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .shell-content {
   grid-area: content;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.5rem;
+}
+
+/* No scrollbars anywhere. Both boxes still scroll — by wheel, by trackpad, by
+   arrow key — the bars themselves are simply never drawn. Firefox and the rest
+   read the first rule; Safari and Chrome read the second. */
+.shell-sidebar,
+.shell-content {
+  scrollbar-width: none;
+}
+
+.shell-sidebar::-webkit-scrollbar,
+.shell-content::-webkit-scrollbar {
+  display: none;
 }
 
 .shell-status {
@@ -256,4 +271,76 @@ video.gallery-photo {
   margin: 0.5rem 0 0;
   font-size: 0.9rem;
   opacity: 0.75;
+}
+
+/* ----- Editing ----- */
+/* The edit button, top right, shown only in a technical browser. */
+.shell-edit {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 20;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.shell-edit:hover {
+  background: #fff;
+}
+
+/* Where a gallery stands while editing is on: a box to drop a file into. */
+.gallery-drop {
+  border: 2px dashed rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.gallery-drop.over {
+  border-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.gallery-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
+/* The files in a gallery's folder while editing: what each is called, and the
+   caption, which can be typed into. */
+.gallery-captions {
+  border-collapse: collapse;
+  margin: 1rem auto 0;
+  font-size: 0.85rem;
+  width: 100%;
+  max-width: 40rem;
+  text-align: left;
+}
+
+.gallery-captions th,
+.gallery-captions td {
+  border-bottom: 0.5px solid lightgrey;
+  padding: 0.35rem 0.5rem;
+  vertical-align: top;
+}
+
+.gallery-captions th {
+  color: #666;
+  font-weight: normal;
+}
+
+.gallery-captions td[contenteditable] {
+  background: rgba(0, 0, 0, 0.03);
+  cursor: text;
+}
+
+.gallery-captions td[contenteditable]:focus {
+  background: #fff;
+  outline: 1px solid rgba(0, 0, 0, 0.4);
 }

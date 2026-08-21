@@ -35,6 +35,25 @@
 - **Image embeds can carry a size.** After the bar in an image embed, a plain number sets the width and a number-by-number sets width and height — the same shorthand Obsidian uses. The picture is then drawn at that size. Any other text after the bar is still treated as the caption.
 - **Tests live in their own folder.** The unit tests moved out from beside the code they check into a single `test` folder next to the code folders, with their links to the code repointed to match.
 
+### 2026-08-21 — the photo gallery
+
+- **A gallery is one folder of pictures.** Each folder under `src/assets/` is a gallery, shown one picture at a time. The build already found every picture there but filed each by name alone; one more function keeps the folder as well.
+- **A folder's name is matched loosely.** Case is ignored, and a space, a hyphen and an underscore all read as the same character — so `the vineyard` answers a page asking for `the-vineyard`, and a dropped picture goes into the folder already on disk rather than making a second one beside it.
+- **A gallery is asked for as a callout**, `> [!gallery] the vineyard`, with `|400` after the name to draw every picture 400 tall. The first shape tried was `![[gallery: x]]`, and Obsidian read it as an embed of a note by that name, found none, and offered to make one. A callout is a shape Obsidian draws without complaint; the preprocessor catches it before the callout plugin runs, the same path the centered line takes.
+- **Html cannot answer a click**, so the renderer finds each gallery's empty box in the finished html and builds a live piece inside it. Each one is taken off as the page changes: the arrow keys are heard on the window, and a window listener outlives the element that set it.
+- **Movies play**, with sound and their own controls, and start on their own. A movie is not the button that steps to the next picture — its controls own every press inside it — so the arrow keys do that. Stepping away builds a fresh element, which stops the movie.
+- **A picture is called by the title it carries inside itself.** JPEG keeps one in an XMP block, PNG in a `tEXt` chunk, GIF in a comment block, a movie in a `©nam` block inside its description. No browser hands a page what a file carries, so the titles are read while the site is built and handed over as a plain list. A file carrying none is called by its file name.
+- **Only the jpeg goes through exifr.** exifr reads no gif and no movie at all, so those two and the png are read by hand.
+- **One movie in three is refused a caption.** Writing one adds bytes inside the movie's description; where that description sits before the picture data, every offset into that data would shift and the movie would break. Where it sits last — an iPhone movie, for one — nothing moves.
+- **Captions are written from the app.** A technical preference, off for everyone else, shows an edit button; pressing it turns every gallery into a box to drop a picture into, with a table under it — one row per file, its caption typeable, written into that file when the cell is left.
+- **A page cannot write to disk**, so the dev server does the writing and the page asks for it. The edit button does nothing on the built site.
+- **The file travels as itself.** Turning a 53 MB movie into text first made two more copies of it in the browser's own memory, and the drop died there. The bytes now go as the body, with the folder, the name and the caption riding as headers.
+- **Every refusal is written to the log.** A refusal that only reaches the screen leaves the log saying nothing happened at all.
+- **The titles are read again whenever a file changes.** The list is built once and held; nothing about it tells the dev server a file on disk changed, so the assets folder is watched and any file arriving, changing or leaving throws the list away.
+- **Editing survives the reload** that follows a write, so a run of captions can be written one after another.
+- **No scrollbars.** The sidebar and the page still scroll by wheel, trackpad and arrow key; the bars are never drawn.
+- **The hamburger is out of sight** for now. Its button and its styling stand; one line in the page shell brings it back.
+
 ## Deferred — possible future features
 
 Not in scope for the first pass. Listed for the record so they are not forgotten:
@@ -68,6 +87,7 @@ The six steps from the proposal's "Order of work":
 - [x] Step 4 — router plus click handling (link interceptor and back/forward listener).
 - [x] Step 5 — status line; read `Sidebar.md` to drive the sidebar.
 - [x] Step 6 — sidebar component (active-entry pill, collapsible sections, home-entry treatment) and the `[!center]` callout override.
+- [x] The photo gallery — see the entry above, and [photo gallery](photo%20gallery.md) for how each piece works.
 
 ## Sources
 

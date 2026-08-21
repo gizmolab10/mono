@@ -19,6 +19,7 @@ Every file under `notes/`. Update when notes files are added, moved, or removed.
 
 ## work/ — active tracking
 
+- `AI on my mac.md` — what a coding agent on the new M3 Ultra Studio takes, in build order: memory ceiling, serving layer, model pick, borrowed harness, then our own.
 - `code debt.md` — open coding tasks, as checkboxes.
 - `handoff.md` — current status and the single **Next** action; read first each session.
 - `work journal.md` — reverse-chronological log of finished work.

@@ -4,7 +4,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { photosInFolder, loadAssetFolders } from '../utilities/loader';
-import { captionFor, isMovie, step } from '../utilities/gallery';
+import { captionFor, isMovie, nameOf, step } from '../utilities/gallery';
+import photoTitles from 'virtual:photo-titles';
 import { render } from '../utilities/parser';
 
 describe('a folder of photos', () => {
@@ -39,15 +40,19 @@ describe('a folder of photos', () => {
 
 describe('asking for a gallery in markdown', () => {
   it('turns into an empty box carrying the folder name', () => {
-    expect(render('![[gallery: The Vineyard]]')).toContain('<div class="gallery" data-folder="The Vineyard"></div>');
+    expect(render('> [!gallery] the-vineyard')).toContain('<div class="gallery" data-folder="the-vineyard"></div>');
   });
 
   it('draws every photo at the height said after the bar', () => {
-    expect(render('![[gallery: the-vineyard|400]]')).toContain('<div class="gallery" data-folder="the-vineyard" data-height="400"></div>');
+    expect(render('> [!gallery] the-vineyard|400')).toContain('<div class="gallery" data-folder="the-vineyard" data-height="400"></div>');
   });
 
   it('says no height where none is asked for', () => {
-    expect(render('![[gallery: the-vineyard]]')).not.toContain('data-height');
+    expect(render('> [!gallery] the-vineyard')).not.toContain('data-height');
+  });
+
+  it('leaves every other callout to the callout plugin', () => {
+    expect(render('> [!note] just a note')).not.toContain('class="gallery"');
   });
 
   it('leaves a plain image embed alone', () => {
@@ -70,6 +75,28 @@ describe('a movie among the photos', () => {
   });
 });
 
+describe('what a photo is called', () => {
+  it('uses the title the file carries', () => {
+    expect(nameOf({ name: 'IMG_5305.jpg', url: '/x', title: 'Tom at the crush pad' })).toBe('Tom at the crush pad');
+  });
+
+  it('falls back to the file name, extension taken off', () => {
+    expect(nameOf({ name: 'rows in june.png', url: '/x' })).toBe('rows in june');
+  });
+
+  it('falls back where the title is empty', () => {
+    expect(nameOf({ name: 'rows in june.png', url: '/x', title: '   ' })).toBe('rows in june');
+  });
+
+  it('reads the titles out of the photos while the site is built', () => {
+    expect(typeof photoTitles).toBe('object');
+    for (const [name, title] of Object.entries(photoTitles)) {
+      expect(name.length).toBeGreaterThan(0);
+      expect(typeof title).toBe('string');
+    }
+  });
+});
+
 describe('walking the photos', () => {
   const photos = photosInFolder('the-vineyard');
 
@@ -88,10 +115,9 @@ describe('walking the photos', () => {
     expect(step(0, 0, 1)).toBe(0);
   });
 
-  it('says where you are and what you are looking at', () => {
+  it('says what you are looking at, and nothing else', () => {
     const last = photos.length - 1;
-    const name = photos[last].name.replace(/\.[a-z0-9]+$/i, '');
-    expect(captionFor(last, photos)).toBe(`${photos.length} of ${photos.length} ${name}`);
+    expect(captionFor(last, photos)).toBe(nameOf(photos[last]));
   });
 
   it('says nothing at all where there is no photo', () => {

@@ -22,15 +22,17 @@ we need an html injector
 
 One folder per gallery under `src/assets/`. The build finds every photo there but files them by name and forgets the folder (`loadAssets`, in `src/lib/ts/utilities/loader.ts`). One more function remembers: a folder name in, its photos out, in name order.
 
-A folder's name holds no spaces — `the-vineyard`, never `The Vineyard`. The name is matched loosely, so a page may still ask for `![[gallery: The Vineyard]]`: case is ignored, and a space, a hyphen and an underscore all read as the same character. The photos themselves keep whatever names they have, since each one becomes a caption.
+A folder's name is matched loosely: case is ignored, and a space, a hyphen and an underscore all read as the same character. So the folder `the vineyard` answers a page asking for `the-vineyard`, and a dropped photo goes into the folder already on disk rather than making a second one beside it.
 
 ### 2. Markdown
 ```text
-![[gallery: The Vineyard]]
+> [!gallery] the-vineyard
 ```
-A number after a bar — `![[gallery: the-vineyard|400]]` — draws every photo in that gallery 400 tall, shrinking or enlarging it to match. Without one, each photo is drawn at its own size.
+A number after a bar — `> [!gallery] the-vineyard|400` — draws every photo in that gallery 400 tall, shrinking or enlarging it to match. Without one, each photo is drawn at its own size.
 
-The MD link preprocessor turns this into an empty `<div>` carrying the folder name, and the height where one was said:
+It is said as a callout because Obsidian reads `![[gallery: x]]` as an embed of a note called that, finds none, and offers to make one. A callout is a shape Obsidian draws without complaint, and the preprocessor catches it before the callout plugin runs — the same path the centered line takes.
+
+The preprocessor turns it into an empty `<div>` carrying the folder name, and the height where one was said:
 ```html
 <div class="gallery" data-folder="the-vineyard" data-height="400"></div>
 ```
@@ -60,10 +62,27 @@ A movie is not the button: its own controls own every press inside it, so steppi
 
 ### 4. What it does
 
-The first photo. A click or the right arrow shows the next, the left goes back, the last wraps to the first. Caption: `3 of 12 sunset over the rows`.
+The first photo. A click or the right arrow shows the next, the left goes back, the last wraps to the first. Under it, one caption: what the photo is called — the title it carries inside itself, or its file name.
+
+### 5. A caption, written into the file
+
+A photo can carry its own title — JPEG in an XMP block, PNG in a `tEXt` chunk keyed "Title" — and that title becomes the caption. Where a file carries none, its file name answers instead. The reading happens while the site is built (`plugins/photo-titles.ts`), since no browser hands a page what a picture carries.
+
+Captions are written from the app itself:
+
+1. **The technical preference.** `lv.technical` in the browser's own storage, read once as the app launches, off for everyone else. Set it by hand: `localStorage.setItem('lv.technical', 'true')`.
+2. **The edit button**, top right, shown only where that preference is on.
+3. **Pressing it** puts every gallery on the page into editing: each one gives way to a box a photo can be dropped into.
+4. **Dropping a photo** asks for a caption, then writes the caption inside the file and saves it into that gallery's folder.
+
+Two limits, both real:
+
+- **A page cannot write to disk**, so the writing is done by the dev server (`plugins/caption-drop.ts`). The edit button does nothing on the built site.
+- **png, jpeg, gif and movies carry a caption** — a `tEXt` chunk, an XMP block, a comment block, and a `©nam` block inside the movie's description. HEIC is refused, with a line saying so. Only the jpeg goes through exifr; the rest are read by hand.
+- **One movie in three is refused**: where a movie keeps its description before its picture data, adding a caption there would shift every offset into that data and break the movie. Where the description comes last — an iPhone movie, for one — nothing moves and the caption is written.
 
 ## how it gets proved
 
 - `![[gallery: X]]` shows every photo in folder X, in name order
 - clicking walks 1 → 2 → 3 → 1, arrows both ways
-- the caption under the third of twelve reads `3 of 12` and that photo's name
+- the caption reads what the photo is called, and nothing else

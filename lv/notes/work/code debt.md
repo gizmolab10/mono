@@ -12,6 +12,7 @@ write a proposal for the first unchecked item to the top of handoff.
 ## work
 
 - [ ] bring tom up to speed
+- [ ] [[editing the published site]] — captions from the live site, and where large media should live
 
 ## done
 

@@ -3,6 +3,10 @@
 // every image. The result is two maps keyed by simple file name (without
 // the path, and for md files without the .md extension).
 
+// The titles carried inside the photos themselves, read while the site is
+// built. See `plugins/photo-titles.ts`.
+import photoTitles from 'virtual:photo-titles';
+
 // md files: load every file under src/md as raw text.
 const rawMdModules = import.meta.glob<string>('/src/md/**/*.md', {
   query: '?raw',
@@ -23,8 +27,9 @@ const assetModules = import.meta.glob<string>(
 export type MdMap = Map<string, string>;    // file name (no .md) -> contents
 export type AssetMap = Map<string, string>; // file name (with extension) -> URL
 
-// One photo in a gallery: the file's own name, and the address the build gave it.
-export type Photo = { name: string; url: string };
+// One photo in a gallery: the file's own name, the address the build gave it,
+// and the title the file carries inside itself, where it carries one.
+export type Photo = { name: string; url: string; title?: string };
 
 // One page on disk: its name (no .md), the folder it sits in ('' at the top
 // level), and its raw text.
@@ -83,7 +88,7 @@ export function loadAssetFolders(): Map<string, Photo[]> {
     const folder = rel.slice(0, slash);
     const name = basename(path);
     const photos = folders.get(folder) ?? [];
-    photos.push({ name, url });
+    photos.push({ name, url, title: photoTitles[name] });
     folders.set(folder, photos);
   }
   for (const photos of folders.values()) {

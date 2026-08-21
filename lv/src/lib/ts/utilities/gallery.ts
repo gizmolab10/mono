@@ -23,11 +23,14 @@ export function step(at: number, count: number, by: number): number {
   return ((at + by) % count + count) % count;
 }
 
-// The words under the photo: where it sits in the run, then the file's own
-// name with its extension taken off — `3 of 12 sunset over the rows`.
+// What the photo is called: the title it carries inside itself, or its file
+// name with the extension taken off.
+export function nameOf(one: Photo): string {
+  return one.title?.trim() || one.name.replace(/\.[a-z0-9]+$/i, '');
+}
+
+// The words under the photo — what it is called, and nothing else.
 export function captionFor(at: number, photos: Photo[]): string {
   const one = photos[at];
-  if (!one) { return ''; }
-  const name = one.name.replace(/\.[a-z0-9]+$/i, '');
-  return `${at + 1} of ${photos.length} ${name}`;
+  return one ? nameOf(one) : '';
 }

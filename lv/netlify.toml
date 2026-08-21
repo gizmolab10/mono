@@ -1,0 +1,7 @@
+# Netlify reads this beside the site it builds. Only the functions are declared
+# here; how the site itself is built stays where it already is, in Netlify's own
+# settings.
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
