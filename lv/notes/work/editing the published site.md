@@ -26,6 +26,24 @@ GITHUB_BRANCH   which branch — optional, main unless said
 
 Until `LV_PASSPHRASE` is set, the function answers that nothing can be written, and writes nothing.
 
+### Setting them, once
+
+**At GitHub — make the token**
+
+1. github.com → your avatar → **Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens** → **Generate new token**
+2. Repository access: **Only select repositories** → `gizmolab10/mono`. Permissions → Repository permissions → **Contents: Read and write**. Nothing else.
+3. Generate, and copy the token — GitHub shows it once.
+
+**At Netlify — set them**
+
+4. app.netlify.com → the **littlecloudvineyard** site → **Site configuration** → **Environment variables** → **Add a variable** → **Add a single variable**.
+5. Add each, scoped to **Functions**: `LV_PASSPHRASE` (talktuh gracias) and `GITHUB_TOKEN` (the one you copied). `GITHUB_REPO` and `GITHUB_BRANCH` can be skipped — `gizmolab10/mono` and `main` are what the function uses unless told otherwise.
+6. **Deploys** → **Trigger deploy** → **Deploy site**. A function only sees a variable that was set before it was deployed.
+
+**Then, in the browser**
+
+7. On the live site, turn editing on and change a caption. The browser asks for the word; type it. It is remembered there, and a wrong one is forgotten, so the next try asks again.
+
 The commit is made the long way — a blob, a tree, a commit, then the branch moved — because that path takes a file of any size, where the plain one stops at a megabyte.
 
 **One limit not yet met:** Netlify gives a function ten seconds. Reading fifty megabytes out of GitHub and committing it back may take longer, so the movie may fail where a photo will not. If it does, the answer is to do that work in the background and stop waiting for it.

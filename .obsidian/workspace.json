@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "lv/src/md/Little Cloud Vineyard.md",
+                "file": "lv/notes/work/editing the published site.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Little Cloud Vineyard"
+              "title": "editing the published site"
             }
           },
           {
@@ -213,13 +213,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "lv/src/md/Little Cloud Vineyard.md",
+                "file": "lv/notes/work/editing the published site.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Little Cloud Vineyard"
+              "title": "Outline of editing the published site"
             }
           },
           {
@@ -254,6 +254,7 @@
   },
   "active": "6ac25d6346f16830",
   "lastOpenFiles": [
+    "lv/src/md/Little Cloud Vineyard.md",
     "ji/notes/work/AI on my mac.md",
     "lv/dist/assets/yo bro IMG_5305-DbYqpz0P.mov",
     "lv/dist/assets/index-6b1Rcb9V.js",
@@ -271,7 +272,6 @@
     "lv/src/assets/the vineyard/a made-up movie.mov",
     "lv/src/lib/ts/test/movie on disk.test.ts",
     "lv/src/assets/the vineyard/zoogilly boogley!.gif",
-    "lv/src/md/Little Cloud Vineyard.md",
     "lv/dist/assets/zoogilly boogley!-DVxhFJ0_.gif",
     "node_modules/exifr/README.md",
     "node_modules/exifr/CHANGELOG.md",
