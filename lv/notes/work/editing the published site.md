@@ -48,6 +48,12 @@ The commit is made the long way — a blob, a tree, a commit, then the branch mo
 
 **One limit not yet met:** Netlify gives a function ten seconds. Reading fifty megabytes out of GitHub and committing it back may take longer, so the movie may fail where a photo will not. If it does, the answer is to do that work in the background and stop waiting for it.
 
+## Built — adding a file under five megabytes
+
+`lv/netlify/functions/add-photo.mts`. The file arrives in the request itself, the caption is written inside it, and it is committed. A photo from a phone fits; anything larger is refused with a line saying so, by the page before it sends and by the function after it arrives.
+
+Five megabytes is what Netlify will hand a function. Nothing in our code chose it.
+
 ## Still to build — adding a large file
 
 ## The path a new file takes
@@ -80,3 +86,14 @@ The second is the better home for a vineyard's photos and movies. It is also a c
 ## Until then
 
 Large files are added with `yarn dev`, or by hand.
+
+## What the published site can do today
+
+```text
+add a file under 5 MB      yes
+add anything larger        no — the dev server, or by hand
+change a caption           yes, any size
+delete a file              yes
+```
+
+All three ask for the passphrase once, and all three need `LV_PASSPHRASE` and `GITHUB_TOKEN` set at Netlify.

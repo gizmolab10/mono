@@ -28,6 +28,10 @@
   const LIVE = !import.meta.env.DEV;
   const DOORWAY = LIVE ? '/.netlify/functions/recaption' : '/__recaption';
   const AWAY = LIVE ? '/.netlify/functions/delete-photo' : '/__delete-photo';
+  const ADD = LIVE ? '/.netlify/functions/add-photo' : '/__caption';
+  // The published site takes a file in the request itself, which Netlify caps
+  // at about five megabytes. A photo fits; a movie is a job for the dev server.
+  const MOST = LIVE ? 5 * 1024 * 1024 : Infinity;
 
   // The passphrase, asked for once and remembered in this browser.
   function passphrase(): string | null {
@@ -92,7 +96,7 @@
       if (!answer.ok) {
         // A wrong word is worth forgetting, so the next try asks again.
         if (answer.status === 401) { savePass(''); }
-        note = await answer.text();
+        note = await why(answer);
         return;
       }
       note = LIVE
@@ -121,7 +125,7 @@
       });
       if (!answer.ok) {
         if (answer.status === 401) { savePass(''); }
-        note = await answer.text();
+        note = await why(answer);
         return;
       }
       note = LIVE
@@ -134,6 +138,14 @@
     }
   }
 
+  // What went wrong, in one line. A doorway that is not there answers with a
+  // whole web page; saying so beats printing it.
+  async function why(answer: Response): Promise<string> {
+    const words = (await answer.text()).trim();
+    if (words.startsWith('<')) { return `nothing is listening at ${answer.url.replace(location.origin, '')}`; }
+    return words.length > 200 ? `${words.slice(0, 200)}…` : words;
+  }
+
   async function dropped(event: DragEvent) {
     event.preventDefault();
     over = false;
@@ -143,22 +155,36 @@
       note = `"${file.name}" cannot carry a caption — png, jpeg, gif and movies do`;
       return;
     }
+    if (file.size > MOST) {
+      note = `"${file.name}" is ${Math.round(file.size / 1024 / 1024)} MB — this site takes 5 MB at most. Add it with the dev server.`;
+      return;
+    }
     const said = window.prompt(`Caption for "${file.name}"`, '');
     if (said === null) { return; }
+    const pass = passphrase();
+    if (pass === null) { return; }
     note = `writing "${file.name}" …`;
     try {
       // The file goes as it is. Turning it into text first cost three copies
       // of it in the browser's own memory, and a movie died on the way.
-      const answer = await fetch('/__caption', {
+      const answer = await fetch(ADD, {
         method: 'POST',
         headers: {
           'x-folder': encodeURIComponent(folder),
           'x-name': encodeURIComponent(file.name),
           'x-caption': encodeURIComponent(said),
+          'x-pass': encodeURIComponent(pass),
         },
         body: file,
       });
-      note = answer.ok ? `wrote "${file.name}" into ${folder}` : `${await answer.text()}`;
+      if (!answer.ok) {
+        if (answer.status === 401) { savePass(''); }
+        note = await why(answer);
+        return;
+      }
+      note = LIVE
+        ? `wrote "${file.name}" into ${folder} — the site rebuilds in a minute or two`
+        : `wrote "${file.name}" into ${folder}`;
     } catch (e) {
       note = `nothing was written — ${(e as Error).message}`;
     }
