@@ -27,6 +27,7 @@
   // Netlify, which commits to the repository and asks for a passphrase first.
   const LIVE = !import.meta.env.DEV;
   const DOORWAY = LIVE ? '/.netlify/functions/recaption' : '/__recaption';
+  const AWAY = LIVE ? '/.netlify/functions/delete-photo' : '/__delete-photo';
 
   // The passphrase, asked for once and remembered in this browser.
   function passphrase(): string | null {
@@ -44,13 +45,18 @@
   let at = $state(0);
   let note = $state('');
   let over = $state(false);
+  let thrown = $state<string[]>([]);
 
-  const showing = $derived(photos[at]);
-  const caption = $derived(captionFor(at, photos));
+  // What this gallery holds: everything the caller handed over, less whatever
+  // has been thrown away since the page was drawn.
+  const here = $derived(photos.filter((one) => !thrown.includes(one.name)));
+
+  const showing = $derived(here[at]);
+  const caption = $derived(captionFor(at, here));
   const plays = $derived(!!showing && isMovie(showing.name));
 
   function walk(by: number) {
-    at = step(at, photos.length, by);
+    at = step(at, here.length, by);
   }
 
   function on_key(event: KeyboardEvent) {
@@ -94,6 +100,37 @@
         : `"${one.name}" now reads "${said}"`;
     } catch (e) {
       note = `nothing was written — ${(e as Error).message}`;
+    }
+  }
+
+  // A file thrown away, asked about first: it cannot be undone from here, and
+  // only a commit in the repository holds the old one.
+  async function throwAway(one: Photo) {
+    if (!window.confirm(`Throw "${one.name}" out of ${folder}? This cannot be undone here.`)) { return; }
+    const pass = passphrase();
+    if (pass === null) { return; }
+    note = `throwing "${one.name}" away …`;
+    try {
+      const answer = await fetch(AWAY, {
+        method: 'POST',
+        headers: {
+          'x-folder': encodeURIComponent(folder),
+          'x-name': encodeURIComponent(one.name),
+          'x-pass': encodeURIComponent(pass),
+        },
+      });
+      if (!answer.ok) {
+        if (answer.status === 401) { savePass(''); }
+        note = await answer.text();
+        return;
+      }
+      note = LIVE
+        ? `"${one.name}" is gone — the site rebuilds in a minute or two`
+        : `"${one.name}" is gone`;
+      thrown = [...thrown, one.name];
+      at = Math.min(at, Math.max(0, here.length - 1));
+    } catch (e) {
+      note = `nothing was thrown away — ${(e as Error).message}`;
     }
   }
 
@@ -145,16 +182,19 @@
 
   <!-- Every file in the folder, and what it is called. A caption is written
        into its own file when the cell is left. -->
-  {#if photos.length > 0}
+  {#if here.length > 0}
     <table class='gallery-captions'>
       <thead>
-        <tr><th>file</th><th>caption</th></tr>
+        <tr><th>file</th><th>caption</th><th></th></tr>
       </thead>
       <tbody>
-        {#each photos as one (one.name)}
+        {#each here as one (one.name)}
           <tr>
             <td>{one.name}</td>
             <td contenteditable='plaintext-only' onblur={(e) => recaption(one, e)}>{nameOf(one)}</td>
+            <td class='gallery-throw'>
+              <button type='button' onclick={() => throwAway(one)}>delete</button>
+            </td>
           </tr>
         {/each}
       </tbody>

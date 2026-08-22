@@ -5,13 +5,14 @@
 // This is a dev-server doorway only: the built site has no server behind it, so
 // the edit button does nothing there.
 
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { join, resolve, basename } from 'node:path';
 import type { Plugin } from 'vite';
 import { stamp, canHoldACaption } from './stamp';
 
 const DOORWAY = '/__caption';       // a file arriving, its bytes in the body
 const AGAIN = '/__recaption';       // a file already here, its caption alone
+const AWAY = '/__delete-photo';     // a file already here, thrown away
 
 // What rides with the file: the folder it belongs to, its name, and its
 // caption — each one written as a header, since the body is the file itself.
@@ -88,6 +89,25 @@ export function captionDrop(assets = 'src/assets'): Plugin {
             response.end(JSON.stringify({ wrote: `${folder}/${name}` }));
           } catch (e) {
             server.config.logger.error(`caption: "${name}" unchanged — ${(e as Error).message}`);
+            response.statusCode = 400;
+            response.end(String((e as Error).message));
+          }
+        })();
+      });
+
+      // A file thrown away. Nothing arrives but its name.
+      server.middlewares.use(AWAY, (request, response) => {
+        if (request.method !== 'POST') { response.statusCode = 405; return response.end('post only'); }
+        const name = basename(said(request as never, 'x-name'));
+        void (async () => {
+          try {
+            const folder = await folderOnDisk(root, basename(said(request as never, 'x-folder')));
+            await unlink(join(root, folder, name));
+            server.config.logger.info(`caption: threw "${name}" out of ${folder}`);
+            response.setHeader('content-type', 'application/json');
+            response.end(JSON.stringify({ threw: `${folder}/${name}` }));
+          } catch (e) {
+            server.config.logger.error(`caption: "${name}" is still there — ${(e as Error).message}`);
             response.statusCode = 400;
             response.end(String((e as Error).message));
           }

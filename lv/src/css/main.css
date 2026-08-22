@@ -344,3 +344,25 @@ video.gallery-photo {
   background: #fff;
   outline: 1px solid rgba(0, 0, 0, 0.4);
 }
+
+/* The throw-away button in the last column of the editing table. */
+.gallery-throw {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.gallery-throw button {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.1rem 0.6rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: #a33;
+  cursor: pointer;
+}
+
+.gallery-throw button:hover {
+  background: #fff;
+  border-color: #a33;
+}

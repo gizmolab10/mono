@@ -60,8 +60,26 @@ async function titleOf(path: string): Promise<string | null> {
   const read = await exifr.parse(bytes, { xmp: true, iptc: true }).catch(() => null);
   if (!read) { return null; }
   const said = read.title ?? read.dc?.title ?? read.ObjectName ?? read.Headline ?? read.ImageDescription;
-  const one = typeof said === 'object' && said !== null ? Object.values(said)[0] : said;
-  return typeof one === 'string' && one.trim() !== '' ? one.trim() : null;
+  const one = wordsIn(said);
+  return one !== null && one.trim() !== '' ? one.trim() : null;
+}
+
+// A title comes back in more than one shape. Written in one language it is a
+// pair — the language and the words. Written in several it is one entry per
+// language. Either way the words are what is wanted, never the language's name.
+function wordsIn(said: unknown): string | null {
+  if (typeof said === 'string') { return said; }
+  if (Array.isArray(said)) { return wordsIn(said[0]); }
+  if (typeof said === 'object' && said !== null) {
+    const one = said as Record<string, unknown>;
+    if (typeof one.value === 'string') { return one.value; }
+    if (typeof one['x-default'] === 'string') { return one['x-default'] as string; }
+    for (const two of Object.values(one)) {
+      const found = wordsIn(two);
+      if (found !== null) { return found; }
+    }
+  }
+  return null;
 }
 
 // A PNG carries its text in `tEXt` chunks: four bytes of length, the four

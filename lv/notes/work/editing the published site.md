@@ -37,7 +37,7 @@ Until `LV_PASSPHRASE` is set, the function answers that nothing can be written, 
 **At Netlify — set them**
 
 4. app.netlify.com → the **littlecloudvineyard** site → **Site configuration** → **Environment variables** → **Add a variable** → **Add a single variable**.
-5. Add each, scoped to **Functions**: `LV_PASSPHRASE` (talktuh gracias) and `GITHUB_TOKEN` (the one you copied). `GITHUB_REPO` and `GITHUB_BRANCH` can be skipped — `gizmolab10/mono` and `main` are what the function uses unless told otherwise.
+5. Add each, scoped to **Functions**: `LV_PASSPHRASE` and `GITHUB_TOKEN` (the one you copied). `GITHUB_REPO` and `GITHUB_BRANCH` can be skipped — `gizmolab10/mono` and `main` are what the function uses unless told otherwise.
 6. **Deploys** → **Trigger deploy** → **Deploy site**. A function only sees a variable that was set before it was deployed.
 
 **Then, in the browser**
