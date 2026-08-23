@@ -20,7 +20,7 @@ Then every press has one plain rule:
 
 Nothing else has to be decided. Three faults today all came from the app knowing only where you let go, never what you pressed — and each one was patched on its own. Knowing both makes all three patches unnecessary.
 
-[Hits.ts:76-79](../../src/lib/ts/events/Hits.ts#L76-L79)
+[Hits.ts:76-79](../../../src/lib/ts/events/Hits.ts#L76-L79)
 
 ## Three faults, one cause
 
@@ -48,11 +48,11 @@ The pressed thing **and** where the button came up, each reported, each caller s
 
 **For.** It answers both questions rather than picking one: a button wants what you pressed, a drop wants where you let go. The release-outside question then settles itself — a button acts only when the two agree, a drop acts on the second. It costs two fields and one comparison, since what one press did already carries its element and its event, and the double-press already remembers a target across a press.
 
-[S_Mouse.ts:8-29](../../src/lib/ts/events/S_Mouse.ts#L8-L29), [Hits.ts:43-44](../../src/lib/ts/events/Hits.ts#L43-L44)
+[S_Mouse.ts:8-29](../../../src/lib/ts/events/S_Mouse.ts#L8-L29), [Hits.ts:43-44](../../../src/lib/ts/events/Hits.ts#L43-L44)
 
 **Against.** Every caller must know which it wants, so silence becomes a choice. The three controls changed today should go back to acting on the press — a second pass over the very code just changed. And nothing on screen says which a control uses: a press that acts and a press that cancels look the same until it happens.
 
-[Files_List.svelte:427-437](../../src/lib/svelte/content/Files_List.svelte#L427-L437), [Steppers.svelte:43-49](../../src/lib/svelte/support/Steppers.svelte#L43-L49)
+[Files_List.svelte:427-437](../../../src/lib/svelte/content/Files_List.svelte#L427-L437), [Steppers.svelte:43-49](../../../src/lib/svelte/support/Steppers.svelte#L43-L49)
 
 ## Undecided
 

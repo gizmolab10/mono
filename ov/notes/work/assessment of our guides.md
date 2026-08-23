@@ -139,9 +139,8 @@ Seven, each holding one kind of guidance.
 - [expectations](collaborate/expectations.md) — how to get co's best work and avoid its worst.
 - [hooks](collaborate/hooks.md) — what hooks are, how they differ from memory, and which are live.
 - [jonathan](collaborate/jonathan.md) — the phrases Jonathan uses to steer a debugging session, and what each asks for.
-- [organize](collaborate/organize.md) — what is actually in the repo, and the one vocabulary for talking about it.
 - [skills](collaborate/skills.md) — the words typed with a leading slash, and what each does.
-- [tags hierarchy](collaborate/tags%20hierarchy.md) — the seven areas the tags are read in.
+- [tags hierarchy](develop/tags%20hierarchy.md) — the seven areas the tags are read in.
 - [voice](collaborate/voice.md) — how prose written into files reads: first person, warm, punchy.
 - [workflow](collaborate/workflow.md) — the turn-taking cadence and the propose-before-acting discipline.
 - [write a journal](collaborate/write%20a%20journal.md) — the formatting rules for a running journal.
@@ -163,7 +162,7 @@ Seven, each holding one kind of guidance.
 - [migrate](develop/migrate.md) — writing a migration document that breaks a big change into safe phases.
 - [port](develop/port.md) — moving a capability between projects: read the source, describe it, write a spec.
 - [refactor](develop/refactor.md) — the guardrails for letting co refactor a temperamental codebase.
-- [specification driven development](develop/early%20di%20spec.md) — what di is meant to do, from a drawing to a lumber list.
+- [specification driven development](develop/%28newer%20than%20SDD%29%20methodology.md) — what di is meant to do, from a drawing to a lumber list.
 - [style guide](develop/style%20guide.md) — naming, formatting and organization, followed strictly across projects.
 
 ### philosophy — why the work is shaped this way

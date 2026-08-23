@@ -2,7 +2,7 @@
 kind: explain
 title: "Murk record"
 description: "The use case behind the murk guide: twelve causes found in one rule set, six now closed, and the daily rate they were measured against."
-tags: [journal, notes, now, prose, stow, team]
+tags: [journal, notes, prose, stow, team]
 date: 2026-08-17
 ---
 # Murk journal
@@ -92,7 +92,7 @@ They arrive with every message. What they do is what i do. Six ways, counted nex
 1. **Pointers to names that no longer exist.** Twenty-six rows across three guides sent a reader to
    six files that had been renamed or moved. Nine links went nowhere. One file named as a standard
    piece every project keeps existed in no project.
-2. **The words disagree with the link.** `See [refactoring.md](../develop/refactor.md)` — the reader
+2. **The words disagree with the link.** `See [refactoring.md](../../../../notes/guides/develop/refactor.md)` — the reader
    trusts the word and hunts a file that is not there.
 3. **Three names for one actor.** Collaborator, co, Claude. A reader has to work out they are one.
 4. **Rules written as codes.** `STOP/SEARCH/LIST/WAIT` stands alone in two files and is unpacked in a

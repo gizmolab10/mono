@@ -56,6 +56,7 @@ What is di's own — its geometry and its pipeline — is in [di's learn](../../
 | Revisit as info not action                  | `shorthand.md` — revisit now includes "ask Work on?"              |
 | Incomplete journal                          | `shorthand.md` — journal now says "Execute ALL parts"             |
 | Contradicted self                           | `always.md` — "Before saying No, verify"                          |
+| Said 'stand' for what is still there        | `banned words.md` — remain, unchanged; never stand                |
 | Misread exact name                          | `always.md` — "Exact names matter"                                |
 | Checked off without testing                 | `always.md` — "Code written ≠ feature complete"                   |
 | Asked which task first                      | `always.md` — "Task lists are priority-ordered"                   |

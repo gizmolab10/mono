@@ -13,5 +13,6 @@ I am trying here to convey a way of being that persists from chat to chat. Not s
 - [Test](./test/)
 - [Tools](./tools/)
 - [(newer than SDD) methodology](./(newer%20than%20SDD)%20methodology.md)
+- [Assessment of our guides](./assessment%20of%20our%20guides.md)
 - [Running e2e tests](./develop/running%20e2e%20tests.md)
 

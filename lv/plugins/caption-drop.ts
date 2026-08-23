@@ -9,10 +9,12 @@ import { mkdir, readdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { join, resolve, basename } from 'node:path';
 import type { Plugin } from 'vite';
 import { stamp, canHoldACaption } from './stamp';
+import { ORDER_FILE, orderText } from '../src/lib/ts/utilities/order';
 
 const DOORWAY = '/__caption';       // a file arriving, its bytes in the body
 const AGAIN = '/__recaption';       // a file already here, its caption alone
 const AWAY = '/__delete-photo';     // a file already here, thrown away
+const ORDER = '/__reorder';         // the whole order of one folder, in the body
 
 // What rides with the file: the folder it belongs to, its name, and its
 // caption — each one written as a header, since the body is the file itself.
@@ -93,6 +95,32 @@ export function captionDrop(assets = 'src/assets'): Plugin {
             response.end(String((e as Error).message));
           }
         })();
+      });
+
+      // The order of one folder, arriving whole: every file name, one to a
+      // line, in the order they are to be shown. Nothing but the list is
+      // written, so no picture is touched however heavy it is.
+      server.middlewares.use(ORDER, (request, response) => {
+        if (request.method !== 'POST') { response.statusCode = 405; return response.end('post only'); }
+        const chunks: Buffer[] = [];
+        request.on('data', (one: Buffer) => chunks.push(one));
+        request.on('end', async () => {
+          try {
+            const folder = await folderOnDisk(root, basename(said(request as never, 'x-folder')));
+            const names = Buffer.concat(chunks).toString('utf8').split('\n')
+              .map((one) => basename(one.trim())).filter((one) => one !== '');
+            if (names.length === 0) { throw new Error('no order arrived'); }
+            const where = join(root, folder, ORDER_FILE);
+            await writeFile(where, orderText(names));
+            server.config.logger.info(`caption: ${folder} is now shown in the order of ${names.length} names`);
+            response.setHeader('content-type', 'application/json');
+            response.end(JSON.stringify({ wrote: `${folder}/${ORDER_FILE}` }));
+          } catch (e) {
+            server.config.logger.error(`caption: the order of that folder is unchanged — ${(e as Error).message}`);
+            response.statusCode = 400;
+            response.end(String((e as Error).message));
+          }
+        });
       });
 
       // A file thrown away. Nothing arrives but its name.

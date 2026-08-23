@@ -1,0 +1,1 @@
+Propose without believing: $ARGUMENTS. Read memory/shared/truth/protocol.md ("Studio", "Session protocol"): capture in the project's studio/ideas.md or as an I:/Q: log line. Never touch truth/. Reply with one line saying where it landed.

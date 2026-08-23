@@ -1,3 +1,10 @@
+---
+kind: analyze
+title: "Journal — design decisions and stack"
+description: "Not in scope for the first pass"
+tags: [now, stale]
+date: 2026-08-23
+---
 # Journal — design decisions and stack
 
 ## Decisions
@@ -20,6 +27,8 @@
 - **Wiki-links.** Look and behave like normal links — same colour, same hover, same click-to-navigate. Open the target page.
 - **External links.** Open in a new tab.
 - **Frontmatter scope.** Allowed entries: pretty title, redirect, subtitle, author, date, and a `home` flag that marks the home page. The sidebar reads the title and the home flag today; behaviour of the rest is TBD.
+- **The order a gallery is shown in.** It belongs to the folder, in one list — `order.md` beside the pictures, naming them one to a line. A file's line is its place, so nothing is numbered and no picture is rewritten to reorder it. A folder with no list is in file-name order; the first move writes the list whole.
+- **The caption belongs to the picture**, inside the file, as it always has — so a picture away from this site still says what it is.
 - **Images.** Pulled from the assets folder. The loader searches the assets root and all its subfolders. Image filenames are unique by guarantee.
 - **Embedded md files.** Supported by the parser but not expected to come up.
 - **Math, code-block highlighting, body-tag syntax.** Out of scope for the first pass; listed under "Deferred" below.
@@ -34,6 +43,19 @@
 - **Type checker includes only imported types.** The checker was pulling in every shared type package in the monorepo and warning about one with no definitions. It now includes only the types the code actually imports, which clears the warning without changing any behaviour.
 - **Image embeds can carry a size.** After the bar in an image embed, a plain number sets the width and a number-by-number sets width and height — the same shorthand Obsidian uses. The picture is then drawn at that size. Any other text after the bar is still treated as the caption.
 - **Tests live in their own folder.** The unit tests moved out from beside the code they check into a single `test` folder next to the code folders, with their links to the code repointed to match.
+
+### 2026-08-21 — editing from the published site
+
+**Proved on the live site: a photo added, a caption written, both showing.**
+
+- **A page cannot write to disk, and the published site has no server**, so three small pieces of code run at Netlify: change a caption, add a file, delete a file. Each checks a passphrase, does the work against GitHub, and commits. Netlify sees the commit and rebuilds.
+- **The page picks its own doorway** by where it is running — the dev server while `yarn dev` runs, Netlify on the live site.
+- **The passphrase is the only guard.** Typed once, remembered in that browser, forgotten when it is wrong. Netlify holds the real one, and the key to the repository, and the page holds neither.
+- **A file added from the live site travels in the request**, which Netlify caps at about five megabytes. A photo fits; a movie is a job for the dev server. The refusal is said twice — by the page before it sends, and by the function if it arrives anyway.
+- **The commit is made the long way** — a blob, a tree, a commit, then the branch moved — since that path takes a file of any size where the short one stops at a megabyte.
+- **`lv.technical` says three things now**: unset, and there is no edit button at all; false, and the table shows without the drop box; true, and a file may be added.
+- **A caption's words are not its language.** exifr hands a title back as a pair — the language and the words — and the first read took the language, so every jpeg's caption read `x-default`. The words are taken now, in every shape a title arrives in.
+- **A file thrown away leaves the working files only.** Every commit that held it still holds it, so deleting frees nothing in the repository.
 
 ### 2026-08-21 — the photo gallery
 
@@ -88,6 +110,7 @@ The six steps from the proposal's "Order of work":
 - [x] Step 5 — status line; read `Sidebar.md` to drive the sidebar.
 - [x] Step 6 — sidebar component (active-entry pill, collapsible sections, home-entry treatment) and the `[!center]` callout override.
 - [x] The photo gallery — see the entry above, and [photo gallery](photo%20gallery.md) for how each piece works.
+- [x] Reordering a gallery — the table shows where each file sits, up and down move the highlight, option with them moves the file, and the list is written by the dev server or by Netlify. Proved on 2026-08-23 with `yarn dev`.
 
 ## Sources
 

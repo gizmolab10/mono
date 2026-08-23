@@ -319,9 +319,21 @@ def is_listed_note(where):
 
     Every guide and every design, at any depth. A work note where it sits at the very top of a
     work folder, and inside any of WORK_FOLDERS — the same rule the listing uses, said here as
-    well because reading and writing pass through this one door."""
+    well because reading and writing pass through this one door. Every file in the memory
+    system, at any depth, the same as a guide."""
     if not where.endswith('.md'):
         return False
+    # A place on this machine is turned into one counting from the top of the repo, so the
+    # memory system is recognised however the app names it.
+    inside = where
+    if os.path.isabs(inside):
+        root = os.path.realpath(GITHUB_DIR)
+        full = os.path.realpath(inside)
+        if not full.startswith(root + os.sep):
+            return False
+        inside = os.path.relpath(full, root)
+    if inside.startswith('memory/'):
+        return True
     if any(part in where for part in ('notes/guides/', 'notes/designs/')):
         return True
     at = where.find('notes/work/')
@@ -523,6 +535,15 @@ class APIHandler(BaseHTTPRequestHandler):
                                     inside_one = os.path.join(whole, deeper)
                                     if deeper.endswith('.md') and os.path.isfile(inside_one):
                                         found.append(os.path.relpath(inside_one, root))
+                # The memory system sits at the top of the repo, beside notes, and belongs to
+                # no collection. Every file inside it is listed, however deep it sits.
+                memory = os.path.join(root, 'memory')
+                if os.path.isdir(memory):
+                    for here, folders, files in os.walk(memory):
+                        folders[:] = [f for f in folders if not f.startswith('.')]
+                        for one in files:
+                            if one.endswith('.md'):
+                                found.append(os.path.relpath(os.path.join(here, one), root))
                 found.sort()
                 # The repo's own place on this machine goes back too, since the app reads each
                 # file by its full place and has nothing else to work it out from.

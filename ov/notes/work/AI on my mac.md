@@ -1,8 +1,8 @@
 ---
-kind: analyze
+kind: specify
 title: "AI on My Mac"
 description: "What a coding agent running on the new M3 Ultra Studio actually takes, in the order the work has to happen"
-tags: [now]
+tags: [now, proposal]
 date: 2026-08-21
 ---
 # AI on my mac
@@ -22,13 +22,15 @@ Set the expectation now: a local 30B to 80B model is good at scoped edits in cod
 
 ## The number that decides everything
 
-GPU cores set speed. Unified memory sets what can run at all. M3 Ultra comes at 96, 256 or 512 GB, and that choice matters more than anything else on this page.
+GPU cores set speed. Unified memory sets what can run at all. The memory shortage has already made that choice for us.
+
+Apple pulled the 512 GB option in March, cut more in May, and today the store lists exactly one Ultra build: 28-core processor, 60-core graphics, 96 GB, 1 TB. 96 GB or nothing. The 256 GB tier, and every model that needed it, is gone.
 
 And macOS does NOT hand the graphics side all of it. There's a ceiling on how much memory Metal may pin for weights and cache, and it needs raising.
 
 ```bash
 sysctl iogpu.wired_limit_mb              # what the GPU may pin now
-sudo sysctl iogpu.wired_limit_mb=237568  # 256 GB machine, ~232 GB ceiling
+sudo sysctl iogpu.wired_limit_mb=86016   # 96 GB machine, ~84 GB ceiling
 sudo sysctl iogpu.wired_limit_mb=0       # back to default
 ```
 
@@ -36,15 +38,15 @@ It's a runtime setting, so it dies at reboot. Wrap it in a launch agent. Leave t
 
 | Installed | Practical model + cache budget | What it buys |
 | --- | --- | --- |
-| 96 GB | ~82 GB | an 80B mixture-of-experts model at 4-bit, long context, comfortable |
-| 256 GB | ~232 GB | that same model at 8-bit, or the 200B+ models. the interesting tier |
-| 512 GB | ~480 GB | frontier-size open weights, no offload |
+| 96 GB (the only one sold) | ~82 GB | an 80B mixture-of-experts model at 4-bit, long context, comfortable |
+| 256 GB (withdrawn) | ~232 GB | that same model at 8-bit, or the 200B+ models |
+| 512 GB (withdrawn) | ~480 GB | frontier-size open weights, no offload |
 
 ## The catch nobody puts in the headline
 
 M3 Ultra has gorgeous memory bandwidth, so words come out fast once it starts.
 
-Starting is the problem. Prompt processing (chewing through the context before the first word) is the weak spot, and agentic coding is nothing but prompt processing. Every single turn re-reads a huge context. Apple added dedicated accelerators for exactly this in the M5 generation. M3 Ultra doesn't have them.
+Starting is the problem. Prompt processing (chewing through the context before the first word) is the weak spot, and agentic coding is nothing but prompt processing. Every single turn re-reads a huge context. Apple added dedicated accelerators for exactly this in the M5 generation. M3 Ultra doesn't have them, and no Ultra chip does yet (the M5 family so far is only the Air, the small Pro and the Neo).
 
 So prompt caching stops being an optimization and becomes a requirement. Stable prefix first, volatile content last, always.
 
@@ -73,7 +75,7 @@ The test is not code benchmarks. It's whether the thing emits well-formed tool c
 | --- | --- | --- | --- |
 | Qwen3-Coder-Next | ~80B MoE, ~3B active | ~46 GB at 3-4 bit, ~85 GB at 8-bit | the default for this machine. 262k context, Apache 2.0, trained for tool use |
 | Qwen 3.6 35B-A3B | 35B MoE, 3B active | ~30-40 GB | lighter and quick. the right thing to wire everything up with first |
-| DeepSeek V4-Flash | ~284B MoE, 13B active | 256 GB+ | the actual reason to buy the big memory config |
+| DeepSeek V4-Flash | ~284B MoE, 13B active | 256 GB+ | out of reach. it wants memory Apple no longer sells |
 
 Two settings people get wrong. Don't quantize below about 3-bit (tool-call formatting degrades well before the prose visibly does). And use the model's published sampling numbers, not the harness defaults: for the Qwen coder line that's temperature 1.0, top-p 0.95, top-k 40, min-p 0.01, repetition penalty off.
 
@@ -134,4 +136,8 @@ Build a fixed suite of five to ten real tasks from our own repos, gradeable pass
 
 The Studio makes local genuinely usable for the grinding work, which the 2018 mini never could. It does not make local a replacement for what we do together on a whole project. The lever is still which model does which task.
 
-Next thing to decide: which memory config. 96 versus 256 is the whole conversation.
+The next decision isn't the memory config. It's the calendar.
+
+Order the M3 Ultra now and it's 13 to 14 weeks, so it lands in October, at $5,299 for the 96 GB (it was $3,999). A Studio with M5 Max and M5 Ultra is expected around October as well, tested as high as 768 GB, though the same shortage makes that timing soft. Same wait either way. And the M5 generation is precisely the one that fixes the prompt-processing weakness above.
+
+UA! The M5 Studio is a rumor with a date attached, not an announcement. If it slips, waiting costs real months.

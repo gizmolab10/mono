@@ -6,9 +6,17 @@
 // The titles carried inside the photos themselves, read while the site is
 // built. See `plugins/photo-titles.ts`.
 import photoTitles from 'virtual:photo-titles';
+import { inOrder, namesInOrder } from './order';
 
 // md files: load every file under src/md as raw text.
 const rawMdModules = import.meta.glob<string>('/src/md/**/*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+// the order lists: one per gallery folder, naming its files one to a line.
+const orderModules = import.meta.glob<string>('/src/assets/**/order.md', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -75,9 +83,23 @@ export function loadMdEntries(): MdEntry[] {
   return entries;
 }
 
-// Returns a map from folder name to that folder's photos, in name order. The
-// folder is the one directly under `src/assets/`; images sitting at the top of
-// assets belong to no folder and are left out. This is what a gallery reads:
+// The names each folder's own list holds, in the order it holds them. A folder
+// with no list is not in here at all.
+export function loadAssetOrders(): Map<string, string[]> {
+  const orders = new Map<string, string[]>();
+  for (const [path, text] of Object.entries(orderModules)) {
+    const rel = path.startsWith(ASSET_ROOT) ? path.slice(ASSET_ROOT.length) : path;
+    const slash = rel.indexOf('/');
+    if (slash === -1) { continue; }
+    orders.set(rel.slice(0, slash), namesInOrder(text));
+  }
+  return orders;
+}
+
+// Returns a map from folder name to that folder's photos, in the order that
+// folder's own list names — file-name order where it has no list. The folder is
+// the one directly under `src/assets/`; images sitting at the top of assets
+// belong to no folder and are left out. This is what a gallery reads:
 // `loadAssets` keys every image by its own name alone and forgets where it sat.
 export function loadAssetFolders(): Map<string, Photo[]> {
   const folders = new Map<string, Photo[]>();
@@ -91,8 +113,9 @@ export function loadAssetFolders(): Map<string, Photo[]> {
     photos.push({ name, url, title: photoTitles[name] });
     folders.set(folder, photos);
   }
-  for (const photos of folders.values()) {
-    photos.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  const orders = loadAssetOrders();
+  for (const [folder, photos] of folders) {
+    folders.set(folder, inOrder(photos, orders.get(folder) ?? []));
   }
   return folders;
 }
@@ -104,8 +127,8 @@ function flatten(folder: string): string {
   return folder.trim().toLowerCase().replace(/[ _-]+/g, '-');
 }
 
-// The photos in one folder, in name order. Nothing at all for a folder that is
-// not there.
+// The photos in one folder, in the order that folder is shown in. Nothing at
+// all for a folder that is not there.
 export function photosInFolder(folder: string): Photo[] {
   const want = flatten(folder);
   for (const [name, photos] of loadAssetFolders()) {

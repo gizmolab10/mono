@@ -345,6 +345,19 @@ video.gallery-photo {
   outline: 1px solid rgba(0, 0, 0, 0.4);
 }
 
+/* The row being worked on: up and down move the highlight, and option with
+   them moves that file up or down the folder's own order. */
+.gallery-captions tr.picked td {
+  background: rgba(255, 214, 102, 0.35);
+}
+
+/* Where a file sits in the folder's order — the first column of the table. */
+.gallery-row {
+  width: 1%;
+  color: #666;
+  text-align: right;
+}
+
 /* The throw-away button in the last column of the editing table. */
 .gallery-throw {
   width: 1%;

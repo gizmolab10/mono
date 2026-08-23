@@ -1,0 +1,1 @@
+Audit the memory system (target: $ARGUMENTS, default all). Read memory/shared/truth/protocol.md, "Skills" entry for check plus the sizing table, and execute: structure, sizing, terminology drift, duplicated facts, skill/command pointers. If checking a settle this session performed, say so and ask for a rerun in a new session. Read-only; report finding, file, fix.

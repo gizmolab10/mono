@@ -20,12 +20,12 @@ source code is [map of di files](map%20of%20di%20files.md); the map of the guide
 
 ## designs/ — direction
 
-- `di road map.md` — where di is going, phase by phase.
+- [di road map.md](../../designs/di%20road%20map.md) — where di is going, phase by phase.
 
 ## work/ — active tracking
 
-- `now/` — the current working files: `code debt.md`, `code debt paid.md`, `handoff.md`,
-  `work journal.md`, `working features.md`, `learn.md`, `revisit.di.md`, and the loose notes beside
+- `now/` — the current working files: [code debt.md](../../work/now/code%20debt.md) — whose finished half sits under its own `done` heading —, [handoff.md](../../work/now/handoff.md),
+  [work journal.md](../../work/now/work%20journal.md), [working features.md](../../work/now/working%20features.md), `learn.md`, [revisit.di.md](../../work/now/revisit.di.md), and the loose notes beside
   them.
 - `next/` — planned work not yet started.
 - `milestones/` — work bundled into named milestones, open and done.
@@ -35,4 +35,4 @@ source code is [map of di files](map%20of%20di%20files.md); the map of the guide
 
 ## tools/
 
-- `sync-next.mjs` — reads the first unchecked item out of `work/now/code debt.md`.
+- [sync-next.mjs](../../tools/sync-next.mjs) — reads the first unchecked item out of [work/now/code debt.md](../../work/now/code%20debt.md).

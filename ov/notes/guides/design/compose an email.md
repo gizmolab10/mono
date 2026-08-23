@@ -1,7 +1,7 @@
 ---
 kind: howto
-title: "ov installer"
-description: "What a new machine needs before overview works on it."
+title: "Compose an email"
+description: "Handing a file on by mail: what the app opens, and why it does nothing on Windows."
 tags: [setup]
 date: 2026-08-17
 ---
@@ -58,4 +58,4 @@ it has always worked here. Carrying a whole file to Gmail needs another way alto
 clipboard, or a file the dispatcher writes and then shows.
 
 ji's ⤴ sends an empty message, so the setup above is the whole of it there:
-[Controls.svelte:49-52](../../../ji/src/lib/svelte/main/Controls.svelte#L49-L52).
+[Controls.svelte:49-52](../../../../ji/src/lib/svelte/main/Controls.svelte#L49-L52).

@@ -19,6 +19,7 @@
   // page changes.
   import { technical } from '../ts/utilities/technical.svelte';
   import { captionFor, isMovie, nameOf, step } from '../ts/utilities/gallery';
+  import { halted, inOrder, moved } from '../ts/utilities/order';
   import { loadPass, savePass } from '../ts/utilities/persistence';
   import type { Photo } from '../ts/utilities/loader';
 
@@ -29,6 +30,7 @@
   const DOORWAY = LIVE ? '/.netlify/functions/recaption' : '/__recaption';
   const AWAY = LIVE ? '/.netlify/functions/delete-photo' : '/__delete-photo';
   const ADD = LIVE ? '/.netlify/functions/add-photo' : '/__caption';
+  const ORDER = LIVE ? '/.netlify/functions/reorder' : '/__reorder';
   // The published site takes a file in the request itself, which Netlify caps
   // at about five megabytes. A photo fits; a movie is a job for the dev server.
   const MOST = LIVE ? 5 * 1024 * 1024 : Infinity;
@@ -47,13 +49,23 @@
   let { photos, folder, height = null }: { photos: Photo[]; folder: string; height?: number | null } = $props();
 
   let at = $state(0);
+  let edit_index = $state(0);
   let note = $state('');
   let over = $state(false);
   let thrown = $state<string[]>([]);
+  // The order settled since the page was drawn. Empty until a file is moved,
+  // and then it is what the table and the pictures both follow, so a move shows
+  // at once instead of waiting for the site to be built again.
+  let order = $state<string[]>([]);
 
   // What this gallery holds: everything the caller handed over, less whatever
-  // has been thrown away since the page was drawn.
-  const here = $derived(photos.filter((one) => !thrown.includes(one.name)));
+  // has been thrown away since the page was drawn. They arrive in the order the
+  // folder's own list names, so that order is kept until a move here settles a
+  // new one.
+  const here = $derived.by(() => {
+    const left = photos.filter((one) => !thrown.includes(one.name));
+    return order.length === 0 ? left : inOrder(left, order);
+  });
 
   const showing = $derived(here[at]);
   const caption = $derived(captionFor(at, here));
@@ -63,16 +75,69 @@
     at = step(at, here.length, by);
   }
 
+  // While a picture is showing, left and right step it. While the table is up,
+  // up and down move the highlight, and holding option moves the file itself.
   function on_key(event: KeyboardEvent) {
-    if (technical.editing) { return; }
-    if (event.key === 'ArrowRight') { walk(1); }
-    if (event.key === 'ArrowLeft')  { walk(-1); }
+    if (!technical.editing) {
+      if (event.key === 'ArrowRight') { walk(1); }
+      if (event.key === 'ArrowLeft')  { walk(-1); }
+      return;
+    }
+    const by = event.key === 'ArrowDown' ? 1 : event.key === 'ArrowUp' ? -1 : 0;
+    if (by === 0) { return; }
+    // A caption being typed keeps its own arrow keys, so the cursor can be
+    // moved through the words.
+    if ((event.target as HTMLElement | null)?.isContentEditable) { return; }
+    event.preventDefault();
+    if (event.altKey) { void reorder(by); } else { edit_index = halted(edit_index, here.length, by); }
   }
 
   $effect(() => {
     window.addEventListener('keydown', on_key);
     return () => window.removeEventListener('keydown', on_key);
   });
+
+  // One file moved a step, and the whole new order written back. Only the list
+  // travels — the pictures are never touched — so this is the same small write
+  // whatever the folder holds.
+  async function reorder(by: number) {
+    const next = moved(here.map((one) => one.name), edit_index, by);
+    if (next.at === edit_index) { return; }
+    const pass = passphrase();
+    if (pass === null) { return; }
+    const order_was = order;
+    const index_was = edit_index;
+    const which = here[edit_index]?.name ?? '';
+    order = next.names;
+    edit_index = next.at;
+    note = `moving "${which}" …`;
+    try {
+      const answer = await fetch(ORDER, {
+        method: 'POST',
+        headers: {
+          'x-folder': encodeURIComponent(folder),
+          'x-pass': encodeURIComponent(pass),
+        },
+        body: next.names.join('\n'),
+      });
+      if (!answer.ok) {
+        // The order on screen goes back to what the folder holds, so nothing is
+        // shown that was never written.
+        if (answer.status === 401) { savePass(''); }
+        order = order_was;
+        edit_index = index_was;
+        note = await why(answer);
+        return;
+      }
+      note = LIVE
+        ? `"${which}" moved — the site rebuilds in a minute or two`
+        : `"${which}" moved`;
+    } catch (e) {
+      order = order_was;
+      edit_index = index_was;
+      note = `nothing was moved — ${(e as Error).message}`;
+    }
+  }
 
   // The caption of a file already in the folder, written when the cell is left.
   // Only the words travel; the server reads that file, writes the caption in,
@@ -211,11 +276,12 @@
   {#if here.length > 0}
     <table class='gallery-captions'>
       <thead>
-        <tr><th>file</th><th>caption</th><th></th></tr>
+        <tr><th></th><th>file</th><th>caption</th><th></th></tr>
       </thead>
       <tbody>
-        {#each here as one (one.name)}
-          <tr>
+        {#each here as one, row (one.name)}
+          <tr class:picked={row === edit_index}>
+            <td class='gallery-row'>{row}</td>
             <td>{one.name}</td>
             <td contenteditable='plaintext-only' onblur={(e) => recaption(one, e)}>{nameOf(one)}</td>
             <td class='gallery-throw'>

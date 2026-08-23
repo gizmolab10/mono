@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "Implementation"
+description: "Render the home page (and every page) from md files in the md folder"
+tags: [now, stale]
+date: 2026-08-21
+---
 # Implementation
 
 Render the home page (and every page) from md files in the md folder. Full Obsidian syntax. One page shows one md file. A sidebar lists the md files so the reader can jump between them.

@@ -11,6 +11,16 @@ describe('which links are code', () => {
 		expect(is_code_link('./Files.ts')).toBe(true);
 	});
 
+	it('takes every other kind a guide names', () => {
+		expect(is_code_link('../../netlify/functions/recaption.mts')).toBe(true);
+		expect(is_code_link('../../src/css/main.css')).toBe(true);
+		expect(is_code_link('../../index.html')).toBe(true);
+		expect(is_code_link('../../package.json')).toBe(true);
+		expect(is_code_link('../../netlify.toml')).toBe(true);
+		expect(is_code_link('notes/tools/hub/dispatcher.py')).toBe(true);
+		expect(is_code_link('notes/tools/hub/servers.sh')).toBe(true);
+	});
+
 	it('leaves the line off the reckoning', () => {
 		expect(is_code_link('../../src/lib/ts/managers/Files.ts#L42')).toBe(true);
 		expect(is_code_link('Section.svelte#L46-L52')).toBe(true);
@@ -21,7 +31,7 @@ describe('which links are code', () => {
 		expect(is_code_link('always.md#naming')).toBe(false);
 		expect(is_code_link('#a-heading-here')).toBe(false);
 		expect(is_code_link('')).toBe(false);
-		expect(is_code_link('notes/tools/hub/dispatcher.py')).toBe(false);
+		expect(is_code_link('the vineyard/lcv.label.png')).toBe(false);
 	});
 
 	it('is not fooled by a name that merely holds the ending', () => {

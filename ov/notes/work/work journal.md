@@ -1,9 +1,9 @@
 ---
 kind: explain
-title: "Work"
-description: "What's been finished, newest first"
+title: "Work journal"
+description: "What has been finished, newest first."
 tags: [journal]
-date: 2026-08-10
+date: 2026-08-19
 ---
 # Work Journal
 
@@ -34,7 +34,7 @@ every path falls back and the stale mark asks for a real answer. Four test cases
   files wearing it. The `done` work folder and the `done` shorthand are untouched — neither is a tag.
 - **The dispatcher's `/list-guides` route is `/list-files`**, on both sides and in its test.
 - **The murk work split in two:** the nine strategies are a guide at
-  `notes/guides/collaborate/murk.md`; the case they came from stays as a record in `soon/`.
+  `notes/guides/collaborate/avoid murk.md`; the case they came from stays as a record in `soon/`.
 
 ### Verification
 
@@ -188,7 +188,7 @@ line takes it. When that line went, the word was taken off the page and left the
 manager let its target go for good, and the word sat on screen answering nothing. It goes back to
 where it was built now.
 
-[sections](sections.md) holds the design. [sections spec](../../../notes/guides/develop/sections%20spec.md)
+[sections](../../../notes/guides/develop/sections.md) holds the design. [sections spec](../../../notes/guides/develop/sections%20spec.md)
 holds the instructions for putting it into di, ji and ws.
 
 ## 2026-08-17 — five words for how soon

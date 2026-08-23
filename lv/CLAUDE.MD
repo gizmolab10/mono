@@ -12,6 +12,10 @@ READ before proposing. SEARCH before claiming nothing exists.
 
 Structure emerges as needed — don't over-organize early.
 
+## Map
+
+The file map is `notes/guides/map of lv files.md`. Read it instead of hunting, and update it when files are added, moved or removed.
+
 ## Words
 
 - **repo** — the GitHub repository, `gizmolab10/mono`, which holds this project's code and its pictures.

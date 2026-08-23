@@ -14,7 +14,6 @@ Active non-milestone work. The files in this folder are the current working docu
 - [27.selection.algorithm](./27.selection.algorithm.md)
 - [30.licensing](./30.licensing.md)
 - [Code debt](./code%20debt.md)
-- [Code debt paid](./code%20debt%20paid.md)
 - [Handoff](./handoff.md)
 - [Learn](./learn.md) — mistakes in di's own workings, never to be repeated.
 - [Open Items](./open items.md)

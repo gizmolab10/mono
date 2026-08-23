@@ -5,8 +5,8 @@
 // list. Where the file sits is worked out from the guide naming it, so nothing has to be
 // stored: the link climbs out of that guide's own folder exactly as it reads.
 
-/** The endings that mean a file of code. */
-const CODE_ENDINGS = ['.ts', '.svelte'];
+/** The endings that mean a file of code — anything a guide names that this app cannot open itself. */
+const CODE_ENDINGS = ['.ts', '.mts', '.mjs', '.js', '.svelte', '.css', '.html', '.json', '.toml', '.sh', '.py'];
 
 /** The part of a link before the hash: the file it names, with any line left off. */
 function file_named_by(link: string): string {

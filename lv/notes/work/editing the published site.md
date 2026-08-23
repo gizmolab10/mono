@@ -1,9 +1,9 @@
 ---
 kind: specify
 title: "Editing the published site"
-description: "How a photo dropped on the live site reaches the repository: straight to remote hosted storage, then a function stamps it and commits."
+description: "How the published site changes a gallery: the caption inside each file, the order in one list per folder, and a function that commits."
 tags: [now, proposal]
-date: 2026-08-21
+date: 2026-08-23
 ---
 # Editing the published site
 
@@ -54,6 +54,37 @@ The commit is made the long way — a blob, a tree, a commit, then the branch mo
 
 Five megabytes is what Netlify will hand a function. Nothing in our code chose it.
 
+## Built — reordering a gallery
+
+Today the browsing order is the file name, in alphabetical order:
+
+```text
+loader.ts:95   photos.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+```
+
+The order becomes a list, one per folder — `src/assets/<folder>/order.md` — holding the file names, one to a line. A file's place in the list is its place in the gallery, so no numbers are written anywhere. Captions are unchanged: each sits inside its own file, as it does today, so a picture away from this site still says what it is.
+
+The gallery reads only pictures and movies, so a list sitting beside them is never taken for one:
+
+```text
+loader.ts:19   '/src/assets/**/*.{png,jpg,jpeg,gif,svg,webp,avif,mov,mp4,m4v,webm}'
+```
+
+1. **The list is the order.** The gallery draws the folder in the order the list names, and the number beside each row in the table is the line it sits on.
+2. **The list is mended as it is read.** A file the list does not name goes at the end, by file name; a name the folder no longer holds is dropped. A folder with no list at all is in file-name order, as it is today.
+3. **`edit_index` — which row is being worked on.** It starts at 0.
+4. **The table highlights that row.**
+5. **Up and down move the highlight** — down adds one, up takes one away, and it halts at each end. Left and right already step the picture; up and down do nothing yet.
+6. **Option-up and option-down move the file.** The highlighted file and the one beside it swap lines, `edit_index` follows the file so the same file remains highlighted, and the list is written back — one small file, one commit, whatever the pictures weigh.
+7. **The table is drawn again** from the new order.
+
+### Decided
+
+- **The order belongs to the folder**, in one list. **The caption belongs to the picture**, inside the file.
+- **A folder with no list** is in file-name order until the first move, which writes the list whole.
+- **Every write of the list is one act** — one commit, the whole list, all of it or none.
+- **A file added later** goes at the end of the list.
+
 ## Still to build — adding a large file
 
 ## The path a new file takes
@@ -79,9 +110,11 @@ Step 4 runs as a background function: a plain one is given ten seconds, and fetc
 So there is a fork here, and it is worth taking deliberately:
 
 - **Large media in the repository** — what this plan does. Simple to reason about, and the repository grows without bound.
-- **Large media in the remote hosted storage, and nowhere else** — the site reads a list of what the remote hosted storage holds rather than a list of what the build found. The repository stays small, editing needs no commit and no rebuild, and the gallery's list has to come from somewhere new.
+- **Large media in the remote hosted storage, and nowhere else** — the repository keeps the words and none of the weight. `order.md` already names every file in a folder, in the order they are shown, so it can name what the remote hosted storage holds as well, and the gallery reads that list instead of what the build found. Editing needs no commit and no rebuild.
 
 The second is the better home for a vineyard's photos and movies. It is also a change to how a gallery finds its pictures, which is why it is written down here rather than assumed.
+
+A caption stays inside its own file either way, so a picture away from this site still says what it is.
 
 ## Until then
 
@@ -93,7 +126,8 @@ Large files are added with `yarn dev`, or by hand.
 add a file under 5 MB      yes
 add anything larger        no — the dev server, or by hand
 change a caption           yes, any size
+change the order           yes, any size
 delete a file              yes
 ```
 
-All three ask for the passphrase once, and all three need `LV_PASSPHRASE` and `GITHUB_TOKEN` set at Netlify.
+All four ask for the passphrase once, and all four need `LV_PASSPHRASE` and `GITHUB_TOKEN` set at Netlify.

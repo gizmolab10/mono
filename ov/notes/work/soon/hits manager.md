@@ -1,7 +1,7 @@
 ---
 kind: explain
 title: "hits manager"
-description: ""
+description: "The hits manager after two faults were mended: what went wrong, why it went unseen, and the one danger left."
 tags: [soon, program]
 date: 2026-08-12
 ---

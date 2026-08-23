@@ -73,6 +73,7 @@ The [banned words](banned%20words.md) turned the right way round — the word to
 - **place**, **include** — putting a value where it goes. Never *absorb*.
 - **are built** — code that exists. Never *stands*, which is a metaphor.
 - **sits**, **is drawn at** — where a thing is on screen. Never *stands* there either.
+- **remain**, **unchanged** — what is still there after a change. Never *stands*, in this or any other sense: the word is banned outright.
 - **path** — where a file is, counting from the top of the repo. Never *place*, which keeps its everyday sense: said in one place, holds its place in the run.
 - **url** — a target on the web. **address** — either one, when a link could carry either.
 - **content** — everything a file holds. Never *words*, which means words and nothing else: the words looked for, the word on a line, the words a link reads as.

@@ -43,3 +43,4 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | who does what                   |        |      | split                                  |                    |
 | hierarchy                       |   y    |  y   | tree                                   | ji structure       |
 | content                         |   y    |      | words                                  | what a file holds  |
+| remain, unchanged               |   y    |  y   | stand, stands, standing, stood         | what is still there |

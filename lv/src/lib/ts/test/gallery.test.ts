@@ -1,18 +1,27 @@
 // Tests for the gallery rules in `notes/work/photo gallery.md`:
-// a folder of photos read in name order, the markdown that asks for one, and
-// the walk from photo to photo with its caption.
+// a folder of photos read in the order its own list names, the markdown that
+// asks for one, and the walk from photo to photo with its caption.
 
 import { describe, it, expect } from 'vitest';
-import { photosInFolder, loadAssetFolders } from '../utilities/loader';
+import { photosInFolder, loadAssetFolders, loadAssetOrders } from '../utilities/loader';
 import { captionFor, isMovie, nameOf, step } from '../utilities/gallery';
 import photoTitles from 'virtual:photo-titles';
 import { render } from '../utilities/parser';
 
 describe('a folder of photos', () => {
-  it('finds the photos in the folder, in name order', () => {
+  it('finds the photos in the folder, in the order its own list names', () => {
     const names = photosInFolder('the-vineyard').map((one) => one.name);
     expect(names.length).toBeGreaterThan(1);
-    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
+    const listed = (loadAssetOrders().get('the vineyard') ?? []).filter((one) => names.includes(one));
+    expect(listed.length).toBeGreaterThan(0);
+    expect(names.slice(0, listed.length)).toEqual(listed);
+  });
+
+  it('puts a photo the list does not name after the ones it does, by name', () => {
+    const names = photosInFolder('the-vineyard').map((one) => one.name);
+    const listed = (loadAssetOrders().get('the vineyard') ?? []).filter((one) => names.includes(one));
+    const rest = names.slice(listed.length);
+    expect(rest).toEqual([...rest].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
   });
 
   it('hands back an address for each one', () => {

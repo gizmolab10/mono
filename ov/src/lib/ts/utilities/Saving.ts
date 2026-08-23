@@ -17,11 +17,18 @@ function notes_of(bundle: T_Bundle): string {
 	return bundle === T_Bundle.mono ? 'notes' : `${bundle}/notes`;
 }
 
+/**
+ * The memory system, at the top of the repo beside notes. It belongs to no collection, so the
+ * shared one carries it, and its path is the whole way there — no notes folder above it.
+ */
+const MEMORY = 'memory/';
+
 // Where a file sits, counting from the top of the repo. A design's path already begins with
 // "designs" and a work note's with "work", so those two hang straight off the notes folder;
 // everything else is under guides.
 export function file_path_of(bundle: T_Bundle, path: string): string {
 	const ending = path.endsWith('.md') ? path : `${path}.md`;
+	if (ending.startsWith(MEMORY)) { return ending; }
 	const beside = ending.startsWith('designs/') || ending.startsWith('work/');
 	const inside = beside ? ending : `guides/${ending}`;
 	return `${notes_of(bundle)}/${inside}`;
@@ -48,6 +55,7 @@ export type File_Site = { bundle: T_Bundle; path: string; is_design: boolean };
 
 export function site_of_file(where: string): File_Site | null {
 	if (!where.endsWith('.md')) { return null; }
+	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.mono, path: where, is_design: false }; }
 	for (const bundle of Object.values(T_Bundle)) {
 		const notes = `${notes_of(bundle)}/`;
 		if (!where.startsWith(notes)) { continue; }
@@ -89,6 +97,7 @@ export function reaches_under_work(address: string): boolean {
 export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
 	const notes = notes_of(bundle);
 	if (folder_path === '') { return `${notes}/guides`; }
+	if (folder_path === 'memory' || folder_path.startsWith(MEMORY)) { return folder_path; }
 	const beside = folder_path.startsWith('designs') || folder_path.startsWith('work');
 	return beside ? `${notes}/${folder_path}` : `${notes}/guides/${folder_path}`;
 }

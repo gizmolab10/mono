@@ -77,6 +77,21 @@ check('the shared collection\'s work is listed too', 'notes/work/learn.md' in li
 deeper = [one for one in listed if '/notes/work/' in f'/{one}' and one.count('/') > 3]
 check('nothing deeper than the top of a work folder is listed', deeper, [])
 
+# --- the memory system --------------------------------------------------------
+#
+# It sits at the top of the repo beside notes, belongs to no collection, and every file in
+# it is listed however deep it sits.
+
+check('the memory system is listed', 'memory/index.md' in listed, True)
+check('a memory file three folders down is listed', 'memory/shared/truth/protocol.md' in listed, True)
+
+code, said = ask('/read-guide', where='memory/shared/truth/protocol.md')
+check('a memory file is read', code, 200)
+check('a memory file hands back its words', said.get('text', '') != '', True)
+
+code, said = ask('/read-guide', where=os.path.join(REPO, 'memory/index.md'))
+check('a memory file is read by its full place too', code, 200)
+
 # --- reading one guide's words -----------------------------------------------
 
 ordinary = 'notes/guides/collaborate/organize.md'

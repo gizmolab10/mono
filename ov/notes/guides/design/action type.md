@@ -36,19 +36,19 @@ i want to pass **Separator** more than one title. each title needs its own handl
 
 ### calls to Section
 
-Each of these reaches a Separator through [Section.svelte:46](../../src/lib/svelte/support/Section.svelte#L46), and each decides for itself what goes on the bar. Eight give it a clickable title; the last gives it nothing.
+Each of these reaches a Separator through [Section.svelte:46](../../../src/lib/svelte/support/Section.svelte#L46), and each decides for itself what goes on the bar. Eight give it a clickable title; the last gives it nothing.
 
 | file | line |
 | --- | --- |
-| [Editor_Filters.svelte](../../src/lib/svelte/filter/Editor_Filters.svelte#L148) | 148 |
-| [Editor_Filters.svelte](../../src/lib/svelte/filter/Editor_Filters.svelte#L183) | 183 |
-| [Editor_Filters.svelte](../../src/lib/svelte/filter/Editor_Filters.svelte#L202) | 202 |
-| [Browse_Filters.svelte](../../src/lib/svelte/filter/Browse_Filters.svelte#L182) | 182 |
-| [Browse_Filters.svelte](../../src/lib/svelte/filter/Browse_Filters.svelte#L195) | 195 |
-| [Browse_Filters.svelte](../../src/lib/svelte/filter/Browse_Filters.svelte#L210) | 210 |
-| [Browse_Filters.svelte](../../src/lib/svelte/filter/Browse_Filters.svelte#L242) | 242 |
-| [Search.svelte](../../src/lib/svelte/filter/Search.svelte#L158) | 158 |
-| [Browse.svelte](../../src/lib/svelte/main/Browse.svelte#L47) | 47 |
+| [Editor_Filters.svelte](../../../src/lib/svelte/filter/Editor_Filters.svelte#L148) | 148 |
+| [Editor_Filters.svelte](../../../src/lib/svelte/filter/Editor_Filters.svelte#L183) | 183 |
+| [Editor_Filters.svelte](../../../src/lib/svelte/filter/Editor_Filters.svelte#L202) | 202 |
+| [Browse_Filters.svelte](../../../src/lib/svelte/filter/Browse_Filters.svelte#L182) | 182 |
+| [Browse_Filters.svelte](../../../src/lib/svelte/filter/Browse_Filters.svelte#L195) | 195 |
+| [Browse_Filters.svelte](../../../src/lib/svelte/filter/Browse_Filters.svelte#L210) | 210 |
+| [Browse_Filters.svelte](../../../src/lib/svelte/filter/Browse_Filters.svelte#L242) | 242 |
+| [Search.svelte](../../../src/lib/svelte/filter/Search.svelte#L158) | 158 |
+| [Browse.svelte](../../../src/lib/svelte/main/Browse.svelte#L47) | 47 |
 
 ### separators with no title
 
@@ -56,9 +56,9 @@ these do not need conversison
 
 | file | line |
 | --- | --- |
-| [Markdown_Editor.svelte](../../src/lib/svelte/content/Markdown_Editor.svelte#L784) | 784 |
-| [Markdown_Editor.svelte](../../src/lib/svelte/content/Markdown_Editor.svelte#L804) | 804 |
-| [Files_List.svelte](../../src/lib/svelte/content/Files_List.svelte#L411) | 411 |
+| [Markdown_Editor.svelte](../../../src/lib/svelte/content/Markdown_Editor.svelte#L784) | 784 |
+| [Markdown_Editor.svelte](../../../src/lib/svelte/content/Markdown_Editor.svelte#L804) | 804 |
+| [Files_List.svelte](../../../src/lib/svelte/content/Files_List.svelte#L411) | 411 |
 
 ## done
 

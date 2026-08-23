@@ -52,6 +52,15 @@ describe('reading a path in the repo back into a collection and a folder', () =>
 		}
 	});
 
+	it('reads a memory file, whole path and all, under the shared collection', () => {
+		expect(site_of_file('memory/index.md'))
+			.toEqual({ bundle: T_Bundle.mono, path: 'memory/index.md', is_design: false });
+		expect(site_of_file('memory/shared/truth/protocol.md'))
+			.toEqual({ bundle: T_Bundle.mono, path: 'memory/shared/truth/protocol.md', is_design: false });
+		expect(file_path_of(T_Bundle.mono, 'memory/shared/truth/protocol.md')).toBe('memory/shared/truth/protocol.md');
+		expect(folder_path_of(T_Bundle.mono, 'memory/shared/truth')).toBe('memory/shared/truth');
+	});
+
 	it('reads anything that is not a guide as nothing', () => {
 		expect(site_of_file('ov/src/lib/main.css')).toBe(null);
 		expect(site_of_file('notes/guides/a folder')).toBe(null);

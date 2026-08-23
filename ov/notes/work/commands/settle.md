@@ -1,0 +1,1 @@
+Settle the log for project: $ARGUMENTS (infer if empty). Read memory/shared/truth/protocol.md, section "Consolidation", and execute all five steps exactly, ending in the single labeled commit. Never summarize into vaguer prose. Finish with the settle manifest: each line and where it went.

@@ -1,7 +1,7 @@
 ---
 kind: analyze
 title: "Repair staleness"
-description: "runs in, and there is none — asking it answers \\\\\\\"no key for the model is set on this machine\\\\\\\""
+description: "Mending the files that have gone stale: what makes one stale, and what a machine could do about it without a person sweeping."
 tags: [journal, soon]
 date: 2026-08-08
 ---

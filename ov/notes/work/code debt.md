@@ -1,7 +1,7 @@
 ---
 kind: specify
 title: "Code debt"
-description: "write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff"
+description: "Everything still owed, and everything finished. The first unchecked item is the next thing to work on."
 tags: [journal, now, proposal]
 date: 2026-08-10
 ---
@@ -13,6 +13,11 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## work
 
+- [ ] read work/md audit
+    - [ ] pac execute it
+- [x] use claude mythos to audit my md system
+    - [x] project separate for audit
+        - [x] tell it where my folders of md files live
 - [ ] 1127 occurrences of 'guide' -> many should be 'file'
 - [ ] too many ts files are class-less
     - [ ] require LOOONG import statements
