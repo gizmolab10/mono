@@ -8,6 +8,6 @@ LCV sketch 1.jpg
 LCV_Label_v3B.jpg
 LittleCloudLabel_v1.jpg
 LittleCloudSoil_CrossSectionProfile.jpg
-TrellisOutrigger.jpg
 Versaison_20190803.jpg
+TrellisOutrigger.jpg
 Vyd_2014_0321_Haley.jpg
