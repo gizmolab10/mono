@@ -26,6 +26,7 @@ sooner or later every project creates a knowledge base and a work manager. this 
 - [ ] write installation instructions in
     - [ ] [[ov installer]]
 - [ ] compose-an-email does not work on Windows
+- [ ] hermes agent
 
 ## done
 

@@ -1,1 +1,0 @@
-Pros and cons of: $ARGUMENTS. Read memory/shared/truth/protocol.md, "Skills" entry for pac, and execute it exactly: ground in the truths this touches, decisions.md, the lexicon, taste.md if visual; argue both sides tied to specifics, no generic filler; end with the deciding question, not a verdict. Read-only.

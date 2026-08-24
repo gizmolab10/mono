@@ -1,1 +1,0 @@
-Read memory/shared/truth/protocol.md, section "Session protocol" (Start), and execute it exactly for project: $ARGUMENTS (infer from context if empty). Read-only. Reply with the three-line orientation: current state, truths loaded, unsettled Q: lines.

@@ -1,1 +1,0 @@
-Define (or redefine) the term: $ARGUMENTS. Read memory/shared/truth/protocol.md, section "Prose and terminology", and execute the coining/redefinition procedure exactly — entry, D: log line, and old-sense sweep on redefinition. The lexicon has no other door.

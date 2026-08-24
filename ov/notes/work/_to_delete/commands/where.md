@@ -1,1 +1,0 @@
-Which one file owns: $ARGUMENTS? Read memory/shared/truth/protocol.md, section "Finding where to tweak", and run its lookups in order. Reply with the one owning path (and line). Two claimants = duplication bug: report both.
