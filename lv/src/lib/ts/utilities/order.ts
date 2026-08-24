@@ -7,6 +7,8 @@
 // browser. Reading the list at build time is the loader's job; writing it back
 // belongs to the dev server and to `netlify/functions/reorder.mts`.
 
+import { step } from './gallery';
+
 export const ORDER_FILE = 'order.md';
 
 // The names a list holds, in the order it holds them. A blank line says
@@ -38,19 +40,12 @@ export function inOrder<T extends { name: string }>(photos: T[], names: string[]
   return [...listed, ...rest];
 }
 
-// One file moved by a step, and where it now sits. A move off either end is no
-// move at all: the list and the place both come back as they were.
+// One file moved by a step, and where it now sits. The run wraps, the same way
+// stepping a picture does: the last file moved down swaps with the first.
 export function moved(names: string[], at: number, by: number): { names: string[]; at: number } {
-  const to = at + by;
-  if (at < 0 || at >= names.length || to < 0 || to >= names.length) { return { names, at }; }
+  if (at < 0 || at >= names.length || names.length < 2) { return { names, at }; }
+  const to = step(at, names.length, by);
   const now = [...names];
   [now[at], now[to]] = [now[to], now[at]];
   return { names: now, at: to };
-}
-
-// Where the highlight lands. It halts at both ends, where stepping a picture
-// wraps around.
-export function halted(at: number, count: number, by: number): number {
-  if (count <= 0) { return 0; }
-  return Math.min(count - 1, Math.max(0, at + by));
 }

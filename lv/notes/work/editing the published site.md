@@ -74,8 +74,8 @@ loader.ts:19   '/src/assets/**/*.{png,jpg,jpeg,gif,svg,webp,avif,mov,mp4,m4v,web
 2. **The list is mended as it is read.** A file the list does not name goes at the end, by file name; a name the folder no longer holds is dropped. A folder with no list at all is in file-name order, as it is today.
 3. **`edit_index` — which row is being worked on.** It starts at 0.
 4. **The table highlights that row.**
-5. **Up and down move the highlight** — down adds one, up takes one away, and it halts at each end. Left and right already step the picture; up and down do nothing yet.
-6. **Option-up and option-down move the file.** The highlighted file and the one beside it swap lines, `edit_index` follows the file so the same file remains highlighted, and the list is written back — one small file, one commit, whatever the pictures weigh.
+5. **A click picks a row, and up and down move the highlight** — down adds one, up takes one away, and both wrap: past the last is the first. Left and right step the picture while one is showing.
+6. **Option-up and option-down move the file.** The highlighted file and the one beside it swap lines, wrapping the same way, `edit_index` follows the file so the same file remains highlighted, and the list is written back — one small file, one commit, whatever the pictures weigh.
 7. **The table is drawn again** from the new order.
 
 ### Decided

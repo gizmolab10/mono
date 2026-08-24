@@ -346,9 +346,20 @@ video.gallery-photo {
 }
 
 /* The row being worked on: up and down move the highlight, and option with
-   them moves that file up or down the folder's own order. */
+   them moves that file up or down the folder's own order. Drawn as a pill, the
+   same shape the sidebar gives the page you are on — a row is many cells, so
+   the first takes the left end and the last takes the right. */
 .gallery-captions tr.picked td {
   background: rgba(255, 214, 102, 0.35);
+  border-bottom-color: transparent;
+}
+
+.gallery-captions tr.picked td:first-child {
+  border-radius: 999px 0 0 999px;
+}
+
+.gallery-captions tr.picked td:last-child {
+  border-radius: 0 999px 999px 0;
 }
 
 /* Where a file sits in the folder's order — the first column of the table. */

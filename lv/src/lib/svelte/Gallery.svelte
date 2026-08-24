@@ -19,7 +19,7 @@
   // page changes.
   import { technical } from '../ts/utilities/technical.svelte';
   import { captionFor, isMovie, nameOf, step } from '../ts/utilities/gallery';
-  import { halted, inOrder, moved } from '../ts/utilities/order';
+  import { inOrder, moved } from '../ts/utilities/order';
   import { loadPass, savePass } from '../ts/utilities/persistence';
   import type { Photo } from '../ts/utilities/loader';
 
@@ -89,7 +89,7 @@
     // moved through the words.
     if ((event.target as HTMLElement | null)?.isContentEditable) { return; }
     event.preventDefault();
-    if (event.altKey) { void reorder(by); } else { edit_index = halted(edit_index, here.length, by); }
+    if (event.altKey) { void reorder(by); } else { edit_index = step(edit_index, here.length, by); }
   }
 
   $effect(() => {
@@ -280,7 +280,9 @@
       </thead>
       <tbody>
         {#each here as one, row (one.name)}
-          <tr class:picked={row === edit_index}>
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+          <tr class:picked={row === edit_index} onclick={() => { edit_index = row; }}>
             <td class='gallery-row'>{row}</td>
             <td>{one.name}</td>
             <td contenteditable='plaintext-only' onblur={(e) => recaption(one, e)}>{nameOf(one)}</td>

@@ -2,7 +2,7 @@
 // The order belongs to the folder, in one list; a file's line is its place.
 
 import { describe, it, expect } from 'vitest';
-import { halted, inOrder, moved, namesInOrder, orderText } from '../utilities/order';
+import { inOrder, moved, namesInOrder, orderText } from '../utilities/order';
 
 describe('reading a list', () => {
   it('takes the names in the order they are written', () => {
@@ -56,24 +56,13 @@ describe('moving one file', () => {
     expect(moved(names, 2, -1)).toEqual({ names: ['a.png', 'c.png', 'b.png'], at: 1 });
   });
 
-  it('does nothing at either end', () => {
-    expect(moved(names, 0, -1)).toEqual({ names, at: 0 });
-    expect(moved(names, 2, 1)).toEqual({ names, at: 2 });
-  });
-});
-
-describe('moving the highlight', () => {
-  it('halts at both ends', () => {
-    expect(halted(0, 3, -1)).toBe(0);
-    expect(halted(2, 3, 1)).toBe(2);
+  it('wraps at both ends, swapping the last with the first', () => {
+    expect(moved(names, 2, 1)).toEqual({ names: ['c.png', 'b.png', 'a.png'], at: 0 });
+    expect(moved(names, 0, -1)).toEqual({ names: ['c.png', 'b.png', 'a.png'], at: 2 });
   });
 
-  it('steps by one either way', () => {
-    expect(halted(0, 3, 1)).toBe(1);
-    expect(halted(2, 3, -1)).toBe(1);
-  });
-
-  it('stays at zero for a folder holding nothing', () => {
-    expect(halted(0, 0, 1)).toBe(0);
+  it('does nothing to a folder holding one file, or none', () => {
+    expect(moved(['a.png'], 0, 1)).toEqual({ names: ['a.png'], at: 0 });
+    expect(moved([], 0, 1)).toEqual({ names: [], at: 0 });
   });
 });

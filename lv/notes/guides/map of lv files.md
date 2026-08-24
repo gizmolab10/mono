@@ -76,11 +76,11 @@ Each asks for a passphrase; Netlify holds it, and the key to the repository, as 
 
 ## Tests
 
-In `src/lib/ts/test/`. Every file names the rules it proves in its own first lines. 124 pass, 4 are skipped.
+In `src/lib/ts/test/`. Every file names the rules it proves in its own first lines. 122 pass, 4 are skipped.
 
 - [parser.test.ts](../../src/lib/ts/test/parser.test.ts) — 26. Obsidian syntax into html: wiki-links, embeds, callouts, the centered line, sizes, links with spaces
 - [gallery.test.ts](../../src/lib/ts/test/gallery.test.ts) — 22. A folder's photos in the order its own list names, the callout that asks for a gallery, the height after the bar, the walk, what a photo is called, and the titles read while the site is built
-- [order.test.ts](../../src/lib/ts/test/order.test.ts) — 14. The list read and written, a folder put in its order, one file moved, and the highlight halting at both ends
+- [order.test.ts](../../src/lib/ts/test/order.test.ts) — 12. The list read and written, a folder put in its order, and one file moved, wrapping at both ends
 - [stamp.test.ts](../../src/lib/ts/test/stamp.test.ts) — 15. A caption written into a png, a jpeg and a gif, read back, and never doubled; what can carry one at all
 - [movie title.test.ts](../../src/lib/ts/test/movie%20title.test.ts) — 9. A movie's blocks walked, which movies take a caption, the write, and the picture data left where it was
 - [loader.test.ts](../../src/lib/ts/test/loader.test.ts) — 9. Every page and every picture gathered, keyed by name

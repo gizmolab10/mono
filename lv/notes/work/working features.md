@@ -14,7 +14,8 @@ What works today. Each entry says its own limit, where it has one.
 The order belongs to the folder, in one list — `order.md` beside the pictures, naming them one to a line. A file's line is its place, so no picture is ever rewritten to reorder it.
 
 - **While editing, the table shows the order** — the first column is where each file sits, and one row is highlighted.
-- **Up and down move the highlight**, halting at each end. **Option with them moves the file**, swapping it with the one beside it.
+- **A click picks a row**, and up and down move the highlight. Both wrap: past the last is the first.
+- **Option with them moves the file**, swapping it with the one beside it — and past the last it swaps with the first.
 - **A move writes the list alone** — a few bytes, whatever the pictures weigh, and one commit on the published site.
 - **A folder with no list** is shown in file-name order, and the first move writes the list whole.
 - **A file the list does not name** goes at the end; a name the folder no longer holds is left out.

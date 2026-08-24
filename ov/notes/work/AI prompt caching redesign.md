@@ -230,8 +230,8 @@ What deliberately stays manual: settling, defining, promoting or culling ideas, 
 
 ## Adoption
 
-1. Create `memory/` inside the repo that holds your projects; add root `index.md` and `shared/`. No separate repo — the surrounding repo's history is the archaeology layer, and memory edits travel in the same commits as the work they describe.
-2. Transcribe the operating rules from this doc into `shared/truth/protocol.md`; point the root `index.md` at it first. Create the seven skills as thin triggers into it. Delete all the existing hooks that are not described here and create the new hooks.
+1. **DONE** Create `memory/` inside the repo that holds your projects; add root `index.md` and `shared/`. No separate repo — the surrounding repo's history is the archaeology layer, and memory edits travel in the same commits as the work they describe.
+2. **DONE except hooks** Transcribe the operating rules from this doc into `shared/truth/protocol.md`; point the root `index.md` at it first. Create the seven skills as thin triggers into it *(done as shorthand rows in `notes/guides/pre-flight/shorthand.md`)*. Delete all the existing hooks that are not described here and create the new hooks *(pending)*.
 3. Seed `shared/truth/taste.md` with five principles you already know you hold.
 4. Bring up **one** project: write its `index.md` and its two or three obviously-needed truths from scratch (current design only — resist importing history).
 5. Work normally for a week with the session protocol; run the first consolidation by hand to feel the settling step.

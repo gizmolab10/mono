@@ -110,7 +110,7 @@ The six steps from the proposal's "Order of work":
 - [x] Step 5 — status line; read `Sidebar.md` to drive the sidebar.
 - [x] Step 6 — sidebar component (active-entry pill, collapsible sections, home-entry treatment) and the `[!center]` callout override.
 - [x] The photo gallery — see the entry above, and [photo gallery](photo%20gallery.md) for how each piece works.
-- [x] Reordering a gallery — the table shows where each file sits, up and down move the highlight, option with them moves the file, and the list is written by the dev server or by Netlify. Proved on 2026-08-23 with `yarn dev`.
+- [x] Reordering a gallery — the table shows where each file sits, a click or the up and down keys move the highlight, option with them moves the file, and the list is written by the dev server or by Netlify. Both wrap at the ends. Proved on 2026-08-23 with `yarn dev`.
 
 ## Sources
 
