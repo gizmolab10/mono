@@ -1,4 +1,4 @@
-# CLAUDE.MD
+# CLAUDE.md
 
 COMMON: Read `../CLAUDE.md`
 

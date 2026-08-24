@@ -7,9 +7,11 @@ date: 2026-07-08
 ---
 # Voice and Tone Guide
 
-I do have strong opinions written material: I want our guides to satisfy and nurture, not just inform. I try to write that way (aka voice), but my output is meager. I very much enjoy a collaborator's help to boost that output, while maintaining crisp, lighthearted, joyful prose.
+The memory files MUST satisfy and nurture, not just inform. Collaborator can help to boost that output, while maintaining crisp, lighthearted, joyful prose.
 
 My motto: We are building stuff that we want humans to love using. I luxuriate in the hypothetical soul of my user. I try to sense and to guess when things feel smooth, engaging, gentle. I want that, as well, to come across in these guides. This is an enterprise immersed in the joy of being human, riding the ever-present waves of technical disruption.
+
+**CAVEAT:** Avoid pointless asides, flowery wording, excess words.
 
 ## Capturing Intuition
 
@@ -29,7 +31,7 @@ This means:
 i write from my perspective. Not "the developer" or "we" (royal). Just me.
 
 * ✅ "i built this to switch between databases"
-* ✅ "i wanted a reference for the handshake"
+* ✅ "i want a link to the handshake protocol"
 * ❌ "The system was built to support multiple databases"
 * ❌ "One might want to reference the handshake protocol"
 
@@ -37,8 +39,8 @@ i write from my perspective. Not "the developer" or "we" (royal). Just me.
 
 Start with what pissed me off or what i needed, not with the solution.
 
-* ✅ "Radial clusters get crowded fast. Needed paging."
-* ✅ "Colors kept ending up in weird states. Hover looked wrong."
+* ✅ "Radial clusters get crowded fast. Needs paging."
+* ✅ "Colors are inconsistent. Hover looks wrong for X." Needs a color management system.
 * ❌ "This document describes the paging system."
 * ❌ "The color management system provides centralized state."
 
@@ -46,15 +48,15 @@ Start with what pissed me off or what i needed, not with the solution.
 
 Every word earns its place AND nothing essential is missing.
 
-* Problem first, always. Pinch points, yearnings
+* Solution first, always, punchy
+* Problem statement, pinch points, goals
 * Research, plan, details, verify
-* Then the solution, punchy
-* Interesting details if they are spicy
+* Interesting details if they are needed
 * well organized
 * easy to absorb
-* plain english (avoid banned words, prefer lexicon)
+* plain english (avoid banned words, deploy wording from lexicon)
 
-Lose the filler, love the flavor.
+Lose the filler, less is best.
 
 ### Short, Punchy Sentences
 
@@ -77,11 +79,11 @@ A fragment still has to be one clean thought. Don't drop the subject and then co
 
 A good synopsis typically follows this pattern:
 
-1. **State the problem** (what was broken/annoying/missing)
-2. **Hint at the solution** (what you built)
-3. **Maybe add a detail** (one interesting technical point or outcome)
+1. **Describe the problem** (what was broken/annoying/missing)
+2. **Describe what you built in a line** (not how)
+3. **Include everything vitally important** -> all relevant facts and findings
 
-Not a rigid formula, but it works.
+This is NOT a rigid formula, it is an excellent start for developing a synopsis, expand upon it as seems necessary.
 
 ### Integrate, Don't Append
 
@@ -111,7 +113,7 @@ When naming sections or concepts, favor warmth over mechanics:
 
 **preferences.md:**
 
-> Okay, so I like to give people choices about looks and what have you. Of course their choices need to be remembered for them. It's a computer, for crying sake. This is a walk through how one preference flows from UI click to localStorage and back.
+> Okay, so I like to give people choices about looks and such. Of course their choices need to be remembered for them. It's a computer, it should be as helpful as is reasonably possible. This is a walk through how one preference flows from UI click to localStorage and back.
 
 **gotchas.md:**
 

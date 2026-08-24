@@ -50,7 +50,7 @@ Generated: Sat Jan 31 21:40:40 PST 2026
 /Users/sand/GitHub/mono/di/tsconfig.json
 /Users/sand/GitHub/mono/di/vite.config.ts
 /Users/sand/GitHub/mono/di/vitest.config.ts
-/Users/sand/GitHub/mono/di/CLAUDE.MD
+/Users/sand/GitHub/mono/di/CLAUDE.md
 /Users/sand/GitHub/mono/di/src/main.ts
 /Users/sand/GitHub/mono/di/src/App.svelte
 /Users/sand/GitHub/mono/di/src/vite-env.d.ts
@@ -2343,7 +2343,7 @@ Lowercase "i" signals informality. Short punchy sentences. Fragments are fine. T
 ## One truth, one place
 
 Guides encode decisions, grouped into a topic, crafted to casually walk the walk. 
-CLAUDE.MD is the entry point, the large scale map.
+CLAUDE.md is the entry point, the large scale map.
 
 ## Dual purpose
 
@@ -2373,7 +2373,7 @@ This project moves differently than webseriously. Not just faster — *easier*. 
 
 ## Why it flows
 
-The patterns are borrowed from ws, not reinvented. The AI collaboration has persistent context through CLAUDE.MD. Documentation happens as I go, not as afterthought. When I say "full monte," I get it — no shortcuts that create debt later.
+The patterns are borrowed from ws, not reinvented. The AI collaboration has persistent context through CLAUDE.md. Documentation happens as I go, not as afterthought. When I say "full monte," I get it — no shortcuts that create debt later.
 
 So there's less friction. Less second-guessing. More certainty when I move.
 
@@ -2504,7 +2504,7 @@ Types proliferated. Started with raw `{x, y}` objects, formalized into `Point`, 
 
 ### The Workflow System
 
-Most important outcome: the notes structure. `notes/work/` for active tasks, `notes/work/done/` for completed ones. `notes/guides/` for living references. CLAUDE.MD as the entry point. Work tracking files that survive across chat sessions.
+Most important outcome: the notes structure. `notes/work/` for active tasks, `notes/work/done/` for completed ones. `notes/guides/` for living references. CLAUDE.md as the entry point. Work tracking files that survive across chat sessions.
 
 This isn't just documentation—it's the AI collaboration pattern. Define problem and goal upfront. Track progress in markdown. Revisit points for continuity. The guides encode hard-won lessons (gotchas.md, debugging.md, style.md) so Claude doesn't repeat mistakes.
 ### Testing Infrastructure
@@ -3315,11 +3315,11 @@ export default defineConfig({
 });
 ```
 
-### /Users/sand/GitHub/mono/di/CLAUDE.MD
+### /Users/sand/GitHub/mono/di/CLAUDE.md
 ```MD
-# CLAUDE.MD
+# CLAUDE.md
 
-COMMON: Read `../../CLAUDE.MD`
+COMMON: Read `../../CLAUDE.md`
 
 REPO: `~/GitHub/mono/projects/di`
 
@@ -9001,7 +9001,7 @@ export const svg_paths = new SVG_Paths();
     "di/notes/work/milestones/5.smart.objects.md",
     "di/src/lib/ts/types/Attribute.ts",
     "di/src/lib/ts/runtime/Smart_Object.ts",
-    "CLAUDE.MD",
+    "CLAUDE.md",
     "notes/work/feedstock.md",
     "notes/guides/pre-flight/always.md",
     "notes/work/raw.md",
@@ -9157,10 +9157,10 @@ node dist/fix-links.js
 
 ## For Projects Using This Repo
 
-Each project's CLAUDE.MD should include:
+Each project's CLAUDE.md should include:
 
 ```markdown
-COMMON: Read ../shared/CLAUDE.MD and guides first
+COMMON: Read ../shared/CLAUDE.md and guides first
 ```
 
 Clone as sibling:
@@ -15178,7 +15178,7 @@ Generated: Sat Jan 31 21:40:40 PST 2026
 /Users/sand/GitHub/mono/di/tsconfig.json
 /Users/sand/GitHub/mono/di/vite.config.ts
 /Users/sand/GitHub/mono/di/vitest.config.ts
-/Users/sand/GitHub/mono/di/CLAUDE.MD
+/Users/sand/GitHub/mono/di/CLAUDE.md
 /Users/sand/GitHub/mono/di/src/main.ts
 /Users/sand/GitHub/mono/di/src/App.svelte
 /Users/sand/GitHub/mono/di/src/vite-env.d.ts
@@ -19973,7 +19973,7 @@ Your folder structure:
 ```
 ~/GitHub/
   mono/
-    CLAUDE.MD
+    CLAUDE.md
     notes/
     ws/
     di/
@@ -20066,7 +20066,7 @@ Set up SSH key: https://docs.github.com/en/authentication/connecting-to-github-w
 
 ## Next Steps
 
-- Read `CLAUDE.MD` for project context
+- Read `CLAUDE.md` for project context
 - Check `notes/guides/collaborate/` for how to work with Claude
 - Check `notes/guides/setup/` for deployment and tooling docs
 ```
@@ -20254,8 +20254,8 @@ Co resets between conversations. What persists (strongest influence first):
 
 1. Memory edits — direct overrides, always visible
 2. userMemories (auto-generated) — shapes assumptions before Jonathan says anything
-3. CLAUDE.MD — loaded when Jonathan says `go`; sets project frame
-4. Files mentioned in CLAUDE.MD — read when relevant
+3. CLAUDE.md — loaded when Jonathan says `go`; sets project frame
+4. Files mentioned in CLAUDE.md — read when relevant
 5. Files not mentioned — no influence until discovered
 
 Without these, every conversation starts from zero.
@@ -20445,11 +20445,11 @@ See [chat.md](chat.md) for how we interact — roles, requirements, and the divi
 ## The Structure
 - `notes/guides/` — living reference (style, patterns, how-tos)
 - `notes/work/` — ALL work is recorded here, as we go
-- `CLAUDE.MD` — entry point, tells Claude where to start
+- `CLAUDE.md` — entry point, tells Claude where to start
 
 ## One Truth, One Place
 
-Guides encode decisions, grouped by topic. CLAUDE.MD is the entry point, the large scale map. Don't duplicate — reference.
+Guides encode decisions, grouped by topic. CLAUDE.md is the entry point, the large scale map. Don't duplicate — reference.
 
 ## How we Work Together
 
@@ -20551,7 +20551,7 @@ Before writing code:
 
 **The trap:** Optimizing for appearing helpful by producing code quickly. The fix: slow down, verify, quote sources.
 
-**"relearn"** — Stop. Re-read CLAUDE.MD, `notes/guides/collaborate/*.md`, and the active work doc. Quote the relevant section before continuing.
+**"relearn"** — Stop. Re-read CLAUDE.md, `notes/guides/collaborate/*.md`, and the active work doc. Quote the relevant section before continuing.
 
 ## Refactoring Discipline
 
@@ -20867,16 +20867,16 @@ Short commands and abbreviations for working with collaborator.
 
 | Command | Action |
 |----|----|
-| `go` | Read ~/GitHub/mono/`<current-go>`/CLAUDE.MD |
-| `go mo` | Read ~/GitHub/mono/CLAUDE.MD |
-| `go <X>` | Set current-go to X, read ~/GitHub/mono/X/CLAUDE.MD |
+| `go` | Read ~/GitHub/mono/`<current-go>`/CLAUDE.md |
+| `go mo` | Read ~/GitHub/mono/CLAUDE.md |
+| `go <X>` | Set current-go to X, read ~/GitHub/mono/X/CLAUDE.md |
 | `what go` | Tell current-go value |
-| `claude` | Reread CLAUDE.MD |
+| `claude` | Reread CLAUDE.md |
 
 ### Go Implementation
 
 1. `list_allowed_directories` → get base (e.g., `/Users/sand/GitHub`)
-2. Construct path: `<base>/mono/<X>/CLAUDE.MD`
+2. Construct path: `<base>/mono/<X>/CLAUDE.md`
 3. Use `read_text_file` (not `view`)
 4. No exploration. Path is known.
 
@@ -21008,7 +21008,7 @@ This project moves differently than webseriously. Not just faster — *easier*. 
 
 ## Why it flows
 
-The patterns are borrowed from ws, not reinvented. The AI collaboration has persistent context through CLAUDE.MD. Documentation happens as I go, not as afterthought. When I say "full monte," I get it — no shortcuts that create debt later.
+The patterns are borrowed from ws, not reinvented. The AI collaboration has persistent context through CLAUDE.md. Documentation happens as I go, not as afterthought. When I say "full monte," I get it — no shortcuts that create debt later.
 
 So there's less friction. Less second-guessing. More certainty when I move.
 
@@ -21055,7 +21055,7 @@ Not files — a methodology:
 
 ### Phase 1: Template Repo
 - [x] Create `enhanced` repo ✅
-- [x] Minimal CLAUDE.MD with instructions ✅
+- [x] Minimal CLAUDE.md with instructions ✅
 - [x] Starter notes/guides/ structure (voice.md, workflow.md, style.md stubs) ✅
 - [x] Starter notes/work/ structure ✅
 - [x] README explaining the system ✅
@@ -21140,10 +21140,10 @@ Two distinct personas—work and personal—each with their own gating and guide
 
 ## Current State
 
-- Single `CLAUDE.MD` in mono root
+- Single `CLAUDE.md` in mono root
 - Guides live in `mono/notes/guides/collaborate/`
 - Work tracking in `mono/notes/work/`
-- "go" commands read project-specific CLAUDE.MD files
+- "go" commands read project-specific CLAUDE.md files
 
 ## Design Questions
 
@@ -21175,8 +21175,8 @@ Two distinct personas—work and personal—each with their own gating and guide
 
 **Option A: Two Root Files**
 ```
-mono/CLAUDE.MD         → work persona
-shared/CLAUDE.MD       → personal persona
+mono/CLAUDE.md         → work persona
+shared/CLAUDE.md       → personal persona
 ```
 - Chat starts with "go mono" or "go shared"
 - Each file is self-contained
@@ -21184,9 +21184,9 @@ shared/CLAUDE.MD       → personal persona
 
 **Option B: Layered (Base + Persona)**
 ```
-mono/CLAUDE.MD              → shared base
+mono/CLAUDE.md              → shared base
 mono/notes/guides/work.md   → work persona overlay
-shared/CLAUDE.MD            → personal persona (includes base)
+shared/CLAUDE.md            → personal persona (includes base)
 ```
 - Cleaner separation of concerns
 - More complex mental model
@@ -21194,7 +21194,7 @@ shared/CLAUDE.MD            → personal persona (includes base)
 
 **Option C: Single Router + Sections**
 ```
-mono/CLAUDE.MD
+mono/CLAUDE.md
   - Shared defaults
   - ## Work Persona
   - ## Personal Persona
@@ -21249,7 +21249,7 @@ If mono and personal are separate repos, three approaches:
 
 ### 1. Reference Pattern
 ```markdown
-# mono/CLAUDE.MD
+# mono/CLAUDE.md
 First read ~/GitHub/shared/CLAUDE-BASE.md, then continue here.
 
 ## Work-Specific
@@ -21263,10 +21263,10 @@ shared/CLAUDE-BASE.md        ← the actual shared content
 mono/base.md                 → symlink to shared/CLAUDE-BASE.md
 shared/base.md               → symlink (or same file)
 ```
-Each CLAUDE.MD says "read base.md first." Single source of truth.
+Each CLAUDE.md says "read base.md first." Single source of truth.
 
 ### 3. User Preferences
-Put shared defaults in Claude user preferences (Settings → Profile). Then CLAUDE.MD files only contain persona-specific content. No duplication, no extra reads.
+Put shared defaults in Claude user preferences (Settings → Profile). Then CLAUDE.md files only contain persona-specific content. No duplication, no extra reads.
 
 **Trade-offs:**
 
@@ -21301,7 +21301,7 @@ You mentioned having a repository in mind. Based on what I see, `shared` seems l
 
 ### Pros of keeping personal in mono (subfolder like `mono/personal/`)
 
-1. **Single source of truth** — one CLAUDE.MD, one place to look
+1. **Single source of truth** — one CLAUDE.md, one place to look
 2. **Cross-reference** — guides can link freely
 3. **Unified maintenance** — update once, applies everywhere
 
@@ -21321,7 +21321,7 @@ Rationale:
 - Simplest mental model: repo = persona
 - No layering complexity
 - Shared infrastructure lives in preferences (always loaded, zero duplication)
-- CLAUDE.MD files are pure persona
+- CLAUDE.md files are pure persona
 - Adaptable: can evolve independently
 - Clean git histories
 
@@ -21329,11 +21329,11 @@ Rationale:
 
 ```
 mono/
-  CLAUDE.MD                  ← work persona (no shared defaults)
+  CLAUDE.md                  ← work persona (no shared defaults)
   notes/guides/collaborate/  ← work guides
 
 shared/
-  CLAUDE.MD                  ← personal persona (no shared defaults)
+  CLAUDE.md                  ← personal persona (no shared defaults)
   notes/guides/              ← personal guides (create as needed)
   notes/journal/             ← or whatever emerges
 ```
@@ -21342,8 +21342,8 @@ shared/
 
 Update user preferences:
 ```
-"go work" → read ~/GitHub/mono/CLAUDE.MD
-"go personal" → read ~/GitHub/shared/CLAUDE.MD
+"go work" → read ~/GitHub/mono/CLAUDE.md
+"go personal" → read ~/GitHub/shared/CLAUDE.md
 "go" → ask which: (w) work or (p) personal
 ```
 
@@ -21365,7 +21365,7 @@ Update user preferences:
 
 - [ ] Decide: `shared/` or different repo?
 - [ ] Move shared defaults to user preferences
-- [ ] Draft `shared/CLAUDE.MD` with personal persona
+- [ ] Draft `shared/CLAUDE.md` with personal persona
 - [ ] Update user preferences for "go" commands
 - [ ] Create minimal `shared/notes/guides/` structure (or defer until needed)
 ```
@@ -21413,7 +21413,7 @@ Here's what my project looks like:
 
 ```
 myproject/
-├── CLAUDE.MD          ← the bootstrap file
+├── CLAUDE.md          ← the bootstrap file
 ├── src/               ← actual code
 ├── notes/
 │   ├── architecture/  ← institutional memory
@@ -21435,10 +21435,10 @@ That's it. Nothing exotic. The magic is in the content, not the structure.
 
 ## The Bootstrap File
 
-Create `CLAUDE.MD` in your project root. Here's a starter template:
+Create `CLAUDE.md` in your project root. Here's a starter template:
 
 ```markdown
-# CLAUDE.MD
+# CLAUDE.md
 
 REPO: ~/GitHub/myproject
 GUIDES: Read all md files in `notes/guides` at start of session
@@ -21455,7 +21455,7 @@ FILES: Always read current version before editing
 
 Customize it. Add your own commands. The point is: when you start a session, point the AI here first.
 
-"Read CLAUDE.MD" becomes your greeting at the beginning a new chat.
+"Read CLAUDE.md" becomes your greeting at the beginning a new chat.
 
 ## Building Guides (Slowly)
 
@@ -21502,7 +21502,7 @@ Once the problem is resolved, consider whether you want to keep it. The ones I k
 
 ### **The AI will forget.**
 
-Even with guides, Claude doesn't have infinite context. Long sessions get fuzzy. If things drift, say "reread CLAUDE.MD and the relevant guides." Reset the context.
+Even with guides, Claude doesn't have infinite context. Long sessions get fuzzy. If things drift, say "reread CLAUDE.md and the relevant guides." Reset the context.
 
 ### **Your guides will get stale.**
 
@@ -21541,7 +21541,7 @@ Your’e building a knowledge base of what, how, and the daily grind. Only corpo
 ## Getting Started Today
 
 1. **Create the folder structure.** Five minutes.
-2. **Write a minimal CLAUDE.MD.** Five minutes.
+2. **Write a minimal CLAUDE.md.** Five minutes.
 3. **Start your first work file.** Whatever you're working on right now.
 4. **After your next "aha" moment, write it down.** First guide entry.
 
@@ -21565,7 +21565,7 @@ Most developers use AI as a fancy search engine — one-off questions, copy-past
 
 ## Goal
 
-A Medium article that shows developers a different approach: treating AI as a collaborative partner with institutional memory. The workflow system you've built — CLAUDE.MD bootstrapping, living guides, work tracking with resume points.
+A Medium article that shows developers a different approach: treating AI as a collaborative partner with institutional memory. The workflow system you've built — CLAUDE.md bootstrapping, living guides, work tracking with resume points.
 
 ## Audience
 
@@ -21593,7 +21593,7 @@ Not "here's a cool prompt." Instead: "here's a system that compounds."
 **Subtitle:** How a pile of markdown files turned AI into a real collaborator
 
 1. **The Accident** — hook + origin story
-2. **The Bootstrap File** — CLAUDE.MD as entry point
+2. **The Bootstrap File** — CLAUDE.md as entry point
 3. **Living Guides** — patterns AI applies without being told
 4. **Work Tracking** — resume points that survive sessions
 5. **The Dynamic Shift** — trust + course-correct
@@ -21869,18 +21869,18 @@ ws 6/7 rebuild → done
 
 ## Guide System Overhaul
 
-Major reorganization of collaboration guides and CLAUDE.MD.
+Major reorganization of collaboration guides and CLAUDE.md.
 
 **Pre-flight folder created** — `notes/guides/collaborate/pre-flight/`:
 
-- [x] `gates.md` — extracted from CLAUDE.MD
+- [x] `gates.md` — extracted from CLAUDE.md
 - [x] `keywords.md` — new, word → guide mapping
 - [x] `kinds.of.tasks.md` — new, task type → guides + conflicts
 - [x] `shorthand.md` — moved from collaborate/
-- [x] `workarounds.md` — extracted from CLAUDE.MD
+- [x] `workarounds.md` — extracted from CLAUDE.md
 - [x] `index.md` — numbered reading order
 
-**CLAUDE.MD slimmed** from 83 → 57 lines:
+**CLAUDE.md slimmed** from 83 → 57 lines:
 
 - [x] Added synopsis blockquote at top
 - [x] Pre-flight section points to folder
@@ -21981,19 +21981,19 @@ function handle_s_mouse(s_mouse) {
 
 ## Guide Consolidation
 
-- [x] Moved commands/abbreviations from CLAUDE.MD to `guides/collaborate/shorthand.md`
+- [x] Moved commands/abbreviations from CLAUDE.md to `guides/collaborate/shorthand.md`
 - [x] Removed duplicate commands section from chat.md, now links to shorthand.md
-- [x] CLAUDE.MD now minimal — just context and defaults
+- [x] CLAUDE.md now minimal — just context and defaults
 ```
 
 ### /Users/sand/GitHub/mono/notes/work/journals/journal.md
 ```md
 # Journal
 
-**Current** Investigating dual persona design — work vs personal, each with own gating and guides. Core insight: shared infrastructure (~15 lines of defaults) belongs in Claude user preferences, leaving CLAUDE.MD files as pure persona. Exploring `shared/` repo for personal persona. See `notes/work/claude.md`.
+**Current** Investigating dual persona design — work vs personal, each with own gating and guides. Core insight: shared infrastructure (~15 lines of defaults) belongs in Claude user preferences, leaving CLAUDE.md files as pure persona. Exploring `shared/` repo for personal persona. See `notes/work/claude.md`.
 
 
-**2025** Started webseriously as graph visualization tool. Built di as quaternion rotation demo, rebuilding a 20-year-old CAD program. Developed collaboration workflow with Claude through trial and error — CLAUDE.MD files, structured guides, work tracking. The pattern emerged: Claude handles execution and analysis, I handle direction and distillation.
+**2025** Started webseriously as graph visualization tool. Built di as quaternion rotation demo, rebuilding a 20-year-old CAD program. Developed collaboration workflow with Claude through trial and error — CLAUDE.md files, structured guides, work tracking. The pattern emerged: Claude handles execution and analysis, I handle direction and distillation.
 
 
 **January 8, 2026** Wrote `pacing.md`. This project moves differently than webseriously — faster AND easier. The gap between thinking and seeing has collapsed. Say it, see it. Mere minutes from idea to artifact. Crazily like a lucid dream. Frees me, lets ideas settle, evolve. Pushed "enhanced" template to GitHub. Phase 1 of **commoditize** complete. The template captures the methodology: bidirectional docs, living guides, work tracking that survives sessions, context-switching rituals.
@@ -22080,7 +22080,7 @@ Chronicle of guide and work file evolution, extracted from timestamps in the fil
 **January 4-8, 2026** (di) Created the project. Vite + TypeScript + Svelte 5 from day one. Built quaternion POC: two nested cubes rotating independently, wireframe rendering with depth-based opacity. Proof that gl-matrix + Canvas 2D pipeline works without gimbal lock. Established the manager pattern (Scene, Camera, Render, Input, Animation). Created the notes structure that would become the collaboration workflow. Milestone 1 (solid foundation) and Milestone 2 (panel layout) completed. Set up dual Netlify deployments: docs.designintuition.app (VitePress) and designintuition.app (main app). Milestone 3 (document publishing) and Milestone 4 (hits manager borrowed from ws) done.
 
 
-**January 8, 2026** Wrote `work/next/pacing.md`. Captured the insight that this project moves differently — the gap between thinking and seeing has collapsed. Started the **commoditize** effort to package the AI collaboration methodology. Phase 1 complete: created `enhanced` repo with template CLAUDE.MD and starter structure. See `work/next/commoditize.md`.
+**January 8, 2026** Wrote `work/next/pacing.md`. Captured the insight that this project moves differently — the gap between thinking and seeing has collapsed. Started the **commoditize** effort to package the AI collaboration methodology. Phase 1 complete: created `enhanced` repo with template CLAUDE.md and starter structure. See `work/next/commoditize.md`.
 
 
 **January 9, 2026** Started the hub app — browser-based dashboard for managing local dev servers. Defined port assignments, keyboard shortcuts, UI components. See `guides/develop/hub-app.md` and `guides/setup/hub-app-spec.md`.
@@ -22731,7 +22731,7 @@ Then it might be good to know what patterns cause the stop-dead moments? Is it a
 **Proposed new rule:** When chiming in, verify the observation isn't already stated in the file.
 
 #### Incomplete rename
-**What:** Renamed `mistakes.md` to `raw.md`, updated CLAUDE.MD reference, but didn't update index.md or check for other references.
+**What:** Renamed `mistakes.md` to `raw.md`, updated CLAUDE.md reference, but didn't update index.md or check for other references.
 **Why:** Treated rename as just move + one known reference, not a full search.
 **Proposed new rule:** On rename, also update index.md and search for other references.
 
@@ -22789,7 +22789,7 @@ Firefox bugs in ws app. 5 identified, 3 fixed:
 - Fixed shift-click deselection (added return true after ungrab)
 - Fixed empty rubberband deselects on mouse-up
 - Created `notes/guides/pre-flight/always.md` — read every response
-- Updated CLAUDE.MD: every response reads always.md + scans keywords.md
+- Updated CLAUDE.md: every response reads always.md + scans keywords.md
 
 ## Files touched
 
@@ -22801,7 +22801,7 @@ Firefox bugs in ws app. 5 identified, 3 fixed:
 - `ws/src/lib/svelte/mouse/Color.svelte` — Firefox top offset fix
 - `notes/guides/pre-flight/always.md` — created
 - `notes/guides/pre-flight/index.md` — updated
-- `CLAUDE.MD` — updated pre-flight instructions
+- `CLAUDE.md` — updated pre-flight instructions
 ```
 
 ### /Users/sand/GitHub/mono/.gitignore
@@ -22844,7 +22844,7 @@ Firefox bugs in ws app. 5 identified, 3 fixed:
 }
 ```
 
-### /Users/sand/GitHub/mono/CLAUDE.MD
+### /Users/sand/GitHub/mono/CLAUDE.md
 ```MD
 # Shared Context
 
@@ -34398,11 +34398,11 @@ Summary of steps taken during "go ws" initialization, plus research on AI memory
 
 ## Steps
 
- 1. **Attempted ws CLAUDE.MD** — failed, wrong path (`/Users/jonathanmast/...`)
+ 1. **Attempted ws CLAUDE.md** — failed, wrong path (`/Users/jonathanmast/...`)
  2. **Listed allowed directories** — discovered correct base is `/Users/sand/GitHub`
- 3. **Explored mono structure** — found `mono/projects/ws/CLAUDE.MD`
- 4. **Read ws/CLAUDE.MD** — instructions: read `../../CLAUDE.MD` and `notes/guides/*.md`
- 5. **Read mono/CLAUDE.MD** — shared context: defaults, gates, workarounds
+ 3. **Explored mono structure** — found `mono/projects/ws/CLAUDE.md`
+ 4. **Read ws/CLAUDE.md** — instructions: read `../../CLAUDE.md` and `notes/guides/*.md`
+ 5. **Read mono/CLAUDE.md** — shared context: defaults, gates, workarounds
  6. **Read collaborate guides (batch 1)** — index, access, chat, evolve, filesystem, gating
  7. **Read collaborate guides (batch 2)** — journals, markdown, repo, shorthand, voice, workflow
  8. **Read mono/notes/work files** — index, revisit.md, journal.md
@@ -34416,7 +34416,7 @@ Summary of steps taken during "go ws" initialization, plus research on AI memory
 ## Observations
 
 * Path discovery took 4 tool calls (could be 1 if I knew the base path)
-* ws/CLAUDE.MD says "Read all `.md` files in `notes/guides/`" but that dir doesn't exist — actual guides are in `notes/collaborate/`
+* ws/CLAUDE.md says "Read all `.md` files in `notes/guides/`" but that dir doesn't exist — actual guides are in `notes/collaborate/`
 * Memory said "Phase 3 next" for recents but the work is complete
 
 ## userMemories Staleness Discovery
@@ -34429,7 +34429,7 @@ Summary of steps taken during "go ws" initialization, plus research on AI memory
 
 | Source | Freshness |
 |----|----|
-| CLAUDE.MD, guides, work/\*.md | Fresh — read live |
+| CLAUDE.md, guides, work/\*.md | Fresh — read live |
 | conversation_search / recent_chats | Fresh — searches actual history |
 | userMemories (auto-generated) | **Stale** — unknown lag |
 | memory_user_edits (manual) | Immediate, reliable |
@@ -34437,8 +34437,8 @@ Summary of steps taken during "go ws" initialization, plus research on AI memory
 **Resolution:**
 
 * Removed stale memory entry
-* Updated CLAUDE.MD to say: "userMemories: Ignore entirely. Stale data risk outweighs serendipity. Use `memory` command if curious."
-* Added stable context (Who section, execution mode) directly to CLAUDE.MD
+* Updated CLAUDE.md to say: "userMemories: Ignore entirely. Stale data risk outweighs serendipity. Use `memory` command if curious."
+* Added stable context (Who section, execution mode) directly to CLAUDE.md
 * Added `memory` shorthand command to surface auto-generated insights on demand
 
 **Implication:** Don't trust userMemories for anything time-sensitive. The md files are the real memory system.
@@ -34505,7 +34505,7 @@ Searched for consumer products that accomplish something like Jonathan's md-base
 
 ### The Irony
 
-Jonathan built an entire methodology — CLAUDE.MD, gates, work files, guides — to work around AI unreliability. That labor compensates for the tool's opacity. The collaboration guides he's written are clearer documentation of how to work with Claude than anything Anthropic provides.
+Jonathan built an entire methodology — CLAUDE.md, gates, work files, guides — to work around AI unreliability. That labor compensates for the tool's opacity. The collaboration guides he's written are clearer documentation of how to work with Claude than anything Anthropic provides.
 ```
 
 ### /Users/sand/GitHub/mono/ws/notes/work/next/index.md
@@ -35644,7 +35644,7 @@ Firefox bugs in ws app. 5 identified, 3 fixed:
 * Fixed shift-click deselection
 * Fixed empty rubberband deselects on mouse-up
 * Created `notes/guides/pre-flight/always.md`
-* Updated [CLAUDE.MD](http://CLAUDE.MD) pre-flight instructions
+* Updated [CLAUDE.md](http://CLAUDE.md) pre-flight instructions
 ```
 
 ### /Users/sand/GitHub/mono/ws/.gitignore
@@ -36409,11 +36409,11 @@ export default defineConfig({
 
 ```
 
-### /Users/sand/GitHub/mono/ws/CLAUDE.MD
+### /Users/sand/GitHub/mono/ws/CLAUDE.md
 ```MD
-# CLAUDE.MD
+# CLAUDE.md
 
-COMMON: Read `../../CLAUDE.MD`
+COMMON: Read `../../CLAUDE.md`
 
 REPO: `~/GitHub/mono/projects/ws`
 

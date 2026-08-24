@@ -148,7 +148,7 @@ function first_words(text: string): string {
 
 /** A title from the file's own name: dashes and underscores become spaces, first letter up. */
 function title_from_name(file_name: string): string {
-	const words = file_name.replace(/\.md$/, '').replace(/[-_]+/g, ' ').trim();
+	const words = file_name.replace(/\.md$/i, '').replace(/[-_]+/g, ' ').trim();
 	return words.charAt(0).toUpperCase() + words.slice(1);
 }
 

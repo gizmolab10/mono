@@ -42,7 +42,7 @@ What is actually in the repo, in markdown. Counted 2026-08-01, skipping installe
 
 - Should we include work notes here? The app is deliberately about guides; the count says that leaves most of the writing out.
 - Analyze the loose files. What are they for? Does anything belong in guides, in work, or deletion?
-- Focus on murky, what are its causes. [[Voice]], [[replying]], [[chat]], [[shorthand]], [[sparse replies]], [[CLAUDE]], [[guides.layout]], [[di/notes/guides/pre-flight/lexicon]], 
+- Focus on murky, what are its causes. [[Voice]], [[replying]], [[chat]], [[shorthand]], [[sparse replies]], [[CLAUDE]], [[guides.layout]], [[ov/notes/guides/pre-flight/lexicon]], 
 
 ## Proposal — two lexicons, one shared and one for overview
 

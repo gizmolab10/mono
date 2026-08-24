@@ -13,7 +13,7 @@ The intersection project's files. Update this when files are added, moved, or re
 
 - [vite.config.ts](../../../vite.config.ts) — dev server (port 5184) and build.
 - `package.json` — dependencies (markdown-it, color2k, @fontsource/montserrat).
-- [CLAUDE.md](../../../CLAUDE.MD) — project entry point.
+- [CLAUDE.md](../../../CLAUDE.md) — project entry point.
 
 ## src/lib/svelte/ — components
 

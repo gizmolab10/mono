@@ -22,6 +22,7 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | main                            |   y    |      | cross-project                          |                    |
 | visual confirmation             |   y    |      | eyeball, nod                           |                    |
 | easy to misuse                  |   y    |      | footgun                                | self-inflicted     |
+| discover files using regex and wildcards | y |      | glob, globbing                         | sweep the disk for files |
 | register                        |   y    |      | hand over, hand to                     | tell the manager   |
 | add, insert, write, update, put |   y    |      | land                                   | add a thing        |
 | do, perform, can be done        |   y    |      | land                                   | complete an action |

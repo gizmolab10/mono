@@ -8,6 +8,22 @@ describe('reading a path in the repo back into a collection and a folder', () =>
 			.toEqual({ bundle: T_Bundle.mono, path: 'pre-flight/always.md', is_design: false });
 	});
 
+	it('reads the repo\'s own CLAUDE file', () => {
+		expect(site_of_file('CLAUDE.MD'))
+			.toEqual({ bundle: T_Bundle.mono, path: 'CLAUDE.MD', is_design: false });
+	});
+
+	it('reads a project\'s CLAUDE file, either spelling', () => {
+		expect(site_of_file('lv/CLAUDE.MD'))
+			.toEqual({ bundle: T_Bundle.lv, path: 'CLAUDE.MD', is_design: false });
+		expect(site_of_file('ov/CLAUDE.md'))
+			.toEqual({ bundle: T_Bundle.ov, path: 'CLAUDE.md', is_design: false });
+	});
+
+	it('places no CLAUDE file below a collection\'s top', () => {
+		expect(site_of_file('lv/notes/CLAUDE.MD')).toBeNull();
+	});
+
 	it('reads a project\'s guide', () => {
 		expect(site_of_file('di/notes/guides/core/units.md'))
 			.toEqual({ bundle: T_Bundle.di, path: 'core/units.md', is_design: false });

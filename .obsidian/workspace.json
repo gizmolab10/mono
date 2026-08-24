@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "lv/notes/work/editing the published site.md",
+                "file": "memory/shared/truth/taste.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "editing the published site"
+              "title": "taste"
             }
           },
           {
@@ -69,12 +69,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/AI prompt caching redesign.md",
+                "file": "ov/notes/work/AI memory redesign.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AI prompt caching redesign"
+              "title": "AI memory redesign"
             }
           },
           {
@@ -104,7 +104,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -138,7 +138,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:shorthand",
+                "query": "file:taste",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -159,7 +159,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -242,7 +243,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "lv/notes/work/editing the published site.md",
+                "file": "ov/notes/work/AI memory redesign.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -280,42 +281,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6ac25d6346f16830",
+  "active": "63e890a916e9d492",
   "lastOpenFiles": [
+    "ov/CLAUDE.md",
+    "ov/CLAUDE.MD",
+    "ws/CLAUDE.md",
+    "s3/CLAUDE.md",
+    "me/CLAUDE.md",
+    "lv/CLAUDE.md",
+    "ji/CLAUDE.md",
+    "di/CLAUDE.md",
+    "CLAUDE.md",
+    "vitest.config.ts",
+    "memory/shared/truth/migration.md",
+    "notes/guides/collaborate/voice.md",
+    "memory/shared/truth/conventions.md",
+    "ov/notes/work/AI memory redesign.md",
+    "memory/shared/truth/taste.md",
+    "lv/notes/work/editing the published site.md",
+    "memory/lv/log.md",
+    "memory/lv/truth/lexicon.md",
+    "memory/lv/truth/gallery.md",
+    "memory/lv/truth",
+    "memory/lv/index.md",
+    "memory/lv",
+    "memory/ov/log.md",
+    "memory/ov/truth/lexicon.md",
+    "memory/ov/truth/scope.md",
+    "memory/ov/truth",
+    "memory/ov/index.md",
+    "memory/ov",
     "ov/notes/work/commands/where.md",
     "ov/notes/work/commands/settle.md",
     "ov/notes/work/commands/start.md",
-    "ov/notes/work/commands/propose.md",
-    "ov/notes/work/commands/pac.md",
-    "ov/notes/work/commands/define.md",
-    "ov/notes/work/commands/check.md",
     "ov/notes/work/commands",
-    "lv/notes/work/photo gallery.md",
-    "ov/notes/work/AI prompt caching redesign.md",
-    "ov/notes/work/_to_delete/skills/where/SKILL.md",
-    "ov/notes/work/_to_delete/skills/start/SKILL.md",
-    "ov/notes/work/_to_delete/skills/settle/SKILL.md",
-    "ov/notes/work/_to_delete/skills/propose/SKILL.md",
-    "ov/notes/work/_to_delete/skills/pac/SKILL.md",
-    "ov/notes/work/_to_delete/skills/define/SKILL.md",
-    "ov/notes/work/_to_delete/skills/check/SKILL.md",
     "ov/notes/work/_to_delete/skills/where",
     "ov/notes/work/_to_delete/skills/start",
     "ov/notes/work/_to_delete/skills/settle",
     "ov/notes/work/_to_delete/skills/propose",
-    "ov/notes/work/_to_delete/skills/pac",
-    "ov/notes/work/_to_delete/skills/define",
-    "ov/notes/work/_to_delete/skills/check",
-    "ov/notes/work/_to_delete/commands/where.md",
-    "ov/notes/work/_to_delete/commands/start.md",
-    "ov/notes/work/_to_delete/commands/settle.md",
-    "ov/notes/work/_to_delete/commands/propose.md",
-    "ov/notes/work/_to_delete/commands/pac.md",
-    "ov/notes/work/_to_delete/commands/define.md",
-    "ov/notes/work/_to_delete/commands/check.md",
-    "ov/notes/work/_to_delete/skills",
-    "ov/notes/work/_to_delete/commands",
-    "ov/notes/guides/design/okf.md",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",
@@ -326,8 +329,6 @@
     "lv/src/assets/the vineyard/LCV_Label_v3B.jpg",
     "lv/src/assets/the vineyard/LCV sketch 1.jpg",
     "lv/src/assets/the vineyard/LCV sketch 0.jpg",
-    "ji/notes/work/AI on my mac.md",
-    "di/notes/work/now/learn.md",
     "Untitled.canvas",
     "ws/notes/work/Untitled.canvas"
   ]

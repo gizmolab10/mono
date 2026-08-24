@@ -32,7 +32,7 @@ Each project keeps its own lexicon for its own things — [di](../../../di/notes
 - **kind** — the first label, saying what sort of file it is. Five exist: howto, specify, explain, arch, analyze.
 - **tag** — a word in the labels saying what the file is about.
 - **brief** — the description label. One sentence.
-- **map** — a project's file map. Read it instead of globbing; update it when files move.
+- **map** — a project's file map. Read it instead of discovering files using regex and wildcards; update it when files move.
 - **index** — the list of what a folder holds. Update it when files come or go.
 - **handoff** — current status and the one **Next** action. Read first each session.
 - **code debt** — open tasks as checkboxes. **code debt paid** holds the finished ones.

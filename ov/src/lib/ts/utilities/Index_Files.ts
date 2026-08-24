@@ -26,7 +26,7 @@ export function file_named_by(line: string): string {
 // A line for a file that had none: just a link, no description. The shown name is the file's
 // own name without its ending, first letter capitalized, the way the others read.
 export function line_for(file_name: string): string {
-	const bare = file_name.replace(/\.md$/, '');
+	const bare = file_name.replace(/\.md$/i, '');
 	const shown = bare.charAt(0).toUpperCase() + bare.slice(1);
 	return `- [${shown}](./${encodeURIComponent(file_name)})`;
 }

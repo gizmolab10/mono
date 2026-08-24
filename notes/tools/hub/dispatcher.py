@@ -321,7 +321,7 @@ def is_listed_note(where):
     work folder, and inside any of WORK_FOLDERS — the same rule the listing uses, said here as
     well because reading and writing pass through this one door. Every file in the memory
     system, at any depth, the same as a guide."""
-    if not where.endswith('.md'):
+    if not where.lower().endswith('.md'):
         return False
     # A place on this machine is turned into one counting from the top of the repo, so the
     # memory system is recognised however the app names it.
@@ -332,6 +332,11 @@ def is_listed_note(where):
         if not full.startswith(root + os.sep):
             return False
         inside = os.path.relpath(full, root)
+    # A collection's CLAUDE file — its entry point — spelled CLAUDE.MD or CLAUDE.md. The
+    # same line the listing draws: at the repo's own top, or at the top of a collection.
+    parts = inside.split('/')
+    if parts[-1].lower() == 'claude.md':
+        return len(parts) == 1 or (len(parts) == 2 and parts[0] in ('di', 'ws', 'ji', 'lv', 'ov'))
     if inside.startswith('memory/'):
         return True
     if any(part in where for part in ('notes/guides/', 'notes/designs/')):
@@ -535,6 +540,14 @@ class APIHandler(BaseHTTPRequestHandler):
                                     inside_one = os.path.join(whole, deeper)
                                     if deeper.endswith('.md') and os.path.isfile(inside_one):
                                         found.append(os.path.relpath(inside_one, root))
+                    # The collection's CLAUDE file — its entry point — sits at its very top,
+                    # spelled CLAUDE.MD or CLAUDE.md depending on the project. Listed here so
+                    # the overview app can show it.
+                    top_dir = os.path.join(root, collection) if collection else root
+                    if os.path.isdir(top_dir):
+                        for one in sorted(os.listdir(top_dir)):
+                            if one.lower() == 'claude.md' and os.path.isfile(os.path.join(top_dir, one)):
+                                found.append(os.path.relpath(os.path.join(top_dir, one), root))
                 # The memory system sits at the top of the repo, beside notes, and belongs to
                 # no collection. Every file inside it is listed, however deep it sits.
                 memory = os.path.join(root, 'memory')

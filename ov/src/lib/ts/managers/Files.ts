@@ -640,7 +640,7 @@ class Files {
 		for (const where of on_disk.paths) {
 			const site = site_of_file(where);
 			if (!site) { continue; }
-			const name = where.split('/').pop()?.replace(/\.md$/, '') ?? '';
+			const name = where.split('/').pop()?.replace(/\.md$/i, '') ?? '';
 
 			// An index file only lists what sits beside it — the folders here do that job, so it
 			// would say nothing the list doesn't already show. Left out entirely, not merely
@@ -678,7 +678,7 @@ class Files {
 		const roof = under === '' ? top : this.hierarchy.folder_at(bundle, under, under);
 		if (under !== '') { this.hierarchy.add_relationship(top.id, roof.id); }
 		const parts = inside.split('/');
-		const name = parts[parts.length - 1].replace(/\.md$/, '');
+		const name = parts[parts.length - 1].replace(/\.md$/i, '');
 		let parent = roof;
 		for (let i = 0; i < parts.length - 1; i++) {
 			const so_far = under === '' ? parts.slice(0, i + 1).join('/') : `${under}/${parts.slice(0, i + 1).join('/')}`;

@@ -194,14 +194,15 @@ The set:
 - **start** — load the prompt cache: root `index.md` → `protocol.md` → project `index.md` → `use_when`-matched truths. Session start, project switch — and mid-session whenever the AI sounds like it has forgotten the rules. `start` is also the drift-correction command: re-grounding on demand instead of arguing with a drifted session.
 - **pac** — pros and cons of X: a grounded deliberation before a decision. It reads the truths X touches, `decisions.md` (was this already decided?), the lexicon, and `taste.md` when X is visual — then argues both sides, each point tied to a specific truth, principle, or cost, never generic filler. It ends with the question that would decide the matter, not a verdict (unless asked), and offers to capture the outcome via `propose` or a `D:` line.
 - **define** — coin or redefine a term: lexicon entry, `D:` log line, and (on redefinition) a sweep of old-sense uses, in one atomic act. The only door into the lexicon.
-- **propose** — put something forward without making it true: it lands in `zone/ideas.md` or as an `I:`/`Q:` line, and truth files stay untouched until you promote it. The quarantine between having an idea and believing it.
+- **propose** — put something forward without implementing it: it goes in `zone/ideas.md` or as an `I:`/`Q:` line, and truth files stay untouched until you ask that the proposal be implemented.
 - **settle** — run the five-step consolidation on a project, ending in its one labeled commit.
 - **check** — the audit: `okf` structural validation, terminology drift scan (off-definition and undefined terms), duplicate-fact hunt, and skill-pointer verification (every skill's referenced `protocol.md` section must still exist — the skills live outside the memory system, so nothing else audits them). Aimed at a settle, it verifies the commit diff cold; for real independence, run it in a *new* session — a skill cannot freshen its own context, and the checker must not be the settler.
 - **where** — name the one file that owns a topic, before you or the AI touch it.
+- **summary** — the state of the current chat, with extreme brevity: done, in motion, open. A handful of lines, no preamble, no recap of how we got here.
 
-Skills that write (`define`, `propose`, `settle`), log; skills that only read (`start`, `pac`, `check`, `where`) don't. And the set stays small by the same rule as everything else: a new skill must own a procedure `protocol.md` actually defines — a skill without a procedure is word salad in verb form.
+Skills that write (`define`, `propose`, `settle`), log; skills that only read (`start`, `pac`, `check`, `where`, `summary`) don't log. And the set stays small by the same rule as everything else: a new skill must own an already defined procedure in `protocol.md` — a skill without a procedure is distracting and improperly defined.
 
-## Hooks: automation with a leash
+## Hooks: automation that boosts work flow
 
 Skills are verbs you speak; hooks fire the same procedures on events, no speech required. One boundary keeps them trustworthy: **hooks automate reading, checking, and reminding — never writing truths, settling, coining, or deleting.** A hook may run a read-only skill; a write skill is only ever run by you. Automation proposes; you dispose.
 
@@ -226,13 +227,25 @@ What deliberately stays manual: settling, defining, promoting or culling ideas, 
 | `decisions.md` | ~10 live items | delete finalized ones |
 | `ideas.md` idea age | 3 consolidations | promote or cull |
 | `lexicon.md` | ~30 terms | delete dead terms; question whether coinages are earning their keep |
-| skill set | ~7 verbs | merge overlapping skills; a skill must own a `protocol.md` procedure |
+| skill set | ~8 verbs | merge overlapping skills; a skill must own a `protocol.md` procedure |
 
 ## Adoption
 
 1. **DONE** Create `memory/` inside the repo that holds your projects; add root `index.md` and `shared/`. No separate repo — the surrounding repo's history is the archaeology layer, and memory edits travel in the same commits as the work they describe.
-2. **DONE except hooks** Transcribe the operating rules from this doc into `shared/truth/protocol.md`; point the root `index.md` at it first. Create the seven skills as thin triggers into it *(done as shorthand rows in `notes/guides/pre-flight/shorthand.md`)*. Delete all the existing hooks that are not described here and create the new hooks *(pending)*.
-3. Seed `shared/truth/taste.md` with five principles you already know you hold.
-4. Bring up **one** project: write its `index.md` and its two or three obviously-needed truths from scratch (current design only — resist importing history).
+2. **DONE except hooks** Transcribe the operating rules from this doc into `shared/truth/protocol.md`; point the root `index.md` at it first. Create the eight skills as thin triggers into it *(done as shorthand rows in `notes/guides/pre-flight/shorthand.md`)*. Delete all the existing hooks that are not described here and create the new hooks *(pending)*.
+3. **DONE** Seed `shared/truth/taste.md` with five principles you already know you hold *(seeded, then edited by Jonathan; `conventions.md` also begun)*.
+4. **DONE** Bring up **one** project: write its `index.md` and its two or three obviously-needed truths from scratch (current design only — resist importing history) *(lv is first; ov's skeleton sits idle beside it)*.
 5. Work normally for a week with the session protocol; run the first consolidation by hand to feel the settling step.
-6. Add the other projects only after the first one's rhythm holds.
+6. Add the other projects only after the first one's rhythm feels satisfying and solid.
+
+## Leaving the old system
+
+The memory system replaces an older one: CLAUDE.md's reading-on-load list, `notes/guides/`, and the per-project `notes/work/` files (handoffs, work journals, learn files, mothballs, current contexts). The goal is that system's **complete abandonment** — not coexistence. Five rules govern the exit:
+
+1. **Move truths, not history.** Worth moving: anything *currently true* that a session would act on — a rule, a design fact, a term, a live question, a lesson's conclusion. Each settles into its one home in `memory/`. Not worth moving: journals, handoffs, mothballs, finished contexts, the stories behind lessons. That is history; the old files *are* the archive, and they get abandoned in place, not imported. (This is the same fossil rule the truths already live by.)
+2. **Pull, don't push.** No big-bang import. When work actually reaches for something that exists only in the old system, move it that day. Anything nothing reaches for was already dead — a sweep would just copy fossils forward with the living.
+3. **A move is a move, not a copy.** When content enters `memory/`, the old file loses it — delete the moved lines, or the whole file when nothing is left. A line living in both systems is two sources of truth, banned here as everywhere.
+4. **The ratchet: never write new content into the old system.** Every new rule, term, decision, and note lands in `memory/` from now on. The old system only shrinks. This rule alone guarantees abandonment; the others just set the pace.
+5. **`migration.md` keeps the death list.** `shared/truth/migration.md` names, one line each, what still lives only in the old system. A line leaves when its content moves in or is declared dead. The file emptying is the finish line: when it's empty, delete it, shrink CLAUDE.md's "Reading on load" to `start` alone, and the old system is gone.
+
+Rough mapping when things do move: pre-flight and collaborate rules → `protocol.md` or `conventions.md`; the mono-wide and per-project lexicons → the owning `truth/lexicon.md`; a learn entry → the rule the mistake taught, in its owning truth (the story stays behind); a handoff or current-context → the project index's *current state* paragraph plus `Q:` lines. One deliberate exception: `shorthand.md` stays where it is — it is the trigger surface, and its rows already point into `protocol.md`.

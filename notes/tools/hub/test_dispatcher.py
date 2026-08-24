@@ -77,6 +77,21 @@ check('the shared collection\'s work is listed too', 'notes/work/learn.md' in li
 deeper = [one for one in listed if '/notes/work/' in f'/{one}' and one.count('/') > 3]
 check('nothing deeper than the top of a work folder is listed', deeper, [])
 
+# --- the CLAUDE files ---------------------------------------------------------
+#
+# Each collection's entry point sits at its very top, spelled CLAUDE.MD or CLAUDE.md.
+
+check('the repo\'s own CLAUDE file is listed', 'CLAUDE.md' in listed, True)
+check('lv\'s CLAUDE file is listed', 'lv/CLAUDE.md' in listed, True)
+check('ov\'s lowercase CLAUDE.md is listed', 'ov/CLAUDE.md' in listed, True)
+
+code, said = ask('/read-guide?where=lv/CLAUDE.md')
+check('a CLAUDE file can be read', code, 200)
+code, said = ask('/read-guide?where=CLAUDE.md')
+check('the repo\'s own CLAUDE file can be read', code, 200)
+code, said = ask('/read-guide?where=lv/notes/CLAUDE.md')
+check('no CLAUDE file below a collection\'s top is readable', code, 409)
+
 # --- the memory system --------------------------------------------------------
 #
 # It sits at the top of the repo beside notes, belongs to no collection, and every file in

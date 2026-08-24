@@ -188,7 +188,7 @@ How each dim line's position and label are chosen.
 - **stub out** — write the empty test bodies (or the empty file structure) ready for content to be filled in later. Never call this *scaffold*.
 - **needs visual confirmation** — phrase used at the end of a session note when a change needs Jonathan to open a browser and describe the image, offering approval or criticism. Never write *needs eyeball*.
 - **handoff** — the running document that captures what's done, what's open, and the proposals on the table. Preserves every detail; the assistant adds a new section in the same turn it does new work.
-- **map** — the running file-map document. Read instead of globbing when looking for files.
+- **map** — the running file-map document. Read instead of discovering files using regex and wildcards when looking for files.
 - **learn** — the running list of past mistakes. Once it has ten entries, time to distill.
 - **work journal** — the running list of session entries, reverse-chronological.
 

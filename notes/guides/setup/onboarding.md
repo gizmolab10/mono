@@ -50,7 +50,7 @@ Your folder structure:
 ```
 ~/GitHub/
   mono/
-    CLAUDE.MD
+    CLAUDE.md
     notes/
     ws/
     di/
@@ -143,6 +143,6 @@ Set up SSH key: https://docs.github.com/en/authentication/connecting-to-github-w
 
 ## Next Steps
 
-- Read `CLAUDE.MD` for project context
+- Read `CLAUDE.md` for project context
 - Check `notes/guides/collaborate/` for how to work with Claude
 - Check `notes/guides/setup/` for deployment and tooling docs

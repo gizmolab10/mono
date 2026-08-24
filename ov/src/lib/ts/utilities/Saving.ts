@@ -27,6 +27,9 @@ const MEMORY = 'memory/';
 // "designs" and a work note's with "work", so those two hang straight off the notes folder;
 // everything else is under guides.
 export function file_path_of(bundle: T_Bundle, path: string): string {
+	if (path.split('/').pop()?.toLowerCase() === 'claude.md') {
+		return bundle === T_Bundle.mono ? path : `${bundle}/${path}`;
+	}
 	const ending = path.endsWith('.md') ? path : `${path}.md`;
 	if (ending.startsWith(MEMORY)) { return ending; }
 	const beside = ending.startsWith('designs/') || ending.startsWith('work/');
@@ -54,6 +57,16 @@ function under_work(parts: string[], at: number): number {
 export type File_Site = { bundle: T_Bundle; path: string; is_design: boolean };
 
 export function site_of_file(where: string): File_Site | null {
+	// A collection's CLAUDE file sits at its very top, spelled CLAUDE.MD or CLAUDE.md — so
+	// this stands before the lowercase .md gate, which would turn the uppercase spelling away.
+	// It hangs off the collection's own top folder, beside guides, designs and work.
+	const steps = where.split('/');
+	if (steps[steps.length - 1].toLowerCase() === 'claude.md') {
+		if (steps.length === 1) { return { bundle: T_Bundle.mono, path: steps[0], is_design: false }; }
+		const owner = Object.values(T_Bundle).find((one) => one === steps[0]);
+		if (steps.length === 2 && !!owner) { return { bundle: owner, path: steps[1], is_design: false }; }
+		return null;
+	}
 	if (!where.endsWith('.md')) { return null; }
 	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.mono, path: where, is_design: false }; }
 	for (const bundle of Object.values(T_Bundle)) {

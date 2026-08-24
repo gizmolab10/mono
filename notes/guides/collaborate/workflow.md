@@ -25,11 +25,11 @@ Living notes at [[cadence]].
 
 - `notes/guides/` — living reference (style, patterns, how-tos)
 - `notes/work/` — ALL work is recorded here, as we go
-- `CLAUDE.MD` — entry point, tells Claude where to start
+- `CLAUDE.md` — entry point, tells Claude where to start
 
 ## One truth, one place
 
-Guides encode decisions, grouped by topic. CLAUDE.MD is the entry point, the large scale map. Don't duplicate — reference.
+Guides encode decisions, grouped by topic. CLAUDE.md is the entry point, the large scale map. Don't duplicate — reference.
 
 ## Starting work
 

@@ -16,8 +16,8 @@ Co resets between conversations. What persists (strongest influence first):
 
 1. Memory edits — direct overrides, always visible
 2. userMemories (auto-generated) — shapes assumptions before Jonathan says anything
-3. CLAUDE.MD — loaded when Jonathan says `go`; sets project frame
-4. Files mentioned in CLAUDE.MD — read when relevant
+3. CLAUDE.md — loaded when Jonathan says `go`; sets project frame
+4. Files mentioned in CLAUDE.md — read when relevant
 5. Files not mentioned — no influence until discovered
 
 Without these, every conversation starts from zero.
@@ -227,7 +227,7 @@ Before writing code:
 
 **The trap:** Optimizing for appearing helpful by producing code quickly. The fix: slow down, verify, quote sources.
 
-**"relearn"** — Stop. Re-read CLAUDE.MD, `notes/guides/collaborate/*.md`, and the active work doc. Quote the relevant section before continuing.
+**"relearn"** — Stop. Re-read CLAUDE.md, `notes/guides/collaborate/*.md`, and the active work doc. Quote the relevant section before continuing.
 
 ### Debugging Discipline
 
@@ -267,7 +267,7 @@ If collaborator produces a fix and user reports "still broken" or "new error in 
 
 ### File Operations
 
-**Rename with `mv`, then search.** On rename or move: use `mv old new`, then search for all references (index.md, CLAUDE.MD, imports, links). Update everything in one pass.
+**Rename with `mv`, then search.** On rename or move: use `mv old new`, then search for all references (index.md, CLAUDE.md, imports, links). Update everything in one pass.
 
 **Remove, don't swap.** When removing project-specific content from shared docs, remove entirely — don't replace ws examples with di examples or vice versa.
 

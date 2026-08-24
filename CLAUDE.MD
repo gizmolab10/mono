@@ -1,6 +1,6 @@
 # Shared Context
 
-NEVER EVER use git.
+NEVER EVER use git. One exception: inside `memory/`, git is allowed for what `memory/shared/truth/protocol.md` prescribes (settle commits and their reverts) — nothing else, nowhere else.
 
 PROJECTS: ws (webseriously) = graph visualization, di (design intuition) = CAD rebuild, ga (game), me (my personal work)
 
@@ -29,7 +29,7 @@ Also read:
 
 - `notes/work/learn.md` — past mistakes that apply across every project; never repeat them. Read at session start, not on every response.
 - `<X>/notes/work/now/learn.md` — past mistakes specific to the active project; never repeat them. If twenty or more entries, say: "Feedstock: \[N\] — time to distill."
-- The project's file map — one per project, at the path that project's own CLAUDE names (locations vary; not every project has one). Read it instead of globbing. Update it when files are added, moved, or removed. Skip folders listed in `notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
+- The project's file map — one per project, at the path that project's own CLAUDE names (locations vary; not every project has one). Read it instead of discovering files using regex and wildcards. Update it when files are added, moved, or removed. Skip folders listed in `notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
 
 If any keyword matches, read the listed guide(s). If any shorthand matches, perform the action.
 

@@ -17,7 +17,7 @@ These are the files a fresh session reads first, and each one points somewhere w
 
 **CLAUDE.md** carries three faults, and it is eleven lines long:
 
-1. "The file map is `notes/guides/map.md`" — no such file. The map lives at `notes/guides/project/map of ov files.md`. Every session told to read the map instead of globbing starts by failing to.
+1. "The file map is `notes/guides/map.md`" — no such file. The map lives at `notes/guides/project/map of ov files.md`. Every session told to read the map instead of discovering files using regex and wildcards starts by failing to.
 2. The one-line description — "a barebones web app: a details column on the left, an accent color picker inside it" — is the phase-3 empty room. The app is now a knowledge-base browser and editor with features numbered to 72 and 410 tests. A session that trusts this line misjudges everything it touches.
 3. "Nothing about documents, tags, storage, or chat belongs in this project" — written when that was true. Tags are now the app's center: a closed list, eight areas, filters, a label form. The prohibition contradicts the app it guards.
 

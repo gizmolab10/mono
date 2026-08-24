@@ -1,11 +1,14 @@
 import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { resolve } from 'path';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 export default defineConfig({
   plugins: [svelte()],
   define: {
-    __ASSETS_DIR__: JSON.stringify(resolve(process.cwd(), 'src/assets')),
+    // This config's own folder, not where vitest was launched — so a run from the
+    // repo's top finds the same assets a run from here does.
+    __ASSETS_DIR__: JSON.stringify(resolve(dirname(fileURLToPath(import.meta.url)), 'src/assets')),
   },
   test: {
     setupFiles: ['src/lib/ts/tests/setup.ts'],

@@ -8,7 +8,7 @@ updated: 2026-08-22
 ---
 # Protocol
 
-The authority for how the memory system runs. The design rationale lives in `ov/notes/work/AI prompt caching redesign.md`; this file is the law. Tune the system by editing this file — nowhere else.
+The authority for how the memory system runs. The design rationale lives in `ov/notes/work/AI memory redesign.md`; this file is the law. Tune the system by editing this file — nowhere else.
 
 ## Session protocol
 
@@ -67,7 +67,7 @@ In order, stopping at the first hit: (1) the project's `index.md` catalog; (2) f
 
 ## Skills
 
-One skill per procedure; the skill is a trigger, not a copy. Write skills (`define`, `propose`, `settle`) log every run; read-only skills (`start`, `pac`, `check`, `where`) don't.
+One skill per procedure; the skill is a trigger, not a copy. Write skills (`define`, `propose`, `settle`) log every run; read-only skills (`start`, `pac`, `check`, `where`, `summary`) don't.
 
 - **start** — execute "Session protocol" (Start). Reply: three-line orientation — current state, truths loaded, unsettled `Q:` lines.
 - **pac** — pros and cons of X, grounded: read the truths X touches, `decisions.md` (was this already decided? — if so, lead with the recorded why), the lexicon, `taste.md` when visual. Argue both sides steelmanned, every point tied to a specific truth, principle, or cost; no generic filler; lexicon terms used exactly; no new terms. End with the question that would decide it — a verdict only if asked. Offer to capture via `propose` or a truth edit with its `D:` line.
@@ -76,16 +76,28 @@ One skill per procedure; the skill is a trigger, not a copy. Write skills (`defi
 - **settle** — execute "Consolidation", all five steps; finish with the settle manifest (each line and where it went).
 - **check** — audit: OKF structure (frontmatter, `type`, links), the sizing table below, terminology drift, duplicated facts, and skill pointers (every section a skill references must exist in this file). Aimed at a settle: verify the commit diff cold; if this session performed the settle, ask for a rerun in a new session. Report finding → file → fix; fix nothing unless instructed.
 - **where** — execute "Finding where to tweak"; reply with the one owning path.
+- **summary** — the state of the current chat, with extreme brevity: done, in motion, open. A handful of lines, no preamble, no recap of how we got here.
 
 ## Hooks
 
-Hooks automate reading, checking, and reminding — never writing truths, settling, coining, or deleting. Automation proposes; you dispose.
+Hooks only read, check, and remind — they never write truths, settle, coin, or delete. A hook can suggest; only I decide.
 
 - Session start → run `start`.
 - Commit touching `memory/` → structural `check`; violations block.
 - Commit touching `memory/` → warn if `truth/` changed but the project's `log.md` didn't.
 - Log past ~30 entries → announce "settle is due"; never settle.
 - Session end → draft `S:`/`Q:` lines; they land only on approval.
+
+## Migration
+
+The old system (CLAUDE.md's reading-on-load list, `notes/guides/`, per-project `notes/work/` files) is being abandoned completely. Until it's gone:
+
+- Move truths, not history: only currently-true content a session would act on enters `memory/`; journals, handoffs, mothballs, and stories stay behind as the archive, abandoned in place.
+- Pull, don't push: move a thing the day work actually reaches for it; never bulk-import.
+- A move is a move: delete what the old file loses — content never lives in both systems.
+- The ratchet: write nothing new into the old system, ever. All new rules, terms, decisions, and notes land in `memory/`.
+- Keep `truth/migration.md` current: it lists what still lives only in the old system; remove a line when its content moves in or is declared dead. When the list is empty, delete the file, shrink CLAUDE.md's "Reading on load" to `start` alone — done.
+- Exception: `notes/guides/pre-flight/shorthand.md` stays — it is the trigger surface; its rows point here.
 
 ## Sizing rules
 
@@ -98,4 +110,4 @@ Hooks automate reading, checking, and reminding — never writing truths, settli
 | `decisions.md` | ~10 live items | delete finalized ones |
 | `ideas.md` idea age | 3 consolidations | promote or cull |
 | `lexicon.md` | ~30 terms | delete dead terms |
-| skill set | ~7 verbs | merge overlapping skills |
+| skill set | ~8 verbs | merge overlapping skills |
