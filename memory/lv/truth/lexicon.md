@@ -1,11 +1,15 @@
 ---
 type: reference
 title: lv lexicon
-description: lv's terms. Transitional — the definitions currently live in the Words section of lv's CLAUDE.md.
+description: lv's terms, defined once. Loaded at every lv session start.
 tags: [lexicon, terminology]
 use_when: [every lv session]
-updated: 2026-08-22
+updated: 2026-08-24
 ---
 # lv lexicon
 
-lv already keeps its terms in the **Words** section of [lv/CLAUDE.md](../../../lv/CLAUDE.md) — repo, remote hosted storage, gallery, caption. That section remains the single source until a settle decides whether to move it here. Read it as this project's lexicon; add no term in both places.
+- **repo** — the GitHub repository, `gizmolab10/mono`, which holds this project's code and its pictures.
+- **remote hosted storage** — a rented folder on somebody else's computer, reachable at a web address, where each file has its own address and nothing of ours runs. Cloudflare, Amazon and Backblaze rent it.
+  Not: a bucket — never call one that.
+- **gallery** — one folder of pictures under `src/assets/`, shown one at a time.
+- **caption** — what a picture is called. It is written inside the file itself, and the file's name answers where there is none.

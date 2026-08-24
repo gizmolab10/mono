@@ -5,9 +5,9 @@ description: lv — Tommy's Vineyard Space: sharing the work and fun of owning a
 
 Tommy's Vineyard Space — a place to share the work and fun of owning a vineyard, representing it with descriptions and photos. Svelte site, deployed on Netlify. Structure emerges as needed; don't over-organize early.
 
-**Current state:** memory bring-up just completed; project state to be filled in by the first working session that runs `start` here.
+**Current state:** lexicon folded in from CLAUDE.md — the migration's first move; the gallery truth stands current. Open: which remote hosted storage, if the pictures outgrow the repo.
 
 ## Truths
 
 - [gallery.md](truth/gallery.md) — how pictures and captions currently work.
-- [lexicon.md](truth/lexicon.md) — lv's terms (currently points at the Words section of lv's CLAUDE.md).
+- [lexicon.md](truth/lexicon.md) — lv's terms, defined once.
