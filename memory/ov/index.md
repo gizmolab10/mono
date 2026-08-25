@@ -5,10 +5,12 @@ description: ov (Overview) — a browser and editor for every markdown file in t
 
 A browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place. Ported from ji. Built with Svelte.
 
-**Current state:** CLAUDE files are first-class — listed, placed, readable, editable — with case-tolerance as a guard; all CLAUDE files renamed lowercase across the repo. Vitest confirmation still pending on the Mac (the run needs mono's root config, new since the last try).
+**Current state:** memory is a collection in the browse list; the filters are multi-pick with the option-click ladder; the editor's title tools ride the form's top line. Vitest confirmation still pending on the Mac.
 
 ## Truths
 
 - [scope.md](truth/scope.md) — what belongs in ov and what deliberately does not.
 - [lexicon.md](truth/lexicon.md) — ov's terms (currently points at the project's existing lexicon).
+- [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
+- [controls.md](truth/controls.md) — how the list's filters and the editor's controls behave.
 - [claude-files.md](truth/claude-files.md) — how CLAUDE files are listed, placed, read, and written; the three places that must agree.
