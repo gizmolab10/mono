@@ -1,7 +1,7 @@
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
 import type { File, Labels, Filtered_File } from '../types/File';
 import type { Sort } from './Filters';
-import { kind_matches, tags_match, words_match } from './Filters';
+import { kind_matches, tags_match, words_match, project_matches } from './Filters';
 import { Indexes } from '../database/Indexes';
 import { T_Bundle, in_order, key_of } from '../types/File';
 import { likeliest, link_agrees, parts_of_link, resolved_from } from '../utilities/Following_Links';
@@ -80,7 +80,7 @@ export class Hierarchy {
 	add_folder(bundle: T_Bundle, path: string, name: string): File {
 		return this.register({
 			id: this.fresh_id(), name, bundle, path, address: '', is_folder: true, is_design: false,
-			kind: '', title: name, description: '', date: '', labeled: false,
+			kind: '', title: name, description: '', use_when: [], date: '', labeled: false,
 		});
 	}
 
@@ -156,6 +156,7 @@ export class Hierarchy {
 		guide.kind        = labels.kind;
 		guide.title       = labels.title || guide.name;
 		guide.description = labels.description;
+		guide.use_when    = labels.use_when ?? [];
 		guide.date        = labels.date;
 		guide.labeled     = true;
 		this.taggings = this.taggings.filter((t) => t.file_id !== guide.id);
@@ -401,9 +402,9 @@ export class Hierarchy {
 	 * Does one row survive the three filters? Folders never match on their own — they
 	 * come back only by holding something that did.
 	 */
-	private matches(row: Filtered_File, project: string, kind: string, tags: string[], words: string, picking: string): boolean {
+	private matches(row: Filtered_File, projects: string[], kind: string, tags: string[], words: string, picking: string): boolean {
 		if (row.file.is_folder) { return false; }
-		if (project !== '' && row.file.bundle !== project) { return false; }
+		if (!project_matches(projects, row.file.bundle)) { return false; }
 		if (!kind_matches(kind, row.file.kind, row.file.labeled)) { return false; }
 		if (!tags_match(picking, tags, row.tag_names)) { return false; }
 		if (!words_match(words, row.file.name, row.file.title, row.file.description)) { return false; }
@@ -431,7 +432,7 @@ export class Hierarchy {
 		return row.tag_names.join(', ');
 	}
 
-	narrow(project: string, kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = ''): void {
+	narrow(projects: string[], kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = ''): void {
 		const all = this.list_files();
 		this.all_files = new Map(all.map((r) => [r.key, r]));
 		const closed = new Set(shut);
@@ -442,7 +443,7 @@ export class Hierarchy {
 			? all.filter((r) => !r.ancestor_keys.some((a) => closed.has(a)))
 			: all;
 
-		const matched = all.filter((r) => this.matches(r, project, kind, tags, words, picking));
+		const matched = all.filter((r) => this.matches(r, projects, kind, tags, words, picking));
 		this.matched_count = matched.length;
 		const keep = new Set(matched.map((r) => r.key));
 		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }
@@ -454,6 +455,7 @@ export class Hierarchy {
 			.filter((r) => keep.has(r.key))
 			.filter((r) => show_folders || !r.file.is_folder)
 			.map((r) => show_folders ? r : { ...r, depth: 0 });
+
 
 		// How many matching files sit under each folder — counted over the whole walk, so
 		// a shut folder still shows its full tally. Only files count; the folders between
@@ -485,7 +487,7 @@ export class Hierarchy {
 		}
 
 		const folders_shown = this.filtered_files.filter((r) => r.file.is_folder).length;
-		debug.log(`Narrowed: project "${project || 'all'}", kind "${kind || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_files.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
+		debug.log(`Narrowed: project(s) "${projects.join(', ') || 'all'}", kind "${kind || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_files.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
 	}
 
 	/** The guides wearing one tag. */

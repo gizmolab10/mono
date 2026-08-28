@@ -7,7 +7,7 @@
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { k } from '../../ts/common/Constants';
 	import { gap_below_line } from '../../ts/utilities/Separator_Spacing';
-	import { w_words } from '../../ts/managers/Filters';
+	import { w_search_text } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
 	import Section from '../support/Section.svelte';
 	import { debug } from '../../ts/common/Debug';
@@ -19,15 +19,17 @@
 	// This drawing owns neither; it only reads and writes them, so both carry across the list, the
 	// next guide, and a refresh.
 
-	let { name, page, hovered = false, onclose }: {
-		name    : string;                  // what the file is called, for the log
-		page    : HTMLElement | null;      // the drawn words, which is what is looked through
-		hovered?: boolean;                 // force the word's edge on, because a surrounding area says so
-		onclose : () => void;              // back to the list, since this row's bare space is part of the way out
+	let { name, page, hovered = false, onclose, bare = false, fold_element = $bindable(null) }: {
+		name          : string;                  // what the file is called, for the log
+		page          : HTMLElement | null;      // the drawn words, which is what is looked through
+		hovered?      : boolean;                 // force the clickable's edge on, because a surrounding area says so
+		onclose       : () => void;              // back to the list, since this row's bare space is part of the way out
+		bare?         : boolean;                 // stand as somebody else's subsection: no section of our own, no line, no gap — they draw those
+		fold_element? : HTMLElement | null;      // the made clickable, handed out so a stack can stand it on its own line
 	} = $props();
 
 	// Whether the search row is on screen at all. Folded away, the words below take its gap,
-	// and the word on the line above brings it back. Remembered across visits.
+	// and the clickable on the line above brings it back. Remembered across visits.
 	const w_show_search = preferences.persistent<boolean>(T_Preference.show_search, true);
 
 	// How far the field stands below the line above it, said in the log once the browser has drawn.
@@ -40,16 +42,15 @@
 		requestAnimationFrame(() => gap_below_line(seen, 'the editor\'s search field'));
 	});
 
-	// Shown, the word is just "search". Folded away with something typed, it says what is being
+	// Shown, the clickable is just "search". Folded away with something typed, it says what is being
 	// looked for, so a search left running is never invisible.
-	let search_word = $derived($w_show_search || $w_words === '' ? 'search' : `search ➜ ${$w_words}`);
+	let search_word = $derived($w_show_search || $w_search_text === '' ? 'search' : `search ➜ ${$w_search_text}`);
 
-	// The word that folds this section away. It is ours now, not the line's: we build the button,
+	// The clickable that folds this section away. It is ours now, not the line's: we build the button,
 	// style it, and hand the made element to the line, which only finds it a place to stand.
 	// The browser makes it one drawing after we ask, so this holds nothing on the first drawing
 	// and the made button on the next — which is itself a change, so the line is told at once.
-	let fold_word: HTMLElement | null = $state(null);
-	const to_do = $derived(Object.assign(new Action(), { element: fold_word, position: T_Position.left }));
+	const to_do = $derived(Object.assign(new Action(), { element: fold_element, position: T_Position.left }));
 
 	/** Put the search row away, or bring it back. */
 	function toggle_search() {
@@ -96,7 +97,7 @@
 		unmark();
 		// Taken exactly as typed — a space is a character to look for like any other, so
 		// "the end" finds those two words together rather than just "the".
-		const wanted = $w_words.toLowerCase();
+		const wanted = $w_search_text.toLowerCase();
 		if (wanted === '') {
 			hits_found = 0;
 			w_search_at.set(0);
@@ -124,7 +125,7 @@
 			fold_after_search(null);
 			// Nothing highlighted is answer enough while the words are still being typed, so this
 			// stays quiet on screen and says it only to the log.
-			debug.log(`Search in "${name}" for "${$w_words}": not there.`);
+			debug.log(`Search in "${name}" for "${$w_search_text}": not there.`);
 			return;
 		}
 		w_search_at.set(((which % places.length) + places.length) % places.length);   // wraps at both ends
@@ -138,7 +139,7 @@
 		marked = lit;
 		fold_after_search(piece_holding(lit));
 		lit.scrollIntoView({ block: 'center' });
-		debug.log(`Search in "${name}" for "${$w_words}": showing ${get(w_search_at) + 1} of ${places.length}.`);
+		debug.log(`Search in "${name}" for "${$w_search_text}": showing ${get(w_search_at) + 1} of ${places.length}.`);
 	}
 
 	// A match can sit inside a folded section, where it would be highlighted but out of sight.
@@ -180,62 +181,75 @@
 	}
 </script>
 
-<!-- The word that folds this section away, built here rather than by the line it stands on: the
+<!-- The clickable that folds this section away, built here rather than by the line it stands on: the
      line is handed the made button and only finds it a place. It is written out of sight, since
      the moment the browser has made it, it is taken and put on the line instead. -->
-<div class='out_of_sight'>
-	<button type='button' class='fold-word' class:forced={hovered} bind:this={fold_word}
-		use:hit_target={{ id: 'search.fold', onpress: toggle_search, tip: 'search this file' }}>{search_word}</button>
-</div>
+<!-- Standing inside somebody else's stack, the clickable that folds this away is theirs: it has to
+     be built where a fold can never take it away, and this row is exactly what the fold takes. -->
+{#if !bare}
+	<div class='out_of_sight'>
+		<button type='button' class='clickable' class:forced={hovered} bind:this={fold_element}
+			use:hit_target={{ id: 'search.fold', onpress: toggle_search, tip: 'search this file' }}>{search_word}</button>
+	</div>
+{/if}
 
-<!-- Looking through the file on screen, as a section of its own: its line carries the word
-     that folds it away, and the section holds the gap around it.
+<!-- What this section shows: the field, and — with something typed — the count and the two
+     triangles that walk the places those words turn up. The count reads first. -->
+{#snippet search_row()}
+	<!-- Its type is "search", so the browser draws its own clear cross at the right end
+	     once there is text. -->
+	<div class='view-search'>
+		{#if $w_search_text !== ''}
+			<div class='view-steps hits'>
+				<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
+				<Steppers id='search.step' can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
+			</div>
+		{/if}
+		<input
+			type='search'
+			class='search'
+			bind:this={field}
+			oninput={find_first}
+			bind:value={$w_search_text}
+			use:hit_target={{ id: 'search.field', tip: 'search this file' }}
+			placeholder='search the contents of this file' />
+	</div>
+{/snippet}
 
-     The bare space beside the field is part of the way back to the list, so it carries that
-     name and press and lights with the rest of it. -->
-<Section
-	gap={k.gap.big}
-	onbare={onclose}
-	bare_says='resume browse'
-	actions={[to_do]}
-	edge={T_Edge.thick}
-	id={`${WAY_OUT}.search`}
-	folded={!$w_show_search}>
-	{#snippet contents()}
-		<!-- Its type is "search", so the browser draws its own clear cross at the right end
-		     once there is text. -->
-		<div class='view-search'>
-			<!-- With something typed, two triangles walk the places those words turn up, and the
-			     count says which of them is highlighted. The count reads first. -->
-			{#if $w_words !== ''}
-				<div class='view-steps hits'>
-					<span class='hit-count'>{hits_found === 0 ? 'none' : `${hit_at + 1} of ${hits_found}`}</span>
-					<Steppers id='search.step' can_back can_forward onprev={() => step_hit(-1)} onnext={() => step_hit(1)} back_says='the place before' forward_says='the place after' />
-				</div>
-			{/if}
-			<input
-				type='search'
-				class='search'
-				bind:this={field}
-				oninput={find_first}
-				bind:value={$w_words}
-				use:hit_target={{ id: 'search.field', tip: 'search this file' }}
-				placeholder='search the contents of this file' />
-		</div>
-	{/snippet}
-</Section>
+<!-- Standing inside somebody else's stack, the row is all there is: the line above it, the gap
+     around it, and the place its word stands are that stack's to draw. Folded, it draws nothing
+     at all — the stack leaves the space and the run of accent that says something is folded. -->
+{#if bare}
+	{#if $w_show_search}{@render search_row()}{/if}
+{:else}
+	<!-- Standing alone, it is a section of its own: its line carries the word that folds it away,
+	     and the section holds the gap around it.
+
+	     The bare space beside the field is part of the way back to the list, so it carries that
+	     name and press and lights with the rest of it. -->
+	<Section
+		gap={k.gap.big}
+		onbare={onclose}
+		bare_says='resume browse'
+		actions={[to_do]}
+		edge={T_Edge.thick}
+		id={`${WAY_OUT}.search`}
+		folded={!$w_show_search}>
+		{#snippet contents()}{@render search_row()}{/snippet}
+	</Section>
+{/if}
 
 <style>
-	/* Where the fold word is written before the line takes it. It is taken out of here on the
+	/* Where the clickable is written before the line takes it. It is taken out of here on the
 	   very next drawing, so nothing is ever seen in this spot. */
 	.out_of_sight {
 		display : none;
 	}
 
-	/* The word that folds this section away, standing on the line above. Its page-colored
+	/* The clickable that folds this section away, standing on the line above. Its page-colored
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   word's own space, so the hover edge adds no width and the word never shifts. */
-	.fold-word {
+	.clickable {
 		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
@@ -250,12 +264,12 @@
 
 	/* The edge appears under the cursor, or because the area around it says so. Told to light
 	   from outside, it takes white — it reads as marked without claiming the cursor. */
-	.fold-word:global([data-hit]) {
+	.clickable:global([data-hit]) {
 		border-color : var(--darkgray);
 		background   : var(--hover);
 	}
 
-	.fold-word.forced {
+	.clickable.forced {
 		border-color : var(--darkgray);
 		background   : var(--bg);
 	}

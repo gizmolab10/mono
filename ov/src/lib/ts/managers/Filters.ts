@@ -10,8 +10,24 @@ import { get } from 'svelte/store';
  * across visits.
  */
 
-// One collection at a time; empty means every collection.
-export const w_project = preferences.persistent<string>(T_Preference.filter_project, '');
+// Any number of collections; empty means every collection.
+export const w_projects = preferences.persistent<string[]>(T_Preference.filter_project, []);
+
+/** Does a file survive the projects picked? Nothing picked lets everything through. */
+export function project_matches(picked: string[], bundle: string): boolean {
+	return picked.length === 0 || picked.includes(bundle);
+}
+
+/** Turn one project on or off. */
+export function toggle_project(name: string): void {
+	w_projects.update((picked) => picked.includes(name) ? picked.filter((one) => one !== name) : [...picked, name]);
+}
+
+// The pick used to be one word; a remembered word from that time comes back as a list of one.
+{
+	const remembered = get(w_projects) as unknown;
+	if (typeof remembered === 'string') { w_projects.set(remembered === '' ? [] : [remembered]); }
+}
 
 // One kind at a time; empty means every kind. One more word than the seven kinds: this one
 // asks for the files that carry no labels at all, which is how they are found and given some.
@@ -52,6 +68,15 @@ export function tags_match(picking: string, chosen: string[], worn: string[]): b
 	}
 }
 
+/**
+ * A row's tags with the picked ones trailing, in the very order they were picked — so down
+ * the right edge of the list, every row ends with the same run the tags filter shows.
+ */
+export function ordered_tags(worn: string[], picked: string[]): string[] {
+	const trailing = picked.filter((tag) => worn.includes(tag));
+	return [...worn.filter((tag) => !trailing.includes(tag)), ...trailing];
+}
+
 /** Exactly the tags on offer that are not picked — what inverting leaves picked. */
 export function inverted(offered: string[], chosen: string[]): string[] {
 	return offered.filter((tag) => !chosen.includes(tag));
@@ -78,7 +103,7 @@ export function kept_from(remembered: string[], choices: string[]): string[] {
 }
 
 // Words looked for in a file's own name, its title and its brief, ignoring case.
-export const w_words = preferences.persistent<string>(T_Preference.filter_text, '');
+export const w_search_text = preferences.persistent<string>(T_Preference.filter_text, '');
 
 /**
  * Does a file survive the words typed? All three are looked in, since the three disagree often

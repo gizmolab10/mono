@@ -2,7 +2,7 @@
 kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
-tags: [journal, now, proposal, session]
+tags: [journal, maybe, now, proposal, session]
 date: 2026-08-17
 ---
 # Handoff
@@ -10,6 +10,21 @@ date: 2026-08-17
 My resume point for overview: the one thing to do next.
 
 Everything still owed is in [code debt](code%20debt.md). The [work journal](work%20journal.md) file has what's finished, and the [[current context]] you can't read off the code.
+
+## Session of 27 August 2026 (Cowork)
+
+**In ov's code.** Four things, all verified with `tsc` and none with vitest — that still needs a run on the Mac.
+
+1. A thing placed on a separator can ask for no mask of its own (`transparent` on Action). The editor's title tools ask for it, so the line shows through the gaps between the buttons.
+2. The four title tools each carry a direction: `H1_copy(to)` writes the title onto the top heading or reads it back; `filename_copy(to)` renames the file to the title, lowercased, links and all, or takes the title from the name. They were wired to run at draw time rather than on press — fixed.
+3. The drawn page now watches the words it was drawn from. When the body under the labels changes from outside — a title tool writing into the file — it draws again. A label-only save still leaves it alone.
+4. The label form gained a **use when** field and an **information** section. `use when` holds several occasions, one to a line, written as `use_when: [a, b]` and only when the file names any; both that shape and one-name-to-a-line are read back. The information section holds title, date, brief and use when, folded by its own word beside kinds and tags. `Labels` gained the field; the six places that build one were updated; three tests cover the round trip.
+
+**In the memory system.** ov was settled — commit `6670a99e`, `truth/controls.md` now holds all of the above. The set of skills is named the **toolkit**; `d`, `t`, `go` and `syns` became named skills; `pac` was reclassified as a skill that writes.
+
+**Worth knowing.** The hooks in `.claude` did not run for any of this. They are Claude Code hooks; this session was Cowork, in the cloud. Their own logs stopped on 24 August. Four days of replies passed no check. The analysis is in `memory/shared/zone/ideas.md`, and where each kind of session runs is in `memory/shared/zone/claude code.md`.
+
+**Elsewhere.** A new project, `mu` — a music browser. `memory/mu` holds its ideas and challenges; `mono/mu` is one App.svelte on port 5186, needing `yarn install` before it runs.
 
 ## The word 'guide' where the app means 'file'
 

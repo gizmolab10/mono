@@ -1,4 +1,4 @@
-import { T_Picking, foot_is_all_folds, inverted, kept_from, tags_match, words_match } from '../managers/Filters';
+import { T_Picking, foot_is_all_folds, inverted, kept_from, tags_match, words_match, ordered_tags } from '../managers/Filters';
 import { describe, expect, it } from 'vitest';
 
 describe('the foot of a stack of rows', () => {
@@ -125,5 +125,22 @@ describe('letting go of a remembered word', () => {
 
 	it('hands back nothing when none of them is', () => {
 		expect(kept_from(['gone'], ['prose'])).toEqual([]);
+	});
+});
+
+
+// Down the list's right edge, every row ends with the picked tags in the picked order.
+
+describe('trailing the picked tags', () => {
+	it('moves worn picked tags to the end, in the picked order', () => {
+		expect(ordered_tags(['prose', 'team', 'debug'], ['debug', 'team'])).toEqual(['prose', 'debug', 'team']);
+	});
+
+	it('leaves a row alone when it wears none of the picked', () => {
+		expect(ordered_tags(['prose'], ['debug'])).toEqual(['prose']);
+	});
+
+	it('leaves a row alone when nothing is picked', () => {
+		expect(ordered_tags(['prose', 'team'], [])).toEqual(['prose', 'team']);
 	});
 });

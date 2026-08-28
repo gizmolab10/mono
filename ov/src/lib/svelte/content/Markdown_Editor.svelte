@@ -28,14 +28,14 @@
 
 	let {
 		name, address, guide, text = $bindable(''), page = $bindable<HTMLElement | null>(null),
-		onsay, ondrawn, onredrawn,
+		onshow, ondrawn, onredrawn,
 	}: {
 		name       : string;                  // what the file is called
 		address    : string;                  // which file it is, so folds belong to one file at a time
 		guide      : File;                   // the record of the file being read
 		text       : string;                  // the whole file, held only while it is on screen
 		page       : HTMLElement | null;      // the drawn words, so a search can look inside them
-		onsay      : (words: string) => void; // something to tell the reader, briefly
+		onshow      : (message: string) => void; // something to tell the reader, briefly
 		ondrawn    : () => void;              // a file has just been read and drawn
 		onredrawn  : () => void;              // the page was built afresh from changed words
 	} = $props();
@@ -189,7 +189,7 @@
 		const found = page.querySelector(`[id="${CSS.escape(named)}"]`);
 		if (!found) {
 			debug.log(`Heading "${named}" is not in "${name}" — staying where we are.`);
-			onsay(`this guide has no heading called "${named}"`);
+			onshow(`this guide has no heading called "${named}"`);
 			return;
 		}
 		found.scrollIntoView({ block: 'start' });
@@ -235,7 +235,7 @@
 		if (found.why === 'a heading inside this same guide') { move_to_heading(found.heading); return; }
 		// The whole account, the same one the log gets. A short phrase — "a file outside the
 		// guides" — says which kind of refusal it was and nothing about which file or where.
-		onsay(found.says || `"${link}" is ${found.why}`);
+		onshow(found.says || `"${link}" is ${found.why}`);
 	}
 
 	/**
@@ -256,7 +256,7 @@
 		const line = lines_between(text, at, at + 1);
 		const flipped = flipped_task(line);
 		if (flipped === null) {
-			onsay('the guide changed underneath — nothing saved');
+			onshow('the guide changed underneath — nothing saved');
 			debug.log(`Editing "${name}": a box on line ${at} was pressed, but that line now reads "${line}", which holds no pair of brackets. Nothing written.`);
 			return true;
 		}
@@ -267,7 +267,7 @@
 		redraw(whole);
 		save_file(where, whole, was).then((answer) => {
 			if (answer.ok) { debug.log(`Editing "${name}": ${where} written.`); return; }
-			onsay(`not saved — ${answer.why}`);
+			onshow(`not saved — ${answer.why}`);
 			debug.log(`Editing "${name}": ${where} was NOT written — ${answer.why}. Putting the words back the way the file has them.`);
 			redraw(was);
 		});
@@ -605,7 +605,7 @@
 		// The lines have to still say what they said when the box opened, or the numbers are
 		// stale and putting words back would land them somewhere else in the file.
 		if (!still_reads(text, from, to, opened_with)) {
-			onsay('the guide changed underneath — nothing saved');
+			onshow('the guide changed underneath — nothing saved');
 			debug.log(`Editing "${name}": refused to save lines ${from} through ${to - 1} — they no longer read as they did when the box opened.`);
 			return;
 		}
@@ -618,7 +618,7 @@
 		redraw(whole);
 		save_file(where, whole, was).then((answer) => {
 			if (answer.ok) { debug.log(`Editing "${name}": ${where} written.`); return; }
-			onsay(`not saved — ${answer.why}`);
+			onshow(`not saved — ${answer.why}`);
 			debug.log(`Editing "${name}": ${where} was NOT written — ${answer.why}. Putting the words back the way the file has them.`);
 			redraw(was);
 		});
@@ -634,6 +634,7 @@
 		const was_at = page?.scrollTop ?? 0;
 		text  = whole;
 		words = page_of(reader, whole);
+		drawn_body = body_of(whole).body;
 		// An edit can write a link or take one away, so what points at what is worked out again.
 		// Only this file is read for it; every other guide's links were gathered at launch.
 		files.links_changed(key_of(guide), whole);
@@ -950,7 +951,7 @@
 	}
 
 	/**
-	 * A file's words start at its top heading. Anything between the labels and that heading is
+	 * A file's contents start at its top heading. Anything between the labels and that heading is
 	 * left over, so it is said along the bottom with a button that takes it out. Nothing is
 	 * written unless that button is pressed — dismissing the line leaves the file alone.
 	 */
@@ -973,6 +974,7 @@
 		}
 		text  = cleared;
 		words = page_of(reader, cleared);
+		drawn_body = body_of(cleared).body;
 		files.links_changed(key_of(guide), cleared);
 		debug.log(`Editing "${name}": took out the ${whole.length - cleared.length} character(s) that sat between the labels and the top heading.`);
 	}
@@ -980,6 +982,14 @@
 	let words  = $state<string | null>(null);
 	let loaded = $state(false);
 	let failed = $state('');
+
+	// The filters above can write into the file's own words — the title onto the top heading —
+	// while the page still shows the old ones. When the body under the labels differs from what
+	// was drawn, the page is built afresh; a label-only change leaves it alone.
+	let drawn_body = $state('');
+	$effect(() => {
+		if (loaded && body_of(text).body !== drawn_body) { redraw(text); }
+	});
 	// Where the file sits, as one piece of text. Typing in the search field works the whole list
 	// out again, which arrives here as a fresh record of the very same file; the place it names is
 	// the same text as before, so nothing below stirs. Reading and drawing the file again on every
@@ -1003,6 +1013,7 @@
 				whole  = await label_it_if_bare(whole);
 				text   = whole;                      // what an edit slices its own words out of
 				words  = page_of(reader, whole);
+				drawn_body = body_of(whole).body;
 				loaded = true;
 				debug.log(`Viewer: read ${whole.length} character(s) for "${name}" and turned them into a ${words.length}-character page, every piece carrying the lines it came from.`);
 				offer_to_clear_above_heading(whole);

@@ -2,7 +2,7 @@
 kind: specify
 title: "Stipulations"
 description: "The load-bearing rules the app is built on, each one pinned by a test."
-tags: [session, speed, test]
+tags: [session, faster, test]
 date: 2026-05-20
 ---
 # Stipulations

@@ -2,7 +2,7 @@
 kind: specify
 title: "Sparsity"
 description: "How I write to you: short, plain, unmistakable"
-tags: [now, stale]
+tags: [keep, now]
 date: 2026-08-19
 ---
 # Sparsity

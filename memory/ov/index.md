@@ -7,6 +7,11 @@ A browser and editor for every markdown file in this repo: a list on the left, o
 
 **Current state:** memory is a collection in the browse list; the filters are multi-pick with the option-click ladder; the editor's title tools ride the form's top line. Vitest confirmation still pending on the Mac.
 
+## Zone
+
+- [handoff.md](zone/handoff.md) — where to pick up; moved from the old system as it was.
+- [code debt.md](zone/code debt.md) — everything owed and everything finished; moved as it was, done section and all.
+
 ## Truths
 
 - [scope.md](truth/scope.md) — what belongs in ov and what deliberately does not.

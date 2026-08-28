@@ -2,7 +2,7 @@
 kind: specify
 title: "Cancel — stopping what is already under way"
 description: "Cancel today waits"
-tags: [now, proposal, stale]
+tags: [maybe, now, proposal]
 date: 2026-08-19
 ---
 # Cancel — stopping what is already under way

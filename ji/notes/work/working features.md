@@ -2,7 +2,7 @@
 kind: explain
 title: "working features"
 description: ""
-tags: [journal, now, stow]
+tags: [journal, keep, now]
 date: 2026-08-11
 ---
 # working features

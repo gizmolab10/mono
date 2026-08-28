@@ -1,8 +1,8 @@
 ---
 kind: specify
-title: "UX terms and concepts"
+title: "Constants and subtypes"
 description: ""
-tags: [data, program, proposal, stow]
+tags: [data, keep, program, proposal]
 date: 2026-08-07
 ---
 # Constants and subtypes
@@ -26,7 +26,7 @@ The names of subtypes of measurement types are completely inconsistent. They can
 
 The table above is history now. Every type below uses the same words, and the styling names match: `--font-tiny`, `--gap-tiny`, `--thick-small`.
 
-| type➜  | thick | gap   | corner | font | size  | height | width | fw  | em  |
+| type➜  | thick | gap   | radius | font | size  | height | width | fw  | em  |
 | ------ | ----- | ----- | ------ | ---- | ----- | ------ | ----- | --- | --- |
 | micro  |       | 1.3   |        |      |       |        |       |     |     |
 | faint  | 0.56  | 1.94  |        | 8.75 |       |        |       |     |     |

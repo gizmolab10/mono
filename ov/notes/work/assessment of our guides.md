@@ -2,7 +2,7 @@
 kind: analyze
 title: "Assessment of our Guides"
 description: "A hand-kept rundown of every shared guide, what is thin, and what is missing."
-tags: [journal, notes, now, proposal, session, team]
+tags: [keep, notes, now, proposal, session, team]
 date: 2026-07-08
 ---
 # Assessment of mono's guide files
@@ -70,7 +70,7 @@ A rule in three files is three wordings, and no reader can tell whether they dif
 - [exclude](collaborate/exclude%20from%20maps.md) (8 lines of body) — three folder names and one sentence. Missing: why each is skipped, and what breaks when one is not.
 - [port](develop/port.md) — the three steps and a template. Missing: a worked example from a real port, what went wrong in it, and how to tell the port matches the original.
 - [limitations](philosophy/limitations.md) — names three failure modes and says outright, in its own last section, that naming is not enough to catch one in the act. Missing: the symptom each one shows on the surface.
-- [constants](develop/constants.md) and [conceptual composition](develop/conceptual%20composition.md) — both carry an empty brief, so neither says what it is for before it is opened.
+- [constants](develop/constants%20and%20subtypes.md) and [conceptual composition](develop/conceptual%20composition.md) — both carry an empty brief, so neither says what it is for before it is opened.
 
 ### Partial — substance present, an obvious gap on first use
 
@@ -152,7 +152,7 @@ Seven, each holding one kind of guidance.
 - [build](develop/build.md) — Netlify, VitePress and related tooling, with the gotchas that bite.
 - [build notes](develop/build%20notes.md) — hand-distilling the build-notes table from the change history.
 - [conceptual composition](develop/conceptual%20composition.md) — no brief; opens on its own subject.
-- [constants](develop/constants.md) — the one ladder of measurement names, and the table it replaced.
+- [constants](develop/constants%20and%20subtypes.md) — the one ladder of measurement names, and the table it replaced.
 - [create a design](develop/create%20a%20design.md) — how the two of us write a design document together.
 - [create a proposal](develop/create%20a%20proposal.md) — a worked example of writing a proposal in short cycles.
 - [css](develop/css.md) — styling patterns and gotchas from real work.
@@ -162,7 +162,7 @@ Seven, each holding one kind of guidance.
 - [migrate](develop/migrate.md) — writing a migration document that breaks a big change into safe phases.
 - [port](develop/port.md) — moving a capability between projects: read the source, describe it, write a spec.
 - [refactor](develop/refactor.md) — the guardrails for letting co refactor a temperamental codebase.
-- [specification driven development](develop/%28newer%20than%20SDD%29%20methodology.md) — what di is meant to do, from a drawing to a lumber list.
+- [specification driven development](develop/better%20than%20sdd.md) — what di is meant to do, from a drawing to a lumber list.
 - [style guide](develop/style%20guide.md) — naming, formatting and organization, followed strictly across projects.
 
 ### philosophy — why the work is shaped this way
@@ -202,4 +202,4 @@ Seven, each holding one kind of guidance.
 - [git](tools/git.md) — undoing common mistakes in the change history.
 - [hub-app](tools/hub-app.md) — what the Hub app is, how it is put together, what its screens do.
 - [single line of progress](tools/single%20line%20of%20progress.md) — a build script that reports on one line that updates in place.
-- [try both](tools/visual%20inspection.md) — build two ways of showing something at once, behind one word you flip.
+- [try both](tools/code%20both%20sides.md) — build two ways of showing something at once, behind one word you flip.

@@ -1,5 +1,5 @@
 import { address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, move_file, moved_into, path_of_address, reaches_under_work, site_of_file, read_file, renamed_path, save_file } from '../utilities/Saving';
-import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts } from './Filters';
+import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { blank_file, free_name, has_labels, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
 import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type File, type Labels, type Filtered_File } from '../types/File';
@@ -25,7 +25,7 @@ import { debug } from '../common/Debug';
 
 
 /**
- * Every address one file's words point at, the double-bracket form turned into the ordinary one
+ * Every address one file's contents point at, the double-bracket form turned into the ordinary one
  * first — the same order the dead-link check reads them in. A guide written the short way, naming
  * only `[[a name]]`, holds no ordinary link at all, so reading the raw text finds nothing in it.
  */
@@ -142,14 +142,14 @@ class Files {
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than
 		// in each of the places that shows it.
-		for (const w of [w_project, w_kind, w_tags, w_tag_picking, w_words, w_shut, w_show_folders, w_sorts]) {
+		for (const w of [w_projects, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts]) {
 			w.subscribe(() => this.renarrow());
 		}
 	}
 
 	/** Work the list out again from what the filters say right now. */
 	renarrow(): void {
-		this.hierarchy.narrow(get(w_project), get(w_kind), get(w_tags), get(w_words), get(w_shut), get(w_show_folders), get(w_sorts), get(w_tag_picking));
+		this.hierarchy.narrow(get(w_projects), get(w_kind), get(w_tags), get(w_search_text), get(w_shut), get(w_show_folders), get(w_sorts), get(w_tag_picking));
 		this.w_showing.set(this.hierarchy.filtered_files);
 	}
 
@@ -445,7 +445,7 @@ class Files {
 
 		const address = address_of_file(renamed_path(path_of_address(guide.address), name));
 		const made = this.hierarchy.add_file(guide.bundle, path, name, address, {
-			kind, title: name, description: '', date: today(), labeled: true,
+			kind, title: name, description: '', use_when: [], date: today(), labeled: true,
 		}, guide.is_design);
 		this.hierarchy.add_relationship(folder.id, made.id);
 		for (const tag of tags) { this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, made.id); }
@@ -539,7 +539,7 @@ class Files {
 	}
 
 	/**
-	 * Read one file's words, or nothing if it isn't there. The dispatcher hands them over rather
+	 * Read one file's contents, or nothing if it isn't there. The dispatcher hands them over rather
 	 * than the dev server: the dev server will not accept a name holding a question mark, however
 	 * that mark is written, and answers with the app's own page instead of the file.
 	 */
@@ -725,17 +725,17 @@ class Files {
 	 * words would still find something.
 	 */
 	private within_reach(without: 'project' | 'kind' | 'tags'): File[] {
-		const project  = get(w_project);
+		const projects = get(w_projects);
 		const kind     = get(w_kind);
 		const tags     = get(w_tags);
 		const picking  = get(w_tag_picking);
-		const words    = get(w_words);
+		const words    = get(w_search_text);
 		// The tags row is the one that cannot set its own filter fully aside. With every picked
 		// tag required, a tag worth offering is one worn by a file that already wears them all —
 		// so the picked tags stay in the question, and a tag that would empty the list grays out.
 		const set_aside = without === 'tags' && picking !== T_Picking.all;
 		return this.files.filter((guide) => {
-			if (without !== 'project' && project !== '' && guide.bundle !== project) { return false; }
+			if (without !== 'project' && !project_matches(projects, guide.bundle)) { return false; }
 			if (without !== 'kind' && !kind_matches(kind, guide.kind, guide.labeled)) { return false; }
 			if (!set_aside && !tags_match(picking, tags, this.hierarchy.tag_names_of(guide.id))) { return false; }
 			if (!words_match(words, guide.name, guide.title, guide.description)) { return false; }

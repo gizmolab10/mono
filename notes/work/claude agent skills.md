@@ -1,11 +1,11 @@
 ---
-kind: explain
-title: "Agent Skills"
+kind: specify
+title: "Claude agent skills"
 description: "AI generated in dialogue with humans"
-tags: [proposal]
+tags: [always, maybe, now, proposal, session, team]
 date: 2026-08-10
 ---
-# Agent Skills
+# Claude agent skills
 
 _AI generated in dialogue with humans. Not fully reviewed._
 

@@ -1,10 +1,9 @@
 ---
-type: principle
-title: Protocol
-description: The operating rules of the memory system. Every session loads this at start; every skill points here.
-tags: [protocol, rules, operations]
-use_when: [every session, running any skill, tuning the system]
-updated: 2026-08-22
+kind: specify
+title: "Protocol"
+description: "The operating rules of the memory system. Every session loads this at start; every skill points here."
+tags: [always, team]
+date: 
 ---
 # Protocol
 
@@ -18,7 +17,7 @@ The authority for how the memory system runs. The design rationale lives in `ov/
 
 **End.** Append `S:` lines for state, `Q:` lines for anything left open.
 
-Log entries are dated, one line each, tagged: `D:` decision · `I:` idea · `S:` state/progress · `Q:` open question.
+Log entries are one line each, tagged: `D:` decision · `I:` idea · `S:` state/progress · `Q:` open question. They stand under day headings (`## 25 August 2026`), in reverse chronological order — newest day first, newest line first within its day. A new entry goes at the top of today's heading, and a new day makes its heading at the top. Never reuse a stale heading: that is how dates get lost.
 
 ## Consolidation
 
@@ -28,7 +27,7 @@ Run when a project's log exceeds ~30 entries, or before a major work burst.
 2. **Settle each line** by tag: `D:` → edit the owning truth (and `decisions.md` if the rationale will be questioned again); `S:` → rewrite the *current state* paragraph in the project's `index.md`; `Q:` → carry forward to the top of the fresh log; `I:` → promote to a truth / `ideas.md`, keep, or cull. While settling, scan the prose for defined terms used off-definition (reword or formally redefine) and undefined terms (reword into plain language — never retroactively coin).
 3. Delete settled entries; move the marker.
 4. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, have a *new* session run this check.
-5. **Commit as one labeled commit** — `memory: settle <project>` — touching nothing else.
+5. **Commit as one labeled commit** — `memory: settle <project>` — touching nothing else. If the `memory/` tree is not yet tracked by git, a one-time baseline commit (`memory: baseline`) comes first, so reverting a settle never removes the tree.
 
 Never summarize prose into vaguer prose. Settling moves facts to their one home and throws away only what it names.
 
@@ -40,7 +39,8 @@ Never summarize prose into vaguer prose. Settling moves facts to their one home 
 
 ## Design churn
 
-- Truths are current-only. On a pivot, rewrite the truth wholesale; one `D:` line records the pivot; git records the corpse.
+- Truths are current-only. On a pivot, rewrite the truth wholesale; one `D:` line records the pivot; git records the old words.
+- A no-longer-current but carefully composed file moves whole into the project's `archive/` — kept readable, never loaded at start, no sizing limit.
 - `decisions.md` holds live rationales only — choices likely to be revisited, one line of "why" each. Delete a line when its decision becomes final.
 
 ## Prose and terminology
@@ -65,17 +65,39 @@ Never summarize prose into vaguer prose. Settling moves facts to their one home 
 
 In order, stopping at the first hit: (1) the project's `index.md` catalog; (2) frontmatter grep over `tags`/`description` in `truth/`; (3) the link graph. Two files claiming one topic is a duplication bug — fix it.
 
+## Pros and cons
+
+This is where collaborator can advise Jonathan about a decision, it is a key control in the surface.
+
+- Grounded the advice in
+    - read the truths X touches
+    - `decisions.md` (was this already decided? — if so, lead with the reasons)
+    - the lexicon
+    - `taste.md` when visual
+- Argue both sides
+    - every point tied to a specific truth, principle, or cost
+    - no generic filler
+    - lexicon terms used exactly
+    - no new terms
+- End with the question that would decide it
+- Record it in the most relevant project's `zone/decisions.md`
+- Waits there for resolution
+
 ## Skills
 
-One skill per procedure; the skill is a trigger, not a copy. Write skills (`define`, `propose`, `settle`) log every run; read-only skills (`start`, `pac`, `check`, `where`, `summary`) don't.
+One skill per procedure; the skill is a trigger, not a copy. Write skills (`d`, `pac`, `go`, `define`, `propose`, `settle`) log every run; read-only skills (`start`, `t`, `syns`, `check`, `where`, `summary`) don't.
 
+- **d** (decision) — execute "Session protocol" (During) for one decision: edit the one truth file that owns it, add one `D:` log line. The workhorse; a write skill, logged by its nature.
 - **start** — execute "Session protocol" (Start). Reply: three-line orientation — current state, truths loaded, unsettled `Q:` lines.
-- **pac** — pros and cons of X, grounded: read the truths X touches, `decisions.md` (was this already decided? — if so, lead with the recorded why), the lexicon, `taste.md` when visual. Argue both sides steelmanned, every point tied to a specific truth, principle, or cost; no generic filler; lexicon terms used exactly; no new terms. End with the question that would decide it — a verdict only if asked. Offer to capture via `propose` or a truth edit with its `D:` line.
+- **pac** — pros and cons of X; the response is written into the most relevant project's `truth/decisions.md`
 - **define** — execute "Prose and terminology" for one term. The lexicon's only door.
-- **propose** — capture without believing: `zone/ideas.md` or an `I:`/`Q:` line; truths untouched; promotion only at settle or on instruction.
+- **propose** — capture without believing, into whichever project the idea is most relevant to: its `zone/ideas.md` or an `I:`/`Q:` line; truths untouched; promotion only at settle or on instruction. pac and propose stay two commands.
+- **go** (g) — implement the proposal or suggestion on the table, as stated. A write skill: the work it does leaves its own `D:`/`S:` lines.
 - **settle** — execute "Consolidation", all five steps; finish with the settle manifest (each line and where it went).
 - **check** — audit: OKF structure (frontmatter, `type`, links), the sizing table below, terminology drift, duplicated facts, and skill pointers (every section a skill references must exist in this file). Aimed at a settle: verify the commit diff cold; if this session performed the settle, ask for a rerun in a new session. Report finding → file → fix; fix nothing unless instructed.
+- **t** (translate) — reword the last reply, or the quoted words, into plain language. Nothing is written; if the same wording needs translating twice, that is a conventions.md rule waiting to be recorded.
 - **where** — execute "Finding where to tweak"; reply with the one owning path.
+- **syns** (synonyms) — list words synonymous with the given one, single words preferred. Read-only.
 - **summary** — the state of the current chat, with extreme brevity: done, in motion, open. A handful of lines, no preamble, no recap of how we got here.
 
 ## Hooks
@@ -88,15 +110,15 @@ Hooks only read, check, and remind — they never write truths, settle, coin, or
 - Log past ~30 entries → announce "settle is due"; never settle.
 - Session end → draft `S:`/`Q:` lines; they land only on approval.
 
-## Migration
+## Inception
 
 The old system (CLAUDE.md's reading-on-load list, `notes/guides/`, per-project `notes/work/` files) is being abandoned completely. Until it's gone:
 
 - Move truths, not history: only currently-true content a session would act on enters `memory/`; journals, handoffs, mothballs, and stories stay behind as the archive, abandoned in place.
 - Pull, don't push: move a thing the day work actually reaches for it; never bulk-import.
 - A move is a move: delete what the old file loses — content never lives in both systems.
-- The ratchet: write nothing new into the old system, ever. All new rules, terms, decisions, and notes land in `memory/`.
-- Keep `truth/migration.md` current: it lists what still lives only in the old system; remove a line when its content moves in or is declared dead. When the list is empty, delete the file, shrink CLAUDE.md's "Reading on load" to `start` alone — done.
+- Write nothing new into the old system, ever. All new rules, terms, decisions, and notes go into `memory/`.
+- Keep `truth/inception.md` current: it lists what still lives only in the old system; remove a line when its content moves in or is declared dead. When the list is empty, delete the file, shrink CLAUDE.md's "Reading on load" to `start` alone — done.
 - Exception: `notes/guides/pre-flight/shorthand.md` stays — it is the trigger surface; its rows point here.
 
 ## Sizing rules
@@ -110,4 +132,4 @@ The old system (CLAUDE.md's reading-on-load list, `notes/guides/`, per-project `
 | `decisions.md` | ~10 live items | delete finalized ones |
 | `ideas.md` idea age | 3 consolidations | promote or cull |
 | `lexicon.md` | ~30 terms | delete dead terms |
-| skill set | ~8 verbs | merge overlapping skills |
+| toolkit | no two skills overlap; a definition stays near one line | merge the overlapping pair; trim the fat definition |

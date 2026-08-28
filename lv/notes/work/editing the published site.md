@@ -2,7 +2,7 @@
 kind: specify
 title: "Editing the published site"
 description: "How the published site changes a gallery: the caption inside each file, the order in one list per folder, and a function that commits."
-tags: [now, proposal]
+tags: [keep, now, proposal]
 date: 2026-08-23
 ---
 # Editing the published site

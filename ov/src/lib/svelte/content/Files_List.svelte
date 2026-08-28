@@ -12,7 +12,7 @@
 
 <script lang='ts'>
 	import { VAULT, file_path_of, folder_path_of, obsidian_link, show_folder } from '../../ts/utilities/Saving';
-	import { w_shut, w_show_folders, w_project, w_kind, w_sorts, T_Sort } from '../../ts/managers/Filters';
+	import { w_shut, w_show_folders, w_projects, w_kind, w_tags, ordered_tags, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
@@ -275,7 +275,7 @@
 	// Which collection a file belongs to is normally plain from the folder it sits under.
 	// With the folders hidden that's gone, so a project column steps in — but only while no
 	// project is picked, since with one picked every row would read the same.
-	const shows_project = $derived(!$w_show_folders && $w_project === '');
+	const shows_project = $derived(!$w_show_folders && $w_projects.length !== 1);
 	// With the folders hidden and one kind picked, every row would read the same kind, so
 	// that column goes too — the count row above says which kind was picked.
 	const shows_kind = $derived($w_show_folders || $w_kind === '');
@@ -417,7 +417,7 @@
 	{/if}
 	<!-- With the folders hidden the rows are a flat run, so nothing is stepped in and no room
 	     is held back for a triangle that cannot appear. -->
-	<td class='name' style:padding-left='{$w_show_folders ? row.depth * 5 : 0}px'>
+	<td class='name' style:padding-left={$w_show_folders ? `calc(${row.depth} * var(--gap-big))` : '0'}>
 		<span class='name-line'>
 			<span class='tri-slot' style:width='{$w_show_folders ? TRIANGLE : 0}px'>
 				{#if row.has_children}
@@ -440,7 +440,7 @@
 			</span><span class='name-text'>{row.file.name}</span>
 		</span>
 	</td>
-	<td class='tags-cell'><span class='tag-names'>{row.tag_names.join(', ')}</span></td>
+	<td class='tags-cell'><span class='tag-names'>{ordered_tags(row.tag_names, $w_tags).join(', ')}</span></td>
 {/snippet}
 
 <div class='list'>

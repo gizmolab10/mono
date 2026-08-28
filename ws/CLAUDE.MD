@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "CLAUDE.md"
+description: "COMMON: Read ../../CLAUDE.md"
+tags: [always, keep, now, session]
+date: 2026-08-24
+---
 # CLAUDE.md
 
 COMMON: Read `../../CLAUDE.md`

@@ -4,13 +4,12 @@
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of, type File } from '../../ts/types/File';
 	import Markdown_Editor from '../content/Markdown_Editor.svelte';
-	import Back_Links from '../content/Back_Links.svelte';
 	import Editor_Filters from '../filter/Editor_Filters.svelte';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { WAY_OUT } from '../../ts/events/Hit_Target';
-	import { w_words } from '../../ts/managers/Filters';
+	import { w_search_text } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';
 	import { files } from '../../ts/managers/Files';
 	import { debug } from '../../ts/common/Debug';
@@ -118,11 +117,11 @@
 		const wanted = get(w_search_for);
 		if (wanted !== '') {
 			w_search_for.set('');
-			w_words.set(wanted);
+			w_search_text.set(wanted);
 			requestAnimationFrame(() => find?.light_hit(0));
 			return;
 		}
-		if (get(w_words) !== '') {
+		if (get(w_search_text) !== '') {
 			const was_at = get(w_search_at);
 			requestAnimationFrame(() => find?.light_hit(was_at));
 		}
@@ -286,16 +285,12 @@
 				</span>
 			{/if}
 		</div>
-		<Search bind:this={find} {name} {page} {onclose} hovered={way_out_lit} />
 	</div>
-	<Editor_Filters {name} {guide} {tags} {onclose} onsay={say}
-		bind:text={text_of_file} bind:folded={filters_folded} />
-	<Markdown_Editor {name} {address} {guide} onsay={say}
+	<Editor_Filters {name} {guide} {tags} {page} {onclose} onshow={say}
+		bind:find bind:text={text_of_file} bind:folded={filters_folded} />
+	<Markdown_Editor {name} {address} {guide} onshow={say}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />
-	<!-- Which guides point at this one. Below the words and above whatever the bottom line has to
-	     say, in the frame rather than in the words — so it is there without scrolling to it. -->
-	<Back_Links key={key_of(guide)} {name} />
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds.
 	     Registered while it is showing, as a section, so the manager knows the cursor is on it and
 	     nothing underneath answers instead. -->

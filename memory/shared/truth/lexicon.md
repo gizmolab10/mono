@@ -4,7 +4,7 @@ title: Shared lexicon
 description: Cross-project terms, defined once. Loaded at every session start.
 tags: [lexicon, terminology]
 use_when: [every session]
-updated: 2026-08-22
+updated: 27 August 2026
 ---
 # Shared lexicon
 
@@ -16,5 +16,7 @@ updated: 2026-08-22
   Not: history (that is git's job), not an idea (that is the zone's).
 - **settle** — consolidation's line-by-line step: each log line moved into its one home, dismissed with a stated reason, or carried forward unsettled.
   Not: summarizing.
+- **toolkit** — the set of skills that act on the memory system: start, pac, define, propose, settle, check, where, summary.
+  Not: the shorthand file (the trigger surface), not any one skill.
 - **zone** — the folder where ideas and visual references gather before they're believed; named for the state of mind that fills it and the zoning-in that empties it.
   Not: truth.

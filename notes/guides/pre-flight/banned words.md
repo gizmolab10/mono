@@ -41,6 +41,7 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | write code                      |   y    |      | ship                                   |                    |
 | detour                          |   y    |  y   | side-build                             |                    |
 | drifted                         |        |      | slid                                   |                    |
+| kind of bug                     |   y    |      | species                                | bugs with one cause |
 | who does what                   |        |      | split                                  |                    |
 | hierarchy                       |   y    |  y   | tree                                   | ji structure       |
 | content                         |   y    |      | words                                  | what a file holds  |

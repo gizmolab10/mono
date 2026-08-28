@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "ji — Jeffrey's Space"
+description: "Read notes/guides/pre-flight/lexicon.md at session start"
+tags: [always, keep, now, session]
+date: 2026-08-24
+---
 # ji — Jeffrey's Space
 
 > implementation of Jeff's intersection project

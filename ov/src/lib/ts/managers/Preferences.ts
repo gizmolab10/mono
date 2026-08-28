@@ -47,6 +47,7 @@ export enum T_Preference {
 	form_folded     = 'form_folded',
 	fold_titles     = 'fold_titles',
 	show_search     = 'show_search',
+	show_backlinks  = 'show_backlinks',
 	search_at       = 'search_at',
 	left_at         = 'left_at',
 

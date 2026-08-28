@@ -28,7 +28,7 @@ export type Hit_Target_Options = {
 	onlong?        : (s_mouse: S_Mouse) => void;         // held down a while
 	onautorepeat?  : () => void;                         // held down, and repeating while it is
 	onrelease?     : () => void;                         // the press let go
-	onpress?       : () => void;                         // the press made
+	onpress?       : (s_mouse?: S_Mouse) => void;        // the press made — the mouse state rides along, for reading held keys
 	hoverCursor?   : string;                             // what the cursor becomes over it
 	dormant?       : boolean;                            // drawn but out of sight, so it holds no place at all
 	tip?           : string | null;                      // the words shown while the cursor is on it
@@ -93,7 +93,7 @@ export function hit_target(element: HTMLElement, options: Hit_Target_Options) {
 		if (said.contains_point) { one.contains_point       = said.contains_point; }
 
 		one.handle_s_mouse = (s_mouse: S_Mouse) => {
-			if (s_mouse.isDown) { said.onpress?.(); }
+			if (s_mouse.isDown) { said.onpress?.(s_mouse); }
 			if (s_mouse.isUp)   { said.onrelease?.(); }
 			return true;
 		};

@@ -3,8 +3,8 @@
 ## Contents
 
 - [Class-lists](./class-lists.md)
-- [Cleanup](./cleanup.md)
 - [Code](./code.md)
+- [Cleanup](./dead%20links.md)
 - [February.1.2026](./february.1.2026.md)
 - [Gating](./gating.md)
 - [Guides-clutter](./guides-clutter.md)

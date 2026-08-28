@@ -2,7 +2,7 @@
 kind: specify
 title: "Photo gallery"
 description: "A folder of photos on a page: one showing, click it for the next."
-tags: [now]
+tags: [keep, now]
 date: 2026-08-19
 ---
 # photo gallery

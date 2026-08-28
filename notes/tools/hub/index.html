@@ -478,6 +478,7 @@
         <button class="project active" data-project="di">di<span class="badge">I</span></button>
         <button class="project" data-project="ji">ji<span class="badge">Z</span></button>
         <button class="project" data-project="ov">ov<span class="badge">O</span></button>
+        <button class="project" data-project="mu">mu<span class="badge">U</span></button>
       </div>
     </div>
 
@@ -584,6 +585,7 @@
           me: buildProjectConfig('me', 'app'),
           mo: buildProjectConfig('mo', 'app'),
           ov: buildProjectConfig('ov', 'app'),
+          mu: buildProjectConfig('mu', 'app'),
           s3: buildProjectConfig('s3', 'app'),
           ws: buildProjectConfig('ws', 'app'),
         },
@@ -596,6 +598,7 @@
           me: buildProjectConfig('me', 'docs'),
           mo: buildProjectConfig('mo', 'docs'),
           ov: buildProjectConfig('ov', 'docs'),
+          mu: buildProjectConfig('mu', 'docs'),
           s3: buildProjectConfig('s3', 'docs'),
           ws: buildProjectConfig('ws', 'docs'),
         }
@@ -1505,6 +1508,7 @@
         case 'v': { const m = getDisplayMode(); if (config[m]?.['lv'] !== null) { previewProject = 'lv'; highlightProjectButton('lv'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'z': { const m = getDisplayMode(); if (config[m]?.['ji'] !== null) { previewProject = 'ji'; highlightProjectButton('ji'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'o': { const m = getDisplayMode(); if (config[m]?.['ov'] !== null) { previewProject = 'ov'; highlightProjectButton('ov'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 'u': { const m = getDisplayMode(); if (config[m]?.['mu'] !== null) { previewProject = 'mu'; highlightProjectButton('mu'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'n': hoveredActionId = 'btn-netlify'; hoveredAction = actionButtons['btn-netlify'](); highlightActionButton('btn-netlify'); prePublishFeedbackRow(); break;
         case 'r': hoveredActionId = 'btn-revisit'; hoveredAction = actionButtons['btn-revisit'](); highlightActionButton('btn-revisit'); prePublishFeedbackRow(); break;
         case 'p': hoveredActionId = 'btn-public'; hoveredAction = actionButtons['btn-public'](); highlightActionButton('btn-public'); prePublishFeedbackRow(); break;

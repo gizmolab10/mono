@@ -2,7 +2,7 @@
 kind: analyze
 title: "md audit"
 description: "Every md file in ov read end to end on 2026-08-22, and the improvements each wants — the drift first, then the labels, then the shape of the notes."
-tags: [notes, now, proposal]
+tags: [keep, notes, now, proposal]
 date: 2026-08-22
 ---
 # md audit

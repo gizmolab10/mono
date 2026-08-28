@@ -1,11 +1,11 @@
 ---
 kind: analyze
-title: "Five things"
+title: "Better than SDD"
 description: "Five things together are what make something an intent:"
-tags: [now, stale]
+tags: [maybe, now]
 date: 2026-08-19
 ---
-# Five things
+# Better than SDD
 
 Five things together are what make something an **intent**: 
 

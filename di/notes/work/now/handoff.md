@@ -2,7 +2,7 @@
 kind: specify
 title: "Handoff"
 description: "The details column is one stack (2026-08-19 work-journal entry; moved to [[code debt paid]])"
-tags: [now, proposal]
+tags: [maybe, now, proposal]
 date: 2026-08-19
 ---
 # Handoff

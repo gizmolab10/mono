@@ -1,7 +1,7 @@
 import { ALL_TAGS, T_Kind, type Labels } from '../types/File';
 import { debug } from '../common/Debug';
 
-// The five labels at the top of every guide — read off a file's text, and written back into it.
+// The labels at the top of every guide — read off a file's text, and written back into it.
 //
 // Both directions live here, since both are plain work on text and neither needs anything else
 // to be on screen. They are the one part of a guide the app itself reads, so they are never
@@ -13,13 +13,16 @@ function quoted(words: string): string {
 	return `"${words.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/[\r\n]+/g, ' ')}"`;
 }
 
-// The block itself: three dashes, the five labels in their settled order, three dashes.
+// The block itself: three dashes, the labels in their settled order, three dashes. The occasions
+// line is written only by a file that names any, so a file that names none is left as it was.
 export function label_block(labels: Labels, tags: string[]): string {
+	const when = labels.use_when ?? [];
 	return [
 		'---',
 		`kind: ${labels.kind}`,
 		`title: ${quoted(labels.title)}`,
 		`description: ${quoted(labels.description)}`,
+		...(when.length > 0 ? [`use_when: [${when.join(', ')}]`] : []),
 		`tags: [${tags.join(', ')}]`,
 		`date: ${labels.date}`,
 		'---',
@@ -69,7 +72,7 @@ export const TAG_WHEN_NEW = 'now';
  * what the list is filtered by — a guide labeled otherwise would be made and then hidden.
  */
 export function blank_file(name: string, date: string, kind: string, tags: string[]): string {
-	const labels: Labels = { kind, title: name, description: '', date, labeled: true };
+	const labels: Labels = { kind, title: name, description: '', use_when: [], date, labeled: true };
 	return `${label_block(labels, tags)}\n# ${name}\n`;
 }
 
@@ -147,7 +150,7 @@ function first_words(text: string): string {
 }
 
 /** A title from the file's own name: dashes and underscores become spaces, first letter up. */
-function title_from_name(file_name: string): string {
+export function title_from_name(file_name: string): string {
 	const words = file_name.replace(/\.md$/i, '').replace(/[-_]+/g, ' ').trim();
 	return words.charAt(0).toUpperCase() + words.slice(1);
 }
@@ -164,6 +167,7 @@ export function labels_for(text: string, file_name: string, today: string, where
 			kind        : kind_from_where(where),
 			title,
 			description : first_words(text),
+			use_when    : [],
 			date        : today,
 			labeled     : true,
 		},
@@ -244,6 +248,19 @@ function names_below(lines: string[], at: number): string[] {
 }
 
 /**
+ * The occasions a file names, in either shape: `use_when: [one, two]` on the one line, which is
+ * what this app writes, or one to a line below a bare `use_when:`, which is what Obsidian leaves
+ * behind. Unlike tags there is no closed list — these are phrases, kept exactly as written.
+ */
+function phrases_from(lines: string[], at: number): string[] {
+	const inside = value_after(lines[at]).replace(/^\[/, '').replace(/\]$/, '');
+	const named = inside.length > 0
+		? inside.split(',').map((one) => one.trim())
+		: names_below(lines, at);
+	return named.filter((one) => one.length > 0);
+}
+
+/**
  * Read the labels off one file's text. The block is the lines between the first row
  * of three dashes and the next one. Everything below is dropped on the floor here —
  * this is the only place a file's text is ever seen, and it does not survive the call.
@@ -256,13 +273,15 @@ export function labels_from(text: string, where: string): { labels: Labels; tags
 
 	let kind = '', title = '', description = '', date = '';
 	let tags: string[] = [];
+	let use_when: string[] = [];
 	for (let at = 0; at < block.length; at += 1) {
 		const line = block[at];
 		if (line.startsWith('kind:'))        { kind        = value_after(line); }
 		if (line.startsWith('title:'))       { title       = value_after(line); }
 		if (line.startsWith('description:')) { description = value_after(line); }
 		if (line.startsWith('date:'))        { date        = value_after(line); }
+		if (line.startsWith('use_when:'))    { use_when    = phrases_from(block, at); }
 		if (line.startsWith('tags:'))        { tags        = tags_from(block, at, where); }
 	}
-	return { labels: { kind, title, description, date, labeled: block.length > 0 }, tags };
+	return { labels: { kind, title, description, use_when, date, labeled: block.length > 0 }, tags };
 }

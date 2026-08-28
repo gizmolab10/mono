@@ -13,4 +13,7 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [lexicon.md](truth/lexicon.md) — cross-project terms, defined once.
 - [taste.md](truth/taste.md) — Jonathan's visual/design principles, in his own words.
 - [conventions.md](truth/conventions.md) — how Jonathan wants Claude to work and speak.
-- [migration.md](truth/migration.md) — the death list: what still lives only in the old system.
+- [medium article.md](truth/medium article.md) — the whole design explained for someone new to AI.
+- [create a project.md](truth/create a project.md) — the steps to bring up a new project, in memory and in mono.
+- [inception.md](truth/inception.md) — the death list: what still lives only in the old system.
+- [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.

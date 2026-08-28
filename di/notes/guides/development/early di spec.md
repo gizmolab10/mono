@@ -2,7 +2,7 @@
 kind: specify
 title: "Features (di)"
 description: "The checklist of what di is meant to do, from a drawing to a lumber list."
-tags: [notes, vision]
+tags: [notes, plans, vision]
 date: 2026-05-11
 ---
 # Early di spec

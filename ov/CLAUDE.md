@@ -1,8 +1,8 @@
 ---
-kind: analyze
+kind: specify
 title: "ov — Overview"
 description: "Ported from ji"
-tags: [now, stale]
+tags: [always, keep, now, session]
 date: 2026-08-24
 ---
 # ov — Overview

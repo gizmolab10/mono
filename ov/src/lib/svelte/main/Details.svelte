@@ -71,10 +71,10 @@
 <!-- The two words, written out of sight: the moment the browser has made one, the stack takes it
      and puts it on a separator instead. -->
 <div class='out_of_sight'>
-	<button type='button' class='fold-word' bind:this={preferences_word}
+	<button type='button' class='clickable' bind:this={preferences_word}
 		use:hit_target={{ id: `details.fold.${T_Details.preferences}`,
 			onpress: () => w_preferences_open.set(!$w_preferences_open) }}>{T_Details.preferences}</button>
-	<button type='button' class='fold-word' bind:this={repair_word}
+	<button type='button' class='clickable' bind:this={repair_word}
 		use:hit_target={{ id: `details.fold.${T_Details.repair}`,
 			onpress: () => w_repair_open.set(!$w_repair_open) }}>{T_Details.repair}</button>
 </div>
@@ -105,7 +105,7 @@
 </div>
 
 <style>
-	/* Where the two fold words are written before the stack takes them. Each is taken out of here
+	/* Where the two clickables are written before the stack takes them. Each is taken out of here
 	   on the very next drawing, so nothing is ever seen in this spot. */
 	.out_of_sight {
 		display : none;
@@ -113,7 +113,7 @@
 
 	/* A word that folds its section away, standing on the separator above it. Its page-colored
 	   background masks the separator behind it. */
-	.fold-word {
+	.clickable {
 		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
@@ -126,7 +126,7 @@
 		cursor        : pointer;
 	}
 
-	.fold-word:global([data-hit]) {
+	.clickable:global([data-hit]) {
 		border-color : var(--darkgray);
 		background   : var(--hover);
 	}

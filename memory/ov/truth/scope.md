@@ -4,7 +4,7 @@ title: Scope
 description: What belongs in ov and what deliberately does not.
 tags: [scope, boundaries]
 use_when: [adding features, deciding where something belongs, ov vs ji questions]
-updated: 2026-08-22
+updated: 22 August 2026
 ---
 # Scope
 

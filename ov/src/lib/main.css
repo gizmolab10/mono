@@ -47,13 +47,23 @@ button {
 
    Said here rather than in each component, since every one of them paints the same --hover and
    every one would otherwise carry its own copy of the timing. It names the elements that take a
-   fill — anything pressable, a tag area, a section's own background, a row of the list — and
-   :where() holds its weight at nothing, so a component's own rule always wins.
+   fill — anything pressable, a tag area, a row of the list, and separately every section
+   background that lights — and :where() holds its weight at nothing, so a component's own rule
+   always wins.
 
-   How long is one number in Constants, pushed onto the page at startup. */
+   The list's table was once called guides-table and this rule still named it, so a row's fill
+   jumped for as long as the two names disagreed.
 
-:where(button, .big, .section-body, .clear, .fold-word, .picking, .head-label, .guides-table td) {
+   How long is two numbers in Constants, pushed onto the page at startup. */
+
+:where(button, .big, .clear, .clickable, .picking, .head-label, .files-table td) {
    transition: background-color var(--hover-fade) linear;
+}
+
+/* A whole section's background takes twice as long, since it moves far more color: the same
+   speed across a small pill and across half the screen reads as the screen flashing. */
+:where(.section-body, .bare-answers, .filter-block, .label-rows, .view-top) {
+   transition: background-color var(--hover-fade-section) linear;
 }
 
 /* Everything below is a catalogue, not code — what a component style can read,

@@ -2,7 +2,7 @@
 kind: analyze
 title: "Performance — the pause before the file list shows"
 description: "You saw a pause when switching to the list"
-tags: [now, stale]
+tags: [maybe, now]
 date: 2026-08-19
 ---
 # Performance — the pause before the file list shows

@@ -1,11 +1,11 @@
 ---
 kind: specify
-title: "db implementation proposal"
+title: "DB implementation proposal"
 description: "How to build the store [[db spec]] describes: the ws plugin architecture ported whole, ji's own five-record data model on top, document bytes kept outside th..."
-tags: [now, proposal, stale]
+tags: [maybe, now, proposal]
 date: 2026-08-19
 ---
-# db implementation proposal
+# DB implementation proposal
 
 How to build the store [[db spec]] describes: the ws plugin architecture ported whole, ji's own five-record data model on top, document bytes kept outside the db. Nothing here departs from the spec — this is the build order and the file layout.
 

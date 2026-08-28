@@ -2,7 +2,7 @@
 kind: explain
 title: "Deliverables"
 description: "urls for review and feedback"
-tags: [journal, plans, proposal, stow]
+tags: [journal, maybe, proposal]
 date: 2026-08-10
 ---
 # Deliverables

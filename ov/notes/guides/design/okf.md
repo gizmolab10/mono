@@ -2,7 +2,7 @@
 kind: explain
 title: "OKF — turning the guides into a knowledge bundle"
 description: "OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at t..."
-tags: [proposal, stow]
+tags: [keep, proposal]
 date: 2026-08-08
 ---
 # OKF — turning the guides into a knowledge bundle

@@ -186,7 +186,7 @@ describe('taking the labels off', () => {
 	});
 });
 
-// A file's words start at its top heading. Anything above that heading and below the labels is
+// A file's contents start at its top heading. Anything above that heading and below the labels is
 // left over — a stray line, a run of blanks — and goes the first time the file is opened.
 
 describe('clearing whatever sits above the top heading', () => {

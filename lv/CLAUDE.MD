@@ -1,3 +1,10 @@
+---
+kind: specify
+title: "lv — Tommy’s Vineyard Space"
+description: "Represent the vineyard with descriptions and photos"
+tags: [always, keep, now, session]
+date: 2026-08-24
+---
 # lv — Tommy’s Vineyard Space
 
 > A place to share the work and fun of owning a vineyard.
@@ -18,10 +25,7 @@ The file map is `notes/guides/map of lv files.md`. Read it instead of hunting, a
 
 ## Words
 
-- **repo** — the GitHub repository, `gizmolab10/mono`, which holds this project's code and its pictures.
-- **remote hosted storage** — a rented folder on somebody else's computer, reachable at a web address, where each file has its own address and nothing of ours runs. Cloudflare, Amazon and Backblaze rent it. Never call one a bucket.
-- **gallery** — one folder of pictures under `src/assets/`, shown one at a time.
-- **caption** — what a picture is called. It is written inside the file itself, and the file's name answers where there is none.
+This project's terms live in [memory/lv/truth/lexicon.md](../memory/lv/truth/lexicon.md) — read them at session start; add none anywhere else.
 
 ## Tone
 

@@ -7,7 +7,7 @@ date: 2026-08-07
 ---
 # UX terms and concepts
 
-the code for the app is becoming byzantine. It lacks unifying principles, and i hope it is not too late to inject them. we have separators, but they are being deployed several different ways, which is a burden to layout, with huge amounts of hand tweaking, which is fragile and cryptic.
+the code for the app easily becomes byzantine. perhaps it lacks unifying principles, and i hope such can be injected. we have separators, but they are being deployed several different ways, which is a burden to layout, with huge amounts of hand tweaking, which is fragile and cryptic.
 
 **Separators** exist to delineate sections. The UX needs sections, and **stacks** of sections. A **section** is a rectangular area of the screen, surrounded by separators and **edges**. Always. Sometimes the rectangular area itself responds to hover and click. Sometimes the separator does.
 

@@ -2,7 +2,7 @@
 kind: specify
 title: "Code Debt"
 description: "Running a project according to code debt changes the dynamic"
-tags: [now]
+tags: [maybe, now]
 date: 2026-08-19
 ---
 # Code Debt

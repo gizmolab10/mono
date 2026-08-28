@@ -2,7 +2,7 @@
 kind: arch
 title: "Buttons (ws)"
 description: "The button components that grew ad-hoc, gathered up for a sanity check."
-tags: [now, program, UX]
+tags: [program, UX]
 date: 2026-01-12
 ---
 # Button Components Analysis

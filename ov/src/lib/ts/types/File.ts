@@ -13,16 +13,19 @@ export enum T_Kind {
 	specify    = 'specify',
 }
 
-// The closed tag list — thirty-four, alphabetized, nothing invented on the spot.
+// The closed tag list — thirty-five, alphabetized, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
 	'always',
 	'build',
 	'data',
 	'debug',
 	'deploy',
+	'faster',
 	'geometry',
 	'journal',
+	'keep',
 	'later',
+	'maybe',
 	'migrate',
 	'next',
 	'notes',
@@ -38,9 +41,7 @@ export const ALL_TAGS: string[] = [
 	'session',
 	'setup',
 	'soon',
-	'speed',
 	'stale',
-	'stow',
 	'style',
 	'tabled',
 	'team',
@@ -69,6 +70,7 @@ export enum T_Bundle {
 	ji   = 'ji',
 	lv   = 'lv',
 	ov   = 'ov',
+	memory = 'memory',
 }
 
 // The labels off a file's top. A folder carries none of them.
@@ -76,6 +78,7 @@ export type Labels = {
 	kind        : string;     // one of the five — empty when the file carries no labels
 	title       : string;     // the human name; falls back to the file's own name
 	description : string;     // one sentence
+	use_when    : string[];   // the occasions this file should be read on; empty for a file that names none
 	date        : string;     // year-month-day of its last real change
 	labeled     : boolean;    // false for a file that carries no label block at all
 };

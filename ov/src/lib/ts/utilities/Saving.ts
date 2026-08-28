@@ -31,7 +31,7 @@ export function file_path_of(bundle: T_Bundle, path: string): string {
 		return bundle === T_Bundle.mono ? path : `${bundle}/${path}`;
 	}
 	const ending = path.endsWith('.md') ? path : `${path}.md`;
-	if (ending.startsWith(MEMORY)) { return ending; }
+	if (bundle === T_Bundle.memory) { return `memory/${ending}`; }
 	const beside = ending.startsWith('designs/') || ending.startsWith('work/');
 	const inside = beside ? ending : `guides/${ending}`;
 	return `${notes_of(bundle)}/${inside}`;
@@ -68,7 +68,7 @@ export function site_of_file(where: string): File_Site | null {
 		return null;
 	}
 	if (!where.endsWith('.md')) { return null; }
-	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.mono, path: where, is_design: false }; }
+	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.memory, path: where.slice(MEMORY.length), is_design: false }; }
 	for (const bundle of Object.values(T_Bundle)) {
 		const notes = `${notes_of(bundle)}/`;
 		if (!where.startsWith(notes)) { continue; }
@@ -108,9 +108,9 @@ export function reaches_under_work(address: string): boolean {
 // has no path inside it, so the guides folder itself is the answer. The designs folder and the
 // work folder stand beside guides rather than inside it.
 export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
+	if (bundle === T_Bundle.memory) { return folder_path === '' ? 'memory' : `memory/${folder_path}`; }
 	const notes = notes_of(bundle);
 	if (folder_path === '') { return `${notes}/guides`; }
-	if (folder_path === 'memory' || folder_path.startsWith(MEMORY)) { return folder_path; }
 	const beside = folder_path.startsWith('designs') || folder_path.startsWith('work');
 	return beside ? `${notes}/${folder_path}` : `${notes}/guides/${folder_path}`;
 }

@@ -1,8 +1,8 @@
 ---
-kind: explain
+kind: specify
 title: "Mouse UX"
 description: "What a press means when the thing under the cursor changes between pressing and letting go."
-tags: [soon, proposal, UX, program]
+tags: [program, proposal, soon, UX]
 date: 2026-08-14
 ---
 # Mouse UX

@@ -2,7 +2,7 @@
 kind: specify
 title: "Aesthetics"
 description: "Visual constants and patterns, arrived at by small perturbations rather than formulas."
-tags: [visual]
+tags: [program, proposal, style, visual]
 date: 2026-05-10
 ---
 # Aesthetics
@@ -17,14 +17,14 @@ Organic, not planned. Small perturbations, easy to test.
 2. **Constants** — Make hand-tweaking easy (faster than asking AI)
 3. **Color** — Tweak until it feels relaxing to the eye
 4. **Wire** — Connect buttons to actions
-5. **Play** — Use it, notice friction, add feedback (hover works well)
-6. **Refine** — Persistence, edge cases, make it feel natural
+5. **Play** — Use it, notice friction, add feedback (eg, 'hover works well')
+6. **Refine** — Polish, edge cases, make it feel natural
 
 **Lessons:**
-- Stay simple — each piece added should not increase overall complexity
-- Fewer containers = simpler math = fewer bugs
-- CSS flex beats manual width calculations
-- Nurture the *feeling* — does it feel natural, intuitive, helpful?
+- **Stay simple** — each piece added should not increase overall complexity
+- **Fewer containers** = simpler math = fewer bugs
+- **CSS flex** beats manual width calculations
+- **Nurture the *feeling*** — does it feel natural, intuitive, helpful?
 
 ## Separators
 

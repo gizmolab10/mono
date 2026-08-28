@@ -2,7 +2,7 @@
 kind: specify
 title: "Road Map"
 description: "The dimensions-label algorithm is being replaced with a four-degrees-of-freedom search per label (edge, direction, witness length, slidable position)"
-tags: [now, stale]
+tags: [keep, now, plans]
 date: 2026-08-19
 ---
 # Road Map

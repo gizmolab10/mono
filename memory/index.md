@@ -11,10 +11,10 @@ Before any work: read [shared/truth/protocol.md](shared/truth/protocol.md) — t
 ## Projects
 
 - [shared](shared/index.md) — cross-project truths: the protocol, the shared lexicon, taste, conventions.
-- [lv](lv/index.md) — Tommy's Vineyard Space: the vineyard in descriptions and photos. **First project — the week of real use runs here.**
-- [ov](ov/index.md) — Overview: browser and editor for every markdown file in the repo.
+- [ov](ov/index.md) — Overview: browser and editor for every markdown file in the repo. **First project — the week of real use runs here.**
+- [lv](lv/index.md) — Tommy's Vineyard Space: the vineyard in descriptions and photos.
 
-*(Remaining projects — ws, di, musicology — join here once lv's rhythm holds.)*
+*(Remaining projects — ws, di, musicology — join here once ov's rhythm holds.)*
 
 ## Type vocabulary
 

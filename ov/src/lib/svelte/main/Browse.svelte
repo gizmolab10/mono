@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_project, w_tags } from '../../ts/managers/Filters';
+	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_projects, w_tags } from '../../ts/managers/Filters';
 	import Files_List, { w_scrollbar_showing } from '../content/Files_List.svelte';
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { words_that_fit } from '../../ts/utilities/Fitting';
@@ -69,7 +69,7 @@
 	// What the stack of lines is holding, said to the log once the browser has drawn them. It is
 	// read again whenever a fold changes, since that is what moves them.
 	$effect(() => {
-		$w_show_filters; $w_show_folders; $w_kind; $w_project; $w_tags;
+		$w_show_filters; $w_show_folders; $w_kind; $w_projects; $w_tags;
 		const soon = setTimeout(() => report_line_spacing('browse'), k.timeout.slide);
 		return () => clearTimeout(soon);
 	});
@@ -93,10 +93,13 @@
 <div class='browse'>
 <Browse_Filters />
 <!-- How many the filters leave, as a section of its own. The heavy line above it is what closes
-     the picking rows off from the list; with nothing standing open above it there is nothing for
-     it to close, so this section stands at an edge of the view instead and draws no line at all.
-     That is so with the whole set of rows folded away, and equally with the tags folded — the tags
-     are the last row, and their own line is already closing what stands above them. -->
+     the picking rows off from the list, and it is drawn whenever those rows are on screen at all —
+     whatever is folded among them. The stack above is told so, and leaves its last fold this line
+     to end against rather than drawing one of its own. With the whole set of rows folded away
+     there is nothing to close, so this section stands at an edge of the view and draws no line.
+
+     Thin where the tags are folded: what it closes off is then a run of accent rather than a row
+     of pills, and the heavy line reads as a second boundary on top of one already drawn. -->
 <!-- The count and the rows under it are one area to the cursor — the third kind of target, standing
      behind everything drawn in them. Anything inside that answers for itself wins the cursor
      first: the count row's own section, the folders button, a row's triangle. -->
@@ -104,7 +107,9 @@
 <Section
 	id='browse.count'
 	gap={k.gap.normal}
-	edge={$w_show_filters && !$w_filters_folded.includes('tags') ? T_Edge.thick : T_Edge.view}>
+	edge={!$w_show_filters ? T_Edge.view
+		: $w_filters_folded.includes('tags') ? T_Edge.thin
+		: T_Edge.thick}>
 	{#snippet contents()}
 		<div class='count-row' bind:this={count_row}>
 			<!-- With nothing left after the filters there are no folders to show or hide, so the
@@ -128,11 +133,11 @@
 			{/if}
 			<!-- What was picked, beside the folder button: the project's short name, then the kind,
 				each held well clear of its neighbors. -->
-			{#if $w_project !== ''}
-				<span class='chosen-project'>{$w_project}</span>
+			{#if $w_projects.length !== 0}
+				<span class='chosen-project'>{$w_projects.join(', ')}</span>
 			{/if}
 			<!-- An upright line stands between them, but only while both are picked. -->
-			{#if $w_project !== '' && $w_kind !== ''}
+			{#if $w_projects.length !== 0 && $w_kind !== ''}
 				<span class='chosen-between'>|</span>
 			{/if}
 			{#if $w_kind !== ''}

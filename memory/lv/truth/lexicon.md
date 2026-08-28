@@ -4,7 +4,7 @@ title: lv lexicon
 description: lv's terms, defined once. Loaded at every lv session start.
 tags: [lexicon, terminology]
 use_when: [every lv session]
-updated: 2026-08-24
+updated: 24 August 2026
 ---
 # lv lexicon
 

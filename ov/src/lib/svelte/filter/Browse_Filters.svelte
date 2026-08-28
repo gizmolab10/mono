@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_project, w_kind, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_words } from '../../ts/managers/Filters';
+	import { w_projects, toggle_project, w_kind, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_search_text } from '../../ts/managers/Filters';
 	import { inverted, T_Picking } from '../../ts/managers/Filters';
 	import { toggle_all_areas, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
@@ -44,15 +44,15 @@
 	// so picking a kind never grays out the other kinds. Every filter is named below so the
 	// rows are worked out again whenever any of them moves.
 	const w_ready = files.w_ready;
-	let kinds = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? files.kinds_present() : []; });
-	let bare = $derived.by(() => { $w_project; $w_tags; $w_words; return $w_ready ? files.unlabeled_within_reach() : 0; });
+	let kinds = $derived.by(() => { $w_projects; $w_tags; $w_search_text; return $w_ready ? files.kinds_present() : []; });
+	let bare = $derived.by(() => { $w_projects; $w_tags; $w_search_text; return $w_ready ? files.unlabeled_within_reach() : 0; });
 	// The tags row names the picked tags and which way they pick, unlike the other two rows: with
 	// every picked tag required, it cannot set its own filter aside, so what it offers changes as
 	// the picks do.
-	let tags_in_use = $derived.by(() => { $w_project; $w_kind; $w_words; $w_tags; $w_tag_picking; return $w_ready ? files.tags_present() : []; });
+	let tags_in_use = $derived.by(() => { $w_projects; $w_kind; $w_search_text; $w_tags; $w_tag_picking; return $w_ready ? files.tags_present() : []; });
 	const projects = Object.values(T_Bundle);
 	let counts = $derived.by(() => {
-		$w_kind; $w_tags; $w_words;
+		$w_kind; $w_tags; $w_search_text;
 		return $w_ready ? new Map(projects.map((p) => [p, files.files_in(p)])) : new Map();
 	});
 
@@ -60,23 +60,39 @@
 	// within reach the other. A word already picked always shows, so a choice never vanishes
 	// from under the cursor.
 	let shown_kinds = $derived(test === 'a' ? Object.values(T_Kind)
-		: Object.values(T_Kind).filter((kind) => kinds.includes(kind) || $w_kind === kind));
+		: Object.values(T_Kind).filter((kind) => kinds.includes(kind)));
+
+	// A picked kind that no longer matches anything would narrow the list from nowhere —
+	// its word gone from the row, nothing to press to undo it. It is let go instead.
+	$effect(() => {
+		if (!$w_ready) { return; }
+		if ($w_kind === UNLABELED ? bare === 0 : $w_kind !== '' && !kinds.includes($w_kind)) { w_kind.set(''); }
+	});
 	let shown_projects = $derived(test === 'a' ? projects
-		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_project === p));
+		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_projects.includes(p)));
 
 	// How many words the kinds row actually offers — the kinds themselves, and the one that asks
 	// for the files carrying no labels, which is only there while there are some.
 	let kinds_offered = $derived(shown_kinds.length + (bare > 0 || $w_kind === UNLABELED ? 1 : 0));
 
-	function choose_project(project: string) {
-		w_project.set($w_project === project ? '' : project);
+	// A plain press turns one project on or off. With the option key held, the press means
+	// "only this one": every other pick is dropped.
+	function choose_project(project: string, only: boolean) {
+		if (only) { w_projects.set([project]); }
+		else      { toggle_project(project); }
 	}
 
 	function choose_kind(kind: string) {
 		w_kind.set($w_kind === kind ? '' : kind);
 	}
 
-	function toggle_tag(tag: string) {
+	// A plain press turns one tag on or off. With the option key held, the press means
+	// "only this one within its own tagset": the area's other picked tags are dropped,
+	// and picks in every other area stand. With command held as well, it reaches everywhere:
+	// every other tag, whatever its area, is dropped.
+	function toggle_tag(tag: string, only: boolean = false, among: string[] = [], everywhere: boolean = false) {
+		if (everywhere) { w_tags.set([tag]); return; }
+		if (only) { w_tags.update((chosen) => [...chosen.filter((t) => t !== tag && !among.includes(t)), tag]); return; }
 		w_tags.update((chosen) => chosen.includes(tag)
 			? chosen.filter((t) => t !== tag)
 			: [...chosen, tag]);
@@ -101,16 +117,16 @@
 		debug.log(`Filters: a file now shows if it wears ${way} the ${$w_tags.length} picked tag(s).`);
 	}
 
-	// Each row can be folded away by pressing the word above it. Folded, that word says how to
+	// Each row can be folded away by pressing the clickable above it. Folded, that clickable says how to
 	// get the row back and what is picked, so nothing is hidden without a way out. With either
-	// of the top two folded they take separate bars, since one word over two halves would
+	// of the top two folded they take separate bars, since one clickable over two halves would
 	// point at the wrong place. Which rows are folded is remembered between visits, named
 	// rather than numbered so adding a row later cannot shift the meaning of what was saved.
 	let show_projects = $derived(!$w_filters_folded.includes('projects'));
 	let show_kinds = $derived(!$w_filters_folded.includes('kinds'));
 	let show_tags = $derived(!$w_filters_folded.includes('tags'));
 
-	let project_word = $derived($w_project === '' ? 'all' : $w_project);
+	let project_word = $derived($w_projects.length === 0 ? 'all' : $w_projects.join(', '));
 	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
 	let tags_word = $derived($w_tags.length === 0 ? 'all' : $w_tags.join(', '));
 
@@ -149,7 +165,7 @@
 		return () => watcher.disconnect();
 	});
 
-	// What the word on the bar says: just the name while the row is there, the name and what
+	// What the clickable on the bar says: just the name while the row is there, the name and what
 	// is picked while it is folded away.
 	function heading(name: string, shown: boolean, picked: string): string {
 		return shown ? name : `${name} ➜ ${picked}`;
@@ -160,7 +176,7 @@
 		debug.log(`Filters: the ${name} row is now ${away ? 'folded away' : 'shown'}.`);
 	}
 
-	// One word above them all, saying what every picking row holds — in the order they appear,
+	// One clickable above them all, saying what every picking row holds — in the order they appear,
 	// and leaving out any row narrowing nothing, since "all" says nothing worth the room.
 	// Pressing it folds the whole set away or brings it back.
 	let all_picked = $derived([project_word, kind_word, tags_word]
@@ -168,7 +184,7 @@
 	let all_word = $derived($w_show_filters ? '✂ filters'
 		: `✂ filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
 
-	// The four words that fold these sections away are ours, not the lines'. Each is built as a
+	// The four clickables that fold these sections away are ours, not the lines'. Each is built as a
 	// button below, out of sight; the browser makes it one drawing after we ask, so each of these
 	// holds nothing on the first drawing and the made button on the next — which is itself a
 	// change, so the line it stands on is told at once.
@@ -178,8 +194,8 @@
 	let tags_button     = $state<HTMLElement | null>(null);
 
 	// How the picked tags narrow, and the two presses that change which are picked. It stands on
-	// the tags line at the middle, so it is beside the word that folds them rather than inside
-	// what that word folds away.
+	// the tags line at the middle, so it is beside the clickable that folds them rather than inside
+	// what that clickable folds away.
 	let picking_control = $state<HTMLElement | null>(null);
 
 	// Stopping a row filtering, standing on that row's own line at the middle. Each is built only
@@ -189,25 +205,25 @@
 	let kinds_clear    = $state<HTMLElement | null>(null);
 
 	const all_action      = $derived(Object.assign(new Action(), { element: all_button,      position: T_Position.left }));
-	const projects_action = $derived(Object.assign(new Action(), { element: projects_button, position: T_Position.left }));
-	const kinds_action    = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left }));
-	const tags_action     = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left }));
+	const projects_action = $derived(Object.assign(new Action(), { element: projects_button, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
+	const kinds_action    = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
+	const tags_action     = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const picking_action  = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
 	const projects_clearer = $derived(Object.assign(new Action(), { element: projects_clear, position: T_Position.center }));
 	const kinds_clearer    = $derived(Object.assign(new Action(), { element: kinds_clear,    position: T_Position.center }));
 </script>
 
-<!-- The four words that fold these sections away, built here rather than by the lines they stand
+<!-- The four clickables that fold these sections away, built here rather than by the lines they stand
      on. Each is written out of sight, since the moment the browser has made it, it is taken and
      put on its line instead. -->
 <div class='out_of_sight'>
-	<button type='button' class='fold-word' bind:this={all_button}
+	<button type='button' class='clickable' bind:this={all_button}
 		use:hit_target={{ id: 'list.fold.all', onpress: toggle_filters }}>{all_word}</button>
-	<button type='button' class='fold-word' bind:this={projects_button}
+	<button type='button' class='clickable' bind:this={projects_button}
 		use:hit_target={{ id: 'list.fold.projects', onpress: () => fold('projects', show_projects) }}>{heading('projects', show_projects, project_word)}</button>
-	<button type='button' class='fold-word' bind:this={kinds_button}
+	<button type='button' class='clickable' bind:this={kinds_button}
 		use:hit_target={{ id: 'list.fold.kinds', onpress: () => fold('kinds', show_kinds) }}>{heading('kinds', show_kinds, kind_word)}</button>
-	<button type='button' class='fold-word' bind:this={tags_button}
+	<button type='button' class='clickable' bind:this={tags_button}
 		use:hit_target={{ id: 'list.fold.tags', onpress: () => fold('tags', show_tags) }}>{heading('tags', show_tags, tags_word)}</button>
 	<!-- One control holding two kinds: the three on the left are states, saying how the picked
 	     tags narrow; the ones on the right are presses that change what is picked and leave the
@@ -218,9 +234,9 @@
 	     control it belongs to. It is drawn only where it would do something: one of the words is
 	     picked, and there is more than one to pick from. With a single choice on offer there is
 	     nowhere to go back to, so nothing is made and the line is given none. -->
-	{#if $w_project !== '' && shown_projects.length > 1}
+	{#if $w_projects.length !== 0 && shown_projects.length > 1}
 		<button class='clear' bind:this={projects_clear}
-			use:hit_target={{ id: 'list.clear.projects', onpress: () => w_project.set(''),
+			use:hit_target={{ id: 'list.clear.projects', onpress: () => w_projects.set([]),
 				tip: 'show every project\'s guides' }}>clear</button>
 	{/if}
 	{#if $w_kind !== '' && kinds_offered > 1}
@@ -257,11 +273,11 @@
 			{@const held = counts.get(project) ?? 0}
 			<!-- One that would leave nothing still holds its place in the run, so it registers with
 			     no press: the ones beside it must not answer for the space it stands in. -->
-			<button class='segment' class:current={$w_project === project} class:empty={held === 0}
+			<button class='segment' class:current={$w_projects.includes(project)} class:empty={held === 0}
 				use:hit_target={{ id: `list.project.${project}`,
 					tip: held === 0 ? `nothing in "${project}" is left by the other filters`
-						: $w_project === project ? 'show all project files' : `show only "${project}" files`,
-					onpress: held > 0 ? () => choose_project(project) : undefined }}>{project}</button>
+						: $w_projects.includes(project) ? `hide "${project}" files` : `show "${project}" files`,
+					onpress: held > 0 ? (m) => choose_project(project, m?.event?.altKey ?? false) : undefined }}>{project}</button>
 		{/each}
 	</div>
 	{/if}
@@ -335,12 +351,12 @@
 		<input
 			type='search'
 			class='search'
-			bind:value={$w_words}
+			bind:value={$w_search_text}
 			placeholder='search titles and descriptions'
 			use:hit_target={{ id: 'list.field.search', tip: 'type a word to look for' }} />
 	</div>
 
-	<!-- The whole set of picking rows, as one section: its line carries the word that folds them
+	<!-- The whole set of picking rows, as one section: its line carries the clickable that folds them
 	     all away, and it holds three subsections — the projects, the kinds, the tags. It holds no
 	     gap of its own, since each of those holds the gap at its own boundaries. -->
 	<Section
@@ -352,14 +368,14 @@
 		folded={!$w_show_filters}>
 		{#snippet contents()}
 		<!-- The three picking rows are one stack of subsections: a gap between each pair, and a line
-		     standing centred in every gap. Each line carries the word that names what sits under it,
-		     so the word reads as a heading for the subsection that follows.
+		     standing centred in every gap. Each line carries the clickable that names what sits under it,
+		     so it reads as a heading for the subsection that follows.
 
-		     The line above this stack is the heavy one carrying the word that folds every picking
+		     The line above this stack is the heavy one carrying the clickable that folds every picking
 		     row away, and it is drawn by whatever holds us — so we say how thick it is, and the
 		     stack measures from its middle like every other line. This goes when what holds us is
 		     itself a stack and draws its own line in its own gap. -->
-		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge}
+		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below'
 			leads={[projects_action, projects_clearer]} sections={[
 			{ subsection: projects_row, folded: !show_projects },
 			{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_kinds },
@@ -370,16 +386,16 @@
 </div>
 
 <style>
-	/* Where the four fold words are written before their lines take them. Each is taken out of
+	/* Where the four clickables are written before their lines take them. Each is taken out of
 	   here on the very next drawing, so nothing is ever seen in this spot. */
 	.out_of_sight {
 		display : none;
 	}
 
-	/* A word that folds its section away, standing on the line above it. Its page-colored
+	/* A clickable that folds its section away, standing on the line above it. Its page-colored
 	   background masks the line behind it. The edge is held see-through and counted inside the
-	   word's own space, so the hover edge adds no width and the word never shifts. */
-	.fold-word {
+	   clickable's own space, so the hover edge adds no width and it never shifts. */
+	.clickable {
 		border        : var(--thick-small) solid var(--black);
 		background    : var(--section-bg, var(--bg));
 		border-radius : var(--radius-pill);
@@ -392,7 +408,7 @@
 		white-space   : nowrap;
 	}
 
-	.fold-word:global([data-hit]) {
+	.clickable:global([data-hit]) {
 		border-color : var(--darkgray);
 		background   : var(--hover);
 	}
@@ -480,7 +496,7 @@
 	/* Clearing a row stands apart from its control, as a pill of its own. It is never a state —
 	   it is something done, not something picked — so it never reads as picked, filling only
 	   under the cursor and filling stronger while it is held. */
-	/* It stands on its row's own line beside the word that folds the row, so it takes that word's
+	/* It stands on its row's own line beside the clickable that folds the row, so it takes that clickable's
 	   size — the same text and the same edge thickness, which makes both boxes the same height.
 	   Its height is whatever that text needs; nothing is fixed. */
 	.clear {
@@ -542,7 +558,7 @@
 	}
 
 	/* The control saying how the picked tags narrow, holding the two presses that change what is
-	   picked. It stands on the tags line beside the word that folds them, so it takes that word's own
+	   picked. It stands on the tags line beside the clickable that folds them, so it takes that clickable's own
 	   size — the same text and the same edge thickness, which makes both boxes exactly as tall
 	   as each other. Its height is whatever that text needs; nothing is fixed. */
 	.picking {
@@ -558,7 +574,7 @@
 	}
 
 	/* A button keeps no text size of its own, so it is said here — without it each segment falls
-	   back to whatever the browser draws a button at, which is larger than the word beside it. */
+	   back to whatever the browser draws a button at, which is larger than the clickable beside it. */
 	.picking .segment {
 		font-size : var(--font-faint);
 		padding   : 0 var(--gap);

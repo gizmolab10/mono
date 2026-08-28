@@ -2,7 +2,7 @@
 kind: specify
 title: "Handoff"
 description: "My resume point for ji: the one thing to do next, and the context you can't read off the code"
-tags: [journal, now, session]
+tags: [journal, maybe, now, session]
 date: 2026-08-11
 ---
 # Handoff
@@ -64,7 +64,7 @@ The work is done and written up. It ended on how I write, not on code.
 
 **The app as it stands.** One always-on screen: a top bar (hamburger, the operations pill, the centered "Intersection" title, a help button), then a panel. The content region shows one view for the current operation (the switcher, Show_Operation): the documents list, the drop box, the document viewer, or the LLM ask box. The list carries a tag filter (a joined pill with an all/any toggle, both hiding when there aren't enough tags), a "search by name" box, and the family filter; below a rule, the table. The "ask" segment works only on the LLM store. The details region (preferences + data) collapses from the hamburger.
 
-**The stores.** The document store is built and wired — design in [db spec](db%20spec.md) / [db proposal](db%20proposal.md), status in [db handoff](db%20handoff.md). The LLM store is built too — a local store mirrored to a running AnythingLLM for search-and-ask.
+**The stores.** The document store is built and wired — design in [db spec](db%20spec.md) / [db proposal](db%20implementation%20proposal.md), status in [db handoff](db%20handoff.md). The LLM store is built too — a local store mirrored to a running AnythingLLM for search-and-ask.
 
 **The saved settings.** All of them read `ji_` then parts joined by underscores, and the words in the code match the saved ones. Old names are brought up to that spelling as the settings file is read — before any screen can read a setting — and anything the app no longer uses is removed. That order is the whole lesson: the first attempt ran it from the launch code instead, the screens had already read the new empty names, and my store's records were lost.
 

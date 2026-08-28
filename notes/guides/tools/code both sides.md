@@ -1,11 +1,11 @@
 ---
 kind: howto
-title: "Try Both"
+title: "Code both sides"
 description: "Build two ways of showing something at once, behind one word you flip, and look at each."
 tags: [tools, visual]
 date: 2026-08-03
 ---
-# Visual inspection
+# Code Both Sides
 
 When a look can't be settled by argument — and a look almost never can — build both and put a
 switch at the top of the file.

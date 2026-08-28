@@ -26,7 +26,7 @@ export function body_of(text: string): { body: string; skipped: number } {
 }
 
 /**
- * A file's words start at its first heading, whatever its rank — not every file opens with a
+ * A file's contents start at its first heading, whatever its rank — not every file opens with a
  * top-level one. Every character between the labels and that heading is left over: a stray line,
  * a run of blanks, spaces holding the heading off the left edge. It all goes the first time the
  * file is opened.

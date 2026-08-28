@@ -19,7 +19,7 @@
 	// register the same names, the older of each pair is let go, and whichever tag they had in
 	// common answers nothing on the row that lost it.
 	let { area, in_reach, chosen, ontoggle, row }:
-		{ area: Tag_Area; in_reach: string[]; chosen: string[]; ontoggle: (tag: string) => void; row: string } = $props();
+		{ area: Tag_Area; in_reach: string[]; chosen: string[]; ontoggle: (tag: string, only?: boolean, among?: string[], everywhere?: boolean) => void; row: string } = $props();
 
 	// Which areas are open is remembered between visits, and kept in one place so an area left
 	// open among the filters is open in the label form too.
@@ -130,7 +130,7 @@
 			dormant: open && lone === '',
 			tip: lone !== '' ? `${chosen.includes(lone) ? 'remove' : 'add'} "${lone}" tag`
 				: `choose ➜ ${shown.join(', ')}`,
-			onpress: lone !== '' ? () => ontoggle(lone) : () => toggle_area(area.name) }}>
+			onpress: lone !== '' ? (m) => ontoggle(lone, m?.event?.altKey ?? false, area.tags, (m?.event?.altKey && m?.event?.metaKey) ?? false) : () => toggle_area(area.name) }}>
 		<!-- The area's own name straddles the top edge whenever the words below it are not the
 		     area's name — open, or shut with something picked, or standing in for a lone tag. -->
 		{#if open || lone !== '' || area.tags.some((tag) => chosen.includes(tag))}
@@ -165,7 +165,7 @@
 						     an unpicked one — a state that can be taken back is not a dead end. -->
 						<button class='segment' class:current={chosen.includes(tag)}
 							style:--waits='{waits_for(at)}ms'
-							use:hit_target={{ id: `${row}.pill.${area.name}.${tag}`, onpress: () => ontoggle(tag),
+							use:hit_target={{ id: `${row}.pill.${area.name}.${tag}`, onpress: (m) => ontoggle(tag, m?.event?.altKey ?? false, area.tags, (m?.event?.altKey && m?.event?.metaKey) ?? false),
 								dormant: !open || moving,
 								tip: `${chosen.includes(tag) ? 'remove' : 'add'} "${tag}" tag` }}>{tag}</button>
 					{/each}

@@ -71,6 +71,8 @@
 {#snippet given_things()}
 	{#each placed as one, i (i)}
 		<span class='placed' class:left={one.position === T_Position.left}
+			class:transparent={one.transparent}
+			style:left={one.position === T_Position.left && one.inset ? one.inset : undefined}
 			class:center={one.position === T_Position.center}
 			class:right={one.position === T_Position.right}
 			use:holds_element={one.element as HTMLElement}></span>
@@ -159,6 +161,8 @@
 		display       : flex;
 		top           : 50%;
 	}
+
+	.placed.transparent { background : transparent; }
 
 	.placed.left   { left      : var(--gap-fat); }
 	.placed.center { left      : 50%; transform : translate(-50%, -50%); }

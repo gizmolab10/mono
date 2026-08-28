@@ -4,11 +4,9 @@ title: Taste
 description: "Jonathan's recurring visual and design principles, in his own words."
 tags: [taste, visual, design]
 use_when: [visual work, UI work, choosing between designs, any styling decision]
-updated: 2026-08-22
+updated: 22 August 2026
 ---
 # Taste
-
-
 
 1. **The eye wins over the formula**. When a computed value looks wrong, it is wrong — let Jonathan guide small changes and he will visually verify.
 2. **Warmth over precision.** Prefer the choice that feels human; **slight** irregularity is a feature, not an error.

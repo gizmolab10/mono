@@ -27,6 +27,7 @@
 		actions            = null,
 		bare_says          = '',
 		extra_when_folded  = 0,
+		accent_when_folded = false,
 		contents,
 	}: {
 		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
@@ -42,6 +43,7 @@
 		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
 		gap_at_foot?       : number;                  // a different number below its content, where the two sides are drawn against different things
 		extra_when_folded? : number;                  // more than the one folded height, for the one section that needs it
+		accent_when_folded?: boolean;                 // folded, its space takes the accent — the same run of color a stack draws for a fold of its own
 	} = $props();
 
 	// Said once here, so the line and the gap can never disagree about what this section is.
@@ -94,6 +96,7 @@
 	<div
 		class='section-body'
 		class:folded
+		class:accented={folded && accent_when_folded}
 		class:lit={fills_when_bare && !folded}
 		style:padding-top='{gap_under_line}px'
 		style:padding-bottom='{gap_below}px'
@@ -117,6 +120,12 @@
 		display        : flex;
 		flex           : 0 0 auto;
 		gap            : 0;
+	}
+
+	/* Folded, its space takes the accent — so a fold outside a stack reads exactly as a fold
+	   inside one, which is a run of accent between two lines rather than a gap of page color. */
+	.section-body.accented {
+		background : var(--accent);
 	}
 
 	/* The line's own gap is the separator's; nothing is added here, or the two would disagree. */

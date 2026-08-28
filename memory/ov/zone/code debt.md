@@ -2,7 +2,7 @@
 kind: specify
 title: "Code debt"
 description: "Everything still owed, and everything finished. The first unchecked item is the next thing to work on."
-tags: [journal, now, proposal]
+tags: [journal, maybe, now, proposal]
 date: 2026-08-10
 ---
 # Code debt
@@ -13,11 +13,9 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## work
 
-- [ ] read work/md audit
+- [ ] editor. add a clickable to the back links section 'back links'
+- [ ] read work/md audit (old location)
     - [ ] pac execute it
-- [x] use claude mythos to audit my md system
-    - [x] project separate for audit
-        - [x] tell it where my folders of md files live
 - [ ] 1127 occurrences of 'guide' -> many should be 'file'
 - [ ] too many ts files are class-less
     - [ ] require LOOONG import statements
@@ -30,6 +28,9 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## done
 
+- [x] use claude mythos to audit my md system
+    - [x] project separate for audit
+        - [x] tell it where my folders of md files live
 - [x] the kinds are five — analyze in, design and refer out
     - [x] analyze added: a taking apart of something to find out how it works
     - [x] fourteen files wearing design moved to explain, then design taken out of the list

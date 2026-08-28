@@ -19,7 +19,7 @@ Code style, patterns, and development practices.
 - [Build Notes](./build notes.md)
 - [Build](./build.md)
 - [Conceptual composition](./conceptual%20composition.md)
-- [Constants](./constants.md)
+- [Constants](./constants%20and%20subtypes.md)
 - [Creating A Design](./create a design.md)
 - [Creating A Proposal](./create a proposal.md)
 - [Css](./css.md)

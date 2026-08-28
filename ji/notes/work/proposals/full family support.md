@@ -1,8 +1,8 @@
 ---
 kind: specify
 title: "Full family support"
-description: "Everything ji now decides about a file the moment it arrives, what changed to get here, and what's still owed"
-tags: [stale]
+description: "Keep each ask exchange — the question, its answer, and the relevant documents it drew from — so the chat operation can show the running conversation"
+tags: [maybe]
 date: 2026-08-19
 ---
 # Full family support

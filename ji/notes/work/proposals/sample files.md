@@ -2,7 +2,7 @@
 kind: specify
 title: "Sample files — what a fair one is, and where to get one"
 description: "Testing builds a file of every kind out of a handful of bytes"
-tags: [stale]
+tags: [maybe]
 date: 2026-08-19
 ---
 # Sample files — what a fair one is, and where to get one

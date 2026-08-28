@@ -2,7 +2,7 @@
 kind: explain
 title: "Tags hierarchy"
 description: "In the filters, the linear list is currently quite lengthy (22), challenging to scan by eye"
-tags: [proposal, stow]
+tags: [keep, proposal]
 date: 2026-08-08
 ---
 # Tags hierarchy

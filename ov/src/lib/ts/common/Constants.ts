@@ -21,6 +21,7 @@ export default class Constants {
 		rows		 : 200,						// the pills taking a row of their own, or giving one back
 		fade		 : 200,						// something arriving or leaving its position
 		hover		 : 333,						// a fill arriving or leaving under the cursor — a third of a second
+		hover_section: 666,					// the same fill on a whole section's background — twice as slow, since it moves far more color
 		asking		 : 1500,					// how often the dispatcher is asked again while it is down
 		drift		 : 1000,					// how often the hits manager asks whether what it holds has gone stale
 	};

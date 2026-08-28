@@ -4,7 +4,7 @@ title: CLAUDE files
 description: How CLAUDE.md files are listed, placed, read, and written — and the three places that must agree.
 tags: [claude-files, dispatcher, placement]
 use_when: [dispatcher work, file listing, adding a kind of file the app shows, case or naming questions]
-updated: 2026-08-24
+updated: 24 August 2026
 ---
 # CLAUDE files
 

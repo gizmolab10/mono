@@ -2,7 +2,7 @@
 kind: specify
 title: "Code debt"
 description: "write a proposal for the first unchecked item to the top of handoff"
-tags: [journal, now, plans, proposal]
+tags: [journal, maybe, now, proposal]
 date: 2026-08-24
 ---
 # Code debt

@@ -2,7 +2,7 @@
 kind: specify
 title: "Proposal — build DBLLM"
 description: "DB API that talks to AnythingLLM"
-tags: [now, proposal, stale]
+tags: [keep, now, proposal]
 date: 2026-08-19
 ---
 # Proposal — build DB_LLM

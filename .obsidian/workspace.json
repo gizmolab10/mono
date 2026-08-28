@@ -8,45 +8,31 @@
         "type": "tabs",
         "children": [
           {
-            "id": "a932f7d0e39d14ca",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "lv/notes/work/photo gallery.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "photo gallery"
-            }
-          },
-          {
             "id": "6ac25d6346f16830",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/taste.md",
+                "file": "notes/guides/develop/conceptual composition.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "taste"
+              "title": "conceptual composition"
             }
           },
           {
-            "id": "dbeed9a3b2e1d907",
+            "id": "e1feaeab04f78ee5",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/pre-flight/agency.md",
+                "file": "memory/mu/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "agency"
+              "title": "ideas"
             }
           },
           {
@@ -64,47 +50,20 @@
             }
           },
           {
-            "id": "63e890a916e9d492",
+            "id": "0f26b3619fd59405",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/AI memory redesign.md",
+                "file": "memory/shared/truth/conventions.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AI memory redesign"
-            }
-          },
-          {
-            "id": "8fbfedcd79ac7319",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.13.7"
-              },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.13.7"
-            }
-          },
-          {
-            "id": "a4d4239ca91c9f32",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ov/notes/guides/design/ov - goals.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "ov - goals"
+              "title": "conventions"
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
@@ -138,7 +97,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:taste",
+                "query": "file:adop",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -159,13 +118,11 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 388.50271224975586,
-    "collapsed": true
+    "width": 388.50271224975586
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -243,7 +200,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ov/notes/work/AI memory redesign.md",
+                "file": "notes/guides/develop/conceptual composition.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -281,44 +238,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "63e890a916e9d492",
+  "active": "6ac25d6346f16830",
   "lastOpenFiles": [
-    "ov/CLAUDE.md",
-    "ov/CLAUDE.MD",
-    "ws/CLAUDE.md",
-    "s3/CLAUDE.md",
-    "me/CLAUDE.md",
-    "lv/CLAUDE.md",
-    "ji/CLAUDE.md",
-    "di/CLAUDE.md",
-    "CLAUDE.md",
-    "vitest.config.ts",
-    "memory/shared/truth/migration.md",
-    "notes/guides/collaborate/voice.md",
+    "notes/guides/develop/constants and subtypes.md",
+    "memory/ov/zone/code debt.md",
+    "ov/src/lib/svelte/filter/sedJQrQh5",
     "memory/shared/truth/conventions.md",
-    "ov/notes/work/AI memory redesign.md",
+    "notes/guides/collaborate/voice.md",
+    "memory/mu/zone/ideas.md",
+    "memory/shared/zone/inception into the new design.md",
+    "memory/shared/truth/inception.md",
+    "memory/shared/truth/inception into the new design.md",
+    "memory/shared/zone/claude code.md",
+    "memory/shared/truth/create a project.md",
+    "memory/wo/zone/observations.md",
+    "memory/wo/zone",
+    "memory/wo/truth",
+    "memory/wo/log.md",
+    "memory/wo/index.md",
+    "memory/wo",
+    "memory/shared/truth/migration.md",
+    "memory/ov/zone/handoff.md",
+    "memory/shared/zone/ideas.md",
+    "_to_delete/git-leftovers/index.lock.11797",
+    "_to_delete/git-leftovers",
+    "_to_delete",
+    "memory/shared/zone/iron carbonate.md",
     "memory/shared/truth/taste.md",
-    "lv/notes/work/editing the published site.md",
-    "memory/lv/log.md",
-    "memory/lv/truth/lexicon.md",
-    "memory/lv/truth/gallery.md",
-    "memory/lv/truth",
-    "memory/lv/index.md",
-    "memory/lv",
-    "memory/ov/log.md",
-    "memory/ov/truth/lexicon.md",
-    "memory/ov/truth/scope.md",
-    "memory/ov/truth",
-    "memory/ov/index.md",
-    "memory/ov",
-    "ov/notes/work/commands/where.md",
-    "ov/notes/work/commands/settle.md",
-    "ov/notes/work/commands/start.md",
-    "ov/notes/work/commands",
-    "ov/notes/work/_to_delete/skills/where",
-    "ov/notes/work/_to_delete/skills/start",
-    "ov/notes/work/_to_delete/skills/settle",
-    "ov/notes/work/_to_delete/skills/propose",
+    "memory/shared/truth/protocol.md",
+    "memory/shared/truth/decisions.md",
+    "mu/CLAUDE.md",
+    "mu/src/lib/svelte/main/App.svelte",
+    "mu/src/lib/ts/main.ts",
+    "mu/src/vite-env.d.ts",
+    "memory/mu/log.md",
+    "memory/mu/index.md",
+    "memory/shared/truth/can an AI actually learn?.md",
+    "memory/shared/truth/medium article.md",
+    "memory/shared/truth/can an ai actually learn?.md",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",

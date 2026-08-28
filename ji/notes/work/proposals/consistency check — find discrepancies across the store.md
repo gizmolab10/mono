@@ -2,7 +2,7 @@
 kind: specify
 title: "Consistency check — find discrepancies across the store"
 description: "The ask box pulls the top few most-similar passages for one question"
-tags: [now, proposal]
+tags: [maybe, now, proposal]
 date: 2026-08-19
 ---
 # Consistency check — find discrepancies across the store

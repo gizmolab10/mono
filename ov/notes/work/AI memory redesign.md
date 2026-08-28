@@ -2,7 +2,7 @@
 kind: analyze
 title: "Memory System Design"
 description: "A fresh design for a persistent, tweakable memory that carries context across chats, survives consolidation, and supports several concurrent long-term projec..."
-tags: [now, proposal]
+tags: [keep, now, proposal]
 date: 2026-08-21
 ---
 # Memory System Design
@@ -55,12 +55,13 @@ memory/                      # a folder inside your existing repo; an OKF bundle
     │   ├── decisions.md     # live rationales only (see "Design churn")
     │   ├── lexicon.md       # this project's terms (see "Prose and terminology")
     │   └── …
-    └── zone/              # ideas + visual references
-        ├── ideas.md
-        └── ref/             # images, palettes, screenshots
+    ├── zone/               # ideas + visual references
+    │   ├── ideas.md
+    │   └── ref/             # images, palettes, screenshots
+    └── archive/             # no longer current, carefully composed — kept whole, never loaded at start
 ```
 
-Two levels deep, everywhere. `shared/` is just a project whose subject is you.
+Two levels deep, everywhere. `shared/` is just a project whose subject is you. The three content folders complete a set: truth is believed, zone is not yet believed, archive is no longer believed.
 
 ## File anatomy
 
@@ -234,7 +235,7 @@ What deliberately stays manual: settling, defining, promoting or culling ideas, 
 1. **DONE** Create `memory/` inside the repo that holds your projects; add root `index.md` and `shared/`. No separate repo — the surrounding repo's history is the archaeology layer, and memory edits travel in the same commits as the work they describe.
 2. **DONE except hooks** Transcribe the operating rules from this doc into `shared/truth/protocol.md`; point the root `index.md` at it first. Create the eight skills as thin triggers into it *(done as shorthand rows in `notes/guides/pre-flight/shorthand.md`)*. Delete all the existing hooks that are not described here and create the new hooks *(pending)*.
 3. **DONE** Seed `shared/truth/taste.md` with five principles you already know you hold *(seeded, then edited by Jonathan; `conventions.md` also begun)*.
-4. **DONE** Bring up **one** project: write its `index.md` and its two or three obviously-needed truths from scratch (current design only — resist importing history) *(lv is first; ov's skeleton sits idle beside it)*.
+4. **DONE** Bring up **one** project: write its `index.md` and its two or three obviously-needed truths from scratch (current design only — resist importing history) *(ov is first; lv's skeleton sits ready beside it)*.
 5. Work normally for a week with the session protocol; run the first consolidation by hand to feel the settling step.
 6. Add the other projects only after the first one's rhythm feels satisfying and solid.
 
@@ -245,7 +246,7 @@ The memory system replaces an older one: CLAUDE.md's reading-on-load list, `note
 1. **Move truths, not history.** Worth moving: anything *currently true* that a session would act on — a rule, a design fact, a term, a live question, a lesson's conclusion. Each settles into its one home in `memory/`. Not worth moving: journals, handoffs, mothballs, finished contexts, the stories behind lessons. That is history; the old files *are* the archive, and they get abandoned in place, not imported. (This is the same fossil rule the truths already live by.)
 2. **Pull, don't push.** No big-bang import. When work actually reaches for something that exists only in the old system, move it that day. Anything nothing reaches for was already dead — a sweep would just copy fossils forward with the living.
 3. **A move is a move, not a copy.** When content enters `memory/`, the old file loses it — delete the moved lines, or the whole file when nothing is left. A line living in both systems is two sources of truth, banned here as everywhere.
-4. **The ratchet: never write new content into the old system.** Every new rule, term, decision, and note lands in `memory/` from now on. The old system only shrinks. This rule alone guarantees abandonment; the others just set the pace.
+4. **Write nothing new into the old system, ever.** Every new rule, term, decision, and note goes into `memory/` from now on. The old system only shrinks. This rule alone guarantees abandonment; the others just set the pace.
 5. **`migration.md` keeps the death list.** `shared/truth/migration.md` names, one line each, what still lives only in the old system. A line leaves when its content moves in or is declared dead. The file emptying is the finish line: when it's empty, delete it, shrink CLAUDE.md's "Reading on load" to `start` alone, and the old system is gone.
 
 Rough mapping when things do move: pre-flight and collaborate rules → `protocol.md` or `conventions.md`; the mono-wide and per-project lexicons → the owning `truth/lexicon.md`; a learn entry → the rule the mistake taught, in its owning truth (the story stays behind); a handoff or current-context → the project index's *current state* paragraph plus `Q:` lines. One deliberate exception: `shorthand.md` stays where it is — it is the trigger surface, and its rows already point into `protocol.md`.
