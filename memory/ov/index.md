@@ -5,7 +5,7 @@ description: ov (Overview) — a browser and editor for every markdown file in t
 
 A browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place. Ported from ji. Built with Svelte.
 
-**Current state:** memory is a collection in the browse list; the filters are multi-pick with the option-click ladder; the editor's title tools ride the form's top line. Vitest confirmation still pending on the Mac.
+**Current state:** both views are one shape — a filters stack whose heavy line sits on the region's top edge, search first inside it; the editor's stack also holds its controls, back links, information, kinds and tags. mu is a collection; a file's project is its own idea. Vitest confirmation still pending on the Mac.
 
 ## Zone
 
