@@ -1,21 +1,13 @@
 ---
-description: ov (Overview) — a browser and editor for every markdown file in the repo.
+description: core — the library every mono app shares; state lives in the host, behavior in core.
 ---
-# ov
+# core
 
-A browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place. Ported from ji. Built with Svelte.
+A library with no entry point, carved out of ov: what every mono app can share. Four ts folders — common, events, types, utilities — each behind an index.ts barrel, and eight support components. Core keeps no state of its own; a host hands its state in as props and remembers what needs remembering.
 
-**Current state:** both views are one shape — a filters stack whose heavy line sits on the region's top edge, search first inside it; the editor's stack also holds its controls, back links, information, kinds and tags. mu is a collection; a file's project is its own idea. Vitest confirmation still pending on the Mac.
-
-## Zone
-
-- [handoff.md](zone/handoff.md) — where to pick up; moved from the old system as it was.
-- [code debt.md](zone/code debt.md) — everything owed and everything finished; moved as it was, done section and all.
+**Current state:** the ov-only code is out (tests, main.ts, the managers reads in Colors, Big_Pill and Status_Line); every cross-folder import goes through a barrel; the package is named core, declares only what its code uses, and sits in mono's workspaces — one pile at the root, the svelte nohoist gone. `zone/design.md` is a draft awaiting Jonathan's edit. Not yet in the hub, by decision.
 
 ## Truths
 
-- [scope.md](truth/scope.md) — what belongs in ov and what deliberately does not.
-- [lexicon.md](truth/lexicon.md) — ov's terms (currently points at the project's existing lexicon).
+- [structure.md](truth/structure.md) — what core is and the rules that keep it core.
 - [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
-- [controls.md](truth/controls.md) — how the list's filters and the editor's controls behave.
-- [claude-files.md](truth/claude-files.md) — how CLAUDE files are listed, placed, read, and written; the three places that must agree.
