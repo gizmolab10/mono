@@ -1,11 +1,10 @@
 ---
 kind: analyze
-title: "24 August 2026"
-description: "<!-- consolidated: 24 August 2026 -->"
+title: "lv log"
+description: "<!-- consolidated: 30 August 2026 -->"
 tags: [journal, now]
-date: 2026-08-25
+date: 2026-08-30
 ---
 # lv log
 
-## 24 August 2026
-
+<!-- consolidated: 30 August 2026 -->
