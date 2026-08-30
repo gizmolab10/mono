@@ -9,4 +9,3 @@ date: 2026-08-25
 
 ## 24 August 2026
 
-- Q: if pictures outgrow the repo, which remote hosted storage — Cloudflare, Amazon, or Backblaze?

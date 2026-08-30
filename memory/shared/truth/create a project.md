@@ -18,12 +18,13 @@ Two halves. The memory half is always done; the code half only when the project 
 memory/<name>/
   index.md      what it is, how it stands, the truths listed
   log.md        the diary, empty but for the day it was brought up
-  truth/        empty; nothing is believed on day one
+  open questions.md   what is unanswered, one line each
+  truth/        empty; nothing is incorporated on day one
   zone/         one file to gather in
 ```
 
 - **index.md** — frontmatter with only `description:`. Then the name as a heading, a line or two saying what the project is, a **Current state:** paragraph, and a `## Truths` heading reading "None yet."
-- **log.md** — the usual frontmatter (`kind: analyze`, title `<name> log`, `tags: [journal, now]`, today's date), the heading, then `<!-- consolidated: never -->`, then today's day heading with a `S:` line saying it was brought up and a `Q:` line naming what is still unknown.
+- **log.md** — the usual frontmatter (`kind: analyze`, title `<name> log`, `tags: [journal, now]`, today's date), the heading, then `<!-- consolidated: never -->`, then today's day heading with a `S:` line saying it was brought up. What is still unknown goes into `open questions.md`, not the log.
 - **truth/** — left empty. A truth on day one is a guess.
 - **zone/** — one file, named for what will gather there: `ideas.md` for a project about building something, `observations.md` for one about watching something. Frontmatter and a heading, nothing else.
 

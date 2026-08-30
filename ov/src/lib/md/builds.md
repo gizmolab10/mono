@@ -2,6 +2,7 @@
 
 | Build | Date | Note |
 | ---- | ---- | ---- |
+| 10 | Aug 28, 2026 | new AI memory system |
 | 9 | Aug 13, 2026 | fully adopt hits manager from di |
 | 8 | Aug 9, 2026 | new Sections component |
 | 7 | Aug 8, 2026 | eliminate purpose |

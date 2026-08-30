@@ -1,6 +1,8 @@
 <script lang='ts'>
+	import { w_operation, T_Operation, close_view } from '../../ts/managers/Operations';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
+	import { Direction } from '../../ts/types/Angle';
 	import { k } from '../../ts/common/Constants';
 
 	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
@@ -12,6 +14,9 @@
 
 	const size = k.size.big;
 	const hamburgerPath = svg_paths.hamburger(size);
+	// The way back to the list while a file is open, drawn as the fat triangle the steppers
+	// use, pointing left — the direction the list lies in.
+	const backPath = svg_paths.fat_polygon(k.size.fat, Direction.left);
 
 	// The hamburger is the first control to hand the whole of itself to the one manager. It says
 	// its name, what a press does, and what to show while the cursor is on it — and nothing else:
@@ -26,6 +31,14 @@
 			<path d={hamburgerPath} />
 		</svg>
 	</button>
+	{#if $w_operation === T_Operation.edit}
+		<button class='back-button' aria-label='resume browsing'
+			use:hit_target={{ id: 'controls.back', onpress: close_view, tip: 'resume browsing' }}>
+			<svg class='back-icon' viewBox='0 0 {k.size.fat} {k.size.fat}' width={k.size.fat} height={k.size.fat}>
+				<path d={backPath} />
+			</svg>
+		</button>
+	{/if}
 	<span class='spacer'></span>
 	<!-- While it is starting over it answers nothing, so it hands the manager no press and no
 	     words — the same as being disabled, said the one way a target can say it. -->
@@ -51,6 +64,29 @@
 		align-items : center;
 		display     : flex;
 		width       : 100%;
+	}
+
+	/* One gap off the hamburger, drawn the way the list draws its pointers — an outline, not a fill. */
+	.back-button {
+		margin-left : calc(var(--gap-big) * -1);
+		background  : transparent;
+		cursor      : pointer;
+		align-items : center;
+		display     : flex;
+		border      : none;
+		padding     : 0;
+	}
+
+	.back-icon path {
+		stroke       : var(--black);
+		fill         : var(--white);
+		stroke-width : 0.7px;
+	}
+
+	/* Under the cursor the triangle's own body takes the hover color — the stamp comes from the
+	   manager, like every other control's. */
+	.back-button:global([data-hit]) .back-icon path {
+		fill : var(--hover);
 	}
 
 	.hamburger-button {

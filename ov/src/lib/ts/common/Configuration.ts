@@ -52,7 +52,10 @@ class Configuration {
 		root.setProperty('--width-tiny',         `${k.width.tiny}px`);
 		root.setProperty('--size-small',         `${k.size.small}px`);
 		root.setProperty('--size',               `${k.size.normal}px`);
+		root.setProperty('--size-big',           `${k.size.big}px`);
+		root.setProperty('--size-big',           `${k.size.big}px`);
 		root.setProperty('--size-fat',           `${k.size.fat}px`);
+		root.setProperty('--font-micro',         `${k.font.micro}px`);
 		root.setProperty('--font-faint',         `${k.font.faint}px`);
 		root.setProperty('--font-tiny',          `${k.font.tiny}px`);
 		root.setProperty('--font-small',         `${k.font.small}px`);

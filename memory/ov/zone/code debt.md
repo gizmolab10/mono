@@ -11,9 +11,22 @@ write a proposal for JUST the first unchecked item (ignore all the others) to th
 
 sooner or later every project creates a knowledge base and a work manager. this one is free, or is it? can it be made to be easily deployed? plug and play?
 
-## work
+## next
 
-- [ ] editor. add a clickable to the back links section 'back links'
+- [ ] drag and drop file in browser -> any child goes to folder
+- [ ] add subfolders under truth and zone
+    - [ ] ai and design
+- [ ] switch back to using **claude code** inside vscode
+    - [ ] skills add /project (X)
+    - [ ] remove /ov, etc
+    - [ ] [[adoption journal]]
+    - [ ] [[inception into the new design]]
+- [ ] new 'sh' project — toolkit that all my projects can build from
+    - [ ] section
+    - [ ] separator
+    - [ ] hits
+    - [ ] constants
+    - [ ] configuration
 - [ ] read work/md audit (old location)
     - [ ] pac execute it
 - [ ] 1127 occurrences of 'guide' -> many should be 'file'

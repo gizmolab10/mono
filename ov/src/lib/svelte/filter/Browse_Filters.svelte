@@ -122,10 +122,13 @@
 	// of the top two folded they take separate bars, since one clickable over two halves would
 	// point at the wrong place. Which rows are folded is remembered between visits, named
 	// rather than numbered so adding a row later cannot shift the meaning of what was saved.
+	let show_search = $derived(!$w_filters_folded.includes('search'));
 	let show_projects = $derived(!$w_filters_folded.includes('projects'));
 	let show_kinds = $derived(!$w_filters_folded.includes('kinds'));
 	let show_tags = $derived(!$w_filters_folded.includes('tags'));
 
+	let search_word = $derived(show_search ? 'search'
+		: `search${$w_search_text === '' ? '' : ` ➜ ${$w_search_text}`}`);
 	let project_word = $derived($w_projects.length === 0 ? 'all' : $w_projects.join(', '));
 	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
 	let tags_word = $derived($w_tags.length === 0 ? 'all' : $w_tags.join(', '));
@@ -179,8 +182,8 @@
 	// One clickable above them all, saying what every picking row holds — in the order they appear,
 	// and leaving out any row narrowing nothing, since "all" says nothing worth the room.
 	// Pressing it folds the whole set away or brings it back.
-	let all_picked = $derived([project_word, kind_word, tags_word]
-		.filter((one) => one !== 'all').join(', '));
+	let all_picked = $derived([$w_search_text, project_word, kind_word, tags_word]
+		.filter((one) => one !== 'all' && one !== '').join(', '));
 	let all_word = $derived($w_show_filters ? '✂ filters'
 		: `✂ filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
 
@@ -189,6 +192,7 @@
 	// holds nothing on the first drawing and the made button on the next — which is itself a
 	// change, so the line it stands on is told at once.
 	let all_button      = $state<HTMLElement | null>(null);
+	let search_button = $state<HTMLElement | null>(null);
 	let projects_button = $state<HTMLElement | null>(null);
 	let kinds_button    = $state<HTMLElement | null>(null);
 	let tags_button     = $state<HTMLElement | null>(null);
@@ -201,14 +205,17 @@
 	// Stopping a row filtering, standing on that row's own line at the middle. Each is built only
 	// where it would do something, so on a row narrowing nothing there is no element at all and
 	// the line is given none.
+	let search_clear = $state<HTMLElement | null>(null);
 	let projects_clear = $state<HTMLElement | null>(null);
 	let kinds_clear    = $state<HTMLElement | null>(null);
 
 	const all_action      = $derived(Object.assign(new Action(), { element: all_button,      position: T_Position.left }));
+	const search_action   = $derived(Object.assign(new Action(), { element: search_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const projects_action = $derived(Object.assign(new Action(), { element: projects_button, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const kinds_action    = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const tags_action     = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const picking_action  = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
+	const search_clearer   = $derived(Object.assign(new Action(), { element: search_clear,   position: T_Position.center }));
 	const projects_clearer = $derived(Object.assign(new Action(), { element: projects_clear, position: T_Position.center }));
 	const kinds_clearer    = $derived(Object.assign(new Action(), { element: kinds_clear,    position: T_Position.center }));
 </script>
@@ -219,6 +226,8 @@
 <div class='out_of_sight'>
 	<button type='button' class='clickable' bind:this={all_button}
 		use:hit_target={{ id: 'list.fold.all', onpress: toggle_filters }}>{all_word}</button>
+	<button type='button' class='clickable' bind:this={search_button}
+		use:hit_target={{ id: 'list.fold.search', onpress: () => fold('search', show_search) }}>{search_word}</button>
 	<button type='button' class='clickable' bind:this={projects_button}
 		use:hit_target={{ id: 'list.fold.projects', onpress: () => fold('projects', show_projects) }}>{heading('projects', show_projects, project_word)}</button>
 	<button type='button' class='clickable' bind:this={kinds_button}
@@ -234,6 +243,13 @@
 	     control it belongs to. It is drawn only where it would do something: one of the words is
 	     picked, and there is more than one to pick from. With a single choice on offer there is
 	     nowhere to go back to, so nothing is made and the line is given none. -->
+	<!-- Drawn only with something to clear, like the row clearers: an empty field offers
+	     nothing to press for. -->
+	{#if $w_search_text !== ''}
+		<button class='clear' bind:this={search_clear}
+			use:hit_target={{ id: 'list.clear.search', onpress: () => w_search_text.set(''),
+				tip: 'empty the search field' }}>clear</button>
+	{/if}
 	{#if $w_projects.length !== 0 && shown_projects.length > 1}
 		<button class='clear' bind:this={projects_clear}
 			use:hit_target={{ id: 'list.clear.projects', onpress: () => w_projects.set([]),
@@ -342,22 +358,23 @@
 	</div>
 {/snippet}
 
-<div class='filters'>
-
-	<!-- The search field takes the whole row, so the words looked for stay in reach whether or
-	     not the picking rows show. Its type is "search", so the browser draws its own clear
-	     cross at the right end once there is text — the same as ji's file search. -->
-	<div class='top-row'>
+<!-- The search field, as the stack's first section. Plain text, not type "search": the
+     browser's own clear cross is gone, since the line above carries a clear of ours. It reaches
+     over the stack's half-gaps the way every row does, so its hover area sits on what it shows. -->
+{#snippet search_rows()}
+	<div class='search-rows'>
 		<input
-			type='search'
+			type='text'
 			class='search'
 			bind:value={$w_search_text}
 			placeholder='search titles and descriptions'
 			use:hit_target={{ id: 'list.field.search', tip: 'type a word to look for' }} />
 	</div>
+{/snippet}
 
+<div class='filters'>
 	<!-- The whole set of picking rows, as one section: its line carries the clickable that folds them
-	     all away, and it holds three subsections — the projects, the kinds, the tags. It holds no
+	     all away, and it holds four subsections — the search, the projects, the kinds, the tags. It holds no
 	     gap of its own, since each of those holds the gap at its own boundaries. -->
 	<Section
 		gap={0}
@@ -376,8 +393,9 @@
 		     stack measures from its middle like every other line. This goes when what holds us is
 		     itself a stack and draws its own line in its own gap. -->
 		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below'
-			leads={[projects_action, projects_clearer]} sections={[
-			{ subsection: projects_row, folded: !show_projects },
+			leads={[search_action, search_clearer]} sections={[
+			{ subsection: search_rows, folded: !show_search },
+			{ subsection: projects_row, rides: [projects_action, projects_clearer], folded: !show_projects },
 			{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_kinds },
 			{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_tags },
 		]} />
@@ -415,22 +433,25 @@
 
 	/* Sections stack flush against each other: each already holds its own gap above and below
 	   what it shows, so a gap here would be a second helping of the same thing. */
+	/* Pulled up by the region's own top padding, so the heavy line sits on the region's top
+	   edge and the '✂ filters' clickable pokes above the border — the same as the editor's. */
 	.filters {
+		margin-top     : calc(var(--gap) * -1);
 		flex-direction : column;
 		display        : flex;
 		gap            : 0;
 	}
 
-	/* The toggle at the far left, the search field taking whatever is left. Not a section, so it
-	   holds its own gap below — the gap the line under it would otherwise stand clear of. */
-	.top-row {
-		padding-bottom : var(--gap-big);
-		min-height     : var(--height);
-		gap            : var(--gap);
-		align-items    : center;
-		display        : flex;
+	/* The search row reaches over the half-gaps the stack leaves around it, so its hover area
+	   sits on what it shows, and holds one gap under the field — a box with an edge of its own
+	   needs room a row of plain words does not. */
+	.search-rows {
+		margin  : calc(var(--over, 0px) * -1) 0 calc(var(--under, 0px) * -1);
+		padding : calc(var(--over, 0px) + var(--gap-small)) 0 var(--under, 0px);
 	}
 
+	/* The toggle at the far left, the search field taking whatever is left. Not a section, so it
+	   holds its own gap below — the gap the line under it would otherwise stand clear of. */
 	/* The bare space beside the tag pills answers its own press. It reaches out to the box's own
 	   edges and up and down over half of each gap around it — the part of those gaps that belongs
 	   to this section — and holds all of that back as its own step-in, so the pills stand exactly

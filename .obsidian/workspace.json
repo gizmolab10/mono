@@ -13,54 +13,54 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/develop/conceptual composition.md",
+                "file": "memory/core/zone/code debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "conceptual composition"
+              "title": "code debt"
             }
           },
           {
-            "id": "e1feaeab04f78ee5",
+            "id": "547fa3b444ad9aa4",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/mu/zone/ideas.md",
+                "file": "memory/shared/truth/create a project.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ideas"
+              "title": "create a project"
             }
           },
           {
-            "id": "6ec60fa17edeb103",
+            "id": "977981c37cc36ed4",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/collaborate/voice.md",
+                "file": "memory/shared/zone/inception into the new design.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "voice"
+              "title": "inception into the new design"
             }
           },
           {
-            "id": "0f26b3619fd59405",
+            "id": "d982d392357bac1d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/conventions.md",
+                "file": "memory/shared/zone/adoption journal.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "conventions"
+              "title": "adoption journal"
             }
           }
         ]
@@ -97,7 +97,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:adop",
+                "query": "[x]",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -200,7 +200,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/develop/conceptual composition.md",
+                "file": "memory/core/zone/code debt.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -224,7 +224,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 237.5
+    "width": 237.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -240,42 +241,42 @@
   },
   "active": "6ac25d6346f16830",
   "lastOpenFiles": [
-    "notes/guides/develop/constants and subtypes.md",
-    "memory/ov/zone/code debt.md",
-    "ov/src/lib/svelte/filter/sedJQrQh5",
-    "memory/shared/truth/conventions.md",
-    "notes/guides/collaborate/voice.md",
-    "memory/mu/zone/ideas.md",
-    "memory/shared/zone/inception into the new design.md",
-    "memory/shared/truth/inception.md",
-    "memory/shared/truth/inception into the new design.md",
-    "memory/shared/zone/claude code.md",
-    "memory/shared/truth/create a project.md",
-    "memory/wo/zone/observations.md",
-    "memory/wo/zone",
-    "memory/wo/truth",
-    "memory/wo/log.md",
-    "memory/wo/index.md",
-    "memory/wo",
-    "memory/shared/truth/migration.md",
-    "memory/ov/zone/handoff.md",
-    "memory/shared/zone/ideas.md",
-    "_to_delete/git-leftovers/index.lock.11797",
-    "_to_delete/git-leftovers",
-    "_to_delete",
-    "memory/shared/zone/iron carbonate.md",
-    "memory/shared/truth/taste.md",
-    "memory/shared/truth/protocol.md",
-    "memory/shared/truth/decisions.md",
-    "mu/CLAUDE.md",
-    "mu/src/lib/svelte/main/App.svelte",
-    "mu/src/lib/ts/main.ts",
-    "mu/src/vite-env.d.ts",
-    "memory/mu/log.md",
-    "memory/mu/index.md",
-    "memory/shared/truth/can an AI actually learn?.md",
-    "memory/shared/truth/medium article.md",
-    "memory/shared/truth/can an ai actually learn?.md",
+    "memory/core/log.md",
+    "memory/core/zone/code debt.md",
+    "memory/shared/zone/code debt.md",
+    "memory/core/truth/decisions.md",
+    "memory/core/truth/controls.md",
+    "memory/shared/zone/create core.md",
+    "memory/core/open questions.md",
+    "core/src/lib/ts/utilities/index.ts",
+    "core/src/lib/ts/types/index.ts",
+    "core/src/lib/ts/events/index.ts",
+    "core/src/lib/ts/common/index.ts",
+    "core/src/lib/svelte/support/Operation.svelte",
+    "core/src/lib/svelte/support/BuildNotes.svelte",
+    "core/src/lib/svelte/support/Status_Line.svelte",
+    "core/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
+    "core/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/component.js",
+    "core/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/element.js",
+    "core/src/lib/md/builds.md",
+    "core/notes/work/soon/tag drift.md",
+    "core/notes/work/soon/stale guides.md",
+    "core/notes/work/soon/rewrite guides.md",
+    "core/notes/work/soon/repair staleness of files.md",
+    "core/notes/work/soon/ov installer.md",
+    "core/notes/work/soon/organize.md",
+    "core/notes/work/soon/murk journal.md",
+    "core/notes/work/soon/mouse ux.md",
+    "core/notes/work/soon/index.md",
+    "core/notes/work/soon/hits manager.md",
+    "core/notes/guides/project/working features.md",
+    "core/notes/guides/project/index.md",
+    "core/notes/guides/project/map of ov files.md",
+    "core/notes/guides/pre-flight/index.md",
+    "core/notes/guides/pre-flight/banned words.md",
+    "core/notes/guides/design/ov - goals.md",
+    "core/notes/guides/design/okf — is it worth it?.md",
+    "core/notes/guides/design/index.md",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",

@@ -1,10 +1,13 @@
 ---
-kind: 
-title: "Can an AI actually learn?"
-description: "The whole memory design, explained plainly and in enough detail that a newcomer and their AI could build it."
-use_when: [explaining the system to someone new, writing about the system]
+kind:
+title: Can an AI actually learn?
+description: The whole memory design, explained plainly and in enough detail that a newcomer and their AI could build it.
+use_when:
+  - explaining the system to someone new
+  - writing about the system
+  - publishing the recipe
 tags: []
-date: 
+date:
 ---
 # Can an AI actually learn?
 
@@ -58,7 +61,7 @@ memory/
 
 One page. What this project is, one paragraph saying how it stands right now, and a list of the truth files with one line each saying what each holds. When the AI starts a chat, this is the first thing it reads.
 
-### **Facts the project believes** (`truth/`)
+### **Facts the project has incorporated** (`truth/`)
 
 Each file covers exactly one subject. Each fact lives in exactly one file — never two, so there is never a second copy to fall out of date. Each file starts with a few labeled lines the AI can search: a one-line description, a few tags, and a `use_when` line saying which kinds of task should load it. Keep each file under about 100 lines and each project under about 15 of them; past that, split or merge.
 
@@ -68,7 +71,7 @@ One truth file deserves special mention: `decisions.md`. It holds only choices l
 
 Another: `conventions.md`, in `shared/`. This is where the collaboration itself improves. Every friction — a vague word the AI used, a reply shaped so you had to work to read it, a request it misunderstood — becomes a recorded rule here, and the AI reads the file at every chat's start. Corrections stop repeating because they stop being conversation and become memory.
 
-### **Ideas not yet believed** (`zone/`)
+### **The project's live thinking** (`zone/`)
 
 A scratchpad. Anything may be jotted here with no ceremony. Nothing here is treated as true until it is deliberately moved into `truth/`. An idea that sits untouched through three tidy-ups gets promoted or thrown out.
 

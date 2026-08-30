@@ -179,6 +179,7 @@ export enum T_Sort {
 	project = 'project',
 	name    = 'name',
 	tags    = 'tags',
+	size    = 'size',
 }
 
 // One entry per column being sorted by, in the order they were picked: the first decides,

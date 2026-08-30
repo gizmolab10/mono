@@ -20,7 +20,7 @@ Make `ov/notes/` obsolete: everything living moves into `memory/ov/`, history st
 
 ## Remaining
 
-- Move `notes/guides/pre-flight/lexicon.md` into [truth/lexicon.md](truth/lexicon.md).
+- Move `notes/guides/pre-flight/lexicon.md` into [truth/lexicon.md](memory/ov/truth/lexicon.md).
 - Move the living design content (`notes/guides/design/ov - goals.md`) into a truth; [scope.md](truth/scope.md) already links to it.
 - Decide a home for the file map (`notes/guides/project/map of ov files.md`) — it is living and load-bearing.
 - Fold the work notes (handoff, code debt, current context) into the index's current state and `Q:` lines; journals stay as archive.

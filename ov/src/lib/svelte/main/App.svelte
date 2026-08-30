@@ -232,7 +232,7 @@
 	/* The two side-by-side boxes, below the controls row. */
 	.boxes {
 		gap        : var(--gap);
-		overflow   : hidden;
+		overflow   : visible;    /* the editor's top clickable pokes above the regions; the frame still clips at the window */
 		display    : flex;
 		min-height : 0;
 		flex       : 1;

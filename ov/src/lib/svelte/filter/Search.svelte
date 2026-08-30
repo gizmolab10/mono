@@ -75,6 +75,16 @@
 		marked = null;
 	}
 
+	// Emptied words mean nothing to highlight, wherever the emptying came from — the clear on
+	// the line, the list's clear, or the field itself. Watching the value here means no caller
+	// has to remember to say so.
+	$effect(() => {
+		if ($w_search_text === '') {
+			unmark();
+			hits_found = 0;
+		}
+	});
+
 	/** The drawing being left behind takes its highlighted words with it. */
 	export function forget() {
 		marked = null;
@@ -196,8 +206,8 @@
 <!-- What this section shows: the field, and — with something typed — the count and the two
      triangles that walk the places those words turn up. The count reads first. -->
 {#snippet search_row()}
-	<!-- Its type is "search", so the browser draws its own clear cross at the right end
-	     once there is text. -->
+	<!-- Plain text, not type "search": the browser's own clear cross is gone, since the line
+	     above carries a clear of ours. -->
 	<div class='view-search'>
 		{#if $w_search_text !== ''}
 			<div class='view-steps hits'>
@@ -206,7 +216,7 @@
 			</div>
 		{/if}
 		<input
-			type='search'
+			type='text'
 			class='search'
 			bind:this={field}
 			oninput={find_first}

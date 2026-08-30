@@ -47,7 +47,7 @@
 		background     : var(--bg);
 		position       : relative;
 		flex-direction : column;
-		overflow       : hidden;      /* the filters stay put; only the rows scroll */
+		overflow       : visible;     /* the editor's top clickable pokes above the border; the rows scroll inside their own boxes */
 		display        : flex;
 		flex-shrink    : 0;
 		min-height     : 0;

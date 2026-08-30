@@ -61,7 +61,7 @@ export function in_order(one: string, two: string): number {
 	return one.localeCompare(two, undefined, { sensitivity: 'base' });
 }
 
-// The six collections the guides live in, each named for the folder that holds it.
+// The collections the guides live in, each named for the folder that holds it.
 // The shared guides sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
 	mono = 'mo',
@@ -69,8 +69,21 @@ export enum T_Bundle {
 	di   = 'di',
 	ji   = 'ji',
 	lv   = 'lv',
+	mu   = 'mu',
 	ov   = 'ov',
 	memory = 'memory',
+}
+
+/**
+ * The project a file answers to. Memory's project sub-folders belong to their projects —
+ * memory/mu to mu, memory/ov to ov — so a memory file's project is its first folder whenever
+ * that folder names a collection. Anything else in memory (shared, a project with no
+ * collection of its own) stays memory's.
+ */
+export function project_of(file: File): string {
+	if (file.bundle !== T_Bundle.memory) { return file.bundle; }
+	const first = file.path.split('/')[0];
+	return (Object.values(T_Bundle) as string[]).includes(first) ? first : T_Bundle.memory;
 }
 
 // The labels off a file's top. A folder carries none of them.
@@ -90,7 +103,8 @@ export type File = Labels & {
 	path      : string;      // where it sits inside that collection, folders and all
 	address   : string;      // where its text can be read from, if ever wanted
 	is_folder : boolean;
-	is_design : boolean;     // a design says how a thing was built, a guide says how to work
+	is_design : boolean;
+	size      : number;      // how many characters its text held when it was read at launch; 0 for a folder     // a design says how a thing was built, a guide says how to work
 };
 
 // A guide paired with the tags on it — what a listing hands back. A folder appears

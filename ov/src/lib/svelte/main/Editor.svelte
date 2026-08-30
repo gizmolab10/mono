@@ -211,9 +211,10 @@
 	}
 </script>
 
-<div class='viewer'>
-	<!-- Everything above the heavy line is one block: its empty parts are the way back to the
-	     list, and the whole of it lights while the cursor is on any of them. -->
+<!-- The editor's controls — the steppers, the count, the folders, the name, and the four
+     buttons — as one block the form places at the top of its own stack. Everything it needs
+     lives here; the form only finds it a place and a clickable to fold it away. -->
+{#snippet controls_rows()}
 	<div class='view-top' role='button' tabindex='-1' onkeyup={() => {}}
 		class:lit={way_out_lit}
 		use:hit_target={{ id: `${WAY_OUT}.top`, type: T_Hit_Target.section,
@@ -286,7 +287,10 @@
 			{/if}
 		</div>
 	</div>
-	<Editor_Filters {name} {guide} {tags} {page} {onclose} onshow={say}
+{/snippet}
+
+<div class='viewer'>
+	<Editor_Filters {name} {guide} {tags} {page} {onclose} onshow={say} controls={controls_rows}
 		bind:find bind:text={text_of_file} bind:folded={filters_folded} />
 	<Markdown_Editor {name} {address} {guide} onshow={say}
 		bind:text={text_of_file} bind:page
@@ -316,9 +320,12 @@
 	   to the list, and the whole of it lights while the cursor is on any of them. */
 	/* It reaches out to the three edges of the box it sits in — the space the box holds
 	   around its contents is part of this area, so the lit color has to cover it too. */
+	/* It reaches over the half-gaps the stack leaves around it, the same as every other row in
+	   the form — the old negative top margin was for its old home at the region's very top,
+	   and inside the stack it pulled the hover area up into the line above. */
 	.view-top {
-		margin         : calc(var(--gap) * -1) calc(var(--gap) * -1) 0;
-		padding        : var(--gap-small) var(--gap) 0;
+		margin         : calc(var(--over, 0px) * -1) calc(var(--gap) * -1) calc(var(--under, 0px) * -1);
+		padding        : var(--over, var(--gap-small)) var(--gap) var(--under, 0px);
 		flex           : 0 0 auto;
 		cursor         : pointer;
 		flex-direction : column;

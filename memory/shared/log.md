@@ -9,6 +9,18 @@ date: 22 August 2026
 
 <!-- consolidated: 22 August 2026 -->
 
+## 30 August 2026
+- D: convention — never write to a file, or state what one holds, without having read it this turn; earned three times over today (the many-others collision, the memory/core claim, the claim that this rule already existed)
+
+## 29 August 2026
+- D: zone/truth and zone.md written — the three divide-further ideas reviewed in one place; verdict: no new folders, the ai/app divide already exists as shared vs project
+- D: zone redefined — a project's live thinking: active plans, research, considerations, bright ideas, visual references; not a waiting room for belief; old-sense uses swept
+- D: "believed" is out — a truth is "incorporated"; convention added, prose swept
+- D: open questions live in each project's open questions.md, not the log — questions are not history; protocol, the create-a-project howto, and every project updated, Q lines moved
+- D: convention — no unasked asides in replies; what is noticed but not said waits for obs
+- D: obs (observations) is a skill — the one place suggestions, reminders and things seen in passing appear; read-only; shorthand row added
+- D: protocol — the writer asks the clock in the same write that stamps a log heading; a date typed from memory is not a date
+
 ## 28 August 2026
 - S: wo brought up — a project to hold Jonathan's observations while the W experiment runs
 - D: how to create a project is written down: truth/create a project.md, both halves, including the two registrations easy to forget
@@ -16,7 +28,6 @@ date: 22 August 2026
 ## 27 August 2026
 - D: migration.md renamed inception.md — the file, the index line, and protocol's section and pointer
 - S: this session ends in Cowork; work continues in Claude Code on the Mac, where the hooks actually run
-- Q: fold conventions.md into always.md, or move always.md into memory/ and re-point inject-always.sh? (the hooks read the old system; both files are on the death list)
 - S: mu brought up — memory/mu and mono/mu (one App.svelte, port 5186); its ideas file holds the goal, the challenges and what is settled
 - S: article's what-is-different and goal sections merged into one — each claim now appears once, goal and mechanism paired
 - D: protocol caught up with practice — pac is a write skill (it writes decisions.md); go and syns are named skills now; syns row added to shorthand; article's last 'diaries' swept to 'logs'
@@ -43,7 +54,7 @@ date: 22 August 2026
 - S: chat reviewed for pacs — the archive bulk-move pac (open) filed in shared decisions; the case-normalization pac (decided) filed in ov's new decisions.md
 - D: pac responses are written into decisions.md (most relevant project); shared/truth/decisions.md created, catalogued, first two entries in
 - D: retraction — the three toolkit lines were Jonathan's rewrite of the zone entry, not rulings to promote; his words now stand there verbatim
-- Q: where do pac's deliberations belong for good? — answered: decisions.md
+- D: pac's deliberations belong for good in decisions.md
 - I: first exposure of the toolkit found a seam between pac and propose — tuning ideas in zone/ideas.md
 
 ## 24 August 2026

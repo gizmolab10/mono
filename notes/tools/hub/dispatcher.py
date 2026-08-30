@@ -336,7 +336,7 @@ def is_listed_note(where):
     # same line the listing draws: at the repo's own top, or at the top of a collection.
     parts = inside.split('/')
     if parts[-1].lower() == 'claude.md':
-        return len(parts) == 1 or (len(parts) == 2 and parts[0] in ('di', 'ws', 'ji', 'lv', 'ov'))
+        return len(parts) == 1 or (len(parts) == 2 and parts[0] in ('di', 'ws', 'ji', 'lv', 'mu', 'ov'))
     if inside.startswith('memory/'):
         return True
     if any(part in where for part in ('notes/guides/', 'notes/designs/')):
@@ -511,7 +511,7 @@ class APIHandler(BaseHTTPRequestHandler):
             try:
                 root = os.path.realpath(GITHUB_DIR)
                 found = []
-                for collection in ('', 'di', 'ws', 'ji', 'lv', 'ov'):
+                for collection in ('', 'di', 'ws', 'ji', 'lv', 'mu', 'ov'):
                     for purpose in ('guides', 'designs'):
                         inside = os.path.join(collection, 'notes', purpose) if collection else os.path.join('notes', purpose)
                         start = os.path.join(root, inside)

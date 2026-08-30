@@ -17,7 +17,8 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
 	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
-	import type { Filtered_File } from '../../ts/types/File';
+	import { project_of, type Filtered_File } from '../../ts/types/File';
+	import { in_thousands } from '../../ts/utilities/Numbers';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { show_status } from '../../ts/managers/Status';
@@ -189,6 +190,7 @@
 
 	// How many matching files sit under each folder — worked out alongside the rows.
 	const folder_count = $derived.by(() => { $w_showing; return files.hierarchy.folder_counts; });
+	const folder_size  = $derived.by(() => { $w_showing; return files.hierarchy.folder_sizes; });
 
 	// --- remembering where the list was scrolled ------------------------------
 
@@ -291,6 +293,7 @@
 		// Both are left open, so whatever the fixed columns leave is split evenly between them.
 		{ label: 'name', width: 'auto', sort: T_Sort.name },
 		{ label: 'tags', width: 'auto', sort: T_Sort.tags },
+		{ label: 'size', width: '30px', sort: T_Sort.size },
 	]);
 
 	// The count row above draws its folders button in a lane this wide, so the button's right
@@ -413,7 +416,7 @@
 		<td class='kind'><span>{row.file.is_folder ? (folder_count.get(row.key) ?? 0) : ($w_kind !== '' ? '' : (row.file.kind || '---'))}</span></td>
 	{/if}
 	{#if shows_project}
-		<td class='project'><span>{row.file.bundle}</span></td>
+		<td class='project'><span>{project_of(row.file)}</span></td>
 	{/if}
 	<!-- With the folders hidden the rows are a flat run, so nothing is stepped in and no room
 	     is held back for a triangle that cannot appear. -->
@@ -441,6 +444,8 @@
 		</span>
 	</td>
 	<td class='tags-cell'><span class='tag-names'>{ordered_tags(row.tag_names, $w_tags).join(', ')}</span></td>
+	<!-- How big the file's text is, in characters; a folder sums its matching files. -->
+	<td class='size'><span>{in_thousands(row.file.is_folder ? (folder_size.get(row.key) ?? 0) : row.file.size)}</span></td>
 {/snippet}
 
 <div class='list'>
@@ -614,9 +619,9 @@
 	/* The bar beside the rows. Every scrolling box has to name itself like this — the
 	   app-wide form of the rule matches nothing at all. */
 	.table-scroll::-webkit-scrollbar {
-		background : transparent;
-		height     : var(--width-bar);
 		width      : var(--width-bar);
+		height     : var(--width-bar);
+		background : transparent;
 	}
 
 	/* The marker showing where the browser alone would have put the thumb: half the lane's
@@ -625,9 +630,9 @@
 		width          : calc(var(--width-bar) / 2);
 		right          : calc(var(--width-bar) / 4);
 		background     : var(--accent-dark);
+		position       : absolute;
 		border-radius  : 999px;
 		pointer-events : none;
-		position       : absolute;
 		z-index        : 1;
 	}
 
@@ -719,9 +724,9 @@
 	/* The tags title hugs the right, matching the tags in the cells below — pulled out by the
 	   gap the button carries inside it, so the words end where the tags end. */
 	.head th:last-child {
+		text-align   : right;
 		margin-right : 0;
 		padding-right: 0;
-		text-align   : right;
 	}
 
 	.head th:last-child .head-label {
@@ -789,8 +794,8 @@
 	/* The line starts well in from the left edge. Under the first cell it is painted rather than
 	   drawn as an edge, so it can begin part-way across without the words moving. */
 	.files-table .file td:first-child {
-		background-size     : calc(100% - var(--gap)) var(--thick-faint);
 		background-image    : linear-gradient(var(--accent), var(--accent));
+		background-size     : calc(100% - var(--gap)) var(--thick-faint);
 		background-position : right bottom;
 		border-bottom-color : transparent;
 		background-repeat   : no-repeat;
@@ -830,8 +835,8 @@
 	/* Which collection the file belongs to — shown only while the folders are hidden and
 	   no project is picked. */
 	.project {
-		padding-right : var(--gap-fat);
 		font-size     : var(--font-tiny);
+		padding-right : var(--gap-fat);
 		text-align    : right;
 		width         : 99px;
 	}
@@ -904,12 +909,19 @@
 		text-align : right;
 	}
 
+	/* The size column hugs its right edge, the way numbers read. */
+	td.size {
+		font-size     : var(--font-micro);
+		padding-right : var(--gap-small);
+		text-align    : right;
+	}
+
 	.tag-names {
 		opacity       : var(--opacity-label);
 		font-size     : var(--font-tiny);
+		text-overflow : ellipsis;
 		white-space   : nowrap;
 		overflow      : hidden;
-		text-overflow : ellipsis;
 		display       : block;
 	}
 

@@ -9,7 +9,9 @@ date: 29 August 2026
 
 <!-- consolidated: 29 August 2026 -->
 
-- Q: fold ov/notes/guides/pre-flight/lexicon.md into truth/lexicon.md, or leave it where ov's CLAUDE.md already points? (carried from 22 August)
+## 29 August 2026
+- D: ov has one lexicon — the old pre-flight file's terms merged into truth/lexicon.md ('title on a sep' superseded by clickable, filters entry updated to multi-pick), old file removed, CLAUDE.md re-pointed, death-list line checked off, open question struck
+
 
 ---
 

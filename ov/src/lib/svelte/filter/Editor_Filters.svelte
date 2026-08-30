@@ -20,6 +20,7 @@
 	import { debug } from '../../ts/common/Debug';
 	import { hits } from '../../ts/events/Hits';
 	import Stack from '../support/Stack.svelte';
+	import type { Snippet } from 'svelte';
 	import Back_Links from '../content/Back_Links.svelte';
 	import Search from './Search.svelte';
 
@@ -29,9 +30,10 @@
 	// where it matters: the kind and the tags are picked from the only lists the app accepts.
 
 	let {
-		name, guide, tags, text = $bindable(''), page = null,
+		name, guide, tags, text = $bindable(''), page = null, controls,
 		find = $bindable(null), folded = $bindable(false), onclose, onshow,
 	}: {
+		controls    : Snippet;               	// the editor's top block — steppers, name, buttons — placed at the top of this stack
 		guide       : File;                 	// the record of the file being read
 		name        : string;                	// what the file is called
 		page        : HTMLElement | null;    	// the drawn words, handed through to the search row
@@ -72,6 +74,15 @@
 	// Whether the search row inside the form is shown. Read here as well as inside the row, since
 	// the stack has to leave the folded space for it — one remembered value, two readers.
 	const w_show_search = preferences.persistent<boolean>(T_Preference.show_search, true);
+
+	// Whether the editor's controls — the steppers, the name, the four buttons — are shown.
+	const w_show_controls = preferences.persistent<boolean>(T_Preference.show_controls, true);
+
+	/** Put the controls away, or bring them back. */
+	function toggle_controls() {
+		w_show_controls.set(!$w_show_controls);
+		debug.log(`Editing "${name}": the controls are now ${!$w_show_controls ? 'folded away' : 'shown'}.`);
+	}
 
 	// Whether the back links row is shown, and how many point here. The count is read here as
 	// well as inside the row, since the folded clickable is ours and has to say it.
@@ -147,7 +158,9 @@
 	// holds nothing on the first drawing and the made button on the next — which is itself a
 	// change, so the line it stands on is told at once.
 	let filters_button = $state<HTMLElement | null>(null);
+	let controls_button = $state<HTMLElement | null>(null);
 	let search_button  = $state<HTMLElement | null>(null);
+	let search_clear   = $state<HTMLElement | null>(null);
 	let backlinks_button = $state<HTMLElement | null>(null);
 	let info_button    = $state<HTMLElement | null>(null);
 	let kinds_button   = $state<HTMLElement | null>(null);
@@ -164,7 +177,9 @@
 	let title_tools = $state<HTMLElement | null>(null);
 	const title_tools_action = $derived(Object.assign(new Action(),
 		{ element: $w_show_filters ? title_tools : null, position: T_Position.center, transparent: true }));
+	const controls_action = $derived(Object.assign(new Action(), { element: controls_button, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const backlinks_action = $derived(Object.assign(new Action(), { element: backlinks_count > 0 ? backlinks_button : null, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
+	const search_clearer = $derived(Object.assign(new Action(), { element: search_clear, position: T_Position.center }));
 	const search_action  = $derived(Object.assign(new Action(), { element: search_button,  position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const info_action    = $derived(Object.assign(new Action(), { element: info_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const kinds_action   = $derived(Object.assign(new Action(), { element: kinds_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
@@ -362,6 +377,15 @@
 		use:hit_target={{ id: 'editor.fold.filters', onpress: toggle_filters }}>{filter_rows_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={search_button}
 		use:hit_target={{ id: 'editor.fold.search', onpress: toggle_search, tip: 'search this file' }}>{search_word}</button>
+	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={controls_button}
+		use:hit_target={{ id: 'editor.fold.controls', onpress: toggle_controls, tip: 'the steppers, the name, and the buttons' }}>controls</button>
+	<!-- Drawn only with something to clear: an empty field offers nothing to press for.
+	     Clearing also puts the highlighted words back. -->
+	{#if $w_search_text !== ''}
+		<button class='clear' bind:this={search_clear}
+			use:hit_target={{ id: 'editor.clear.search', onpress: () => { w_search_text.set(''); find?.light_hit(0); },
+				tip: 'empty the search field' }}>clear</button>
+	{/if}
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={backlinks_button}
 		use:hit_target={{ id: 'editor.fold.backlinks', onpress: toggle_backlinks, tip: 'which guides point at this one' }}>{backlinks_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={info_button}
@@ -439,6 +463,12 @@
 			onpress: onclose, tip: 'resume browse' }}>
 		<Search bare bind:this={find} {name} {page} {onclose} hovered={way_out_lit} />
 	</div>
+{/snippet}
+
+<!-- The editor's controls, handed in whole. The block answers for itself — its own way-out
+     press, its own lighting — so no wrapper stands around it. -->
+{#snippet controls_rows()}
+	{@render controls()}
 {/snippet}
 
 <!-- Which guides point at this one. It stands bare here: its line, its gap and its clickable
@@ -521,14 +551,15 @@
 				one kind, and its tags. The heavy line carrying the clickable that folds the whole form away
 				is drawn by the section holding us, so we say how thick it is and the stack measures from
 				its middle like every other separator. -->
-			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[search_action]} sections={[
-				{ subsection: search_rows, folded: !$w_show_search },
-				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
-				{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
-				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },
+			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[controls_action]} sections={[
+				{ subsection: controls_rows, folded: !$w_show_controls },
+				{ subsection: search_rows, rides: [search_action, search_clearer], folded: !$w_show_search },
 				// With nothing pointing here there is no row at all — not a folded one, since a fold
 				// reads as something put away that a press could bring back, and there is nothing.
 				...(backlinks_count > 0 ? [{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks }] : []),
+				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
+				{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
+				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },
 			]} />
 			<!-- What closes the form off from the file's contents below. Always drawn, whatever is
 			     folded — the stack is told so, and leaves its last fold this line to end against
@@ -587,8 +618,10 @@
 	   list and lights with the two rows above it. It reaches out to the box's left and right
 	   edges, the way those rows do, so the lit color covers the gap the box holds around its
 	   contents rather than stopping short. */
+	/* Pulled up by the region's own top padding, so the form's heavy line sits exactly on the
+	   region's top edge and the clickable riding it pokes above the border. */
 	.filter-block {
-		margin         : 0 calc(var(--gap) * -1);
+		margin         : calc(var(--gap) * -1) calc(var(--gap) * -1) 0;
 		padding        : 0 var(--gap);
 		flex-direction : column;
 		display        : flex;
@@ -759,6 +792,26 @@
 	.title-tools {
 		display : flex;
 		gap     : var(--gap-small);
+	}
+
+	/* The clear on the search line, matching the list's. */
+	.clear {
+		border        : var(--thick-small) solid var(--black);
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-faint);
+		background    : var(--white);
+		padding       : 0 var(--gap);
+		color         : var(--text);
+		box-sizing    : border-box;
+		align-self    : center;
+		cursor        : pointer;
+		white-space   : nowrap;
+		flex-shrink   : 0;
+	}
+
+	.clear:global([data-hit]) {
+		border-color : var(--darkgray);
+		background   : var(--hover);
 	}
 
 	.title-button {

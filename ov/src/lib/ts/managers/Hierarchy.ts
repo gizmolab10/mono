@@ -3,7 +3,7 @@ import type { File, Labels, Filtered_File } from '../types/File';
 import type { Sort } from './Filters';
 import { kind_matches, tags_match, words_match, project_matches } from './Filters';
 import { Indexes } from '../database/Indexes';
-import { T_Bundle, in_order, key_of } from '../types/File';
+import { project_of, T_Bundle, in_order, key_of } from '../types/File';
 import { likeliest, link_agrees, parts_of_link, resolved_from } from '../utilities/Following_Links';
 import { file_path_of, reaches_under_work } from '../utilities/Saving';
 
@@ -39,6 +39,7 @@ export class Hierarchy {
 	// How many matching files sit under each folder, by where that folder sits. Counted
 	// over everything, so a shut folder still shows its full tally.
 	folder_counts: Map<string, number> = new Map();
+	folder_sizes: Map<string, number> = new Map();
 
 	// Every guide, filters or no filters, by where it sits. A guide reached by following
 	// a link may be one the filters hide, and the reading view has to show it all the same.
@@ -79,15 +80,15 @@ export class Hierarchy {
 	/** A folder: a do-nothing node whose contents are linked under it. */
 	add_folder(bundle: T_Bundle, path: string, name: string): File {
 		return this.register({
-			id: this.fresh_id(), name, bundle, path, address: '', is_folder: true, is_design: false,
+			id: this.fresh_id(), name, bundle, path, address: '', is_folder: true, is_design: false, size: 0,
 			kind: '', title: name, description: '', use_when: [], date: '', labeled: false,
 		});
 	}
 
 	/** A file, carrying whatever labels were read off its top. */
-	add_file(bundle: T_Bundle, path: string, name: string, address: string, labels: Labels, is_design = false): File {
+	add_file(bundle: T_Bundle, path: string, name: string, address: string, labels: Labels, is_design = false, size = 0): File {
 		return this.register({
-			id: this.fresh_id(), name, bundle, path, address, is_folder: false, is_design, ...labels,
+			id: this.fresh_id(), name, bundle, path, address, is_folder: false, is_design, size, ...labels,
 		});
 	}
 
@@ -404,7 +405,7 @@ export class Hierarchy {
 	 */
 	private matches(row: Filtered_File, projects: string[], kind: string, tags: string[], words: string, picking: string): boolean {
 		if (row.file.is_folder) { return false; }
-		if (!project_matches(projects, row.file.bundle)) { return false; }
+		if (!project_matches(projects, project_of(row.file))) { return false; }
 		if (!kind_matches(kind, row.file.kind, row.file.labeled)) { return false; }
 		if (!tags_match(picking, tags, row.tag_names)) { return false; }
 		if (!words_match(words, row.file.name, row.file.title, row.file.description)) { return false; }
@@ -427,8 +428,10 @@ export class Hierarchy {
 		// dashes would — ahead of every word — rather than being treated as a blank and pushed
 		// to the bottom. It is a real state, not a missing one.
 		if (by === 'kind')    { return row.file.kind || '!'; }
-		if (by === 'project') { return row.file.bundle; }
+		if (by === 'project') { return project_of(row.file); }
 		if (by === 'name')    { return row.file.name; }
+		// Numbers compared as words put 9 after 80; padded to a fixed width they order right.
+		if (by === 'size')    { return String(row.file.size).padStart(12, '0'); }
 		return row.tag_names.join(', ');
 	}
 
@@ -461,8 +464,12 @@ export class Hierarchy {
 		// a shut folder still shows its full tally. Only files count; the folders between
 		// are the structure holding them.
 		this.folder_counts = new Map<string, number>();
+		this.folder_sizes = new Map<string, number>();
 		for (const r of matched) {
-			for (const a of r.ancestor_keys) { this.folder_counts.set(a, (this.folder_counts.get(a) ?? 0) + 1); }
+			for (const a of r.ancestor_keys) {
+				this.folder_counts.set(a, (this.folder_counts.get(a) ?? 0) + 1);
+				this.folder_sizes.set(a, (this.folder_sizes.get(a) ?? 0) + r.file.size);
+			}
 		}
 
 		// Sorting only makes sense on a flat run of files, so it applies only while the

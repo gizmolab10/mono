@@ -705,7 +705,7 @@ class Files {
 		const guide = this.hierarchy.add_file(bundle, path, name, address, {
 			...labels,
 			title: labels.title || name,
-		}, is_design);
+		}, is_design, text.length);
 		this.hierarchy.add_relationship(parent.id, guide.id);
 		for (const tag of tags) {
 			this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, guide.id);
