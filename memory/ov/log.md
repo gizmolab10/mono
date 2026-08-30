@@ -1,17 +1,13 @@
 ---
 kind: analyze
 title: "ov log"
-description: "<!-- consolidated: 29 August 2026 -->"
+description: "<!-- consolidated: 30 August 2026 -->"
 tags: [journal, now]
-date: 29 August 2026
+date: 2026-08-30
 ---
 # ov log
 
-<!-- consolidated: 29 August 2026 -->
-
-## 29 August 2026
-- D: ov has one lexicon — the old pre-flight file's terms merged into truth/lexicon.md ('title on a sep' superseded by clickable, filters entry updated to multi-pick), old file removed, CLAUDE.md re-pointed, death-list line checked off, open question struck
-
+<!-- consolidated: 30 August 2026 -->
 
 ---
 

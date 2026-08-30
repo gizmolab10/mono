@@ -15,7 +15,7 @@ A browser and editor for every markdown file in this repo: a list on the left, o
 ## Truths
 
 - [scope.md](truth/scope.md) — what belongs in ov and what deliberately does not.
-- [lexicon.md](truth/lexicon.md) — ov's terms (currently points at the project's existing lexicon).
+- [lexicon.md](truth/lexicon.md) — ov's terms, the one home; the old pre-flight lexicon is merged in and gone.
 - [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
 - [controls.md](truth/controls.md) — how the list's filters and the editor's controls behave.
 - [claude-files.md](truth/claude-files.md) — how CLAUDE files are listed, placed, read, and written; the three places that must agree.
