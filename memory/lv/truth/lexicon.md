@@ -2,7 +2,7 @@
 type: reference
 title: lv lexicon
 description: lv's terms, defined once. Loaded at every lv session start.
-tags: [lexicon, terminology]
+tags: [lexicon, terminology, incorporated]
 use_when: [every lv session]
 updated: 24 August 2026
 ---
