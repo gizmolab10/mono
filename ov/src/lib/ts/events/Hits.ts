@@ -2,7 +2,7 @@ import { T_Drag, T_Hit_Target } from '../types/Hit_Targets';
 import Mouse_Timer, { T_Timer } from './Mouse_Timer';
 import type { Dictionary } from '../types/Types';
 import { Point, Rect } from '../types/Coordinates';
-import { k } from '../common/Constants';
+import { k } from '../common/Core';
 import { writable, get } from 'svelte/store';
 import S_Hit_Target from './S_Hit_Target';
 import { debug } from '../common/Debug';

@@ -5,7 +5,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import Separator from '../support/Separator.svelte';
 	import { hits } from '../../ts/events/Hits';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 	import type { Writable } from 'svelte/store';
 	import { T_Details } from '../../ts/types/Details';
 	import D_Preferences from '../content/D_Preferences.svelte';

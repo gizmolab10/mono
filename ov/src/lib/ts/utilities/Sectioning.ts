@@ -7,7 +7,7 @@
  * doing their own arithmetic and drifting apart.
  */
 
-import { k } from '../common/Constants';
+import { k } from '../common/Core';
 
 /** What a section is bounded by, above and below. */
 export enum T_Edge {

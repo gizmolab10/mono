@@ -3,7 +3,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { Direction } from '../../ts/types/Angle';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
 	// left shows or hides details; at its right the dispatcher starts over, and the build number

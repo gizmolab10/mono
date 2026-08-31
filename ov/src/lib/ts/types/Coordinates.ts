@@ -1,4 +1,4 @@
-import '../common/Extensions';
+import '../common/Core';
 
 const p = 2;
 

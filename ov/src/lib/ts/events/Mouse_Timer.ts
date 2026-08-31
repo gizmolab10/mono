@@ -1,4 +1,4 @@
-import { k } from '../common/Constants';
+import { k } from '../common/Core';
 import { debug } from '../common/Debug';
 
 // The clocks a press runs against. ⟵di

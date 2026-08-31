@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/inception into the new design.md",
+                "file": "memory/shared/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "inception into the new design"
+              "title": "ideas"
             }
           },
           {
@@ -63,7 +63,8 @@
               "title": "adoption journal"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -97,7 +98,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "[x]",
+                "query": "file:shorthand",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -200,7 +201,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/core/zone/design.md",
+                "file": "memory/shared/zone/ideas.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -224,8 +225,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 237.5,
-    "collapsed": true
+    "width": 237.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -239,44 +239,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6ac25d6346f16830",
+  "active": "977981c37cc36ed4",
   "lastOpenFiles": [
-    "ws/vite.config.js.timestamp-1788132361482-3cf42c4e762f9.mjs",
+    "memory/ov/zone/ideas.md",
+    "memory/shared/zone/ideas.md",
+    "memory/shared/zone/code debt.md",
+    "memory/core/zone/ideas.md",
+    "memory/shared/zone/inception into the new design.md",
+    "memory/core/zone/design.md",
+    "_to_delete/ji-old-code-debt.md",
+    "memory/ji/zone/ideas.md",
+    "memory/ji/questions.md",
+    "memory/ji/log.md",
+    "memory/ji/index.md",
+    "memory/ji/zone",
+    "memory/ji/truth",
+    "memory/ji",
+    "memory/ov/zone/code debt.md",
+    "_to_delete/lv-old-code-debt.md",
+    "_to_delete",
+    "memory/lv/questions.md",
+    "memory/wo/questions.md",
+    "memory/me/questions.md",
+    "memory/mu/questions.md",
+    "memory/core/questions.md",
+    "memory/ov/questions.md",
+    "memory/shared/questions.md",
+    "memory/shared/truth/cases.md",
+    "memory/core/zone/code debt.md",
+    "memory/core/log.md",
+    "memory/ov/sed7qduKQ",
+    "ov/src/lib/svelte/filter/sedK6x8kZ",
+    "ov/src/lib/svelte/support/sedSHZMAZ",
+    "ov/src/lib/svelte/content/sed5ZYCF4",
+    "ov/src/lib/svelte/content/sedyFoGgP",
+    "ov/src/lib/ts/common/Core.ts",
+    "notes/guides/pre-flight/shorthand.md",
     "memory/core/truth/structure.md",
-    "mu/node_modules/svelte-check/node_modules",
-    "mu/node_modules/svelte/node_modules",
-    "mu/node_modules/@sveltejs/acorn-typescript/node_modules",
-    "core/node_modules/svelte-check/node_modules",
-    "core/node_modules/svelte/node_modules",
-    "core/node_modules/@sveltejs/acorn-typescript/node_modules",
-    "core/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
-    "mu/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/element.js",
-    "mu/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
-    "mu/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/utils.js",
     "mu/node_modules/@jridgewell/resolve-uri/README.md",
-    "mu/node_modules/@jridgewell/sourcemap-codec/README.md",
-    "mu/node_modules/@types/estree/README.md",
-    "mu/node_modules/@jridgewell/trace-mapping/README.md",
-    "mu/node_modules/@jridgewell/remapping/README.md",
-    "mu/node_modules/@tsconfig/svelte/README.md",
-    "mu/node_modules/@sveltejs/acorn-typescript/README.md",
-    "mu/node_modules/@sveltejs/acorn-typescript/LICENSE.md",
-    "mu/node_modules/@jridgewell/gen-mapping/README.md",
-    "mu/node_modules/svelte/LICENSE.md",
-    "mu/node_modules/svelte/README.md",
-    "mu/node_modules/zimmerframe/README.md",
-    "mu/node_modules/svelte-check/README.md",
-    "mu/node_modules/locate-character/README.md",
-    "mu/node_modules/esrap/README.md",
-    "mu/node_modules/readdirp/README.md",
-    "mu/node_modules/magic-string/README.md",
-    "mu/node_modules/is-reference/README.md",
-    "mu/node_modules/clsx/readme.md",
-    "mu/node_modules/esm-env/CHANGELOG.md",
-    "mu/node_modules/esm-env/README.md",
-    "mu/node_modules/axobject-query/README.md",
-    "mu/node_modules/chokidar/README.md",
-    "mu/node_modules/devalue/README.md",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",

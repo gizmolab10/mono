@@ -1,5 +1,5 @@
 import { T_Bundle } from '../types/File';
-import { k } from '../common/Constants';
+import { k } from '../common/Core';
 
 // Writing a changed guide back to the file it came from.
 //

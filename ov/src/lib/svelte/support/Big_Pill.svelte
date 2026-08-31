@@ -4,7 +4,7 @@
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 	// One area of tags, standing as a single pill. Shut, it shows the tagset name — or the names
 	// of whatever inside it is picked, so a filter is never hidden without a sign that it is on.

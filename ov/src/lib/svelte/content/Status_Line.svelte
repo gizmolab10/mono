@@ -3,7 +3,7 @@
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 	// One line of words along the bottom of the window: what just happened, or what went
 	// wrong. It stays until the cross at its top right corner takes it away.

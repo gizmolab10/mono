@@ -19,7 +19,7 @@
 	import { files } from '../../ts/managers/Files';
 	import { Direction } from '../../ts/types/Angle';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 	import MarkdownIt from 'markdown-it';
 
 	// One guide's own words: read from disk, drawn as a page, folded by heading, and changed a

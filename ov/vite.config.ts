@@ -6,8 +6,8 @@ import path from 'path';
 export default defineConfig({
   plugins: [svelte()],
   resolve: {
-    // "core" is a nickname for the shared library one folder over; tsconfig teaches
-    // the checker the same nickname, and the two must always agree.
+    // "core" is an alias for the shared library one folder over; tsconfig teaches
+    // the checker the same alias, and the two must always agree.
     alias: { core: path.resolve(__dirname, '../core/src/lib') },
   },
   server: {

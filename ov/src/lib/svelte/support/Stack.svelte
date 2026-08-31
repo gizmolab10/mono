@@ -3,7 +3,7 @@
 	import { T_Position } from '../../ts/types/Action';
 	import type Action from '../../ts/types/Action';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 	import { hits } from '../../ts/events/Hits';
 	import Separator from './Separator.svelte';
 

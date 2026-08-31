@@ -1,4 +1,4 @@
-import '../common/Extensions';
+import '../common/Core';
 
 export default class Angle {
 	angle: number;								// angles begin at 3 o'clock & rotate up (counter-clockwise)

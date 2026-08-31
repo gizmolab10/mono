@@ -4,7 +4,7 @@
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 	// Words too many for the one line along the bottom are read here instead, in the whole
 	// content box, with room to scroll. The cross at the top left takes them away.

@@ -13,7 +13,7 @@
 	import Steppers from '../support/Steppers.svelte';
 	import { files } from '../../ts/managers/Files';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 	import Search from '../filter/Search.svelte';
 	import { hits } from '../../ts/events/Hits';
 	import { get } from 'svelte/store';

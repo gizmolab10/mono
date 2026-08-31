@@ -27,7 +27,7 @@
 	import { Direction } from '../../ts/types/Angle';
 	import { files } from '../../ts/managers/Files';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 	import { hits } from '../../ts/events/Hits';
 	import { get } from 'svelte/store';
 
@@ -464,7 +464,7 @@
 					<tr class='head'>
 						{#each columns as col}
 							{@const place = can_sort ? place_of.get(col.sort) : undefined}
-							<th class:name-head={col.label === 'name'} class:flat={!$w_show_folders} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'}>
+							<th class:name-head={col.label === 'name'} class:flat={!$w_show_folders} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'} class:tags-head={col.label === 'tags'}>
 								<!-- A mark in the name column's own lane while the folders show, its
 								     right edge 20px clear of the word. -->
 								{#if col.label === 'name' && $w_show_folders}
@@ -560,15 +560,9 @@
 		flex-shrink   : 0;
 	}
 
-	/* With a scrollbar showing, the titles hold back its width plus the gap, so they stay
-	   lined up with the columns below. With none, they use the whole width. */
-	.table-head.has-bar {
-		padding-right : calc(var(--width-bar) + var(--gap));
-	}
-
-	/* With no scrollbar, both the titles and the rows keep the same fat gap at the right,
-	   so nothing runs against the edge of the box. */
-	.table-head:not(.has-bar),
+	/* With no scrollbar, the rows keep a fat gap at the right, so nothing runs against
+	   the edge of the box. The titles match it through their table's own right offset —
+	   the table is absolutely positioned, so a padding here would not reach it. */
 	.table-scroll:not(.has-bar) {
 		padding-right : var(--gap);
 	}
@@ -592,14 +586,22 @@
 	   own height makes it a world of its own, and nothing inside can reach past the line unless
 	   the header as a whole stands in front of it. */
 	.table-head table {
-		/* Half its own height puts the words' box on the line; the two pixels over that put the
-		   words themselves there, since a letter sits low in the line it is written on. */
-		transform : translateY(calc(-50% - 2px));
+		/* Half its own height centers the titles on the separator's own center. */
+		transform : translateY(-50%);
 		z-index   : var(--z-frontmost);
 		position  : absolute;
-		right     : 0;
+		/* The rows hold a gap at the right; the titles end where the rows do. The table
+		   wears width: 100%, and with left set a right offset is ignored (over-constrained
+		   absolute layout drops it) — so the room is taken out of the width itself. */
+		width     : calc(100% - var(--gap));
 		left      : 0;
 		top       : 0;
+	}
+
+	/* With a scrollbar showing, the rows lose its width too — so the titles hold back the
+	   same room and stay lined up with the columns below. */
+	.table-head.has-bar table {
+		width : calc(100% - var(--width-bar) - var(--gap));
 	}
 
 	/* Only the rows scroll; they fill the space under the header. The scrollbar's room is
@@ -723,14 +725,25 @@
 
 	/* The tags title hugs the right, matching the tags in the cells below — pulled out by the
 	   gap the button carries inside it, so the words end where the tags end. */
-	.head th:last-child {
+	.head th.tags-head {
 		text-align   : right;
 		margin-right : 0;
 		padding-right: 0;
 	}
 
-	.head th:last-child .head-label {
+	.head th.tags-head .head-label {
 		margin-right : calc(var(--gap-big) - var(--gap));
+	}
+
+	/* The size title ends where the sizes end — the same right padding the cells carry,
+	   minus the gap the button carries inside it. */
+	.head th:last-child {
+		text-align   : right;
+		padding-right: 0;
+	}
+
+	.head th:last-child .head-label {
+		margin-right : calc(var(--gap-small) - var(--gap));
 	}
 
 	.head th.kind-head .head-label,
@@ -764,7 +777,12 @@
 	}
 
 	.head-words {
-		opacity : var(--opacity-header);
+		opacity  : var(--opacity-header);
+		/* The words ride 2px high in the button; relative offset moves them without
+		   changing the button's own height. */
+		display  : inline-block;
+		position : relative;
+		top      : -1.5px;
 	}
 
 	.head-label.sortable:global([data-hit]) .head-words,
@@ -782,7 +800,6 @@
 	   order — 1 decides, the rest only break ties. */
 	.order {
 		font-size     : var(--font-faint);
-		vertical-align: super;
 		margin-left   : 1px;
 	}
 
@@ -938,7 +955,12 @@
 
 	/* At the right the pill reaches a gap further, drawn as a strip hanging off the last cell.
 	   The rounding lives on the strip, so the two read as one pill and nothing inside the row
-	   moves. The left end is unchanged. */
+	   moves. The left end is unchanged. The cell is the strip's anchor — without this, the
+	   strip anchors to the table and paints its whole right side. */
+	.files-table .file td:last-child {
+		position : relative;
+	}
+
 	.files-table .file.hovered td:last-child::after {
 		border-top-right-radius    : var(--radius-pill);
 		border-bottom-right-radius : var(--radius-pill);

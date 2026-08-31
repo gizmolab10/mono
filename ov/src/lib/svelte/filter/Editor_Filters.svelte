@@ -16,7 +16,7 @@
 	import Big_Pill from '../support/Big_Pill.svelte';
 	import { files } from '../../ts/managers/Files';
 	import Section from '../support/Section.svelte';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Debug';
 	import { hits } from '../../ts/events/Hits';
 	import Stack from '../support/Stack.svelte';

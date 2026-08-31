@@ -438,15 +438,17 @@ export class Hierarchy {
 	narrow(projects: string[], kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = ''): void {
 		const all = this.list_files();
 		this.all_files = new Map(all.map((r) => [r.key, r]));
+		// Logs are mined, never read — they neither show nor count in browse.
+		const readable = all.filter((r) => r.file.is_folder || (r.file.name !== 'log' && r.file.name !== 'log.md'));
 		const closed = new Set(shut);
 		// A shut folder only hides things while the folders are on screen. With them off the
 		// list is a flat run of every file, so which folders were left shut is set aside —
 		// remembered, not applied — and comes back the moment the folders do.
 		const open_rows = show_folders
-			? all.filter((r) => !r.ancestor_keys.some((a) => closed.has(a)))
-			: all;
+			? readable.filter((r) => !r.ancestor_keys.some((a) => closed.has(a)))
+			: readable;
 
-		const matched = all.filter((r) => this.matches(r, projects, kind, tags, words, picking));
+		const matched = readable.filter((r) => this.matches(r, projects, kind, tags, words, picking));
 		this.matched_count = matched.length;
 		const keep = new Set(matched.map((r) => r.key));
 		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }

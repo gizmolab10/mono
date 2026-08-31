@@ -1,7 +1,7 @@
 import { T_Hit_Target, T_Mouse_Detection } from '../types/Hit_Targets';
 import type { Writable } from 'svelte/store';
 import { Rect, Point } from '../types/Coordinates';
-import { k } from '../common/Constants';
+import { k } from '../common/Core';
 import { get } from 'svelte/store';
 import S_Mouse from './S_Mouse';
 

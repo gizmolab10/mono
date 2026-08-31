@@ -1,7 +1,7 @@
 import { ALL_TAGS, in_order } from './File';
 
 /**
- * The tags, gathered into nine areas.
+ * The tags, gathered into ten areas.
  *
  * Thirty-four words in one row is more than an eye can scan, so each area folds its tags
  * away behind its own name and opens again when pressed. The areas are a way of reading the
@@ -25,6 +25,7 @@ export const TAG_AREAS: Tag_Area[] = [
 	{ name: 'bedrock',  tags: ['build', 'deploy', 'platform', 'setup', 'tools'] },
 	{ name: 'progress', tags: ['proposal', 'journal'] },
 	{ name: 'active',   tags: ['now', 'next', 'soon', 'later', 'tabled'] },
+	{ name: 'lifecycle', tags: ['born', 'weighed', 'waiting', 'incorporated', 'settled'] },
 	{ name: 'think',    tags: ['notes', 'plans', 'research', 'vision'] },
 	{ name: 'ux',       tags: ['geometry', 'UX', 'visual'] },
 ];

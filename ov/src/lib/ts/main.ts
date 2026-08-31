@@ -1,10 +1,25 @@
 import App from '../svelte/main/App.svelte';
 import { w_app, S_App } from './types/App';
 import { files } from './managers/Files';
-import { c } from './common/Configuration';
+import { c } from './common/Core';
 import { debug } from './common/Debug';
+import { preferences, T_Preference } from './managers/Preferences';
+import { colors } from './common/Core';
 import { mount } from 'svelte';
 import '../main.css';
+
+// What the host owes core's colors: core starts the three chosen colors at defaults and
+// remembers nothing, so each remembered choice is read in here, and every later change is
+// written back where it was read from.
+for (const [key, store] of [
+	[T_Preference.color_background, colors.w_background_color],
+	[T_Preference.color_accent,     colors.w_accent_color],
+	[T_Preference.color_text,       colors.w_text_color],
+] as const) {
+	const remembered = preferences.read<string>(key);
+	if (remembered !== null) { store.set(remembered); }
+	store.subscribe((color) => preferences.write(key, color));
+}
 
 // Mirror the static values (stacking layers, sizes, and the fixed ink colors)
 // onto the page before anything renders, so the stylesheets read them from the

@@ -5,7 +5,7 @@
 	import { hit_target, WAY_OUT } from '../../ts/events/Hit_Target';
 	import Action, { T_Position } from '../../ts/types/Action';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 	import { gap_below_line } from '../../ts/utilities/Separator_Spacing';
 	import { w_search_text } from '../../ts/managers/Filters';
 	import Steppers from '../support/Steppers.svelte';

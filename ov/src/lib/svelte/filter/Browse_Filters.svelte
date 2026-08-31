@@ -18,7 +18,7 @@
 	import { files } from '../../ts/managers/Files';
 	import { tip } from '../../ts/utilities/Tooltip';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 	function toggle_filters() {
 		const next = !$w_show_filters;

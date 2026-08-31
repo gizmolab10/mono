@@ -1,7 +1,7 @@
 <script lang='ts'>
 	// The two colors that are chosen: the accent, and the page behind everything. Each drives
 	// Colors' subscribers, which re-work the hover color, the text color and the rest.
-	import { colors } from '../../ts/utilities/Colors';
+	import { colors } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { debug } from '../../ts/common/Debug';
 

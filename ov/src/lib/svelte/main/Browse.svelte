@@ -11,7 +11,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import Section from '../support/Section.svelte';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
 	const MARK = k.size.normal;
@@ -24,7 +24,8 @@
 	// hides its files from the list without changing what the count says.
 	let matching = $derived.by(() => { $w_showing; return files.hierarchy.matched_count; });
 	// How many there are to be had at all.
-	let total = $derived(files.files.length);
+	// Logs neither show nor count in browse, so the total leaves them out too.
+	let total = $derived(files.files.filter((f) => f.name !== 'log' && f.name !== 'log.md').length);
 
 	// The picked tags hug the right end of the count row, and the count keeps its middle — so the
 	// space for the tags is what is left between the count's right edge and the row's, less the

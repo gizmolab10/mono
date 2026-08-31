@@ -16,12 +16,14 @@ export enum T_Kind {
 // The closed tag list — thirty-five, alphabetized, nothing invented on the spot.
 export const ALL_TAGS: string[] = [
 	'always',
+	'born',
 	'build',
 	'data',
 	'debug',
 	'deploy',
 	'faster',
 	'geometry',
+	'incorporated',
 	'journal',
 	'keep',
 	'later',
@@ -39,6 +41,7 @@ export const ALL_TAGS: string[] = [
 	'refactor',
 	'research',
 	'session',
+	'settled',
 	'setup',
 	'soon',
 	'stale',
@@ -50,6 +53,8 @@ export const ALL_TAGS: string[] = [
 	'UX',
 	'vision',
 	'visual',
+	'waiting',
+	'weighed',
 ];
 
 /**
@@ -64,21 +69,26 @@ export function in_order(one: string, two: string): number {
 // The collections the guides live in, each named for the folder that holds it.
 // The shared guides sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
-	mono = 'mo',
-	ws   = 'ws',
-	di   = 'di',
-	ji   = 'ji',
-	lv   = 'lv',
-	mu   = 'mu',
-	ov   = 'ov',
+	mono   = 'mo',
 	memory = 'memory',
+	shared = 'shared',
+	core   = 'core',
+	ws     = 'ws',
+	me     = 'me',
+	di     = 'di',
+	ji     = 'ji',
+	lv     = 'lv',
+	ov     = 'ov',
+	wo     = 'wo',
+	mu     = 'mu',
+	mj     = 'mj',
 }
 
 /**
  * The project a file answers to. Memory's project sub-folders belong to their projects —
  * memory/mu to mu, memory/ov to ov — so a memory file's project is its first folder whenever
- * that folder names a collection. Anything else in memory (shared, a project with no
- * collection of its own) stays memory's.
+ * that folder names a project on the list (core, me, shared and wo are memory-only projects,
+ * on the list with no folder of guides). Anything else in memory stays memory's.
  */
 export function project_of(file: File): string {
 	if (file.bundle !== T_Bundle.memory) { return file.bundle; }
@@ -99,7 +109,7 @@ export type Labels = {
 export type File = Labels & {
 	id        : string;      // unique within this launch
 	name      : string;      // the file's or folder's own name
-	bundle    : T_Bundle;    // which of the four collections it belongs to
+	bundle    : T_Bundle;    // which collection it belongs to
 	path      : string;      // where it sits inside that collection, folders and all
 	address   : string;      // where its text can be read from, if ever wanted
 	is_folder : boolean;

@@ -4,7 +4,7 @@
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import buildsRaw from '../../md/builds.md?raw';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 
 	// The newer/older steppers: the same fat triangle mark the viewer uses to step files, pointing up

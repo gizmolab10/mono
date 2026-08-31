@@ -1,6 +1,6 @@
 import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../utilities/Sectioning';
 import { describe, expect, it } from 'vitest';
-import { k } from '../common/Constants';
+import { k } from '../common/Core';
 
 // A section is a rectangle bounded above and below, holding equal gap around its content. The
 // evenness is the whole rule: every spacing fault it exists to prevent came from two places

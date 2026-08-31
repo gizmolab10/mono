@@ -2,7 +2,7 @@ import { address_of_file, delete_file, file_path_of, folder_path_of, files_on_di
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { blank_file, free_name, has_labels, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
-import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, type File, type Labels, type Filtered_File } from '../types/File';
+import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, project_of, type File, type Labels, type Filtered_File } from '../types/File';
 import { links_in, plain_links } from '../utilities/Markdown_Blocks';
 import { resolved_from } from '../utilities/Following_Links';
 import { show_status, type Finding } from './Status';
@@ -744,8 +744,8 @@ class Files {
 	}
 
 	/** How many files one collection still has within reach of the other filters. */
-	files_in(bundle: string): number {
-		return this.within_reach('project').filter((g) => g.bundle === bundle).length;
+	files_in(project: string): number {
+		return this.within_reach('project').filter((g) => project_of(g) === project).length;
 	}
 
 	/** Every kind still within reach of the other filters, in alphabetical order. */

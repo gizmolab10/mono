@@ -8,7 +8,7 @@
 	import Section from '../support/Section.svelte';
 	import { files } from '../../ts/managers/Files';
 	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common/Core';
 
 	// Which guides point at the one being read.
 	//

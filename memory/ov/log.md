@@ -9,6 +9,17 @@ date: 2026-08-30
 
 <!-- consolidated: 30 August 2026 -->
 
+## 30 August 2026
+- D: a file row's hover highlight is instant — .files-table td left the shared background-fade rule in main.css
+- D: the hover pill's right strip anchors to its own cell — the size cell was not positioned, so the strip's top: 0 / bottom: 0 measured against the table and painted a full-height band
+- D: the title words settle 1px — their offset inside the button is -1px now, button height unchanged
+- D: the title buttons stand 2px taller — 1px of vertical padding each side
+- D: the title words ride 2px high inside their buttons (relative offset on .head-words), button heights unchanged
+- D: the files-list titles center vertically on the header separator — the old 2px lift is gone; the over-constrained-absolute lesson from the same header: width 100% plus left makes a right offset ignored, so the scrollbar room comes out of the width
+- D: the tags column title is right-justified over its tags (the old rule aimed at last-child, which the size column had taken); the size title lines up over the sizes, carrying the cells' own right padding
+- D: the control's counter counts by project_of, not raw bundle — the mismatch hid the four new projects (count 0) and emptied memory (its files now answer to their projects)
+- D: the projects segmented control gains core, me, shared and wo — T_Bundle lists them, so their memory subfolders answer to them; memory keeps only its loose files
+
 ---
 
 ## original work log
