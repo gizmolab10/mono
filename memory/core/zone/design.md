@@ -94,5 +94,5 @@ The four claimants for an unresolved pac:
 
 1. decisions.md — today's practice
 2. questions.md — the previous pac's offer
-3. zone/decisions.md — protocol line 83's stray claim
+3. zone/decisions.md — handbook line 83's stray claim
 4. unresolved.md — this pac's newcomer
