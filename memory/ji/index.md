@@ -5,7 +5,7 @@ description: "ji — the intersection app: documents, tags, and an AI that reads
 
 The intersection app: drop documents in, tag them, and ask an AI that has read them.
 
-**Current state:** brought up in memory today; its unpaid code debt moved into zone/ideas.md from the old notes.
+**Current state:** its unpaid code debt leads `zone/ideas.md`, and the two maps (files, notes) live in `truth/`, moved whole from the old notes.
 
 ## Truths
 
