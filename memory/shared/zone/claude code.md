@@ -2,7 +2,7 @@
 kind: analyze
 title: "Claude Code"
 description: "Where the toolkit actually runs, and how to install and start Claude Code."
-tags: [now]
+tags: [now, born]
 date: 27 August 2026
 ---
 # Claude Code

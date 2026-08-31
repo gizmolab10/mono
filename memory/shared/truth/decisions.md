@@ -2,7 +2,7 @@
 kind: 
 title: "Decisions"
 description: "Live rationales, and the pac responses that weigh coming choices."
-tags: [maybe]
+tags: [maybe, incorporated]
 date: 
 ---
 # Decisions
@@ -17,8 +17,66 @@ date:
 
 ## Evaluations (pac) made during 2026
 
+- 30 August 2026; **remove the logs from ov.**
+  For: logs are mined and fed to settle, never read — and ov is an instrument for reading and grasping. Every log row in browse is noise in that instrument: ~8 files that no filter stage claims (logs ride no life cycle), whose content is one-line entries meant for sweeping. Removing them sharpens what ov is for.
+  Against: today's date mistake was caught by reading a log in ov — the rare look does happen, and the editor is where a log line gets hand-fixed. Hiding files makes ov lie about what a folder holds, the claim a browse table exists to make. And the lifecycle area may already do the job gently: logs wear no stage tag, so stage-filtered views omit them without anyone hiding anything.
+  Deciding question: hidden from the table, or merely absent from every stage filter — does ov show what is, or what is worth reading?
+  Decided 30 August 2026: hidden — browse neither shows nor counts log files.
+
+- 30 August 2026; **add the lifecycle tags to the memory files.**
+  For: the instrument lights only when files wear the tags — ov's lifecycle area filters nothing until then. One tag per file over ~40 files is one cheap sweep, and the big picture arrives at once: waiting's count shows today's true backlog. The stages were designed against these exact files, so most placements are obvious — questions.md waits, truth/ is incorporated, raw zone is born.
+  Against: a sweep bakes in ~40 guesses in one act, and a wrong settled misleads more than no tag — the prior pac's drift warning remains unanswered, since nothing yet audits a tag at settle. okf's closed-list rule is satisfied, but its deeper rule — every placement true — is what a mass sweep risks. Tagging file by file, each at its next touch, earns each tag instead.
+  Deciding question: one sweep now, or each file earns its tag at its next touch — and which act (settle?) audits the tags so they stay true?
+  Decided 30 August 2026: one sweep, now — every cycle-riding file wears its stage; logs and indexes ride none; the settle audit stays open.
+
+- 30 August 2026; **tags for the life-cycle stages — born, weighed, waiting, decided, settled — in a tag area "protocol".**
+  For: the stage becomes clickable — #waiting gathers every waiting thing across projects, in Obsidian and in ov's tag filters alike, the q-tag mechanism generalized. It rides the frontmatter tags line every file already has: no new files, no new structure. An area named protocol keeps the five together, apart from content tags. And a transition is a one-word edit instead of text moving between files — which could dissolve the four-doors question outright: the wait becomes a tag, not a file.
+  Against: tags mark files, but the life cycle lives in entries — one ideas.md holds born and weighed paragraphs at once, so a file-level tag lies unless every idea gets its own file, and a file per idea is the clutter being fought. Five hand-maintained tags will drift, and a stale #waiting is worse than none. "Settled" is an act, not a state a file sits in. And questions.md already is the waiting list — #waiting is a second claimant on that topic.
+  Deciding question: what does a stage tag mark — a file or an entry? Tags reach only files; the life cycle lives in entries.
+
+- 30 August 2026; **per mono project, merge all code debt content into memory, the paid subsection's content going to the log under an H2 "code debt paid (transferred, <today's date>)".**
+  For: it answers the open deciding question — the done section neither transfers into zone nor dies: paid debt is history, and the log is the history file (truth = is, log = recent, git = was). Each kind lands in its nature's file: unpaid debts become live ideas with a settle pulse, paid ones become record. Precedent exists — ov's log already carries the "## original work log" appendix, kept verbatim. And the H2 names the transfer and its date, so the sweep knows it is imported record, not a day's work.
+  Against: the log's law is one-line tagged entries under day headings, emptied by settle — a ~315-checkbox H2 is a boulder every consolidation steps around forever, permanent fat in a file meant to drain. Git already holds each paid item; the transfer writes that history a third time. And this is the third pac claiming the code-debt topic — the pile of rivals now needs a d more than a new evaluation.
+  Deciding question: is the log temporary and emptied, or a ledger where record may sit — which does the appendix precedent make it?
+  Decided 30 August 2026: no transfer — the done sections die at the door; the log stays temporary.
+
+- 30 August 2026; **per mono project, merge all code debt content into the memory project's ideas.md, at the very top — after the H1 and a blank line.**
+  For: a debt is a stage-1 idea — work someone might do — and ideas.md is where the life-cycle proposal gives such things a pulse: triaged every settle instead of rotting in a file nobody re-reads. One zone file fewer per project. Leading the file, the debts meet the triage first — obligation before musing. And it reaches beyond the twins: ji and lv still keep code debt only in the old notes's notes/work/, which this transfer would finally move in.
+  Against: ov's file is 406 lines, ~315 of them finished checkboxes — transferred whole it drowns ideas.md, and importing history is what inception forbids; the done section should die at the door, git keeping it. The cull rule still menaces owed debts (the parent pac's unresolved Against). Position as meaning is a hidden rule — "top = obligation" is invisible; a named section says it aloud. And the parent pac — merge code debt *and handoff* into ideas — still waits: two pacs now claim one topic.
+  Deciding question: does the done section transfer too, or die at the door — is this a merge or a triage?
+  Decided 30 August 2026: it dies at the door — unpaid content leads each memory project's ideas.md, git keeps the paid.
+
+- 30 August 2026; **a new file `unresolved.md` holding all pacs.**
+  For: the wait gets an owner whose name says its state. The file empties as decisions land, so its length is a visible health gauge — pacs buried in decisions.md rot invisibly, a fat unresolved.md accuses. questions.md keeps its one-line law, decisions.md returns to decided rationales, and the lifecycle turns clean: pac in, d out — outcome to decisions.md, case to cases.md, entry deleted, git keeps the history (the same shape as settling a log).
+  Against: one more file per project, and this is the third rival for one job — decisions.md holds pacs today, the last pac offered questions.md, protocol's stray line said zone/decisions.md; a fourth door deepens the very confusion it means to end. Deletion on deciding breaks cases.md's fourth line — "the decisions.md that keeps the full record" would point at git, not a file. And an evaluation is thinking, which the design already houses: zone.
+  Deciding question: is an empties-when-healthy file worth another door — and if the wait deserves its own file, why is that file not in zone/?
+
+- 30 August 2026; **move all pacs from decisions.md to questions.md.**
+  For: an unresolved pac is an open question — it literally ends with one — and questions.md is the design's single place for what waits, read at every start and struck at every settle, so parked pacs stop rotting in a file nobody re-reads. It dissolves today's check finding: three claimants for the pac destination become one. And decisions.md returns to its own law — live rationales of decided things, one line of why — the other finding fixed in the same act.
+  Against: questions' law is one line each, and a pac is paragraphs — parked evaluations bury the quick scan and eat start's ~2,000-word budget every session. And a decided pac would have to move files (questions → decisions), where today a decided line is appended in place; records never move is cases.md's own rule.
+  A middle path: only the deciding question goes to questions.md, one line linking to the full evaluation, which stays put.
+  Deciding question: is a pac the question or the evaluation — which file owns the wait?
+
+- 30 August 2026; **merge code debt.md and handoff.md into ideas.md (per project, in zone/).**
+  For: zone means live thinking — plans, considerations, ideas — and debt items and handoff's "what next" are exactly that; three gathering files become one per project. ideas.md is the only one of the three with a lifecycle — triaged every consolidation — so debts and handoff lines stop rotting unmeasured. And handoff duplicates index.md's current-state paragraph (flagged in inception and today's check); merging forces that split: state to index.md, the rest to ideas.
+  Against: the three differ in obligation — an idea is optional, a debt is owed, a handoff is where things sit — and ideas' cull rule (three consolidations without promotion → cut) would kill debts that remain owed. ov's code debt.md is ~390 lines; moved into ideas.md it breaks the sizing rule at once unless the done section dies in transit. And the merge grows the file the twins check just flagged in both ov and core — the transfer should follow the twin fix, not precede it.
+  Deciding question: is a debt an idea with a deadline, or an obligation the cull rule must never touch?
+
+- 30 August 2026; **name the gathered decision stories "use cases."**
+  For: the term is already alive in the memory — core's design.md holds "use case: Constants" and "use case: Configuration" — and it is the standard software term, which `translate` now prefers over a coined one; it needs no definition.
+  Against: the standard sense points forward — how a thing is to be used — and design.md uses it exactly that way. The gathered stories point back: a question, its answer, what now holds. That is a precedent, not a use. One term carrying both senses across two files is two claimants on one word — the duplication bug in word form.
+  Deciding question: is a decided story a use case or a precedent?
+  Decided 30 August 2026: neither name — the file is `cases.md`; "use case" stays design.md's, forward-pointing.
+
+- 30 August 2026; **remove the "avoid technical terminology" rule, hoping to fix murky and wordy.**
+  For: the rule lives in `translate` ("Avoid jargon") and today produced both faults it exists to prevent — dodging "dependency cycle" forced "form a circle," a metaphor murkier and wordier than the term. A standard term is one word doing the work of a clause; precision is compression. And word choice already has a governor with a finer instrument: the lexicon coins terms, the banned-words table bans them, Jonathan edits both — a blanket avoidance is a second claimant on that topic, the duplication bug in rule form.
+  Against: the rule's target was never standard terms but decorative ones — utilize, leverage, orthogonal — and removing the whole rule readmits those. The session's actual murk came mostly from home-made words where standard terms existed (circle, edge, nickname, "decided treatment"), which removal does not touch: the banned-words table fixed those, one by one. And the murk rate is measured (`rate`); the hope could be tested instead of trusted.
+  A middle path: reword rather than remove — "use the standard term; avoid the decorative one" — and leave `plain` as the no-undefined-terms door for when it is asked for.
+  Deciding question: is the rule's target technical terms, or decoration wearing them?
+  Decided 30 August 2026: decoration. The rule now reads "use the standard term; avoid the decorative one"; `plain` remains the defined-terms-only door.
+
 - 29 August 2026; **a design/ folder, sibling to truth/.**
-  For: the distinction is already real in the code — ov's File record carries `is_design`, and the old system keeps `notes/designs/` beside `notes/guides/`: "a design says how a thing was built, a guide says how to work." Inception will move design files in, and a design/ sibling gives them a landing spot instead of mixing how-it-is-built into a folder of operating rules. Visual material (taste, refs) leans that way too.
+  For: the distinction is already real in the code — ov's File record carries `is_design`, and the old notes keeps `notes/designs/` beside `notes/guides/`: "a design says how a thing was built, a guide says how to work." Inception will move design files in, and a design/ sibling gives them a landing spot instead of mixing how-it-is-built into a folder of operating rules. Visual material (taste, refs) leans that way too.
   Against: the memory design's split is exhaustive — a design that is current is a truth (controls.md is `type: design` and lives in truth/ comfortably), and one being considered is zone material; a third folder has no state of its own to hold. Every future "where" answer becomes a coin flip between truth/ and design/, which is the seed of the duplication bug, and one more top-level door works against finding anything in seconds.
   Deciding question: which taxonomy governs memory/ — the code's guide-vs-design split, or the design's is-vs-thinking split? They give opposite answers, and the folder should exist only if the first one wins.
 

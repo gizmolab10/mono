@@ -2,7 +2,7 @@
 type: principle
 title: Taste
 description: "Jonathan's recurring visual and design principles, in his own words."
-tags: [taste, visual, design]
+tags: [taste, visual, design, settled]
 use_when: [visual work, UI work, choosing between designs, any styling decision]
 updated: 22 August 2026
 ---

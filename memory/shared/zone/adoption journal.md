@@ -2,7 +2,7 @@
 kind: specify
 title: "Adoption journal"
 description: "Where ov's move into the memory system stands — done, goal, remaining."
-tags: [journal, now, proposal]
+tags: [journal, now, proposal, born]
 date: 
 ---
 # Adoption journal — ov

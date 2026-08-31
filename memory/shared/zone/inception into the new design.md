@@ -1,14 +1,14 @@
 ---
 kind: howto
 title: "Inception into the new design"
-description: "The death list — what still lives only in the old system. Empty means the old system can be deleted."
+description: "The death list — what still lives only in the old notes. Empty means the old notes can be deleted."
 use_when: [reaching into notes/guides or notes/work, settling, deciding where an old file's content belongs]
-tags: [now]
+tags: [now, born]
 date: 
 ---
 # Inception into the new design
 
-Some files remain in the old system. They are listed here, one line each. Remove a line when its content moves into `memory/` or is declared dead. Empty file = inception complete: delete this file, shrink CLAUDE.md's "Reading on load" to `start` alone.
+Some files remain in the old notes. They are listed here, one line each. Remove a line when its content moves into `memory/` or is declared dead. Empty file = inception complete: delete this file, shrink CLAUDE.md's "Reading on load" to `start` alone.
 
 ov project first
 
@@ -33,12 +33,12 @@ Duplicated sources of truth (logs do not count).
 
 Found 29 August 2026, each a topic living in two places — the merge direction is always into memory/.
 
-- **conduct rules** — `memory/shared/truth/conventions.md` vs the old system's `pre-flight/always.md`, `response.md`, `collaborate/voice.md`: all four say how Claude speaks and works. The hooks read only the old ones.
+- **conduct rules** — `memory/shared/truth/conventions.md` vs the old notes's `pre-flight/always.md`, `response.md`, `collaborate/voice.md`: all four say how Claude speaks and works. The hooks read only the old ones.
 - **banned words** — `conventions.md` bans "lands" and "stands"; `pre-flight/banned words.md` carries the same stands row in its table. The hooks read only the table.
 - **shared terms** — `memory/shared/truth/lexicon.md` vs `pre-flight/lexicon.md` (mono-wide): two lexicons for cross-project words; the old one still points at ov's dead pre-flight lexicon.
 - **taste** — `memory/shared/truth/taste.md` vs `notes/guides/develop/aesthetics.md`: both hold visual principles.
 - **the design's own story** — `ov/notes/work/AI memory redesign.md` (rationale), `memory/shared/truth/protocol.md` (law), and `truth/publish — can an AI actually learn?.md` (the article): three tellings; only the rationale/law split is by design.
-- **ov, where to pick up** — `memory/ov/zone/handoff.md` ("where it stands") vs `index.md`'s current-state paragraph; and `zone/code debt.md`'s open items vs `open questions.md` — the pac that moved them in flagged both.
+- **ov, where to pick up** — `memory/ov/zone/handoff.md` ("where it stands") vs `index.md`'s current-state paragraph; and `zone/code debt.md`'s open items vs `questions.md` — the pac that moved them in flagged both.
 - **ov work history** — `zone/code debt.md`'s done section vs the log's "original work log" appendix: the same finished work, told twice.
 - **di and ji terms, to come** — `di/` and `ji/notes/guides/pre-flight/lexicon.md` have no memory home yet; the day those projects come up, the ov merge is their pattern.
 

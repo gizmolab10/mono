@@ -6,7 +6,7 @@ use_when:
   - explaining the system to someone new
   - writing about the system
   - publishing the recipe
-tags: []
+tags: [incorporated]
 date:
 ---
 # Can an AI actually learn?

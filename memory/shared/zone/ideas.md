@@ -2,10 +2,30 @@
 kind: analyze
 title: "Ideas"
 description: "<!-- Ideas about the collaboration itself"
-tags: [now]
+tags: [born, now]
 date: 22 August 2026
 ---
 # Ideas
+
+- [ ] create mj (gallery of girls)
+
+---
+
+## life cycle (30 August 2026)
+
+Proposal — the flow from any idea to truth, five stages, each with one file, nothing waiting anywhere else:
+
+1. Born: a paragraph in zone/ideas.md, or just an `I:` line. Zero ceremony.
+2. Weighed: pac grows that same entry in place — For, Against, deciding question. The idea and its evaluation are one thing; nothing moves.
+3. Waiting: the deciding question alone goes to questions.md, one line linking the entry. Start reads it every session, so no idea rots unseen.
+4. Decided: d — edit the owning truth to state what now holds, one `D:` log line, strike the question, delete the zone entry; one line of why in decisions.md per its own law; a case in cases.md when it teaches.
+5. Settled: settle commits; git keeps the full argument forever.
+
+Closes the four doors: pacs live in zone with the ideas they weigh, questions.md holds every wait as one line, decisions.md returns to decided one-liners, unresolved.md is never born.
+
+## rename protocol.md — Jonathan hates the name (30 August 2026)
+
+Candidates: law, canon, code, charter, constitution, covenant, doctrine, creed, rulebook, playbook, bylaws, regimen, procedure, practice, custom, order, rubric, ritual. Already taken: code (software), convention (conventions.md); the file calls itself "the law."
 
 ## proposal: the hooks do not reach this session (27 August 2026)
 
@@ -20,7 +40,7 @@ I broke the "stands" rule the day after it was written. I first blamed my memory
 **Why it did not stop me.** Two gaps, and neither is about remembering.
 
 1. **None of it runs here.** These hooks are Claude Code hooks on your Mac. This is a Cowork session in Anthropic's cloud; it never executes them. The proof is in the hooks' own logs: `log.jsonl` and `murk.jsonl` were last written on 24 August at 19:00, and every turn we have worked since has been in this session. Four days of replies passed no check at all.
-2. **Where they do run, they read the old system.** The rotation names `notes/guides/pre-flight/` files only. `memory/shared/truth/conventions.md` is in no rotation and no table. The rule I broke does exist in the banned-words table — `stand, stands, standing, stood → remain, unchanged` — as a sense check, not a hard block. So even on the Mac it would have asked me to judge rather than refused.
+2. **Where they do run, they read the old notes.** The rotation names `notes/guides/pre-flight/` files only. `memory/shared/truth/conventions.md` is in no rotation and no table. The rule I broke does exist in the banned-words table — `stand, stands, standing, stood → remain, unchanged` — as a sense check, not a hard block. So even on the Mac it would have asked me to judge rather than refused.
 
 **What follows.**
 

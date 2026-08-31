@@ -2,7 +2,7 @@
 kind: analyze
 title: "Truth and zone"
 description: "Whether truth/ and zone/ should divide further — the three ideas weighed, and where each landed."
-tags: [now]
+tags: [now, weighed]
 date: 2026-08-29
 ---
 # truth and zone — divide them further?

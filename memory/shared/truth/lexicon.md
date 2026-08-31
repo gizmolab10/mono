@@ -2,7 +2,7 @@
 type: reference
 title: Shared lexicon
 description: Cross-project terms, defined once. Loaded at every session start.
-tags: [lexicon, terminology]
+tags: [lexicon, terminology, incorporated]
 use_when: [every session]
 updated: 27 August 2026
 ---
