@@ -18,6 +18,14 @@ date:
 
 ## Evaluations (pac) made during 2026
 
+- 31 August 2026; **the shifted-titles bug: key the stack's sections by identity, or make the separator re-adopt its pills.**
+  For keying (name each section, `{#each ... (section.name)}`): the list is the thing that shifts, so the list is where identity belongs; Svelte then moves each section's whole slot intact when back links comes and goes, separators riding along. Small, declarative, no imperative DOM work.
+  Against keying: every Stack caller must name its sections — a new required field across the app. Adoption still happens once, so the fragility is not cured, only dodged: an action whose element changes in place still shows the stale pill. And a keyed section that leaves the array destroys its wrapper with the adopted pill inside — if the section returns, the pill must survive that.
+  For re-adoption (the separator watches its actions and takes the current elements whenever they change): one edit in one file heals every stack everywhere, this shift included and the next one; identity stops mattering, since each slot always wears what its current section hands it.
+  Against re-adoption: adoption is imperative DOM-moving, and doing it inside an effect invites loops and fights with Svelte's own patching; during a shift one pill can be claimed by two separators, so ordering must be right; harder to reason about than a key.
+  Deciding question: whose bug is it — the list that shifted (key it), or the one-time adoption (make it live)? Re-adoption fixes the class; keying fixes this instance and leaves one-time adoption waiting to bite again.
+  Decided 31 August 2026: neither — the gate that hid back links owns the bug. The section never leaves the list; it hides in place (a stacked section's new hidden state: no line, no height, no fold to bring back), so nothing below it shifts.
+
 - 30 August 2026; **merge all small ts files into one common/core.ts** — small meaning at most the lines in Configuration.ts plus 3, today 2 + 3 = 5.
   For: the seam gathered into one file — every borrowing from core is one export line in a file whose name says what it is, the one-place readability the lib/core folder wanted, without a folder and without colliding with the alias's name. Three one-liners become one; a future adoption adds a line rather than a file.
   Against: with the threshold at 5 lines, four files qualify — the three borrowings (Constants 4, Colors 4, Configuration 2) and one stray: Types.ts at 5, ov's own. So even a sharp threshold mixes one concept in that is not a borrowing, and one-concept-one-file is the design's own rule; the sizing table caps a file's length, never the count of files. The criterion also moves as Configuration grows. And the sweep is the same one the lib/core pac choked on: every importer of the merged files changes its path.
