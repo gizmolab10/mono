@@ -3,21 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "workspaces": {
-    "packages": [
-      "di",
-      "ji",
-      "lv",
-      "mu",
-      "ov",
-      "s3",
-      "ws"
-    ],
-    "nohoist": [
-      "**/svelte",
-      "**/svelte/**"
-    ]
-  },
+  "workspaces": [
+    "core",
+    "di",
+    "ji",
+    "lv",
+    "mu",
+    "ov",
+    "s3",
+    "ws"
+  ],
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",

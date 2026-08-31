@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import Action, { T_Position } from '../../ts/types/Action';
-	import { hits } from '../../ts/events/Hits';
-	import { k } from '../../ts/common/Constants';
+	import { Action, T_Position } from '../../ts/types';
+	import { hits } from '../../ts/events';
+	import { k } from '../../ts/common';
 
 	// A colored divider — a thin accent bar, horizontal or vertical — with little rounded
 	// gussets (fillets) at its ends so it meets a rounded panel cleanly. Can instead be a

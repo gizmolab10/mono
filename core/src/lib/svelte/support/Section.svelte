@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
-	import type Action from '../../ts/types/Action';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { hits } from '../../ts/events/Hits';
+	import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../../ts/utilities';
+	import { T_Hit_Target } from '../../ts/types';
+	import { hit_target } from '../../ts/events';
+	import type { Action } from '../../ts/types';
+	import { hits } from '../../ts/events';
 	import Separator from './Separator.svelte';
 	import type { Snippet } from 'svelte';
 

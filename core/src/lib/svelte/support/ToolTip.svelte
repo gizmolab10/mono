@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k } from '../../ts/common/Constants';
+	import { k } from '../../ts/common';
 
 	// A hover hint that shows the instant the cursor arrives — the browser's own
 	// hover text waits about a second first, and that wait can't be shortened, so

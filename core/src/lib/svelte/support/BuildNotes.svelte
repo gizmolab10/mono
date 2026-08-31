@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { Direction } from '../../ts/types/Angle';
-	import { hit_target } from '../../ts/events/Hit_Target';
+	import { svg_paths } from '../../ts/utilities';
+	import { hit_target } from '../../ts/events';
+	import { Direction } from '../../ts/types';
 	import buildsRaw from '../../md/builds.md?raw';
-	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
+	import { debug } from '../../ts/common';
+	import { k } from '../../ts/common';
 
 
 	// The newer/older steppers: the same fat triangle mark the viewer uses to step files, pointing up

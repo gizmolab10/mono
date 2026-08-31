@@ -1,5 +1,5 @@
 {
-  "name": "ov",
+  "name": "core",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -12,17 +12,16 @@
   },
   "dependencies": {
     "color2k": "^2.0.3",
-    "markdown-it": "^14.1.1",
     "rbush": "^4.0.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tsconfig/svelte": "^5.0.0",
-    "@types/rbush": "^4.0.0",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "typescript": "^5.3.3",
     "vite": "^6.0.0",
-    "vitest": "^4.0.0"
+    "vitest": "^4.0.0",
+    "@types/rbush": "^4.0.0"
   }
 }

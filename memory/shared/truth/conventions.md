@@ -17,6 +17,7 @@ date: 25 August 2026
 - **No unasked asides.** Nothing "noticed in passing", "by the way", or "in case it matters" rides along in a reply. Such things wait for **obs**, which is when they are asked for.
 - **Dates** are always written like 22 August 2026 — day, month name, year. and never in a header, put it next line
 - **Reports**: say what got decided, which file now holds it, and what is still unanswered — with the reason it waits.
+- **Outcomes in files**: one present-tense sentence stating the fact that now holds. The choosing, its date, and what might change it later stay out — the log holds those. ("The 'core' nickname is now part of ov's tsconfig and vite.")
 
 ## need translation
 

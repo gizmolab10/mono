@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { back_direction, forward_direction, shows_mark } from '../../ts/utilities/Stepping';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { k } from '../../ts/common/Constants';
+	import { back_direction, forward_direction, shows_mark } from '../../ts/utilities';
+	import { hit_target } from '../../ts/events';
+	import { svg_paths } from '../../ts/utilities';
+	import { k } from '../../ts/common';
 
 	// Two fat marks that step from one thing to the next. Ordinarily a mark that leads nowhere
 	// is simply absent — its absence is the sign there is nothing that way — but asked to show

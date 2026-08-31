@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import type { Stacked, T_Foot } from '../../ts/types/Stacked';
-	import { T_Position } from '../../ts/types/Action';
-	import type Action from '../../ts/types/Action';
-	import { debug } from '../../ts/common/Debug';
-	import { k } from '../../ts/common/Constants';
-	import { hits } from '../../ts/events/Hits';
+	import type { Stacked, T_Foot } from '../../ts/types';
+	import { T_Position } from '../../ts/types';
+	import type { Action } from '../../ts/types';
+	import { debug } from '../../ts/common';
+	import { k } from '../../ts/common';
+	import { hits } from '../../ts/events';
 	import Separator from './Separator.svelte';
 
 	// A run of sections, a gap between each pair, a line drawn centred in every gap.

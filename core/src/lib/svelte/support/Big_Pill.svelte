@@ -1,10 +1,9 @@
 <script lang='ts'>
-	import { type Tag_Area, area_reads, tags_shown } from '../../ts/types/Tag_Areas';
-	import { w_areas_open, toggle_area } from '../../ts/managers/Filters';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { hits } from '../../ts/events/Hits';
-	import { k } from '../../ts/common/Constants';
+	import { type Tag_Area, area_reads, tags_shown } from '../../ts/types';
+	import { svg_paths } from '../../ts/utilities';
+	import { hit_target } from '../../ts/events';
+	import { hits } from '../../ts/events';
+	import { k } from '../../ts/common';
 
 	// One area of tags, standing as a single pill. Shut, it shows the tagset name — or the names
 	// of whatever inside it is picked, so a filter is never hidden without a sign that it is on.
@@ -18,12 +17,12 @@
 	// says which row it belongs to and every name here begins with it. Without that both rows
 	// register the same names, the older of each pair is let go, and whichever tag they had in
 	// common answers nothing on the row that lost it.
-	let { area, in_reach, chosen, ontoggle, row }:
-		{ area: Tag_Area; in_reach: string[]; chosen: string[]; ontoggle: (tag: string, only?: boolean, among?: string[], everywhere?: boolean) => void; row: string } = $props();
+	let { area, in_reach, chosen, ontoggle, ontoggle_area, opened, row }:
+		{ area: Tag_Area; in_reach: string[]; chosen: string[]; ontoggle: (tag: string, only?: boolean, among?: string[], everywhere?: boolean) => void; ontoggle_area: (name: string) => void; opened: string[]; row: string } = $props();
 
-	// Which areas are open is remembered between visits, and kept in one place so an area left
-	// open among the filters is open in the label form too.
-	let open = $derived($w_areas_open.includes(area.name));
+	// Which areas are open belongs to the host, handed in — core keeps no state of its own, so
+	// an area left open in one place is open wherever the host says so.
+	let open = $derived(opened.includes(area.name));
 
 	const CROSS = k.size.normal * 0.7;
 	const cross_path = svg_paths.x_cross(CROSS, CROSS / 6);
@@ -130,7 +129,7 @@
 			dormant: open && lone === '',
 			tip: lone !== '' ? `${chosen.includes(lone) ? 'remove' : 'add'} "${lone}" tag`
 				: `choose ➜ ${shown.join(', ')}`,
-			onpress: lone !== '' ? (m) => ontoggle(lone, m?.event?.altKey ?? false, area.tags, (m?.event?.altKey && m?.event?.metaKey) ?? false) : () => toggle_area(area.name) }}>
+			onpress: lone !== '' ? (m) => ontoggle(lone, m?.event?.altKey ?? false, area.tags, (m?.event?.altKey && m?.event?.metaKey) ?? false) : () => ontoggle_area(area.name) }}>
 		<!-- The area's own name straddles the top edge whenever the words below it are not the
 		     area's name — open, or shut with something picked, or standing in for a lone tag. -->
 		{#if open || lone !== '' || area.tags.some((tag) => chosen.includes(tag))}
@@ -144,7 +143,7 @@
 			style:--shows='{open ? lead_time : run_time}ms'>
 			<!-- Named by its own area, since a row holds one of these per area. -->
 			<button class='shut-me' bind:this={cross} aria-label={`shut ${area.name}`}
-				use:hit_target={{ id: `${row}.pill.shut.${area.name}`, onpress: () => toggle_area(area.name),
+				use:hit_target={{ id: `${row}.pill.shut.${area.name}`, onpress: () => ontoggle_area(area.name),
 					dormant: !open || moving, tip: `hide ${area.name} tags` }}>
 				<svg overflow='visible' viewBox='0 0 {CROSS} {CROSS}' width={CROSS} height={CROSS}>
 					<path d={cross_path} />
