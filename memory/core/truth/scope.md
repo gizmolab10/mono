@@ -2,7 +2,7 @@
 type: spec
 title: Scope
 description: What belongs in ov and what deliberately does not.
-tags: [scope, boundaries]
+tags: [scope, boundaries, incorporated]
 use_when: [adding features, deciding where something belongs, ov vs ji questions]
 updated: 22 August 2026
 ---

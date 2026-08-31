@@ -2,15 +2,25 @@
 kind: analyze
 title: "25 August 2026 — a name for the tagset {stow, stale, keep, maybe}"
 description: "<!-- ov ideas"
-tags: [now]
+tags: [born, now]
 date: 25 August 2026
 ---
 # Ideas
 
-Churn
+- [ ] for each file that remains
+    - [ ] import it instead, deleting the now-duplicate
+- [ ] record the ov journey for projects later
 
 [[my story]]
 
+## resolve me
+
+The four claimants for an unresolved pac:
+
+1. decisions.md — today's practice
+2. questions.md — the previous pac's offer
+3. zone/decisions.md — protocol line 83's stray claim
+4. unresolved.md — this pac's newcomer
 
 ## a name for the tagset {stow, stale, keep, maybe}
 

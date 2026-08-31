@@ -2,7 +2,7 @@
 type: design
 title: core structure
 description: What core is and the rules that keep it core.
-tags: [structure, library]
+tags: [structure, library, incorporated]
 use_when: [working in core, moving code between ov and core]
 updated: 30 August 2026
 ---

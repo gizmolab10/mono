@@ -2,7 +2,7 @@
 kind: specify
 title: "Handoff"
 description: "My resume point for overview: the one thing to do next"
-tags: [journal, maybe, now, proposal, session]
+tags: [journal, maybe, now, proposal, session, born]
 date: 2026-08-17
 ---
 # Handoff
