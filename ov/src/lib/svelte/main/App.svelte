@@ -94,7 +94,7 @@
 
 	// The dispatcher is the only thing that reads and writes the files, so changing its code means
 	// starting it over. The button's own face is the whole report — nothing goes to the status
-	// line, which is for what the guides are doing.
+	// line, which is for what the files are doing.
 	let restarting = $state(false);
 
 	async function restart() {
@@ -191,7 +191,7 @@
 {/if}
 
 <style>
-	/* While the guides are being read: nothing but these words, centered both ways. */
+	/* While the files are being read: nothing but these words, centered both ways. */
 	.launch {
 		font-size       : var(--em);
 		color           : var(--text);

@@ -106,7 +106,7 @@ export function reaches_under_work(address: string): boolean {
 
 // The folder a file sits in, counting from the top of the repo. A collection's own top folder
 // has no path inside it, so the guides folder itself is the answer. The designs folder and the
-// work folder stand beside guides rather than inside it.
+// work folder stand beside files rather than inside it.
 export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
 	if (bundle === T_Bundle.memory) { return folder_path === '' ? 'memory' : `memory/${folder_path}`; }
 	const notes = notes_of(bundle);

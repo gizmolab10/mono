@@ -387,7 +387,7 @@
 				tip: 'empty the search field' }}>clear</button>
 	{/if}
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={backlinks_button}
-		use:hit_target={{ id: 'editor.fold.backlinks', onpress: toggle_backlinks, tip: 'which guides point at this one' }}>{backlinks_word}</button>
+		use:hit_target={{ id: 'editor.fold.backlinks', onpress: toggle_backlinks, tip: 'which files point at this one' }}>{backlinks_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={info_button}
 		use:hit_target={{ id: 'editor.fold.info', onpress: toggle_info }}>{form_info_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={kinds_button}
@@ -471,7 +471,7 @@
 	{@render controls()}
 {/snippet}
 
-<!-- Which guides point at this one. It stands bare here: its line, its gap and its clickable
+<!-- Which files point at this one. It stands bare here: its line, its gap and its clickable
      are this stack's, the same as the search's. -->
 {#snippet backlinks_rows()}
 	<div class='label-rows' role='button' tabindex='-1' onkeyup={() => {}}
@@ -554,9 +554,9 @@
 			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[controls_action]} sections={[
 				{ subsection: controls_rows, folded: !$w_show_controls },
 				{ subsection: search_rows, rides: [search_action, search_clearer], folded: !$w_show_search },
-				// With nothing pointing here there is no row at all — not a folded one, since a fold
-				// reads as something put away that a press could bring back, and there is nothing.
-				...(backlinks_count > 0 ? [{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks }] : []),
+				// With nothing pointing here the section hides in place — no row, no line — but it
+				// never leaves the list, so the sections below it keep their own separators.
+				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0 },
 				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
 				{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
 				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },

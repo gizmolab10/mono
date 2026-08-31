@@ -27,13 +27,13 @@ export const w_view_file = preferences.persistent<string | null>(T_Preference.vi
 // Leaving the reading view drops what it pointed at.
 w_operation.subscribe((op) => { if (op !== T_Operation.edit) { w_view_file.set(null); } });
 
-// --- stepping through the guides on screen ---------------------------------
+// --- stepping through the files on screen ---------------------------------
 //
 // Reading steps through the very same rows the list draws — what the filters and the
 // folds leave, folders included. Folders are not stops, so stepping walks past any it
 // meets. Nothing is sifted on the way in.
 
-// --- the guides reached by following links ---------------------------------
+// --- the files reached by following links ---------------------------------
 //
 // Following a link puts the guide it names on a stack of its own, which starts empty
 // each time reading begins from the list. While the stack holds anything, the two
@@ -193,7 +193,7 @@ export function open_from_report(key: string): void {
 
 /**
  * Show a guide reached by following a link. Already on the stack: back up to it, leaving
- * what is above still there to go forward to. Otherwise the guides above where you stand
+ * what is above still there to go forward to. Otherwise the files above where you stand
  * are dropped and this one goes on top — so the stack is always the path you actually took,
  * which is what keeps a guide from being on it twice.
  */
@@ -276,7 +276,7 @@ function file_stack_step(by: number): string | null {
 	return stack[to];
 }
 
-/** Walk the stack of guides reached by links. Backing out of the bottom empties it. */
+/** Walk the stack of files reached by links. Backing out of the bottom empties it. */
 function step_stack(by: number): void {
 	const stack = get(w_link_stack);
 	const at = get(w_stack_at);

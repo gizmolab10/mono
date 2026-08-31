@@ -336,7 +336,7 @@ export class Hierarchy {
 		// last word, and pressing it opens the very file it was written in.
 		//
 		// Asked of the file's whole path, counting from the top of the repo. A file's path inside
-		// its own collection has the project and the notes and guides folders stripped off it, so a
+		// its own collection has the project and the notes and files folders stripped off it, so a
 		// link written the long way round — `../../../di/notes/guides/…` — could never agree with
 		// anything, and every one of them read as dead.
 		//
@@ -499,13 +499,13 @@ export class Hierarchy {
 		debug.log(`Narrowed: project(s) "${projects.join(', ') || 'all'}", kind "${kind || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_files.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
 	}
 
-	/** The guides wearing one tag. */
+	/** The files wearing one tag. */
 	filter_by_tag(tag_id: string): File[] {
 		const wanted = new Set(this.indexes.files_withTag(tag_id));
 		return this.files.filter((g) => wanted.has(g.id));
 	}
 
-	/** The guides that carry no tag at all. */
+	/** The files that carry no tag at all. */
 	untagged(): File[] {
 		const ids = new Set(this.indexes.untagged_among(this.files.filter((g) => !g.is_folder).map((g) => g.id)));
 		return this.files.filter((g) => ids.has(g.id));

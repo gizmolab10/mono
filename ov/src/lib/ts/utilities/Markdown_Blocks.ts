@@ -153,7 +153,7 @@ export function numbers_out_of_code(html: string): string {
 // The reader leaves headings unnamed, so a link ending in "#naming" would have nothing to
 // land on. Each heading is given a name made from its own words — lowercased, with anything
 // that isn't a letter or a number becoming a dash — which is how the writing tools make
-// them, so the links already in the guides line up.
+// them, so the links already in the files line up.
 export function name_the_headings(html: string): string {
 	return html.replace(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/g, (whole, level, already, inside) => {
 		const words = inside.replace(/<[^>]*>/g, '');
@@ -292,7 +292,7 @@ export function page_of(reader: MarkdownIt, text: string): string {
 
 /**
  * Obsidian's own way of naming another guide is two square brackets round its name, and these
- * guides are an Obsidian vault, so the form is all through them. The reader knows only the
+ * files are an Obsidian vault, so the form is all through them. The reader knows only the
  * ordinary form, so each one is turned into that before the words are drawn — and then the
  * finding, the mending on rename, and the dead-link check all go on knowing one shape.
  *

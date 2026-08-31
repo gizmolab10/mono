@@ -3,7 +3,7 @@ import { ALL_TAGS, T_Kind } from '../types/File';
 import { get } from 'svelte/store';
 
 /**
- * Filters — the four things that decide which guides show.
+ * Filters — the four things that decide which files show.
  *
  * They live here rather than inside whatever draws them, because the hierarchy is what
  * narrows the list now, and it has to be able to read them. All four are remembered

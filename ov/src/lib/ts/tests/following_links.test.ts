@@ -45,7 +45,7 @@ describe('whether the guide found really answers the link', () => {
 });
 
 // The question is asked of a file's whole path, counting from the top of the repo. A file's path
-// inside its own collection has the project and the notes and guides folders stripped off it, so a
+// inside its own collection has the project and the notes and files folders stripped off it, so a
 // link written the long way round could never agree with anything — and every one read as dead.
 
 describe('a link written the long way round', () => {

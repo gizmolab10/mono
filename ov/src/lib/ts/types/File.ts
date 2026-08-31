@@ -66,8 +66,8 @@ export function in_order(one: string, two: string): number {
 	return one.localeCompare(two, undefined, { sensitivity: 'base' });
 }
 
-// The collections the guides live in, each named for the folder that holds it.
-// The shared guides sit at the top of the repo, so their root is the repo's own folder.
+// The collections the files live in, each named for the folder that holds it.
+// The shared files sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
 	mono   = 'mo',
 	memory = 'memory',

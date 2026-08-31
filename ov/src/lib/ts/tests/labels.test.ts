@@ -3,7 +3,7 @@ import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/File';
 
-// A file added to the guides since the app last looked carries no labels at all. One is
+// A file added since the app last looked carries no labels at all. One is
 // composed from its own words and marked for a person to look at.
 
 const TODAY = '2026-08-06';

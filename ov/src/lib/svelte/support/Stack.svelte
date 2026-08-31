@@ -99,10 +99,11 @@
 	// against, so the stack draws the heavy one exactly where the fold's accent ends. Two folds
 	// running to the foot need none — the run of accent is boundary enough. Nor does any stack
 	// whose caller says the line down there is drawn by somebody else, or by nobody.
+	const shown = $derived(sections.filter((one) => !one.hidden));
 	const add_end_separator = $derived(foot === 'stack'
-		&&   sections.length > 1
-		&&  !sections[sections.length - 2].folded
-		&& !!sections[sections.length - 1].folded);
+		&&   shown.length > 1
+		&&  !shown[shown.length - 2].folded
+		&& !!shown[shown.length - 1].folded);
 
 	// Whether a separator is drawn at the foot at all, by the stack or by whatever stands below it.
 	// A fold is the span between two separators, so this is what says whether the last one has a
@@ -115,7 +116,7 @@
 	//
 	// A fold ends exactly on the separator below it, so a folded last section leaves nothing at
 	// all: the space would show as a strip of page color between that fold's accent and the line.
-	const foot_gap = $derived(sections[sections.length - 1]?.folded ? 0 : gap / 2);
+	const foot_gap = $derived(shown[shown.length - 1]?.folded ? 0 : gap / 2);
 
 	// Half the space above a section and half the space below it — the part of each gap that
 	// belongs to this section rather than to its neighbour. A section that answers a press reads
@@ -124,12 +125,20 @@
 		return at === 0 ? (leads ? spacing(0) / 2 : 0) : spacing(at) / 2;
 	}
 
+	// The neighbor below that is actually there — hidden sections keep their slot in the list
+	// but not in the layout, so every measurement walks past them.
+	function next_shown(at: number): number | null {
+		for (let n = at + 1; n < sections.length; n++) { if (!sections[n].hidden) { return n; } }
+		return null;
+	}
+
 	function isLast(at: number): boolean {
-		return at === sections.length - 1;
+		return next_shown(at) === null;
 	}
 
 	function under_of(at: number): number {
-		return isLast(at) ? Math.max(0, foot_gap) : spacing(at + 1) / 2;
+		const next = next_shown(at);
+		return next === null ? Math.max(0, foot_gap) : spacing(next) / 2;
 	}
 
 	// A folded section shows nothing and takes whatever height puts that next separator exactly the
@@ -139,9 +148,9 @@
 	// nothing at all is below it — and with no separator drawn down there it takes no height at all,
 	// since there is nothing for the folded distance to reach.
 	function height_of(at: number): number {
-		const last = isLast(at);
-		if (last && !line_at_foot) { return 0; }
-		return FOLDED - spacing(at) / 2 - (last ? 0 : spacing(at + 1) / 2);
+		const next = next_shown(at);
+		if (next === null && !line_at_foot) { return 0; }
+		return FOLDED - spacing(at) / 2 - (next === null ? 0 : spacing(next) / 2);
 	}
 </script>
 
@@ -171,19 +180,22 @@
 		</div>
 	{/if}
 	{#each sections as section, at (at)}
+		<!-- A hidden section is not there at all — no line, no height, no gap — but its slot
+		     stays in the run, so the sections below it never shift onto other separators. -->
 		<div class='stacked'
 			class:folded={section.folded}
 			style:--over='{over_of(at)}px'
 			style:--under='{under_of(at)}px'
-			style:margin-top={at > 0 ? `${spacing(at)}px` : undefined}
+			style:display={section.hidden ? 'none' : undefined}
+			style:margin-top={at > 0 && !section.hidden && shown[0] !== section ? `${spacing(at)}px` : undefined}
 			style:height={section.folded ? `${height_of(at)}px` : undefined}>
 			<!-- The accent fills the whole span between the two separators, so no page color is left
 			     showing anywhere in it, and the hairline is drawn down the exact middle of that span
 			     — which puts it exactly halfway between the two separators' own middles. -->
-			{#if section.folded && (!isLast(at) || line_at_foot)}
+			{#if section.folded && !section.hidden && (!isLast(at) || line_at_foot)}
 				{@render band(FOLDED, line_at(at) + FOLDED / 2)}
 			{/if}
-			{#if at > 0}
+			{#if at > 0 && !section.hidden && shown[0] !== section}
 				<div class='gap-line' style:top='{line_at(at)}px'>
 					<Separator {thickness} actions={actions_at(at)} />
 				</div>

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/core/zone/design.md",
+                "file": "memory/shared/zone/drive.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "design"
+              "title": "drive"
             }
           },
           {
@@ -41,7 +41,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/ideas.md",
+                "file": "memory/ov/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
@@ -50,21 +50,20 @@
             }
           },
           {
-            "id": "d982d392357bac1d",
+            "id": "07bc1b8e0aa42459",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/adoption journal.md",
+                "file": "memory/shared/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "adoption journal"
+              "title": "ideas"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -201,7 +200,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/zone/ideas.md",
+                "file": "memory/shared/zone/drive.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -239,44 +238,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "977981c37cc36ed4",
+  "active": "6ac25d6346f16830",
   "lastOpenFiles": [
-    "memory/ov/zone/ideas.md",
     "memory/shared/zone/ideas.md",
-    "memory/shared/zone/code debt.md",
-    "memory/core/zone/ideas.md",
+    "memory/shared/zone/drive.md",
+    "memory/di/zone/proposals.md",
+    "memory/ji/zone/proposals.md",
+    "memory/lv/zone/proposals.md",
+    "memory/wo/zone/proposals.md",
+    "memory/me/zone/proposals.md",
+    "memory/mu/zone/proposals.md",
+    "memory/core/zone/proposals.md",
+    "memory/ov/zone/proposals.md",
+    "memory/shared/zone/proposals.md",
     "memory/shared/zone/inception into the new design.md",
-    "memory/core/zone/design.md",
-    "_to_delete/ji-old-code-debt.md",
+    "memory/shared/zone/adoption journal.md",
+    "memory/lv/zone/ideas.md",
     "memory/ji/zone/ideas.md",
-    "memory/ji/questions.md",
-    "memory/ji/log.md",
-    "memory/ji/index.md",
+    "memory/core/zone/design.md",
+    "notes/guides/pre-flight/sedEMKzaA",
+    "memory/shared/truth/handbook.md",
+    "memory/shared/truth/create a project.md",
+    "memory/ov/zone/ideas.md",
+    "_to_delete/core-copy-of-map-of-ov-files.md",
+    "memory/ov/truth/map of ov files.md",
+    "memory/lv/truth/map of lv files.md",
+    "memory/ji/truth/map of ji notes.md",
+    "memory/ji/truth/map of ji files.md",
+    "memory/di/truth/map of di notes.md",
+    "memory/di/truth/map of di guides.md",
+    "memory/di/zone",
+    "memory/di/truth",
+    "memory/di",
     "memory/ji/zone",
     "memory/ji/truth",
     "memory/ji",
-    "memory/ov/zone/code debt.md",
-    "_to_delete/lv-old-code-debt.md",
     "_to_delete",
-    "memory/lv/questions.md",
-    "memory/wo/questions.md",
-    "memory/me/questions.md",
-    "memory/mu/questions.md",
-    "memory/core/questions.md",
-    "memory/ov/questions.md",
-    "memory/shared/questions.md",
-    "memory/shared/truth/cases.md",
-    "memory/core/zone/code debt.md",
-    "memory/core/log.md",
     "memory/ov/sed7qduKQ",
     "ov/src/lib/svelte/filter/sedK6x8kZ",
-    "ov/src/lib/svelte/support/sedSHZMAZ",
-    "ov/src/lib/svelte/content/sed5ZYCF4",
-    "ov/src/lib/svelte/content/sedyFoGgP",
-    "ov/src/lib/ts/common/Core.ts",
-    "notes/guides/pre-flight/shorthand.md",
-    "memory/core/truth/structure.md",
-    "mu/node_modules/@jridgewell/resolve-uri/README.md",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",

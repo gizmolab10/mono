@@ -40,7 +40,7 @@
 		onredrawn  : () => void;              // the page was built afresh from changed words
 	} = $props();
 
-	// The guides are written in markdown, so they are turned into a real page before being
+	// The files are written in markdown, so they are turned into a real page before being
 	// shown. Any markup written into a guide is left as plain characters rather than acted
 	// on, so a guide can never reach into the app.
 	// Punctuation is left exactly as the file writes it — no curling quotes, no turning two

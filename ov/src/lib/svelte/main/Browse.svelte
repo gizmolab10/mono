@@ -20,7 +20,7 @@
 	// and the list itself. The narrowing happens in the hierarchy; this only shows it.
 	const w_showing = files.w_showing;
 
-	// How many guides the filters leave — counted before the folds, so shutting a folder
+	// How many files the filters allow — counted before the folds, so shutting a folder
 	// hides its files from the list without changing what the count says.
 	let matching = $derived.by(() => { $w_showing; return files.hierarchy.matched_count; });
 	// How many there are to be had at all.

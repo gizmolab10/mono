@@ -10,7 +10,7 @@
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Core';
 
-	// Which guides point at the one being read.
+	// Which files point at the one being read.
 	//
 	// A guide says what it points at, and until this nothing said what points at it — so one
 	// could be rewritten, moved or thrown away without ever seeing who was relying on it.
@@ -91,7 +91,7 @@
 	<div class='out_of_sight'>
 		<button type='button' class='clickable' bind:this={clickable}
 			use:hit_target={{ id: 'editor.fold.backlinks', onpress: toggle_backlinks,
-				tip: 'which guides point at this one' }}>{backlinks_word}</button>
+				tip: 'which files point at this one' }}>{backlinks_word}</button>
 	</div>
 	<!-- A gap is measured from the middle of the line above and half that line is given back, so
 	     a plain gap would begin the pills at its very edge. Half the heavy line is asked for on

@@ -539,7 +539,7 @@
 	}
 
 
-	/* A collection with no guides yet: grayed and dead to the touch. */
+	/* A collection with no files yet: grayed and dead to the touch. */
 	.segment.empty {
 		color  : var(--gray);
 		cursor : default;

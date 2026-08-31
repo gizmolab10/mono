@@ -1,3 +1,10 @@
+---
+kind: analyze
+title: "Handoff"
+description: "Resume point for next chat"
+tags: [now, stale]
+date: 2026-08-31
+---
 # Handoff
 
 Resume point for next chat.

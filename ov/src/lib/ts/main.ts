@@ -38,7 +38,7 @@ debug.log(`Startup: pushed the layer numbers, the sizes and the fixed inks onto 
 // structure that isn't there yet.
 files.load().then(() => {
 	w_app.set(S_App.ready);
-	debug.log(`Startup: the guides are read and the app is showing itself.`);
+	debug.log(`Startup: the files are read and the app is showing itself.`);
 });
 
 const app = mount(App, {

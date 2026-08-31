@@ -13,7 +13,7 @@ import { debug } from '../common/Debug';
 /**
  * Guides — every guide file in the four collections, hung on the structure.
  *
- * Overview reaches outside its own folder on purpose: the guides are the thing it
+ * Overview reaches outside its own folder on purpose: the files are the thing it
  * is a picture of. What travels with the app is only their addresses, never a word
  * of their text. At launch each file is read once, the five labels off its top are
  * kept, and everything else is let go — nothing is held on to and nothing is saved.
@@ -37,7 +37,7 @@ class Files {
 
 	hierarchy = new Hierarchy();
 
-	// Flips to true once every file has been read. Anything showing the guides watches
+	// Flips to true once every file has been read. Anything showing the files watches
 	// this, since at first launch there is nothing yet to show.
 	w_ready = writable(false);
 
@@ -62,7 +62,7 @@ class Files {
 	// hears about a change. Re-worked out whenever any filter or any fold moves.
 	w_showing = writable<Filtered_File[]>([]);
 
-	// --- which guides point at which ------------------------------------------
+	// --- which files point at which ------------------------------------------
 	//
 	// A guide says what it points at, and nothing says what points at it — so one can be
 	// rewritten, moved or thrown away without ever seeing who was relying on it.
@@ -77,17 +77,17 @@ class Files {
 	// needs every guide already hung on the structure.
 	links_from = new Map<string, string[]>();
 
-	// Which guides point at each one, by where they sit. Worked out from the above, and again
+	// Which files point at each one, by where they sit. Worked out from the above, and again
 	// whenever one file's own links change.
 	w_pointing_at = writable(new Map<string, string[]>());
 
-	/** The guides that point at this one, in the order they were read. */
+	/** The files that point at this one, in the order they were read. */
 	pointing_at(key: string): string[] {
 		return get(this.w_pointing_at).get(key) ?? [];
 	}
 
 	/**
-	 * Work out afresh which guides point at which, from the links every one of them holds.
+	 * Work out afresh which files point at which, from the links every one of them holds.
 	 * Each link is answered by the same following that answers a press, so a link naming a file
 	 * the app never lists counts for nothing here, exactly as it does there.
 	 */
@@ -217,7 +217,7 @@ class Files {
 	 */
 	async repair_indexes(): Promise<void> {
 		const root = this.repo_root;
-		if (root === '') { show_status('cannot repair — the guides have no addresses to read'); return; }
+		if (root === '') { show_status('cannot repair — the files have no addresses to read'); return; }
 
 		const folders = this.hierarchy.files.filter((g) => g.is_folder);
 		const files   = this.files;
@@ -372,7 +372,7 @@ class Files {
 	 * file itself goes is the app's own picture changed, so a refusal leaves everything as it
 	 * was. Says whether it went.
 	 *
-	 * Links in other guides that named it are left alone: they now lead nowhere, and the dead
+	 * Links in other files that named it are left alone: they now lead nowhere, and the dead
 	 * link report is what finds those.
 	 */
 	async delete_one(guide: File): Promise<boolean> {
@@ -490,7 +490,7 @@ class Files {
 			// drawing does it. Read raw, none of those was seen at all — and a link the check
 			// cannot see is one it can never call dead.
 			for (const { address: link, words: reads_as } of links_in(plain_links(text))) {
-				// Only links to guides are judged. A link to a source file or to a folder is
+				// Only links to files are judged. A link to a source file or to a folder is
 				// perfectly good — the app simply never lists those, so it cannot follow them.
 				const named = link.split('#')[0];
 				if (named.endsWith('/')) { continue; }
@@ -627,7 +627,7 @@ class Files {
 		const on_disk = await files_on_disk();
 		if (on_disk.paths.length === 0) {
 			this.w_no_server.set(true);
-			debug.log('Guides: the dispatcher did not answer, so there are no guides to show — it is the only thing that knows what is on disk.');
+			debug.log('Guides: the dispatcher did not answer, so there are no files to show — it is the only thing that knows what is on disk.');
 			this.w_ready.set(true);
 			return;
 		}
@@ -670,7 +670,7 @@ class Files {
 	 * Read one file and hang it under the folders its path names, making each folder the first
 	 * time it is met. The path begins with "designs" for a design and "work" for a work note, so
 	 * the three purposes can never collide — and each of those two gets a folder of its own,
-	 * standing beside the guides inside its project.
+	 * standing beside the files inside its project.
 	 */
 	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: File): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
 		const under = is_design ? 'designs' : path.startsWith('work/') ? 'work' : '';
