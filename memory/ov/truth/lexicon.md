@@ -2,7 +2,7 @@
 type: reference
 title: ov lexicon
 description: The exact words ov uses in prose, comments, log lines, and test names — the one home.
-tags: [lexicon, terminology]
+tags: [lexicon, terminology, incorporated]
 use_when: [every ov session]
 updated: 29 August 2026
 ---

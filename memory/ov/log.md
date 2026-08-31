@@ -9,9 +9,6 @@ date: 2026-08-30
 
 <!-- consolidated: 30 August 2026 -->
 
-## 30 August 2026
-- D: ov's Constants.ts is a two-line re-export of core's, through the new 'core' nickname (alias in tsconfig and vite); one k instance, no drift possible
-
 ---
 
 ## original work log

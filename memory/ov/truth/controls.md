@@ -2,7 +2,7 @@
 type: design
 title: Controls
 description: How the list's filters and the editor's controls behave.
-tags: [filters, controls, editor]
+tags: [filters, controls, editor, incorporated]
 use_when: [filter work, segmented controls, tag picking, editor title row]
 updated: 29 August 2026
 ---
