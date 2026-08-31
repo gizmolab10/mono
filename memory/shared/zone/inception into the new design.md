@@ -38,7 +38,7 @@ Found 29 August 2026, each a topic living in two places — the merge direction 
 - **shared terms** — `memory/shared/truth/lexicon.md` vs `pre-flight/lexicon.md` (mono-wide): two lexicons for cross-project words; the old one still points at ov's dead pre-flight lexicon.
 - **taste** — `memory/shared/truth/taste.md` vs `notes/guides/develop/aesthetics.md`: both hold visual principles.
 - **the design's own story** — `ov/notes/work/AI memory redesign.md` (rationale), `memory/shared/truth/protocol.md` (law), and `truth/publish — can an AI actually learn?.md` (the article): three tellings; only the rationale/law split is by design.
-- **ov, where to pick up** — `memory/ov/zone/handoff.md` ("where it stands") vs `index.md`'s current-state paragraph; and `zone/code debt.md`'s open items vs `questions.md` — the pac that moved them in flagged both.
+- **ov, where to pick up** — resolved: code debt merged into ideas.md (done section dead at the door), handoff dissolved — state to index.md, live work to ideas.md as born entries, history to git.
 - **ov work history** — `zone/code debt.md`'s done section vs the log's "original work log" appendix: the same finished work, told twice.
 - **di and ji terms, to come** — `di/` and `ji/notes/guides/pre-flight/lexicon.md` have no memory home yet; the day those projects come up, the ov merge is their pattern.
 

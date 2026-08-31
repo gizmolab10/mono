@@ -17,6 +17,12 @@ date:
 
 ## Evaluations (pac) made during 2026
 
+- 30 August 2026; **move the map files into truth/ — each project's file map becomes its `truth/structure.md`.**
+  For: a map states what is — every file and what it does — which is a truth's job (structure.md is not a map — it tells core's design, not what each file is; a map keeps its own name). The family is real: seven file maps across di, ji, lv and ov (files, guides and notes maps), all load-bearing ("read this instead of hunting"), all commanding truth discipline in their own descriptions. One decided pattern settles all seven, and core's copy of ov's map is a carve leftover to delete, not move.
+  Against: the sizes break the truth cap by multiples, not lines — ov's map is 37.6k, ji's 27.9k — so moving whole is impossible and trimming is the real work. The update duty is a hand-kept promise, the drift the lifecycle pac already named, and a stale map misleads worse than hunting. di has no memory project to receive its three maps. And the road maps (di, ji) wear the name but are plans, not file maps — zone material if they move at all.
+  Deciding question: trim each under the cap at the door, or move whole and let settles cut — and does a 37.6k map belong in memory at all, or should ov's app answer "what does this file do" instead?
+  Decided 31 August 2026: moved whole, under their own names, each into its project's truth/ — settles cut them, and the new settle step keeps them true from git; core's copy of ov's map is deleted; the road maps stay where they are, being plans.
+
 - 30 August 2026; **remove the logs from ov.**
   For: logs are mined and fed to settle, never read — and ov is an instrument for reading and grasping. Every log row in browse is noise in that instrument: ~8 files that no filter stage claims (logs ride no life cycle), whose content is one-line entries meant for sweeping. Removing them sharpens what ov is for.
   Against: today's date mistake was caught by reading a log in ov — the rare look does happen, and the editor is where a log line gets hand-fixed. Hiding files makes ov lie about what a folder holds, the claim a browse table exists to make. And the lifecycle area may already do the job gently: logs wear no stage tag, so stage-filtered views omit them without anyone hiding anything.

@@ -25,9 +25,10 @@ Run when a project's log exceeds ~30 entries, or before a major work burst.
 
 1. Read every log entry above the `<!-- consolidated: DATE -->` marker.
 2. Read `questions.md` too: strike any question the work has since answered, recording the answer as a `D:`. Then **settle each line** by tag: `D:` → edit the owning truth (and `decisions.md` if the rationale will be questioned again); `S:` → rewrite the *current state* paragraph in the project's `index.md`; `I:` → promote to a truth / `ideas.md`, keep, or cull. While settling, scan the prose for defined terms used off-definition (reword or formally redefine) and undefined terms (reword into plain language — never retroactively coin).
-3. Delete settled entries; move the marker.
-4. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, have a *new* session run this check.
-5. **Commit as one labeled commit** — `memory: settle <project>` — touching nothing else. If the `memory/` tree is not yet tracked by git, a one-time baseline commit (`memory: baseline`) comes first, so reverting a settle never removes the tree.
+3. **Map upkeep:** when the project's truth holds a map, ask git what changed under the project's code since the marker — files added, moved, removed — and edit the map to match. No change, no edit.
+4. Delete settled entries; move the marker.
+5. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, have a *new* session run this check.
+6. **Commit as one labeled commit** — `memory: settle <project>` — touching nothing else. If the `memory/` tree is not yet tracked by git, a one-time baseline commit (`memory: baseline`) comes first, so reverting a settle never removes the tree.
 
 Never summarize prose into vaguer prose. Settling moves facts to their one home and throws away only what it names.
 

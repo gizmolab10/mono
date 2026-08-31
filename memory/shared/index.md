@@ -5,7 +5,7 @@ description: The shared project — truths about how this collaboration works, s
 
 Cross-project bundle: the subject of this project is the collaboration itself — its rules, its vocabulary, its taste.
 
-**Current state:** the toolkit is thirteen skills (d, start, pac, go, define, propose, settle, t, syns, obs, check, where, summary — no two overlapping), plus `wordy` as t's careful-wording form; questions live in each project's `questions.md`; zone means a project's live thinking; a truth is incorporated, never believed; decided pacs leave compressed stories in `truth/cases.md`; every cycle-riding file wears a lifecycle tag (born, weighed, waiting, incorporated, settled — logs and indexes ride none). Git is permitted in `memory/`. Eight projects are up: shared, ov, core, mu, me, wo, lv, ji. The hooks still read the old notes — the one long-open question, joined by the check's inconsistency list.
+**Current state:** the toolkit is thirteen skills (d, start, pac, go, define, propose, settle, t, syns, obs, check, where, summary — no two overlapping), plus `wordy` as t's careful-wording form; questions live in each project's `questions.md`; zone means a project's live thinking; a truth is incorporated, never believed; decided pacs leave compressed stories in `truth/cases.md`; every cycle-riding file wears a lifecycle tag (born, weighed, waiting, incorporated, settled — logs and indexes ride none). Git is permitted in `memory/`. Consolidation keeps each project's map true from git — a step between settling lines and committing. Eight projects are up: shared, ov, core, mu, me, wo, lv, ji. The hooks still read the old notes — the one long-open question, joined by the check's inconsistency list.
 
 ## Truths
 
