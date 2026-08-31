@@ -134,3 +134,11 @@ That is what the move on 27 August already did, by hand. This proposal is for ma
 **Cost.** One more file in every project's zone, and a settle step that touches it. Both small.
 
 **Open question:** does `soon` stay as a heading inside `debt.md`, or does a debt line carry a tag — `now`, `soon`, `tabled` — the way a file does?
+
+## guide -> file rename (from handoff)
+
+Criteria settled: rename to `file` wherever the thing can be a design or work note too; keep `guide` where the name exists outside our code (the guides/ folder, its paths, sentences that turn on the difference); leave the ~550 comments, each changed as its file is next touched, never as a sweep. Group 1 is done — fourteen names, 87 occurrences, 11 files, and the dispatcher route `/list-guides` -> `/list-files`. Remaining: group 2, a reading job — walk the 52 occurrences inside paths and confirm each is the folder on disk rather than a thing the app lists.
+
+## gather the utilities (from handoff)
+
+Seventeen of the nineteen utility files hand out loose functions, so the editor's frame opens with nineteen import lines. Gather each file's functions into one exported thing, so a caller names the file, not every function: `export const labels = { labels_from, label_block, has_labels, blank_file };` Open: a class or one gathered object (no state either way — Colors and SVG_Paths, which hold classes, should end the same shape as the rest); whether `labels.from` reads better than `labels_from`; and one file first, looked at, before the rest.
