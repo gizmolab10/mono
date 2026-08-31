@@ -17,6 +17,23 @@ date:
 
 ## Evaluations (pac) made during 2026
 
+- 31 August 2026; **working.md as the name for the proposals-in-flight file.**
+  For: the gerund says activity, not state — these proposals are being worked, right now, which is truer than open or active. The idiom carries it: a working draft, working papers — provisional things mid-shaping, exactly what the file holds. And unlike the three state-words, it survives its neighbors: no tag, no index paragraph, no ov control wears it.
+  Against: as an adjective it also means functioning — "a working app" — so working.md could read as "what works" rather than "what is being worked." The word's family is all over the dying old notes (notes/work/, work journal, working features), so the name drags an old smell into the new design. And it still says how rather than what — the contents question ("where is the plan for X") is answered by proposals.md, not by any word about activity.
+  Deciding question: does the working-draft idiom carry the meaning cleanly, or does what-it-holds beat how-it-stands whatever the word?
+  Decided 31 August 2026: what-it-holds won, with a sharper word — `drive`.
+
+- 31 August 2026; **name the zone file that holds proposals in flight: current.md, open.md, or active.md.**
+  For current: says the work is the work of now, and pairs with the index's "current state" — the paragraph tells where the project stands, the file tells what is being built.
+  Against current: that pairing is the trouble — "current" already belongs to index.md's paragraph, and a file wearing the same word makes two claimants on it; the where-to-look answer becomes a coin flip.
+  For open: honest about state — a proposal in the file is not closed — and short.
+  Against open: the word is loaded everywhere nearby: questions.md was "open questions" days ago, ov opens files and folds, and an "open.md" reads as a verb waiting for an object.
+  For active: says exactly what zone means — live thinking, being acted on.
+  Against active: "active" is already a tag area in ov (now, next, soon, later, tabled) — the same word naming a file and a tag family is the duplication bug in word form, and the freshest convention says name the concrete thing.
+  All three describe the state, not the contents — proposals.md says what is inside, these say how it is doing; a reader hunting "where is the plan for X" asks for contents.
+  Deciding question: should the file's name say what it holds (proposals) or how its holdings stand (current, open, active) — and can any state-word survive its collisions?
+  Decided 31 August 2026: none of the three — the file is `zone/drive.md`, named for what it holds: the current drive, a proposal being decided and implemented.
+
 - 30 August 2026; **move the map files into truth/ — each project's file map becomes its `truth/structure.md`.**
   For: a map states what is — every file and what it does — which is a truth's job (structure.md is not a map — it tells core's design, not what each file is; a map keeps its own name). The family is real: seven file maps across di, ji, lv and ov (files, guides and notes maps), all load-bearing ("read this instead of hunting"), all commanding truth discipline in their own descriptions. One decided pattern settles all seven, and core's copy of ov's map is a carve leftover to delete, not move.
   Against: the sizes break the truth cap by multiples, not lines — ov's map is 37.6k, ji's 27.9k — so moving whole is impossible and trimming is the real work. The update duty is a hand-kept promise, the drift the lifecycle pac already named, and a stale map misleads worse than hunting. di has no memory project to receive its three maps. And the road maps (di, ji) wear the name but are plans, not file maps — zone material if they move at all.

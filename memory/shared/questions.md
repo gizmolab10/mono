@@ -11,9 +11,9 @@ date: 2026-08-29
 
 ## Inconsistencies and duplications
 
-- pac destination has three claimants — protocol line 83 says `zone/decisions.md`, its Skills pac entry and all practice say `truth/decisions.md`; which yields?
+- pac destination has three claimants — handbook line 83 says `zone/decisions.md`, its Skills pac entry and all practice say `truth/decisions.md`; which yields?
 - `decisions.md` law vs practice — "one line of why, delete when final, ~10 items" vs multi-paragraph pacs kept after deciding; which yields?
-- protocol names the inception file `truth/inception.md`; it lives at shared/zone/`inception into the new design.md`; re-point or move?
+- the handbook names the inception file `truth/inception.md`; it lives at shared/zone/`inception into the new design.md`; re-point or move?
 - learn has no home — shorthand says "add it to learn", practice writes conventions.md; and that row calls "decision" a synonym of learn, colliding with d
 - ov↔core memory twins from the carve — truth: action type, claude-files, scope, lexicon; zone: ideas, handoff (code debt near-twin); merge or trim core's?
 - ov↔core code twins — ov's Debug.ts and Dirty.ts are core's verbatim; two instances run, Dirty's stores can diverge; same changes as with Extensions?

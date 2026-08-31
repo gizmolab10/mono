@@ -43,7 +43,7 @@ memory/
     index.md          the table of contents
     log.md
     truth/            1 source of truth
-      protocol.md     1 source of governing rules
+      handbook.md     1 source of governing rules
       lexicon.md      1 dictionary
       decisions.md    choices made, and why
     zone/             everything not yet accepted
