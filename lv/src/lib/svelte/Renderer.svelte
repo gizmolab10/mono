@@ -8,10 +8,10 @@
   // inside it, holding that folder's photos. Each one is taken off before the
   // next page arrives: its arrow-key listener sits on the window and would
   // outlive the html it belongs to.
-  import { photosInFolder } from '../ts/utilities/loader';
-  import { router } from '../ts/utilities/router.svelte';
-  import { getMdText } from '../ts/utilities/resolver';
-  import { render } from '../ts/utilities/parser';
+  import { photosInFolder } from '../ts/utilities/Loader';
+  import { router } from '../ts/utilities/Router.svelte';
+  import { getMdText } from '../ts/utilities/Resolver';
+  import { render } from '../ts/utilities/Parser';
   import { mount, unmount } from 'svelte';
   import Gallery from './Gallery.svelte';
 

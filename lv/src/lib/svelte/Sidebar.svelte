@@ -6,11 +6,11 @@
   //     foldable section, so the writer can group entries with `## Section`.
   //   - highlightActive: marks the anchor whose target matches the current
   //     page with an "active" class for the pill background.
-  import { loadFolderOpen, saveFolderOpen } from '../ts/utilities/persistence';
-  import { buildSidebarMd } from '../ts/utilities/sidebar-content';
-  import { router } from '../ts/utilities/router.svelte';
-  import { fatTriangle } from '../ts/utilities/icons';
-  import { render } from '../ts/utilities/parser';
+  import { loadFolderOpen, saveFolderOpen } from '../ts/utilities/Persistence';
+  import { buildSidebarMd } from '../ts/utilities/Sidebar_Content';
+  import { router } from '../ts/utilities/Router.svelte';
+  import { fatTriangle } from '../ts/utilities/Icons';
+  import { render } from '../ts/utilities/Parser';
 
   const html = render(buildSidebarMd());
 

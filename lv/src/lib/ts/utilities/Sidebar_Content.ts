@@ -7,7 +7,7 @@
 // renderer the rest of the site uses; the fold-maker turns each folder
 // heading into a collapsible section.
 
-import { loadMdEntries } from './loader';
+import { loadMdEntries } from './Loader';
 
 export type PageInfo = { name: string; title?: string; home: boolean; folder: string };
 

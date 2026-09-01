@@ -35,7 +35,9 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
-Empty. Everything here has been distilled into a rule; the table below says where each went.
+- 1. 2026-09-01 A true premise carrying an untested conclusion. i said a rename would need a temporary name "to make git see it", from two facts that are true — the disk is case-insensitive, `core.ignorecase` is `true`. `git mv gallery.ts Gallery.ts` does it in one move; the setting governs what git notices by itself, never what it can be told to do. No evidence, no I AM GUESSING. The rule is `always.md` #3 and conventions' verify-by-observation line, so this is a failure to follow. Watch for the shape: general knowledge that is true, spent on a specific prediction about this repo, when one command would settle it.
+
+Everything else here has been distilled into a rule; the table below says where each went.
 What is di's own — its geometry and its pipeline — is in [di's learn](../../di/notes/work/now/learn.md).
 
 ---

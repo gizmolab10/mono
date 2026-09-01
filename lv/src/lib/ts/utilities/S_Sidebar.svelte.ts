@@ -3,7 +3,7 @@
 // to the content. On a narrow screen, the state picks which of the two
 // mobile modes is shown: sidebar-plus-status or content-plus-status.
 
-import { loadSidebarVisible, saveSidebarVisible } from './persistence';
+import { loadSidebarVisible, saveSidebarVisible } from './Persistence';
 
 class S_Sidebar {
   visible = $state<boolean>(loadSidebarVisible(false));

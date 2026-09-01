@@ -19,6 +19,7 @@
       {#snippet contents()}{/snippet}
     </Section>
   </div>
+  <!--Hamburger /-->
   <Sidebar />
   <Renderer />
   <StatusLine />

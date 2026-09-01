@@ -9,7 +9,7 @@ import { mkdir, readdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { join, resolve, basename } from 'node:path';
 import type { Plugin } from 'vite';
 import { stamp, canHoldACaption } from './stamp';
-import { ORDER_FILE, orderText } from '../src/lib/ts/utilities/order';
+import { ORDER_FILE, orderText } from '../src/lib/ts/utilities/Order';
 
 const DOORWAY = '/__caption';       // a file arriving, its bytes in the body
 const AGAIN = '/__recaption';       // a file already here, its caption alone

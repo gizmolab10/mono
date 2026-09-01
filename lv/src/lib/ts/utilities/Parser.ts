@@ -20,7 +20,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 
-import { resolveHref } from './resolver';
+import { resolveHref } from './Resolver';
 
 // Convert `![[name.png]]` and `[[Other Note]]` (and the `[[Target|Display]]`
 // alias form) into standard markdown image and link syntax. Also relax

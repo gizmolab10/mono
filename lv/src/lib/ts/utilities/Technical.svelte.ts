@@ -6,7 +6,7 @@
 //
 // Editing is remembered, since writing a caption sends the page around again.
 
-import { loadEditing, loadTechnical, saveEditing } from './persistence';
+import { loadEditing, loadTechnical, saveEditing } from './Persistence';
 
 class Technical {
   readonly said = loadTechnical();               // read at launch, never after

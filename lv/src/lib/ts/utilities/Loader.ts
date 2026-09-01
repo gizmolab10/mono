@@ -6,7 +6,7 @@
 // The titles carried inside the photos themselves, read while the site is
 // built. See `plugins/photo-titles.ts`.
 import photoTitles from 'virtual:photo-titles';
-import { inOrder, namesInOrder } from './order';
+import { inOrder, namesInOrder } from './Order';
 
 // md files: load every file under src/md as raw text.
 const rawMdModules = import.meta.glob<string>('/src/md/**/*.md', {

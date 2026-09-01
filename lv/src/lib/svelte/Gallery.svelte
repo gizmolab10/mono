@@ -17,11 +17,11 @@
   // focus. A window listener outlives the element that set it, so the listener
   // is taken off when this component goes — the renderer unmounts it as the
   // page changes.
-  import { technical } from '../ts/utilities/technical.svelte';
-  import { captionFor, isMovie, nameOf, step } from '../ts/utilities/gallery';
-  import { inOrder, moved } from '../ts/utilities/order';
-  import { loadPass, savePass } from '../ts/utilities/persistence';
-  import type { Photo } from '../ts/utilities/loader';
+  import { technical } from '../ts/utilities/Technical.svelte';
+  import { captionFor, isMovie, nameOf, step } from '../ts/utilities/Gallery';
+  import { inOrder, moved } from '../ts/utilities/Order';
+  import { loadPass, savePass } from '../ts/utilities/Persistence';
+  import type { Photo } from '../ts/utilities/Loader';
 
   // Who does the writing. While `yarn dev` runs it is the dev server, which
   // writes straight to disk. On the published site it is a piece of code at

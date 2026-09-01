@@ -2,7 +2,7 @@
 // The order belongs to the folder, in one list; a file's line is its place.
 
 import { describe, it, expect } from 'vitest';
-import { inOrder, moved, namesInOrder, orderText } from '../utilities/order';
+import { inOrder, moved, namesInOrder, orderText } from '../utilities/Order';
 
 describe('reading a list', () => {
   it('takes the names in the order they are written', () => {

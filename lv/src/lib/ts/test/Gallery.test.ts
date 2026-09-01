@@ -3,10 +3,10 @@
 // asks for one, and the walk from photo to photo with its caption.
 
 import { describe, it, expect } from 'vitest';
-import { photosInFolder, loadAssetFolders, loadAssetOrders } from '../utilities/loader';
-import { captionFor, isMovie, nameOf, step } from '../utilities/gallery';
+import { photosInFolder, loadAssetFolders, loadAssetOrders } from '../utilities/Loader';
+import { captionFor, isMovie, nameOf, step } from '../utilities/Gallery';
 import photoTitles from 'virtual:photo-titles';
-import { render } from '../utilities/parser';
+import { render } from '../utilities/Parser';
 
 describe('a folder of photos', () => {
   it('finds the photos in the folder, in the order its own list names', () => {

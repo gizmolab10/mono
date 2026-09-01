@@ -11,7 +11,7 @@ import {
   saveSidebarVisible,
   loadFolderOpen,
   saveFolderOpen,
-} from '../utilities/persistence';
+} from '../utilities/Persistence';
 
 describe('sidebar shown state', () => {
   beforeEach(() => localStorage.clear());

@@ -5,7 +5,7 @@
 // - Image embeds: ![[name.png]] -> bundled image URL from the asset map.
 // - Page links:   [[Other Note]] -> a path the router will pick up.
 
-import { loadAssets, loadMdFiles } from './loader';
+import { loadAssets, loadMdFiles } from './Loader';
 
 const assetMap = loadAssets();
 const mdMap = loadMdFiles();

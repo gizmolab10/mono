@@ -10,7 +10,7 @@
 // See the "Not yet built" note at the foot of the spec file.
 
 import { describe, it, expect } from 'vitest';
-import { render } from '../utilities/parser';
+import { render } from '../utilities/Parser';
 
 describe('standard markdown', () => {
   it('turns a hash line into a top heading', () => {

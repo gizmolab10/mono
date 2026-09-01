@@ -4,7 +4,7 @@
 // md file that does not exist on disk, a broken-link error appears; the next
 // successful navigation clears it.
 
-import { pageExists } from './resolver';
+import { pageExists } from './Resolver';
 
 const HOME = 'Little Cloud Vineyard';
 

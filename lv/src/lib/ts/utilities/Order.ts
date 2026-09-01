@@ -7,7 +7,7 @@
 // browser. Reading the list at build time is the loader's job; writing it back
 // belongs to the dev server and to `netlify/functions/reorder.mts`.
 
-import { step } from './gallery';
+import { step } from './Gallery';
 
 export const ORDER_FILE = 'order.md';
 

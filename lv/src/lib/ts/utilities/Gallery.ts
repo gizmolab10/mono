@@ -4,7 +4,7 @@
 // The photos themselves come from the loader (`photosInFolder`). Everything
 // here is arithmetic on the position, so it can be proved without a browser.
 
-import type { Photo } from './loader';
+import type { Photo } from './Loader';
 
 // A movie plays; everything else is drawn as a still. `.mov` is a QuickTime
 // wrapper — Safari plays it, other browsers often will not, so `.mp4` is the

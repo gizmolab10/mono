@@ -4,7 +4,7 @@
   // collapses; on a narrow screen, the layout switches between sidebar
   // mode and content mode.
   import { s_sidebar } from '../ts/utilities/S_Sidebar.svelte';
-  import { hamburger } from '../ts/utilities/icons';
+  import { hamburger } from '../ts/utilities/Icons';
 </script>
 
 <button class="shell-toggle" aria-label="Hamburger sidebar" type="button" onclick={() => s_sidebar.toggle()}>

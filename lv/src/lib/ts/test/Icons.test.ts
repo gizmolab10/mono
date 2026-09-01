@@ -2,7 +2,7 @@
 // closed shape, starting with a move and ending with a close.
 
 import { describe, it, expect } from 'vitest';
-import { hamburger, fatTriangle } from '../utilities/icons';
+import { hamburger, fatTriangle } from '../utilities/Icons';
 
 describe('menu mark', () => {
   const d = hamburger(32);
