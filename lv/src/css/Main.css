@@ -18,7 +18,7 @@ textarea:focus {
 /* ----- Page shell: four-piece layout =====
    .shell wraps the entire page.
    .shell holds three regions in a grid (sidebar | content) on top of (status across both),
-   plus the toggle button positioned over the top-left corner.
+   plus the hamburger positioned over the top-left corner.
 */
 .shell {
   grid-template-columns: 250px 1fr;
@@ -79,7 +79,7 @@ textarea:focus {
 
 .shell-sidebar {
   border-right: var(--thick-faint) solid lightgrey;
-  /* Leave room at the top for the toggle button. */
+  /* Leave room at the top for the hamburger. */
   padding: calc(3rem + 12px) 1rem 1rem 1rem;
   grid-area: sidebar;
   overflow-y: auto;
@@ -120,7 +120,7 @@ textarea:focus {
   color: #b80000;
 }
 
-.shell-toggle {
+.hamburger-button {
   border: var(--thick) solid white;
   justify-content: center;
   border-radius: 0.25rem;
@@ -136,11 +136,11 @@ textarea:focus {
   z-index: 10;
 }
 
-.shell-toggle:hover {
+.hamburger-button:hover {
   color: lightgrey;
 }
 
-.shell-toggle .toggle-icon path {
+.hamburger-button .hamburger-icon path {
   fill: currentColor;
 }
 

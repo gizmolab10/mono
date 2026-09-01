@@ -1,11 +1,11 @@
 <script lang='ts'>
   // The page shell. Four regions in a grid: a top row across the whole width, the
   // sidebar and the rendered md file beside each other, and the status line across
-  // the foot. The toggle button is pinned over the top-left corner.
-  import { s_sidebar } from '../ts/utilities/S_Sidebar.svelte';
+  // the foot. The hamburger is pinned over the top-left corner.
   import { Section, T_Edge } from '../ts/common/Core';
+  // import { Hamburger } from '../ts/common/Core';   // out of sight with its markup below
+  import { s_sidebar } from '../ts/utilities/S_Sidebar.svelte';
   import StatusLine from './StatusLine.svelte';
-  import Hamburger from './Hamburger.svelte';
   import Renderer from './Renderer.svelte';
   import Sidebar from './Sidebar.svelte';
   import Edit from './Edit.svelte';
@@ -19,7 +19,7 @@
       {#snippet contents()}{/snippet}
     </Section>
   </div>
-  <!--Hamburger /-->
+  <!--Hamburger size={44} label='show or hide the sidebar' onpress={() => s_sidebar.toggle()} /-->
   <Sidebar />
   <Renderer />
   <StatusLine />

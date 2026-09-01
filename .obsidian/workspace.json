@@ -226,6 +226,8 @@
   },
   "active": "977981c37cc36ed4",
   "lastOpenFiles": [
+    "lv/src/lib/ts/common/Core.ts.tmp.86851.9ce520f8a3c5",
+    "core/src/lib/svelte/support/Hamburger.svelte",
     "lv/src/lib/ts/test/Stamp.test.ts",
     "lv/src/Vite_Env.d.ts",
     "lv/src/css/Main.css",
@@ -235,8 +237,6 @@
     "lv/src/lib/ts/test/Resolver.test.ts",
     "lv/src/lib/ts/test/Persistence.test.ts",
     "lv/src/lib/ts/test/Parser.test.ts",
-    "lv/src/lib/ts/test/Order.test.ts",
-    "lv/src/lib/ts/test/Movie_Title.test.ts",
     "notes/guides/pre-flight/shorthand.md",
     "ov/notes/guides/design/ov - goals.md",
     "memory/core/truth/adopting core.md",

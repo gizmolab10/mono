@@ -21,5 +21,6 @@ export { T_Drag, T_Hit_Target, T_Mouse_Detection } from 'core/ts/types/Hit_Targe
 export { T_Edge } from 'core/ts/utilities/Sectioning';
 
 // Components come through here too, so the alias is still named in one file only.
+export { default as Hamburger } from 'core/svelte/support/Hamburger.svelte';
 export { default as Section } from 'core/svelte/support/Section.svelte';
 export { default as Separator } from 'core/svelte/support/Separator.svelte';

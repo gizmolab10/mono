@@ -11,6 +11,9 @@ date: 2026-08-30
 
 ## 1 September 2026
 
+- D: the Hamburger component is core's — svelte/support/Hamburger.svelte, taking the press and the spoken label as props and the size with a default; only the two blocks of styling stay in the hosts, reaching it by the class it wears. lv's copy is deleted and its class renamed hamburger-button to match ov's. core clean at 467 files, lv at 469 with 122 tests
+- D: never "toggle button" for it — it is the hamburger; the word `toggle` remains where it names flipping a value or the browser's own event
+- I: pac written — move Hamburger into core; both hosts already take the drawing, the size and the padding from core, and what differs is placement, so the deciding question is whether placement belongs to a library at all
 - D: how a host adopts core is core's own truth — 'adopting core.md' moved out of ov's zone, where lv would never have found it, and core's index now lists all seven truths rather than two
 
 ## 31 August 2026

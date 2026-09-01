@@ -11,6 +11,8 @@ date: 2026-08-30
 
 ## 1 September 2026
 
+- D: the sidebar starts hidden — Jonathan undid the show; `S_Sidebar.svelte.ts` reads `loadSidebarVisible(false)` and the test now expects it, named "starts hidden". The hamburger's markup is commented out in Main.svelte, so nothing toggles it on screen
+- D: every code file under lv/src is capitalized, each word after an underscore too — 25 files, one `git mv` each with no temporary name, and every importer re-pointed including index.html and the two plugins that reach into src. `sidebar-content` and `movie title` took underscores. The md and image files under assets/ and md/ are content the app loads by name, so they keep theirs
 - D: no scrollbar is drawn anywhere, across or down — the rule moved off the sidebar and content boxes onto every element, so a bar cannot appear on anything new. Everything still scrolls by wheel, trackpad and arrow key
 - D: the sidebar is back on screen and the shell has a top row — Main.svelte draws Sidebar and Toggle again, the shell wears sidebar-hidden only when the remembered choice says so, and the grid grew a row spanning both columns. That row is core's Section, `top.row`, bounded above by the view so it draws no line there, and holding nothing yet. Check clean at 469 files, 122 tests pass; nothing on screen is confirmed
 - D: lv adopts the hits manager and core's colors — App.svelte hands over every mouse move, press and release, and pushes the four theme colors whenever one changes; main.ts calls configure_inks alongside the layers and metrics. lv remembers no color choice of its own, so these are core's defaults. Check clean at 467 files, 122 tests pass
