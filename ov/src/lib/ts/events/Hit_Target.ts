@@ -1,7 +1,7 @@
-import { T_Hit_Target, T_Mouse_Detection } from '../types/Hit_Targets';
+import { T_Hit_Target, T_Mouse_Detection } from '../common/Core';
 import type { Point } from '../types/Coordinates';
 import S_Hit_Target from './S_Hit_Target';
-import type S_Mouse from './S_Mouse';
+import type { S_Mouse } from '../common/Core';
 import { hits } from './Hits';
 
 // One element told to answer the cursor, said in one place. ⟵di

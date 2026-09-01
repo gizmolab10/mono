@@ -1,4 +1,4 @@
-import { natural_height } from '../utilities/Smooth_Height';
+import { natural_height } from '../common/Core';
 import { describe, expect, it } from 'vitest';
 
 // A row of pills that wraps changes the height of the box holding it, and everything below jumps.

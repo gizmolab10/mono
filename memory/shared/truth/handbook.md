@@ -15,20 +15,20 @@ The authority for how the memory system runs. The design rationale lives in `ov/
 
 **During.** When a decision lands, edit its one truth file at that moment and add one `D:` log line. Ideas get an `I:` line, or a paragraph in `zone/ideas.md`. Never defer writes to session end.
 
-**End.** Append `S:` lines for state. Anything left open goes into the project's `questions.md` — questions are not history, and a log buries them. The file exists only while questions do.
+**End.** Append `S:` lines for state. Anything left open goes into the project's `zone/questions.md` — questions are not history, and a log buries them. The file exists only while questions do.
 
-Log entries are one line each, tagged: `D:` decision · `I:` idea · `S:` state/progress. Questions are not log entries: they live in the project's `questions.md`, one line each, removed when answered — a `D:` line records the answer. They stand under day headings (`## 25 August 2026`), in reverse chronological order — newest day first, newest line first within its day. A new entry goes at the top of today's heading. The writer asks the clock in the same write that stamps the heading — a date typed from memory is not a date, and a new day makes its heading at the top. Never reuse a stale heading: that is how dates get lost.
+Log entries are one line each, tagged: `D:` decision · `I:` idea · `S:` state/progress. Questions are not log entries: they live in the project's `zone/questions.md`, one line each, removed when answered — a `D:` line records the answer. They stand under day headings (`## 25 August 2026`), in reverse chronological order — newest day first, newest line first within its day. A new entry goes at the top of today's heading. The writer asks the clock in the same write that stamps the heading — a date typed from memory is not a date, and a new day makes its heading at the top. Never reuse a stale heading: that is how dates get lost.
 
 ## Consolidation
 
 Run when a project's log exceeds ~30 entries, or before a major work burst.
 
 1. Read every log entry above the `<!-- consolidated: DATE -->` marker.
-2. Read `questions.md` too: strike any question the work has since answered, recording the answer as a `D:`. Then **settle each line** by tag: `D:` → edit the owning truth (and `decisions.md` if the rationale will be questioned again); `S:` → rewrite the *current state* paragraph in the project's `index.md`; `I:` → promote to a truth / `ideas.md`, keep, or cull. While settling, scan the prose for defined terms used off-definition (reword or formally redefine) and undefined terms (reword into plain language — never retroactively coin).
+2. Read `zone/questions.md` too: strike any question the work has since answered, recording the answer as a `D:`. Then **settle each line** by tag: `D:` → edit the owning truth (and `decisions.md` if the rationale will be questioned again); `S:` → rewrite the *current state* paragraph in the project's `index.md`; `I:` → promote to a truth / `ideas.md`, keep, or cull. While settling, scan the prose for defined terms used off-definition (reword or formally redefine) and undefined terms (reword into plain language — never retroactively coin).
 3. **Map upkeep:** when the project's truth holds a map, ask git what changed under the project's code since the marker — files added, moved, removed — and edit the map to match. No change, no edit.
 4. Delete settled entries; move the marker.
 5. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, have a *new* session run this check.
-6. **Commit as one labeled commit** — `memory: settle <project>` — touching nothing else. If the `memory/` tree is not yet tracked by git, a one-time baseline commit (`memory: baseline`) comes first, so reverting a settle never removes the tree.
+6. **No commit.** Settle never commits — committing `memory/` is Jonathan's act, done by him, when he chooses.
 
 Never summarize prose into vaguer prose. Settling moves facts to their one home and throws away only what it names.
 
@@ -60,7 +60,8 @@ Never summarize prose into vaguer prose. Settling moves facts to their one home 
 
 - `zone/ideas.md`: append freely, zero ceremony. Every consolidation triages each idea — promote, keep, or cull. Three consolidations without promotion → promote or cut.
 - `zone/proposals.md`: every proposal not yet the drive, gathered so ideas.md holds only ideas; one leaves when it becomes the drive, dissolves into truth, or dies. The file exists only while proposals do.
-- `zone/drive.md`: the current drive — the one proposal being decided and implemented. It moves here from proposals.md when work starts, carries the plan and one present-tense where-it-stands line, and dissolves into truth when done. ideas.md stays uncluttered by proposals in flight.
+- `zone/drive.md`: the current drive — the one proposal being decided and implemented. It moves here from proposals.md when work starts, carries the plan and one present-tense where-it-stands line, and dissolves into truth when done — dissolution only by Jonathan's instruction, never on a session's own judgment. ideas.md stays uncluttered by proposals in flight.
+- `zone/questions.md`: what is unanswered, one line each; a question leaves when a `D:` records its answer. The file exists only while questions do. It is Jonathan's own memory. No orientation reports it, no reply lists it, nothing in it is ever raised as a nudge. The one time it is spoken: the work in hand touches a question that is written there — then say which question, once, and carry on. Written into at session end, settled at a consolidation, silent otherwise. Co reads it at start to be able to recognise the touch, and says nothing about it.
 - `zone/ref/`: visual references, descriptively named.
 - `shared/truth/taste.md`: recurring visual/design principles; loaded whenever the task is visual, on any project.
 
@@ -100,10 +101,10 @@ Compressed stories of decided pacs gather in `shared/truth/cases.md` — the one
 One skill per procedure; the skill is a trigger, not a copy. Write skills (`d`, `pac`, `go`, `define`, `propose`, `settle`) log every run; read-only skills (`start`, `t`, `syns`, `obs`, `check`, `where`, `summary`) don't.
 
 - **d** (decision) — execute "Session protocol" (During) for one decision: edit the one truth file that owns it, add one `D:` log line. The workhorse; a write skill, logged by its nature.
-- **start** — execute "Session protocol" (Start). Reply: three-line orientation — current state, truths loaded, the questions.
+- **start** — execute "Session protocol" (Start). Reply: two-line orientation — current state, truths loaded.
 - **pac** — pros and cons of X; the response is written into the most relevant project's `truth/decisions.md`
 - **define** — execute "Prose and terminology" for one term. The lexicon's only door.
-- **propose** — capture without incorporating, into whichever project the idea is most relevant to: its `zone/ideas.md`, an `I:` line, or its `questions.md`; truths untouched; promotion only at settle or on instruction. pac and propose stay two commands.
+- **propose** — capture without incorporating, into whichever project the idea is most relevant to: its `zone/ideas.md`, an `I:` line, or its `zone/questions.md`; truths untouched; promotion only at settle or on instruction. pac and propose stay two commands.
 - **go** (g) — implement the proposal or suggestion on the table, as stated. A write skill: the work it does leaves its own `D:`/`S:` lines.
 - **settle** — execute "Consolidation", all five steps; finish with the settle manifest (each line and where it went).
 - **check** — audit: OKF structure (frontmatter, `type`, links), the sizing table below, terminology drift, duplicated facts, and skill pointers (every section a skill references must exist in this file). Aimed at a settle: verify the commit diff cold; if this session performed the settle, ask for a rerun in a new session. Report finding → file → fix; fix nothing unless instructed.
@@ -135,6 +136,8 @@ The old notes (CLAUDE.md's reading-on-load list, `notes/guides/`, per-project `n
 - Exception: `notes/guides/pre-flight/shorthand.md` stays — it is the trigger surface; its rows point here.
 
 ## Sizing rules
+
+these are soft limits. always allow them to be exceeded, and ask Jonathan in these words "we have reached the limit for X. shall I change it to N or execute the task in the 'when exceeded' column?" — of course, replace N with the new number.
 
 | Thing | Limit | When exceeded |
 |---|---|---|

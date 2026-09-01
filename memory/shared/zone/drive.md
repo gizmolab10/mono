@@ -7,7 +7,9 @@ date: 2026-08-31
 ---
 # Drive
 
-Fully implement the [[handbook]]. Where that content and the files disagree:
+## Fully implement the [[handbook]]
+
+Where that content and the files disagree:
 
 - [ ] Pros and cons still says pacs go to `zone/decisions.md`; they live in `truth/decisions.md` — the four-doors question, unresolved.
 - [ ] Design churn says `decisions.md` holds one-line rationales, ~10, deleted when final; shared's holds multi-paragraph pacs, decided ones kept, well past the cap.

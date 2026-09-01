@@ -1,12 +1,12 @@
-import { T_Drag, T_Hit_Target } from '../types/Hit_Targets';
+import { T_Drag, T_Hit_Target } from '../common/Core';
 import Mouse_Timer, { T_Timer } from './Mouse_Timer';
-import type { Dictionary } from '../types/Types';
+import type { Dictionary } from '../common/Core';
 import { Point, Rect } from '../types/Coordinates';
 import { k } from '../common/Core';
 import { writable, get } from 'svelte/store';
 import S_Hit_Target from './S_Hit_Target';
 import { debug } from '../common/Debug';
-import S_Mouse from './S_Mouse';
+import { S_Mouse } from '../common/Core';
 import { tick } from 'svelte';
 import RBush from 'rbush';
 

@@ -1,4 +1,4 @@
-import { in_thousands } from '../utilities/Numbers';
+import { in_thousands } from '../common/Core';
 import { describe, expect, it } from 'vitest';
 
 // A number written in thousands once it is past one; a small one passes through untouched.

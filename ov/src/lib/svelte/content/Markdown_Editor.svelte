@@ -1,18 +1,18 @@
 <script lang='ts'>
 	import { body_of, flipped_task, lines_between, markup_prefix, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
 	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
-	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/utilities/Sections';
+	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/common/Core';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { file_path_of, path_of_address, read_file, save_file } from '../../ts/utilities/Saving';
 	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { T_Hit_Target } from '../../ts/common/Core';
 	import { Point } from '../../ts/types/Coordinates';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
 	import { offer_status, show_status } from '../../ts/managers/Status';
 	import { follow_link, halt_stepping, leaving_file, left_at_of, w_command_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
+	import { free_thumb, type Free_Thumb } from '../../ts/common/Core';
 	import { key_of, type File } from '../../ts/types/File';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import Separator from '../support/Separator.svelte';

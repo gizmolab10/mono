@@ -3,7 +3,7 @@
 	import { what_to_open } from '../../ts/utilities/Searching';
 	import { w_search_at } from '../../ts/managers/Operations';
 	import { hit_target, WAY_OUT } from '../../ts/events/Hit_Target';
-	import Action, { T_Position } from '../../ts/types/Action';
+	import { Action, T_Position } from '../../ts/common/Core';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { k } from '../../ts/common/Core';
 	import { gap_below_line } from '../../ts/utilities/Separator_Spacing';

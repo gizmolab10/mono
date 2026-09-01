@@ -41,12 +41,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/ideas.md",
+                "file": "memory/ov/zone/adopting core.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ideas"
+              "title": "adopting core"
+            }
+          },
+          {
+            "id": "b23af6bc9b10ed11",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/guides/pre-flight/shorthand.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "shorthand"
             }
           },
           {
@@ -55,15 +69,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/ideas.md",
+                "file": "memory/shared/zone/drive.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ideas"
+              "title": "drive"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -97,7 +112,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:shorthand",
+                "query": "file:short",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -224,7 +239,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 237.5
+    "width": 217.6181640625
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -238,10 +253,26 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "6ac25d6346f16830",
+  "active": "07bc1b8e0aa42459",
   "lastOpenFiles": [
     "memory/shared/zone/ideas.md",
+    "memory/ov/zone/adopting core.md",
     "memory/shared/zone/drive.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "memory/lv/zone/questions.md",
+    "memory/me/zone/questions.md",
+    "memory/mu/zone/questions.md",
+    "memory/shared/zone/questions.md",
+    "memory/shared/questions.md",
+    "memory/shared/zone/checked.md",
+    "memory/shared/truth/handbook.md",
+    "memory/ov/zone/drive.md",
+    "ws/vite.config.js.timestamp-1788230058310-f12bb7e52242e.mjs",
+    "memory/ov/zone/ideas.md",
+    "memory/core/zone/ideas.md",
+    "memory/core/zone/design.md",
+    "memory/shared/zone/inception into the new design.md",
+    "memory/shared/zone/truth and zone and design?.md",
     "memory/di/zone/proposals.md",
     "memory/ji/zone/proposals.md",
     "memory/lv/zone/proposals.md",
@@ -251,22 +282,7 @@
     "memory/core/zone/proposals.md",
     "memory/ov/zone/proposals.md",
     "memory/shared/zone/proposals.md",
-    "memory/shared/zone/inception into the new design.md",
-    "memory/shared/zone/adoption journal.md",
-    "memory/lv/zone/ideas.md",
-    "memory/ji/zone/ideas.md",
-    "memory/core/zone/design.md",
     "notes/guides/pre-flight/sedEMKzaA",
-    "memory/shared/truth/handbook.md",
-    "memory/shared/truth/create a project.md",
-    "memory/ov/zone/ideas.md",
-    "_to_delete/core-copy-of-map-of-ov-files.md",
-    "memory/ov/truth/map of ov files.md",
-    "memory/lv/truth/map of lv files.md",
-    "memory/ji/truth/map of ji notes.md",
-    "memory/ji/truth/map of ji files.md",
-    "memory/di/truth/map of di notes.md",
-    "memory/di/truth/map of di guides.md",
     "memory/di/zone",
     "memory/di/truth",
     "memory/di",
@@ -275,7 +291,6 @@
     "memory/ji",
     "_to_delete",
     "memory/ov/sed7qduKQ",
-    "ov/src/lib/svelte/filter/sedK6x8kZ",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",

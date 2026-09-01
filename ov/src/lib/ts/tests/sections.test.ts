@@ -1,4 +1,4 @@
-import { all_folded, foldable_headings, hidden_pieces, own_words, section_span, top_headings } from '../utilities/Sections';
+import { all_folded, foldable_headings, hidden_pieces, own_words, section_span, top_headings } from '../common/Core';
 import { describe, expect, it } from 'vitest';
 
 // A drawn file, written as the level of each piece in order: one for the top heading, two for

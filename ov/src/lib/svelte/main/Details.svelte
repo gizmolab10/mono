@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import Action, { T_Position } from '../../ts/types/Action';
+	import { Action, T_Position } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import Separator from '../support/Separator.svelte';
 	import { hits } from '../../ts/events/Hits';
 	import { k } from '../../ts/common/Core';
 	import type { Writable } from 'svelte/store';
-	import { T_Details } from '../../ts/types/Details';
+	import { T_Details } from '../../ts/common/Core';
 	import D_Preferences from '../content/D_Preferences.svelte';
 	import D_Repair from '../content/D_Repair.svelte';
 	import { debug } from '../../ts/common/Debug';

@@ -5,7 +5,7 @@
 	import { T_Bundle, key_of, type File } from '../../ts/types/File';
 	import Markdown_Editor from '../content/Markdown_Editor.svelte';
 	import Editor_Filters from '../filter/Editor_Filters.svelte';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { T_Hit_Target } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { WAY_OUT } from '../../ts/events/Hit_Target';

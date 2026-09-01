@@ -6,7 +6,7 @@
 	import { files_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
 	import { colors } from '../../ts/common/Core';
 	import { Point } from '../../ts/types/Coordinates';
-	import S_Mouse from '../../ts/events/S_Mouse';
+	import { S_Mouse } from '../../ts/common/Core';
 	import { hits } from '../../ts/events/Hits';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Core';

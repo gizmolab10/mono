@@ -1,11 +1,13 @@
 ---
 kind: analyze
-title: "Truth and zone"
-description: "Whether truth/ and zone/ should divide further — the three ideas weighed, and where each landed."
-tags: [now, weighed]
+title: Truth and zone and design?
+description: Whether truth/ and zone/ should divide further — the three ideas weighed, and where each landed.
+tags:
+  - now
+  - weighed
 date: 2026-08-29
 ---
-# truth and zone — divide them further?
+# truth and zone and design?
 
 29 August 2026. Three ideas weighed in one sitting. The full pros and cons are in shared decisions, under Evaluations; this is the review copy.
 
@@ -17,7 +19,7 @@ Not yet. A flat truth/ is the whole catalog at one glance, and index.md already 
 
 Hinges on which taxonomy governs. The code splits guide-from-design (`is_design`, notes/designs/); the memory design splits is-from-thinking, and under that reading a current design is simply a truth — controls.md is `type: design` and lives in truth/ comfortably. A third folder would make every "where" a coin flip between two doors. Only the code's taxonomy winning would justify it.
 
-## 3. is divides into ai vs app; thinking needs no divide
+## 3. 'is' splits into ai vs app; 'thinking' needs no divide
 
 The divide is real: sorting today's files gives almost no coin flips — protocol, conventions, lexicon, the howto are ai; controls, scope, claude-files are app. Two strays: decisions.md (holds both kinds) and taste (app-flavored, lives in shared).
 

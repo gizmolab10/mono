@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of } from '../../ts/utilities/Saving';
-	import Action, { T_Position } from '../../ts/types/Action';
+	import { Action, T_Position } from '../../ts/common/Core';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { open_view } from '../../ts/managers/Operations';

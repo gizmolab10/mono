@@ -1,4 +1,4 @@
-import { BETWEEN, ELLIPSIS, words_that_fit } from '../utilities/Fitting';
+import { BETWEEN, ELLIPSIS, words_that_fit } from '../common/Core';
 import { describe, expect, it } from 'vitest';
 
 // How much of a run of words fits. Width is one unit a character here, so the numbers in these

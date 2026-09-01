@@ -13,23 +13,27 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
-- [ ] drag and drop file in browser -> any child goes to folder
+- [ ] browse
+    - [ ] drag and drop file -> any child goes to folder
+- [ ] edit
+    - [ ] rename editor -> edit (browse is a verb)
+    - [ ] keys
+        - [ ] option-command b -> add checkbox | bullet
+        - [ ] command tab -> indent
 - [ ] nudge left 15px -> sep left-side clickables (browse and editor)
-- [ ] rename editor -> edit (browse is a verb)
-- [ ] drag and drop file in browser -> any child goes to folder
-- [ ] add subfolders under truth and zone
-    - [ ] ai and design
+- [x] add subfolders under truth and zone
+    - [x] ai and design
 - [ ] switch back to using **claude code** inside vscode
     - [ ] skills add /project (X)
     - [ ] remove /ov, etc
     - [ ] [[adoption journal]]
     - [ ] [[inception into the new design]]
-- [ ] new 'sh' project — toolkit that all my projects can build from
+- [ ] new 'core' project — toolkit that all my projects can build from (move this to [[inception into the new design]])
+    - [x] constants
+    - [x] configuration
     - [ ] section
     - [ ] separator
     - [ ] hits
-    - [ ] constants
-    - [ ] configuration
 - [ ] read work/md audit (old location)
     - [ ] pac execute it
 - [ ] 1127 occurrences of 'guide' -> many should be 'file'
@@ -41,6 +45,7 @@ sooner or later every project creates a knowledge base and a work manager. this 
     - [ ] [[ov installer]]
 - [ ] compose-an-email does not work on Windows
 - [ ] hermes agent
+    - [ ] new ai memory project
 
 ## soon
 

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import type { Stacked, T_Foot } from '../../ts/types/Stacked';
-	import { T_Position } from '../../ts/types/Action';
-	import type Action from '../../ts/types/Action';
+	import { T_Position } from '../../ts/common/Core';
+	import type { Action } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Debug';
 	import { k } from '../../ts/common/Core';
 	import { hits } from '../../ts/events/Hits';

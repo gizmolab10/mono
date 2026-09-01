@@ -5,9 +5,9 @@
 	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
-	import { smooth_height } from '../../ts/utilities/Smooth_Height';
-	import Action, { T_Position } from '../../ts/types/Action';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { smooth_height } from '../../ts/common/Core';
+	import { Action, T_Position } from '../../ts/common/Core';
+	import { T_Hit_Target } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { T_Edge } from '../../ts/utilities/Sectioning';
 	import { WAY_OUT } from '../../ts/events/Hit_Target';

@@ -1,9 +1,9 @@
-import { T_Hit_Target, T_Mouse_Detection } from '../types/Hit_Targets';
+import { T_Hit_Target, T_Mouse_Detection } from '../common/Core';
 import type { Writable } from 'svelte/store';
 import { Rect, Point } from '../types/Coordinates';
 import { k } from '../common/Core';
 import { get } from 'svelte/store';
-import S_Mouse from './S_Mouse';
+import { S_Mouse } from '../common/Core';
 
 // One thing the mouse can reach. ⟵di
 //

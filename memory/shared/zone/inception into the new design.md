@@ -12,8 +12,9 @@ Some files remain in the old notes. They are listed here, one line each. Remove 
 
 ov project first
 
-- [ ] Live files (`notes/work/*`) go to zone as is. current context, work journal, learn, handoff & code debt (moved on 27 August 2026)
-- [ ] File maps (each project's CLAUDE.md names one)
+- [x] handoff & code debt — done, 30–31 August 2026: each project's unpaid debt leads its zone (done sections dead at the door, git keeps them; ov, core, lv, ji); handoff dissolved — state to index.md, live work to zone, history to git; the old files sit in `_to_delete/`
+- [ ] Live files (`notes/work/*`) still to come: current context, work journal, learn
+- [x] File maps — done, 31 August 2026: seven moved whole into truth/ (di ×3, ji ×2, lv, ov); core's copy of ov's removed; the road maps stay, being plans
 - [x] `guides/pre-flight/lexicon.md` — merged into memory/ov/truth/lexicon.md and removed, 29 August 2026
 
 Later shared, then other projects
@@ -38,9 +39,9 @@ Found 29 August 2026, each a topic living in two places — the merge direction 
 - **shared terms** — `memory/shared/truth/lexicon.md` vs `pre-flight/lexicon.md` (mono-wide): two lexicons for cross-project words; the old one still points at ov's dead pre-flight lexicon.
 - **taste** — `memory/shared/truth/taste.md` vs `notes/guides/develop/aesthetics.md`: both hold visual principles.
 - **the design's own story** — `ov/notes/work/AI memory redesign.md` (rationale), `memory/shared/truth/handbook.md` (law), and `truth/publish — can an AI actually learn?.md` (the article): three tellings; only the rationale/law split is by design.
-- **ov, where to pick up** — resolved: code debt merged into ideas.md (done section dead at the door), handoff dissolved — state to index.md, live work to ideas.md as born entries, history to git.
-- **ov work history** — `zone/code debt.md`'s done section vs the log's "original work log" appendix: the same finished work, told twice.
-- **di and ji terms, to come** — `di/` and `ji/notes/guides/pre-flight/lexicon.md` have no memory home yet; the day those projects come up, the ov merge is their pattern.
+- **ov, where to pick up** — resolved: code debt merged into zone (done section dead at the door), handoff dissolved — state to index.md, proposals to zone/proposals.md, history to git.
+- **ov work history** — resolved, 31 August 2026: code debt.md and its done section are gone; the log's "original work log" appendix is the one telling left, beside git.
+- **di and ji terms** — memory/di and memory/ji are up now (31 August 2026); their old-notes lexicons still await the ov-pattern merge into each project's truth/lexicon.md.
 
 ### **DONE** ov — lexicon
 

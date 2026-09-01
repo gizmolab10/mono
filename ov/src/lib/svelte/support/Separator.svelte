@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import Action, { T_Position } from '../../ts/types/Action';
+	import { Action, T_Position } from '../../ts/common/Core';
 	import { hits } from '../../ts/events/Hits';
 	import { k } from '../../ts/common/Core';
 

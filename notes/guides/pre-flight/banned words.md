@@ -49,6 +49,8 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | dependency cycle                |   y    |      | circle                                 | modules importing each other |
 | temporary                       |   y    |      | drain                                  | what gets emptied  |
 | transfer, migrate, copy, port   |   y    |      | pour                                   | moving content     |
+| adopt, adoption                 |   y    |      | borrow, borrowing                      | a host taking a core file |
+| to confirm                      |   y    |      | owes, owed                             | verification pending |
 | the code, the implementation    |   y    |      | step, move                             | a thing done or to do |
 | choice, decision, truth         |   y    |      | shape                                  | how a thing is decided or written |
 | remain, unchanged               |   y    |  y   | stand, stands, standing, stood         | what is still there |

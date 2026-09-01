@@ -15,10 +15,10 @@
 	import { w_shut, w_show_folders, w_projects, w_kind, w_tags, ordered_tags, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { free_thumb, type Free_Thumb } from '../../ts/utilities/Thumb';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import { free_thumb, type Free_Thumb } from '../../ts/common/Core';
+	import { T_Hit_Target } from '../../ts/common/Core';
 	import { project_of, type Filtered_File } from '../../ts/types/File';
-	import { in_thousands } from '../../ts/utilities/Numbers';
+	import { in_thousands } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/utilities/SVG_Paths';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { show_status } from '../../ts/managers/Status';

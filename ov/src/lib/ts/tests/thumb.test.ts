@@ -1,4 +1,4 @@
-import { SHORTEST_PART, free_thumb } from '../utilities/Thumb';
+import { SHORTEST_PART, free_thumb } from '../common/Core';
 import { describe, expect, it } from 'vitest';
 
 describe('where the browser would put the thumb', () => {

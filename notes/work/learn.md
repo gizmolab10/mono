@@ -35,8 +35,10 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
-Empty. Everything here has been distilled into a rule; the table below says where each went.
 What is di's own — its geometry and its pipeline — is in [di's learn](../../di/notes/work/now/learn.md).
+
+- 2. 2026-08-31 Took the "if not" branch after answering "yes". Jonathan asked: is there a file, if not call it `checked.md`. i found `memory/shared/questions.md`, said in the reply that it already held three of the nine findings — and then made `checked.md` anyway, calling the match "partial" to license it. A conditional with a found answer is settled: take the found branch. Where the fit is imperfect, that is a question to ask, never a reason to take the branch the answer just ruled out.
+- 1. 2026-08-31 A count in place of the names. i wrote "ov has two configs" and "there are two" with both names read that same turn. Jonathan had to ask what they were called. The rule is already written twice — `always.md` #5 and `lexicon.md`'s opening — so this is a failure to follow one, never a gap to fill with a new one. Watch for the shape: a number, "both", "the other one", "either of them", standing where a filename belongs.
 
 
 ---

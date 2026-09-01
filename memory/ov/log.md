@@ -9,6 +9,18 @@ date: 2026-08-30
 
 <!-- consolidated: 31 August 2026 -->
 
+## 31 August 2026
+
+- D: eleven identical files adopted — S_Mouse, Action, Details, Hit_Targets, Types, Fitting, Numbers, Sections, Smooth_Height, Thumb, runner.test; 38 imports re-pointed at common/Core, ov's copies deleted, check clean at 553 and 423 tests pass. Debug and Dirty wait on the dependency cycle
+- S: forty-five ov files can still adopt core — 13 word for word, 25 differing only in their imports, 5 where ov is ahead, 2 paired by name across folders; the list sits at the bottom of zone/'adopting core.md'
+- D: drive.md restored — deleting it was wrong; completion is Jonathan's to confirm, box by box
+
+- D: ov's index lists what is on disk — four zone files, eight truths; handoff.md and code debt.md were named there but gone, and the map, action type and okf were on disk but unnamed
+- S: on the Mac, yarn install and the tests are proven — 24 files, 424 tests, svelte-check clean at 564 files; yarn dev and a cold check still owed
+- D: vitest.config.ts carries the core alias too — vitest reads it in place of vite.config.ts, so 8 of 24 test files could not find core; three files now say where core points, and all three must always agree
+- D: ov's drive exists — prove the core adoption on the Mac; VSCode resume steps at its top, the four owed proofs as its plan
+- D: the ov-adopts-core journey is one telling — zone/'adopting core.md', collated from design, decisions and cases; it moves into core's truth later; core's record-the-journey checkbox can close
+
 ---
 
 ## original work log

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Edge, USUAL_GAP, folded_height, gap_above, gap_inside, thickness_of } from '../../ts/utilities/Sectioning';
-	import type Action from '../../ts/types/Action';
-	import { T_Hit_Target } from '../../ts/types/Hit_Targets';
+	import type { Action } from '../../ts/common/Core';
+	import { T_Hit_Target } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/events/Hit_Target';
 	import { hits } from '../../ts/events/Hits';
 	import Separator from './Separator.svelte';

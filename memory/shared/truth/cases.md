@@ -7,10 +7,10 @@ date: 2026-08-31
 ---
 # Cases
 
-## borrowed — 30 August 2026
-- Deciding question: is the merge criterion *small* or *borrowed from core*?
-- d: "borrowed"
-- common/Core.ts holds ov's borrowings from core, one line each; ov's own files keep their own names.
+## adopted — 30 August 2026
+- Deciding question: is the merge criterion *small* or *adopted from core*?
+- d: "adopted"
+- common/Core.ts holds ov's adoptions from core, one line each; ov's own files keep their own names.
 - Full record: `ov/truth/decisions.md`
 
 ## decoration — 30 August 2026

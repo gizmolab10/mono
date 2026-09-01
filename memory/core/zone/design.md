@@ -21,7 +21,7 @@ core is a library with no entry point: four ts folders (common, events, types, u
 - the utilities: Colors, SVG_Paths, Sectioning, Separator_Spacing, Fitting, Stepping, Numbers, Sections, Smooth_Height, Thumb, Tooltip
 - the support components: Separator, Stack, Section, Steppers, Big_Pill, ToolTip, Status_Line, BuildNotes
 
-A host imports from a folder, never a file inside one: `import { k, debug } from 'core/common'`.
+Inside core, a cross-folder import goes through a barrel, never a file inside one. A host gathers its adoptions instead: in ov, every file imports from ov's own `common/Core.ts`, and that file alone reaches through the alias.
 
 ## what a host must provide
 
@@ -36,10 +36,7 @@ The rule behind all four: state lives in the host, behavior in core. Anything in
 
 ## how ov reaches core
 
-Open — one of:
-1. a project: core joins mono's project, ov depends on it, imports read `core/...`
-2. a path alias in ov's tsconfig/vite pointing at `../core/src/lib`
-3. ov's copies stay until each is retired one at a time, the inception pattern
+Decided — way 2: a path alias in ov's tsconfig and vite pointing at `../core/src/lib`, spelled `core/...` in imports. The roads not taken: a workspace dependency (heavier than the wish), and copies retired one at a time (drift while they lasted — see Extensions below).
 
 ## not settled
 
@@ -74,7 +71,7 @@ export const k = {
 
 A group being touched is spread too (`...core_k.timeout`), or its other members would vanish — the spread replaces whole values, and a group is one value. If ov ever disagrees with a *seed* (common_size and friends), core wraps its arithmetic in a `constants_from(seeds)` function and ov calls it with its own; not worth building until a host actually asks.
 
-The "core" alias is now part of ov's tsconfig and vite.
+The "core" alias is part of ov's tsconfig and vite. The two-line file itself is gone: every adoption lives in ov's `common/Core.ts`, one line each — the merge criterion is *adopted from core*, not *small*.
 
 ## use case: Configuration
 
@@ -86,7 +83,11 @@ Re-exporting Configuration alone would push core's colors — defaults, never Jo
 2. ov's startup (main.ts) provides the three remembered colors from preferences, and manages them into core's stores.
 3. ov's Configuration.ts becomes a re-export of core's.
 
-ov's Colors and Configuration are now re-exports of core's — one SOT for colors — and main.ts reads the three remembered colors in and writes changes back.
+ov's Colors and Configuration are re-exports of core's, through `common/Core.ts` — one SOT for colors — and main.ts reads the three remembered colors in and writes changes back.
+
+## use case: Extensions
+
+A adoption must never be a copy. ov's Extensions.ts was core's verbatim, and both ran — the second define() on String.prototype hit configurable: false and crashed the app. A side-effect module rides Core.ts as a bare import (`import 'core/ts/common/Extensions'`), and ov's copy is gone.
 
 ### dunno
 

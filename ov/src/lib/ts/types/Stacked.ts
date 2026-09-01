@@ -1,5 +1,5 @@
 import type { Snippet } from 'svelte';
-import type Action from './Action';
+import type { Action } from '../common/Core';
 
 // One section of a stack: what it shows, the word riding the line above it, and whether it is
 // put away.
