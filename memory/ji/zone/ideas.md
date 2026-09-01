@@ -1,7 +1,7 @@
 ---
 kind: analyze
 title: "Ideas"
-description: "<!-- ji ideas. Append freely; triaged at every settle. -->"
+description: "ji ideas. Append freely; triaged at every settle."
 tags: [born, now]
 date: 2026-08-30
 ---

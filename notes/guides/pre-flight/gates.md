@@ -25,7 +25,7 @@ Task-specific checkpoints. BEFORE the task, read the guide.
 
 When a task matches a gate:
 
-1. **Announce:** "This is a \[task type\]. Let me read \[guide\] first."
+1. **Announce:** "This is a \[task type\]. Co reads \[guide\] first."
 2. **Read:** Actually read the guide section.
 3. **Quote:** State the key rule from the guide.
 4. **Execute:** Follow the rule.

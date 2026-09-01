@@ -15,7 +15,7 @@ What a hook incorporates is cut off at about 2000 characters.
 
 
 
-**Part A** — (first 2000) the always file, whole, every single turn. It holds the five rules I break most: be brief, plain English, guess, no fluff, show evidence. It is kept short deliberately, so it always survives the cut.
+**Part A** — (first 2000) the always file, whole, every single turn. It holds the nine rules that govern every single reply. It is kept short deliberately, so it always survives the cut.
 
 **Part B** — (everything else): the reply rules, how the work is done, and the two lists of banned words. These are divided into three smaller pieces. One of them is incorporated per turn, in rotation. The rotation pointer is kept in a tiny file. 
 
@@ -25,12 +25,12 @@ The cost is minimal: a rule in part B is out of sight for two or three turns at 
 
 Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked from `.claude/settings.local.json`. Some hooks are a whole command written into the settings file itself, others are scripts it invokes.
 
-### UserPromptSubmit — fires when you send a message
+### UserPromptSubmit — fires when Jonathan sends a message
 
 | Hook | What it does |
 |----|----|
 | debug-reminder *(inline)* | On words like bug/fix/log/why, injects "read the log data first" |
-| log-present *(inline)* | When you paste log markers, injects "read the log yourself, don't ask me to" |
+| log-present *(inline)* | When Jonathan pastes log markers, injects "read the log yourself, don't ask me to" |
 | geometric-mode *(inline)* | Toggles a flag on "geometric"; while on, injects geometry-caution and log-naming rules |
 | done-checklist.sh | On a "done" command, injects the done checklist from shorthand.md |
 | inject-always.sh | Injects part A whole, then one part of B in turn; complains first if any file's labels disagree with what is sent (lives in `.claude/hooks/`) |
@@ -49,7 +49,7 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 | plain-english-check.sh | Flags jargon in .md files and in log/comment lines of .ts files (lives in `.claude/hooks/`) |
 | mark-ts-check-pending.sh | If a .ts/.svelte changed, drops a marker so the end-of-turn type check runs |
 
-### Stop — fires when I finish (all warn-only now)
+### Stop — fires when co finishes (all warn-only now)
 
 | Hook | What it does |
 |----|----|
@@ -152,33 +152,33 @@ Settings load in order: user then project then local. Later overrides earlier.
 
 The command's stdout is parsed as JSON. Which fields matter depends on the event:
 
-**Inject text into my context** — `hookSpecificOutput.additionalContext`. Works on UserPromptSubmit, PostToolUse, and Stop. The debugging reminder and inject-always.sh use this. It is advice I read, not a hard stop — and it is cut off at about two thousand characters, which is the whole reason for the two parts below.
+**Inject text into co's context** — `hookSpecificOutput.additionalContext`. Works on UserPromptSubmit, PostToolUse, and Stop. The debugging reminder and inject-always.sh use this. It is advice co reads, not a hard stop — and it is cut off at about two thousand characters, which is the whole reason for the two parts below.
 
 **Approve or deny a tool** (PreToolUse only) — `hookSpecificOutput.permissionDecision` set to `"deny"` or `"allow"`, plus `permissionDecisionReason`. bash-command-check.sh uses this to deny npx and to auto-approve read-only greps.
 
-**Reject a finished reply** (Stop, PostToolUse) — `decision: "block"` plus a reason. I read the reason and write a NEW reply. This is what causes the doubled reply — see below.
+**Reject a finished reply** (Stop, PostToolUse) — `decision: "block"` plus a reason. co reads the reason and writes a NEW reply. This is what causes the doubled reply — see below.
 
-**Rewrite text on screen** (MessageDisplay only) — `hookSpecificOutput.displayContent`. It changes what you SEE; the saved transcript keeps the original. It cannot reject or regenerate. display-fix.sh uses this to swap hard banned words as the reply streams.
+**Rewrite text on screen** (MessageDisplay only) — `hookSpecificOutput.displayContent`. It changes what Jonathan SEES; the saved transcript keeps the original. It cannot reject or regenerate. display-fix.sh uses this to swap hard banned words as the reply streams.
 
 No JSON output = the hook ran silently, no effect.
 
 ## The doubled-reply trap
 
-A Stop hook fires AFTER the reply is finished and already on screen. If it returns `decision: "block"`, I read the reason and generate a fresh reply — so you see the first attempt AND the corrected one, stacked. That is the doubled reply.
+A Stop hook fires AFTER the reply is finished and already on screen. If it returns `decision: "block"`, co reads the reason and generates a fresh reply — so Jonathan sees the first attempt AND the corrected one, stacked. That is the doubled reply.
 
 Nothing runs before display that can quietly swallow the first attempt. Confirmed against the official docs: there is no pre-send gate, and MessageDisplay can only rewrite what's shown, never reject.
 
-The fix we settled on: judgment hooks are **warn-only**. They log the violation to `di/.claude/hooks/log.jsonl` and exit clean — never reject. Hard banned words (the deterministic ones) get rewritten on screen by display-fix.sh instead of rejected. The cost: style, hedge, and citation rules became advisory — logged, not enforced. The always-rules injected each turn still nudge me toward them.
+The fix we settled on: judgment hooks are **warn-only**. They log the violation to `di/.claude/hooks/log.jsonl` and exit clean — never reject. Hard banned words (the deterministic ones) get rewritten on screen by display-fix.sh instead of rejected. The cost: style, hedge, and citation rules became advisory — logged, not enforced. The always-rules injected each turn still nudge co toward them.
 
 ## Building a hook, step by step
 
 ### 1. Decide what triggers it
 
-Pick the event. "When I say something about debugging" = `UserPromptSubmit`. "After Claude edits a file" = `PostToolUse` with matcher `Write|Edit`. "Before Claude runs a bash command" = `PreToolUse` with matcher `Bash`.
+Pick the event. "When Jonathan says something about debugging" = `UserPromptSubmit`. "After co edits a file" = `PostToolUse` with matcher `Write|Edit`. "Before co runs a bash command" = `PreToolUse` with matcher `Bash`.
 
 ### 2. Write the command
 
-The hook receives JSON on stdin. Use `jq` to extract what you need.
+The hook receives JSON on stdin. Use `jq` to extract what is needed.
 
 ```bash
 # Extract the user's message
@@ -193,7 +193,7 @@ jq -r '.tool_input.command'
 
 ### 3. Pipe-test it
 
-Synthesize the stdin payload and pipe it through your command:
+Synthesize the stdin payload and pipe it through the command:
 
 ```bash
 # Test a UserPromptSubmit hook
@@ -215,7 +215,7 @@ jq -e '.hooks.UserPromptSubmit[0].hooks[0].command' .claude/settings.local.json
 
 ### 5. Verify it fires
 
-For `UserPromptSubmit`: just send a matching message in your next conversation. For `PostToolUse`: trigger the tool and check the effect. Hook output is invisible on success — if you need proof, temporarily log to a file.
+For `UserPromptSubmit`: just send a matching message in the next conversation. For `PostToolUse`: trigger the tool and check the effect. Hook output is invisible on success — if proof is needed, temporarily log to a file.
 
 ## Example: the debugging reminder
 
@@ -245,4 +245,4 @@ When the user's message contains a debugging keyword, inject a reminder into Cla
 * Invalid JSON in settings.json silently disables ALL settings from that file. Always validate with `jq`.
 * Hooks that write to stdout without valid JSON will show raw text to the user.
 * `|| true` at the end prevents non-zero exit codes from blocking Claude.
-* The settings watcher may not pick up new files until you restart or open `/hooks` in the UI.
+* The settings watcher may not pick up new files until Jonathan restarts or open `/hooks` in the UI.

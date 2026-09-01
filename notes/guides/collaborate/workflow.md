@@ -165,13 +165,13 @@ Journal it here. Jonathan will read the first bit of this file. first he will as
 
 ### Grow the guides the way the lexicon grows
 
-Evidence so far suggests that Jonathan cannot describe what is optimal. Rules and more rules end up tangled rather than dialing in. Our lexicon experiment tells us that when you record each correction I give you, you can use it to grow the lexicon, and that your responses have gotten easier for me enough to stay in the flow.
+Evidence so far suggests that Jonathan cannot describe what is optimal. Rules and more rules end up tangled rather than dialing in. Our lexicon experiment tells us that when co records each correction Jonathan gives, co can use it to grow the lexicon, and that co's responses have gotten easier for Jonathan to read — enough to stay in the flow.
 
 This same growth strategy will work for the guides, for one reason: every lexicon entry comes from a correction Jonathan actually made, in his preferred words.
 
-**1.** When Jonathan corrects me, that correction becomes one line of a guide, in the words he used. It happens immediately.
+**1.** When Jonathan corrects co, that correction becomes one line of a guide, in the words he used. It happens immediately.
 
-**2.** However, before adding that line, look for a line already saying something close. If there is one, the new line takes its place. So a guide holds about as many lines as you have made distinct complaints, and never more.
+**2.** However, before adding that line, look for a line already saying something close. If there is one, the new line takes its place. So a guide holds about as many lines as Jonathan has made distinct complaints, and never more.
 
 **3.** Adding and removing will hopefully improve communication in general, and also specifically with his understanding of each rule.
 

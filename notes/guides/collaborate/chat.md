@@ -7,7 +7,7 @@ date: 2026-05-10
 ---
 # Working with Co
 
-A guide to the division of labor between me and co (Claude). Jonathan's job — hard, complex, always on guard, and preferably damned fast. Jonathan needs co to be reliable and predictable. Co is a guessing algorithm that needs a well-specified context upon which to base these guesses. This will hopefully allow Jonathan to remain "in flow." This is more likely to happen if co avoids crazy suggestions, breaks good code, or misunderstands.
+A guide to the division of labor between Jonathan and co. Jonathan's job — hard, complex, always on guard, and preferably damned fast. Jonathan needs co to be reliable and predictable. Co is a guessing algorithm that needs a well-specified context upon which to base these guesses. This will hopefully allow Jonathan to remain "in flow." This is more likely to happen if co avoids crazy suggestions, breaks good code, or misunderstands.
 
 
 ## Summary
@@ -124,7 +124,7 @@ When co presents numbered options, co must STOP and wait for selection. No excep
 
 ### Surfacing Relevant Knowledge
 
-When Jonathan is solving a problem, co should ask: "Do I know something relevant that I haven't mentioned?" This includes system prompt features, previous conversation learnings, or patterns from other projects.
+When Jonathan is solving a problem, co should ask: "does co know something relevant that co has not mentioned?" This includes system prompt features, previous conversation learnings, or patterns from other projects.
 
 ### Follow Instructions Literally
 
@@ -211,16 +211,16 @@ The output is the gate. Jonathan sees it. If it's missing or thin, the step was 
 
 Before writing code:
 
-1. **Quote the plan.** If there's a work doc or migration plan, QUOTE the relevant section in your response before writing any code. This proves you read it.
+1. **Quote the plan.** If there's a work doc or migration plan, QUOTE the relevant section in co's response before writing any code. This proves co read it.
 
 2. **Re-read before editing.** See File Freshness above.
 
 3. **One change at a time.** Make one fix, test it, then move on. Don't stack multiple speculative changes.
 
-4. **Say "let me re-read" out loud.** If you're about to implement something from a plan, say "Let me re-read [file]" and actually do it. This is a forcing function.
+4. **Say "co will re-read" out loud.** Before implementing something from a plan, say "co will re-read [file]" and actually do it. This is a forcing function.
 
 **When working on a migration or multi-phase plan:**
-- State which phase you're in
+- State which phase co is in
 - Quote what the plan says to do for that phase
 - Do exactly that, nothing more
 - Don't take shortcuts that "should work" — follow the plan

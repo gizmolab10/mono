@@ -7,7 +7,7 @@ date: 2026-01-12
 ---
 # Component Composition in Svelte
 
-Props-down, events-up. Slots for flexible content. Compound components for complex UIs. i wanted to document the pattern and see where we could use it better.
+Props-down, events-up. Slots for flexible content. Compound components for complex UIs. Jonathan wanted the pattern documented, and to see where it could be used better.
 
 ## Table of Contents
 - [Svelte Composition Patterns](#svelte-composition-patterns)
@@ -27,7 +27,7 @@ Based on Svelte best practices:
 
 1. **Props down, events up**: Parent components pass data via props, children emit events to communicate back
 2. **Component composition over prop soup**: Break complex components into smaller composable pieces instead of adding endless props
-3. **Slots for flexibility**: Use slots when you need the consumer to control markup/layout
+3. **Slots for flexibility**: Use slots when the consumer must control markup/layout
 4. **$state() for internal, $props() for external** **(Svelte 5 only)**: Component owns its own state, receives props from parent
 5. **Default values in destructuring** **(Svelte 5 only)**: `let { name = "default" } = $props()` provides fallbacks
 
@@ -38,7 +38,7 @@ Based on Svelte best practices:
 let { title, count = 0, onClick } = $props();
 ```
 
-**Type your props:**
+**Type the props:**
 ```typescript
 let { title, count = 0 }: { title: string; count?: number } = $props();
 ```
@@ -84,7 +84,7 @@ The design of components sometimes combines concerns. This reduces the number of
 
 Every component adds overhead - file to navigate, imports to manage, mental model to maintain. Sometimes a fat component with 7-8 props is better than splitting into 4 smaller components.
 
-**Trade-offs i'm willing to make:**
+**Trade-offs Jonathan is willing to make:**
 - Prop soup is fine if the component stays under ~200 lines
 - Mixed concerns are fine if they're tightly related (e.g., banner + content in Banner_Hideable)
 - Harder testing is fine if the component is stable and rarely changes

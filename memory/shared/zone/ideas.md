@@ -1,7 +1,7 @@
 ---
 kind: analyze
 title: "Ideas"
-description: "<!-- Ideas about the collaboration itself"
+description: "Ideas about the collaboration itself. Append freely; triaged at every settle."
 tags: [born, now]
 date: 22 August 2026
 ---

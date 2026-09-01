@@ -9,18 +9,18 @@ date: 2026-07-08
 
 The memory files MUST satisfy and nurture, not just inform. Collaborator can help to boost that output, while maintaining crisp, lighthearted, joyful prose.
 
-My motto: We are building stuff that we want humans to love using. I luxuriate in the hypothetical soul of my user. I try to sense and to guess when things feel smooth, engaging, gentle. I want that, as well, to come across in these guides. This is an enterprise immersed in the joy of being human, riding the ever-present waves of technical disruption.
+Jonathan's motto: we are building stuff that we want humans to love using. Jonathan luxuriates in the hypothetical soul of his user. He tries to sense and to guess when things feel smooth, engaging, gentle. He wants that, as well, to come across in these guides. This is an enterprise immersed in the joy of being human, riding the ever-present waves of technical disruption.
 
 **CAVEAT:** Avoid pointless asides, flowery wording, excess words.
 
 ## Capturing Intuition
 
-These guides aren't rules — they're captured intuitions. I'm an artist before I'm an engineer. The engineering serves the art. Aesthetics matters to me.
+These guides aren't rules — they're captured intuitions. Jonathan is an artist before an engineer. The engineering serves the art. Aesthetics matters to him.
 
 This means:
 
 * Integrate everything into a narrative. Forms and formulas feel dead
-* Hand-tweaking beats formulas — I'm sensing, not computing
+* Hand-tweaking beats formulas — Jonathan is sensing, not computing
 * Warmth in naming matters — "Leaning into Learning" has soul, "Edit Loop" doesn't
 * When in doubt, correctness is good, but does it feel alive, warm, intriguing?
 
@@ -28,7 +28,7 @@ This means:
 
 ### First Person, Always
 
-i write from my perspective. Not "the developer" or "we" (royal). Just me.
+Write from Jonathan's perspective. Not "the developer" or "we" (royal).
 
 * ✅ "i built this to switch between databases"
 * ✅ "i want a link to the handshake protocol"
@@ -37,7 +37,7 @@ i write from my perspective. Not "the developer" or "we" (royal). Just me.
 
 ### Problem First
 
-Start with what pissed me off or what i needed, not with the solution.
+Start with what pissed Jonathan off or what he needed, not with the solution.
 
 * ✅ "Radial clusters get crowded fast. Needs paging."
 * ✅ "Colors are inconsistent. Hover looks wrong for X." Needs a color management system.
@@ -80,7 +80,7 @@ A fragment still has to be one clean thought. Don't drop the subject and then co
 A good synopsis typically follows this pattern:
 
 1. **Describe the problem** (what was broken/annoying/missing)
-2. **Describe what you built in a line** (not how)
+2. **Describe what was built in a line** (not how)
 3. **Include everything vitally important** -> all relevant facts and findings
 
 This is NOT a rigid formula, it is an excellent start for developing a synopsis, expand upon it as seems necessary.
@@ -137,11 +137,11 @@ the difference: Claude catalogues constraints ("the tokenizer only supports…",
 
 ### Before/After — the cutting pass
 
-i handed Jonathan a page about storing app data inside AnythingLLM. He edited the first 44 lines and every single edit was a cut. Six rules come out of it, each with what he actually did.
+co handed Jonathan a page about storing app data inside AnythingLLM. He edited the first 44 lines and every single edit was a cut. Six rules come out of it, each with what he actually did.
 
-**1. Cut the road that led to the conclusion.** Four bullets said what the tool can and cannot do; he kept the one that says where the payload goes and deleted the other three. Those three were how i worked it out. He does not need to re-walk it.
+**1. Cut the road that led to the conclusion.** Four bullets said what the tool can and cannot do; he kept the one that says where the payload goes and deleted the other three. Those three were how co worked it out. He does not need to re-walk it.
 
-**2. One line per point, and nothing after the point.** My three plain-words bullets each ran three lines: a bold lead, the mechanism, the consequence, and some advice. His:
+**2. One line per point, and nothing after the point.** Co's three plain-words bullets each ran three lines: a bold lead, the mechanism, the consequence, and some advice. His:
 
 > 1. To change a file, delete and re-add it
 > 2. Cannot write part of the description
@@ -159,7 +159,7 @@ No bold, no reason, no advice. Notice the third one is *longer* than mine was �
 
 > 2. one row per document (its name, its on-disk path, its details, whether it's pinned) <- **description**
 
-Two smaller habits from the same pass: an aside goes in parentheses, never between dashes. And the thing we are building on is **ours** — *"This is our spot."*, where i had written *"This is the one field ji can store into."*
+Two smaller habits from the same pass: an aside goes in parentheses, never between dashes. And the thing we are building on is **ours** — *"This is our spot."*, where co had written *"This is the one field ji can store into."*
 
 Two more, from his rewrite of [agency](../pre-flight/agency.md)'s opening line:
 
@@ -188,7 +188,7 @@ The voice is for prose, not for code or formal structures.
 
 ### Naming the Two Coordinate Worlds
 
-**World coordinates** — (rather than **structural**) the model. Inches, feet, millimeters. The building. Stored bounds, algebra, formulas, constraints. Doesn't change because you tilted your head.
+**World coordinates** — (rather than **structural**) the model. Inches, feet, millimeters. The building. Stored bounds, algebra, formulas, constraints. Doesn't change because someone tilted their head.
 
 **Camera view** — (rather than **visual**) rendering. Tumble, scale, pan, grid extent, virtual bounds. Everything the camera controls to frame the scene.
 

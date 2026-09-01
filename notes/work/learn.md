@@ -79,9 +79,9 @@ What is di's own — its geometry and its pipeline — is in [di's learn](../../
 | Trimmed rejected idea instead of restarting | `pitfalls.md` #18 — "Rejection means start over"                  |
 | Treated analysis shorthand as action        | `pitfalls.md` #19 — "Analysis shorthands are not action requests" |
 | Guessing said as fact                       | `always.md` #3 — "Guess"                                          |
-| Reading the log myself                      | `response.md` #7 — "Read the log yourself"                        |
+| Reading the log myself                      | `response.md` #5 — "Co reads the log itself"                      |
 | Formatting warnings are mine                | `agency.md` #13 — "Fix every warning"                             |
-| Reply length, and fluff after the answer    | `response.md` #8, `always.md` #4                                  |
+| Reply length, and fluff after the answer    | `always.md` #1                                                    |
 | Words with a settled meaning                | `lexicon.md`, `banned words.md`                                   |
 | Explanations in plain english               | `always.md` #2                                                    |
 | Changing what nobody asked about            | `agency.md` #8, #16                                               |
@@ -92,8 +92,8 @@ What is di's own — its geometry and its pipeline — is in [di's learn](../../
 | Deleting what a checker complained about    | `agency.md` #18 — "Report, never remove"                          |
 | Reasoning about a drawn fault               | `agency.md` #19 — "Measure what is drawn"                         |
 | A constant applied throughout               | `agency.md` #20 — "A constant applied throughout"                 |
-| Ending a turn in silence                    | `response.md` #9 — "Never end a turn without words"               |
-| Notation left unexplained                   | `response.md` #10 — "Explain a notation"                          |
+| Ending a turn in silence                    | `always.md` #9 — "Never end a turn without words"                 |
+| Notation left unexplained                   | `response.md` #6 — "Explain a notation"                          |
 | Inventing a name the code already gives     | `lexicon.md` — its opening                                        |
-| A count in place of the names               | `always.md` #5, `lexicon.md` — already covered                    |
+| A count in place of the names               | `always.md` #4, `lexicon.md` — already covered                    |
 | Took the "if not" branch after a yes        | `pitfalls.md` #21 — "A found answer settles the conditional"      |

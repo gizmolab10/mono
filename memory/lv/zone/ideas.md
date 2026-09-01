@@ -1,7 +1,7 @@
 ---
 kind: analyze
 title: "Ideas"
-description: "<!-- lv ideas"
+description: "lv ideas. Append freely; triaged at every settle."
 tags: [now, stale, born]
 date: 2026-08-27
 ---

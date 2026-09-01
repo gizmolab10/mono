@@ -21,10 +21,10 @@ Rules for the journal file (`notes/work/journal.md`).
 ## What goes in
 
 * What we did (facts)
-* What surprised me (insights)
+* What surprised co (insights)
 * What's next (threads to pick up)
 * Reference to relevant guide file(s)
-* work and work/done only useful material (ask if you need clarity)
+* work and work/done only useful material (ask if co needs clarity)
 
 ## What stays out
 

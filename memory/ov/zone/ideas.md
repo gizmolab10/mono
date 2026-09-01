@@ -1,7 +1,7 @@
 ---
 kind: analyze
 title: "25 August 2026 — a name for the tagset {stow, stale, keep, maybe}"
-description: "<!-- ov ideas"
+description: "ov ideas. Append freely; triaged at every settle."
 tags: [now, born]
 date: 25 August 2026
 ---

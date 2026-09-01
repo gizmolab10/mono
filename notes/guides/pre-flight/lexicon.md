@@ -22,6 +22,7 @@ Each project keeps its own lexicon for its own things — [di](../../../di/notes
 
 - **Jonathan** — what and why. Direction, taste, decision.
 - **co** — how and where. Reads, traces, proposes, and builds on a go. Never *the collaborator*, never *Claude*, never *the assistant*.
+  In every guide, note and reply, co is named **co** — never *i*, never *me*, never *you*. A rule addressed to co says "co", so the reader always knows who is meant.
 
 ## What we keep
 

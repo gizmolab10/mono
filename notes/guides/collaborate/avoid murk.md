@@ -16,18 +16,18 @@ Murk is writing that is challenging to understand. That is the whole definition,
 because the person who cannot read a sentence is never the person who wrote it. The writer sees
 through his own words to the thing behind them. Every clause looks load-bearing from the inside.
 
-Which is the first hard fact about murk: **you cannot find it by rereading your own draft.** You find
+Which is the first hard fact about murk: **co cannot find it by rereading the draft co wrote.** Co finds
 it by watching a reader fail. `t` is that failure, arriving as one keystroke.
 
 ## Nine strategies
 
-1. **Add up what your rules spend before you cap what they may spend.** A rule set with a length
+1. **Add up what the rules spend before capping what they may spend.** A rule set with a length
    limit and three rules that cost length is not a style guide, it is a squeeze. What comes out of a
    squeeze is compression — clauses stacked, connectives dropped — and compression reads as murk.
 2. **Every ban needs a replacement standing next to it.** A lexicon, one settled word per thing, is
    worth more than any number of prohibitions, because it is the only kind of rule that makes a
-   sentence shorter as well as plainer. Ban a name without supplying its replacement and you have not
-   removed jargon, you have made the writer improvise a private one, differently, every time.
+   sentence shorter as well as plainer. Ban a name without supplying its replacement and the jargon
+   remains — the writer improvises a private one, differently, every time.
 3. **A swap that changes the meaning is a fault in the rule, never in the sentence.** Turn the table
    around: state the word to reach for, and let the banned one be the footnote.
 4. **What is measured is what gets obeyed.** Leave clarity unmeasured beside a mechanically enforced
@@ -38,13 +38,13 @@ it by watching a reader fail. `t` is that failure, arriving as one keystroke.
 6. **Enumerate every part of the machine before repairing any one of them.** In the case behind this
    guide, two parts collected twelve causes and three parts were never examined at all — a fair
    description of most post-mortems.
-7. **Know which of your constraints belong to the carrier.** Some are unfixable from inside. Naming
+7. **Know which constraints belong to the carrier.** Some are unfixable from inside. Naming
    one as unfixable is the repair — it stops the argument from restarting every month.
-8. **Before building an instrument, look for the complaint you are already receiving.** The reader
+8. **Before building an instrument, look for the complaint already arriving.** The reader
    has been signalling failure all along, for free, and in a form specific enough to log.
 9. **Publish the count even when it cannot attribute.** A number that cannot say which change did it
-   is still the only thing that can say whether to keep going, and a floor you can see beats a
-   ceiling you cannot.
+   is still the only thing that can say whether to keep going, and a floor that can be seen beats a
+   ceiling that cannot.
 
 In one line: murk is invisible to its author, so it can only be found by counting the reader's
 complaints — and the rules written to prevent it are, more often than anyone expects, where it comes
