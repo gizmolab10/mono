@@ -32,6 +32,7 @@ date: 25 August 2026
 - **No unasked asides.** Nothing "noticed in passing", "by the way", or "in case it matters" rides along in a reply. Such things wait for **obs**, which is when they are asked for.
 - **Dates** are always written like 22 August 2026 — day, month name, year. and never in a header, put it next line
 - **Reports**: say what got decided, which file now holds it, and what is still unanswered — with the reason it waits.
+- **A checkbox is not a measurement.** A list ticked through is a record of what was attempted, never proof of what is true. Where the claim can be measured — no copies left, no second door, nothing unlisted — run the measurement and say the number. Every box in the adoption list was ticked while four twins still sat on disk.
 - **Never report a log entry.** Logging is the job, not news. The only time the log is spoken of: something that should have been logged was not — then say what went unlogged and ask whether he wants it in.
 - **Outcomes in files**: one present-tense sentence stating the fact that now holds. The choosing, its date, and what might change it later stay out — the log holds those. ("The 'core' alias is now part of ov's tsconfig and vite.")
 

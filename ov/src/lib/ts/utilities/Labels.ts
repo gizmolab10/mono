@@ -1,5 +1,5 @@
 import { ALL_TAGS, T_Kind, type Labels } from '../types/File';
-import { debug } from '../common/Debug';
+import { debug } from '../common/Core';
 
 // The labels at the top of every guide — read off a file's text, and written back into it.
 //

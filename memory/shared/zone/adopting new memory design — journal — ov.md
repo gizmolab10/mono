@@ -1,11 +1,11 @@
 ---
 kind: specify
-title: "Adoption journal"
+title: "Adopting new memory design — journal — ov"
 description: "Where ov's move into the memory system stands — done, goal, remaining."
-tags: [journal, now, proposal, born]
+tags: [born, journal, now, proposal]
 date: 
 ---
-# Adoption journal — ov
+# Adopting new memory design — journal — ov
 
 ## Done so far
 

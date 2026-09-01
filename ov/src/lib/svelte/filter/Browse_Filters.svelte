@@ -1,23 +1,23 @@
 <script lang='ts'>
 	import { w_projects, toggle_project, w_kind, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_search_text } from '../../ts/managers/Filters';
 	import { inverted, T_Picking } from '../../ts/managers/Filters';
-	import { toggle_all_areas, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
+	import { toggle_all_areas, toggle_area, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
 	import { T_Bundle, T_Kind } from '../../ts/types/File';
 	import { Action, T_Position } from '../../ts/common/Core';
-	import { TAG_AREAS, tags_shown } from '../../ts/types/Tag_Areas';
+	import { TAG_AREAS, area_reads, tags_shown } from '../../ts/types/Tag_Areas';
 	import { fade } from 'svelte/transition';
 	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { hits } from '../../ts/events/Hits';
+	import { hit_target } from '../../ts/common/Core';
+	import { hits } from '../../ts/common/Core';
 	import { smooth_height } from '../../ts/common/Core';
-	import Section from '../support/Section.svelte';
-	import Stack from '../support/Stack.svelte';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import { Section } from '../../ts/common/Core';
+	import { Stack } from '../../ts/common/Core';
+	import { T_Edge } from '../../ts/common/Core';
 	import { T_Hit_Target } from '../../ts/common/Core';
-	import Big_Pill from '../support/Big_Pill.svelte';
+	import { Big_Pill } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
-	import { tip } from '../../ts/utilities/Tooltip';
-	import { debug } from '../../ts/common/Debug';
+	import { tip } from '../../ts/common/Core';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
 	function toggle_filters() {
@@ -345,7 +345,9 @@
 		<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
 			{#each showing_areas as area (area.name)}
 				<span class='pill-slot' transition:fade={{ duration: FADE }}>
-					<Big_Pill row='list' {area} in_reach={tags_in_use} chosen={$w_tags} ontoggle={toggle_tag} />
+					<Big_Pill row='list' name={area.name} items={area.tags} shown={tags_shown(area, tags_in_use, $w_tags)}
+						reads={area_reads(area, $w_tags)} chosen={$w_tags} ontoggle={toggle_tag}
+						ontoggle_area={toggle_area} opened={$w_areas_open} />
 				</span>
 			{/each}
 		</div>

@@ -1,16 +1,16 @@
 <script lang='ts'>
 	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_projects, w_tags } from '../../ts/managers/Filters';
 	import Files_List, { w_scrollbar_showing } from '../content/Files_List.svelte';
-	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
+	import { report_line_spacing } from '../../ts/common/Core';
 	import { words_that_fit } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import { svg_paths } from '../../ts/common/Core';
+	import { T_Edge } from '../../ts/common/Core';
 	import Browse_Filters from '../filter/Browse_Filters.svelte';
 	import { files } from '../../ts/managers/Files';
 	import { T_Hit_Target } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import Section from '../support/Section.svelte';
-	import { debug } from '../../ts/common/Debug';
+	import { hit_target } from '../../ts/common/Core';
+	import { Section } from '../../ts/common/Core';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.

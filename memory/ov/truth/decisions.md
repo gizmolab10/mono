@@ -18,7 +18,7 @@ date:
 
 ## Evaluations (pac) made during 2026
 
-- 31 August 2026; **adopt every file in core/ts/common — Debug.ts and Dirty.ts remain (Extensions, Constants, Configuration, and Colors are adopted); each adoption adds its name to the roll at the bottom of zone/'adopting core.md'.**
+- 31 August 2026; **adopt every file in core/ts/common — Debug.ts and Dirty.ts remain (Extensions, Constants, Configuration, and Colors are adopted); each adoption adds its name to the roll at the bottom of core/truth/'adopting core.md'.**
   For: it finishes common — no copies left, and Dirty is the live danger: ov's copy is core's verbatim, both hold stale_writable stores, so ov code and core components read two different instances of what should be one state — the Extensions crash's silent sibling, worse for making no sound. Debug identical, drift-only. The lesson is already law in the journey file: an adoption is never a copy. And the roll makes the journey file a running record, not a snapshot — the next host watches adoption happen.
   Against: 27 files import the two copies — the same sweep as every adoption, but stacked on wiring the Mac has not yet proven (yarn dev owes the vite half, vitest owes the tests); each further adoption piles unverified change on unverified change. And Dirty is stateful — module stores move from ov's copy into core's module, bending "state lives in the host" a little further than Colors already bent it.
   Deciding question: both now, or Dirty first — the silent divergence — with Debug waiting until the Mac proves the alias?

@@ -2,7 +2,7 @@
 kind: specify
 title: "Banned Words (mono)"
 description: "The words that cause friction in any project, each with the word to use instead."
-tags: [always, prose, session, team]
+tags: [prose, session, team]
 date: 2026-07-27
 ---
 # Substitutions for banned words — every project

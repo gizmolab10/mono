@@ -1,5 +1,4 @@
 <script lang='ts'>
-	import { type Tag_Area, area_reads, tags_shown } from '../../ts/types';
 	import { svg_paths } from '../../ts/utilities';
 	import { hit_target } from '../../ts/events';
 	import { hits } from '../../ts/events';
@@ -17,19 +16,16 @@
 	// says which row it belongs to and every name here begins with it. Without that both rows
 	// register the same names, the older of each pair is let go, and whichever tag they had in
 	// common answers nothing on the row that lost it.
-	let { area, in_reach, chosen, ontoggle, ontoggle_area, opened, row }:
-		{ area: Tag_Area; in_reach: string[]; chosen: string[]; ontoggle: (tag: string, only?: boolean, among?: string[], everywhere?: boolean) => void; ontoggle_area: (name: string) => void; opened: string[]; row: string } = $props();
+	// Nothing here knows what an area is. The host names it, says which of its items to show and
+	// what the shut pill reads as, and hands both in — core keeps no state and no vocabulary of
+	// its own, so an area left open in one place is open wherever the host says so.
+	let { name, items, shown, reads, chosen, ontoggle, ontoggle_area, opened, row }:
+		{ name: string; items: string[]; shown: string[]; reads: string; chosen: string[]; ontoggle: (item: string, only?: boolean, among?: string[], everywhere?: boolean) => void; ontoggle_area: (name: string) => void; opened: string[]; row: string } = $props();
 
-	// Which areas are open belongs to the host, handed in — core keeps no state of its own, so
-	// an area left open in one place is open wherever the host says so.
-	let open = $derived(opened.includes(area.name));
+	let open = $derived(opened.includes(name));
 
 	const CROSS = k.size.normal * 0.7;
 	const cross_path = svg_paths.x_cross(CROSS, CROSS / 6);
-
-	// Only tags something is left wearing, plus whatever is already picked.
-	let shown = $derived(tags_shown(area, in_reach, chosen));
-	let reads = $derived(area_reads(area, chosen));
 
 	// With one tag left there is nothing to fold away, so the area steps aside and the tag
 	// stands on its own as an ordinary pill.
@@ -121,19 +117,19 @@
 		class='big'
 		class:open={open && lone === ''}
 		class:moving
-		class:holding={lone !== '' ? chosen.includes(lone) : area.tags.some((tag) => chosen.includes(tag))}
+		class:holding={lone !== '' ? chosen.includes(lone) : items.some((tag) => chosen.includes(tag))}
 		role='button'
 		tabindex='-1'
 		onkeyup={() => {}}
-		use:hit_target={{ id: `${row}.pill.${area.name}`,
+		use:hit_target={{ id: `${row}.pill.${name}`,
 			dormant: open && lone === '',
 			tip: lone !== '' ? `${chosen.includes(lone) ? 'remove' : 'add'} "${lone}" tag`
 				: `choose ➜ ${shown.join(', ')}`,
-			onpress: lone !== '' ? (m) => ontoggle(lone, m?.event?.altKey ?? false, area.tags, (m?.event?.altKey && m?.event?.metaKey) ?? false) : () => ontoggle_area(area.name) }}>
+			onpress: lone !== '' ? (m) => ontoggle(lone, m?.event?.altKey ?? false, items, (m?.event?.altKey && m?.event?.metaKey) ?? false) : () => ontoggle_area(name) }}>
 		<!-- The area's own name straddles the top edge whenever the words below it are not the
 		     area's name — open, or shut with something picked, or standing in for a lone tag. -->
-		{#if open || lone !== '' || area.tags.some((tag) => chosen.includes(tag))}
-			<span class='area-name'>{area.name}</span>
+		{#if open || lone !== '' || items.some((tag) => chosen.includes(tag))}
+			<span class='area-name'>{name}</span>
 		{/if}
 		<!-- The cross that folds the area away. It is here whatever the state, and takes no width
 		     while the area is shut. -->
@@ -142,9 +138,9 @@
 			style:--starts='{open ? 0 : run_time}ms'
 			style:--shows='{open ? lead_time : run_time}ms'>
 			<!-- Named by its own area, since a row holds one of these per area. -->
-			<button class='shut-me' bind:this={cross} aria-label={`shut ${area.name}`}
-				use:hit_target={{ id: `${row}.pill.shut.${area.name}`, onpress: () => ontoggle_area(area.name),
-					dormant: !open || moving, tip: `hide ${area.name} tags` }}>
+			<button class='shut-me' bind:this={cross} aria-label={`shut ${name}`}
+				use:hit_target={{ id: `${row}.pill.shut.${name}`, onpress: () => ontoggle_area(name),
+					dormant: !open || moving, tip: `hide ${name} tags` }}>
 				<svg overflow='visible' viewBox='0 0 {CROSS} {CROSS}' width={CROSS} height={CROSS}>
 					<path d={cross_path} />
 				</svg>
@@ -164,7 +160,7 @@
 						     an unpicked one — a state that can be taken back is not a dead end. -->
 						<button class='segment' class:current={chosen.includes(tag)}
 							style:--waits='{waits_for(at)}ms'
-							use:hit_target={{ id: `${row}.pill.${area.name}.${tag}`, onpress: (m) => ontoggle(tag, m?.event?.altKey ?? false, area.tags, (m?.event?.altKey && m?.event?.metaKey) ?? false),
+							use:hit_target={{ id: `${row}.pill.${name}.${tag}`, onpress: (m) => ontoggle(tag, m?.event?.altKey ?? false, items, (m?.event?.altKey && m?.event?.metaKey) ?? false),
 								dormant: !open || moving,
 								tip: `${chosen.includes(tag) ? 'remove' : 'add'} "${tag}" tag` }}>{tag}</button>
 					{/each}

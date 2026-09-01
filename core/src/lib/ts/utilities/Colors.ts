@@ -1,4 +1,7 @@
-import { stale_writable } from '../common';
+// The file, never the barrel. Reaching for '../common' pulls Configuration in with it, and
+// Configuration reaches back here through the utilities barrel — a ring whose behavior depends
+// on which file is entered first. Naming Dirty directly is the cut that breaks it.
+import { stale_writable } from '../common/Dirty';
 import { parseToRgba, transparentize } from 'color2k';
 import { get } from 'svelte/store';
 

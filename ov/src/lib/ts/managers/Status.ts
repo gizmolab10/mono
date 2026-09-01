@@ -1,7 +1,7 @@
 import { w_operation, T_Operation } from './Operations';
 import { preferences, T_Preference } from './Preferences';
 import { moment_written_out } from '../utilities/Labels';
-import { debug } from '../common/Debug';
+import { debug } from '../common/Core';
 import { get, writable } from 'svelte/store';
 
 // The one line of words the app has for the person using it — a thing that just happened, a

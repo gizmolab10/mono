@@ -2,8 +2,8 @@
 	// The two colors that are chosen: the accent, and the page behind everything. Each drives
 	// Colors' subscribers, which re-work the hover color, the text color and the rest.
 	import { colors } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { debug } from '../../ts/common/Debug';
+	import { hit_target } from '../../ts/common/Core';
+	import { debug } from '../../ts/common/Core';
 
 	const { w_accent_color, w_background_color } = colors;
 

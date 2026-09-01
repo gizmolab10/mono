@@ -11,6 +11,7 @@ date: 2026-08-30
 
 ## 31 August 2026
 
+- D: `/p <name>` picks the project and does nothing else — writes the name to .working_project, refuses a name with no folder, reads nothing and offers nothing; the per-project skills keep their second half. Handbook Skills list, shorthand table and the skills guide all say so
 - D: convention — never report a log entry; logging is the job, not news. Speak of the log only when something that should have been logged was not, then name it and ask
 - D: questions.md is Jonathan's own memory — never reported, never listed, never a nudge; spoken only when the work in hand touches one, naming that question once; co reads it at start solely to recognise the touch, so orientation is two lines now, current state and truths loaded
 - D: questions.md lives in zone/ — all four moved (shared, mu, me, lv); the handbook's four pointers and its Zone list re-point, and shared's index says zone holds ideas, proposals, drive, questions

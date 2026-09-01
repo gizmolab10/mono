@@ -2,11 +2,11 @@ import App from '../svelte/main/App.svelte';
 import { w_app, S_App } from './types/App';
 import { files } from './managers/Files';
 import { c } from './common/Core';
-import { debug } from './common/Debug';
+import { debug } from './common/Core';
 import { preferences, T_Preference } from './managers/Preferences';
 import { colors } from './common/Core';
 import { mount } from 'svelte';
-import '../main.css';
+import 'core/main.css';
 
 // What the host owes core's colors: core starts the three chosen colors at defaults and
 // remembers nothing, so each remembered choice is read in here, and every later change is

@@ -7,6 +7,8 @@ date: 2026-08-17
 ---
 # Murk journal
 
+this belongs in mono collaborate.
+
 Murk is bad news. We may have conquered it — see [murk.md](../../../../notes/guides/collaborate/avoid%20murk.md). Our journey so far...
 
 ## afternote ...

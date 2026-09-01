@@ -8,7 +8,7 @@ import { resolved_from } from '../utilities/Following_Links';
 import { show_status, type Finding } from './Status';
 import { CANNOT_FIND, Hierarchy } from './Hierarchy';
 import { writable, get } from 'svelte/store';
-import { debug } from '../common/Debug';
+import { debug } from '../common/Core';
 
 /**
  * Guides — every guide file in the four collections, hung on the structure.

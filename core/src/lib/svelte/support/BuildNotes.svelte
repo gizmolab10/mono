@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { svg_paths } from '../../ts/utilities';
+	import { untrack } from 'svelte';
 	import { hit_target } from '../../ts/events';
 	import { Direction } from '../../ts/types';
-	import buildsRaw from '../../md/builds.md?raw';
 	import { debug } from '../../ts/common';
 	import { k } from '../../ts/common';
 
@@ -15,17 +15,26 @@
 	const down_path   = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.down);
 	const down_bounds = svg_paths.fat_polygon_bounds(STEP_TRIANGLE, Direction.down);
 
-	const allNotes = buildsRaw.split('\n')
-		.filter(l => /^\|\s*\d+/.test(l))
-		.map(l => {
-			const [_, build, date, note] = l.split('|').map(s => s.trim());
-			return { build: parseInt(build), date, note };
-		});
+	// The table's own text comes from the host — core names no file inside a project it has
+	// never heard of. Everything below reads it exactly as it read its own import.
+	let { table, onclose } : { table: string; onclose: () => void } = $props();
+
+	// Read inside a function, so nothing captures the prop at setup: the text is fixed for the
+	// life of the popup, and taking it this way says so without the compiler guessing otherwise.
+	function rows_of(text: string) {
+		return text.split('\n')
+			.filter(l => /^\|\s*\d+/.test(l))
+			.map(l => {
+				const [_, build, date, note] = l.split('|').map(s => s.trim());
+				return { build: parseInt(build), date, note };
+			});
+	}
+
+	const allNotes = untrack(() => rows_of(table));
 	const notesLimit = allNotes.length;
 	const pageCap = Math.min(k.paging.notes, notesLimit);   // most rows a page ever shows, even if the window could hold more
 	const isNewestFirst = allNotes.length > 1 && allNotes[0].build > allNotes[1].build;
 
-	let { onclose } : { onclose: () => void } = $props();
 	// How many rows a page shows. Starts at the constant, then is fitted to the window height so the
 	// popup never grows taller than the screen (which would scroll its title and controls off top).
 	let pageSize = $state(k.paging.notes);

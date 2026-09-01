@@ -2,15 +2,15 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { what_to_open } from '../../ts/utilities/Searching';
 	import { w_search_at } from '../../ts/managers/Operations';
-	import { hit_target, WAY_OUT } from '../../ts/events/Hit_Target';
+	import { hit_target, WAY_OUT } from '../../ts/common/Core';
 	import { Action, T_Position } from '../../ts/common/Core';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
+	import { T_Edge } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
-	import { gap_below_line } from '../../ts/utilities/Separator_Spacing';
+	import { gap_below_line } from '../../ts/common/Core';
 	import { w_search_text } from '../../ts/managers/Filters';
-	import Steppers from '../support/Steppers.svelte';
-	import Section from '../support/Section.svelte';
-	import { debug } from '../../ts/common/Debug';
+	import { Steppers } from '../../ts/common/Core';
+	import { Section } from '../../ts/common/Core';
+	import { debug } from '../../ts/common/Core';
 	import { get } from 'svelte/store';
 
 	// Looking through the guide on screen. The words looked for here are the very ones typed into

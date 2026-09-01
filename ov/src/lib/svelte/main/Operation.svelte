@@ -2,7 +2,7 @@
 	import { w_operation, w_viewed, w_can_back, w_can_forward, T_Operation, step_view, close_view } from '../../ts/managers/Operations';
 	import Editor from './Editor.svelte';
 	import Report from '../content/Report.svelte';
-	import { debug } from '../../ts/common/Debug';
+	import { debug } from '../../ts/common/Core';
 	import Browse from './Browse.svelte';
 
 	// The content box. It holds whichever of the two things is happening: looking through

@@ -1,5 +1,5 @@
 import type MarkdownIt from 'markdown-it';
-import { CHECKBOX, svg_paths } from './SVG_Paths';
+import { CHECKBOX, svg_paths } from '../common/Core';
 
 // Where each piece of a drawn guide came from in the file it was read out of.
 //

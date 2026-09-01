@@ -1,7 +1,7 @@
 import { preferences, T_Preference } from './Preferences';
 import { derived, get, writable } from 'svelte/store';
 import type { Filtered_File } from '../types/File';
-import { debug } from '../common/Debug';
+import { debug } from '../common/Core';
 import { files } from './Files';
 
 /**

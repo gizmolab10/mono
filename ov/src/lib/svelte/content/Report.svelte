@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { w_status, w_findings, w_findings_made, hide_status, type Finding } from '../../ts/managers/Status';
 	import { open_from_report, w_search_for } from '../../ts/managers/Operations';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { debug } from '../../ts/common/Debug';
+	import { svg_paths } from '../../ts/common/Core';
+	import { hit_target } from '../../ts/common/Core';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
 	// Words too many for the one line along the bottom are read here instead, in the whole

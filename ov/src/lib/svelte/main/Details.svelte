@@ -1,17 +1,17 @@
 <script lang='ts'>
-	import { report_line_spacing } from '../../ts/utilities/Separator_Spacing';
+	import { report_line_spacing } from '../../ts/common/Core';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { Action, T_Position } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import Separator from '../support/Separator.svelte';
-	import { hits } from '../../ts/events/Hits';
+	import { hit_target } from '../../ts/common/Core';
+	import { Separator } from '../../ts/common/Core';
+	import { hits } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 	import type { Writable } from 'svelte/store';
 	import { T_Details } from '../../ts/common/Core';
 	import D_Preferences from '../content/D_Preferences.svelte';
 	import D_Repair from '../content/D_Repair.svelte';
-	import { debug } from '../../ts/common/Debug';
-	import Stack from '../support/Stack.svelte';
+	import { debug } from '../../ts/common/Core';
+	import { Stack } from '../../ts/common/Core';
 
 	// The collapsible details column. The frame computes its width. Which sections are
 	// open is remembered as one saved list of their names — all shut saves an empty

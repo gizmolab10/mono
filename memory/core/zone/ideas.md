@@ -7,7 +7,11 @@ date: 2026-08-31
 ---
 # Ideas
 
-- [ ] merge mono -> shared
-- [ ] for each file that remains
+- [ ] as in [[adopting core]], for each file that remains:
     - [ ] import it instead, deleting the now-duplicate
-- [x] record the ov journey for projects later — one telling in ov/zone/'adopting core.md', bound for core's truth
+- [ ] create 'gallery' mono project, then one file at a time:
+    - [ ] populate it from lv
+    - [ ] adopt it into lv
+    - [ ] create 'mj' and adopt core into it
+- [ ] merge mono -> shared
+- [x] record the ov journey for projects later — one telling, now core/truth/'adopting core.md'

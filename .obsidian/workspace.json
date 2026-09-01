@@ -8,45 +8,31 @@
         "type": "tabs",
         "children": [
           {
-            "id": "6ac25d6346f16830",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/shared/zone/drive.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "drive"
-            }
-          },
-          {
-            "id": "547fa3b444ad9aa4",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/shared/truth/create a project.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "create a project"
-            }
-          },
-          {
             "id": "977981c37cc36ed4",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/adopting core.md",
+                "file": "memory/ov/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "adopting core"
+              "title": "ideas"
+            }
+          },
+          {
+            "id": "bfb280323a7d4175",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ov/notes/guides/design/ov - goals.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ov - goals"
             }
           },
           {
@@ -62,23 +48,8 @@
               "icon": "lucide-file",
               "title": "shorthand"
             }
-          },
-          {
-            "id": "07bc1b8e0aa42459",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/shared/zone/drive.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "drive"
-            }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
@@ -215,7 +186,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/zone/drive.md",
+                "file": "memory/ov/zone/ideas.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -253,12 +224,23 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "07bc1b8e0aa42459",
+  "active": "977981c37cc36ed4",
   "lastOpenFiles": [
-    "memory/shared/zone/ideas.md",
-    "memory/ov/zone/adopting core.md",
-    "memory/shared/zone/drive.md",
     "notes/guides/pre-flight/shorthand.md",
+    "ov/notes/guides/design/ov - goals.md",
+    "memory/core/truth/adopting core.md",
+    "memory/ov/truth/scope.md",
+    "memory/ov/zone/ideas.md",
+    "memory/ov/zone/adopting core.md",
+    "ov/src/lib/ts/tests/core_alias.test.ts",
+    "memory/core/zone/ideas.md",
+    "memory/shared/zone/adopting new memory design — journal — ov.md",
+    "memory/shared/zone/adoption journal — ov.md",
+    "memory/shared/zone/drive.md",
+    "core/src/vite-env.d.ts",
+    "core/vitest.config.ts",
+    "core/tsconfig.json",
+    "memory/shared/zone/ideas.md",
     "memory/lv/zone/questions.md",
     "memory/me/zone/questions.md",
     "memory/mu/zone/questions.md",
@@ -268,8 +250,6 @@
     "memory/shared/truth/handbook.md",
     "memory/ov/zone/drive.md",
     "ws/vite.config.js.timestamp-1788230058310-f12bb7e52242e.mjs",
-    "memory/ov/zone/ideas.md",
-    "memory/core/zone/ideas.md",
     "memory/core/zone/design.md",
     "memory/shared/zone/inception into the new design.md",
     "memory/shared/zone/truth and zone and design?.md",
@@ -277,20 +257,11 @@
     "memory/ji/zone/proposals.md",
     "memory/lv/zone/proposals.md",
     "memory/wo/zone/proposals.md",
-    "memory/me/zone/proposals.md",
-    "memory/mu/zone/proposals.md",
-    "memory/core/zone/proposals.md",
-    "memory/ov/zone/proposals.md",
-    "memory/shared/zone/proposals.md",
     "notes/guides/pre-flight/sedEMKzaA",
     "memory/di/zone",
     "memory/di/truth",
     "memory/di",
     "memory/ji/zone",
-    "memory/ji/truth",
-    "memory/ji",
-    "_to_delete",
-    "memory/ov/sed7qduKQ",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",

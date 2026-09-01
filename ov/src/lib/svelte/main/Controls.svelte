@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { w_operation, T_Operation, close_view } from '../../ts/managers/Operations';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { Direction } from '../../ts/types/Angle';
+	import { hit_target } from '../../ts/common/Core';
+	import { svg_paths } from '../../ts/common/Core';
+	import { Direction } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
 	// The controls row: always visible, full width, sitting on the accent. The hamburger at its

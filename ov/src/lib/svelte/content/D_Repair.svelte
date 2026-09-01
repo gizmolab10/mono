@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { files } from '../../ts/managers/Files';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { debug } from '../../ts/common/Debug';
+	import { hit_target } from '../../ts/common/Core';
+	import { debug } from '../../ts/common/Core';
 
 	// Putting things right that nothing on screen would show as wrong. One button so far: the
 	// index files, since a move can only mend the two folders it touched.

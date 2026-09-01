@@ -1,22 +1,22 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { w_tip, start_tips } from '../../ts/utilities/Tooltip';
+	import { w_tip, start_tips } from '../../ts/common/Core';
 	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
 	import { files } from '../../ts/managers/Files';
 	import { files_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
 	import { colors } from '../../ts/common/Core';
-	import { Point } from '../../ts/types/Coordinates';
+	import { Point } from '../../ts/common/Core';
 	import { S_Mouse } from '../../ts/common/Core';
-	import { hits } from '../../ts/events/Hits';
+	import { hits } from '../../ts/common/Core';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Core';
-	import ToolTip from '../support/ToolTip.svelte';
+	import { ToolTip } from '../../ts/common/Core';
 	import buildsRaw from '../../md/builds.md?raw';
-	import { debug } from '../../ts/common/Debug';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
-	import { w_show_status } from '../../ts/managers/Status';
-	import Status_Line from '../content/Status_Line.svelte';
-	import BuildNotes from './BuildNotes.svelte';
+	import { hide_status, show_status_as_report, take_the_offer, w_offer, w_show_status, w_status } from '../../ts/managers/Status';
+	import { Status_Line } from '../../ts/common/Core';
+	import { BuildNotes } from '../../ts/common/Core';
 	import Operation from './Operation.svelte';
 	import Controls from './Controls.svelte';
 	import Details from './Details.svelte';
@@ -164,7 +164,7 @@
 		tabindex='-1'
 		onkeyup={() => {}}
 		onclick={() => showBuildNotes = false}>
-		<BuildNotes onclose={() => showBuildNotes = false} />
+		<BuildNotes table={buildsRaw} onclose={() => showBuildNotes = false} />
 	</div>
 {/if}
 
@@ -181,7 +181,8 @@
 	<!-- Along the bottom, as wide as the window, and only while there is something to say
 	     that fits there — too much to say is read as a report in the content box instead. -->
 	{#if $w_show_status && $w_operation !== T_Operation.report}
-		<Status_Line />
+		<Status_Line status={$w_status} offer={$w_offer} ontake={take_the_offer}
+			onhide={hide_status} onreport={show_status_as_report} />
 	{/if}
 </div>
 

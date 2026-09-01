@@ -17,4 +17,5 @@ export type Stacked = {
 	rides?       : Action[] | null;	// Things standing on the separator above it, each at its own end or middle
 	subsection   : Snippet;			// What this section shows. Nothing is drawn while it is folded
 	folded?      : boolean;			// Folded: nothing is drawn, and the two separators around it become one
+	hidden?      : boolean;			// Hidden: not there at all — no line, no height, no fold to bring back — but the slot stays, so nothing below it shifts
 };

@@ -13,7 +13,7 @@ import { file_path_of, reaches_under_work } from '../utilities/Saving';
  * and printing both reads as saying it twice.
  */
 export const CANNOT_FIND = 'a file this app cannot find';
-import { debug } from '../common/Debug';
+import { debug } from '../common/Core';
 
 /**
  * Hierarchy — the folders, the files, and the tags on them.

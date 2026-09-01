@@ -1,21 +1,21 @@
 <script lang='ts'>
-	import { report_gaps_below_lines, report_line_spacing } from '../../ts/utilities/Separator_Spacing';
+	import { report_gaps_below_lines, report_line_spacing } from '../../ts/common/Core';
 	import { w_file_back, w_file_forward, w_file_site, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of, type File } from '../../ts/types/File';
 	import Markdown_Editor from '../content/Markdown_Editor.svelte';
 	import Editor_Filters from '../filter/Editor_Filters.svelte';
 	import { T_Hit_Target } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { WAY_OUT } from '../../ts/events/Hit_Target';
+	import { svg_paths } from '../../ts/common/Core';
+	import { hit_target } from '../../ts/common/Core';
+	import { WAY_OUT } from '../../ts/common/Core';
 	import { w_search_text } from '../../ts/managers/Filters';
-	import Steppers from '../support/Steppers.svelte';
+	import { Steppers } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
-	import { debug } from '../../ts/common/Debug';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 	import Search from '../filter/Search.svelte';
-	import { hits } from '../../ts/events/Hits';
+	import { hits } from '../../ts/common/Core';
 	import { get } from 'svelte/store';
 
 	// Show one file. This is the frame: the top row that says which file it is and what can be

@@ -7,35 +7,45 @@ date: 25 August 2026
 ---
 # Ideas
 
-write a proposal for JUST the first unchecked item (ignore all the others) to the top of handoff. success criteria at the top.
+write a proposal for JUST the first unchecked item (ignore all the others) to the top of drive. success criteria at the top.
+
+## why ov?
 
 sooner or later every project creates a knowledge base and a work manager. this one is free, or is it? can it be made to be easily deployed? plug and play?
 
 ## next
 
-- [ ] browse
-    - [ ] drag and drop file -> any child goes to folder
+- [ ] search — enter something, click clear -> the selected match remains highlighted
+- [ ] when a section is closed
+    - [ ] hide its middle clickable
+    - [ ] replace it with the chosen filter (as a pill shaped label)
+    - [ ] show nothing if no filter is chosen
 - [ ] edit
+    - [ ] add --gap below tags content
     - [ ] rename editor -> edit (browse is a verb)
+    - [ ] move the steppers and file title -> the top row
     - [ ] keys
         - [ ] option-command b -> add checkbox | bullet
-        - [ ] command tab -> indent
+        - [ ] command ] -> indent, \[ -> outdent
+- [ ] browse
+    - [ ] drag and drop file -> any child goes to folder
+    - [ ] hover on a row says open 'x' -> add the ancestry (hierarchy has it)
 - [ ] nudge left 15px -> sep left-side clickables (browse and editor)
 - [x] add subfolders under truth and zone
     - [x] ai and design
-- [ ] switch back to using **claude code** inside vscode
-    - [ ] skills add /project (X)
+- [x] switch back to using **claude code** inside vscode
+    - [x] skills add /project (X) — it is /p; /p ov picks ov
     - [ ] remove /ov, etc
-    - [ ] [[adoption journal]]
+    - [ ] [[adopting new memory design — journal — ov]]
     - [ ] [[inception into the new design]]
-- [ ] new 'core' project — toolkit that all my projects can build from (move this to [[inception into the new design]])
+- [x] new 'core' project — toolkit that all my projects can build from (move this to [[inception into the new design]])
     - [x] constants
     - [x] configuration
-    - [ ] section
-    - [ ] separator
-    - [ ] hits
+    - [x] section
+    - [x] separator
+    - [x] hits
 - [ ] read work/md audit (old location)
-    - [ ] pac execute it
+    - [ ] pac: if we execute it
 - [ ] 1127 occurrences of 'guide' -> many should be 'file'
 - [ ] too many ts files are class-less
     - [ ] require LOOONG import statements

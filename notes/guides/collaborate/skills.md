@@ -17,6 +17,8 @@ They fall into three sorts.
 
 Each writes the project's short name into `.working_project`, then reads that project's list of what is owed and offers the first unchecked thing. Which file holds that list differs by project, which is why each has its own skill rather than one shared word.
 
+`/p <name>` does the first half alone: it writes the name and says which project is picked, reading nothing and offering nothing. A name with no folder at `~/GitHub/mono/<name>/` is refused, and the names that are there are said instead. With no name it says which project is picked now.
+
 | Skill | Project |
 | --- | --- |
 | `/mo` | the shared collection |

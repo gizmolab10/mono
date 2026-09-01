@@ -234,6 +234,15 @@ A randomly assigned ordering of points will probably create a corner with right 
 
 **Principle:** If an algorithm works sometimes, suspect ordering.
 
+---
+
+## 21. A found answer settles the conditional
+
+"Is there a file? If not, make one." Once the file is found, the second half is dead. A match that is imperfect is a question to ask, never a licence to take the branch the answer just ruled out.
+
+**Anti-pattern:** Jonathan asked whether a file existed. Co found it, said so in the reply, called the match "partial", and made the new file anyway.
+
+**Required:** Take the found branch. Where the fit is wrong, say what is wrong with it and wait.
 
 do not write or edit below this line
 

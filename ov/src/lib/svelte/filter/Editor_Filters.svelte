@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { foot_is_all_folds, inverted, toggle_all_areas, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
+	import { foot_is_all_folds, inverted, toggle_all_areas, toggle_area, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
 	import { with_labels_replaced, title_from_name } from '../../ts/utilities/Labels';
 	import { ALL_TAGS, T_Kind, in_order, key_of, type File } from '../../ts/types/File';
 	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
@@ -8,18 +8,18 @@
 	import { smooth_height } from '../../ts/common/Core';
 	import { Action, T_Position } from '../../ts/common/Core';
 	import { T_Hit_Target } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import { WAY_OUT } from '../../ts/events/Hit_Target';
-	import { TAG_AREAS } from '../../ts/types/Tag_Areas';
-	import Separator from '../support/Separator.svelte';
-	import Big_Pill from '../support/Big_Pill.svelte';
+	import { hit_target } from '../../ts/common/Core';
+	import { T_Edge } from '../../ts/common/Core';
+	import { WAY_OUT } from '../../ts/common/Core';
+	import { TAG_AREAS, area_reads, tags_shown } from '../../ts/types/Tag_Areas';
+	import { Separator } from '../../ts/common/Core';
+	import { Big_Pill } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
-	import Section from '../support/Section.svelte';
+	import { Section } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
-	import { debug } from '../../ts/common/Debug';
-	import { hits } from '../../ts/events/Hits';
-	import Stack from '../support/Stack.svelte';
+	import { debug } from '../../ts/common/Core';
+	import { hits } from '../../ts/common/Core';
+	import { Stack } from '../../ts/common/Core';
 	import type { Snippet } from 'svelte';
 	import Back_Links from '../content/Back_Links.svelte';
 	import Search from './Search.svelte';
@@ -520,7 +520,9 @@
 			bind:this={tags_row} use:smooth_height>
 			{#each TAG_AREAS as area (area.name)}
 				<span class='pill-slot'>
-					<Big_Pill row='editor' {area} in_reach={ALL_TAGS} chosen={form_tags} ontoggle={toggle_tag} />
+					<Big_Pill row='editor' name={area.name} items={area.tags} shown={tags_shown(area, ALL_TAGS, form_tags)}
+						reads={area_reads(area, form_tags)} chosen={form_tags} ontoggle={toggle_tag}
+						ontoggle_area={toggle_area} opened={$w_areas_open} />
 				</span>
 			{/each}
 		</div>

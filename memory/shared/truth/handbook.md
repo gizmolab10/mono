@@ -98,9 +98,10 @@ Compressed stories of decided pacs gather in `shared/truth/cases.md` — the one
 
 ## Skills
 
-One skill per procedure; the skill is a trigger, not a copy. Write skills (`d`, `pac`, `go`, `define`, `propose`, `settle`) log every run; read-only skills (`start`, `t`, `syns`, `obs`, `check`, `where`, `summary`) don't.
+One skill per procedure; the skill is a trigger, not a copy. Write skills (`d`, `pac`, `go`, `define`, `propose`, `settle`) log every run; read-only skills (`start`, `p`, `t`, `syns`, `obs`, `check`, `where`, `summary`) don't.
 
 - **d** (decision) — execute "Session protocol" (During) for one decision: edit the one truth file that owns it, add one `D:` log line. The workhorse; a write skill, logged by its nature.
+- **p** — pick the project to work on: `/p ov` writes `ov` to `.working_project` and says which is picked. A name with no folder at `~/GitHub/mono/<name>/` is refused. Nothing else is read and nothing is offered. Read-only of the memory system, so unlogged.
 - **start** — execute "Session protocol" (Start). Reply: two-line orientation — current state, truths loaded.
 - **pac** — pros and cons of X; the response is written into the most relevant project's `truth/decisions.md`
 - **define** — execute "Prose and terminology" for one term. The lexicon's only door.

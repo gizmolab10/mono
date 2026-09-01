@@ -2,12 +2,12 @@
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of } from '../../ts/utilities/Saving';
 	import { Action, T_Position } from '../../ts/common/Core';
-	import { T_Edge } from '../../ts/utilities/Sectioning';
-	import { hit_target } from '../../ts/events/Hit_Target';
+	import { T_Edge } from '../../ts/common/Core';
+	import { hit_target } from '../../ts/common/Core';
 	import { open_view } from '../../ts/managers/Operations';
-	import Section from '../support/Section.svelte';
+	import { Section } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
-	import { debug } from '../../ts/common/Debug';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
 	// Which files point at the one being read.

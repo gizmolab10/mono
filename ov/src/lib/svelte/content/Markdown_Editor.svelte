@@ -6,19 +6,19 @@
 	import { file_path_of, path_of_address, read_file, save_file } from '../../ts/utilities/Saving';
 	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
 	import { T_Hit_Target } from '../../ts/common/Core';
-	import { Point } from '../../ts/types/Coordinates';
-	import { hit_target } from '../../ts/events/Hit_Target';
-	import { hits } from '../../ts/events/Hits';
+	import { Point } from '../../ts/common/Core';
+	import { hit_target } from '../../ts/common/Core';
+	import { hits } from '../../ts/common/Core';
 	import { offer_status, show_status } from '../../ts/managers/Status';
 	import { follow_link, halt_stepping, leaving_file, left_at_of, w_command_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { free_thumb, type Free_Thumb } from '../../ts/common/Core';
 	import { key_of, type File } from '../../ts/types/File';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import Separator from '../support/Separator.svelte';
+	import { svg_paths } from '../../ts/common/Core';
+	import { Separator } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
-	import { Direction } from '../../ts/types/Angle';
-	import { debug } from '../../ts/common/Debug';
+	import { Direction } from '../../ts/common/Core';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 	import MarkdownIt from 'markdown-it';
 

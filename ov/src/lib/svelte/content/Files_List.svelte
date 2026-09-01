@@ -19,16 +19,16 @@
 	import { T_Hit_Target } from '../../ts/common/Core';
 	import { project_of, type Filtered_File } from '../../ts/types/File';
 	import { in_thousands } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/utilities/SVG_Paths';
-	import { hit_target } from '../../ts/events/Hit_Target';
+	import { svg_paths } from '../../ts/common/Core';
+	import { hit_target } from '../../ts/common/Core';
 	import { show_status } from '../../ts/managers/Status';
-	import Separator from '../support/Separator.svelte';
-	import { Point } from '../../ts/types/Coordinates';
-	import { Direction } from '../../ts/types/Angle';
+	import { Separator } from '../../ts/common/Core';
+	import { Point } from '../../ts/common/Core';
+	import { Direction } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
-	import { debug } from '../../ts/common/Debug';
+	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
-	import { hits } from '../../ts/events/Hits';
+	import { hits } from '../../ts/common/Core';
 	import { get } from 'svelte/store';
 
 	// The file list: every folder and file, folders leading their contents, each row
