@@ -69,19 +69,20 @@ export function in_order(one: string, two: string): number {
 // The collections the files live in, each named for the folder that holds it.
 // The shared files sit at the top of the repo, so their root is the repo's own folder.
 export enum T_Bundle {
-	mono   = 'mo',
-	memory = 'memory',
-	shared = 'shared',
-	core   = 'core',
-	ws     = 'ws',
-	me     = 'me',
-	di     = 'di',
-	ji     = 'ji',
-	lv     = 'lv',
-	ov     = 'ov',
-	wo     = 'wo',
-	mu     = 'mu',
-	mj     = 'mj',
+	mono    = 'mo',
+	memory  = 'memory',
+	shared  = 'shared',
+	core    = 'core',
+	ws      = 'ws',
+	me      = 'me',
+	di      = 'di',
+	ji      = 'ji',
+	lv      = 'lv',
+	ov      = 'ov',
+	wo      = 'wo',
+	mu      = 'mu',
+	mj      = 'mj',
+	gallery = 'gallery',
 }
 
 /**

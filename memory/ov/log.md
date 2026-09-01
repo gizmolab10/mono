@@ -11,7 +11,7 @@ date: 2026-09-01
 
 ## 1 September 2026
 
-- D: ov's adoption of core is finished and measured — the whole telling moved to core/truth/'adopting core.md', the state is in index.md, and core_alias.test.ts keeps the two doors honest. Eighteen entries settled into those three plus shared/truth/conventions.md
+- D: three entries settled — the two seg controls and the two new collections are in `truth/controls.md`; the adoption's own telling is core's
 
 ---
 

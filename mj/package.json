@@ -1,0 +1,22 @@
+{
+  "name": "mj",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test:run": "vitest run",
+    "preview": "vite preview",
+    "build": "vite build",
+    "test": "vitest",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@tsconfig/svelte": "^5.0.0",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^6.0.0",
+    "vitest": "^4.0.0"
+  }
+}

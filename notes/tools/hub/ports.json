@@ -74,6 +74,10 @@
     "port": 5186,
     "repo": "https://github.com/gizmolab10/mono/tree/main/mu"
   },
+  "mj": {
+    "port": 5187,
+    "repo": "https://github.com/gizmolab10/mono/tree/main/mj"
+  },
   "me": {
     "public": "https://jonathansand.me",
     "repo": "https://github.com/gizmolab10/jonathansand-me"

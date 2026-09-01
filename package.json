@@ -3,16 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "core",
-    "di",
-    "ji",
-    "lv",
-    "mu",
-    "ov",
-    "s3",
-    "ws"
-  ],
+  "workspaces": {
+    "packages": [
+      "core",
+      "di",
+      "gallery",
+      "ji",
+      "lv",
+      "mj",
+      "mu",
+      "ov",
+      "s3",
+      "ws"
+    ],
+    "comment": "ws pins svelte 4 and every other project wants 5. Held down in ws alone, the root hoists 5 for everyone else — without it yarn lifts 4 to the root, where the checker finds it and refuses svelte 5's own syntax.",
+    "nohoist": [
+      "webseriously/svelte",
+      "webseriously/**/svelte"
+    ]
+  },
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",

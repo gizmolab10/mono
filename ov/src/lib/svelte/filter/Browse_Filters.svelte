@@ -51,6 +51,9 @@
 	// the picks do.
 	let tags_in_use = $derived.by(() => { $w_projects; $w_kind; $w_search_text; $w_tags; $w_tag_picking; return $w_ready ? files.tags_present() : []; });
 	const projects = Object.values(T_Bundle);
+	// The projects control is two seg controls, a gap apart. These four lead, in this order;
+	// every other project follows in the second.
+	const LEADING = [T_Bundle.mono, T_Bundle.core, T_Bundle.gallery, T_Bundle.shared];
 	let counts = $derived.by(() => {
 		$w_kind; $w_tags; $w_search_text;
 		return $w_ready ? new Map(projects.map((p) => [p, files.files_in(p)])) : new Map();
@@ -70,6 +73,9 @@
 	});
 	let shown_projects = $derived(test === 'a' ? projects
 		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_projects.includes(p)));
+	// Whichever of the four are left by the other filters, in the order named above.
+	let leading_projects = $derived(LEADING.filter((p) => shown_projects.includes(p)));
+	let trailing_projects = $derived(shown_projects.filter((p) => !LEADING.includes(p)));
 
 	// How many words the kinds row actually offers — the kinds themselves, and the one that asks
 	// for the files carrying no labels, which is only there while there are some.
@@ -282,10 +288,9 @@
 
 <!-- With the other filters leaving nothing, a row has no words to offer. The control itself is
      left out then, since an empty one still draws its edge and reads as a sliver. -->
-{#snippet projects_picker()}
-	{#if shown_projects.length > 0}
+{#snippet project_group(group: T_Bundle[])}
 	<div class='kinds' use:tip={'show just one project\'s guides'}>
-		{#each shown_projects as project}
+		{#each group as project}
 			{@const held = counts.get(project) ?? 0}
 			<!-- One that would leave nothing still holds its place in the run, so it registers with
 			     no press: the ones beside it must not answer for the space it stands in. -->
@@ -295,6 +300,14 @@
 						: $w_projects.includes(project) ? `hide "${project}" files` : `show "${project}" files`,
 					onpress: held > 0 ? (m) => choose_project(project, m?.event?.altKey ?? false) : undefined }}>{project}</button>
 		{/each}
+	</div>
+{/snippet}
+
+{#snippet projects_picker()}
+	{#if shown_projects.length > 0}
+	<div class='project-groups'>
+		{#if leading_projects.length > 0}{@render project_group(leading_projects)}{/if}
+		{#if trailing_projects.length > 0}{@render project_group(trailing_projects)}{/if}
 	</div>
 	{/if}
 {/snippet}
@@ -478,6 +491,13 @@
 	}
 
 	/* One pill with a segment per kind; the chosen one fills with the accent. */
+	/* The two seg controls of the projects row, one gap apart. */
+	.project-groups {
+		align-items : center;
+		display     : flex;
+		gap         : var(--gap);
+	}
+
 	.kinds {
 		border        : var(--thick) solid var(--black);
 		border-radius : var(--radius-pill);

@@ -15,6 +15,13 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
+- [x] break projects seg control into two (left is mo, core, shared, dd) gap between is --gap
+- [ ] move all mono projects -> mono/projects, a new folder sibling to memory
+    - [ ] create a new folder in projects 'shared'
+        - [ ] move notes into it
+- [ ] speed up launch by reading files a few at a time
+    - [ ] start with the file the editor is presenting
+    - [ ] then just enough to render the visible part of browse's file list
 - [ ] search — enter something, click clear -> the selected match remains highlighted
 - [ ] when a section is closed
     - [ ] hide its middle clickable

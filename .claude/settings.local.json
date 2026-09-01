@@ -156,6 +156,10 @@
           },
           {
             "type": "command",
+            "command": ".claude/hooks/read-this-turn-check.sh"
+          },
+          {
+            "type": "command",
             "command": ".claude/hooks/murk-count.sh"
           },
           {

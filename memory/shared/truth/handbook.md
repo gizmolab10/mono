@@ -26,9 +26,10 @@ Run when a project's log exceeds ~30 entries, or before a major work burst.
 1. Read every log entry above the `<!-- consolidated: DATE -->` marker.
 2. Read `zone/questions.md` too: strike any question the work has since answered, recording the answer as a `D:`. Then **settle each line** by tag: `D:` → edit the owning truth (and `decisions.md` if the rationale will be questioned again); `S:` → rewrite the *current state* paragraph in the project's `index.md`; `I:` → promote to a truth / `ideas.md`, keep, or cull. While settling, scan the prose for defined terms used off-definition (reword or formally redefine) and undefined terms (reword into plain language — never retroactively coin).
 3. **Map upkeep:** when the project's truth holds a map, ask git what changed under the project's code since the marker — files added, moved, removed — and edit the map to match. No change, no edit.
-4. Delete settled entries; move the marker.
-5. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, have a *new* session run this check.
-6. **No commit.** Settle never commits — committing `memory/` is Jonathan's act, done by him, when he chooses.
+4. **Clear the done ideas:** every checked box in `zone/ideas.md` goes, but only once the log holds a `D:` line saying what was done. Where none does, write it first, then delete the box. A ticked box is a record in the wrong file — the log holds what happened, and ideas.md holds only what is still wanted.
+5. Delete settled entries; move the marker.
+6. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, have a *new* session run this check.
+7. **No commit.** Settle never commits — committing `memory/` is Jonathan's act, done by him, when he chooses.
 
 Never summarize prose into vaguer prose. Settling moves facts to their one home and throws away only what it names.
 
@@ -107,8 +108,8 @@ One skill per procedure; the skill is a trigger, not a copy. Write skills (`d`, 
 - **define** — execute "Prose and terminology" for one term. The lexicon's only door.
 - **propose** — capture without incorporating, into whichever project the idea is most relevant to: its `zone/ideas.md`, an `I:` line, or its `zone/questions.md`; truths untouched; promotion only at settle or on instruction. pac and propose stay two commands.
 - **go** (g) — implement the proposal or suggestion on the table, as stated. A write skill: the work it does leaves its own `D:`/`S:` lines.
-- **settle** — execute "Consolidation", all five steps; finish with the settle manifest (each line and where it went).
-- **check** — audit: OKF structure (frontmatter, `type`, links), the sizing table below, terminology drift, duplicated facts, and skill pointers (every section a skill references must exist in this file). Aimed at a settle: verify the commit diff cold; if this session performed the settle, ask for a rerun in a new session. Report finding → file → fix; fix nothing unless instructed.
+- **settle** — execute "Consolidation", all seven steps; finish with the settle manifest (each line and where it went).
+- **check** — audit: OKF structure (frontmatter, `type`, links), the sizing table below, terminology drift, duplicated facts, and skill pointers (every section a skill references must exist in this file). Aimed at a settle: verify the commit diff cold; if this session performed the settle, ask for a rerun in a new session. Report finding → file → fix; fix nothing unless instructed. The findings go into the project's `zone/questions.md`, under a `## checked` subsection, one line each — there is no separate report file.
 - **t** (translate) — reword the last reply, or the quoted words, into plain language. Nothing is written; if the same wording needs translating twice, that is a conventions.md rule waiting to be recorded.
 - **where** — execute "Finding where to tweak"; reply with the one owning path.
 - **obs** (observations) — say what has been noticed but not said: suggestions, reminders, things seen in passing. The only place such things appear; no reply carries them unasked. Read-only.

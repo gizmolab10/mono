@@ -1,0 +1,401 @@
+/* ===== Single styling file for the site =====
+   Imported once at the app's entry point (src/lib/ts/main.ts).
+   Holds every look-and-feel rule that applies to every page.
+*/
+
+/* ----- Typography (was inline in App.svelte) ----- */
+body {
+  font-family: system-ui, sans-serif;
+  user-select: none;
+  margin: 0;
+}
+
+input:focus,
+textarea:focus {
+  user-select: text;
+}
+
+/* ----- Page shell: four-piece layout =====
+   .shell wraps the entire page.
+   .shell holds three regions in a grid (sidebar | content) on top of (status across both),
+   plus the hamburger positioned over the top-left corner.
+*/
+.shell {
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "top top"
+    "sidebar content"
+    "status status";
+  position: relative;
+  display: grid;
+  height: 100vh;
+}
+
+/* ----- Sidebar hidden / collapsed on wide screens ----- */
+.shell.sidebar-hidden {
+  grid-template-columns: 0 1fr;
+}
+
+.shell.sidebar-hidden .shell-sidebar {
+  display: none;
+}
+
+/* The top row reaches across both columns, whatever the sidebar is doing. */
+.shell-top {
+  grid-area: top;
+}
+
+/* ----- Narrow screens: one column at a time ----- */
+@media (max-width: 700px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "top"
+      "main"
+      "status";
+  }
+
+  /* Default mobile state: sidebar visible, content hidden. */
+  .shell .shell-sidebar {
+    grid-area: main;
+  }
+
+  .shell .shell-content {
+    display: none;
+  }
+
+  /* Toggled state: content visible, sidebar hidden. */
+  .shell.sidebar-hidden .shell-sidebar {
+    display: none;
+  }
+
+  .shell.sidebar-hidden .shell-content {
+    grid-area: main;
+    display: block;
+  }
+}
+
+.shell-sidebar {
+  border-right: var(--thick-faint) solid lightgrey;
+  /* Leave room at the top for the hamburger. */
+  padding: calc(3rem + 12px) 1rem 1rem 1rem;
+  grid-area: sidebar;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.shell-content {
+  grid-area: content;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.5rem;
+}
+
+/* No scrollbars anywhere, across or down. Everything still scrolls — by wheel, by
+   trackpad, by arrow key — the bars themselves are simply never drawn. Firefox and
+   the rest read the first rule; Safari and Chrome read the second. Said of every
+   element rather than the two boxes, so a bar cannot appear on something new. */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.shell-status {
+  border-top: var(--thick-faint) solid lightgrey;
+  padding: 0.25rem 0.75rem;
+  min-height: 1.5rem;
+  grid-area: status;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.status-error {
+  color: #b80000;
+}
+
+.hamburger-button {
+  border: var(--thick) solid white;
+  justify-content: center;
+  border-radius: 0.25rem;
+  align-items: center;
+  background: white;
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  left: 0.5rem;
+  height: 3rem;
+  width: 3rem;
+  top: 0.5rem;
+  z-index: 10;
+}
+
+.hamburger-button:hover {
+  color: lightgrey;
+}
+
+.hamburger-button .hamburger-icon path {
+  fill: currentColor;
+}
+
+/* ----- Sidebar entries ----- */
+.shell-sidebar h1,
+.shell-sidebar h2,
+.shell-sidebar h3 {
+  margin: 0.75rem 0 0.25rem;
+}
+
+.shell-sidebar hr {
+  border-top: var(--thick-faint) solid lightgrey;
+  margin: 1rem 0 0;
+}
+
+/* Each entry is its own paragraph; drop the browser's default paragraph
+   margin so the row height is set only by the entry's own spacing. */
+.shell-sidebar p {
+  margin: 0;
+}
+
+/* The home row sits first; give it a little breathing room from the top. */
+.shell-sidebar p:first-child {
+  margin-top: var(--gap);
+}
+
+.shell-sidebar a {
+  text-decoration: none;
+  padding: 0.6px 0.7rem;
+  border-radius: var(--radius-pill);
+  margin: 0.1rem 0;
+  display: block;
+  color: inherit;
+}
+
+.shell-sidebar a:hover {
+  background: #efefef;
+}
+
+.shell-sidebar a.active {
+  background: #d8d8d8;
+}
+
+/* Section headings written as `## Section Name` collapse via <details>. */
+.shell-sidebar details {
+  margin: 0.25rem 0;
+}
+
+.shell-sidebar summary.sidebar-section {
+  padding: 0.25rem 0.4rem;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.shell-sidebar summary.sidebar-section::-webkit-details-marker {
+  display: none;
+}
+
+/* The fold marker is a drawn triangle. It points right when folded and
+   turns a quarter-turn to point down when the folder is open. */
+.shell-sidebar .fold-icon {
+  transition: transform 0.15s ease;
+  vertical-align: middle;
+  position: relative;
+  margin-left: -7px;
+  fill: currentColor;
+  height: 1.4em;
+  width: 1.4em;
+  top: -2px;
+}
+
+.shell-sidebar details[open] .fold-icon {
+  transform: rotate(90deg);
+}
+
+/* Hovering anywhere on a folder row greys only the triangle. */
+.shell-sidebar summary.sidebar-section:hover .fold-icon {
+  fill: lightgrey;
+}
+
+/* Pages inside an open folder sit indented under their folder name. */
+.shell-sidebar details a {
+  margin-left: 24px;
+}
+
+/* ----- Callout overrides ----- */
+/* The `[!center]` callout strips its box and centres its text. Every other
+   callout keeps the default boxed look from remark-callout. */
+.callout.center {
+  background: none;
+  margin: 0.5rem 0;
+  border: none;
+  padding: 0;
+}
+
+.callout.center .callout-title {
+  display: none;
+}
+
+.callout.center .callout-content {
+  text-align: center;
+}
+
+/* ----- Gallery ----- */
+/* One folder of photos, one showing. The photo is the button, so a click
+   anywhere on it steps to the next; the button itself draws nothing. */
+.gallery {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.gallery-photo {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-block;
+  max-width: 100%;
+}
+
+video.gallery-photo {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.gallery-photo img {
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.gallery-caption {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+/* ----- Editing ----- */
+/* The edit button, top right, shown only in a technical browser. */
+.shell-edit {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 20;
+  padding: 0.25rem 0.75rem;
+  border: var(--thick) solid rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.shell-edit:hover {
+  background: #fff;
+}
+
+/* Where a gallery stands while editing is on: a box to drop a file into. */
+.gallery-drop {
+  border: var(--thick-big) dashed rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.gallery-drop.over {
+  border-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.gallery-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
+/* The files in a gallery's folder while editing: what each is called, and the
+   caption, which can be typed into. */
+.gallery-captions {
+  border-collapse: collapse;
+  margin: 1rem auto 0;
+  font-size: 0.85rem;
+  width: 100%;
+  max-width: 40rem;
+  text-align: left;
+}
+
+.gallery-captions th,
+.gallery-captions td {
+  border-bottom: var(--thick-faint) solid lightgrey;
+  padding: 0.35rem 0.5rem;
+  vertical-align: top;
+}
+
+.gallery-captions th {
+  color: #666;
+  font-weight: normal;
+}
+
+.gallery-captions td[contenteditable] {
+  background: rgba(0, 0, 0, 0.03);
+  cursor: text;
+}
+
+.gallery-captions td[contenteditable]:focus {
+  background: #fff;
+  outline: var(--thick) solid rgba(0, 0, 0, 0.4);
+}
+
+/* The row being worked on: up and down move the highlight, and option with
+   them moves that file up or down the folder's own order. Drawn as a pill, the
+   same shape the sidebar gives the page you are on — a row is many cells, so
+   the first takes the left end and the last takes the right. */
+.gallery-captions tr.picked td {
+  background: rgba(255, 214, 102, 0.35);
+  border-bottom-color: transparent;
+}
+
+.gallery-captions tr.picked td:first-child {
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.gallery-captions tr.picked td:last-child {
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+/* Where a file sits in the folder's order — the first column of the table. */
+.gallery-row {
+  width: 1%;
+  color: #666;
+  text-align: right;
+}
+
+/* The throw-away button in the last column of the editing table. */
+.gallery-throw {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.gallery-throw button {
+  border: var(--thick) solid rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.1rem 0.6rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: #a33;
+  cursor: pointer;
+}
+
+.gallery-throw button:hover {
+  background: #fff;
+  border-color: #a33;
+}

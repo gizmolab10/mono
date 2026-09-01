@@ -11,18 +11,23 @@ Edge cases and nuances that cause mistakes.
 
 ---
 
-## 1. Read before act
+## 1. Cite from this turn, or say you did not look
 
-Re-read the file/input before editing, claiming, or disagreeing.
+A sentence that names a file, a line, a folder, a command's behavior, a count or a version carries a citation whose source is a tool call **in this same reply**. Having read it earlier in the session counts for nothing: a read forty turns old and a read this minute are indistinguishable from the inside, which is exactly why the rule cannot rest on which it was.
 
-**When to re-read:**
-- Before any edit
-- Before claiming file contents
-- Before saying "No" to user's statement
-- When user says "that's not what's in the file"
+Where no tool call this turn stands behind the sentence, it opens with **unread:** and Jonathan decides whether that is good enough.
 
-**When recent context is OK:**
-- File was read in the last 2-3 exchanges AND no user edits since
+This governs behavior as much as contents — what a tool does, what a setting causes, what a folder holds, how many of something there are.
+
+**Why the trigger is a noun and not an intention.** Every earlier version of this rule began "before claiming X, re-read" — and could not fire when co did not notice it was claiming. "Does this sentence name a file, a tool or a number?" is answerable by looking at the sentence.
+
+**The one exception: a name inside quoted output.** Where a filename appears within text quoted from a tool — a check's error, a hook's warning, a command's answer — it is evidence of what that tool said, never an assertion about the file. Nothing needs reading, because nothing is being claimed. The quoting itself is the citation.
+
+The exception is exactly this narrow. A name in co's own words is a claim, however it is punctuated: a link, backticks, or a path all count. Only text co is showing rather than saying is let off, and where the two sit in one sentence, the sentence is a claim.
+
+This was written the first time the check fired — on a reply quoting the check's own output, which named a file co had not read that turn. The check was right on its own terms, and the rule was one case too wide.
+
+**What it caught, on the day it was written.** Seven wrong statements in one session, six of them a true fact spent on an untested conclusion: `core.ignorecase` really is true, so a rename "must" need a temporary name; the collection tuple really is at line 514, so gallery's files "will not" be listed. Both premises checked, both conclusions never.
 
 ---
 

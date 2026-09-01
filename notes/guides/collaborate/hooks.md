@@ -58,7 +58,16 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 | phrase-check.sh | Logs permission-asking and hollow reassurances |
 | required-disclaimer-check.sh | Logs a hedge that lacks "I AM GUESSING" |
 | diagnostic-citation-check.sh | Logs a cause-claim with no citation |
+| read-this-turn-check.sh | Names every file the reply mentions that no tool touched this turn, and says so as next-turn context |
 | check-ts.sh | If a .ts/.svelte changed, runs svelte-check; injects any errors as next-turn context |
+
+**The one with no word list.** Every other judgment hook here matches phrases, so anything phrased differently walks past — `diagnostic-citation-check` caught none of the seven wrong statements of 1 September 2026, since none of them said "the cause is". `read-this-turn-check` compares two sets of paths instead: the files a reply names, and the files a tool touched since Jonathan last spoke. There is nothing to phrase around.
+
+Two things it has to know.
+
+**Where the turn begins.** The record of the conversation files two different things under the same word. When a tool hands back its answer, that answer is written as a `user` line — the very label Jonathan's own typing gets. So looking for the last `user` line finds the last tool answer, not his last message. The hook reads what each line holds instead: his messages hold plain words, a tool's answer holds a result block.
+
+**Where a filename ends.** The hook finds names by looking for a run of characters ending in `.ts`, `.md` and the rest. The first version let that run include spaces, so it kept reading outward through the sentence and reported whole phrases as filenames — "is read. And Persistence.ts". Taking spaces out of the run stops it at the name.
 
 ### MessageDisplay — fires as text is shown
 

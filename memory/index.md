@@ -13,6 +13,8 @@ Before any work: read [shared/truth/handbook.md](shared/truth/handbook.md) — t
 - [shared](shared/index.md) — cross-project truths: the handbook, the shared lexicon, taste, conventions.
 - [ov](ov/index.md) — Overview: browser and editor for every markdown file in the repo. **First project — the week of real use runs here.**
 - [lv](lv/index.md) — Tommy's Vineyard Space: the vineyard in descriptions and photos.
+- [gallery](gallery/index.md) — drag and drop: lv's whole code copied and renamed, waiting to be taken apart.
+- [mj](mj/index.md) — brought up with boilerplate only; what it is for is not written yet.
 
 *(Remaining projects — ws, di, musicology — join here once ov's rhythm holds.)*
 

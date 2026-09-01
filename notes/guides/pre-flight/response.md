@@ -41,7 +41,7 @@ And read it FIRST, before touching a single file. The log holds everything since
 
 ## 8. Half, then a quarter
 
-Whatever the draft is, send half of it. A quarter where the answer still stands. This is a cap on prose, and only prose: the evidence line — the quoted line and its file — is never what gets cut. Short and unproved is worse than long.
+Whatever the draft is, send half of it. A quarter where the answer still stands. The evidence goes too — say **I can prove this** in its place, and hand the line over when Jonathan asks for it.
 
 ## 9. Never end a turn without words
 

@@ -1,0 +1,38 @@
+{
+  "name": "gallery",
+  "main": "dist/main.js",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "e2e": "playwright test --config=e2e/playwright.config.ts",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "docs:preview": "vitepress preview",
+    "docs:build": "vitepress build",
+    "docs:dev": "vitepress dev",
+    "preview": "vite preview",
+    "test:run": "vitest run",
+    "build": "vite build",
+    "test": "vitest",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "rehype-stringify": "^10.0.1",
+    "remark-callout": "^1.1.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@tsconfig/svelte": "^5.0.0",
+    "concurrently": "^9.0.0",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^6.0.0",
+    "vitepress": "^1.6.4",
+    "vitest": "^4.0.0"
+  }
+}
