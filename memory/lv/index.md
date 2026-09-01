@@ -9,5 +9,6 @@ Tommy's Vineyard Space — a place to share the work and fun of owning a vineyar
 
 ## Truths
 
+- [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
 - [gallery.md](truth/gallery.md) — how pictures and captions currently work.
 - [lexicon.md](truth/lexicon.md) — lv's terms, defined once.

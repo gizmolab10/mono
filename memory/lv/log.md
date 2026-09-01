@@ -11,6 +11,9 @@ date: 2026-08-30
 
 ## 1 September 2026
 
+- D: with the sidebar switched off, what was remembered counts for nothing — S_Sidebar keeps the remembered value private and its `visible` answers to the switch as well, so the content stops holding a column's width for a sidebar that is never drawn. Toggling does nothing while it is off. The test proves both branches by setting the switch
+- D: lv's own switches live in common/Customizations.ts, beside Core.ts — one gathered value so a caller names the file, not every switch. First switch is enable_sidebar, moved out of Main.svelte. Check clean at 470 files, 122 tests pass
+- I: pac written — `Customizations` for lv's own constants and switches; lv had no decisions.md, so one is created and named in the index
 - D: the sidebar starts hidden — Jonathan undid the show; `S_Sidebar.svelte.ts` reads `loadSidebarVisible(false)` and the test now expects it, named "starts hidden". The hamburger's markup is commented out in Main.svelte, so nothing toggles it on screen
 - D: every code file under lv/src is capitalized, each word after an underscore too — 25 files, one `git mv` each with no temporary name, and every importer re-pointed including index.html and the two plugins that reach into src. `sidebar-content` and `movie title` took underscores. The md and image files under assets/ and md/ are content the app loads by name, so they keep theirs
 - D: no scrollbar is drawn anywhere, across or down — the rule moved off the sidebar and content boxes onto every element, so a bar cannot appear on anything new. Everything still scrolls by wheel, trackpad and arrow key

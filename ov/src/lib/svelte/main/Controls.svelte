@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { w_operation, T_Operation, close_view } from '../../ts/managers/Operations';
+	import { Hamburger } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/common/Core';
 	import { Direction } from '../../ts/common/Core';
@@ -12,25 +13,15 @@
 		{ onclick: () => void; detailsShown: boolean; buildNumber: number; onBuildOpen: () => void;
 		  onRestart: () => void; restarting: boolean } = $props();
 
-	const size = k.size.big;
-	const hamburgerPath = svg_paths.hamburger(size);
 	// The way back to the list while a file is open, drawn as the fat triangle the steppers
 	// use, pointing left — the direction the list lies in.
 	const backPath = svg_paths.fat_polygon(k.size.fat, Direction.left);
 
-	// The hamburger is the first control to hand the whole of itself to the one manager. It says
-	// its name, what a press does, and what to show while the cursor is on it — and nothing else:
-	// the action makes the target, hands over the rectangle, and stamps the element while it is
-	// the one under the cursor. It carries no press handler, no hover rule and no hint of its own.
 </script>
 
 <div class='controls-row layer-controls'>
-	<button class='hamburger-button' aria-label='toggle details'
-		use:hit_target={{ id: 'controls.hamburger', onpress: onclick, tip: `${detailsShown ? 'hide' : 'show'} details` }}>
-		<svg class='hamburger-icon' viewBox='0 0 {size} {size}' width={size} height={size}>
-			<path d={hamburgerPath} />
-		</svg>
-	</button>
+	<Hamburger id='controls.hamburger' label='show or hide details' onpress={onclick}
+		tip={`${detailsShown ? 'hide' : 'show'} details`} />
 	{#if $w_operation === T_Operation.edit}
 		<button class='back-button' aria-label='resume browsing'
 			use:hit_target={{ id: 'controls.back', onpress: close_view, tip: 'resume browsing' }}>
@@ -89,7 +80,7 @@
 		fill : var(--hover);
 	}
 
-	.hamburger-button {
+	:global(.hamburger-button) {
 		color         : var(--text-on-accent);
 		border-radius : var(--radius-tiny);
 		background    : transparent;
@@ -100,7 +91,7 @@
 		left          : -4px;
 	}
 
-	.hamburger-button .hamburger-icon path {
+	:global(.hamburger-button .hamburger-icon path) {
 		stroke-width : var(--thick-faint);
 		stroke       : var(--black);
 		fill         : currentColor;
@@ -108,7 +99,7 @@
 
 	/* The cursor is on it — the stamp comes from the manager, which is the only thing that knows.
 	   It is put on the element from outside this file, so it is named as reaching outside. */
-	.hamburger-button:global([data-hit]) .hamburger-icon path {
+	:global(.hamburger-button[data-hit] .hamburger-icon path) {
 		fill : var(--hover);
 	}
 

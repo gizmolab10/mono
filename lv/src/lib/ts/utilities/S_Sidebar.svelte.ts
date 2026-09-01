@@ -4,14 +4,25 @@
 // mobile modes is shown: sidebar-plus-status or content-plus-status.
 
 import { loadSidebarVisible, saveSidebarVisible } from './Persistence';
+import { customizations } from '../common/Customizations';
 
 class S_Sidebar {
-  visible = $state<boolean>(loadSidebarVisible(false));
+	// What was remembered from the last visit. Nothing reads it directly: the switch
+	// below decides whether it counts at all.
+	private remembered = $state<boolean>(loadSidebarVisible(false));
 
-  toggle(): void {
-    this.visible = !this.visible;
-    saveSidebarVisible(this.visible);
-  }
+	// With the sidebar switched off there is nothing to show and no way to ask for it,
+	// so a remembered yes is ignored — otherwise the content keeps a column's width of
+	// space for a sidebar that is never drawn.
+	get visible(): boolean {
+		return customizations.enable_sidebar && this.remembered;
+	}
+
+	toggle(): void {
+		if (!customizations.enable_sidebar) { return; }
+		this.remembered = !this.remembered;
+		saveSidebarVisible(this.remembered);
+	}
 }
 
 export const s_sidebar = new S_Sidebar();

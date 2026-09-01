@@ -38,6 +38,7 @@ export { start_tips, tip, w_tip } from 'core/ts/utilities/Tooltip';
 // Components come through here too, so the alias is still named in one file only.
 export { default as Big_Pill } from 'core/svelte/support/Big_Pill.svelte';
 export { default as BuildNotes } from 'core/svelte/support/BuildNotes.svelte';
+export { default as Hamburger } from 'core/svelte/support/Hamburger.svelte';
 export { default as Section } from 'core/svelte/support/Section.svelte';
 export { default as Stack } from 'core/svelte/support/Stack.svelte';
 export { default as Status_Line } from 'core/svelte/support/Status_Line.svelte';

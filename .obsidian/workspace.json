@@ -224,8 +224,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "977981c37cc36ed4",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
+    "lv/src/lib/ts/common/Customizations.ts",
+    "memory/lv/truth/decisions.md",
+    "me/notes/work/recipes.html",
+    "me/notes/work/jonathan copy.md",
     "lv/src/lib/ts/common/Core.ts.tmp.86851.9ce520f8a3c5",
     "core/src/lib/svelte/support/Hamburger.svelte",
     "lv/src/lib/ts/test/Stamp.test.ts",
@@ -235,8 +239,6 @@
     "lv/src/lib/ts/test/Sidebar_Content.test.ts",
     "lv/src/lib/ts/test/Router.test.ts",
     "lv/src/lib/ts/test/Resolver.test.ts",
-    "lv/src/lib/ts/test/Persistence.test.ts",
-    "lv/src/lib/ts/test/Parser.test.ts",
     "notes/guides/pre-flight/shorthand.md",
     "ov/notes/guides/design/ov - goals.md",
     "memory/core/truth/adopting core.md",
@@ -260,8 +262,6 @@
     "memory/shared/zone/inception into the new design.md",
     "memory/shared/zone/truth and zone and design?.md",
     "memory/di/zone/proposals.md",
-    "memory/ji/zone/proposals.md",
-    "memory/lv/zone/proposals.md",
     "lv/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "lv/src/assets/the vineyard/Versaison_20190803.jpg",
     "lv/src/assets/the vineyard/TrellisOutrigger.jpg",
