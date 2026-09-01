@@ -7,6 +7,12 @@ import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [svelte(), photoTitles(), captionDrop()],
+  resolve: {
+    // "core" is an alias for the shared library one folder over; tsconfig teaches
+    // the checker the same alias, and the two must always agree. lv keeps no
+    // vitest config of its own, so the test runner reads this one too.
+    alias: { core: resolve(__dirname, '../core/src/lib') },
+  },
   build: {
     rollupOptions: {
       onwarn(warning, warn) {

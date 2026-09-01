@@ -4,18 +4,18 @@
 // click-through tests.)
 
 import { describe, it, expect } from 'vitest';
-import { sidebar } from '../utilities/sidebar.svelte';
+import { s_sidebar } from '../utilities/S_Sidebar.svelte';
 
-describe('the sidebar show/hide value', () => {
+describe('the s_sidebar show/hide value', () => {
   it('starts shown', () => {
-    expect(sidebar.visible).toBe(true);
+    expect(s_sidebar.visible).toBe(true);
   });
 
   it('flips off then back on with each toggle', () => {
-    const start = sidebar.visible;
-    sidebar.toggle();
-    expect(sidebar.visible).toBe(!start);
-    sidebar.toggle();
-    expect(sidebar.visible).toBe(start);
+    const start = s_sidebar.visible;
+    s_sidebar.toggle();
+    expect(s_sidebar.visible).toBe(!start);
+    s_sidebar.toggle();
+    expect(s_sidebar.visible).toBe(start);
   });
 });

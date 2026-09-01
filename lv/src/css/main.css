@@ -22,8 +22,9 @@ textarea:focus {
 */
 .shell {
   grid-template-columns: 250px 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
+    "top top"
     "sidebar content"
     "status status";
   position: relative;
@@ -40,11 +41,18 @@ textarea:focus {
   display: none;
 }
 
+/* The top row reaches across both columns, whatever the sidebar is doing. */
+.shell-top {
+  grid-area: top;
+}
+
 /* ----- Narrow screens: one column at a time ----- */
 @media (max-width: 700px) {
   .shell {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
     grid-template-areas:
+      "top"
       "main"
       "status";
   }
@@ -70,7 +78,7 @@ textarea:focus {
 }
 
 .shell-sidebar {
-  border-right: 0.5px solid lightgrey;
+  border-right: var(--thick-faint) solid lightgrey;
   /* Leave room at the top for the toggle button. */
   padding: calc(3rem + 12px) 1rem 1rem 1rem;
   grid-area: sidebar;
@@ -85,21 +93,22 @@ textarea:focus {
   padding: 1.5rem;
 }
 
-/* No scrollbars anywhere. Both boxes still scroll — by wheel, by trackpad, by
-   arrow key — the bars themselves are simply never drawn. Firefox and the rest
-   read the first rule; Safari and Chrome read the second. */
-.shell-sidebar,
-.shell-content {
+/* No scrollbars anywhere, across or down. Everything still scrolls — by wheel, by
+   trackpad, by arrow key — the bars themselves are simply never drawn. Firefox and
+   the rest read the first rule; Safari and Chrome read the second. Said of every
+   element rather than the two boxes, so a bar cannot appear on something new. */
+* {
   scrollbar-width: none;
 }
 
-.shell-sidebar::-webkit-scrollbar,
-.shell-content::-webkit-scrollbar {
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
   display: none;
 }
 
 .shell-status {
-  border-top: 0.5px solid lightgrey;
+  border-top: var(--thick-faint) solid lightgrey;
   padding: 0.25rem 0.75rem;
   min-height: 1.5rem;
   grid-area: status;
@@ -112,7 +121,7 @@ textarea:focus {
 }
 
 .shell-toggle {
-  border: 1px solid white;
+  border: var(--thick) solid white;
   justify-content: center;
   border-radius: 0.25rem;
   align-items: center;
@@ -143,7 +152,7 @@ textarea:focus {
 }
 
 .shell-sidebar hr {
-  border-top: 0.5px solid lightgrey;
+  border-top: var(--thick-faint) solid lightgrey;
   margin: 1rem 0 0;
 }
 
@@ -155,13 +164,13 @@ textarea:focus {
 
 /* The home row sits first; give it a little breathing room from the top. */
 .shell-sidebar p:first-child {
-  margin-top: 8px;
+  margin-top: var(--gap);
 }
 
 .shell-sidebar a {
   text-decoration: none;
   padding: 0.6px 0.7rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   margin: 0.1rem 0;
   display: block;
   color: inherit;
@@ -281,8 +290,8 @@ video.gallery-photo {
   right: 0.75rem;
   z-index: 20;
   padding: 0.25rem 0.75rem;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 999px;
+  border: var(--thick) solid rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.9);
   font: inherit;
   font-size: 0.85rem;
@@ -295,7 +304,7 @@ video.gallery-photo {
 
 /* Where a gallery stands while editing is on: a box to drop a file into. */
 .gallery-drop {
-  border: 2px dashed rgba(0, 0, 0, 0.3);
+  border: var(--thick-big) dashed rgba(0, 0, 0, 0.3);
   border-radius: 8px;
   padding: 2rem 1rem;
   text-align: center;
@@ -325,7 +334,7 @@ video.gallery-photo {
 
 .gallery-captions th,
 .gallery-captions td {
-  border-bottom: 0.5px solid lightgrey;
+  border-bottom: var(--thick-faint) solid lightgrey;
   padding: 0.35rem 0.5rem;
   vertical-align: top;
 }
@@ -342,7 +351,7 @@ video.gallery-photo {
 
 .gallery-captions td[contenteditable]:focus {
   background: #fff;
-  outline: 1px solid rgba(0, 0, 0, 0.4);
+  outline: var(--thick) solid rgba(0, 0, 0, 0.4);
 }
 
 /* The row being worked on: up and down move the highlight, and option with
@@ -355,11 +364,11 @@ video.gallery-photo {
 }
 
 .gallery-captions tr.picked td:first-child {
-  border-radius: 999px 0 0 999px;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
 }
 
 .gallery-captions tr.picked td:last-child {
-  border-radius: 0 999px 999px 0;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
 }
 
 /* Where a file sits in the folder's order — the first column of the table. */
@@ -376,8 +385,8 @@ video.gallery-photo {
 }
 
 .gallery-throw button {
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 999px;
+  border: var(--thick) solid rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.9);
   padding: 0.1rem 0.6rem;
   font: inherit;

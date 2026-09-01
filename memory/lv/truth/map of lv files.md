@@ -51,7 +51,7 @@ What it thinks with, in `src/lib/ts/utilities/`:
 - [technical.svelte.ts](../../src/lib/ts/utilities/technical.svelte.ts) — whether editing is offered, and whether it is on
 - [persistence.ts](../../src/lib/ts/utilities/persistence.ts) — what this browser remembers: the preference, the passphrase, the sidebar
 - [sidebar-content.ts](../../src/lib/ts/utilities/sidebar-content.ts) — the page list, built from every page's own top settings
-- [sidebar.svelte.ts](../../src/lib/ts/utilities/sidebar.svelte.ts) — whether the sidebar is showing
+- [S_Sidebar.ts](../../src/lib/ts/utilities/S_Sidebar.ts) — whether the sidebar is showing
 - [icons.ts](../../src/lib/ts/utilities/icons.ts) — the hamburger and the fold triangle, drawn
 
 ## Build-time pieces

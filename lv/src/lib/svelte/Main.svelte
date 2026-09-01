@@ -1,22 +1,25 @@
 <script lang='ts'>
-  // The page shell. Hosts two pieces: the rendered md file area and the status
-  // line, with the edit button pinned over them.
-  //
-  // The sidebar and its toggle are out of sight for now. Both components and
-  // all their styling stand; bringing them back is the three commented imports,
-  // two lines in the markup, and the shell's own class:
-  //
-  //   <div class="shell" class:sidebar-hidden={!sidebar.visible}>
-  //
-  // import { sidebar } from '../ts/utilities/sidebar.svelte';
-  // import Sidebar from './Sidebar.svelte';
-  // import Toggle from './Toggle.svelte';
+  // The page shell. Four regions in a grid: a top row across the whole width, the
+  // sidebar and the rendered md file beside each other, and the status line across
+  // the foot. The toggle button is pinned over the top-left corner.
+  import { s_sidebar } from '../ts/utilities/S_Sidebar.svelte';
+  import { Section, T_Edge } from '../ts/common/Core';
   import StatusLine from './StatusLine.svelte';
+  import Hamburger from './Hamburger.svelte';
   import Renderer from './Renderer.svelte';
+  import Sidebar from './Sidebar.svelte';
   import Edit from './Edit.svelte';
 </script>
 
-<div class="shell sidebar-hidden">
+<div class="shell" class:sidebar-hidden={!s_sidebar.visible}>
+  <!-- The top row: one section, the whole width, holding nothing yet. It bounds the
+       view above, so it draws no line there — what marks it off is the gap it holds. -->
+  <div class="shell-top">
+    <Section id='top.row' edge={T_Edge.view}>
+      {#snippet contents()}{/snippet}
+    </Section>
+  </div>
+  <Sidebar />
   <Renderer />
   <StatusLine />
   <Edit />

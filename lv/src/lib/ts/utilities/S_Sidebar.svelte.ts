@@ -5,8 +5,8 @@
 
 import { loadSidebarVisible, saveSidebarVisible } from './persistence';
 
-class SidebarUI {
-  visible = $state<boolean>(loadSidebarVisible(true));
+class S_Sidebar {
+  visible = $state<boolean>(loadSidebarVisible(false));
 
   toggle(): void {
     this.visible = !this.visible;
@@ -14,4 +14,4 @@ class SidebarUI {
   }
 }
 
-export const sidebar = new SidebarUI();
+export const s_sidebar = new S_Sidebar();
