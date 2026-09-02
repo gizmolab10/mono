@@ -18,9 +18,7 @@ Every AI has amnesia.
 
 So i started saving things. When the AI explained something well, i'd ask it to write it up. Markdown files. Just notes to my future self.
 
-"Here's how we handle state in this project."
-"Watch out for this Svelte gotcha — it'll bite you."
-"This is the naming convention. Stick to it."
+"Here's how we handle state in this project." "Watch out for this Svelte gotcha — it'll bite you." "This is the naming convention. Stick to it."
 
 The pile grew. Dozens of files. It became its own problem — where did i put that thing about debugging?
 

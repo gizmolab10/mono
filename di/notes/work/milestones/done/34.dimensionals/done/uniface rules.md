@@ -8,8 +8,7 @@ The dimensionals are still challenging to interpret. Might be easier if they are
 2. 4DOF with only one continuous degree of freedom -> the position of the dimension label, which still needs complicated avoidance rules (rules 5 - 8). The other 3 are edge, uniface, and witness index.
 3. Compute witness length so as to place its dimension line in the plane of a uniface. witness index says which uniface box. if no such length exists without conflict, drop the label.
 4. For rotated parts, the silhouette box is rotated the same -> the rotated part.
-    1. The label center point is placed on the uniface closest to the rotated label's projected center. The dimension line is placed on the plane parallel to the rotated silhouette box that passes through the label center point.
-****    2. when rotated parts overlap, all rules must be followed.
+    1. The label center point is placed on the uniface closest to the rotated label's projected center. The dimension line is placed on the plane parallel to the rotated silhouette box that passes through the label center point. ****    2. when rotated parts overlap, all rules must be followed.
 5. Every pair of labels must be at least silhouette margin apart, computed using their text rectangles.
 6. Every label must sit at least silhouette margin away from any witness anchor, witness line, dim line, or silhouette box surface.
 7. For a label that conflicts everywhere, increment its witness index and try again. If the witness index exceeds the cap (3, per rule 1), drop the label. Dropping a label does not trigger redoing the placement for labels that depended on this one's position.

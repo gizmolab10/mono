@@ -9,12 +9,7 @@ date: 2026-08-08
 
 In the filters, the linear list is currently quite lengthy (22), challenging to scan by eye. would be easier if some can be encapsulated, and thus hidden. These are the six areas and their tags.
 
-**code:** port, migrate, refactor, wire, data
-**ai:** session, team, style, prose
-**other:** notes, vision, research, stale, think
-**harness:** platform, setup, deploy, tools, build
-**ux:** visual-design, UX, geometry
-**fix:** test, debug
+**code:** port, migrate, refactor, wire, data **ai:** session, team, style, prose **other:** notes, vision, research, stale, think **harness:** platform, setup, deploy, tools, build **ux:** visual-design, UX, geometry **fix:** test, debug
 
 ## thoughts
 

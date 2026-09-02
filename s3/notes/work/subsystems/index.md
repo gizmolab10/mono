@@ -1,7 +1,6 @@
 # Subsystems
 
-1 # s3 Design Spec
-Design spec for the Svelte 5 port of ws. One file per subsystem.
+1 # s3 Design Spec Design spec for the Svelte 5 port of ws. One file per subsystem.
 ## Files
 * [3 types.md](3%20types.md) — Global_Imports (every `h`/`x`/`g` alias), all T_\* enums, type aliases, Coordinates API
 * [4 entities.md](4%20entities.md) — Thing, Relationship, Predicate, Trait, Tag, User, Access, Persistable base
@@ -20,8 +19,7 @@ Design spec for the Svelte 5 port of ws. One file per subsystem.
 Option 3 + A + di CSS:
 * **Store**: normalized reactive tables (`$state`), no god-object Hierarchy
 * **Reactivity**: Svelte 5 runes only (`$state`, `$derived`, `$effect`), no typed-signals
-* **Layout**: flex + gap + border-radius, no SVG draw components
-See ws/notes/work/w2.md for full rationale.
+* **Layout**: flex + gap + border-radius, no SVG draw components See ws/notes/work/w2.md for full rationale.
 
 ## Contents
 

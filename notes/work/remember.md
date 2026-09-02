@@ -7,8 +7,7 @@ date: 2026-08-11
 ---
 # Faster Session Starts
 
-**Started:** 2026-02-01
-**Status:** Research
+**Started:** 2026-02-01 **Status:** Research
 
 ## Problem
 

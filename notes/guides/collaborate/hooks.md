@@ -59,6 +59,7 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 | required-disclaimer-check.sh | Logs a hedge that lacks "I AM GUESSING" |
 | diagnostic-citation-check.sh | Logs a cause-claim with no citation |
 | read-this-turn-check.sh | Names every file the reply mentions that no tool touched this turn, and says so as next-turn context |
+| murk-count.sh | Writes one row per reply, and a second row when any line of Jonathan's message begins with t, translate, rewrite, plain, simplify or murky. Each row carries the rule that counted it (`any-line` from 1 September 2026, `first-word` before) and the length of the reply it is about |
 | check-ts.sh | If a .ts/.svelte changed, runs svelte-check; injects any errors as next-turn context |
 
 **The one with no word list.** Every other judgment hook here matches phrases, so anything phrased differently walks past — `diagnostic-citation-check` caught none of the seven wrong statements of 1 September 2026, since none of them said "the cause is". `read-this-turn-check` compares two sets of paths instead: the files a reply names, and the files a tool touched since Jonathan last spoke. There is nothing to phrase around.

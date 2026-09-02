@@ -1,7 +1,6 @@
 6 # Rendering Design Spec — ws Svelte Components
 
-Source: `/Users/sand/GitHub/mono/ws/src/lib/svelte/`
-Date: 2026-02-20
+Source: `/Users/sand/GitHub/mono/ws/src/lib/svelte/` Date: 2026-02-20
 
 ---
 

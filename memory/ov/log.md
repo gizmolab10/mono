@@ -11,10 +11,8 @@ date: 2026-09-01
 
 ## 1 September 2026
 
-- D: no subfolders under truth/ or zone/ — the ai-and-design divide asked for two, and the answer in `shared/truth/decisions.md` is not yet: a flat truth/ is the whole catalog at one glance, index.md already groups, and the sizing caps only split a folder once it passes its cap. ov/truth holds five, well under
-- D: the work moved from the Claude app into Claude Code inside vscode, and picking a project became `/p` — `/p ov` picks ov, written to `.working_project`. The per-project skills it replaces (`/ov` and its kin) are still to be removed
-- D: the core project is built and ov adopts it — constants, configuration, section, separator and hits. The rules that keep core core, the styling boundary and how core checks itself are in core's `truth/structure.md`; ov's one door through the alias is `common/Core.ts`
-- D: three entries settled — the two seg controls and the two new collections are in `truth/controls.md`; the adoption's own telling is core's
+- D: ov lists mono's tooling folder — the hooks, the skills and the settings under `.claude`, forty files, at any depth and whatever the ending, since a hook is a shell script and a setting is json. Two places had to agree, as always: the dispatcher's own gate and its listing, and `site_of_file` in ov, which stands the test before the .md gate that would turn both away. They answer to mono. The worktrees folder is left out — 1214 files of it, whole copies of the repo, and the file to edit is always the one in the repo itself
+- D: four entries settled — the subfolder answer lives in `shared/truth/decisions.md`, the move to Claude Code and `/p` in CLAUDE.md and the skill itself, the core adoption in core's `truth/structure.md` and ov's map, and the two seg controls in `truth/controls.md`
 
 ---
 

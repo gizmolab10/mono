@@ -2,5 +2,4 @@
 
 ---
 
-[[ma/notes/index]]
-[[describe]]
+[[ma/notes/index]] [[describe]]

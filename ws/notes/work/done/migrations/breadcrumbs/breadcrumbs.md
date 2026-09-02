@@ -347,8 +347,7 @@ This ensures breadcrumbs re-render whenever focus changes, even if the hierarchy
 - Manual trigger system uses encoded counts
 - Separator hardcoded as `>` with thing.color
 
-**Bug fix deployed:**
-Modified `/src/lib/svelte/controls/Breadcrumbs.svelte` line 63:
+**Bug fix deployed:** Modified `/src/lib/svelte/controls/Breadcrumbs.svelte` line 63:
 ```typescript
 // Before:
 trigger = encoded_counts * 10000 + reattachments * 100 + lefts[0];

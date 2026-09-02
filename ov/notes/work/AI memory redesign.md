@@ -13,8 +13,7 @@ A fresh design for a persistent, tweakable memory that carries context across ch
 
 Two terms this document relies on, defined under its own contract:
 
-- **memory system** — the entire set of markdown files described in this file: the `memory/` tree with its indexes, logs, truths, and zones.
-  Not: this design doc, and not the AI's built-in memory.
+- **memory system** — the entire set of markdown files described in this file: the `memory/` tree with its indexes, logs, truths, and zones. Not: this design doc, and not the AI's built-in memory.
 - **prompt cache** — the slice of the memory system loaded into a session's context by `start`: root index → protocol → project index → matched truths, lexicon included. The memory system is what is *stored*; the prompt cache is what is *loaded*.
 
 ## The four failure modes this fixes

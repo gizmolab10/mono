@@ -13,9 +13,7 @@ date: 2026-08-19
 
 ## Routine
 
-*Rule — reread this file at the start of each session.*
-*Rule — keep the indexes in the `now`, `done`, `milestones`, and `milestones/done` folders up to date.*
-*Rule — refresh this file's date stamp and "Current state" section whenever a significant piece of work is started or done.*
+*Rule — reread this file at the start of each session.* *Rule — keep the indexes in the `now`, `done`, `milestones`, and `milestones/done` folders up to date.* *Rule — refresh this file's date stamp and "Current state" section whenever a significant piece of work is started or done.*
 
 ## Current state (2026-05-20)
 

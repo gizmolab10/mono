@@ -24,16 +24,11 @@ Three of them share a lifecycle. The fourth (drag) is per-frame and does not.
 
 The dimension editor, the angular editor, and the face-label editor each follow the same five-step pattern.
 
-1. **Hit test.** Given a screen point, walk the rendered rectangles for that kind of edit and return the one the point was done inside.
-   Citation: `Dimension.ts` lines 26-36, `Angular.ts` lines 26-36, `Face_Label.ts` lines 22-32.
-2. **Begin.** When a hit is done, capture the part and the value into a small reactive state object, place an input overlay at the rectangle's screen coordinates, and set the editing-mode flag in the shared store.
-   Citation: `Dimension.ts` lines 41-53, `Angular.ts` lines 41-51, `Face_Label.ts` lines 37-53.
-3. **Parse.** When the user commits, parse the typed string. Each editor has its own parser (units-and-fractions for dimensions, plain number for angles, no parsing for face labels — just a trim).
-   Citation: `Dimension.ts` lines 99-108 (with a fallback through the formula compiler so expressions work too), `Angular.ts` lines 81-86, `Face_Label.ts` line 61.
-4. **Apply.** Snapshot the history first, then write to the part, run propagation, save the scene.
-   Citation: each editor's `commit` method, line 59 in all three.
-5. **Cancel.** Clear the state, clear the editing flag. The part is unchanged.
-   Citation: `Dimension.ts` lines 111-114, `Angular.ts` lines 89-92, `Face_Label.ts` lines 87-91.
+1. **Hit test.** Given a screen point, walk the rendered rectangles for that kind of edit and return the one the point was done inside. Citation: `Dimension.ts` lines 26-36, `Angular.ts` lines 26-36, `Face_Label.ts` lines 22-32.
+2. **Begin.** When a hit is done, capture the part and the value into a small reactive state object, place an input overlay at the rectangle's screen coordinates, and set the editing-mode flag in the shared store. Citation: `Dimension.ts` lines 41-53, `Angular.ts` lines 41-51, `Face_Label.ts` lines 37-53.
+3. **Parse.** When the user commits, parse the typed string. Each editor has its own parser (units-and-fractions for dimensions, plain number for angles, no parsing for face labels — just a trim). Citation: `Dimension.ts` lines 99-108 (with a fallback through the formula compiler so expressions work too), `Angular.ts` lines 81-86, `Face_Label.ts` line 61.
+4. **Apply.** Snapshot the history first, then write to the part, run propagation, save the scene. Citation: each editor's `commit` method, line 59 in all three.
+5. **Cancel.** Clear the state, clear the editing flag. The part is unchanged. Citation: `Dimension.ts` lines 111-114, `Angular.ts` lines 89-92, `Face_Label.ts` lines 87-91.
 
 The shared editing-mode flag means only one of the three can be active at any moment. The status strip at the bottom of the canvas reads the same flag.
 

@@ -35,12 +35,12 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
+- 4. 2026-09-01 Itemized what a count already said. co wrote "Eight uses of the word are left in those two folders, every one of them a thing actually drawn: the wing arc, the hit target, a 3D part's pivot and matrix four times, the eight-corner box, and its stipulation slug." Jonathan's version: "eight uses of 'shape' refer to drawing a shape, in two folders named X and Y" — nothing else. The count and the one thing they have in common is the whole report; naming each instance adds no fact. This refines the older rule "A count in place of the names": name them when they differ and each needs its own decision; count them when they are all the same and nothing follows.
 - 3. 2026-09-01 Proved a yes/no answer nobody doubted. He asked "do i need to restart claude?" — one word answers it. i gave the word, then the evidence, then the mechanism, then next turn an unasked offer. The rule is already written twice: a question gets its answer and nothing else, and no unasked asides. Cause worth naming: after a run of wrong statements i over-corrected into proving everything, and "show evidence" governs claims, never answers. A one-word answer carries no claim to prove.
 - 2. 2026-09-01 Widened his answer past what it named. He wrote "two styling blocks — they remain within the host". Styling blocks is what he said; i recorded a decision that the whole Hamburger component stays in each host, and closed the pac on it. An answer names its own subject: a decision about a file's styling says nothing about the file. When an answer settles part of a question, record that part and leave the rest open — never read the narrow answer as the broad one.
 - 1. 2026-09-01 A true premise carrying an untested conclusion. i said a rename would need a temporary name "to make git see it", from two facts that are true — the disk is case-insensitive, `core.ignorecase` is `true`. `git mv gallery.ts Gallery.ts` does it in one move; the setting governs what git notices by itself, never what it can be told to do. No evidence, no I AM GUESSING. The rule is `always.md` #3 and conventions' verify-by-observation line, so this is a failure to follow. Watch for the shape: general knowledge that is true, spent on a specific prediction about this repo, when one command would settle it.
 
-Everything else here has been distilled into a rule; the table below says where each went.
-What is di's own — its geometry and its pipeline — is in [di's learn](../../di/notes/work/now/learn.md).
+Everything else here has been distilled into a rule; the table below says where each went. What is di's own — its geometry and its pipeline — is in [di's learn](../../di/notes/work/now/learn.md).
 
 ---
 
@@ -92,7 +92,7 @@ What is di's own — its geometry and its pipeline — is in [di's learn](../../
 | Deleting what a checker complained about    | `agency.md` #18 — "Report, never remove"                          |
 | Reasoning about a drawn fault               | `agency.md` #19 — "Measure what is drawn"                         |
 | A constant applied throughout               | `agency.md` #20 — "A constant applied throughout"                 |
-| Ending a turn in silence                    | `always.md` #9 — "Never end a turn without words"                 |
+| Ending a turn in silence                    | `always.md` #8 — "A reply exists, and it is scanned"              |
 | Notation left unexplained                   | `response.md` #6 — "Explain a notation"                          |
 | Inventing a name the code already gives     | `lexicon.md` — its opening                                        |
 | A count in place of the names               | `always.md` #4, `lexicon.md` — already covered                    |

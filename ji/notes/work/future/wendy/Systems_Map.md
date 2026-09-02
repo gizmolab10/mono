@@ -6,8 +6,7 @@
 
 # Accomplishments
 
-*Source files: Accomplishments.md · Compass.md*
-*Period covered: 1994–2025*
+*Source files: Accomplishments.md · Compass.md* *Period covered: 1994–2025*
 
 ---
 
@@ -131,5 +130,4 @@ Three reframes emerged from sitting with the Accomplishments material that chang
 
 ---
 
-*Sources: Accomplishments.md (synthesized from 65+ files, 1994–2025) · Compass.md · Conversation — April 5, 2026*
-*Next sector to be added: [TBD]*
+*Sources: Accomplishments.md (synthesized from 65+ files, 1994–2025) · Compass.md · Conversation — April 5, 2026* *Next sector to be added: [TBD]*

@@ -55,8 +55,6 @@ Detail for step 4. A guide file name can exist twice: once in mono, once in the 
 
 Settled questions, kept as the record.
 
-I like "Steps involved" — common lingo, that's what is owed, right?
-A: Yes. "Steps" alone reads fine, with the line under the heading saying who writes and who approves.
+I like "Steps involved" — common lingo, that's what is owed, right? A: Yes. "Steps" alone reads fine, with the line under the heading saying who writes and who approves.
 
-Is a question ever better left out of this file?
-A: No. You settled it: this file is the record, the chat is not, so a question that lives only in the chat is lost.
+Is a question ever better left out of this file? A: No. You settled it: this file is the record, the chat is not, so a question that lives only in the chat is lost.

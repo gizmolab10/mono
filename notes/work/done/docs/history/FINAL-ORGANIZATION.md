@@ -38,10 +38,7 @@ Utility scripts (unrelated to docs):
 
 ## Benefits
 
-✅ **Clear separation** - Production tools vs documentation/testing
-✅ **Clean root** - Only essential production files in notes/tools/
-✅ **Organized legacy** - Old tools archived but accessible
-✅ **Easy testing** - Run `bash notes/tools/docs/test.sh`
+✅ **Clear separation** - Production tools vs documentation/testing ✅ **Clean root** - Only essential production files in notes/tools/ ✅ **Organized legacy** - Old tools archived but accessible ✅ **Easy testing** - Run `bash notes/tools/docs/test.sh`
 
 ## Usage
 

@@ -1,8 +1,6 @@
 5 # Hierarchy.ts — Design Spec
 
-File: `ws/src/lib/ts/managers/Hierarchy.ts`
-Lines: 1753
-Sections (marked by `static readonly _____SECTION`): 14
+File: `ws/src/lib/ts/managers/Hierarchy.ts` Lines: 1753 Sections (marked by `static readonly _____SECTION`): 14
 
 ---
 

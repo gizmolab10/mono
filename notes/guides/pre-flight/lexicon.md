@@ -11,18 +11,14 @@ The words used across every project. Use them exactly, even when a near synonym 
 
 Reaching for a word that is not here, say so and stop. Do not invent one.
 
-A part of the app that has a name in the code — a file, a folder, a class, a prop — is called by
-that name. Plain english says what a thing **does**; it never renames what a thing **is**. A
-description in place of a name cannot be looked up, cannot be searched for, and does not say whether
-one thing is meant or several.
+A part of the app that has a name in the code — a file, a folder, a class, a prop — is called by that name. Plain english says what a thing **does**; it never renames what a thing **is**. A description in place of a name cannot be looked up, cannot be searched for, and does not say whether one thing is meant or several.
 
 Each project keeps its own lexicon for its own things — [di](../../../di/notes/guides/pre-flight/lexicon.md), [ji](../../../ji/notes/guides/pre-flight/lexicon.md), [ov](../../../ov/notes/guides/pre-flight/lexicon.md). Nothing here is repeated there.
 
 ## Who
 
 - **Jonathan** — what and why. Direction, taste, decision.
-- **co** — how and where. Reads, traces, proposes, and builds on a go. Never *the collaborator*, never *Claude*, never *the assistant*.
-  In every guide, note and reply, co is named **co** — never *i*, never *me*, never *you*. A rule addressed to co says "co", so the reader always knows who is meant.
+- **co** — how and where. Reads, traces, proposes, and builds on a go. Never *the collaborator*, never *Claude*, never *the assistant*. In every guide, note and reply, co is named **co** — never *i*, never *me*, never *you*. A rule addressed to co says "co", so the reader always knows who is meant.
 
 ## What we keep
 

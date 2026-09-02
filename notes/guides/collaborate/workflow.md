@@ -51,12 +51,9 @@ we will rely on some stuff we have
 3. html injector      <- we need this one
 ```
 
-Jonathan wrote that at the top of the photo-gallery proposal; mine had the new piece buried inside a
-paragraph three sections down, where it read as a step rather than as the work. The list makes the
-whole shape plain: two things to lean on, one thing to build.
+Jonathan wrote that at the top of the photo-gallery proposal; mine had the new piece buried inside a paragraph three sections down, where it read as a step rather than as the work. The list makes the whole shape plain: two things to lean on, one thing to build.
 
-Check every name on the list before writing it down. He had to ask whether all three existed, and
-one of them did not.
+Check every name on the list before writing it down. He had to ask whether all three existed, and one of them did not.
 
 ## Work file structure
 
@@ -104,8 +101,7 @@ Two more are reference, kept in the project's `guides/` (`guides/` for a light p
 
 ### Template guides (di) — where things sit
 
-di is the model these rules came from. It predates them and drifted; on 2026-08-20 it was brought
-into line, and this is the settled layout:
+di is the model these rules came from. It predates them and drifted; on 2026-08-20 it was brought into line, and this is the settled layout:
 
 - The road map is reference, not active work, so it sits in `notes/designs/`, where ji keeps its own.
 - The three maps — files, guides, notes — sit together in `guides/project/`.

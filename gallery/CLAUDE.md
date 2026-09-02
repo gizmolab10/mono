@@ -11,9 +11,7 @@ date: 2026-09-01
 
 ## What This Is
 
-Nothing of its own yet. Every file here is lv's with the name changed — the vineyard's
-words, its galleries, its captions and its netlify functions all still say what lv means
-by them. What gallery is for is drag and drop, and none of that is written.
+Nothing of its own yet. Every file here is lv's with the name changed — the vineyard's words, its galleries, its captions and its netlify functions all still say what lv means by them. What gallery is for is drag and drop, and none of that is written.
 
 ## How to Work Here
 

@@ -172,8 +172,7 @@ Document what makes great technical writing feel great, how to achieve it, and w
 * refactoring.md: "Man crawling across the desert"
 * gotchas.md: "Ack, i get this cryptic error"
 
-**Voice Lost in Body Content:**
-Pattern: Synopses are great, body content reverts to formal technical writing.
+**Voice Lost in Body Content:** Pattern: Synopses are great, body content reverts to formal technical writing.
 
 Examples:
 

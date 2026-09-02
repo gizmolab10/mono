@@ -98,8 +98,7 @@ Replace with `Next_Previous` component to:
   - Only acts when `s_mouse.isDown === true`
   - Currently receives `S_Mouse` from Button component's mouse handler
 
-**The Gap:**
-`Next_Previous` provides `column` number and stored `MouseEvent`, but `handle_s_mouseFor_t_control` expects a complete `S_Mouse` object.
+**The Gap:** `Next_Previous` provides `column` number and stored `MouseEvent`, but `handle_s_mouseFor_t_control` expects a complete `S_Mouse` object.
 
 ### Approach A: Create Synthetic S_Mouse Events (Recommended)
 
@@ -203,8 +202,7 @@ function handle_scale_control(column: number, event: MouseEvent | null, element:
 }
 ```
 
-**Better: Use Next_Previous's autorepeat_isFirstCall flag:**
-If `Next_Previous` exposes whether it's the first call, we can use that directly.
+**Better: Use Next_Previous's autorepeat_isFirstCall flag:** If `Next_Previous` exposes whether it's the first call, we can use that directly.
 
 ### Approach B: Refactor Handler Interface
 

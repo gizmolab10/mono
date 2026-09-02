@@ -11,41 +11,24 @@ My resume point for ji: the one thing to do next, and the context you can't read
 
 ## Next — implement the sections spec
 
-The first unchecked item in [code debt](ji/notes/work/code%20debt.md). The spec is
-[sections spec](../guides/specifications/sections%20spec.md), and its first three steps are a
-check of what the project already has. ji fails three of them, so the port cannot start where the
-spec says to start.
+The first unchecked item in [code debt](ji/notes/work/code%20debt.md). The spec is [sections spec](../guides/specifications/sections%20spec.md), and its first three steps are a check of what the project already has. ji fails three of them, so the port cannot start where the spec says to start.
 
-**ji has** — [Separator.svelte](../../src/lib/svelte/support/Separator.svelte),
-[Constants.ts](../../src/lib/ts/common/Constants.ts),
-[Debug.ts](../../src/lib/ts/common/Debug.ts), and all six page variables the styling reads
-(`--gap`, `--accent`, `--black`, `--z-controls`, `--z-common`, `--z-frontmost`).
+**ji has** — [Separator.svelte](../../src/lib/svelte/support/Separator.svelte), [Constants.ts](../../src/lib/ts/common/Constants.ts), [Debug.ts](../../src/lib/ts/common/Debug.ts), and all six page variables the styling reads (`--gap`, `--accent`, `--black`, `--z-controls`, `--z-common`, `--z-frontmost`).
 
 **ji is missing:**
 
-1. **A separator that can carry things at three places.** ji's carries one only, a centred
-   `title` that is text or a button. The spec names this the blocker: *"If Separator.svelte
-   cannot carry elements, that goes first — the stack is useless without it."*
+1. **A separator that can carry things at three places.** ji's carries one only, a centred `title` that is text or a button. The spec names this the blocker: *"If Separator.svelte cannot carry elements, that goes first — the stack is useless without it."*
 2. **`Action`, and a hits manager.** Neither is built in ji.
-3. **Three of the four ladder rungs.** ji has `gap.fat`. It has no `gap.normal` — its is
-   `gap.default` — no `thickness.huge`, whose part is played by `separator.normal`, and no
-   `height.small`.
+3. **Three of the four ladder rungs.** ji has `gap.fat`. It has no `gap.normal` — its is `gap.default` — no `thickness.huge`, whose part is played by `separator.normal`, and no `height.small`.
 
 ### The order
 
 1. **Give the separator a left, a middle and a right.** Keep `title` working as it does.
-2. **Add `Action`, and settle the ladder.** `gap.normal`, `thickness.huge`, and `height.small`
-   worked out from the floor rule against ji's own widest pair: `gap + thickness` for a plain
-   line, `k.gap.fat + thickness` for one carrying something at its middle. Take the largest.
-3. **Port the hits manager from ov** — five files in `ov/src/lib/ts/events/`: `Hits.ts`,
-   `Hit_Target.ts`, `S_Hit_Target.ts`, `S_Mouse.ts`, `Mouse_Timer.ts`. Pulled ahead of its own
-   place in the debt because trap 8 needs it: a fold moving makes every rectangle it holds stale,
-   and the stack asks it again on every fold change.
-4. **Then steps 4 to 9 of the spec** — the two files, then one run converted at a time, looking
-   at the screen between each.
+2. **Add `Action`, and settle the ladder.** `gap.normal`, `thickness.huge`, and `height.small` worked out from the floor rule against ji's own widest pair: `gap + thickness` for a plain line, `k.gap.fat + thickness` for one carrying something at its middle. Take the largest.
+3. **Port the hits manager from ov** — five files in `ov/src/lib/ts/events/`: `Hits.ts`, `Hit_Target.ts`, `S_Hit_Target.ts`, `S_Mouse.ts`, `Mouse_Timer.ts`. Pulled ahead of its own place in the debt because trap 8 needs it: a fold moving makes every rectangle it holds stale, and the stack asks it again on every fold change.
+4. **Then steps 4 to 9 of the spec** — the two files, then one run converted at a time, looking at the screen between each.
 
-The traps are all in step 10 of the spec, each of which cost a turn in ov and none of which shows
-as an error.
+The traps are all in step 10 of the spec, each of which cost a turn in ov and none of which shows as an error.
 
 ## Where the last session stopped
 

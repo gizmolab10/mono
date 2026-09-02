@@ -57,12 +57,8 @@ Only a project with a port belongs here — the hub launches dev servers and ope
 
 Three edits, all in `notes/tools/hub/index.html`:
 
-1. **The button**, in the `project-row` group beside the others:
-   `<button class="project" data-project="<name>"><name><span class="badge">?</span></button>`
-   The badge is one free letter. Taken so far: M, J, W, V, I, Z, O, U — and the action badges B, E, X, R, G, Y, N, P, L, D.
-2. **Both config maps** — one line each in `config.app` and `config.docs`:
-   `<name>: buildProjectConfig('<name>', 'app'),`
-   `buildProjectConfig` reads `ports.json` and answers null where a mode has nothing, so a project with no docs needs no special case.
+1. **The button**, in the `project-row` group beside the others: `<button class="project" data-project="<name>"><name><span class="badge">?</span></button>` The badge is one free letter. Taken so far: M, J, W, V, I, Z, O, U — and the action badges B, E, X, R, G, Y, N, P, L, D.
+2. **Both config maps** — one line each in `config.app` and `config.docs`: `<name>: buildProjectConfig('<name>', 'app'),` `buildProjectConfig` reads `ports.json` and answers null where a mode has nothing, so a project with no docs needs no special case.
 3. **The key**, copied from the line above it in the keydown switch, with the letter and the name changed.
 
 The dispatcher also names collections it will read and write, in `dispatcher.py` — the tuples at roughly lines 339 and 514. Add the new name there only when ov should list that project's files.

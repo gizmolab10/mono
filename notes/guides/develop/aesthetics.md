@@ -141,8 +141,7 @@ The fillets (╮╭╯╰) create smooth rounded transitions at separator inters
 
 A well-designed interface can serve two complementary purposes:
 
-**Dispatch** — Execute an action (pick options, click, go)
-**Status** — Preview what *would* happen before committing
+**Dispatch** — Execute an action (pick options, click, go) **Status** — Preview what *would* happen before committing
 
 The key insight: status aids dispatch by providing **preflight confirmation**. When hovering reveals the destination URL before clicking, the user sees exactly where they're headed. This removes guesswork and builds confidence.
 

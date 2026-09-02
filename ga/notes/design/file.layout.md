@@ -2,18 +2,7 @@
 
 ## File Layout
 
-`ga/`
-`├── index.html`
-`├── package.json`
-`├── tsconfig.json`
-`├── vite.config.ts`
-`├── notes/`
-`│   ├── project.ts`
-`│   ├── guides/design/`
-`│   │   └── vision.md`
-`│   └── work/`
-`│       └── revisit.ci.md`
-`└── src/`
+`ga/` `├── index.html` `├── package.json` `├── tsconfig.json` `├── vite.config.ts` `├── notes/` `│   ├── project.ts` `│   ├── guides/design/` `│   │   └── vision.md` `│   └── work/` `│       └── revisit.ci.md` `└── src/`
     `├── main.ts`
     `├── App.svelte`
     `└── lib/`

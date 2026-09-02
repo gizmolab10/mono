@@ -1,7 +1,5 @@
 # How to Write an Article
-**Example:** AI Workflow for Developers
-**Started:** 2026-01-06  
-**Status:** Phase 3 in progress
+**Example:** AI Workflow for Developers **Started:** 2026-01-06 **Status:** Phase 3 in progress
 
 ## Problem
 

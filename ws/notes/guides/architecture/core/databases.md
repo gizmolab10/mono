@@ -53,10 +53,7 @@ Webseriously supports multiple database backends through a unified abstraction l
 
 ### Core Components
 
-**DB_Common** - Abstract base class defining CRUD API
-**Databases** - Manager class for database switching and lifecycle
-**DB_* implementations** - Concrete backends (Firebase, Airtable, Local, Bubble, Test)
-**Persistable** - Base class for all persistable entities (Thing, Trait, Tag, Predicate, Relationship)
+**DB_Common** - Abstract base class defining CRUD API **Databases** - Manager class for database switching and lifecycle **DB_* implementations** - Concrete backends (Firebase, Airtable, Local, Bubble, Test) **Persistable** - Base class for all persistable entities (Thing, Trait, Tag, Predicate, Relationship)
 
 ### Database Types
 

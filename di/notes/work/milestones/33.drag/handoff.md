@@ -1,7 +1,6 @@
 # 33 — Drag (mothballed)
 
-**Date mothballed:** 2026-04-14
-**Status:** mothballed mid-investigation. Code is shipped and stable; one residual visual issue is open.
+**Date mothballed:** 2026-04-14 **Status:** mothballed mid-investigation. Code is shipped and stable; one residual visual issue is open.
 
 ---
 

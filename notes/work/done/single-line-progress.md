@@ -1,7 +1,6 @@
 # Single-Line Progress Display
 
-**Started:** 2026-01-14
-**Status:** Complete
+**Started:** 2026-01-14 **Status:** Complete
 
 ## Problem
 

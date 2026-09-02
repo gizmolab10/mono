@@ -9,45 +9,23 @@ date: 2026-08-31
 
 ## proposal: every project moves into mono/projects (1 September 2026)
 
-**Success criteria.** Every app still starts with `yarn dev` from its own folder and serves on the port
-it served on before. `yarn vitest` passes in core, ov and lv with no test edited except the ones that
-spell a path. Every cross-collection link inside the notes still resolves — the dead-link report finds
-no more than it found the day before. ov's file list shows the same count of files under the same
-project names.
+**Success criteria.** Every app still starts with `yarn dev` from its own folder and serves on the port it served on before. `yarn vitest` passes in core, ov and lv with no test edited except the ones that spell a path. Every cross-collection link inside the notes still resolves — the dead-link report finds no more than it found the day before. ov's file list shows the same count of files under the same project names.
 
-**What moves.** Thirteen folders at the top of the repo are projects: core, di, ga, gallery, ji, lv, ma,
-me, mj, mu, ov, s3, ws. They go into a new `projects/` folder, a sibling of `memory/`. What stays at the
-top: `memory`, `notes`, `logs`, `package.json`, `yarn.lock`, `node_modules`, `CLAUDE.md`, `README.md`.
+**What moves.** Thirteen folders at the top of the repo are projects: core, di, ga, gallery, ji, lv, ma, me, mj, mu, ov, s3, ws. They go into a new `projects/` folder, a sibling of `memory/`. What stays at the top: `memory`, `notes`, `logs`, `package.json`, `yarn.lock`, `node_modules`, `CLAUDE.md`, `README.md`.
 
-**Why.** The top of the repo mixes three unlike things — the projects, the shared material, and the
-tooling — and nothing says which is which. `memory/` already gathers one kind under one name; `projects/`
-does the same for the other. It also makes the shared collection nameable: today the shared files sit at
-the repo's top with no folder of their own, which is why ov calls that collection `mo` and treats the
-repo root as its root. The idea's own sub-item — a `projects/shared` holding `notes` — follows from the
-move rather than being a separate act.
+**Why.** The top of the repo mixes three unlike things — the projects, the shared material, and the tooling — and nothing says which is which. `memory/` already gathers one kind under one name; `projects/` does the same for the other. It also makes the shared collection nameable: today the shared files sit at the repo's top with no folder of their own, which is why ov calls that collection `mo` and treats the repo root as its root. The idea's own sub-item — a `projects/shared` holding `notes` — follows from the move rather than being a separate act.
 
 **What has to change with it**
 
-1. `package.json` — `workspaces.packages` names ten folders bare; each becomes `projects/<name>`. The
-   nohoist patterns name the package, not the folder, so they are untouched.
-2. Every cross-collection link in the notes. A guide reaches a sibling project as `../../../<name>/...`,
-   counting from the repo top. One more folder makes it `../../../../<name>/...` for a project-to-project
-   link, while a project-to-shared link keeps its depth only if `notes` moves too. This is the largest
-   part of the work and the one that can be measured — the dead-link report is the measurement.
-3. ov's own path arithmetic. `T_Bundle` names each collection by its folder, and `project_of` reads a
-   memory file's first folder against that list; both keep working, since the names do not change. What
-   changes is where the app roots each collection, and `following_links.test.ts` spells the old depths.
-4. The hub dispatcher and the hooks. `inject-always.sh` builds `$REPO/$PROJECT/notes/...` and scans
-   `$REPO/*/notes/guides`; both gain `projects/`. The `/p` skill checks `~/GitHub/mono/<name>/`.
+1. `package.json` — `workspaces.packages` names ten folders bare; each becomes `projects/<name>`. The nohoist patterns name the package, not the folder, so they are untouched.
+2. Every cross-collection link in the notes. A guide reaches a sibling project as `../../../<name>/...`, counting from the repo top. One more folder makes it `../../../../<name>/...` for a project-to-project link, while a project-to-shared link keeps its depth only if `notes` moves too. This is the largest part of the work and the one that can be measured — the dead-link report is the measurement.
+3. ov's own path arithmetic. `T_Bundle` names each collection by its folder, and `project_of` reads a memory file's first folder against that list; both keep working, since the names do not change. What changes is where the app roots each collection, and `following_links.test.ts` spells the old depths.
+4. The hub dispatcher and the hooks. `inject-always.sh` builds `$REPO/$PROJECT/notes/...` and scans `$REPO/*/notes/guides`; both gain `projects/`. The `/p` skill checks `~/GitHub/mono/<name>/`.
 5. `CLAUDE.md` and the guides that spell paths.
 
-**Cost.** One rename of thirteen folders, then a re-pointing pass whose size is the number of relative
-links between collections. `git mv` keeps the history. The risk is not the move but the links, and the
-dead-link report already exists to say when they are right.
+**Cost.** One rename of thirteen folders, then a re-pointing pass whose size is the number of relative links between collections. `git mv` keeps the history. The risk is not the move but the links, and the dead-link report already exists to say when they are right.
 
-**Open question.** Does `notes` move into `projects/shared`, or does it stay at the top? Moving it makes
-every collection a folder under one parent and gives `mo` a real name; leaving it keeps every
-project-to-shared link at the depth it has today. The two cannot both be had.
+**Open question.** Does `notes` move into `projects/shared`, or does it stay at the top? Moving it makes every collection a folder under one parent and gives `mo` a real name; leaving it keeps every project-to-shared link at the depth it has today. The two cannot both be had.
 
 ## proposal: code debt belongs in the zone, like ideas (28 August 2026)
 

@@ -4,8 +4,7 @@
 
 ## In plain words
 
-Anything ji wants to keep in AnythingLLM without the AI ever seeing it goes in the description of a
-file that is saved and never embedded. Three things worth noting:
+Anything ji wants to keep in AnythingLLM without the AI ever seeing it goes in the description of a file that is saved and never embedded. Three things worth noting:
 
 1. To change a file, delete and re-add it
 2. Cannot write part of the description

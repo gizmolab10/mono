@@ -1,7 +1,6 @@
 # VitePress for Shared
 
-**Started:** 2025-01-09
-**Status:** Phase 2 pending
+**Started:** 2025-01-09 **Status:** Phase 2 pending
 
 ## Problem
 

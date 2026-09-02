@@ -7,8 +7,7 @@ date: 2026-08-24
 ---
 # Dead links
 
-**Started:** 2026-01-14
-**Status:** Complete ✅
+**Started:** 2026-01-14 **Status:** Complete ✅
 
 ## Problem
 

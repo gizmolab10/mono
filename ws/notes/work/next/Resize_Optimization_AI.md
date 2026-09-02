@@ -369,6 +369,4 @@ export default class G_TreeBranches {
 
 ---
 
-*Proposal P - Window Resize Performance Optimization*
-*Created: [Current Date]*
-*Status: Proposed* 
+*Proposal P - Window Resize Performance Optimization* *Created: [Current Date]* *Status: Proposed*

@@ -1,7 +1,6 @@
 # User Manual
 
-**Started:** 2026-02-01
-**Status:** Proposal
+**Started:** 2026-02-01 **Status:** Proposal
 
 ## Problem
 

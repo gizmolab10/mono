@@ -7,8 +7,7 @@ date: 2026-01-12
 ---
 # Preferences System
 
-Store Presentation and Persistence
-Seems to me that people like to alter the looks and behavior of an app. Of course their choices need to be remembered for them. It's a computer, for crying sake. This is a walk through how one preference flows from UI click to localStorage and back.
+Store Presentation and Persistence Seems to me that people like to alter the looks and behavior of an app. Of course their choices need to be remembered for them. It's a computer, for crying sake. This is a walk through how one preference flows from UI click to localStorage and back.
 
 ## Table of Contents
 - [Overview](#overview)

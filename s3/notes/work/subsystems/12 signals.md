@@ -252,8 +252,7 @@ Groupings used by `Hits` for precedence and hover logic:
 
 ### Hover state
 
-`isHovering` getter: `this.hasSameID_as(get(hits.w_s_hover))`.
-`isHovering` setter: calls `hits.w_s_hover.set(isHovering ? this : null)`.
+`isHovering` getter: `this.hasSameID_as(get(hits.w_s_hover))`. `isHovering` setter: calls `hits.w_s_hover.set(isHovering ? this : null)`.
 
 ---
 
@@ -819,8 +818,7 @@ Clears rbush, stops autorepeat and long-click, sets `w_s_hover = null`, cancels 
 
 ### Rubberband support
 
-`rbush_forRubberband` returns a fresh `RBush` containing only `widget`-type targets.
-`rbush_forTypes(types)` builds a one-off bush from `targets_forTypes(types)` without mutating the main bush.
+`rbush_forRubberband` returns a fresh `RBush` containing only `widget`-type targets. `rbush_forTypes(types)` builds a one-off bush from `targets_forTypes(types)` without mutating the main bush.
 
 ---
 

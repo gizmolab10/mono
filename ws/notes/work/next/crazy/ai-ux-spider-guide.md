@@ -13,19 +13,13 @@ We'll build a system that:
 ## Tech Stack Options
 
 ### Option 1: Playwright + Claude API (Recommended)
-**Best for:** Comprehensive testing with intelligent decision-making
-**Complexity:** Medium
-**Cost:** API calls to Claude (~$0.10-1.00 per site tested)
+**Best for:** Comprehensive testing with intelligent decision-making **Complexity:** Medium **Cost:** API calls to Claude (~$0.10-1.00 per site tested)
 
 ### Option 2: Playwright + GPT-4 Vision
-**Best for:** Similar to Option 1, OpenAI ecosystem
-**Complexity:** Medium
-**Cost:** Similar API costs
+**Best for:** Similar to Option 1, OpenAI ecosystem **Complexity:** Medium **Cost:** Similar API costs
 
 ### Option 3: Pure Playwright with Heuristics
-**Best for:** Simpler, cheaper, but less intelligent
-**Complexity:** Low
-**Cost:** Free (just compute)
+**Best for:** Simpler, cheaper, but less intelligent **Complexity:** Low **Cost:** Free (just compute)
 
 We'll focus on **Option 1** as it gives the best balance of intelligence and control.
 

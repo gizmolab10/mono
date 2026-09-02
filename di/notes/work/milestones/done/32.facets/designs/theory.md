@@ -27,8 +27,7 @@ The question at the top of this file. Here's what the evidence supports, and wha
 - The three open unknowns may be symptoms of a structural gap that the current approach can't close without a new idea that hasn't arrived yet.
 - There's no way to estimate when it would be done. "Keep going" is open-ended.
 
-**What the evidence can't answer:**
-Whether the missing idea is close or far. Whether the next session's investigation will crack the boundary-to-interior connection or reveal yet another layer. The work so far has been honest and disciplined — not wasted — but discipline alone doesn't guarantee arrival. The question is whether you're willing to keep investing without a timeline, knowing the foundations are real but the path forward is uncharted.
+**What the evidence can't answer:** Whether the missing idea is close or far. Whether the next session's investigation will crack the boundary-to-interior connection or reveal yet another layer. The work so far has been honest and disciplined — not wasted — but discipline alone doesn't guarantee arrival. The question is whether you're willing to keep investing without a timeline, knowing the foundations are real but the path forward is uncharted.
 
 ### **What would actually help most:**
 
@@ -94,8 +93,7 @@ The problem you're solving — tracing closed visible regions where 3D solids in
 - This is the hardest part to find written up. The closest published work is on **arrangement computation** — given a set of line segments in 2D, find all enclosed faces. CGAL's 2D Arrangements package has documentation that explains the theory. The book "CGAL Arrangements and Their Applications" by Fogel, Halperin, and Wein is the only dedicated treatment I know of.
 - Euler operators and half-edge data structures (Mäntylä, "Introduction to Solid Modeling") — for understanding how faces, edges, and vertices connect topologically.
 
-**The gap nobody covers**
-What's missing from all of these: how to go from "I have visible edge segments and intersection lines in screen space" to "I can trace closed painted regions." That's the specific problem your facets pipeline solves. Academic literature assumes you either have a full boundary representation already (CAD kernel approach) or you're doing pure 2D arrangement computation (computational geometry approach). You're doing neither — you're building the boundary representation *from the visible projection*, which is backwards from how CAD kernels work.
+**The gap nobody covers** What's missing from all of these: how to go from "I have visible edge segments and intersection lines in screen space" to "I can trace closed painted regions." That's the specific problem your facets pipeline solves. Academic literature assumes you either have a full boundary representation already (CAD kernel approach) or you're doing pure 2D arrangement computation (computational geometry approach). You're doing neither — you're building the boundary representation *from the visible projection*, which is backwards from how CAD kernels work.
 
 **The closest real-world precedent**
 - Hidden-line removal papers from the 1960s-70s (Appel, Loutrel, Galimberti & Montanari). They computed exactly what you're computing. The field moved to z-buffers (raster output, not us) and stopped publishing on this.

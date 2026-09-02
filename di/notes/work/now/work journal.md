@@ -8,32 +8,13 @@ Record work performed during chat sessions, in reverse chronological order. Each
 
 ## Session — 2026-08-19 — The details column becomes a stack
 
-- **The sections spec is built in di.** A run of sections with a separator centred in every gap,
-  ported the same way it was ported into ji. `Action` is new, the separator now carries what a
-  caller builds, and `Stacked` and `Stack` came across mended to di's own names throughout —
-  `k.gap.main`, `k.gap.large`, `k.thickness.separator.main`, and one new rung, `k.height.folded`,
-  which is the floor a fold can never go below.
-- **`Hideable` is gone.** Each of its five uses is a section of one stack. A section's word rides
-  the middle of the separator above it and folds that section when pressed; its buttons ride the
-  two ends, where they stood inside the banner. The banner's own height, its radial fill and its
-  two pinned corners went with it.
-- **A separator can now say two things it could not.** How thick to draw it, and how far it reaches
-  past whatever holds it. The details column says zero for the second, so a line's ends — and the
-  flares drawn on them — stand inside the column instead of past the edge that clips it.
-- **The accent moved off the ground and into the folds.** The column behind the stack stood in the
-  accent, and so did every line drawn on it, so a 1px line and the gap around it read as one 11px
-  band. The ground is the page color now and the accent shows only where a section is folded.
-- **The three add buttons draw their mark.** `x_cross` turned a quarter turn, so one path serves
-  both the X elsewhere and the plus here. Each carries its own name, since a button holding only a
-  drawing has nothing to say what it is.
-- **One padding for every button that carries words** — `--l-padding`, left and right. Seven
-  buttons in the primary row had been taking whatever the browser gives a button, since
-  `.toolbar-button` set none at all.
-- **Two faults mended that nothing asked about.** `blend` answered `offwhite`, which is not a color
-  the browser knows, so every blend down that path drew nothing; its test had been failing. And
-  `NodeJS.Timeout` was named in three projects with no project asking for `@types/node` — it
-  resolved only because something else happened to install it. All fourteen now ask `setTimeout`
-  what it answers with.
+- **The sections spec is built in di.** A run of sections with a separator centred in every gap, ported the same way it was ported into ji. `Action` is new, the separator now carries what a caller builds, and `Stacked` and `Stack` came across mended to di's own names throughout — `k.gap.main`, `k.gap.large`, `k.thickness.separator.main`, and one new rung, `k.height.folded`, which is the floor a fold can never go below.
+- **`Hideable` is gone.** Each of its five uses is a section of one stack. A section's word rides the middle of the separator above it and folds that section when pressed; its buttons ride the two ends, where they stood inside the banner. The banner's own height, its radial fill and its two pinned corners went with it.
+- **A separator can now say two things it could not.** How thick to draw it, and how far it reaches past whatever holds it. The details column says zero for the second, so a line's ends — and the flares drawn on them — stand inside the column instead of past the edge that clips it.
+- **The accent moved off the ground and into the folds.** The column behind the stack stood in the accent, and so did every line drawn on it, so a 1px line and the gap around it read as one 11px band. The ground is the page color now and the accent shows only where a section is folded.
+- **The three add buttons draw their mark.** `x_cross` turned a quarter turn, so one path serves both the X elsewhere and the plus here. Each carries its own name, since a button holding only a drawing has nothing to say what it is.
+- **One padding for every button that carries words** — `--l-padding`, left and right. Seven buttons in the primary row had been taking whatever the browser gives a button, since `.toolbar-button` set none at all.
+- **Two faults mended that nothing asked about.** `blend` answered `offwhite`, which is not a color the browser knows, so every blend down that path drew nothing; its test had been failing. And `NodeJS.Timeout` was named in three projects with no project asking for `@types/node` — it resolved only because something else happened to install it. All fourteen now ask `setTimeout` what it answers with.
 
 ### Files touched
 

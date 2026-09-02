@@ -1,7 +1,6 @@
 # Commoditize the Workflow
 
-**Started:** 2026-01-08
-**Status:** Phase 1 complete, Phase 2 next
+**Started:** 2026-01-08 **Status:** Phase 1 complete, Phase 2 next
 
 ## Problem
 

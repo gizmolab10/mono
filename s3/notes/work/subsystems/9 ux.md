@@ -68,8 +68,7 @@ From usage in UX.ts, an `S_Recent` has:
 
 ## UX.ts (S_UX class) — Focus, Grabs, Recents
 
-File: `ws/src/lib/ts/managers/UX.ts`
-Singleton exported as `x`.
+File: `ws/src/lib/ts/managers/UX.ts` Singleton exported as `x`.
 
 ### Top-level writable stores
 
@@ -342,8 +341,7 @@ Stored in `x.w_s_alteration`. Set to null by `becomeFocus`, `grab`, `grabOnly`, 
 
 ### S_Widget
 
-File: `ws/src/lib/ts/state/S_Widget.ts`
-Extends: `S_Element`
+File: `ws/src/lib/ts/state/S_Widget.ts` Extends: `S_Element`
 
 Preserves rendering state for a widget (node in tree or radial view) across DOM reattachment.
 
@@ -376,8 +374,7 @@ Creates sub-elements via `elements.s_element_for(ancestry, T_Hit_Target.<type>, 
 
 ### S_Element
 
-File: `ws/src/lib/ts/state/S_Element.ts`
-Extends: `S_Hit_Target`
+File: `ws/src/lib/ts/state/S_Element.ts` Extends: `S_Hit_Target`
 
 Single source of truth for stroke, fill, cursor, and border of interactive UI elements: buttons, segments, widget dots. Also tracks grabbed/expanded state.
 
@@ -495,8 +492,7 @@ Tracks the persistence lifecycle of a single persistable entity.
 
 ### S_Resizing
 
-File: `ws/src/lib/ts/state/S_Resizing.ts`
-Extends: `S_Rotation`
+File: `ws/src/lib/ts/state/S_Resizing.ts` Extends: `S_Rotation`
 
 Manages the resize-ring interaction for the radial necklace (arc radius dragging).
 
@@ -521,8 +517,7 @@ Manages the resize-ring interaction for the radial necklace (arc radius dragging
 
 ### S_Rotation
 
-File: `ws/src/lib/ts/state/S_Rotation.ts`
-Extends: `S_Component`
+File: `ws/src/lib/ts/state/S_Rotation.ts` Extends: `S_Component`
 
 Manages rotation-ring and paging-thumb interactions in the radial view.
 
@@ -606,8 +601,7 @@ Singleton (stored in `x.w_s_title_edit`) tracking the state machine of an in-pro
 
 ### S_Rubberband
 
-File: `ws/src/lib/ts/state/S_Rubberband.ts`
-Singleton exported as `s_rubberband`.
+File: `ws/src/lib/ts/state/S_Rubberband.ts` Singleton exported as `s_rubberband`.
 
 Manages the rubberband (marquee) selection drag.
 
@@ -663,8 +657,7 @@ Returns the `S_Items` that drives this section's pagination:
 
 ### S_Busy
 
-File: `ws/src/lib/ts/state/S_Busy.ts`
-Singleton exported as `busy`.
+File: `ws/src/lib/ts/state/S_Busy.ts` Singleton exported as `busy`.
 
 Tracks async operation state to prevent concurrent operations and rate-limit UI actions.
 
@@ -694,8 +687,7 @@ Tracks async operation state to prevent concurrent operations and rate-limit UI 
 
 ## Visibility.ts — Show Flags
 
-File: `ws/src/lib/ts/managers/Visibility.ts`
-Singleton exported as `show`.
+File: `ws/src/lib/ts/managers/Visibility.ts` Singleton exported as `show`.
 
 ### Writable stores (all are preferences or runtime flags)
 

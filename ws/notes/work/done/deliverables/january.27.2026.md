@@ -1,7 +1,6 @@
 # Deliverables
 
-**Started:** 2025-01-13
-**Status:** In progress
+**Started:** 2025-01-13 **Status:** In progress
 
 Before I demo a fix to Vincent, review it with Wendy. For items that are checked, I need Wendy's feedback/confirmation. I will let her know in Telegram, and then meet with her to receive it.
 

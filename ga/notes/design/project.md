@@ -3,9 +3,7 @@
 ---
 ## Building the Game
 
-**Platform:** Web (shareable)
-**Type:** Collaborative world-building
-**Starting mechanic:** Regard economy first
+**Platform:** Web (shareable) **Type:** Collaborative world-building **Starting mechanic:** Regard economy first
 
 ### Proposed Minimal First Version
 

@@ -7,8 +7,7 @@ date: 2026-08-10
 ---
 # Co — wisdom layer for AI assistants
 
-**Started:** 2026-02-23
-**Status:** Ideas
+**Started:** 2026-02-23 **Status:** Ideas
 
 **The pitch:** OpenClaw gives your AI superpowers. Co gives it wisdom and creative force multiplier.
 

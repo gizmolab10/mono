@@ -18,21 +18,17 @@ Determines which parser `fetch_fromFile` dispatches to. Supported values: `T_Fil
 
 ### Write
 
-**`persist_json_object_toFile(object, fileName)`**
-Serializes `object` via `tu.stringify_object`, creates a Blob with type `application/json`, creates an `<a>` element, sets `href` to an object URL, triggers a `.click()` download, then revokes the URL. No return value.
+**`persist_json_object_toFile(object, fileName)`** Serializes `object` via `tu.stringify_object`, creates a Blob with type `application/json`, creates an `<a>` element, sets `href` to an object URL, triggers a `.click()` download, then revokes the URL. No return value.
 
 ### Read
 
-**`fetch_fromFile(file: File): Promise<any>`**
-Dispatches based on `format_preference`:
+**`fetch_fromFile(file: File): Promise<any>`** Dispatches based on `format_preference`:
 - `.seriously` / `.json` → `extract_json_object_fromFile` (reads text, calls `JSON.parse`)
 - `.csv` → `extract_csv_records_fromFile`
 
-**`extract_json_object_fromFile` (private)**
-Uses `FileReader.readAsText`, rejects on empty result or parse error, resolves with parsed object.
+**`extract_json_object_fromFile` (private)** Uses `FileReader.readAsText`, rejects on empty result or parse error, resolves with parsed object.
 
-**`extract_csv_records_fromFile` (private)**
-Uses `FileReader.readAsText`. Handles quoted fields by replacing in-quote commas with `$$$$$$`, splits on newline, extracts header row, maps remaining rows to `Record<string, string>` objects. Returns array of row-records.
+**`extract_csv_records_fromFile` (private)** Uses `FileReader.readAsText`. Handles quoted fields by replacing in-quote commas with `$$$$$$`, splits on newline, extracts header row, maps remaining rows to `Record<string, string>` objects. Returns array of row-records.
 
 ### Preview
 
@@ -41,11 +37,9 @@ Uses `FileReader.readAsText`. Handles quoted fields by replacing in-quote commas
 - `w_preview_content: Writable<string | null>` — text or data-URL content
 - `w_preview_type: Writable<T_Preview_Type>` — `'text'`, `'image'`, or `null`
 
-**`preview_type_forFilename(filename)`**
-Checks extension against `T_Image_Extension` and `T_Text_Extension` enums. Returns `'image'`, `'text'`, or `null`.
+**`preview_type_forFilename(filename)`** Checks extension against `T_Image_Extension` and `T_Text_Extension` enums. Returns `'image'`, `'text'`, or `null`.
 
-**`show_previewOf_file(fileId: string): Promise<boolean>`**
-Only works when `h.db` is a `DB_Filesystem`. Fetches file info via `h.db.get_file_information(fileId)`. If not a directory and has a previewable type:
+**`show_previewOf_file(fileId: string): Promise<boolean>`** Only works when `h.db` is a `DB_Filesystem`. Fetches file info via `h.db.get_file_information(fileId)`. If not a directory and has a previewable type:
 - image: reads via `h.db.readFileAsDataURL(fileId)`, sets `w_preview_content`
 - text: reads via `h.db.readFileAsText(fileId)`, sets `w_preview_content`
 
@@ -108,29 +102,21 @@ Each dict represents one record with fields including:
 
 ### Methods
 
-**`extract_fromDict(dict: Dictionary)`**
-Creates a Thing for each dict record. Uses `Identifiable.newID()` for IDs. Sets `t_thing` to `T_Thing.bookmark` or `T_Thing.generic` based on `dict['Type']`. Calls `h.thing_remember_runtimeCreate`. Calls `create_trait_forThingfromDict` and `create_tags_forThing_fromDict`. If title is `'TEAM LIBRARY'` or `'MEMBER LIBRARY'`, immediately creates a parent Relationship to `h.root`.
+**`extract_fromDict(dict: Dictionary)`** Creates a Thing for each dict record. Uses `Identifiable.newID()` for IDs. Sets `t_thing` to `T_Thing.bookmark` or `T_Thing.generic` based on `dict['Type']`. Calls `h.thing_remember_runtimeCreate`. Calls `create_trait_forThingfromDict` and `create_tags_forThing_fromDict`. If title is `'TEAM LIBRARY'` or `'MEMBER LIBRARY'`, immediately creates a parent Relationship to `h.root`.
 
-**`create_trait_forThingfromDict(thing_id, dict)`**
-Creates a `Trait` via `h.trait_remember_runtimeCreate`. For bookmarks, uses `T_Trait.link` and `dict['Link']`. For others, uses `T_Trait.text` and `dict['Description']`. Stores the full dict on `trait.dict` for later relationship creation.
+**`create_trait_forThingfromDict(thing_id, dict)`** Creates a `Trait` via `h.trait_remember_runtimeCreate`. For bookmarks, uses `T_Trait.link` and `dict['Link']`. For others, uses `T_Trait.text` and `dict['Description']`. Stores the full dict on `trait.dict` for later relationship creation.
 
-**`create_tags_forThing_fromDict(thingID, dict)`**
-Reads three tag keys: `'Custom Tags'`, `'Custom Tags (Local)'`, `'All Local Tags (folder names)'`. Delegates each to `create_tag_forThing_andKey_fromDict`.
+**`create_tags_forThing_fromDict(thingID, dict)`** Reads three tag keys: `'Custom Tags'`, `'Custom Tags (Local)'`, `'All Local Tags (folder names)'`. Delegates each to `create_tag_forThing_andKey_fromDict`.
 
-**`create_tag_forThing_andKey_fromDict(thingID, tag_types)`**
-Splits the value on `k.comma`, calls `h.tag_remember_runtimeCreateUnique_forType` for each tag type.
+**`create_tag_forThing_andKey_fromDict(thingID, tag_types)`** Splits the value on `k.comma`, calls `h.tag_remember_runtimeCreateUnique_forType` for each tag type.
 
-**`create_relationships_fromAllTraits()` (async)**
-Main post-processing step. Iterates all traits, reads `trait.dict['parent 1 link']`, looks up the parent Thing by title via `h.things_forTitle`. If not found, falls back to `h.lost_and_found()`. Creates a Relationship via `h.relationship_remember_runtimeCreateUnique`. Clears `trait.dict` after processing (to free memory). Then calls `assure_small_families()` in a loop until stable.
+**`create_relationships_fromAllTraits()` (async)** Main post-processing step. Iterates all traits, reads `trait.dict['parent 1 link']`, looks up the parent Thing by title via `h.things_forTitle`. If not found, falls back to `h.lost_and_found()`. Creates a Relationship via `h.relationship_remember_runtimeCreateUnique`. Clears `trait.dict` after processing (to free memory). Then calls `assure_small_families()` in a loop until stable.
 
-**`assure_small_families()` (private)**
-Traverses the ancestry tree from `h.rootAncestry`. For any node with more than `max_children = 35` children, creates chunk Things (named `parentTitle.1`, `parentTitle.2`, ...) and re-parents children into chunks. Re-runs until no changes. Returns `true` if any change was made.
+**`assure_small_families()` (private)** Traverses the ancestry tree from `h.rootAncestry`. For any node with more than `max_children = 35` children, creates chunk Things (named `parentTitle.1`, `parentTitle.2`, ...) and re-parents children into chunks. Re-runs until no changes. Returns `true` if any change was made.
 
-**`shrink_dict(dict)` (deprecated)**
-Removes keys: `Type`, `Link`, `Description`, `parent 1 link`, `data types import`. Not currently called — `trait.dict = {}` is used instead.
+**`shrink_dict(dict)` (deprecated)** Removes keys: `Type`, `Link`, `Description`, `parent 1 link`, `data types import`. Not currently called — `trait.dict = {}` is used instead.
 
-**`cleanup_lost_and_found()` (async, not currently used)**
-Organizes lost-and-found children into `'leaves'` (no grandchildren) and `'crowds'` (has grandchildren) sub-nodes.
+**`cleanup_lost_and_found()` (async, not currently used)** Organizes lost-and-found children into `'leaves'` (no grandchildren) and `'crowds'` (has grandchildren) sub-nodes.
 
 ### T_Pivot_Fields enum
 
@@ -263,8 +249,7 @@ w_scale_factor      = writable<number>(1);
 
 ### Graph view rect
 
-**`update_rect_ofGraphView()`**
-Recomputes the graph view rect based on:
+**`update_rect_ofGraphView()`** Recomputes the graph view rect based on:
 - Whether secondary controls are below primary (tree mode + search or tree graph)
 - Width of details panel when visible (`k.width.details`)
 - Window size minus separator thickness
@@ -648,14 +633,12 @@ Based on usage: `T_Detail.actions`, `T_Detail.data`, `T_Detail.tags`, `T_Detail.
 
 **`redraw()`** — currently a stub (two commented-out lines). Called to force details re-render.
 
-**`select_next(banner_id, selected_title)`**
-Navigates within a banner. `selected_title` is compared against `T_Direction.next`.
+**`select_next(banner_id, selected_title)`** Navigates within a banner. `selected_title` is compared against `T_Direction.next`.
 - `T_Detail.traits` → `x.select_next_thingTrait(next)`
 - `T_Detail.tags` → `x.select_next_thing_tag(next)`
 - `T_Detail.selection` → `x.grab_next_ancestry(next)`
 
-**`banner_title_forDetail(t_detail, passedGrabs?, passedGrabIndex?)`**
-Computes the display title for a detail section header.
+**`banner_title_forDetail(t_detail, passedGrabs?, passedGrabIndex?)`** Computes the display title for a detail section header.
 
 - `T_Detail.tags` → uses `si_items.title('tag', 'tags', title)` — count-aware label
 - `T_Detail.traits` → uses `si_items.title('trait', 'traits', title)`
@@ -800,12 +783,7 @@ w_g_cluster     = writable<G_Cluster | null>(null);
 w_resize_radius = writable<number>(k.radius.ring_minimum);
 ```
 
-`s_resizing` — state for the resize interaction (dragging the inner circle).
-`s_rotation` — state for the rotate interaction (dragging the ring arc).
-`s_paging` — default paging state (not cluster-specific).
-`s_paging_dict_byName` — one `S_Rotation` per named cluster (for per-cluster paging).
-`g_pages_dict_byThingID` — paging geometry (`G_Pages`) keyed by Thing ID.
-`last_action` — timestamp of last action, used for rate-limiting (500ms resize, 75ms rotate).
+`s_resizing` — state for the resize interaction (dragging the inner circle). `s_rotation` — state for the rotate interaction (dragging the ring arc). `s_paging` — default paging state (not cluster-specific). `s_paging_dict_byName` — one `S_Rotation` per named cluster (for per-cluster paging). `g_pages_dict_byThingID` — paging geometry (`G_Pages`) keyed by Thing ID. `last_action` — timestamp of last action, used for rate-limiting (500ms resize, 75ms rotate).
 
 ### Computed
 
@@ -824,8 +802,7 @@ Subscribes to `core.w_t_startup`. When `T_Startup.ready`, subscribes to `x.w_anc
 
 **`T_Radial_Zone`** values: `miss`, `resize`, `rotate`, `paging`.
 
-**`ring_zone_atVector_relativeToGraphCenter(mouse_vector)`**
-Zone is determined by distance from graph center (`mouse_vector.magnitude`):
+**`ring_zone_atVector_relativeToGraphCenter(mouse_vector)`** Zone is determined by distance from graph center (`mouse_vector.magnitude`):
 - `< inner` (`ring_radius`) → `T_Radial_Zone.resize`
 - `< inner + k.thickness.radial.arc` AND inside cluster thumb → `T_Radial_Zone.paging`
 - `<= inner + k.thickness.radial.ring` → `T_Radial_Zone.rotate`
@@ -839,8 +816,7 @@ Zone is determined by distance from graph center (`mouse_vector.magnitude`):
 
 ### Mouse drag handling
 
-**`handle_mouse_drag()`**
-Rate-limited, priority-ordered:
+**`handle_mouse_drag()`** Rate-limited, priority-ordered:
 
 1. **Resize** (checked first — takes priority when both resize and rotate are dragging):
    - Computes `magnitude = mouse_vector.magnitude - resize.basis_radius`

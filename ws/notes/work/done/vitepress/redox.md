@@ -2,8 +2,7 @@
 
 ## Situation normal
 
-**Obsidian:** Auto-updates wikilinks (`[[file]]`) when renaming/moving files within Obsidian
-**VitePress:** (via `update docs`) Detects and reports broken links
+**Obsidian:** Auto-updates wikilinks (`[[file]]`) when renaming/moving files within Obsidian **VitePress:** (via `update docs`) Detects and reports broken links
 
 ## Problem
 

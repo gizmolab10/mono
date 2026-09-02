@@ -15,6 +15,8 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
+- [x] edit — files that are not markdown, do not translate them, do not treat the first line as a title, never add properties
+- [ ] add 'reveal in finder' to the CONTROL-click popup menu
 - [ ] move all mono projects -> mono/projects, a new folder sibling to memory
     - [ ] create a new folder in projects 'shared'
         - [ ] move notes into it

@@ -1,7 +1,6 @@
 # Truth
 
-**Started:** 2026-01-19
-**Status:** Analysis complete
+**Started:** 2026-01-19 **Status:** Analysis complete
 
 ## Problem
 

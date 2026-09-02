@@ -11,12 +11,9 @@ date: 2026-09-01
 
 ## What This Is
 
-Boilerplate only. Three files carry it: `App.svelte`, the whole app on day one;
-`Main.ts`, which mounts it and pushes core's sizes onto the page; and
-`Customizations.ts`, empty, waiting for the first switch that is mj's alone.
+Boilerplate only. Three files carry it: `App.svelte`, the whole app on day one; `Main.ts`, which mounts it and pushes core's sizes onto the page; and `Customizations.ts`, empty, waiting for the first switch that is mj's alone.
 
-Everything mj takes from core arrives through `common/Core.ts`, and only that file
-reaches through the "core" alias.
+Everything mj takes from core arrives through `common/Core.ts`, and only that file reaches through the "core" alias.
 
 ## How to Work Here
 

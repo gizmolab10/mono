@@ -30,6 +30,5 @@ From the check of 31 August 2026, against all of `memory/`. Nothing fixed; each 
 - [ ] `shared/truth/create a project.md` reads `type: howto`, which is not in the five-word list; pick one from the list or add howto?
 - [ ] three skills point at "Session protocol"; the heading reads `## Session phases` — `handbook.md` line 12, named at lines 102 and 103 and at `shorthand.md` line 40; rename the heading or re-point all three?
 - [x] settle is five steps at `handbook.md` line 108 and six at lines 26 to 31 — answered 1 September 2026 when a seventh step was added: both now say seven
-- [ ] the description label holds a comment where a sentence belongs — all three logs read `description: "<!-- consolidated: 30 August 2026 -->"`, as do ov's `drive.md`, `proposals.md`, and `ideas.md`, whose comment is cut off mid-sentence at `"<!-- ov ideas"`
 - [ ] the consolidation marker is on the wrong side — `handbook.md` line 26 says read every entry above it; in all three logs every entry sits below it; move the marker or reword the step?
 - [ ] `shared/index.md` names `zone/truth and zone.md`, while disk has `truth and zone and design?.md`; it omits `proposals.md`, `drive.md` and `adoption journal.md` from Zone, omits `cases.md` from Truths, and its `create a project.md` link carries raw spaces where its neighbours use `%20`

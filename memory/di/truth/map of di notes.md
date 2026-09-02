@@ -7,9 +7,7 @@ date: 2026-08-20
 ---
 # Map of di notes
 
-Every folder under `notes/`. Update when notes files are added, moved, or removed. The map of the
-source code is [map of di files](map%20of%20di%20files.md); the map of the guides themselves is
-[map of di guides](map%20of%20di%20guides.md).
+Every folder under `notes/`. Update when notes files are added, moved, or removed. The map of the source code is [map of di files](map%20of%20di%20files.md); the map of the guides themselves is [map of di guides](map%20of%20di%20guides.md).
 
 ## guides/ — reference
 
@@ -24,9 +22,7 @@ source code is [map of di files](map%20of%20di%20files.md); the map of the guide
 
 ## work/ — active tracking
 
-- `now/` — the current working files: [code debt.md](../../work/now/code%20debt.md) — whose finished half sits under its own `done` heading —, [handoff.md](../../work/now/handoff.md),
-  [work journal.md](../../work/now/work%20journal.md), [working features.md](../../work/now/working%20features.md), `learn.md`, [revisit.di.md](../../work/now/revisit.di.md), and the loose notes beside
-  them.
+- `now/` — the current working files: [code debt.md](../../work/now/code%20debt.md) — whose finished half sits under its own `done` heading —, [handoff.md](../../work/now/handoff.md), [work journal.md](../../work/now/work%20journal.md), [working features.md](../../work/now/working%20features.md), `learn.md`, [revisit.di.md](../../work/now/revisit.di.md), and the loose notes beside them.
 - `next/` — planned work not yet started.
 - `milestones/` — work bundled into named milestones, open and done.
 - `done/` — finished notes and historical sessions.

@@ -81,8 +81,7 @@ From 3D geometry to painted facets, step by step:
 
 ### Step 1: Object-Space Visibility
 
-Input: 3D polyhedra (ALPHA and BETA boxes)
-Output: visible edge segments in 3D, clipped against occluding faces
+Input: 3D polyhedra (ALPHA and BETA boxes) Output: visible edge segments in 3D, clipped against occluding faces
 
 For each edge of each object:
 - Back-face cull: skip edges where both adjacent faces point away from the camera
@@ -93,8 +92,7 @@ This is the Appel/Roberts part. We already do this.
 
 ### Step 2: Intersection Lines
 
-Input: pairs of face planes from different objects
-Output: intersection line segments, clipped to both face boundaries and visibility
+Input: pairs of face planes from different objects Output: intersection line segments, clipped to both face boundaries and visibility
 
 For each pair of faces (one from ALPHA, one from BETA):
 - Compute the intersection line of the two planes
@@ -105,15 +103,13 @@ We already do this too.
 
 ### Step 3: Project to 2D
 
-Input: all visible 3D segments (edges + intersection lines)
-Output: 2D segments in screen space
+Input: all visible 3D segments (edges + intersection lines) Output: 2D segments in screen space
 
 Orthographic projection. Straightforward. Each 3D segment becomes a 2D segment.
 
 ### Step 4: Find All Crossings
 
-Input: 2D segments
-Output: 2D segments split at every crossing point
+Input: 2D segments Output: 2D segments split at every crossing point
 
 **This is where it gets critical.** In the standard approach, you find ALL crossings between ALL segments — not just crossings between segments from different objects. Two edges of ALPHA can cross in screen space (think of a cube where a front edge crosses over a back edge in projection). Intersection lines can cross edges. Everything crosses everything.
 
@@ -126,8 +122,7 @@ After this step, no two segments cross — they only meet at shared endpoints (v
 
 ### Step 5: Build the DCEL
 
-Input: vertices and split sub-segments (no crossings)
-Output: a doubly-connected edge list
+Input: vertices and split sub-segments (no crossings) Output: a doubly-connected edge list
 
 1. Create a vertex for every endpoint and crossing point
 2. Create two half-edges (twins) for every sub-segment
@@ -137,8 +132,7 @@ Output: a doubly-connected edge list
 
 ### Step 6: Extract Faces
 
-Input: DCEL
-Output: list of faces, each defined by a cycle of half-edges
+Input: DCEL Output: list of faces, each defined by a cycle of half-edges
 
 Walk each half-edge's `next` chain until you return to the start. Each cycle defines one face. Mark half-edges as visited so you don't extract the same face twice.
 
@@ -146,8 +140,7 @@ One face will be the unbounded exterior. The rest are your facets.
 
 ### Step 7: Determine Face Colors
 
-Input: faces from the DCEL, original 3D face data
-Output: colored facets
+Input: faces from the DCEL, original 3D face data Output: colored facets
 
 For each facet, pick a sample point inside it (e.g., centroid of the boundary polygon). Ray-cast or use winding rules to determine which 3D face (if any) this point lies on. That tells you the face color. If the point is occluded, the facet might be behind something — but since we only used visible segments, every facet should be either a visible face or background.
 
@@ -284,8 +277,7 @@ If we only look for crossings between segments from different objects, we find t
 
 ALPHA is a box with visible face ABCD (front) and EFGH (top). BETA overlaps, cutting through both faces.
 
-The intersection of BETA with face ABCD produces segment P1-Q1 (P1 on edge AB, Q1 on edge CD).
-The intersection of BETA with face EFGH produces segment P2-Q2 (P2 on edge EF, Q2 on edge GH).
+The intersection of BETA with face ABCD produces segment P1-Q1 (P1 on edge AB, Q1 on edge CD). The intersection of BETA with face EFGH produces segment P2-Q2 (P2 on edge EF, Q2 on edge GH).
 
 After collecting all segments:
 - ALPHA edges: A-B, B-C, C-D, D-A, E-F, F-G, G-H, H-E, and the shared edges like B-F, C-G

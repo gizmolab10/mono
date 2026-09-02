@@ -19,9 +19,7 @@ date: 2026-08-12
 
 ## id naming rules
 
-Every target says its own name, and the manager keeps one target per name — a repeat throws the
-older one away, leaving a control that answers nothing. So the names have to be unique across
-whatever is on screen at once.
+Every target says its own name, and the manager keeps one target per name — a repeat throws the older one away, leaving a control that answers nothing. So the names have to be unique across whatever is on screen at once.
 
 **`where.what[.which]`** — lowercase, dots between.
 
@@ -33,8 +31,7 @@ whatever is on screen at once.
     something the thing already owns: a guide's address, a tag area's name, a row's line number.
     Never a running count — a narrowed list renumbers, and every name would move.
 
-A pair of steppers is handed its own `where.what` by whoever draws it; the pair adds `.back` and
-`.forward` itself.
+A pair of steppers is handed its own `where.what` by whoever draws it; the pair adds `.back` and `.forward` itself.
 
 Every set of segments holds many at once, so each takes a third part from what it already is:
 
@@ -56,8 +53,7 @@ The soft pointers in a file's own words are the third kind of target, so their *
 - `page.task.<line>` — a thing to be done that holds a list of its own. Same mark, different job,
     so it takes its own word.
 
-The manager says so in the log when a name repeats. That is the whole guard: a test cannot see
-names written across the drawings.
+The manager says so in the log when a name repeats. That is the whole guard: a test cannot see names written across the drawings.
 
 ## implementation
 
@@ -103,75 +99,49 @@ The rectangle is measured once and remembered; nothing re-measures on its own.
 
 ### implement for segments
 
-Twelve of them, in four sets: the three that say how the picked tags narrow, the projects, the
-kinds twice over, and the tags inside a pill. Plus four presses standing among them — clear and
-invert, in the list and in the editor — and the six kind picks in the editor's own form.
+Twelve of them, in four sets: the three that say how the picked tags narrow, the projects, the kinds twice over, and the tags inside a pill. Plus four presses standing among them — clear and invert, in the list and in the editor — and the six kind picks in the editor's own form.
 
-Every one is a `<button>` already carrying its own press, its own hint and a `:hover` rule, so the
-same four steps a plain button took apply unchanged. Three things are different.
+Every one is a `<button>` already carrying its own press, its own hint and a `:hover` rule, so the same four steps a plain button took apply unchanged. Three things are different.
 
 #### 1. a segment has a state, and a press has none
 
-A picked segment wears `current` and answers nothing — `cursor: default`, and the fill it takes is
-the accent rather than the hover. So its fill under the cursor is already written as "not picked,
-not empty": `.segment:not(.current):not(.empty):hover`. That becomes `[data-hit]` in the same
-shape, and the picked one keeps its own rule.
+A picked segment wears `current` and answers nothing — `cursor: default`, and the fill it takes is the accent rather than the hover. So its fill under the cursor is already written as "not picked, not empty": `.segment:not(.current):not(.empty):hover`. That becomes `[data-hit]` in the same shape, and the picked one keeps its own rule.
 
-The presses among them (clear, invert) also take a stronger fill while held — `:active`. Nothing
-in the manager says "held right now"; the target hears the press and the release and nothing
-between. Either a second stamp is added for that, or the stronger fill goes.
+The presses among them (clear, invert) also take a stronger fill while held — `:active`. Nothing in the manager says "held right now"; the target hears the press and the release and nothing between. Either a second stamp is added for that, or the stronger fill goes.
 
 #### 2. a segment that would empty the list answers nothing
 
-A segment wearing `empty` is grayed and dead. A dead one still needs a rectangle — it stands in the
-run and the ones beside it must not answer for its space — so it registers with no press and no
-words, the same way a dead step mark does.
+A segment wearing `empty` is grayed and dead. A dead one still needs a rectangle — it stands in the run and the ones beside it must not answer for its space — so it registers with no press and no words, the same way a dead step mark does.
 
 #### 3. names
 
-Every set holds many at once, so each takes its own third part. The names are in the id naming
-rules above.
+Every set holds many at once, so each takes its own third part. The names are in the id naming rules above.
 
 #### what has to be told
 
-A tag area opening slides its neighbors along the row over the whole of a slide, so every rectangle
-in that row is wrong until it settles. The row already measures itself when the picks change and
-when it changes shape; that is where the manager is told, once the sliding stops.
+A tag area opening slides its neighbors along the row over the whole of a slide, so every rectangle in that row is wrong until it settles. The row already measures itself when the picks change and when it changes shape; that is where the manager is told, once the sliding stops.
 
 ### implement for soft pointers
 
-Every other control is written in the markup, so the action can be put on it. A soft pointer is
-not: the app builds each one in code and pushes it into the drawn page, then throws every one away
-and builds them again whenever a fold moves or the words change.
+Every other control is written in the markup, so the action can be put on it. A soft pointer is not: the app builds each one in code and pushes it into the drawn page, then throws every one away and builds them again whenever a fold moves or the words change.
 
 #### 1. one place makes them, so one place wires them
 
-`one_mark` already takes the words and the press. It gains the name, and inside it makes the
-target, registers the element, watches the manager's hover to stamp the element, and drops its own
-press listener. The `:hover` rule on a mark becomes a `[data-hit]` rule.
+`one_mark` already takes the words and the press. It gains the name, and inside it makes the target, registers the element, watches the manager's hover to stamp the element, and drops its own press listener. The `:hover` rule on a mark becomes a `[data-hit]` rule.
 
 #### 2. unmaking is the part this has to do by hand
 
-The action does its own tidying when its element goes; a mark made in code has nobody to do that.
-Every mark is thrown away and built afresh on each fold, so the line that clears them must also
-take each target out of the manager and stop its watching. Otherwise every fold leaves a dead
-rectangle standing where a mark used to be, still answering the cursor. One list, held beside the
-marks, saying what to undo.
+The action does its own tidying when its element goes; a mark made in code has nobody to do that. Every mark is thrown away and built afresh on each fold, so the line that clears them must also take each target out of the manager and stop its watching. Otherwise every fold leaves a dead rectangle standing where a mark used to be, still answering the cursor. One list, held beside the marks, saying what to undo.
 
 #### 3. two things to settle first
 
-A press on a mark stops the press reaching the words behind it, since a press on those words opens
-that piece for changing. The manager hands a press to one target only, so that stopping is no
-longer needed — but only once the words themselves are a target, and they are not one yet.
+A press on a mark stops the press reaching the words behind it, since a press on those words opens that piece for changing. The manager hands a press to one target only, so that stopping is no longer needed — but only once the words themselves are a target, and they are not one yet.
 
 In the editor's file content area scrolling calls `hits.recalibrate`.
 
 ### implement for md blocks
 
-Each piece of a drawn file — a paragraph, a heading, a list, a code block — answers a press by
-opening in a box holding the file's own words for those lines. That press is watched by the whole
-words area at once rather than by each piece, and which piece was pressed is worked out from what
-the press landed on.
+Each piece of a drawn file — a paragraph, a heading, a list, a code block — answers a press by opening in a box holding the file's own words for those lines. That press is watched by the whole words area at once rather than by each piece, and which piece was pressed is worked out from what the press landed on.
 
 #### the proposal
 
@@ -188,9 +158,7 @@ the press landed on.
 
 #### what a block has to tell the manager
 
-The words scroll, so the box holding them says so on every scroll — the same one line the list
-carries. Opening a piece for changing swaps its height, which moves every piece below it: that is
-told once the box is drawn.
+The words scroll, so the box holding them says so on every scroll — the same one line the list carries. Opening a piece for changing swaps its height, which moves every piece below it: that is told once the box is drawn.
 
 ### implement for a section
 
@@ -254,12 +222,9 @@ Both plain fixes are in. 356 tests pass, 0 type errors.
 
 ## the risk
 
-Every rectangle is measured once and remembered. The manager never looks at the page to answer a
-question — it answers from what it was last told. The whole design rests on one thing: every part
-of the app that moves something must say so.
+Every rectangle is measured once and remembered. The manager never looks at the page to answer a question — it answers from what it was last told. The whole design rests on one thing: every part of the app that moves something must say so.
 
-**That is the true price, not the milliseconds.** All three faults in the wiring session were this
-one fault wearing different clothes:
+**That is the true price, not the milliseconds.** All three faults in the wiring session were this one fault wearing different clothes:
 
 - a run of tags measured before the browser had laid it out, so four areas' tags claimed one strip
 - a shut area's tags keeping their full size inside a box of no width, holding places on the page
@@ -267,19 +232,11 @@ one fault wearing different clothes:
 - a folder's triangle handing its press to the manager while the row behind it went on firing its
     own, since nothing told the row
 
-**What makes it dangerous.** A stale rectangle looks like nothing at all. The screen is drawn
-correctly, the checker is silent, the tests pass — and a control simply answers for a strip of the
-page it no longer occupies, or stops answering for the one it does. Nothing points at the cause;
-the only way in is to make the app say what it found at the point pressed.
+**What makes it dangerous.** A stale rectangle looks like nothing at all. The screen is drawn correctly, the checker is silent, the tests pass — and a control simply answers for a strip of the page it no longer occupies, or stops answering for the one it does. Nothing points at the cause; the only way in is to make the app say what it found at the point pressed.
 
-**What holds it down today.** Eleven places say when something moves: a word moved onto a line, a
-fold, a tag area settling, two scrolling boxes, three watchers, the window resizing, and every
-target as it arrives. Adding a twelfth kind of movement and forgetting to say so is the standing
-danger, and nothing catches it.
+**What holds it down today.** Eleven places say when something moves: a word moved onto a line, a fold, a tag area settling, two scrolling boxes, three watchers, the window resizing, and every target as it arrives. Adding a twelfth kind of movement and forgetting to say so is the standing danger, and nothing catches it.
 
-**What would catch it.** The manager could check itself — once a second while the cursor is still,
-read the hovered target's rectangle afresh and say so in the log if it has moved. That costs one
-read a second, and it would have named all three faults in the moment they appeared.
+**What would catch it.** The manager could check itself — once a second while the cursor is still, read the hovered target's rectangle afresh and say so in the log if it has moved. That costs one read a second, and it would have named all three faults in the moment they appeared.
 
 ## Proposal — manage this risk
 

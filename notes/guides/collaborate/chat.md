@@ -24,8 +24,7 @@ Without these, every conversation starts from zero.
 
 ### The Mental Model
 
-Jonathan is **what** and **why** -- direction, quality, essence
-Co is **how** and **where** -- dig, present, distill
+Jonathan is **what** and **why** -- direction, quality, essence Co is **how** and **where** -- dig, present, distill
 
 
 ### Leaning into Learning

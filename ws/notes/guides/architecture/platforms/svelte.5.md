@@ -689,8 +689,7 @@ $effect(() => {
 });
 ```
 
-First run: setup
-Second run: cleanup + setup
+First run: setup Second run: cleanup + setup
 
 This is intentional. Helps catch bugs. Only happens in dev.
 

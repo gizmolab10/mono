@@ -53,25 +53,19 @@ Sets both `id` and `hid` on construction. Default generates a new ID if none sup
 
 ### Static Methods
 
-**`newID(prefix: string = 'NEW'): string`**
-Generates a unique ID from UUIDv4. Takes the last 14 characters of the UUID (most-unique bytes), strips all `-` characters, prepends `prefix`. Result is alphanumeric, 17 chars with default prefix.
+**`newID(prefix: string = 'NEW'): string`** Generates a unique ID from UUIDv4. Takes the last 14 characters of the UUID (most-unique bytes), strips all `-` characters, prepends `prefix`. Result is alphanumeric, 17 chars with default prefix.
 
-**`removeAll(item: string, from: string): string`**
-Iterative string replacement — removes all occurrences of `item` from `from` until length stops changing.
+**`removeAll(item: string, from: string): string`** Iterative string replacement — removes all occurrences of `item` from `from` until length stops changing.
 
-**`id_inReverseOrder(id: string): string`**
-For IDs longer than 3 characters, generates a fresh new ID. For short IDs (3 chars or fewer), reverses the non-first characters (keeps first char, reverses the rest). Used to generate stable reversed-relationship IDs for short IDs.
+**`id_inReverseOrder(id: string): string`** For IDs longer than 3 characters, generates a fresh new ID. For short IDs (3 chars or fewer), reverses the non-first characters (keeps first char, reverses the rest). Used to generate stable reversed-relationship IDs for short IDs.
 
-**`remove_item_byHID<T>(from: Array<T>, item: T): Array<T>`**
-Filters an array by removing the element whose `hid` matches the target. Type-cast pattern: treats generics as `Identifiable` internally.
+**`remove_item_byHID<T>(from: Array<T>, item: T): Array<T>`** Filters an array by removing the element whose `hid` matches the target. Type-cast pattern: treats generics as `Identifiable` internally.
 
 ### Instance Methods
 
-**`equals(other: Identifiable | null | undefined): boolean`**
-String equality on `id`. Returns `false` for null/undefined.
+**`equals(other: Identifiable | null | undefined): boolean`** String equality on `id`. Returns `false` for null/undefined.
 
-**`setID(id: string = Identifiable.newID())`**
-Updates both `id` and `hid`. Allows post-construction ID assignment.
+**`setID(id: string = Identifiable.newID())`** Updates both `id` and `hid`. Allows post-construction ID assignment.
 
 ---
 
@@ -100,32 +94,25 @@ constructor(t_database: string, idBase: string, t_persistable: T_Persistable, id
 
 ### Instance Methods
 
-**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`**
-Empty async method. Overridden by every concrete subclass to either create or update the record in the database.
+**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`** Empty async method. Overridden by every concrete subclass to either create or update the record in the database.
 
-**`log(option: T_Debug, message: string)`**
-Delegates to `debug.log_maybe`. Some subclasses override this to append `this.description`.
+**`log(option: T_Debug, message: string)`** Delegates to `debug.log_maybe`. Some subclasses override this to append `this.description`.
 
-**`isInDifferentBulkThan(other: Persistable): boolean`**
-Returns `true` if `this.idBase != other.idBase`. Overridden by `Thing` to add cross-bulk alias logic.
+**`isInDifferentBulkThan(other: Persistable): boolean`** Returns `true` if `this.idBase != other.idBase`. Overridden by `Thing` to add cross-bulk alias logic.
 
-**`set_isDirty(flag: boolean = true)`**
-Sets `this.persistence.isDirty` to `flag` and signals a data redraw via `busy.signal_data_redraw()`. Does nothing if `busy.isFetching` is true AND `h.db.isPersistent` is false (i.e., skips dirty marking during fetch on non-persistent databases).
+**`set_isDirty(flag: boolean = true)`** Sets `this.persistence.isDirty` to `flag` and signals a data redraw via `busy.signal_data_redraw()`. Does nothing if `busy.isFetching` is true AND `h.db.isPersistent` is false (i.e., skips dirty marking during fetch on non-persistent databases).
 
-**`persist(): Promise<void>`**
-Calls `this.persistence.persist_withClosure(...)`, passing a closure that calls `persistent_create_orUpdate(already_persisted)`. The `already_persisted` flag comes from `S_Persistence`.
+**`persist(): Promise<void>`** Calls `this.persistence.persist_withClosure(...)`, passing a closure that calls `persistent_create_orUpdate(already_persisted)`. The `already_persisted` flag comes from `S_Persistence`.
 
 ### Static Methods
 
-**`get t_persistables(): Array<T_Persistable>`**
-Returns the five types that participate in bulk operations:
+**`get t_persistables(): Array<T_Persistable>`** Returns the five types that participate in bulk operations:
 ```
 [things, traits, predicates, relationships, tags]
 ```
 Note: `users` and `access` are excluded.
 
-**`dirty_count(persistables: Array<Persistable>): number`**
-Counts how many in the array have `persistence.isDirty === true`.
+**`dirty_count(persistables: Array<Persistable>): number`** Counts how many in the array have `persistence.isDirty === true`.
 
 ---
 
@@ -194,42 +181,29 @@ get fields(): Dictionary<string>
 
 ### Instance Methods
 
-**`debugLog(message: string)`**
-Logs with `T_Debug.things` flag.
+**`debugLog(message: string)`** Logs with `T_Debug.things` flag.
 
-**`trait_forType(type: T_Trait): Trait`**
-Returns `this.si_traits?.item as Trait`. Note: does not use the `type` parameter to filter — appears to return the first trait regardless. Possibly a bug or stub.
+**`trait_forType(type: T_Trait): Trait`** Returns `this.si_traits?.item as Trait`. Note: does not use the `type` parameter to filter — appears to return the first trait regardless. Possibly a bug or stub.
 
-**`hasParents_ofKind(kind: string): boolean`**
-`parents_ofKind(kind).length > 0`.
+**`hasParents_ofKind(kind: string): boolean`** `parents_ofKind(kind).length > 0`.
 
-**`hasMultipleParents_ofKind(kind: string): boolean`**
-`parents_ofKind(kind).length > 1`.
+**`hasMultipleParents_ofKind(kind: string): boolean`** `parents_ofKind(kind).length > 1`.
 
-**`log(option: T_Debug, message: string)`**
-Overrides Persistable. Appends `this.description` to the message.
+**`log(option: T_Debug, message: string)`** Overrides Persistable. Appends `this.description` to the message.
 
-**`isInDifferentBulkThan(other: Thing): boolean`**
-Overrides Persistable. Returns true if `idBase` differs OR if `other.isBulkAlias && !this.isBulkAlias && this.idBase != other.title`. The second condition handles the case where a bulk alias stores the foreign base ID as its title.
+**`isInDifferentBulkThan(other: Thing): boolean`** Overrides Persistable. Returns true if `idBase` differs OR if `other.isBulkAlias && !this.isBulkAlias && this.idBase != other.title`. The second condition handles the case where a bulk alias stores the foreign base ID as its title.
 
-**`signal_color_change()`**
-Increments `e.w_count_rebuild`, then sets `colors.w_thing_color` to `"${id}${separator}${count}"`. Triggers Svelte reactive updates for color-sensitive UI.
+**`signal_color_change()`** Increments `e.w_count_rebuild`, then sets `colors.w_thing_color` to `"${id}${separator}${count}"`. Triggers Svelte reactive updates for color-sensitive UI.
 
-**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`**
-If `already_persisted`: calls `databases.db_now.thing_persistentUpdate(this)`.
-Else: calls `databases.db_now.thing_remember_persistentCreate(this)`.
+**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`** If `already_persisted`: calls `databases.db_now.thing_persistentUpdate(this)`. Else: calls `databases.db_now.thing_remember_persistentCreate(this)`.
 
-**`crumbWidth(numberOfParents: number): number`**
-Returns pixel width for breadcrumb display. Base is `width_ofTitle + 10`. Adds 11 for one parent, 18 for multiple parents (to accommodate parent indicator glyphs).
+**`crumbWidth(numberOfParents: number): number`** Returns pixel width for breadcrumb display. Base is `width_ofTitle + 10`. Adds 11 for one parent, 18 for multiple parents (to accommodate parent indicator glyphs).
 
-**`remove_fromGrabbed_andExpanded_andResolveFocus()`**
-Called on deletion. Iterates all ancestries, removes from grabbed/expanded state for ancestries that reference this thing. If this thing is the current focus, promotes `h.rootAncestry` to focus.
+**`remove_fromGrabbed_andExpanded_andResolveFocus()`** Called on deletion. Iterates all ancestries, removes from grabbed/expanded state for ancestries that reference this thing. If this thing is the current focus, promotes `h.rootAncestry` to focus.
 
-**`parents_ofKind(kind: string): Array<Thing>`**
-Queries `h.relationships_ofKind_forParents_ofThing(kind, true, this)`, extracts `relationship.parent` for each. Returns empty array if `isRoot`.
+**`parents_ofKind(kind: string): Array<Thing>`** Queries `h.relationships_ofKind_forParents_ofThing(kind, true, this)`, extracts `relationship.parent` for each. Returns empty array if `isRoot`.
 
-**`ancestries_createUnique_forPredicate(predicate: Predicate | null): Array<Ancestry>`**
-Creates ancestry path objects for a given predicate. If `predicate.isBidirectional`, creates ancestries centered on this thing. Otherwise walks `parents_ofKind(predicate.kind)` and creates parent-rooted ancestries. Strips falsy values and deduplicates by thing.
+**`ancestries_createUnique_forPredicate(predicate: Predicate | null): Array<Ancestry>`** Creates ancestry path objects for a given predicate. If `predicate.isBidirectional`, creates ancestries centered on this thing. Otherwise walks `parents_ofKind(predicate.kind)` and creates parent-rooted ancestries. Strips falsy values and deduplicates by thing.
 
 ---
 
@@ -282,32 +256,23 @@ Orders are stored as strings in Airtable.
 
 ### Instance Methods
 
-**`reversed_remember_createUnique: Relationship`** (getter)
-If no reversed relationship exists, creates one: new `Relationship` with swapped parent/child, reversed orders array, ID generated by `Identifiable.id_inReverseOrder(this.id)`, `isReversed = true`. Registers it in hierarchy.
+**`reversed_remember_createUnique: Relationship`** (getter) If no reversed relationship exists, creates one: new `Relationship` with swapped parent/child, reversed orders array, ID generated by `Identifiable.id_inReverseOrder(this.id)`, `isReversed = true`. Registers it in hierarchy.
 
-**`order_forPointsTo(isCluster_ofChildren: boolean): number`**
-Returns `orders[T_Order.child]` if `isCluster_ofChildren`, else `orders[T_Order.other]`.
+**`order_forPointsTo(isCluster_ofChildren: boolean): number`** Returns `orders[T_Order.child]` if `isCluster_ofChildren`, else `orders[T_Order.other]`.
 
-**`remove_from(relationships: Array<Relationship>)`**
-Filters by `kind != this.kind`. Note: the result is not assigned — this appears to be a bug (`.filter` return is discarded).
+**`remove_from(relationships: Array<Relationship>)`** Filters by `kind != this.kind`. Note: the result is not assigned — this appears to be a bug (`.filter` return is discarded).
 
-**`orders_setTo(newOrders: Array<number>)`**
-Sets both order slots without persisting or signaling yet.
+**`orders_setTo(newOrders: Array<number>)`** Sets both order slots without persisting or signaling yet.
 
-**`thing(child: boolean): Thing | null`**
-Returns child or parent thing by hashing the relevant ID.
+**`thing(child: boolean): Thing | null`** Returns child or parent thing by hashing the relevant ID.
 
-**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`**
-Routes to `relationship_persistentUpdate` or `relationship_remember_persistentCreate`.
+**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`** Routes to `relationship_persistentUpdate` or `relationship_remember_persistentCreate`.
 
-**`order_setTo_forPointsTo(order: number, toChildren: boolean = true)`**
-Converts `toChildren` to a `T_Order` slot and delegates to `order_setTo`.
+**`order_setTo_forPointsTo(order: number, toChildren: boolean = true)`** Converts `toChildren` to a `T_Order` slot and delegates to `order_setTo`.
 
-**`order_setTo(newOrder: number, t_order: T_Order = T_Order.child)`**
-Only updates if the difference from current is `> 0.001`. On change: updates the array, sets `x.w_order_changed_at` to `Date.now()`, calls `set_isDirty()`.
+**`order_setTo(newOrder: number, t_order: T_Order = T_Order.child)`** Only updates if the difference from current is `> 0.001`. On change: updates the array, sets `x.w_order_changed_at` to `Date.now()`, calls `set_isDirty()`.
 
-**`assign_idParent(idParent: string)`**
-Unregisters self from hierarchy, updates `idParent` and `hidParent`, marks dirty, re-registers in hierarchy. Allows reparenting of a relationship.
+**`assign_idParent(idParent: string)`** Unregisters self from hierarchy, updates `idParent` and `hidParent`, marks dirty, re-registers in hierarchy. Allows reparenting of a relationship.
 
 ---
 
@@ -334,8 +299,7 @@ Passes `k.empty` for `idBase` (predicates are not bulk-scoped) and `T_Persistabl
 
 ### Computed Getters
 
-**`description: string`**
-`this.kind.unCamelCase().lastWord()` — un-camel-cases the kind string, takes last word. E.g. `'isRelated'` → `'related'`.
+**`description: string`** `this.kind.unCamelCase().lastWord()` — un-camel-cases the kind string, takes last word. E.g. `'isRelated'` → `'related'`.
 
 ### Static Convenience Getters
 
@@ -356,26 +320,21 @@ All return `Predicate | null`. Implemented via `predicate_forKind(kind: string):
 
 ### Static Methods
 
-**`isBidirectional_for(kind: T_Predicate): boolean`**
-Returns `kind != T_Predicate.contains`. So only `contains` is unidirectional; everything else is bidirectional by default.
+**`isBidirectional_for(kind: T_Predicate): boolean`** Returns `kind != T_Predicate.contains`. So only `contains` is unidirectional; everything else is bidirectional by default.
 
 ### Instance Methods
 
-**`log(option: T_Debug, message: string)`**
-Overrides Persistable. Appends `this.description`.
+**`log(option: T_Debug, message: string)`** Overrides Persistable. Appends `this.description`.
 
-**`kinship_forChildren_cluster(isCluster_ofChildren: boolean): T_Kinship | null`**
-Maps predicate+direction to a `T_Kinship`:
+**`kinship_forChildren_cluster(isCluster_ofChildren: boolean): T_Kinship | null`** Maps predicate+direction to a `T_Kinship`:
 - `contains` + children → `T_Kinship.children`
 - `contains` + not children → `T_Kinship.parents`
 - `isRelated` → `T_Kinship.related`
 - anything else → `null`
 
-**`angle_ofCluster_when(isCluster_ofChildren: boolean): number`**
-Computes the radial angle for a cluster of this predicate type. Uses global rotate angle (`radial.w_rotate_angle`). For bidirectional predicates, offsets by `2π/3` (equilateral distribution). For unidirectional: children at the global angle, parents at global minus `2π/3`. Returns normalized angle.
+**`angle_ofCluster_when(isCluster_ofChildren: boolean): number`** Computes the radial angle for a cluster of this predicate type. Uses global rotate angle (`radial.w_rotate_angle`). For bidirectional predicates, offsets by `2π/3` (equilateral distribution). For unidirectional: children at the global angle, parents at global minus `2π/3`. Returns normalized angle.
 
-**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`**
-Routes to `predicate_persistentUpdate` or `predicate_remember_persistentCreate`.
+**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`** Routes to `predicate_persistentUpdate` or `predicate_remember_persistentCreate`.
 
 ---
 
@@ -413,18 +372,15 @@ get fields(): Airtable.FieldSet
 
 ### Computed Getters
 
-**`owner: Thing | null`**
-Looks up the owning thing by `ownerID.hash()` in the hierarchy.
+**`owner: Thing | null`** Looks up the owning thing by `ownerID.hash()` in the hierarchy.
 
 ### Instance Methods
 
-**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`**
-Routes to `trait_persistentUpdate` or `trait_remember_persistentCreate`.
+**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`** Routes to `trait_persistentUpdate` or `trait_remember_persistentCreate`.
 
 ### Static Methods
 
-**`type_fromSeriously(type: string): T_Trait`**
-Converts single-char codes from the legacy "Seriously" import format to `T_Trait` enum values:
+**`type_fromSeriously(type: string): T_Trait`** Converts single-char codes from the legacy "Seriously" import format to `T_Trait` enum values:
 
 | Code | T_Trait |
 |------|---------|
@@ -463,16 +419,13 @@ Note: `thingHIDs` is runtime-only as HIDs are derived values. The actual persist
 
 ### Computed Getters
 
-**`things: Array<Thing>`**
-Maps `thingHIDs` through `h.thing_forHID`, filters out nulls. Returns all live `Thing` objects tagged by this tag.
+**`things: Array<Thing>`** Maps `thingHIDs` through `h.thing_forHID`, filters out nulls. Returns all live `Thing` objects tagged by this tag.
 
 ### Instance Methods
 
-**`ownerAt(index: number): Thing | null`**
-Returns the thing at position `index` in `this.things`, or null if out of bounds.
+**`ownerAt(index: number): Thing | null`** Returns the thing at position `index` in `this.things`, or null if out of bounds.
 
-**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`**
-Routes to `tag_persistentUpdate` or `tag_remember_persistentCreate`.
+**`persistent_create_orUpdate(already_persisted: boolean): Promise<void>`** Routes to `tag_persistentUpdate` or `tag_remember_persistentCreate`.
 
 ---
 

@@ -50,5 +50,4 @@ How the mono repo organizes shared and project-specific content.
 
 ## Rule
 
-If a guide applies to multiple projects → `mono/notes/guides/`
-If it's project-specific → `<project>/notes/`
+If a guide applies to multiple projects → `mono/notes/guides/` If it's project-specific → `<project>/notes/`

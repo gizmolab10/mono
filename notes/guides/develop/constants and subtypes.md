@@ -39,13 +39,11 @@ The table above is history now. Every type below uses the same words, and the st
 
 ## gap and thickness and size
 
-can they have non-overlapping ranges?
-size of interleaving lines
+can they have non-overlapping ranges? size of interleaving lines
 
 ## proposal
 
-rewrite -> summary of the code
-One set of eight subtypes — micro, faint, tiny, small, normal, big, fat, huge — and every type uses those words and no others. A step a type has no use for simply does not exist there; nothing is invented to fill a gap. Then reaching for a size is one decision, not two: pick the type, pick the subtype, and never open the file to check what this type happens to call its middle.
+rewrite -> summary of the code One set of eight subtypes — micro, faint, tiny, small, normal, big, fat, huge — and every type uses those words and no others. A step a type has no use for simply does not exist there; nothing is invented to fill a gap. Then reaching for a size is one decision, not two: pick the type, pick the subtype, and never open the file to check what this type happens to call its middle.
 
 **What it changes.** Only names. Every number stays exactly what it is, so nothing on screen moves. It is one pass over the constants and one over everything that reads them.
 

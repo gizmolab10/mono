@@ -70,8 +70,7 @@ export STORAGE="$HOME/anythingllm"mkdir -p "$STORAGE" && touch "$STORAGE/.env"do
 
 ## **3. Confirm and finish**
 
-open `localhost:3001`, finish the setup wizard, set a password (Settings), make your workspace, turn on the API and move the key.
-From memory of AnythingLLM's setup — exact wording shifts by version, so match the intent, not the letter:
+open `localhost:3001`, finish the setup wizard, set a password (Settings), make your workspace, turn on the API and move the key. From memory of AnythingLLM's setup — exact wording shifts by version, so match the intent, not the letter:
 
 1. **Finish the wizard**
 

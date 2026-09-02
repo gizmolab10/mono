@@ -118,8 +118,7 @@ $: {
 </script>
 ```
 
-**Dependencies are implicit:**
-Svelte analyzes your code and tracks what variables you read:
+**Dependencies are implicit:** Svelte analyzes your code and tracks what variables you read:
 ```svelte
 $: result = a + b;  // Depends on a and b
 ```
@@ -310,13 +309,11 @@ const count = writable(0);
 
 ## Svelte 4 vs Svelte 5
 
-**Svelte 4:** Reactive variables, `$:` statements, `$` store prefix
-**Svelte 5:** `$state()`, `$derived()`, `$props()` runes
+**Svelte 4:** Reactive variables, `$:` statements, `$` store prefix **Svelte 5:** `$state()`, `$derived()`, `$props()` runes
 
 We're on Svelte 4. No runes yet. When we upgrade, reactivity will work differently.
 
-**What stays the same:** Props, stores, lifecycle (mostly)
-**What changes:** Component state becomes explicit with runes
+**What stays the same:** Props, stores, lifecycle (mostly) **What changes:** Component state becomes explicit with runes
 
 ## Summary
 

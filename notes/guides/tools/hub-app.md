@@ -7,8 +7,7 @@ date: 2026-05-10
 ---
 # Hub App
 
-**Started:** 2025-01-09
-**Updated:** 2026-01-28
+**Started:** 2025-01-09 **Updated:** 2026-01-28
 
 ## Table of Contents
 

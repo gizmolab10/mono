@@ -1,7 +1,6 @@
 # Slow
 
-**Dates:** 2026-04-10 (bottleneck audit), 2026-04-11 (work-folder reorg cleanup), 2026-04-15 (skip-when-clean gate shipped), 2026-04-16 (bottlenecks #3–8, #10, #11, #14 shipped; remaining mothballed)
-**Session topic:** render pipeline performance audit and bottleneck cleanup; work-folder reorganization cleanup; skip-the-paint-when-nothing-changed gate; world-matrix cache, face-pair prune, and map-lookup swaps
+**Dates:** 2026-04-10 (bottleneck audit), 2026-04-11 (work-folder reorg cleanup), 2026-04-15 (skip-when-clean gate shipped), 2026-04-16 (bottlenecks #3–8, #10, #11, #14 shipped; remaining mothballed) **Session topic:** render pipeline performance audit and bottleneck cleanup; work-folder reorganization cleanup; skip-the-paint-when-nothing-changed gate; world-matrix cache, face-pair prune, and map-lookup swaps
 
 **Next:** bottleneck work is complete. Eleven of fifteen shipped; four mothballed (scratch-memory group #9, #12, #13 and string-key #15 — revisit only if profiling points at allocation pressure). Still open: review the three semantically-suspicious handoff references flagged in the 2026-04-11 session below.
 
@@ -161,91 +160,56 @@ There are now two active handoffs — one in `now/slow/` for the render performa
 
 ## no longer Open decisions Jonathan needs to make
 
-(The four original open questions were decided on 2026-04-15 — see the session
-entry below. Remaining open items are captured in the Next line at the top.)
+(The four original open questions were decided on 2026-04-15 — see the session entry below. Remaining open items are captured in the Next line at the top.)
 
 ---
 
 ## Session 3 — 2026-04-15 — skip-when-clean gate shipped
 
-Wired the full skip-the-paint-when-nothing-changed gate for bottleneck two. All
-three layers of coverage are in place, every test still passes, and the type
-checker is clean.
+Wired the full skip-the-paint-when-nothing-changed gate for bottleneck two. All three layers of coverage are in place, every test still passes, and the type checker is clean.
 
 ### Decisions made at the start of the session
 
 The four open questions were answered before building:
 
-- Rot prevention: strongest. Every write to a canvas-affecting input now
-  funnels through a tiny wrapper that marks the canvas out of date, so new
-  stores added later get coverage automatically when declared through that
-  wrapper.
-- Ship order: three logical steps. Wiring first, then the gate, then the
-  wrapper migration. All three were done in one session.
-- Keystroke override: skipped. The one-character rollback lever at the top of
-  the render module is enough.
-- Targeted marks: shipped alongside the subscriptions, not as a follow-up.
-  Without them the gate would leave three categories silently stale — window
-  resize, direct bound writes, and propagation-driven changes.
+- Rot prevention: strongest. Every write to a canvas-affecting input now funnels through a tiny wrapper that marks the canvas out of date, so new stores added later get coverage automatically when declared through that wrapper.
+- Ship order: three logical steps. Wiring first, then the gate, then the wrapper migration. All three were done in one session.
+- Keystroke override: skipped. The one-character rollback lever at the top of the render module is enough.
+- Targeted marks: shipped alongside the subscriptions, not as a follow-up. Without them the gate would leave three categories silently stale — window resize, direct bound writes, and propagation-driven changes.
 
 ### What shipped
 
-**A per-canvas out-of-date flag.** The render module now carries a private
-boolean that starts on, flips off at the start of every paint, and flips back
-on whenever any input the canvas cares about changes. A one-character
-rollback lever at the top of the module forces the flag to stay on forever,
-restoring the old always-paint behavior if something goes wrong.
+**A per-canvas out-of-date flag.** The render module now carries a private boolean that starts on, flips off at the start of every paint, and flips back on whenever any input the canvas cares about changes. A one-character rollback lever at the top of the module forces the flag to stay on forever, restoring the old always-paint behavior if something goes wrong.
 
 - Flag, mark function, rollback lever, clear-on-paint: [Render.ts](di/src/lib/ts/render/Render.ts)
 
-**Twenty-six subscriptions at setup.** Fourteen scene inputs (selection,
-object list, tick pulse, forward-face tracker, editing mode, decorations
-bitmask, persisted orientation, 2D/3D mode, line thickness, grid opacity,
-show-grid, solid mode, precision, persisted scale), six color inputs (hover
-derivation, selected, background, text, edge, accent), and six interaction
-inputs (pointer hover, drag pin offer, face-label editor, angular editor,
-dimension editor, unit system). Every subscription's unsubscribe is held on
-the render module so hot-module-reload can drop them cleanly.
+**Twenty-six subscriptions at setup.** Fourteen scene inputs (selection, object list, tick pulse, forward-face tracker, editing mode, decorations bitmask, persisted orientation, 2D/3D mode, line thickness, grid opacity, show-grid, solid mode, precision, persisted scale), six color inputs (hover derivation, selected, background, text, edge, accent), and six interaction inputs (pointer hover, drag pin offer, face-label editor, angular editor, dimension editor, unit system). Every subscription's unsubscribe is held on the render module so hot-module-reload can drop them cleanly.
 
 - Subscriptions, hot-reload cleanup, gate, instrumentation: [Engine.ts](di/src/lib/ts/render/Engine.ts)
 
-**Three targeted marks for the non-reactive paths.** Direct writes that bypass
-reactive stores get covered at their chokepoints: the bound setter on every
-smart object, the top of the post-propagate hook, and the top of the resize
-method.
+**Three targeted marks for the non-reactive paths.** Direct writes that bypass reactive stores get covered at their chokepoints: the bound setter on every smart object, the top of the post-propagate hook, and the top of the resize method.
 
 - Bound-change callback: [Smart_Object.ts](di/src/lib/ts/runtime/Smart_Object.ts)
 - Propagate hook and bound-change wire-up: [Engine.ts](di/src/lib/ts/render/Engine.ts)
 - Resize mark: [Render.ts](di/src/lib/ts/render/Render.ts)
 
-**Early-return gate in the animation tick.** If the canvas is up to date and
-the orientation snap-back animation is not running, the tick returns early
-and skips all per-frame work.
+**Early-return gate in the animation tick.** If the canvas is up to date and the orientation snap-back animation is not running, the tick returns early and skips all per-frame work.
 
-**Rot prevention via a writable wrapper.** A new helper wraps a Svelte
-writable so every set and update calls a canvas-stale callback. Setup hooks
-that callback to the render module. The fourteen canvas-affecting scene
-stores, the six color stores, and the six interaction stores were migrated
-to the helper.
+**Rot prevention via a writable wrapper.** A new helper wraps a Svelte writable so every set and update calls a canvas-stale callback. Setup hooks that callback to the render module. The fourteen canvas-affecting scene stores, the six color stores, and the six interaction stores were migrated to the helper.
 
 - Helper: [Stale_Writable.ts](di/src/lib/ts/common/Stale_Writable.ts)
 - Migrations: [Stores.ts](di/src/lib/ts/managers/Stores.ts), [Colors.ts](di/src/lib/ts/utilities/Colors.ts), [Hits_3D.ts](di/src/lib/ts/events/Hits_3D.ts), [Drag.ts](di/src/lib/ts/editors/Drag.ts), [Face_Label.ts](di/src/lib/ts/editors/Face_Label.ts), [Angular.ts](di/src/lib/ts/editors/Angular.ts), [Dimension.ts](di/src/lib/ts/editors/Dimension.ts), [Units.ts](di/src/lib/ts/types/Units.ts)
 
-**Instrumentation in the tick loop.** The loop logs a rolling summary every
-two seconds showing how many ticks it painted and how many it skipped.
-Temporary — to be removed once the gate is proven in real use.
+**Instrumentation in the tick loop.** The loop logs a rolling summary every two seconds showing how many ticks it painted and how many it skipped. Temporary — to be removed once the gate is proven in real use.
 
 ### What did not ship
 
-- Debug flag flips that are not wired through anything reactive will not mark
-  the canvas. The original proposal called this out and left it for later.
-- Any mutation site the audit missed will be silent. The counter is the tool
-  for finding those; use it during real interaction.
+- Debug flag flips that are not wired through anything reactive will not mark the canvas. The original proposal called this out and left it for later.
+- Any mutation site the audit missed will be silent. The counter is the tool for finding those; use it during real interaction.
 
 ### Test results
 
-- Four hundred and ninety-six tests remain green (five hundred and fourteen
-  overall, including the ones that were pre-existing but unchanged).
+- Four hundred and ninety-six tests remain green (five hundred and fourteen overall, including the ones that were pre-existing but unchanged).
 - Type-check is clean with zero errors and zero warnings.
 
 ### Files touched — session 3

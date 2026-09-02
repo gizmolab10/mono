@@ -7,8 +7,7 @@ date: 2026-05-10
 ---
 # Occlusion — Spatial Acceleration
 
-**Started:** 2026-02-08
-**Status:** Research
+**Started:** 2026-02-08 **Status:** Research
 
 ## Problem
 

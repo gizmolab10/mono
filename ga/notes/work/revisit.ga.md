@@ -1,7 +1,6 @@
 # Civilization 2.0 Game — Work Log
 
-**Date:** February 5, 2026
-**Participants:** Jonathan Sand, Claude (Anthropic)
+**Date:** February 5, 2026 **Participants:** Jonathan Sand, Claude (Anthropic)
 
 **Challenge:** Can Claude build the game under Jonathan's supervision?
 

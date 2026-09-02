@@ -43,9 +43,7 @@ Open questions:
 
 ### Structure
 
-**Entry:** Carnival of booths
-**Progression:** Accumulate regard → unlock guilds/homes/communities
-**Governance:** Guilds (master/apprentice, self-governing, non-bureaucratic)
+**Entry:** Carnival of booths **Progression:** Accumulate regard → unlock guilds/homes/communities **Governance:** Guilds (master/apprentice, self-governing, non-bureaucratic)
 
 ### Core Guilds
 

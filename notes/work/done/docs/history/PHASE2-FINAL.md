@@ -22,8 +22,7 @@ The `merge-files` tool is **production-ready** and fully tested.
 
 ## Implementation Notes
 
-**Simplified Approach:**
-The original spec called for "inserting content under best-fit headings," but we implemented a simpler, more reliable approach:
+**Simplified Approach:** The original spec called for "inserting content under best-fit headings," but we implemented a simpler, more reliable approach:
 - Unique sections are **appended to the end** of file B
 - This is safer and more predictable
 - User can manually reorganize if desired

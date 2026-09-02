@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/gallery/zone/ideas.md",
+                "file": "memory/ov/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
@@ -78,7 +78,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -112,7 +112,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:shop",
+                "query": "file:avoid murk",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -133,12 +133,12 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 388.50271224975586
+    "width": 388.50271224975586,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -216,7 +216,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/develop/keep shop.md",
+                "file": "notes/guides/pre-flight/shorthand.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -240,7 +240,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 217.6181640625
+    "width": 217.6181640625,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -254,15 +255,18 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a984c80ea760489d",
+  "active": "b23af6bc9b10ed11",
   "lastOpenFiles": [
-    "notes/guides/pre-flight/agency.md",
-    "notes/guides/pre-flight/response.md",
-    "notes/guides/pre-flight/always.md",
     "memory/ov/zone/ideas.md",
-    "memory/ov/index.md",
+    "notes/guides/collaborate/avoid murk.md",
+    "memory/shared/zone/ideas.md",
     "memory/gallery/zone/ideas.md",
+    "notes/guides/pre-flight/always.md",
+    "notes/guides/pre-flight/response.md",
     "notes/guides/pre-flight/shorthand.md",
+    "notes/guides/develop/keep shop.md",
+    "notes/guides/pre-flight/agency.md",
+    "memory/ov/index.md",
     "ov/notes/guides/design/ov - goals.md",
     "ws/node_modules/ts-node/node_modules",
     "ws/node_modules/@sveltejs/vite-plugin-svelte/node_modules",
@@ -299,9 +303,6 @@
     "gallery/node_modules/chokidar/README.md",
     "gallery/notes/work/working features.md",
     "gallery/notes/work/work journal.md",
-    "gallery/notes/work/photo gallery.md",
-    "gallery/notes/work/index.md",
-    "gallery/notes/work/editing the published site.md",
     "Untitled.canvas",
     "ws/notes/work/Untitled.canvas"
   ]

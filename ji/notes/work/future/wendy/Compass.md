@@ -523,8 +523,7 @@ Wendy's professional identity has crystallized over two decades into a distincti
 - Certified JourneyDance™ teacher
 - 30+ years of yoga and meditation practice (including Kripalu yoga)
 
-**Her superpowers (self-named):**
-Ecosystems Weaver · Energy Alchemist · Sensemaker · Spiritual Adventurer · Curator
+**Her superpowers (self-named):** Ecosystems Weaver · Energy Alchemist · Sensemaker · Spiritual Adventurer · Curator
 
 **Preferred working roles:** Strategist · Consultant · Weaver · Advisor · Content Curator · Researcher
 
@@ -934,8 +933,7 @@ The analogy she draws: once, a wise parent embedded in a stable community could 
 
 It does not tell people what to do. It nudges them toward their own awareness. It makes offers, not demands. It creates conditions for emergence.
 
-**The mathematician-biologist example:**
-A mathematician invited to work with a biologist — not because an algorithm determined this was optimal, but because the invitation itself surfaces something the person didn't know about themselves. *"Unbeknownst to both the system and the person, that invitation unlocks something... the second the invitation comes across, the person sees that in themselves."* This is precisely her Resonance Framework applied to collective intelligence: Resonance → Alignment → Coherence → Flow.
+**The mathematician-biologist example:** A mathematician invited to work with a biologist — not because an algorithm determined this was optimal, but because the invitation itself surfaces something the person didn't know about themselves. *"Unbeknownst to both the system and the person, that invitation unlocks something... the second the invitation comes across, the person sees that in themselves."* This is precisely her Resonance Framework applied to collective intelligence: Resonance → Alignment → Coherence → Flow.
 
 **The essential distinction:** Wendy is building, externally, a tool that works the way she works internally. The Compass she carries inside — her felt sense, her resonance instrument, her self-as-rudder — is the model for the technology she is building for everyone else. This is not coincidence. It is coherence.
 
@@ -961,8 +959,7 @@ This is non-trivial. The gap only becomes visible through the act of sorting eve
 
 This contrast illuminates both her curatorial drive and a recurring dynamic in collaborative relationships: she is wired to notice and celebrate uniqueness and to feel activated by gaps. A pioneer is wired for synergy and scale — novelty registers as "not enough of a pattern yet."
 
-**AI as a narrow pattern sensor:**
-She frames AI as a powerful but narrow pattern recognition tool — it can see patterns humans can't, but only in the language and data it's been fed. The question-design is the irreducibly human work. This is consistent with her conviction that *inquiry with people* is the leading-edge input for any collective intelligence system.
+**AI as a narrow pattern sensor:** She frames AI as a powerful but narrow pattern recognition tool — it can see patterns humans can't, but only in the language and data it's been fed. The question-design is the irreducibly human work. This is consistent with her conviction that *inquiry with people* is the leading-edge input for any collective intelligence system.
 
 **Connection to prior Compass sections:** The three-category taxonomy (similar/unique/missing) maps exactly onto her Sparketype (The Scientist: backbone for emergent conversation, early detection system) and Shadow Sparketype (The Essentialist: sees the whole, sees the holes, fills them). It also maps onto Gene Key 15 (magnetism within the room — she sees what others miss, then moves on). What was described as personality traits in the assessment batch now has a precise functional description.
 

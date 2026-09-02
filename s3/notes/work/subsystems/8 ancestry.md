@@ -323,9 +323,7 @@ get direction_ofReveal(): number
 ```ts
 svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child: boolean): string | null
 ```
-In tree mode: shown when `hidden_by_depth_limit` (truncation indicator) or `isVisible_forChild` (children exist, not expanded).
-In radial mode: children dots shown when not expanded; parent/related dots shown based on `show.parent_dots` / `show.related_dots` / `show.related_dots`.
-Returns `null` when dots should not be shown; otherwise calls `svgPaths.tiny_outer_dots_circular(k.tiny_outer_dots.diameter, count, points_right)`.
+In tree mode: shown when `hidden_by_depth_limit` (truncation indicator) or `isVisible_forChild` (children exist, not expanded). In radial mode: children dots shown when not expanded; parent/related dots shown based on `show.parent_dots` / `show.related_dots` / `show.related_dots`. Returns `null` when dots should not be shown; otherwise calls `svgPaths.tiny_outer_dots_circular(k.tiny_outer_dots.diameter, count, points_right)`.
 
 `k.tiny_outer_dots.diameter = 20` (dot_size 14 + expansion 6).
 
@@ -534,8 +532,7 @@ ancestry_assureIsVisible(): boolean
 ```
 If already visible, returns false. Otherwise:
 - Tree mode: creates a focus ancestry by stripping back `global_depth_limit` levels, makes it focus, then calls `reveal_toFocus()`.
-- Radial mode: makes `parentAncestry` the focus, then calls `assure_isVisible_within(sibling_ancestries)`.
-Returns true if action was taken.
+- Radial mode: makes `parentAncestry` the focus, then calls `assure_isVisible_within(sibling_ancestries)`. Returns true if action was taken.
 
 ```ts
 assure_isVisible_within(ancestries: Array<Ancestry>): boolean
@@ -662,8 +659,7 @@ Switch on `T_Kinship`:
 ```ts
 ancestries_createUnique_forPredicate(predicate: Predicate | null): Array<Ancestry>
 ```
-For `contains`: appends each child relationship ID via `ancestry_createUnique_byAppending_relationshipID`. Normalizes order.
-For non-contains: creates single-segment ancestries via `h.ancestry_remember_createUnique(relationship.id, kind)`.
+For `contains`: appends each child relationship ID via `ancestry_createUnique_byAppending_relationshipID`. Normalizes order. For non-contains: creates single-segment ancestries via `h.ancestry_remember_createUnique(relationship.id, kind)`.
 
 ---
 

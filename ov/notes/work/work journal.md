@@ -11,421 +11,219 @@ What's been finished, newest first.
 
 ## 2026-08-19 — the kinds are five
 
-`analyze` is a kind now: a taking apart of something to find out how it works. Two went out. Every
-screen reads the whole list off the one place it is written, so adding and removing reached the
-browse filters, the editor filters and the filter's own list with no further change.
+`analyze` is a kind now: a taking apart of something to find out how it works. Two went out. Every screen reads the whole list off the one place it is written, so adding and removing reached the browse filters, the editor filters and the filter's own list with no further change.
 
-**`design` moved to `explain`.** Fourteen files across the five collections wore it. Taking the kind
-out took something with it: a file's kind used to be guessed from the folders above it, and the only
-folder that ever spoke was `design` or `designs`. No folder name says how a file reads any more, so
-every path falls back and the stale mark asks for a real answer. Four test cases became one saying so.
+**`design` moved to `explain`.** Fourteen files across the five collections wore it. Taking the kind out took something with it: a file's kind used to be guessed from the folders above it, and the only folder that ever spoke was `design` or `designs`. No folder name says how a file reads any more, so every path falls back and the stale mark asks for a real answer. Four test cases became one saying so.
 
 **`refer` went too, and it was the fallback.** A composed file starts at `analyze` now.
 
 ### Also this session
 
-- **The murk hook was keeping half of every complaint.** It took the second-to-last thing I had said
-  and called it the reply that could not be read — but every tool call is an entry of its own, so for
-  any reply that looked a file up first, that was a tool call holding no words. It wrote an empty
-  string and said nothing about it. It passes over the wordless entries now, and a new test builds a
-  conversation with thinking and two tool calls between the two replies to prove the pair comes back
-  whole. Run against the old line, that test fails exactly the way the record did.
-- **`stow` replaced `done` as a tag**, in the closed list, in the progress tagset, and on the twelve
-  files wearing it. The `done` work folder and the `done` shorthand are untouched — neither is a tag.
+- **The murk hook was keeping half of every complaint.** It took the second-to-last thing I had said and called it the reply that could not be read — but every tool call is an entry of its own, so for any reply that looked a file up first, that was a tool call holding no words. It wrote an empty string and said nothing about it. It passes over the wordless entries now, and a new test builds a conversation with thinking and two tool calls between the two replies to prove the pair comes back whole. Run against the old line, that test fails exactly the way the record did.
+- **`stow` replaced `done` as a tag**, in the closed list, in the progress tagset, and on the twelve files wearing it. The `done` work folder and the `done` shorthand are untouched — neither is a tag.
 - **The dispatcher's `/list-guides` route is `/list-files`**, on both sides and in its test.
-- **The murk work split in two:** the nine strategies are a guide at
-  `notes/guides/collaborate/avoid murk.md`; the case they came from stays as a record in `soon/`.
+- **The murk work split in two:** the nine strategies are a guide at `notes/guides/collaborate/avoid murk.md`; the case they came from stays as a record in `soon/`.
 
 ### Verification
 
 - svelte-check: 532 files, 0 errors, 0 warnings.
-- vitest: 410 tests, 0 failing. One fewer than before — three cases about what a folder says
-  collapsed into one saying it says nothing.
+- vitest: 410 tests, 0 failing. One fewer than before — three cases about what a folder says collapsed into one saying it says nothing.
 
 ## 2026-08-17 — a link no longer stops at the wrong file of that name
 
-Following a link took the first file of that name found while climbing, and refused outright if its
-path disagreed with what the link said. Where two files share a name — a work note and the guide
-drawn out of it — the nearer one is often the file being read, so a link to the other opened
-nothing and named the file itself as the reason.
+Following a link took the first file of that name found while climbing, and refused outright if its path disagreed with what the link said. Where two files share a name — a work note and the guide drawn out of it — the nearer one is often the file being read, so a link to the other opened nothing and named the file itself as the reason.
 
-The climb passes over a file standing in the wrong place now and keeps going, and only refuses once
-every folder above has been looked in. The first one passed over is held for the message, so a
-refusal says where the file of that name does sit rather than saying it was not found.
+The climb passes over a file standing in the wrong place now and keeps going, and only refuses once every folder above has been looked in. The first one passed over is held for the message, so a refusal says where the file of that name does sit rather than saying it was not found.
 
-**The note line at the bottom of the reader says the whole thing.** It used to say which kind of
-refusal it was — "a file outside the guides" — and nothing about which file or where. Its words can
-be picked up and copied, it is registered while it is showing, and its arriving and leaving now say
-so, since it takes its height from the words in it and everything above it moves.
+**The note line at the bottom of the reader says the whole thing.** It used to say which kind of refusal it was — "a file outside the guides" — and nothing about which file or where. Its words can be picked up and copied, it is registered while it is showing, and its arriving and leaving now say so, since it takes its height from the words in it and everything above it moves.
 
 ## 2026-08-17 — the steppers name the file they would open
 
-Pointing at either stepper said only which way it went — "previous file", "next file" — so the only
-way to learn which file was to press, which is the very thing the reader was deciding about. Each
-says the name now, on the list and on the stack of guides reached by links alike.
+Pointing at either stepper said only which way it went — "previous file", "next file" — so the only way to learn which file was to press, which is the very thing the reader was deciding about. Each says the name now, on the list and on the stack of guides reached by links alike.
 
-**One piece of code both picked the next file and opened it; that is two now.** One says which file
-lies that way, the other goes there and asks the first. So the name shown and the file opened are
-one answer, and the walking rule is written once.
+**One piece of code both picked the next file and opened it; that is two now.** One says which file lies that way, the other goes there and asks the first. So the name shown and the file opened are one answer, and the walking rule is written once.
 
-The split settled a case the note had not: **backing out past the bottom of the stack goes to where
-the reading began**, which is a file like any other — so it names that file rather than falling back
-to the plain words. Stepping back to a report keeps them, since a report is not a file.
+The split settled a case the note had not: **backing out past the bottom of the stack goes to where the reading began**, which is a file like any other — so it names that file rather than falling back to the plain words. Stepping back to a report keeps them, since a report is not a file.
 
 ## 2026-08-17 — which guides point at this one
 
-A guide said what it pointed at and nothing said what pointed at it, so one could be rewritten,
-moved or thrown away without ever seeing who was relying on it. A section below the words now names
-them, each one openable, and is drawn only where something points here.
+A guide said what it pointed at and nothing said what pointed at it, so one could be rewritten, moved or thrown away without ever seeing who was relying on it. A section below the words now names them, each one openable, and is drawn only where something points here.
 
-**The links come out of each file's own text at launch**, in the moment its labels are read — the
-one moment that text is in hand, and it is let go straight after. Nothing is kept but the addresses.
-The dead-link walk could not fill this: it reads every file and runs only when asked.
+**The links come out of each file's own text at launch**, in the moment its labels are read — the one moment that text is in hand, and it is let go straight after. Nothing is kept but the addresses. The dead-link walk could not fill this: it reads every file and runs only when asked.
 
 Two faults, both silent, both found by measuring rather than reading:
 
-**The double-bracket form has to be turned into the ordinary one first.** A guide written the short
-way, naming only `[[a name]]`, holds no ordinary link at all — so reading its raw text found nothing
-and said nothing.
+**The double-bracket form has to be turned into the ordinary one first.** A guide written the short way, naming only `[[a name]]`, holds no ordinary link at all — so reading its raw text found nothing and said nothing.
 
-**Answering a link needs every guide findable by where it sits, and that map is filled by the
-narrowing.** Asked before it, every lookup found nothing — and it was silent, since a guide that
-cannot be found is skipped before any link is counted. It read `0 of 0` rather than naming a failure.
+**Answering a link needs every guide findable by where it sits, and that map is filled by the narrowing.** Asked before it, every lookup found nothing — and it was silent, since a guide that cannot be found is skipped before any link is counted. It read `0 of 0` rather than naming a failure.
 
 ## 2026-08-17 — a tag typed by hand went unread, and nothing said so
 
-A file's tags can be written two ways. This app writes them all on one line; **Obsidian writes them
-one name to a line, and rewrites a file into that shape the moment its tags are touched there.** The
-reading knew only the first, found nothing after the colon, and gave the file no tags at all.
+A file's tags can be written two ways. This app writes them all on one line; **Obsidian writes them one name to a line, and rewrites a file into that shape the moment its tags are touched there.** The reading knew only the first, found nothing after the colon, and gave the file no tags at all.
 
-**Nothing was dropped, so nothing was said.** The reading names by name every tag it turns away, and
-that silence was itself the clue — the file was not being half read, it was not being read.
+**Nothing was dropped, so nothing was said.** The reading names by name every tag it turns away, and that silence was itself the clue — the file was not being half read, it was not being read.
 
-The reading of the labels moved out of the manager and into the label utility, where the writing
-already lived. Both are plain work on text; in the manager the reading could not be tested without
-starting the whole app, which is why it had no test to fail.
+The reading of the labels moved out of the manager and into the label utility, where the writing already lived. Both are plain work on text; in the manager the reading could not be tested without starting the whole app, which is why it had no test to fail.
 
 ## 2026-08-17 — coming back comes back to where you were
 
-A guide left partway down opens where it was left, not at its top. That holds walking the link
-stack, stepping back to the list, and across a reload for the one guide being read. A link naming a
-heading still wins — the link says where to be.
+A guide left partway down opens where it was left, not at its top. That holds walking the link stack, stepping back to the list, and across a reload for the one guide being read. A link naming a heading still wins — the link says where to be.
 
-**A line is remembered, never a distance.** The topmost piece names the line of the file it began
-on, and coming back looks for the piece carrying that line. A line survives an edit that adds lines
-above it; a distance does not. One line per guide, so a guide reached twice down two different paths
-keeps a place for each.
+**A line is remembered, never a distance.** The topmost piece names the line of the file it began on, and coming back looks for the piece carrying that line. A line survives an edit that adds lines above it; a distance does not. One line per guide, so a guide reached twice down two different paths keeps a place for each.
 
 Two things had to be found on screen, neither visible from the code:
 
-**The line is written as the scrolling settles, never on the way out.** By the time a guide is
-leaving, its box has already gone back to the top, and every reading taken there said the file's
-first line.
+**The line is written as the scrolling settles, never on the way out.** By the time a guide is leaving, its box has already gone back to the top, and every reading taken there said the file's first line.
 
-**The title stays at the box's top however far the words scroll**, so it was always the first piece
-at the top and answered every reading. Anything that stays put is passed over now.
+**The title stays at the box's top however far the words scroll**, so it was always the first piece at the top and answered every reading. Anything that stays put is passed over now.
 
 ## 2026-08-17 — a fold mark drawn over the row that had covered its words
 
-Scrolled up, a heading's words went under the title row and its soft pointer was drawn whole across
-it. Both are covered by the same row, so the two disagreed.
+Scrolled up, a heading's words went under the title row and its soft pointer was drawn whole across it. Both are covered by the same row, so the two disagreed.
 
-**Every button is put on the controls layer**, and a fold mark is a button — so the mark and the
-title row held the same layer, and the mark, coming later in the page, won. The marks are on the
-common layer now and the title row is back on its own.
+**Every button is put on the controls layer**, and a fold mark is a button — so the mark and the title row held the same layer, and the mark, coming later in the page, won. The marks are on the common layer now and the title row is back on its own.
 
-I guessed twice before measuring, and both guesses were wrong. What settled it was reading the
-computed layer off the browser: the mark said 2, the same as the row, where I had assumed `auto`.
+I guessed twice before measuring, and both guesses were wrong. What settled it was reading the computed layer off the browser: the mark said 2, the same as the row, where I had assumed `auto`.
 
 ## 2026-08-17 — handing a file on, and why Windows never could
 
-The ⤴ mark hands the browser a `mailto:` address. Windows hands that to a program it knows about,
-and a browser tab is not one — so Gmail never sees it unless two separate things are set: Windows
-pointing `mailto:` at Chrome, and Chrome holding Gmail as its own handler. With Outlook holding the
-registration, the press works as designed and opens Outlook, which is a failure to whoever never
-uses it.
+The ⤴ mark hands the browser a `mailto:` address. Windows hands that to a program it knows about, and a browser tab is not one — so Gmail never sees it unless two separate things are set: Windows pointing `mailto:` at Chrome, and Chrome holding Gmail as its own handler. With Outlook holding the registration, the press works as designed and opens Outlook, which is a failure to whoever never uses it.
 
-**ji proved the content is not the cause** — its ⤴ sends a bare address, 27 characters, and fails
-just the same.
+**ji proved the content is not the cause** — its ⤴ sends a bare address, 27 characters, and fails just the same.
 
-**Overview has a second wall behind that one.** Gmail's handler caps at about 4,096 characters after
-encoding, and Chrome reaches Gmail by putting the whole `mailto:` inside a second address, so every
-escape is escaped again. Every guide in the repo is past the ceiling before the doubling —
-handoff.md alone comes to 4,289. Carrying a whole file to Gmail needs another way altogether.
+**Overview has a second wall behind that one.** Gmail's handler caps at about 4,096 characters after encoding, and Chrome reaches Gmail by putting the whole `mailto:` inside a second address, so every escape is escaped again. Every guide in the repo is past the ceiling before the doubling — handoff.md alone comes to 4,289. Carrying a whole file to Gmail needs another way altogether.
 
 The steps for a Windows machine are written into [ov installer](soon/ov%20installer.md).
 
-**Nine dead links found in the work index.** Eight rows named files that had moved into `soon/`, and
-one sat under "More" with a top-level path. That folder has an index of its own now, and the parent
-goes through one row for it.
+**Nine dead links found in the work index.** Eight rows named files that had moved into `soon/`, and one sat under "More" with a top-level path. That folder has an index of its own now, and the parent goes through one row for it.
 
 ## 2026-08-17 — what a field is for, and what is already finished
 
-Both read quieter than real words now, in the light gray. Two fields in the whole app carry
-placeholder words — browse's search and the editor's — and a finished thing's struck-through words
-were a shade too dark to read as done.
+Both read quieter than real words now, in the light gray. Two fields in the whole app carry placeholder words — browse's search and the editor's — and a finished thing's struck-through words were a shade too dark to read as done.
 
 ## 2026-08-17 — the sections design settled, and a word that answered nothing
 
-A stack owns the gaps between its sections and draws a line centred in each one. Every distance is
-middle to middle, and a folded section is one number — `k.height.small` — from its own line to the
-next, with the accent filling that span and a hairline down its exact middle.
+A stack owns the gaps between its sections and draws a line centred in each one. Every distance is middle to middle, and a folded section is one number — `k.height.small` — from its own line to the next, with the accent filling that span and a hairline down its exact middle.
 
-**The folded distance has a floor.** The two half gaps around a fold come out of it, so it can never
-be smaller than the widest pair's spacing on any screen. Below the floor a fold's height goes
-negative, the browser draws it at nothing, and that one pair reads wider than the rest — which looks
-like a spacing fault and is not.
+**The folded distance has a floor.** The two half gaps around a fold come out of it, so it can never be smaller than the widest pair's spacing on any screen. Below the floor a fold's height goes negative, the browser draws it at nothing, and that one pair reads wider than the rest — which looks like a spacing fault and is not.
 
-**A line drawn below a stack must be pulled up half its own thickness.** The stack leaves its bottom
-edge exactly where that line's middle belongs; a line drawn below starts there instead.
+**A line drawn below a stack must be pulled up half its own thickness.** The stack leaves its bottom edge exactly where that line's middle belongs; a line drawn below starts there instead.
 
-**`closes` became `foot`** — who draws that line: the stack, whatever stands below it, or nobody.
-Nobody means a last fold has nothing to end against, so it comes down to its own line and nothing
-else.
+**`closes` became `foot`** — who draws that line: the stack, whatever stands below it, or nobody. Nobody means a last fold has nothing to end against, so it comes down to its own line and nothing else.
 
-**A word lent to a line was never given back.** A caller builds its fold word out of sight and the
-line takes it. When that line went, the word was taken off the page and left there — so the hits
-manager let its target go for good, and the word sat on screen answering nothing. It goes back to
-where it was built now.
+**A word lent to a line was never given back.** A caller builds its fold word out of sight and the line takes it. When that line went, the word was taken off the page and left there — so the hits manager let its target go for good, and the word sat on screen answering nothing. It goes back to where it was built now.
 
-[sections](../../../notes/guides/develop/sections.md) holds the design. [sections spec](../../../notes/guides/develop/sections%20spec.md)
-holds the instructions for putting it into di, ji and ws.
+[sections](../../../notes/guides/develop/sections.md) holds the design. [sections spec](../../../notes/guides/develop/sections%20spec.md) holds the instructions for putting it into di, ji and ws.
 
 ## 2026-08-17 — five words for how soon
 
-`active` said a file was being worked on and nothing more. It is now **now**, and it stands in a
-tagset of its own beside **next**, **soon**, **later** and **tabled** — eight tagsets, thirty-four
-tags. Eighteen files' labels were rewritten, across four collections.
+`active` said a file was being worked on and nothing more. It is now **now**, and it stands in a tagset of its own beside **next**, **soon**, **later** and **tabled** — eight tagsets, thirty-four tags. Eighteen files' labels were rewritten, across four collections.
 
 ## 2026-08-16 — three filters found a folder of their own
 
-Browse's filters, the editor's label form and the search moved into `src/lib/svelte/filter/`, and
-the list component became `Files_List.svelte` — the manager beside it is `files` now, so the two
-stopped sharing a name.
+Browse's filters, the editor's label form and the search moved into `src/lib/svelte/filter/`, and the list component became `Files_List.svelte` — the manager beside it is `files` now, so the two stopped sharing a name.
 
-**The row numbers had vanished from the reader.** One page variable was never pushed —
-`--size-pointer` — and a `calc()` naming an undefined variable makes the browser drop the whole
-declaration. The page's left step-in fell back to nothing and every number was pushed off the edge.
+**The row numbers had vanished from the reader.** One page variable was never pushed — `--size-pointer` — and a `calc()` naming an undefined variable makes the browser drop the whole declaration. The page's left step-in fell back to nothing and every number was pushed off the edge.
 
 ## 2026-08-15 — a table stopped counting, and then counted twice
 
-A table was one piece wearing one number, so the column beside the words skipped every row of it.
-Each row carries its own line now, and pressing anywhere along a row opens that one line.
+A table was one piece wearing one number, so the column beside the words skipped every row of it. Each row carries its own line now, and pressing anywhere along a row opens that one line.
 
-**The number hangs off the row's first cell**, never off the row. Anything drawn against a row
-becomes a cell of its own, which pushed every real cell one column along and left the headings
-standing over the wrong words.
+**The number hangs off the row's first cell**, never off the row. Anything drawn against a row becomes a cell of its own, which pushed every real cell one column along and left the headings standing over the wrong words.
 
-**A table wears no number itself.** A table's own drawing goes wherever the browser decides — which
-turned out to be down beside the second row, over the number already standing there.
+**A table wears no number itself.** A table's own drawing goes wherever the browser decides — which turned out to be down beside the second row, over the number already standing there.
 
-**The line of dashes under the headings has no number**, since the reader draws it as nothing and
-there is no row to hang one on.
+**The line of dashes under the headings has no number**, since the reader draws it as nothing and there is no row to hang one on.
 
 ## 2026-08-15 — one word for where a file sits
 
-`place` meant a file's location in some of the code and an ordinary spot in the rest — 195 uses, and
-about 70 of them the first kind. A link's target settled it: on disk it is a **path**, on the web a
-**url**, and **address** is the word for either.
+`place` meant a file's location in some of the code and an ordinary spot in the rest — 195 uses, and about 70 of them the first kind. A link's target settled it: on disk it is a **path**, on the web a **url**, and **address** is the word for either.
 
-**Nine files renamed**, the everyday noun and verb left alone. Said in one place, holds its place in
-the run — those keep the word.
+**Nine files renamed**, the everyday noun and verb left alone. Said in one place, holds its place in the run — those keep the word.
 
 ## 2026-08-15 — the words hook rewrote code on its way to the screen
 
-Several banned words are also the names of real things. The hook that swaps them ran over the whole
-reply with no exception, so a quoted CSS line arrived saying something the file does not say — a
-line read as wrong when the code was right.
+Several banned words are also the names of real things. The hook that swaps them ran over the whole reply with no exception, so a quoted CSS line arrived saying something the file does not say — a line read as wrong when the code was right.
 
-**Anything between backticks is left exactly as written**, a fenced block and a snippet alike. Prose
-is still corrected, and the ban still holds for the words I choose in code: names, comments, log
-lines.
+**Anything between backticks is left exactly as written**, a fenced block and a snippet alike. Prose is still corrected, and the ban still holds for the words I choose in code: names, comments, log lines.
 
 ## 2026-08-14 — the count holds a width of its own
 
-`4 of 10` at the far left of the editor's top row took exactly the width of its own characters, so
-the two step marks beside it moved as the numbers changed. It holds one width now, with its words
-at the right end — they finish against the marks, and the marks stand in one place from `1 of 9` to
-`218 of 218`.
+`4 of 10` at the far left of the editor's top row took exactly the width of its own characters, so the two step marks beside it moved as the numbers changed. It holds one width now, with its words at the right end — they finish against the marks, and the marks stand in one place from `1 of 9` to `218 of 218`.
 
-**The width went on the ladder** as `width.tiny`, and onto the page like every other size, so
-nothing writes a lone number. Jonathan set it at 50.
+**The width went on the ladder** as `width.tiny`, and onto the page like every other size, so nothing writes a lone number. Jonathan set it at 50.
 
 ## 2026-08-14 — six picking rows, two different gaps
 
-The gap under the editor's search line read smaller than the others. It measured 7.77 below that
-line's middle, which is exactly the gap a section takes when it asks for none — and browse's three
-picking rows each ask for the big one, 9.72. Six rows doing the same job, two numbers between them.
+The gap under the editor's search line read smaller than the others. It measured 7.77 below that line's middle, which is exactly the gap a section takes when it asks for none — and browse's three picking rows each ask for the big one, 9.72. Six rows doing the same job, two numbers between them.
 
-**All six ask for the big one now.** The editor's search, kinds and tags rows join browse's
-projects, kinds and tags.
+**All six ask for the big one now.** The editor's search, kinds and tags rows join browse's projects, kinds and tags.
 
-**The field is drawn two pixels lower**, so it sits square under the line. That is drawing only:
-its place in the row is unchanged, and nothing around it moves.
+**The field is drawn two pixels lower**, so it sits square under the line. That is drawing only: its place in the row is unchanged, and nothing around it moves.
 
-**One call now measures every section against the line above it**, two numbers each — to the top of
-its own box, and to the first ink inside it. A pill-shaped field draws its edge at its very top
-while a line of words holds empty space above the letters, so the same measured gap can read as two
-different gaps. Any next argument about a gap is now one press and a look at the log.
+**One call now measures every section against the line above it**, two numbers each — to the top of its own box, and to the first ink inside it. A pill-shaped field draws its edge at its very top while a line of words holds empty space above the letters, so the same measured gap can read as two different gaps. Any next argument about a gap is now one press and a look at the log.
 
 ## 2026-08-14 — one rule said in three places, and none of them agreed
 
-A link to `[[thin proxy proposal]]` would not open. The file is on disk; the app had never heard
-of it. Chasing that took the whole afternoon and turned up the same fault four times over.
+A link to `[[thin proxy proposal]]` would not open. The file is on disk; the app had never heard of it. Chasing that took the whole afternoon and turned up the same fault four times over.
 
-**The line between what the app lists and what it does not was written in three places.** The
-dispatcher's walk decided what to send. Its one door decided what could be read and written. And
-the app's own reading of a place decided what to place. Each said "a work note only at the top of
-its work folder", in its own words, in its own language — so widening one changed nothing, widening
-two left every file listed and unreadable, and only widening all three worked. Each now says it
-draws the same line as the others, and names them.
+**The line between what the app lists and what it does not was written in three places.** The dispatcher's walk decided what to send. Its one door decided what could be read and written. And the app's own reading of a place decided what to place. Each said "a work note only at the top of its work folder", in its own words, in its own language — so widening one changed nothing, widening two left every file listed and unreadable, and only widening all three worked. Each now says it draws the same line as the others, and names them.
 
-**Five folders came in**: `next`, `milestones`, `now`, `done`, `proposals` — 85 notes across four
-collections. Anything deeper, and every other folder, stays out.
+**Five folders came in**: `next`, `milestones`, `now`, `done`, `proposals` — 85 notes across four collections. Anything deeper, and every other folder, stays out.
 
-**The dead-link check was wrong in four separate ways**, each found by pressing the button and
-reading what it said. It never saw Obsidian's own `[[name]]` form at all, since that is turned into
-an ordinary link only when drawing. It read a link as the words it spells, so one written inside a
-work folder named no work folder and slipped past the test meant to pass it over. It skipped
-anything that merely resolved to a spot under a work folder, whether or not a file stood there —
-119 dead links in one file, hidden. And a press on a row searched for the link's address, which
-lives in what the link points at and is never drawn on the page.
+**The dead-link check was wrong in four separate ways**, each found by pressing the button and reading what it said. It never saw Obsidian's own `[[name]]` form at all, since that is turned into an ordinary link only when drawing. It read a link as the words it spells, so one written inside a work folder named no work folder and slipped past the test meant to pass it over. It skipped anything that merely resolved to a spot under a work folder, whether or not a file stood there — 119 dead links in one file, hidden. And a press on a row searched for the link's address, which lives in what the link points at and is never drawn on the page.
 
-**It now names the likeliest file** for anything it cannot find: most shared folder words first,
-ties broken by the fewest folder steps from the file the link sits in, and nothing at all offered
-where two are equal on both. That rule came out of mono's own link-mending tool, which had been
-sitting in `notes/tools/docs/` the whole time.
+**It now names the likeliest file** for anything it cannot find: most shared folder words first, ties broken by the fewest folder steps from the file the link sits in, and nothing at all offered where two are equal on both. That rule came out of mono's own link-mending tool, which had been sitting in `notes/tools/docs/` the whole time.
 
-**One press was doing two things.** The manager said the press and started the repeating, and the
-repeating begins with a beat at once — so every step mark stepped twice, and a back that went
-somewhere and then stepped again read as going nowhere. A row opened its file on the way down,
-which meant a drag could never begin. And a folder's mark acted on the way down while the row acted
-on the way up: the mark's shape turns when the folder does, so it moved out from under the cursor
-and the row turned the folder straight back. Everything in the list acts when the press is let go
-now.
+**One press was doing two things.** The manager said the press and started the repeating, and the repeating begins with a beat at once — so every step mark stepped twice, and a back that went somewhere and then stepped again read as going nowhere. A row opened its file on the way down, which meant a drag could never begin. And a folder's mark acted on the way down while the row acted on the way up: the mark's shape turns when the folder does, so it moved out from under the cursor and the row turned the folder straight back. Everything in the list acts when the press is let go now.
 
 ## 2026-08-14 — a box that stands inside the piece it is changing
 
-Opening a piece for changing moved its words. A heading jumped bigger-to-smaller and light-to-heavy;
-the hashes and the `- [ ]` took width the drawn page spends on nothing, so every first word slid
-right; and the row number in the left lane went up for one kind of piece and down for another.
+Opening a piece for changing moved its words. A heading jumped bigger-to-smaller and light-to-heavy; the hashes and the `- [ ]` took width the drawn page spends on nothing, so every first word slid right; and the row number in the left lane went up for one kind of piece and down for another.
 
-**The first tries were arithmetic, and arithmetic was the wrong tool.** I copied the piece's
-lettering onto the box, measured the markup at the head of the line and stood it out to the left,
-took off half the leading, hung the number off the box, then off the box's place. Each one fixed
-some pieces and moved others, because each rested on my own model of where a given kind of piece
-hangs its number — and every kind hangs it somewhere slightly different.
+**The first tries were arithmetic, and arithmetic was the wrong tool.** I copied the piece's lettering onto the box, measured the markup at the head of the line and stood it out to the left, took off half the leading, hung the number off the box, then off the box's place. Each one fixed some pieces and moved others, because each rested on my own model of where a given kind of piece hangs its number — and every kind hangs it somewhere slightly different.
 
-**The log said it outright.** The first thing to be done in a list read right while every other one
-was two pixels low. That first one's number is drawn by the list, not by the item, and the list was
-never touched. So the rule was there all along: a number that never leaves the element that draws it
-never moves.
+**The log said it outright.** The first thing to be done in a list read right while every other one was two pixels low. That first one's number is drawn by the list, not by the item, and the list was never touched. So the rule was there all along: a number that never leaves the element that draws it never moves.
 
-**So the box stands inside the piece now**, with the piece's own words held out of sight behind it.
-The piece keeps its place, its lettering, its gaps and its number; the box inherits the lot. The
-code that copied the lettering, the code that slid the box onto the piece's place, and four kinds of
-box styling all went. What is left is measured, never reasoned about: the markup's own width, and
-whatever is left over between where the words stood and where the box begins them.
+**So the box stands inside the piece now**, with the piece's own words held out of sight behind it. The piece keeps its place, its lettering, its gaps and its number; the box inherits the lot. The code that copied the lettering, the code that slid the box onto the piece's place, and four kinds of box styling all went. What is left is measured, never reasoned about: the markup's own width, and whatever is left over between where the words stood and where the box begins them.
 
-**A thing to be done can hold a list of its own**, and that list has nothing to do with the one line
-being changed — so it comes back out to stand below the box while the item's own words are away.
+**A thing to be done can hold a list of its own**, and that list has nothing to do with the one line being changed — so it comes back out to stand below the box while the item's own words are away.
 
-**Two faults in the hits manager, either of which stops every press landing.** It marks that a
-rebuild is queued, waits, then clears the mark — and the clearing sat after the waiting rather than
-inside it, so a wait that never came back left the mark standing, and a standing mark turns away
-every later request. Since a target asks for a rebuild the moment it arrives, nothing would ever be
-measured again. And redrawing the fold marks adds rows and pointers across the whole page without
-telling the manager anything.
+**Two faults in the hits manager, either of which stops every press landing.** It marks that a rebuild is queued, waits, then clears the mark — and the clearing sat after the waiting rather than inside it, so a wait that never came back left the mark standing, and a standing mark turns away every later request. Since a target asks for a rebuild the moment it arrives, nothing would ever be measured again. And redrawing the fold marks adds rows and pointers across the whole page without telling the manager anything.
 
 ## 2026-08-13 — the details column folds the way everything else does
 
-The column's two things — preferences and repair — each wore a banner: a full-width block with the
-title inside it, a fill arriving under the cursor, and a rounded shape drawn behind. Every other
-folding thing in the app is a line across with the word standing on it, masking the line behind it.
-Both are that now, and the banner's own drawing is gone.
+The column's two things — preferences and repair — each wore a banner: a full-width block with the title inside it, a fill arriving under the cursor, and a rounded shape drawn behind. Every other folding thing in the app is a line across with the word standing on it, masking the line behind it. Both are that now, and the banner's own drawing is gone.
 
-**The column became one stack of sections.** The page color runs from the first line down to the
-last; the column's own gap above that first line, and whatever is left below the last, stand on the
-accent. A closing line is drawn under the last section only while it is open — folded, it stands
-one gap tall with its own hairline, and nothing below it draws another line.
+**The column became one stack of sections.** The page color runs from the first line down to the last; the column's own gap above that first line, and whatever is left below the last, stand on the accent. A closing line is drawn under the last section only while it is open — folded, it stands one gap tall with its own hairline, and nothing below it draws another line.
 
-**A section can now hold a different gap below what it shows.** Above its contents it gives back
-half its own line, since a gap is measured from a line's middle; below them the line that bounds
-the gap belongs to whatever comes next, and is not this section's to give back. The details column
-asks for that half on top of the gap above, so both sides draw as one gap and the contents sit
-centred.
+**A section can now hold a different gap below what it shows.** Above its contents it gives back half its own line, since a gap is measured from a line's middle; below them the line that bounds the gap belongs to whatever comes next, and is not this section's to give back. The details column asks for that half on top of the gap above, so both sides draw as one gap and the contents sit centred.
 
-**Three faults of my own, found on screen.** The word handed to the line was never bound, so the
-line was given nothing and no word appeared. The word and its section shared one name, and the
-manager keeps one target per name, so the section threw the word's away. And the column's width
-changes when it is shown or hidden with no window resize to report it — which the manager's own
-self-check named exactly, down to the eight pixels across and eight down.
+**Three faults of my own, found on screen.** The word handed to the line was never bound, so the line was given nothing and no word appeared. The word and its section shared one name, and the manager keeps one target per name, so the section threw the word's away. And the column's width changes when it is shown or hidden with no window resize to report it — which the manager's own self-check named exactly, down to the eight pixels across and eight down.
 
 ## 2026-08-13 — the manager pays its own way, and a file is called a file
 
-Reading the wiring back showed three costs it had added. The hovered target was written to a store
-on every move of the cursor, and every target listened, so ~75 callbacks ran where two elements
-changed. Scrolling rebuilt every rectangle, and each reading makes the browser settle its layout.
-And each target arriving asked for a full rebuild of its own, so forty rows cost forty rebuilds of
-forty rectangles.
+Reading the wiring back showed three costs it had added. The hovered target was written to a store on every move of the cursor, and every target listened, so ~75 callbacks ran where two elements changed. Scrolling rebuilt every rectangle, and each reading makes the browser settle its layout. And each target arriving asked for a full rebuild of its own, so forty rows cost forty rebuilds of forty rectangles.
 
-**All three are gone.** The hover is said only when the answer changes, and the manager stamps the
-two elements itself — nothing listens for it any more. A run of things arriving joins one waiting
-rebuild. A scroll hands over the distance scrolled and every rectangle inside that box is moved by
-exactly that, reading nothing from the browser: asking which targets sit inside walks up from each
-element, which forces no layout.
+**All three are gone.** The hover is said only when the answer changes, and the manager stamps the two elements itself — nothing listens for it any more. A run of things arriving joins one waiting rebuild. A scroll hands over the distance scrolled and every rectangle inside that box is moved by exactly that, reading nothing from the browser: asking which targets sit inside walks up from each element, which forces no layout.
 
-**Against the old per-control wiring it is now about even** — better while the cursor moves, since
-the old code walked the page building class-name lists on every move in four places; slightly worse
-while scrolling, which used to cost nothing.
+**Against the old per-control wiring it is now about even** — better while the cursor moves, since the old code walked the page building class-name lists on every move in four places; slightly worse while scrolling, which used to cost nothing.
 
-**The manager checks itself.** Every rectangle is held rather than read, so anything that moves
-without saying so leaves a control answering for a strip of the page it no longer stands on — and
-nothing on screen shows it. While the cursor rests on a target, its rectangle is read afresh once a
-second; a difference raises a box naming the target, its kind, the element, both readings, how far
-off in each direction, and the three ways to tell the manager. All three faults in the wiring
-session were that one fault in different clothes.
+**The manager checks itself.** Every rectangle is held rather than read, so anything that moves without saying so leaves a control answering for a strip of the page it no longer stands on — and nothing on screen shows it. While the cursor rests on a target, its rectangle is read afresh once a second; a difference raises a box naming the target, its kind, the element, both readings, how far off in each direction, and the three ways to tell the manager. All three faults in the wiring session were that one fault in different clothes.
 
-**A file is called a file.** The record for one guide was `Guide` and a filtered row was
-`Filtered_Guide`, in a folder called `File.ts`, held by a manager called `Files`, for a list that
-holds work notes as well as guides. Both are now `File` and `Filtered_File`, the field on a row is
-`file`, and two more names that had drifted went with them: where a file sits is a `File_Site`, and
-where a pill stands in a wrapping row is a `Pill_Placement`. The word *guide* stays wherever it
-means a guide.
+**A file is called a file.** The record for one guide was `Guide` and a filtered row was `Filtered_Guide`, in a folder called `File.ts`, held by a manager called `Files`, for a list that holds work notes as well as guides. Both are now `File` and `Filtered_File`, the field on a row is `file`, and two more names that had drifted went with them: where a file sits is a `File_Site`, and where a pill stands in a wrapping row is a `Pill_Placement`. The word *guide* stays wherever it means a guide.
 
 ## 2026-08-13 — one manager decides what the cursor is on
 
-Every control used to watch the cursor for itself: its own press, its own hover rule, its own hint,
-and a rule walking up the page to work out whether a press had landed on something that answers.
-One manager decides now. The cursor is fed in once at the top of the app; it asks its own structure
-which targets hold that point and hands the press to one of them. A control beats a section, which
-beats the file's own words — and within one kind the one standing in the smaller area wins, since
-sections sit inside sections.
+Every control used to watch the cursor for itself: its own press, its own hover rule, its own hint, and a rule walking up the page to work out whether a press had landed on something that answers. One manager decides now. The cursor is fed in once at the top of the app; it asks its own structure which targets hold that point and hands the press to one of them. A control beats a section, which beats the file's own words — and within one kind the one standing in the smaller area wins, since sections sit inside sections.
 
-**What moved over.** Twenty-two buttons, thirteen segments, both stepper pairs, every field, nine
-sections, every row of the list, and two whole areas — the file's words, and the count row with the
-rows under it. Each says its name, what a press does and what to show while the cursor is on it,
-and carries no handler, no `:hover` rule and no hint of its own. The rule that walked the page is
-gone, file and tests.
+**What moved over.** Twenty-two buttons, thirteen segments, both stepper pairs, every field, nine sections, every row of the list, and two whole areas — the file's words, and the count row with the rows under it. Each says its name, what a press does and what to show while the cursor is on it, and carries no handler, no `:hover` rule and no hint of its own. The rule that walked the page is gone, file and tests.
 
-**Three faults the wiring turned up, each found by measuring rather than guessing.** Pressing one
-tag reacted on another: a shut tag area keeps its tags at full size inside a box of no width, so
-four areas' tags stacked on one strip of the page. A target can now say it is out of sight and hold
-no place at all — the same thing `pointer-events: none` already tells the browser. Pressing a
-folder's triangle turned it over twice: the triangle handed its press to the manager and the row
-behind it never heard about that, so it fired its own. And the tags section answered nothing,
-because the whole filter form is a section too and covered it.
+**Three faults the wiring turned up, each found by measuring rather than guessing.** Pressing one tag reacted on another: a shut tag area keeps its tags at full size inside a box of no width, so four areas' tags stacked on one strip of the page. A target can now say it is out of sight and hold no place at all — the same thing `pointer-events: none` already tells the browser. Pressing a folder's triangle turned it over twice: the triangle handed its press to the manager and the row behind it never heard about that, so it fired its own. And the tags section answered nothing, because the whole filter form is a section too and covered it.
 
-**Every rectangle is measured once and remembered**, so everything that moves one says so: a word
-moved onto a line, a fold, a tag area finishing its slide, the list scrolling, the file's words
-scrolling, the window resizing. A target arriving among others is measured again one drawing later,
-since the first reading is taken before the browser has laid the run out.
+**Every rectangle is measured once and remembered**, so everything that moves one says so: a word moved onto a line, a fold, a tag area finishing its slide, the list scrolling, the file's words scrolling, the window resizing. A target arriving among others is measured again one drawing later, since the first reading is taken before the browser has laid the run out.
 
-**Elsewhere.** A section's lower gap is the whole gap again — it was giving back half of a line it
-draws at its top, so the count row shrank whenever it drew one. The picked tags in the count row
-are cut to the space beside the count, at whole words, ending in an ellipsis. The editor's own
-folds are remembered between visits. And the two filter drawings were named for the screens they
-belong to: `Browse_Filters` and `Editor_Filters`.
+**Elsewhere.** A section's lower gap is the whole gap again — it was giving back half of a line it draws at its top, so the count row shrank whenever it drew one. The picked tags in the count row are cut to the space beside the count, at whole words, ending in an ellipsis. The editor's own folds are remembered between visits. And the two filter drawings were named for the screens they belong to: `Browse_Filters` and `Editor_Filters`.
 
 ## 2026-08-13 — a gap is measured from a line's middle, and nothing paints over a control
 

@@ -1,7 +1,6 @@
 # Startup Restore
 
-**Started:** 2025-01-21
-**Status:** Complete
+**Started:** 2025-01-21 **Status:** Complete
 
 ## Problem
 

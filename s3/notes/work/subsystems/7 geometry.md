@@ -812,8 +812,7 @@ ancestries.slice(Math.round(index), Math.round(index) + widgets_shown)
 
 ### Serialization
 
-**`create_g_paging_fromDict(dict, isCluster_ofChildren)`** — deserializes one `G_Paging`.
-**`create_g_paging_dict_fromDict(dict, isCluster_ofChildren)`** — deserializes a full dict.
+**`create_g_paging_fromDict(dict, isCluster_ofChildren)`** — deserializes one `G_Paging`. **`create_g_paging_dict_fromDict(dict, isCluster_ofChildren)`** — deserializes a full dict.
 
 ---
 
@@ -956,8 +955,7 @@ The "greedy" column is identified as `column == (swap_title ? 1 : 0)`.
 sum(widths[0..column-1]) + title_gap - gap/2
 ```
 
-**Non-proportionate mode:**
-Accumulates `button_width_for(i) + gap` for `i < column`.
+**Non-proportionate mode:** Accumulates `button_width_for(i) + gap` for `i < column`.
 
 ### `swap_titles(titles, swap_title)` (static)
 

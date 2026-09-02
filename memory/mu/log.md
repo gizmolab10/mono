@@ -1,7 +1,7 @@
 ---
 kind: analyze
 title: "mu log"
-description: "<!-- consolidated: 30 August 2026 -->"
+description: "What mu decided, thought and reached, newest first; settled entries leave at each consolidation."
 tags: [journal, now]
 date: 2026-08-30
 ---

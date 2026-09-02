@@ -155,9 +155,7 @@ Four rules decide a fold, and nothing else:
 1. Its own line to the next is always `k.height.small`. No caller names it.
 2. A hairline is drawn exactly halfway between those two, so half of `k.height.small` below the fold's own line.
 3. The accent fills that whole span, with the hairline down its exact middle.
-4. Its line carries everything the caller handed it, the same as an open one. A folded section's line
-   used to drop whatever rode its middle; it keeps it now, and the thing's own pill masks the accent
-   behind it.
+4. Its line carries everything the caller handed it, the same as an open one. A folded section's line used to drop whatever rode its middle; it keeps it now, and the thing's own pill masks the accent behind it.
 
 ## Step 7 — how the pieces are placed
 

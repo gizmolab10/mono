@@ -7,8 +7,7 @@ date: 2026-08-19
 ---
 # Handoff
 
-**Date:** 2026-08-19
-**Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.
+**Date:** 2026-08-19 **Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.
 
 ## Current thread
 
@@ -24,8 +23,7 @@ The first code bug after those is **"two door cabinet — stretch top drawer up 
 
 ## Paused threads
 
-Zoom feature work is proposed in open items §2.
-Dimension placement. Paused threads in [[open items]]:
+Zoom feature work is proposed in open items §2. Dimension placement. Paused threads in [[open items]]:
 
 - §3.5 — wrong-side scoring iteration (pick the on-plane-reward approach, build, verify, keep tuning).
 - §3.6 — bug 001, dim inside the silhouette. The structural merge is now DONE (2026-07-01): the outer edge is one of the scored options in the same loop as the uniface levels, with its own anchors and witness length from the binary search, not the box. The inside/outside guard already uses the visible silhouette polygon. Any remaining work is scoring-weight tuning only.

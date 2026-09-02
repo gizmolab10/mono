@@ -34,9 +34,7 @@ Jonathan — 2/24/26
 
 Approval process for new guidelines & APIs
 
-**Product / Service**
-Guide you to the best tool for your needs.
-Builders — you'll have access to ppl
+**Product / Service** Guide you to the best tool for your needs. Builders — you'll have access to ppl
 
 ---
 

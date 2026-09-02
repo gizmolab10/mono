@@ -11,6 +11,7 @@ date: 22 August 2026
 
 ---
 
+- [ ] Co did very well at the start. Lately I can't understand about half of co's replies. Try to discover the cause of this recent incomprehensibility.
 ## fine-tuning the control surface: pac vs propose
 
 25 August 2026
