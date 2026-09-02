@@ -46,14 +46,14 @@ The folder a file sits in is not a tag. A tag says what the file is *about*, so 
 4. **style** — naming, formatting, how code is organized
 5. **visual-design** — look and feel, spacing, styling
 6. **refactor** — reshaping code that already works
-7. **migrate** — moving a component to a new shape
+7. **migrate** — moving a component to a new structure
 8. **test** — writing and running tests
 9. **debug** — finding out why something is wrong
 10. **build** — the tools that turn source into a site
 11. **deploy** — getting a built site online
 12. **setup** — getting a machine or an account ready
 13. **tools** — a single tool's own quirks
-14. **vision** — why the work is shaped this way
+14. **vision** — why the work is structured this way
 15. **port** — moving work between projects
 16. **notes** — keeping the note files themselves in order
 
@@ -84,7 +84,7 @@ The first five say how a guide reads. The last two say what it is about, and wer
 | howto | Steps for a task, when that task comes up. | Follow it start to finish while doing that task. |
 | refer | Facts, commands, names, quirks. | Look things up in it. Never obey it. |
 | arch | How one part of an app actually works. | Read it before touching that part. |
-| explain | Why the work is shaped this way. | Read it to judge a call the other kinds don't cover. |
+| explain | Why the work is structured this way. | Read it to judge a call the other kinds don't cover. |
 | design | A record of how something was built. | Read it to learn what was already decided and why. |
 | work | A note about work in hand. | Read it to pick up where the work was left. |
 
@@ -121,11 +121,11 @@ So it is much easier for me to
 
 No two of the four bundles agree on how they are arranged, so neither goal is reachable today.
 
-### One shape, all four bundles
+### One structure, all four bundles
 
 The shared guides use eight folders. di uses four, ws uses two, ji uses three and leaves three files loose at the top. The same subject lands somewhere different each time — how code should look is `develop/style.md` in the shared guides, `collaborate/style.md` in ws, and `architecture/ui/style.md` in di. Testing is `test/testing.md` shared and `project/philosophy/testing.md` in di.
 
-So: one folder shape, used in all four. A folder that a bundle has nothing to say about simply isn't there. Then I can walk any project and already know where I am.
+So: one folder structure, used in all four. A folder that a bundle has nothing to say about simply isn't there. Then I can walk any project and already know where I am.
 
 ### A map page per bundle, built from the labels
 
@@ -166,7 +166,7 @@ One question decides where the truth lives: can a person change this thing witho
 
 Everything this proposal defines — the five kinds, the twenty-four tags, the short names of the collections, and the handling that goes with them — is spread across overview's files today. The idea is to gather it into one file of its own, at `ov/src/lib/ts/common/okf`, so that the format has a single home in the code.
 
-**Pro.** Every rule of the format lands in one place: the kinds, the tags, the collection names, reading the labels off a file's top, and throwing out a tag that isn't on the list. What a guide *is* — its shape as a thing the app holds — stays separate from what the format *allows*. Adding a tag or a collection becomes a one-file change. And when the format goes out into the world, the file that defines it is the file you hand over.
+**Pro.** Every rule of the format lands in one place: the kinds, the tags, the collection names, reading the labels off a file's top, and throwing out a tag that isn't on the list. What a guide *is* — its structure as a thing the app holds — stays separate from what the format *allows*. Adding a tag or a collection becomes a one-file change. And when the format goes out into the world, the file that defines it is the file you hand over.
 
 **Con.** The sweeps that find the files can't follow. The build reads each collection's folder path literally and cannot follow a name, so either a collection's short name and where its files live end up in two different files, or the new file takes on finding files as well as defining the format.
 

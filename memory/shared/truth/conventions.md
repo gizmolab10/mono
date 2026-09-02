@@ -10,7 +10,7 @@ date: 25 August 2026
 - **Never** say a thing "lands." Say it "works fine" or "satisfies our criteria."
 - **Never** say a thing "stands." Say it "remains in force" or just "remains."
 - **Never** "believed." A truth is "incorporated."
-- **Never** "shape" for how a thing is decided or written. Say choice, decision, or truth.
+- **Never** "shape" for how a thing is decided, written or structured. Say choice, decision, truth, or structure — "keep the current structure". The word keeps its everyday sense for a thing actually drawn: a pill shaped as a lozenge, the shapes behind the geometry.
 - **Never** "edge" for a boundary value. Say threshold or limit.
 - **Never** "drain" for what gets emptied. Say temporary.
 - **Never** "pour" for moving content — it is structured tokens, not liquid. Say port, copy, transfer, migrate, relocate.

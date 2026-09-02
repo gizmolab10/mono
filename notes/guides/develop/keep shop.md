@@ -1,13 +1,14 @@
 ---
 kind: howto
-title: "Keep Shop"
-description: "Keeping the note files in a shape that still guides the next session."
-tags: [notes]
+title: Keep Shop
+description: Structure the note files so they still guide the next chat session.
+tags:
+  - notes
 date: 2026-07-07
 ---
 # Keep shop
 
-The project's notes are infrastructure. They guide every session that comes after the one that wrote them. When a session ends with notes in the wrong shape — content in the wrong file, old gaps marked as gaps that have already been closed, completed work cluttering the active-work area — the next session starts at a disadvantage. Keep shop is the work of fixing that shape so the notes keep guiding well.
+The project's notes are infrastructure. They guide every session that comes after the one that wrote them. When a session ends and the notes have the wrong structure — content in the wrong file, old gaps marked as gaps that have already been closed, completed work cluttering the active-work area — the next session starts at a disadvantage. Keep shop is the work of fixing that structure so the notes keep guiding well.
 
 For what each file is — handoff, work journal, code debt, and the rest — see the handoff pieces in [workflow.md](workflow.md).
 
@@ -23,7 +24,7 @@ For what each file is — handoff, work journal, code debt, and the rest — see
 
 The uniface design moved through several rounds of consolidation across the last few sessions.
 
-**The rules file.** Started with eight numbered rules plus a separate "abandoned rules" enumeration and a long carry-over list that named other-spec rules by number only. The other-spec rules got pulled in verbatim, renumbered as rules 9 through 28 in the same file, with banned words swapped to the project's lexicon (template to master, paint to render, search to placement algorithm, slidable position to label position, combined silhouette outline to silhouette box), concept names rephrased where the spec model had moved (the witness-length degree of freedom became the witness-index degree of freedom; the four-degrees tuple changed shape), and cross-references repointed to the new rule numbers. The abandoned-rules enumeration got dropped once its content was either folded into the carry-over rules or rendered obsolete by the new design.
+**The rules file.** Started with eight numbered rules plus a separate "abandoned rules" enumeration and a long carry-over list that named other-spec rules by number only. The other-spec rules got pulled in verbatim, renumbered as rules 9 through 28 in the same file, with banned words swapped to the project's lexicon (template to master, paint to render, search to placement algorithm, slidable position to label position, combined silhouette outline to silhouette box), concept names rephrased where the spec model had moved (the witness-length degree of freedom became the witness-index degree of freedom; the four-degrees tuple changed structure), and cross-references repointed to the new rule numbers. The abandoned-rules enumeration got dropped once its content was either folded into the carry-over rules or rendered obsolete by the new design.
 
 **The proposal file.** Built up from a one-paragraph intent into a structured document: preparation, phase 1 with two test groups (Group A keeps, Group B disables), phase 2 with eight numbered steps. Each step gained an exit criterion. The visible-output steps were tied to per-step visual inspection by the user, with an explicit rejection branch (fix code, switch alternative, or surface as spec question). Hard parts were named so the reader can pace themselves. Missing steps that the original sketch had assumed away — renderer wiring for label text, visual baseline capture, interactive-layer audit, user-override placeholder — were each added as numbered phase 2 steps and the issue list that called them out got dissolved into the steps themselves.
 

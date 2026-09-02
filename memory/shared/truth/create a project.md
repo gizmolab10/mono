@@ -32,7 +32,7 @@ The zone file is what makes the project useful immediately: it is where everythi
 
 ## In mono, when there is code
 
-Copy ov's shape, and no more of it than the project uses:
+Copy ov's structure, and no more of it than the project uses:
 
 - `package.json` — the name, and only the dependencies it actually has.
 - `index.html` — the title, and a script tag pointing at `src/lib/ts/main.ts`.

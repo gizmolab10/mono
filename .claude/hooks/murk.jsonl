@@ -1008,3 +1008,29 @@
 {"timestamp":"2026-09-01T22:27:27Z","action":"reply","word":"","murky":"","plain":""}
 {"timestamp":"2026-09-01T22:28:34Z","action":"reply","word":"","murky":"","plain":""}
 {"timestamp":"2026-09-01T22:29:05Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:29:51Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:34:42Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:34:57Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:42:40Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:42:41Z","action":"complaint","word":"t","murky":"Both lines hold as quoted: the tagset is **fate**, and **stow** was dropped for want of a file wearing it.","plain":"\"the log says what was decided; no folders were created\""}
+{"timestamp":"2026-09-01T22:45:18Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:49:36Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:49:47Z","action":"reply","word":"","murky":"","plain":""}
+{"timestamp":"2026-09-01T22:55:57Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line"}
+{"timestamp":"2026-09-01T22:59:20Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"75","plain_words":""}
+{"timestamp":"2026-09-01T22:59:29Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"10","plain_words":""}
+{"timestamp":"2026-09-01T23:09:37Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"79","plain_words":""}
+{"timestamp":"2026-09-01T23:09:37Z","action":"complaint","word":"t","murky":"Waiting on your call about widening the ban to structure.","plain":"ecision or truth. Two files say so — [banned words.md:55](notes/guides/pre-flight/banned%20words.md#L55) and [conventions.md:13](memory/shared/truth/conventions.md#L13). Co broke it anyway by writing \"the same three-field shape everywhere else\", where the right word was structure. Should the ban cover that use too?\n\nThe same use sits inside a guide: response #9 says \"how a collection is shaped\".","rule":"any-line","words":"10","plain_words":"79"}
+{"timestamp":"2026-09-01T23:09:45Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"20","plain_words":""}
+{"timestamp":"2026-09-01T23:12:07Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"69","plain_words":""}
+{"timestamp":"2026-09-01T23:12:19Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"36","plain_words":""}
+{"timestamp":"2026-09-01T23:13:52Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"98","plain_words":""}
+{"timestamp":"2026-09-01T23:14:01Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"21","plain_words":""}
+{"timestamp":"2026-09-01T23:14:37Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"306","plain_words":""}
+{"timestamp":"2026-09-01T23:14:42Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"17","plain_words":""}
+{"timestamp":"2026-09-01T23:20:47Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"89","plain_words":""}
+{"timestamp":"2026-09-01T23:24:28Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"77","plain_words":""}
+{"timestamp":"2026-09-01T23:24:34Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"3","plain_words":""}
+{"timestamp":"2026-09-01T23:25:28Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"182","plain_words":""}
+{"timestamp":"2026-09-01T23:25:32Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"9","plain_words":""}
+{"timestamp":"2026-09-01T23:29:56Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"55","plain_words":""}

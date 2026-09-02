@@ -11,16 +11,16 @@ Unit tests for pure logic. Vitest runner.
 
 ## Format
 
-Going forward, every entry in this index points back at the stipulations it pins. Every test in the file's tests array carries a `stipulation:` line at the head of its body, naming the stipulation slug it covers. The slug must match an entry in [stipulations.md](di/notes/guides/development/rules/stipulations.md). Existing entries will be migrated to this shape on demand as work next touches their area.
+Going forward, every entry in this index points back at the stipulations it pins. Every test in the file's tests array carries a `stipulation:` line at the head of its body, naming the stipulation slug it covers. The slug must match an entry in [stipulations.md](di/notes/guides/development/rules/stipulations.md). Existing entries will be migrated to this structure on demand as work next touches their area.
 
-The shape of an index entry:
+The structure of an index entry:
 
 ```text
 - **Name** — one-line description of what the file covers.
     - stipulation: slug-one, slug-two, slug-three
 ```
 
-The shape of a test inside the file:
+The structure of a test inside the file:
 
 ```text
 test('the rule the test pins', () => {
@@ -36,7 +36,7 @@ A real example, fully written:
     - stipulation: so-three-directions, axis-three-attributes, plain-number-attributes
 ```
 
-The legacy bullet shape (just the `**Name** — description` line) stays valid until the entry is migrated; it just lacks the stipulation pointer.
+The legacy code structure of bullet (just the `**Name** — description` line) stays valid until the entry is migrated; it just lacks the stipulation pointer.
 
 ## Current tests
 
@@ -73,7 +73,7 @@ Each line names what the file in `src/lib/ts/tests/` covers.
 - **History** — the snapshot-and-restore stack behind undo and redo, with a stubbed scene manager.
     - stipulation: undo-restores-prior-state, redo-restores-undone-state
 - **Hits_3D** — pure 3D hit-testing geometry: point in polygon, segment proximity, front-facing detection.
-- **Invariants_and_Locks** — behavior around stored values, the invariant rule, the lock, and the load-time recompute. Each test names a single behavior; together they cover the bug shapes seen in recent sessions.
+- **Invariants_and_Locks** — behavior around stored values, the invariant rule, the lock, and the load-time recompute. Each test names a single behavior; together they cover the bug patterns seen in recent sessions.
     - stipulation: locked-number-fields, invariant-write-reverse-propagates, locked-attribute-protected-from-propagation
     - **Test 1 — storage round-trip.** Set a value to a cell on a child. Read the cell. Assert: same value back.
     - **Test 2 — invariant rule, marker on the near end.** Set far = 7, length = 4, near = 999 (deliberately wrong). Run the invariant pass on the child. Assert: near is now 3.
@@ -237,7 +237,7 @@ The browser tests run on every commit. A new continuous-integration step starts 
 
 - **Slower than unit tests.** Five hundred ninety-five unit tests run in three to four seconds today. Four browser tests will take roughly an order of magnitude longer per test. Total continuous-integration time goes up by less than a minute.
 - **Animation-timing flake.** A test that moves on before the animation has settled becomes intermittently red. The "settled" signal in the read hooks is the safeguard. If a test still flakes, lengthening the wait is the easy lever.
-- **The read hooks are a small test-only API.** Keeping them small and read-only — no write paths from tests, no shape that callers in production rely on — keeps the maintenance cost low.
+- **The read hooks are a small test-only API.** Keeping them small and read-only — no write paths from tests, no interface that callers in production rely on — keeps the maintenance cost low.
 
 ### Stipulation coverage after browser tests are added
 

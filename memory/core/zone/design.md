@@ -17,7 +17,7 @@ core is a library with no entry point: four ts folders (common, events, types, u
 
 - the constants ladder (k), the debug log, Dirty's stale stores, Extensions
 - the hits manager and hit_target — every press, hover, and tip
-- the shapes: Action, Angle, Coordinates, Stacked, the ladder of types
+- the structures: Action, Angle, Coordinates, Stacked, the ladder of types
 - the utilities: Colors, SVG_Paths, Sectioning, Separator_Spacing, Fitting, Stepping, Numbers, Sections, Smooth_Height, Thumb, Tooltip
 - the support components: Separator, Stack, Section, Steppers, Big_Pill, ToolTip, Status_Line, BuildNotes
 

@@ -30,7 +30,7 @@ guides/
 │   │   ├── managers.md .................. singletons and their concerns
 │   │   ├── Preferences.md ............... local-storage wrapper reference
 │   │   ├── scenes.md .................... scene loading two-phase pattern
-│   │   ├── Smart_Objects.md ............. part data shape reference
+│   │   ├── Smart_Objects.md ............. part data structure ref
 │   │   ├── units.md ..................... millimetre storage, four families
 │   │   └── versions.md .................. file format migration chain
 │   ├── graph/

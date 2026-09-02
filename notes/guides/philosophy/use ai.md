@@ -1,7 +1,7 @@
 ---
 kind: explain
 title: "Motive"
-description: "Why the work is shaped this way: let structure emerge, keep work files raw, distill guides out of them."
+description: "Why the work is structured this way: let it emerge, keep work files raw, distill guides out of them."
 tags: [notes, plans, vision]
 date: 2026-05-10
 ---

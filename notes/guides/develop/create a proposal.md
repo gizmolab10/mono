@@ -19,7 +19,7 @@ We did not try to write the whole proposal in one go. We worked in short cycles.
 2. **Find the gap.** We re-read what we had and asked: is there anything missing, anything two parts contradict each other on, anything that would block someone trying to build it? Each gap was one specific bullet.
 3. **Settle the gap.** You picked an answer. Sometimes you picked from a list of options I laid out. Sometimes you wrote the answer yourself in the file. Once an answer was settled, the proposal got the new wording.
 
-Then we ran the cycle again. And again. Each pass picked up smaller gaps than the one before, because the big-shape questions were already answered.
+Then we ran the cycle again. And again. Each pass picked up smaller gaps than the one before, because the big questions were already answered.
 
 ## What lived where
 
@@ -57,4 +57,4 @@ A few habits made the cycles work:
 - **One change, then re-evaluate.** We did not stack five edits into one round. Each round had its small batch and then a fresh read.
 - **Tighten language as we go.** Words we used early got replaced by sharper words later. "Notes" became "md files." Vague phrases got specific examples.
 - **Surface contradictions early.** When two parts of the proposal disagreed (for example: who owns the toggle button, the sidebar component or the page shell?), we named the contradiction in plain English and you picked the side.
-- **Leave a paper trail.** Every decision left a bullet in the journal. Nothing was lost when the proposal got re-shaped.
+- **Leave a paper trail.** Every decision left a bullet in the journal. Nothing was lost when the proposal got restructured.

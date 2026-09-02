@@ -69,7 +69,7 @@ Facts are written as what IS true, only. When a design changes, the old wording 
 
 One truth file deserves special mention: `decisions.md`. It holds only choices likely to be revisited — one line each: the date, what was chosen, and why. When a decision goes final and no one will ever reopen it, its line is deleted. Kept under about ten live items, or it silts up into a second log.
 
-Another: `conventions.md`, in `shared/`. This is where the collaboration itself improves. Every friction — a vague word the AI used, a reply shaped so you had to work to read it, a request it misunderstood — becomes a recorded rule here, and the AI reads the file at every chat's start. Corrections stop repeating because they stop being conversation and become memory.
+Another: `conventions.md`, in `shared/`. This is where the collaboration itself improves. Every friction — a vague word the AI used, a reply written so you had to work to read it, a request it misunderstood — becomes a recorded rule here, and the AI reads the file at every chat's start. Corrections stop repeating because they stop being conversation and become memory.
 
 ### **The project's live thinking** (`zone/`)
 

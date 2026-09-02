@@ -22,10 +22,10 @@ Every change to the project is governed by the rules below. No shortcut, no exce
 - [ ] adopt the framework opt-in by area
     - [ ] algebra, units, version migration — yes (stable, well-bounded, benefit clearly)
     - [ ] visual layout, color, animation tick — no (resist formalisation)
-    - [ ] each area decides for itself based on its own shape
+    - [ ] each area decides for itself based on its own needs
 - [ ] apply the framework only to stable code
     - [ ] a feature must have lived for some months without major redesign before its stipulations get pinned
-    - [ ] newer features run looser; they earn the framework after they have proved their shape
+    - [ ] newer features run looser; they earn the framework after they have proved themselves
 - [ ] keep two registers, side by side
     - [ ] stipulations — testable invariants, gated by the build
     - [ ] design notes — un-testable design choices (visual feel, animation pacing, layout balance, emotional intent), kept alongside but never gated by a test
@@ -115,7 +115,7 @@ Every change to the project is governed by the rules below. No shortcut, no exce
     - [ ] check whether a work file already exists for the topic
     - [ ] if yes, read it and resume
     - [ ] if no, create it with a problem section, a goal section, and phase sections
-- [ ] standard work-file shape
+- [ ] standard work-file structure
     - [ ] title, started date, status
     - [ ] problem (what is being solved)
     - [ ] goal (what success looks like)
@@ -181,7 +181,7 @@ When a new rule is added — from feature work or from an audit sprint that expo
 7. **Audit the area when fully covered.** Count its load-bearing modules and update the areas file the extractor reads, at `notes/guides/project/development/areas.json`. That file is not there today, so the dashboard has no coverage figures to show until it is written.
 8. **Run `yarn adherence`.** Confirm the rule appears in the matched count with zero uncovered, orphan, or malformed.
 
-A rule that mixes the old and new shape is flagged malformed; the extractor's exit code fails the build, so it never goes through silently. The fixture validator at `node notes/tools/validate-adherence.mjs` re-runs on demand and confirms the parser still behaves correctly.
+A rule that mixes the old and new structure is flagged malformed; the extractor's exit code fails the build, so it never goes through silently. The fixture validator at `node notes/tools/validate-adherence.mjs` re-runs on demand and confirms the parser still behaves correctly.
 # Needs
 
 What is the granularity of our stipulations? Are they fractal enough without being crazy?
@@ -194,7 +194,7 @@ these have tests already in the test index but no rule citing them, so the tests
 - **Coordinate math** (`types/Coordinates.ts`) — point/size/rectangle helpers, with tests, no rule.
 - **Hit testing** (`events/Hits_3D.ts`) — there's a test file for 3D hit geometry (point-in-polygon, segment proximity, front-facing detection), no rule. The click-stack drill-down behavior (each click rotates through stacked parts under the cursor) is described in the handoff but not in the catalogue.
 - **Topology** (`render/Topology.ts`) — there's a test file ("Topology") for the unified-endpoint pipeline, no rule.
-- **Save-format migrations** (`managers/Versions.ts`) — there's a test file ("Versions") for the v1-through-v9 chain, no rule. The catalogue says scenes round-trip but does not say "every old save format has a one-way upgrade to the current shape."
+- **Save-format migrations** (`managers/Versions.ts`) — there's a test file ("Versions") for the v1-through-v9 chain, no rule. The catalogue says scenes round-trip but does not say "every old save format has a one-way upgrade to the current structure."
 
 ### **Plausible candidates**
 

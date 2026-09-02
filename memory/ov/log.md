@@ -11,6 +11,9 @@ date: 2026-09-01
 
 ## 1 September 2026
 
+- D: no subfolders under truth/ or zone/ — the ai-and-design divide asked for two, and the answer in `shared/truth/decisions.md` is not yet: a flat truth/ is the whole catalog at one glance, index.md already groups, and the sizing caps only split a folder once it passes its cap. ov/truth holds five, well under
+- D: the work moved from the Claude app into Claude Code inside vscode, and picking a project became `/p` — `/p ov` picks ov, written to `.working_project`. The per-project skills it replaces (`/ov` and its kin) are still to be removed
+- D: the core project is built and ov adopts it — constants, configuration, section, separator and hits. The rules that keep core core, the styling boundary and how core checks itself are in core's `truth/structure.md`; ov's one door through the alias is `common/Core.ts`
 - D: three entries settled — the two seg controls and the two new collections are in `truth/controls.md`; the adoption's own telling is core's
 
 ---

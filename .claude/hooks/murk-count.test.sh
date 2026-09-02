@@ -82,6 +82,38 @@ OUT=$(run_once "T. now the other one")
 check "capitals and a full stop still count" \
 	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .word')" "t"
 
+# 6b. A word that follows a number leads its line, so it counts. This is the firing the
+# first-word rule lost — about one in seven.
+OUT=$(run_once "$(printf '1. fix the fill\n2. t "the last bit"')")
+check "a t after a number counts" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .word')" "t"
+
+OUT=$(run_once "$(printf 'do the rename\n- translate the second line')")
+check "a t after a dash counts" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .word')" "translate"
+
+# 6c. Mid-line is still no complaint, on any line.
+OUT=$(run_once "$(printf 'fix the fill\nand then translate nothing at all')")
+check "the word mid-line on a later line is no complaint" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint")' | wc -l | tr -d ' ')" "0"
+
+# 6d. Every row says which rule counted it.
+OUT=$(run_once "t")
+check "a row says its rule" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .rule')" "any-line"
+
+# 6e. Every row carries the length of the reply it is about. The two replies in the
+# made-up conversation run nine words and twelve.
+OUT=$(run_once "make the numbers line up")
+check "a reply row counts the reply just sent" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="reply") | .words')" "12"
+
+OUT=$(run_once "t")
+check "a complaint counts the reply he could not read" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .words')" "9"
+check "a complaint counts the reply that replaced it" \
+	"$(printf '%s' "$OUT" | jq -rc 'select(.action=="complaint") | .plain_words')" "12"
+
 # 7. Stop can fire twice for one reply. The second firing must add nothing.
 rm -f "$WORK/murk.jsonl" "${TMPDIR:-/tmp}"/murk-count-*
 sed "s#^HOOK_DIR=.*#HOOK_DIR=\"$WORK\"#" "$HOOK" > "$WORK/murk-count.sh"

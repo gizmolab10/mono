@@ -577,7 +577,7 @@ See project-specific style guides for import patterns and manager access convent
 ### Type Definitions
 
 - Use `type` for aliases: `type Dictionary<K, V> = { [key: K]: V }`
-- Use `interface` for object shapes (when extending is needed)
+- Use `interface` for object structures (when extending is needed)
 - Use `enum` for fixed sets of values (with `T_` prefix)
 
 ### Generic Types

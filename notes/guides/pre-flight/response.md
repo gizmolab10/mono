@@ -59,7 +59,7 @@ co wrote a rule for following a link, then Jonathan rewrote it. His was a third 
 
 | Co's | His |
 | --- | --- |
-| Restated what a guide knows and how a collection is shaped before the first step | Named it in one clause — each guide knows its ancestry — and moved on |
+| Restated what a guide knows and how a collection is structured before the first step | Named it in one clause — each guide knows its ancestry — and moved on |
 | Spelled out the walk: drop a folder, ignore this one, add the rest | Said ascend the ancestry, and left the rest to the reader who knows what that means |
 | Gave each step its reason inside the step | Gave the steps bare, reasons only where a reader would stop |
 | Added a paragraph on index files after the list | Made it step 1 |

@@ -30,7 +30,7 @@ goal is to scan a local filesystem and extract **music** and meta data and navig
 
 27 August 2026, CLAUDE
 
-mu is a music browser: scan the disk, read each file's own labels (artist, album, title), and offer several hierarchies over one collection — ov's shape, with tags and kinds swapped for metadata. Most of it is known territory.
+mu is a music browser: scan the disk, read each file's own labels (artist, album, title), and offer several hierarchies over one collection — ov's structure, with tags and kinds swapped for metadata. Most of it is known territory.
 
 1. **The tiny dispatcher installer.** Building the dispatcher is easy; installing it on someone else's machine is not — macOS signing and notarization, auto-start, updates. WHAT DOES THIS MEAN: "A product problem, not a code problem."
 2. **Scale.** A real music library is tens of thousands of files. Reading every file's metadata each launch will not do. mu needs 1) a saved index, 2) a way to notice what changed, 3) a gradual buildout of the index (start small so first launch is fast, page through the rest when cpu is idle).

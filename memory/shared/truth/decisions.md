@@ -84,7 +84,7 @@ date:
   Decided 30 August 2026: it dies at the door — unpaid content leads each memory project's ideas.md, git keeps the paid.
 
 - 30 August 2026; **a new file `unresolved.md` holding all pacs.**
-  For: the wait gets an owner whose name says its state. The file empties as decisions land, so its length is a visible health gauge — pacs buried in decisions.md rot invisibly, a fat unresolved.md accuses. questions.md keeps its one-line law, decisions.md returns to decided rationales, and the lifecycle turns clean: pac in, d out — outcome to decisions.md, case to cases.md, entry deleted, git keeps the history (the same shape as settling a log).
+  For: the wait gets an owner whose name says its state. The file empties as decisions land, so its length is a visible health gauge — pacs buried in decisions.md rot invisibly, a fat unresolved.md accuses. questions.md keeps its one-line law, decisions.md returns to decided rationales, and the lifecycle turns clean: pac in, d out — outcome to decisions.md, case to cases.md, entry deleted, git keeps the history (the same structure as settling a log).
   Against: one more file per project, and this is the third rival for one job — decisions.md holds pacs today, the last pac offered questions.md, protocol's stray line said zone/decisions.md; a fourth door deepens the very confusion it means to end. Deletion on deciding breaks cases.md's fourth line — "the decisions.md that keeps the full record" would point at git, not a file. And an evaluation is thinking, which the design already houses: zone.
   Deciding question: is an empties-when-healthy file worth another door — and if the wait deserves its own file, why is that file not in zone/?
 

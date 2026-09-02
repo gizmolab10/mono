@@ -163,7 +163,7 @@ Formula language used inside attribute cells. Compile a typed expression to a tr
 
 - `Tokenizer.ts` — Turns formula text into a token stream
 - `Compiler.ts` — Turns the token stream into a tree
-- `Nodes.ts` — Tree node shapes
+- `Nodes.ts` — Tree node structures
 - `Evaluator.ts` — Walks the tree forward (read) and backward (propagate)
 - `Constraints.ts` — Glue between the algebra and the scene; resolves names, writes values, runs propagation, holds the start/length/end/center letter rules
 - `Givens.ts` — Global table of named numbers a formula can read
@@ -232,7 +232,7 @@ The canvas rendering pipeline.
 
 ## Runtime
 
-- `Smart_Object.ts` — The data shape for one part — bounds, attributes, formulas, repeater config
+- `Smart_Object.ts` — The data structure for one part — bounds, attributes, formulas, repeater config
 - `Axis.ts` — One direction inside a Smart Object — start, length, end, center, invariant
 - `Identifiable.ts` — Base class with id and human-id
 

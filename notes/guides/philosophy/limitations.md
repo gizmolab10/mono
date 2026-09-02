@@ -38,6 +38,6 @@ This section will grow as patterns emerge.
 
 ## Cannot catch something before it happens
 
-This file names failure modes without describing how they show up or what the symptom looks like. The assistant cannot recognise a failure mode in real time from a name alone. So the same modes resurface in slightly different shapes and time is spent diagnosing them as new each time.
+This file names failure modes without describing how they show up or what the symptom looks like. The assistant cannot recognise a failure mode in real time from a name alone. So the same modes resurface in slightly different forms and time is spent diagnosing them as new each time.
 
 **Direct evidence:** this file catches specific incidents AFTER they happen. The limitations file's purpose is to catch them BEFORE; without unpacking, it cannot.
