@@ -46,7 +46,7 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 
 | Hook | What it does |
 |----|----|
-| plain-english-check.sh | Flags jargon in .md files and in log/comment lines of .ts files (lives in `.claude/hooks/`) |
+| plain-english-check.sh | Says when a banned word or a lexicon-settled word goes into a file — the whole edit of an .md, the comment and log lines of a .ts or .svelte. Reads the banned-words tables' mechanical rows and the lexicon's never-words; di's twenty identifiers kept (lives in `.claude/hooks/`) |
 | mark-ts-check-pending.sh | If a .ts/.svelte changed, drops a marker so the end-of-turn type check runs |
 
 ### Stop — fires when co finishes (all warn-only now)

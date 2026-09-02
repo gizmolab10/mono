@@ -54,3 +54,5 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | the code, the implementation    |   y    |      | step, move                             | a thing done or to do |
 | choice, decision, truth, structure |   y    |      | shape                                  | how a thing is decided, written or structured |
 | remain, unchanged               |   y    |  y   | stand, stands, standing, stood         | what is still there |
+| held back                       |   y    |  y   | held                                   | evidence read this turn, kept until Jonathan asks |
+| consider the best possible alternative |   y    |      | steel man, steel-man, steelman         | weigh the other side at its strongest |

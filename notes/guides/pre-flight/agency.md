@@ -9,7 +9,7 @@ date: 2026-08-14
 
 Each rule ends with Jonathan's preferred wording, which MUST not be improved any further.
 
- 1. **Paths** — every one starts at `~/GitHub/mono/`. Never the worktree. *The file co edits is the file he opens.*
+ 1. **Paths** — every one starts at `~/GitHub/mono/`. Never the worktree, with one exception: a session sweeping the whole repo unsupervised works in its own worktree, so nothing moves under Jonathan while he works in the repo itself. *The file co edits is the file he opens.*
  2. **Yarn** — never npm. *One lockfile, one set of versions.*
  3. **No preview** — never start one unless Jonathan says yes. Ask, then wait. *His screen stays his.*
  4. **Glob and Read, not Bash** — for finding and reading files. *No permission prompt standing in the way.*
@@ -28,4 +28,5 @@ Each rule ends with Jonathan's preferred wording, which MUST not be improved any
 17. **After a correction** — re-read [pitfalls](pitfalls.md) before replying. *The same mistake happens once.*
 18. **Report, never remove** — `yarn svelte-check` or the linter complaining about something co was not asked to change licenses a report, never a deletion. Fix the smallest thing actually wrong and leave every prop, field and export standing. *Unused today is somebody's next turn.*
 19. **Measure what is drawn** — a fault in what is painted, or in where a thing sits, is settled by reading what the browser computed: the layer, the placement, the transform, the clip, the rectangle. Never by reasoning about which rule ought to have applied — a style arrives from anywhere in the cascade, and a shared rule on a plain tag is invisible from inside a component. Take the reading two frames after any hover, press or class change; inside the event the new style has not arrived. *One measurement costs a turn; a guess costs two.*
-20. **A constant applied throughout** — search the code for the number itself, to find every place it is written. Have each of those places read the one file that holds the number, and take out the copies written onto single elements. Before editing, say which calls are judgment and which values the constant would change. Search again afterwards: no copy is left. *One number, one place, proved.*
+20. **Guide prose is a draft** — everything co writes into a rule, Jonathan rewrites within minutes, and the rewrite is the decision. Write it short and hand it over; length spent polishing is wasted twice. *Jonathan finishes it.*
+21. **A constant applied throughout** — search the code for the number itself, to find every place it is written. Have each of those places read the one file that holds the number, and take out the copies written onto single elements. Before editing, say which calls are judgment and which values the constant would change. Search again afterwards: no copy is left. *One number, one place, proved.*

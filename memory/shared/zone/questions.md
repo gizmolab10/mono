@@ -23,6 +23,16 @@ date: 2026-08-29
 
 From the check of 31 August 2026, against all of `memory/`. Nothing fixed; each waits for Jonathan to say which.
 
+From the check of 2 September 2026, the first to audit colliding rules across the always-tagged guides. Nothing fixed.
+
+- [x] 1. always #4 against response #2 — resolved 2 September 2026: #2 now says "say which wrong reading was ruled out, in plain words", its evidence held like any claim's
+- [x] 2. always #4 against the lexicon's evidence entry — resolved 2 September 2026: evidence is now "the line and its file, held back for every claim; shown when Jonathan asks, on its own line, after the plain words"
+- [x] 3. always #7 against the shorthand table — resolved 2 September 2026: #7 now says a shorthand is an interpretation Jonathan already approved, performed at once
+- [ ] 4. always #3 tail against conventions line 39 — "NEVER paint a rosy version of the truth" is written near-verbatim in both files. **Proposal**: always #3 is the home, since it arrives every turn; delete conventions line 39
+- [ ] 5. two compression rules disagree — conventions line 24 says compress by naming the parts, response #6 says compress by choosing a plainer verb. **Proposal**: response #6 becomes the one home, saying both moves and keeping conventions' warning that a reply which drops the pending action is incomplete; delete conventions line 24
+- [ ] 6. always #8's scan list names "the length limit", and always #1 no longer has one — the cap became a relevance test. **Proposal**: the scan item becomes "always #1's relevance test — anything not directly relevant"
+- [ ] 7. handbook.md's date label is empty — `date: ` with no value, which the OKF labels require. **Proposal**: stamp 2 September 2026, the day the label is filled
+
 - [ ] the root map is five projects behind — `memory/index.md` lists shared, ov, lv; disk holds core, di, ji, lv, me, mu, ov, shared, wo, and its parenthetical names `ws` (no folder) and `musicology` (the folder is `mu`); rewrite the list from disk?
 - [ ] the two indexes disagree on the count — `shared/index.md` line 8 says eight are up and omits di; the root says three; which yields?
 - [ ] four of core's six truths are copies of ov's — `lexicon.md` byte-identical, `action type.md`, `scope.md` and `claude-files.md` differing only in `settled` against `incorporated`; already asked above as the ov↔core memory twins

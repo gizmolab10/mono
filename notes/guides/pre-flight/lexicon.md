@@ -52,7 +52,7 @@ Each project keeps its own lexicon for its own things — [di](../../../di/notes
 ## Saying what is true
 
 - **I AM GUESSING** — the exact words that must open any claim with no evidence behind it.
-- **evidence** — a quoted line and its file, on its own line, after the plain words.
+- **evidence** — a line number and a file name. Do not reveal until Jonathan asks you to describe the evidence. See response.md rule 4.
 - **visual confirmation** — Jonathan looked at the screen and said what he saw. Never *eyeball*, never *nod*.
 - **mistrust point** — a mark against trust, earned by stating a thing as fact without checking it, or by calling work done while steps remain.
 - **complaint** — one row in the murk record: a reply Jonathan could not read. **rate** is complaints per 100 replies.

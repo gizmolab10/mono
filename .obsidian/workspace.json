@@ -8,21 +8,35 @@
         "type": "tabs",
         "children": [
           {
-            "id": "977981c37cc36ed4",
+            "id": "fc95377ae45588c2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/ideas.md",
+                "file": "memory/shared/truth/handbook.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ideas"
+              "title": "handbook"
             }
           },
           {
-            "id": "fc95377ae45588c2",
+            "id": "59edb0fd08ed8ac8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/zone/questions.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "questions"
+            }
+          },
+          {
+            "id": "c376e045e76b9cad",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -33,6 +47,20 @@
               },
               "icon": "lucide-file",
               "title": "always"
+            }
+          },
+          {
+            "id": "8349deacc4817361",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "notes/work/learn.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "learn"
             }
           },
           {
@@ -50,35 +78,21 @@
             }
           },
           {
-            "id": "a984c80ea760489d",
+            "id": "5da725e643fea146",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/guides/develop/keep shop.md",
+                "file": "notes/guides/pre-flight/lexicon.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "keep shop"
-            }
-          },
-          {
-            "id": "b23af6bc9b10ed11",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/shorthand.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "shorthand"
+              "title": "lexicon"
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -112,7 +126,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:avoid murk",
+                "query": "file:handb",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -137,8 +151,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 388.50271224975586,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -216,7 +229,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/guides/pre-flight/shorthand.md",
+                "file": "notes/guides/pre-flight/always.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -240,8 +253,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 217.6181640625,
-    "collapsed": true
+    "width": 217.6181640625
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -255,15 +267,22 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "b23af6bc9b10ed11",
+  "active": "c376e045e76b9cad",
   "lastOpenFiles": [
+    "notes/work/learn.md",
+    "notes/guides/collaborate/jonathan.md",
+    "notes/guides/pre-flight/always.md",
+    "memory/shared/zone/questions.md",
+    "notes/guides/pre-flight/response.md",
+    "notes/guides/pre-flight/lexicon.md",
+    "memory/shared/truth/handbook.md",
+    "memory/shared/zone/ideas.md",
+    "memory/shared/zone/fable.md",
+    "memory/shared/zone/drive.md",
+    "notes/guides/pre-flight/shorthand.md",
     "memory/ov/zone/ideas.md",
     "notes/guides/collaborate/avoid murk.md",
-    "memory/shared/zone/ideas.md",
     "memory/gallery/zone/ideas.md",
-    "notes/guides/pre-flight/always.md",
-    "notes/guides/pre-flight/response.md",
-    "notes/guides/pre-flight/shorthand.md",
     "notes/guides/develop/keep shop.md",
     "notes/guides/pre-flight/agency.md",
     "memory/ov/index.md",
@@ -296,13 +315,6 @@
     "gallery/src/assets/photo list.md",
     "gallery/node_modules/svelte-check/README.md",
     "gallery/node_modules/readdirp/README.md",
-    "gallery/node_modules/aria-query/README.md",
-    "gallery/node_modules/svelte/README.md",
-    "gallery/node_modules/svelte/LICENSE.md",
-    "gallery/node_modules/is-reference/README.md",
-    "gallery/node_modules/chokidar/README.md",
-    "gallery/notes/work/working features.md",
-    "gallery/notes/work/work journal.md",
     "Untitled.canvas",
     "ws/notes/work/Untitled.canvas"
   ]

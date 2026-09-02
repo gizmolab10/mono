@@ -53,7 +53,6 @@ Quote the line, state the source, prove it.
 
 **For positive claims:**
 - Quote the exact line(s)
-- State file path and line number if relevant
 
 **For negative claims ("X doesn't exist"):**
 - Show the search performed

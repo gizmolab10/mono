@@ -7,11 +7,24 @@ date: 22 August 2026
 ---
 # Ideas
 
+- [ ] unmurk the entirety of our documentation 
 - [ ] create mj (gallery of girls)
 
 ---
 
 - [ ] Co did very well at the start. Lately I can't understand about half of co's replies. Try to discover the cause of this recent incomprehensibility.
+
+## Fully implement the [[handbook]]
+
+Where that content and the files disagree:
+
+- [ ] Pros and cons still says pacs go to `zone/decisions.md`; they live in `truth/decisions.md` — the four-doors question, unresolved.
+- [ ] Design churn says `decisions.md` holds one-line rationales, ~10, deleted when final; shared's holds multi-paragraph pacs, decided ones kept, well past the cap.
+- [ ] Inception says "keep `truth/inception.md` current"; the file lives in shared/zone under another name.
+- [ ] Hooks — the enforcement the handbook describes still reads the old notes, and does not run in a Cowork session at all.
+- [ ] The truth cap: the moved maps break ~100 lines (ov's at 146) — the promised settle-cuts have not begun, and the map-upkeep step has never yet run at a settle.
+- [ ] Zone names `zone/ref/` for visual references; no project has one. And `drive.md` existed nowhere while a drive was in flight — this file is the first.
+
 ## fine-tuning the control surface: pac vs propose
 
 25 August 2026

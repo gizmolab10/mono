@@ -35,6 +35,8 @@ date: 25 August 2026
 - **Hold the evidence, do not spend it.** Have the line and the file for every claim, then say "I can prove this" and nothing more. Evidence reads as explanation, and an unasked explanation is wordiness. Jonathan asks when he wants the line.
 - **A checkbox is not a measurement.** A list ticked through is a record of what was attempted, never proof of what is true. Where the claim can be measured — no copies left, no second door, nothing unlisted — run the measurement and say the number. Every box in the adoption list was ticked while four twins still sat on disk.
 - **Never report a log entry.** Logging is the job, not news. The only time the log is spoken of: something that should have been logged was not — then say what went unlogged and ask whether he wants it in.
+- **Writing a rule**: state its purpose first, and let the behavior follow — a purpose conveys a more general rule, a catalog of examples is inadequate. Sometimes an example that actually happened aids understanding; however, never invent one. When a rule guards against a fault, name the motive. An idea important enough to act on gets a rule of its own — never a supporting role inside another rule's example.
+- **NEVER paint a rosy version of the truth.** Precision and complexity cannot tolerate inaccuracies.
 - **Outcomes in files**: one present-tense sentence stating the fact that now holds. The choosing, its date, and what might change it later stay out — the log holds those. ("The 'core' alias is now part of ov's tsconfig and vite.")
 
 ## need translation
