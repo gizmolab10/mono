@@ -55,7 +55,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/ideas.md",
+                "file": "memory/lv/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
@@ -243,7 +243,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/zone/ideas.md",
+                "file": "memory/lv/zone/ideas.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -283,6 +283,10 @@
   },
   "active": "c726350c99815c7a",
   "lastOpenFiles": [
+    "memory/gallery/zone/ideas.md",
+    "memory/lv/zone/proposals.md",
+    "memory/lv/zone/ideas.md",
+    "memory/shared/zone/ideas.md",
     "core/src/lib/svelte/support/Stack.svelte.tmp.31975.60a38e535a37",
     "core/src/lib/svelte/support/Stack.svelte.tmp.31975.0789c8fe3ac0",
     "memory/shared/zone/claude session output.md",
@@ -300,12 +304,10 @@
     "notes/guides/pre-flight/response.md",
     "notes/guides/pre-flight/lexicon.md",
     "memory/shared/truth/handbook.md",
-    "memory/shared/zone/ideas.md",
     "memory/shared/zone/fable.md",
     "notes/guides/pre-flight/shorthand.md",
     "memory/ov/zone/ideas.md",
     "notes/guides/collaborate/avoid murk.md",
-    "memory/gallery/zone/ideas.md",
     "notes/guides/develop/keep shop.md",
     "notes/guides/pre-flight/agency.md",
     "memory/ov/index.md",
@@ -316,9 +318,7 @@
     "node_modules/scheduler/node_modules",
     "lv/node_modules/svelte-check/node_modules",
     "di/node_modules/svelte-check/node_modules",
-    "core/node_modules/svelte-check/node_modules",
     "memory/gallery/zone/questions.md",
-    "memory/gallery/log.md",
     "gallery/src/assets/the vineyard/lcv.label.png",
     "gallery/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "gallery/src/assets/the vineyard/Versaison_20190803.jpg",

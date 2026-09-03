@@ -11,6 +11,7 @@ date: 2026-09-01
 
 ## 3 September 2026
 
+- S: the mechanical sweep is done on branch sweep/unmurk in the worktree — 11 commits, about 175 files, about 260 word changes, about 20 judgment rewrites, none to main, nothing pushed. Report with a summary at notes/work/big rewrite log.md on that branch. Two pre-existing test failures found and left (lv Gallery.test.ts, ma svelte-check). ji, ov, ws and core were sampled highest-signal-first, not read line by line. Awaiting Jonathan: merge, drop, or revert single commits
 - D: the sweep runs as its own claude process inside the worktree, not as a subagent — a subagent's every tool call was drawn into Jonathan's chat. Its words go to "claude session output.md" (shared-z); the detailed report stays in the worktree at notes/work/big rewrite log.md
 - D: the mechanical sweep is launched — an unsupervised session in its own worktree, branch sweep/unmurk, following the plan in "rewrite the guides.md" (shared-z). The plan's memory/ contradiction is resolved for the run as: memory/ files are never edited, hits there are reported. Report lands at notes/work/big rewrite log.md in the worktree. No commits to main
 - D: relevance-check's haiku call runs detached — the hook logs a start row and exits at once, so the turn never waits. A watcher kills a call at 90 seconds and logs "killed", every start row gets an ending row (clean, warn, no-judgment, killed), and each run flags any earlier start left unpaired ("stale"). 5 mocked tests pass, and the hook's own run measured under a second and a half
