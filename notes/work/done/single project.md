@@ -140,7 +140,7 @@ cp -r ~/GitHub/work-backup-*/enhanced/notes ~/GitHub/work/enhanced/
 - [ ] Move di → `work/di` (code only, notes already moved)
 - [ ] Move ws → `work/ws`
 - [ ] Move enhanced → `work/enhanced`
-- [ ] Create `work/core` scaffold
+- [ ] Stub out `work/core`
 - [ ] Single `yarn install` at root
 
 **🔴 Panic button:**
@@ -212,7 +212,7 @@ mv ~/GitHub/work-backup-* ~/GitHub/work
 
 ## Open Questions
 
-1. **enhanced** - what is it? Keep or absorb?
+1. **enhanced** - what is it? Keep or include?
 2. **Git history** - preserve or start fresh?
 3. **Deploy targets** - still separate Netlify sites?
 4. **Naming** - `@work/core` or something else?

@@ -21,8 +21,8 @@ Patterns from debugging intersection line occlusion (Feb 2025).
 
 ## Anti-pattern: discarding a working fix
 
-The collaborator had the correct fix (project world-space crossing point to screen, work in screen-space `t` throughout) but then layered a half-measure on top — projecting `bs`/`be` correctly but still mapping the polygon clip's `t` back to world-space linearly. This introduced a second bug (tiny stray edge fragments) that took additional rounds to diagnose. Lesson: when a fix is structurally correct, carry it through to completion. Don't mix the old approach with the new one.
+Co had the correct fix (project world-space crossing point to screen, work in screen-space `t` throughout) but then layered a half-measure on top — projecting `bs`/`be` correctly but still mapping the polygon clip's `t` back to world-space linearly. This introduced a second bug (tiny stray edge fragments) that took additional rounds to diagnose. Lesson: when a fix is structurally correct, carry it through to completion. Don't mix the old approach with the new one.
 
 ## The pattern
 
-Jonathan diagnoses visually, collaborator translates to code. He keeps the collaborator honest by demanding evidence, stopping premature action, and pointing at what he can *see* rather than letting the collaborator speculate.
+Jonathan diagnoses visually, co translates to code. He keeps co honest by demanding evidence, stopping premature action, and pointing at what he can *see* rather than letting co speculate.

@@ -24,7 +24,7 @@ i spent months building a collaboration system that actually works — guides, g
 
 Co is the missing layer. Not a competing platform — a collaboration layer that sits on top of whatever AI assistant you already use. OpenClaw, Claude Code, whatever comes next.
 
-The architecture is general. The content is personal. Co ships the architecture and helps you fill in the content.
+The architecture is general. The content is personal. Co completes the architecture and helps you fill in the content.
 
 ## What Co does
 

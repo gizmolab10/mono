@@ -17,7 +17,7 @@ We did not try to write the whole proposal in one go. We worked in short cycles.
 
 1. **Read what is there.** Before saying anything about the design or the files, we opened the actual files and looked. When you said the sidebar file was hand-written, we read the file to see how. When the proposal said a piece of code lived somewhere, we checked.
 2. **Find the gap.** We re-read what we had and asked: is there anything missing, anything two parts contradict each other on, anything that would block someone trying to build it? Each gap was one specific bullet.
-3. **Settle the gap.** You picked an answer. Sometimes you picked from a list of options I laid out. Sometimes you wrote the answer yourself in the file. Once an answer was settled, the proposal got the new wording.
+3. **Settle the gap.** You picked an answer. Sometimes you picked from a list of options co laid out. Sometimes you wrote the answer yourself in the file. Once an answer was settled, the proposal got the new wording.
 
 Then we ran the cycle again. And again. Each pass picked up smaller gaps than the one before, because the big questions were already answered.
 

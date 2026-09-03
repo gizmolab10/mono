@@ -7,7 +7,7 @@ date: 2026-07-08
 ---
 # Voice and Tone Guide
 
-The memory files MUST satisfy and nurture, not just inform. Collaborator can help to boost that output, while maintaining crisp, lighthearted, joyful prose.
+The memory files MUST satisfy and nurture, not just inform. Co can help to boost that output, while maintaining crisp, lighthearted, joyful prose.
 
 Jonathan's motto: we are building stuff that we want humans to love using. Jonathan luxuriates in the hypothetical soul of his user. He tries to sense and to guess when things feel smooth, engaging, gentle. He wants that, as well, to come across in these guides. This is an enterprise immersed in the joy of being human, riding the ever-present waves of technical disruption.
 
@@ -105,7 +105,7 @@ When naming sections or concepts, favor warmth over mechanics:
 
 **paging.md:**
 
-> Three clusters of widgets nestle around the radial ring. Often enough, there's not enough room. So, we show only a page at a time. The user can adjust the page. Lots of ghastly geometry goes into making it feel comfortable.
+> Three clusters of widgets nestle around the radial ring. Often enough, there's not enough gap. So, we show only a page at a time. The user can adjust the page. Lots of ghastly geometry goes into making it feel comfortable.
 
 **styles.md:**
 
@@ -125,7 +125,7 @@ When naming sections or concepts, favor warmth over mechanics:
 
 ### Before/After — Technical Prose
 
-Claude's draft (explaining why cross-axis named references don't use agnostic notation):
+Co's draft (explaining why cross-axis named references don't use agnostic notation):
 
 > cross-axis named refs are the one limitation. the tokenizer only supports a two-part reference token (`object.attribute`) — there's no third slot for an axis qualifier, so `A.y.l` can't be expressed. cross-axis named refs stay explicit (`A.d`) and are left as-is during translation.
 
@@ -133,7 +133,7 @@ Jonathan's rewrite:
 
 > when an attribute is on one axis (say x), and its formula grabs a value (say d) on a different axis (y), it could use something like `A.y.l` (length on the y axis of A). to support that, our compiler would need more complexity. NOPE! since `A.d` is fine, we keep the explicit tokens around, and our compiler is simpler and more robust.
 
-the difference: Claude catalogues constraints ("the tokenizer only supports…", "there's no third slot…"). Jonathan states the situation, makes a judgment call, and moves on. the reasoning is a decision, not a spec.
+the difference: co catalogues constraints ("the tokenizer only supports…", "there's no third slot…"). Jonathan states the situation, makes a judgment call, and moves on. the reasoning is a decision, not a spec.
 
 ### Before/After — the cutting pass
 

@@ -7,7 +7,7 @@ date: 2026-06-19
 ---
 # Kinds of Tasks
 
-Task types and which guides to read before starting. Collaborator will declare one or more of these, assess and state conflicts and update the column below.
+Task types and which guides to read before starting. Co will declare one or more of these, assess and state conflicts and update the column below.
 
 | Kind | Guides | Notes | Conflicts |
 |------|--------|-------|-----------|

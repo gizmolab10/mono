@@ -7,7 +7,7 @@ date: 2026-07-29
 ---
 # Shorthand
 
-Short commands and abbreviations for working with collaborator. NB: ALL urls on this page are relative to `~/GitHub/mono/`
+Short commands and abbreviations for working with co. NB: ALL urls on this page are relative to `~/GitHub/mono/`
 
 | Command                | Action                                                                                                                                                                                                                                                                       |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

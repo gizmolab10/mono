@@ -7,7 +7,7 @@ date: 2026-05-10
 ---
 # Build Notes
 
-The build-notes table is hand-distilled from the git log. Each entry is one short line that names a single shipped capability or shipped milestone.
+The build-notes table is hand-distilled from the git log. Each entry is one short line that names a single completed capability or completed milestone.
 
 The source table is the markdown file `di/src/lib/md/builds.md`. The bundler reads that file at build time and turns each row into one entry the in-app build-notes panel renders. See `notes/guides/develop/build.md` for how that pipeline works.
 
@@ -37,7 +37,7 @@ Walk the list once and drop everything that is not a real build. Drop:
 - internal reorganisations and file moves that do not change behavior;
 - documentation-only updates;
 - work in other projects in the same repo, when those touch folders outside the design-intuition app;
-- mothballed work that was parked rather than shipped — entries that say "give up", "moth ball", "park".
+- mothballed work that was parked rather than completed — entries that say "give up", "moth ball", "park".
 
 Keep:
 
@@ -45,7 +45,7 @@ Keep:
 - new architectural pieces that change what the app can do ("axis-agnostic algebra", "reverse traversal", "lacemaker");
 - new screens, panels, navigation modes, or input modes ("electron multi-window", "mobile support", "arrow-key navigation");
 - significant data-model additions ("angular smart object", "axis swap", "unlockable givens");
-- shipped fix chains for long-standing flaws when the fix adds a real capability ("undo / redo").
+- completed fix chains for long-standing flaws when the fix adds a real capability ("undo / redo").
 
 ### 4. Consolidate multi-commit chains
 
@@ -69,7 +69,7 @@ Add the new rows above the previous newest entry in the source markdown file. Re
 
 After saving, the running dev server picks up the change and the in-app build-notes panel refreshes. The little build button at the bottom of the canvas should now read the new highest number. If it does not, the row may have been dropped because its first cell was not a number with the column-divider bar in front of it.
 
-## Notes for the AI collaborator
+## Notes for co
 
 - Do not invent capabilities — every entry must trace back to a real commit on a real day.
 - Do not include personal commit messages verbatim — distill to one short noun phrase.

@@ -7,7 +7,7 @@ This repo contains common guides and tools shared across projects.
 ```
 shared/
   guides/
-    collaborate/    ← working with Claude
+    collaborate/    ← working with co
     develop/        ← coding patterns
     test/           ← debugging, testing
   tools/
@@ -19,7 +19,7 @@ shared/
 Read these to understand how we work:
 
 - `guides/collaborate/voice.md` — writing style
-- `guides/collaborate/chat.md` — problem-solving with Claude
+- `guides/collaborate/chat.md` — problem-solving with co
 - `guides/collaborate/workflow.md` — the meta-system
 - `guides/develop/markdown.md` — doc formatting patterns
 - `guides/test/debugging.md` — systematic debugging

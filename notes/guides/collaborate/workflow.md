@@ -17,7 +17,7 @@ Turn-taking. Jonathan moves, co responds, Jonathan reads, Jonathan decides, co a
     Jonathan frames the question and decides about proposals and visual feedback.
     Co researches, analyzes, proposes. In small increments. Tests, code, request visual feedback.
 
-Claude's query-response is best for Jonathan if it is precise, concise, and easy to comprehend. Long responses are wasted on him. Explanations irrelevant until asked for.
+Co's query-response is best for Jonathan if it is precise, concise, and easy to comprehend. Long responses are wasted on him. Explanations irrelevant until asked for.
 
 Living notes at [[cadence]].
 
@@ -25,7 +25,7 @@ Living notes at [[cadence]].
 
 - `notes/guides/` — living reference (style, patterns, how-tos)
 - `notes/work/` — ALL work is recorded here, as we go
-- `CLAUDE.md` — entry point, tells Claude where to start
+- `CLAUDE.md` — entry point, tells co where to start
 
 ## One truth, one place
 
@@ -51,7 +51,7 @@ we will rely on some stuff we have
 3. html injector      <- we need this one
 ```
 
-Jonathan wrote that at the top of the photo-gallery proposal; mine had the new piece buried inside a paragraph three sections down, where it read as a step rather than as the work. The list makes the whole shape plain: two things to lean on, one thing to build.
+Jonathan wrote that at the top of the photo-gallery proposal; mine had the new piece buried inside a paragraph three sections down, where it read as a step rather than as the work. The list makes the whole structure plain: two things to lean on, one thing to build.
 
 Check every name on the list before writing it down. He had to ask whether all three existed, and one of them did not.
 
@@ -138,7 +138,7 @@ When updating a work doc — milestones, notes, plans — keep its content intac
 2. **"Propose a rewrite" means propose.** Present the plan, wait for approval before touching the file.
 3. **Summarize by adding, not replacing.** If a synopsis or summary would help, add it alongside the original — don't compress the original into it.
 4. **Design notes are not clutter.** Type definitions, rationale, lifecycle rules, error source mappings — these are decisions, not noise. They stay.
-5. **When in doubt, add a section.** A new "synopsis" or "open items" section at the top costs nothing. Gutting the middle to make room costs everything.
+5. **When in doubt, add a section.** A new "synopsis" or "open items" section at the top costs nothing. Gutting the middle to create a gap costs everything.
 
 ## Fixing friction before the work
 
@@ -157,7 +157,7 @@ Are these guides effective and intelligible? Are they smooth, engaging and gentl
 
 Jonathan can only read a little at a time and immediately his comprehension plummets. This is not good. Makes him wonder how many of these files are doing what was intended, or indeed ANYTHING useful. Of course they MUST be readable by him.
 
-Journal it here. Jonathan will read the first bit of this file. first he will ask claude to read it. then he will edit it until it makes sense. then he will ask claude to compare and to learn from his example. Thus...
+Journal it here. Jonathan will read the first bit of this file. first he will ask co to read it. then he will edit it until it makes sense. then he will ask co to compare and to learn from his example. Thus...
 
 ### Grow the guides the way the lexicon grows
 

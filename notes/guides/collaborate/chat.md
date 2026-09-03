@@ -1,7 +1,7 @@
 ---
 kind: specify
 title: "Working with Co"
-description: "Who does what between Jonathan and the collaborator, and what the collaborator must do to stay reliable."
+description: "Who does what between Jonathan and co, and what co must do to stay reliable."
 tags: [team, session]
 date: 2026-05-10
 ---
@@ -194,7 +194,7 @@ Always specify the working directory when referencing files. Use paths relative 
 
 ### Approval Gate
 
-When Jonathan says "y" (or similar approval), collaborator must **output the verification step before any action**:
+When Jonathan says "y" (or similar approval), co must **output the verification step before any action**:
 
 | Task type | Output before acting |
 |-----------|---------------------|
@@ -259,9 +259,9 @@ See [refactoring.md](../develop/refactor.md) for the full guide with examples.
 
 #### Enforcement
 
-If collaborator produces a fix and user reports "still broken" or "new error in different file":
+If co produces a fix and user reports "still broken" or "new error in different file":
 - This is a REFACTORING DISCIPLINE FAILURE
-- Collaborator must STOP, apologize, and run the search that should have happened first
+- Co must STOP, apologize, and run the search that should have happened first
 - Do not make another point fix
 
 ### File Operations

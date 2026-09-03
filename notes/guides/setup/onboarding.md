@@ -144,5 +144,5 @@ Set up SSH key: https://docs.github.com/en/authentication/connecting-to-github-w
 ## Next Steps
 
 - Read `CLAUDE.md` for project context
-- Check `notes/guides/collaborate/` for how to work with Claude
+- Check `notes/guides/collaborate/` for how to work with co
 - Check `notes/guides/setup/` for deployment and tooling docs

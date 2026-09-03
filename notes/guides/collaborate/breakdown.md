@@ -42,7 +42,7 @@ Three columns, written out:
 | --- | --- | --- |
 | what a file or a log actually says | what was inferred and never checked | what a number came back for |
 
-Anything unmeasured goes in **Guessed**. The learn log holds four entries whose common shape is a guess reported as a fact — 2026-03-21 three times in one session, 2026-03-25 a fourth. A breakdown that skips this step repeats them.
+Anything unmeasured goes in **Guessed**. The learn log holds four entries whose common structure is a guess reported as a fact — 2026-03-21 three times in one session, 2026-03-25 a fourth. A breakdown that skips this step repeats them.
 
 Then say plainly which of the guesses the whole approach rested on.
 

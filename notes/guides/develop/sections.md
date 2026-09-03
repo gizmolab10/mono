@@ -180,7 +180,7 @@ Eleven props become six, five of which have an answer already.
 
 ## Still on the old section
 
-Four of the ten: the search, browse's count row, and the two whole-block sections that hold the picking rows and the label form. `Sectioning.ts`, its four measurements and its twelve tests all stand until those are converted.
+Four of the ten: the search, browse's count row, and the two whole-block sections that hold the picking rows and the label form. `Sectioning.ts`, its four measurements and its twelve tests all remain until those are converted.
 
 [Search.svelte](../../src/lib/svelte/filter/Search.svelte), [Browse.svelte](../../src/lib/svelte/main/Browse.svelte), [Sectioning.ts](../../src/lib/ts/utilities/Sectioning.ts), [Section.svelte](../../src/lib/svelte/support/Section.svelte)
 

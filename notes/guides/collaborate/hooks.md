@@ -7,7 +7,7 @@ date: 2026-07-08
 ---
 # Hooks
 
-Hooks are shell commands that fire automatically when Claude does something — edits a file, runs a command, receives a message. They live in settings.json and run without asking.
+Hooks are shell commands that fire automatically when co does something — edits a file, runs a command, receives a message. They live in settings.json and run without asking.
 
 ## The cut, and the two parts
 
@@ -89,9 +89,9 @@ Every file that arrives, in either part, wears the `always` tag. Two things can 
 
 ## Why hooks
 
-Memory tells Claude what to remember. Hooks make Claude's environment *react*. A memory says "prefer tabs." A hook reformats the file after every write. Memory is advice; hooks are mandatory.
+Memory tells co what to remember. Hooks make co's environment *react*. A memory says "prefer tabs." A hook reformats the file after every write. Memory is advice; hooks are mandatory.
 
-The debugging reminder is a hook because it needs to fire *before* Claude starts reasoning — injected into context at the moment the user says "bug," not recalled later when Claude remembers to check.
+The debugging reminder is a hook because it needs to fire *before* co starts reasoning — injected into context at the moment the user says "bug," not recalled later when co remembers to check.
 
 ## Where they live
 
@@ -133,7 +133,7 @@ Settings load in order: user then project then local. Later overrides earlier.
 | `PreToolUse` | Before a tool runs | Tool name |
 | `PostToolUse` | After a tool succeeds | Tool name |
 | `MessageDisplay` | Text is about to be shown on screen | -- |
-| `Stop` | Claude finishes responding | -- |
+| `Stop` | co finishes responding | -- |
 | `PreCompact` | Before context compaction | "manual"/"auto" |
 | `SessionStart` | New session begins | -- |
 
@@ -222,7 +222,7 @@ For `UserPromptSubmit`: just send a matching message in the next conversation. F
 
 ## Example: the debugging reminder
 
-When the user's message contains a debugging keyword, inject a reminder into Claude's context.
+When the user's message contains a debugging keyword, inject a reminder into co's context.
 
 ```json
 {
@@ -247,5 +247,5 @@ When the user's message contains a debugging keyword, inject a reminder into Cla
 
 * Invalid JSON in settings.json silently disables ALL settings from that file. Always validate with `jq`.
 * Hooks that write to stdout without valid JSON will show raw text to the user.
-* `|| true` at the end prevents non-zero exit codes from blocking Claude.
+* `|| true` at the end prevents non-zero exit codes from blocking co.
 * The settings watcher may not pick up new files until Jonathan restarts or open `/hooks` in the UI.

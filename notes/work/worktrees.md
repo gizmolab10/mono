@@ -29,4 +29,4 @@ git branch | grep -v -E '^\*|main|<current-branch>' | xargs git branch -D
 ## What NOT to Do
 
 - Don't read or write files via worktree paths (`~/.claude-worktrees/...`). Always use `~/GitHub/mono/`.
-- Don't assume worktree branches have meaningful content — they're session scaffolding, not feature branches.
+- Don't assume worktree branches have meaningful content — they're session infrastructure, not feature branches.

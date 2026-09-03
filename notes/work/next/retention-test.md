@@ -4,7 +4,7 @@ Measures how well guides transfer knowledge across sessions.
 
 ## Setup
 
-Fresh chat. Run `go mo`. Wait for collaborator to read guides.
+Fresh chat. Run `go mo`. Wait for co to read guides.
 
 ## Probes
 

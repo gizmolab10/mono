@@ -1,13 +1,13 @@
 ---
 kind: explain
 title: "Learn"
-description: "Collaborator errors → distilled into guide updates"
+description: "Co errors → distilled into guide updates"
 tags: [journal]
 date: 2026-08-11
 ---
 # Learn
 
-Collaborator errors → distilled into guide updates. It's a step in our roadmap for improvement
+Co errors → distilled into guide updates. It's a step in our roadmap for improvement
 
 ---
 
