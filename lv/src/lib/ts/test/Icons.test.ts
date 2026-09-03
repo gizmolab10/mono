@@ -1,4 +1,4 @@
-// Tests for the borrowed icon shapes: each returns drawing instructions for a
+// Tests for the adopted icon shapes: each returns drawing instructions for a
 // closed shape, starting with a move and ending with a close.
 
 import { describe, it, expect } from 'vitest';

@@ -2,7 +2,7 @@
 // written into a `©nam` block inside the movie's description, and only where
 // that description is the last block in the file.
 //
-// The made-up movies here are real in shape — the same blocks, in the same
+// The made-up movies here are real in structure — the same blocks, in the same
 // order — so the walk is proved without a fifty-megabyte file.
 
 import { describe, it, expect } from 'vitest';

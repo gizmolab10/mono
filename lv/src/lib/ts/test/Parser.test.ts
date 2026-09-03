@@ -155,7 +155,7 @@ describe('relaxed link with spaces', () => {
 describe('rules the code does not satisfy yet', () => {
   it.skip('outside links should open in a new tab', () => {
     // Spec line 37: external links open in a new tab. The parser chain has
-    // no step that adds a new-tab marker, so nothing opens a new tab today.
+    // no step that adds a new-tab decoration, so nothing opens a new tab today.
     const html = render('[label](https://example.com)');
     expect(html).toContain('target="_blank"');
   });

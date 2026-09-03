@@ -193,3 +193,31 @@ Total for this section: 16 files touched, 5 systematic word-categories fixed (~5
 ## me
 
 Scope: all of `me/` — 3 files, no `package.json` (notes only, nothing to verify). No project-specific word table. Checked all three files against the mono table: `mj.md` (a cannabis-growing reference) has one "room" instance ("hard to do organically in a sealed room" — a literal grow room) and no other hits; `jonathan.md` and `revisit.me.md` have zero hits (a "markdown" false-positive on `mark` was the only near-match, not a real one). No edits made, nothing to commit for this folder.
+
+## lv
+
+Scope: all of `lv/` (50 files). No `banned words.md`/`lexicon.md` of its own at the project-table locations checked (a read-only `memory/lv/truth/lexicon.md` exists but wasn't in scope to read or edit) — mono table only. Same high-signal-first method as ji, given the file count.
+
+### Swaps made
+
+- **`mark` → `decoration`** (a drawn hamburger-menu icon and a planned new-tab indicator icon, the "stamped visual element" sense) — `work journal.md` (heading + body), `bare bone website.md`, `Parser.test.ts` comment.
+- **`shape` → `type`** (an AST/markdown node's kind — paragraph, list, code block — not geometry or generic data structure) — 6 instances in one `bare bone website.md` paragraph, rewritten together since "structure" was already used once in the same sentence for a different, larger-scale idea (the whole parse tree) and repeating it for "node kind" too would have been confusing; `type` is the plain, standard word for this and isn't already used elsewhere in the passage for something else.
+- **`shape` → `structure`** (literal data/file-format sense) — `photo-titles.ts`, `Movie_Title.test.ts`, `work journal.md` ("The first shape tried" — a syntax pattern attempt).
+- **`borrowed` → `adopted`** (`Icons.test.ts`: icon-drawing code ported from di, exactly the table's "a host taking a core file" sense).
+- **`stand` → `remain`** — `work journal.md`: "Its button and its styling stand" (the hamburger is hidden but its component and CSS remain in place) → "remain", the "still there after a change" sense the table targets, not the positional sense left alone elsewhere.
+
+### Hits left in place, with reason
+
+- **`tree`** (6 instances, `bare bone website.md`, `work journal.md`) — literal git object-model tree (blob/tree/commit) or the markdown parser's literal AST tree — standard CS/git terms, not a document-hierarchy concept (lv has no hierarchy feature).
+- **`mark`/`marked`/`markdown`** (remaining ~40 of 43 raw hits) — almost all are the substring `markdown` (Obsidian's file format); the few real `mark`/`marked` hits are the generic flag sense ("the one whose top settings mark it as home").
+- **`shape`** (`photo gallery.md`, `work journal.md`: "A callout is a shape Obsidian draws") — a callout's literal drawn box, not data structure.
+- **`bar`** (~30 instances) — "address bar," "scroll bar," and Obsidian's own `|` syntax character called "the bar" in `bare bone website.md` — all literal named UI/syntax elements, not the margin/padding sense.
+- **`words`** (46 instances) — literal file/caption text content throughout, the exempted sense.
+- **`stand`** (`movie-title.ts`: "Four bytes of version stand before this block" — precedes spatially) — left per the same narrower-scope carve-out used in di and ji.
+- **`land`, `owe`, `borrow`** (remaining) — no further real hits found beyond the one `borrowed` swap above.
+
+### Verification
+
+`yarn --cwd lv test:run` — 121 passed, 4 skipped, **1 pre-existing failure** (`Gallery.test.ts`: "finds the photos in the folder, in the order its own list names" — confirmed failing identically on the main checkout at `/Users/sand/GitHub/mono/lv`, unrelated to this sweep's edits; not fixed, per instructions). `yarn --cwd lv run check` (svelte-check) — 469 files, 0 errors, 0 warnings.
+
+Total for this section: 6 files touched, 4 word-categories fixed (~11 individual edits), 6 categories of hits left in place, one pre-existing test failure reported and left untouched.

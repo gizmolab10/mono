@@ -64,7 +64,7 @@ async function titleOf(path: string): Promise<string | null> {
   return one !== null && one.trim() !== '' ? one.trim() : null;
 }
 
-// A title comes back in more than one shape. Written in one language it is a
+// A title comes back in more than one structure. Written in one language it is a
 // pair — the language and the words. Written in several it is one entry per
 // language. Either way the words are what is wanted, never the language's name.
 function wordsIn(said: unknown): string | null {
