@@ -228,7 +228,7 @@ Not yet. Overview has nothing to publish until it has content. The github line g
 
 ## Content view
 
-What fills the empty box beside details. Four more phases, same shape as the first four — each ends with something to look at.
+What fills the empty box beside details. Four more phases, same structure as the first four — each ends with something to look at.
 
 **One thing this list assumes and doesn't say:** a list of files needs files, and overview has none — no store, no documents, nothing to filter. Something has to hold them before any of this can show anything. Worth settling before phase 5 starts.
 

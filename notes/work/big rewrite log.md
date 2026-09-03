@@ -278,3 +278,24 @@ Given the file count, this pass sampled the biggest categories (`panel` 80, `nod
 `yarn --cwd ws test:run` — 192 passed, 0 failed. ws has no `check`/svelte-check script in `package.json`.
 
 Total for this section: 2 files touched, 1 swap, 6 categories of hits left in place with reasons (the `tree` finding is the significant one — confirming a large raw-hit category is a false alarm, not a miss), tests green.
+
+## core
+
+Scope: all of `core/` (84 files). Shares ov's `banned words.md` (identical file, neither row found). `core/notes/` overlaps substantially with `ov/notes/` — several files (`AI memory redesign.md`, `md audit.md`, `AI on my mac.md`, `assessment of our guides.md`, `hits manager.md`, `ov - goals.md`, `work journal.md`) are the same content as the ov section already swept, carrying the same unfixed hits; those got the identical fixes applied here. `core/src` itself is a different, smaller shared-component library (Section, Stack, Separator, BuildNotes, Steppers — the primitives di/ji/lv/ov/ws draw from), not a copy of ov's app code.
+
+### Swaps made
+
+- **`shape` → `structure`** (data/API/organization sense, identical instances and fixes to the ov section) — `ov - goals.md`, `AI memory redesign.md` ×2 ("Two shapes only"), `AI on my mac.md`, `hits manager.md`, `assessment of our guides.md`, `work journal.md`.
+- **`cross-project` → `main`** — `AI memory redesign.md` ×2 (same diagram comment as in ov).
+- **`shipped` → `was done`** — `md audit.md` ("even that shipped" → "even that was done").
+- **`fold mark(s)`/`step mark(s)` → `fold decoration(s)`/`step decoration(s)`** (a drawn triangle/chevron and a drawn stepper glyph — core's own version of the same "decoration" pattern found in di, ji and lv) — systematic fix across `working features.md`, `mouse ux.md`, `hits manager.md`, `work journal.md` (~14 instances of the two-word phrase). Anaphoric follow-on references later in the same paragraphs (a bare "the mark," "the marks" referring back to a decoration just named) were **not** individually chased down — flagged here rather than silently left, since fixing every pronoun-like reference across ~20 more sentences was judged not worth the risk of introducing a wrong antecedent under this session's remaining time, versus the clear, safe, contained fix of the named phrase itself.
+
+### Hits left in place, with reason
+
+Same categories and reasoning as the ov section apply to the shared files (`words`, `mark` in the generic-flag sense, `edge`, `bar`, literal `shape` instances, `tree` as a filesystem/component tree, `absorb` quoted as a rule example, `borrowed titles`). `core/src`'s own files were spot-checked and turned up nothing beyond the fold/step-mark pattern above.
+
+### Verification
+
+`yarn --cwd core test:run` — 91 passed, 0 failed. `yarn --cwd core run check` (svelte-check) — 468 files, 0 errors, 0 warnings.
+
+Total for this section: 9 files touched, 4 word-categories fixed (~22 individual edits), one explicitly-flagged incomplete category (anaphoric mark references), tests and type-check green.

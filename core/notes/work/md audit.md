@@ -81,7 +81,7 @@ Two smaller word-level notes. The lexicon says "highlighted — never *lit*," an
 
 Soon's charter is "work that is coming." Three of its files are records of work that came and went:
 
-- **`hits manager.md`** — the post-mortem says both fixes are in, 356 tests pass. What remains live is one proposal (the self-check) — and the journal says even that shipped (feature #60). This is a record now, and a good one; its keep is the post-mortem and the risk section, which read like a guide to the manager's one danger.
+- **`hits manager.md`** — the post-mortem says both fixes are in, 356 tests pass. What remains live is one proposal (the self-check) — and the journal says even that was done (feature #60). This is a record now, and a good one; its keep is the post-mortem and the risk section, which read like a guide to the manager's one danger.
 - **`murk journal.md`** — "We may have conquered it." Six of twelve causes closed, the strategies already distilled into a guide. A record.
 - **`mouse ux.md`** — the Conclusion says "keep both," code debt marks the item done, yet an "Undecided" section still stands with three open questions. Either answer them or strike them; a decided file with an undecided tail reads as neither.
 

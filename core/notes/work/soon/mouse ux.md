@@ -26,7 +26,7 @@ Nothing else has to be decided. Three faults today all came from the app knowing
 
 All three turned up on 14 August 2026, each mended on its own before the shared cause was named.
 
-**The step marks stepped twice.** The manager said the press and started the repeating, and the repeating begins with a beat at once. Where the second step arrived back at the first, it read as doing nothing.
+**The step decorations stepped twice.** The manager said the press and started the repeating, and the repeating begins with a beat at once. Where the second step arrived back at the first, it read as doing nothing.
 
 **A folder opened and then shut.** The mark acted on the way down, the row on the way up. The mark's shape turns when its folder does, so it moved out from under the cursor and the row turned the folder straight back.
 

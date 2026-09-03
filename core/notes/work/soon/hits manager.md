@@ -105,13 +105,13 @@ Every one is a `<button>` already carrying its own press, its own hint and a `:h
 
 #### 1. a segment has a state, and a press has none
 
-A picked segment wears `current` and answers nothing — `cursor: default`, and the fill it takes is the accent rather than the hover. So its fill under the cursor is already written as "not picked, not empty": `.segment:not(.current):not(.empty):hover`. That becomes `[data-hit]` in the same shape, and the picked one keeps its own rule.
+A picked segment wears `current` and answers nothing — `cursor: default`, and the fill it takes is the accent rather than the hover. So its fill under the cursor is already written as "not picked, not empty": `.segment:not(.current):not(.empty):hover`. That becomes `[data-hit]` in the same structure, and the picked one keeps its own rule.
 
 The presses among them (clear, invert) also take a stronger fill while held — `:active`. Nothing in the manager says "held right now"; the target hears the press and the release and nothing between. Either a second stamp is added for that, or the stronger fill goes.
 
 #### 2. a segment that would empty the list answers nothing
 
-A segment wearing `empty` is grayed and dead. A dead one still needs a rectangle — it stands in the run and the ones beside it must not answer for its space — so it registers with no press and no words, the same way a dead step mark does.
+A segment wearing `empty` is grayed and dead. A dead one still needs a rectangle — it stands in the run and the ones beside it must not answer for its space — so it registers with no press and no words, the same way a dead step decoration does.
 
 #### 3. names
 
