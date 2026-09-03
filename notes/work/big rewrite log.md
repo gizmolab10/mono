@@ -250,3 +250,31 @@ Scope: all of `ov/` (85 files). ov has its own `notes/guides/pre-flight/banned w
 `yarn --cwd ov test:run` — 336 passed, 0 failed. `yarn --cwd ov run check` (svelte-check) — 530 files, 0 errors, 0 warnings.
 
 Total for this section: 13 files touched, 3 word-categories fixed (~19 individual edits), 8 categories of hits left in place with reasons, tests and type-check green. Reported as a prioritized sweep given the raw-hit volume, per the same note as the ji section.
+
+## ws
+
+Scope: all of `ws/` (382 files, the largest folder). No project-specific word table for ws; mono table only. `ws/notes/archives/**` (old, closed-out snapshots) was included in the search but treated like the notes+root section's historical-content carve-out where hits turned up there.
+
+The standout finding: **`tree` (119 raw hits) is not a hit at all.** ws has a real, named, deeply-wired feature — "tree mode" versus "radial mode," two distinct graph layout algorithms — with matching identifiers throughout the actual code (`T_Hit_Target.tree`, `inTreeMode`, the `tree-graph` CSS class, `Tree_Graph.svelte`, a `tree/` component folder). This is a different concept from ji's document/tag hierarchy (which the banned-words table's own "meaning" column scopes to "ji structure"), and ji's own prose confirms it — ji explicitly says it ported its Hierarchy manager *from* ws while separately calling ws's own graph-shape idea "tree mode." So unlike the ji section, `tree` here was correctly left untouched everywhere, all 119 instances, as ws's own literal, code-backed vocabulary.
+
+Given the file count, this pass sampled the biggest categories (`panel` 80, `nod` 58, `split` 46, `circle` 37, `slid` 34, `glob` 29, `edge` 26, `mark` 21, `stand` 17, `bar` 15, `copy` 14, `shape` 13) and checked the small ones exhaustively (`seam`, `ship`, `land`, `lit`, `room`, `repro`, `words`).
+
+### Swaps made
+
+- **`shipped` → `done`** — `breadcrumbs.md`, `focus.md` (the same sentence appears in both — a migration note copied between two docs): "can still be shipped one by one" → "can still be done one by one."
+
+### Hits left in place, with reason
+
+- **`tree`** (119) — ws's own "tree mode" graph-layout feature, matching real identifiers throughout the code, as detailed above.
+- **`panel`** (80) — "Details panel," "Actions panel," "Control panel" are ws's own established, code-matching component names (`Details.svelte` etc.), the same carve-out already used for di and ji.
+- **`nod`** (58) — entirely the substring `node`/`Node.js`, ws's graph-node terminology and the JS runtime.
+- **`circle`** (37) — literal SVG `circle()` path calls and drawn graph-node circles, plus one "going around in circles" idiom quoted from another file's title. None describe modules importing each other.
+- **`seam`** — zero real hits (the raw count of 2 was noise from a broader net; a direct check found none).
+- **`shape`** — one real hit (`Mouse_Responder.svelte`, archived: "this element's hover shape is not its bounding rect") — a literal hit-region outline, not data structure.
+- **`split`, `slid`, `glob`, `edge`, `mark`, `stand`, `bar`, `copy`, `words`** — sampled; consistent with literal/established senses throughout (SVG/DOM code, graph-node vocabulary, `global`/`globalThis`, generic flag/designate usage), the same pattern as every other project in this sweep. No systematic category surfaced the way `tree`/`seam` did in ji.
+
+### Verification
+
+`yarn --cwd ws test:run` — 192 passed, 0 failed. ws has no `check`/svelte-check script in `package.json`.
+
+Total for this section: 2 files touched, 1 swap, 6 categories of hits left in place with reasons (the `tree` finding is the significant one — confirming a large raw-hit category is a false alarm, not a miss), tests green.

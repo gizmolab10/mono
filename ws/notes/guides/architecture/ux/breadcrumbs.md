@@ -291,7 +291,7 @@ These phases can be implemented incrementally, but in order, with each phase lea
 
 ###### **Notes**:
 - Phase 1 (subscription) and phase 5 (initialization) have to be implemented and deployed before fully removing direct `w_ancestry_focus.set` calls.
-- Phases 2–4 depend on phase 1 being in place, but can still be shipped one by one (for example: update `becomeFocus()` first, `ancestry_next_focusOn()` next, then the remaining setters).
+- Phases 2–4 depend on phase 1 being in place, but can still be done one by one (for example: update `becomeFocus()` first, `ancestry_next_focusOn()` next, then the remaining setters).
 ###### 1. **Create derived store subscription**:
    - In `UX.ts.setup_subscriptions()`, add subscription to `si_recents.w_index` and `si_recents.w_items`
    - When either changes, extract ancestry from `si_recents.item[0]` and update `w_ancestry_focus`
