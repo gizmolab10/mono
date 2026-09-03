@@ -162,7 +162,7 @@
 
 	function look_for_names() {
 		names_riding = tags_row === null ? false : names_ride_in(placements_of(tags_row));
-		// The run just changed shape, so every tag in it stands somewhere new. Asked at the next
+		// The run just changed structure, so every tag in it stands somewhere new. Asked at the next
 		// drawing, since a run re-wrapping says this many times over.
 		hits.recalibrate_when_drawn();
 	}

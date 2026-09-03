@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-// The test runner. Same shape as di's, minus the pieces overview has no use for:
+// The test runner. Same structure as di's, minus the pieces overview has no use for:
 // no setup file, no assets folder, no browser-driven tests. Tests sit beside the
 // code they cover, or under a tests folder — anything ending in .test.ts under src.
 export default defineConfig({

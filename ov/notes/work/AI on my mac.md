@@ -52,7 +52,7 @@ So prompt caching stops being an optimization and becomes a requirement. Stable 
 
 ## Serving the model
 
-Everything downstream speaks the OpenAI HTTP shape, so this piece is swappable. Start with MLX. It's Apple's own framework, tuned for this silicon, and its server does structured tool calling, which is the part that actually matters for an agent.
+Everything downstream speaks the OpenAI HTTP structure, so this piece is swappable. Start with MLX. It's Apple's own framework, tuned for this silicon, and its server does structured tool calling, which is the part that actually matters for an agent.
 
 ```bash
 pip install mlx-lm

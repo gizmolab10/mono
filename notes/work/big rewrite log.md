@@ -221,3 +221,32 @@ Scope: all of `lv/` (50 files). No `banned words.md`/`lexicon.md` of its own at 
 `yarn --cwd lv test:run` — 121 passed, 4 skipped, **1 pre-existing failure** (`Gallery.test.ts`: "finds the photos in the folder, in the order its own list names" — confirmed failing identically on the main checkout at `/Users/sand/GitHub/mono/lv`, unrelated to this sweep's edits; not fixed, per instructions). `yarn --cwd lv run check` (svelte-check) — 469 files, 0 errors, 0 warnings.
 
 Total for this section: 6 files touched, 4 word-categories fixed (~11 individual edits), 6 categories of hits left in place, one pre-existing test failure reported and left untouched.
+
+## ov
+
+Scope: all of `ov/` (85 files). ov has its own `notes/guides/pre-flight/banned words.md` (2 rows: "joined line," "block of drawing," neither found anywhere in the corpus) and a read-only `memory/ov/truth/lexicon.md` not touched. Raw hits were very high (`words` 569, `mark` 273, `stand` 243, `edge` 135, `bar` 116, `glob` 125, `split` 97) — ov is a markdown-file browser/editor, so `words`, `mark`, `edge` and `bar` are constantly used in ov's own literal editor/UI vocabulary, same pattern as ji. This pass again worked highest-signal-first: `shape` (ov's biggest real category) was checked exhaustively; `cross-project`, `absorb`, `ship`, `slid` were checked exhaustively (small counts); the huge literal categories were sampled.
+
+### Swaps made
+
+- **`shape` → `structure`** (data/file-format/folder-layout sense, not geometry) — 14 instances: `ov - goals.md`, `AI memory redesign.md` ×3, `AI on my mac.md`, `hits manager.md`, `assessment of our guides.md`, `work journal.md`, `vitest.config.ts`, `Browse_Filters.svelte`, `Editor_Filters.svelte`, `labels.test.ts` ×2, `Labels.ts`.
+- **`cross-project` → `main`** — `AI memory redesign.md` ×2 (a diagram comment: "cross-project bundle" and "cross-project terms").
+- **`ship`/`shipped` → `is bundled with`/`was done`** — `Markdown_Editor.svelte` comment ("the six heading colors Obsidian ships with" — bundled, not completed-work sense), `md audit.md` ("even that shipped" → "even that was done").
+
+### Judgment rewrites (class 3)
+
+- `Markdown_Blocks.ts` and `hits manager.md:122`'s remaining `shape` instances were checked but left — see below, they're literal rendering/layout, not data structure, despite sitting close to fixed instances in the same files.
+
+### Hits left in place, with reason
+
+- **`shape`** (remaining ~45 of 59) — the large majority: literal drawn/CSS shapes (pill-shaped fields, a mark's triangle rotating, rounded backgrounds), or (`hits manager.md:122`, `Markdown_Blocks.ts:216`) a row's or a browser-drawn rule's literal visible layout, not a data format. `md audit.md:55` ("the exact shape the murk journal warns about," meaning "situation/pattern") was left — none of the table's four replacement words (choice/decision/truth/structure) fit "pattern" without drifting the meaning, and confidence was too low to force one.
+- **`slid`/`slide`** (24 instances) — all literal UI sliding-panel/drag-and-drop animation, not "drifted off true over time."
+- **`words`** (569), **`mark`/`marked`** (273), **`edge`** (135), **`bar`** (116), **`glob`** (125 — mostly the substring `global`), **`split`** (97), **`stand`/`stood`** (263 combined) — sampled rather than read exhaustively given the volume; every sample matched ov's own literal editor/UI vocabulary (a document's text content, a triangle/chevron toggle icon, a text-cursor or box boundary, a title bar, `globalThis`/`global` state, splitting a file path or a run of tags, a component's on-screen position) or the generic non-UI flag sense already carved out in the ji and di sections. No systematic real category turned up the way `tree`/`seam` did in ji or `room`/`static room` did in di.
+- **`borrowed`** (`md audit.md`: "borrowed titles") — describes stale/reused documentation titles, not the "host adopts a core file" architecture sense.
+- **`absorb`** (`assessment of our guides.md`) — quotes the banned word itself as a rule example ("good prose is says 'easy to absorb'. *Absorb* is on the banned list") — exempt.
+- **`tree`** (3) — a filesystem directory tree and a Svelte component tree, standard generic CS terms (ov has no document-hierarchy feature to confuse this with).
+
+### Verification
+
+`yarn --cwd ov test:run` — 336 passed, 0 failed. `yarn --cwd ov run check` (svelte-check) — 530 files, 0 errors, 0 warnings.
+
+Total for this section: 13 files touched, 3 word-categories fixed (~19 individual edits), 8 categories of hits left in place with reasons, tests and type-check green. Reported as a prioritized sweep given the raw-hit volume, per the same note as the ji section.

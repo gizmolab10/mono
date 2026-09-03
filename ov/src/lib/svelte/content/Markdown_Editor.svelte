@@ -1427,7 +1427,7 @@
 	.view-page :global(h5),
 	.view-page :global(h6) { font-size : var(--font); }
 
-	/* The six heading colors Obsidian ships with in its light theme, so a guide reads here the
+	/* The six heading colors Obsidian is bundled with in its light theme, so a guide reads here the
 	   way it reads there. */
 	.view-page :global(h1) { color : #4a9ad4; }
 

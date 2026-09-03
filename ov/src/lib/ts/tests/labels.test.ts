@@ -234,8 +234,8 @@ describe('a moment written out for reading', () => {
 	});
 });
 
-// The tags a file names, in either of the two shapes one can be written in. This app writes them
-// all on one line; Obsidian writes them one to a line, and rewrites a file into that shape the
+// The tags a file names, in either of the two structures one can be written in. This app writes them
+// all on one line; Obsidian writes them one to a line, and rewrites a file into that structure the
 // moment its tags are touched there.
 
 describe('reading the tags off a file', () => {

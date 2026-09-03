@@ -59,7 +59,7 @@ Two faults, both silent, both found by measuring rather than reading:
 
 ## 2026-08-17 — a tag typed by hand went unread, and nothing said so
 
-A file's tags can be written two ways. This app writes them all on one line; **Obsidian writes them one name to a line, and rewrites a file into that shape the moment its tags are touched there.** The reading knew only the first, found nothing after the colon, and gave the file no tags at all.
+A file's tags can be written two ways. This app writes them all on one line; **Obsidian writes them one name to a line, and rewrites a file into that structure the moment its tags are touched there.** The reading knew only the first, found nothing after the colon, and gave the file no tags at all.
 
 **Nothing was dropped, so nothing was said.** The reading names by name every tag it turns away, and that silence was itself the clue — the file was not being half read, it was not being read.
 

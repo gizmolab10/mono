@@ -9,7 +9,7 @@ date: 2026-08-22
 
 Every markdown file in `ov/` was read whole — the entry point, the four guide folders, the work notes, and the eleven in soon. Thirty-three files. The goals file was read against all of them, since it describes what this was meant to be.
 
-The headline: **the corpus already knows its faults.** The four staleness files diagnose dead pointers, borrowed titles, hand-kept counts and bloated done-lists better than any outside reader could. What this audit adds is that the same faults now live in ov's own notes — and that the diagnoses were written down and mostly never executed. So: the drift first, then the labels, then the shape of the notes, then what would keep all of it true without a person sweeping.
+The headline: **the corpus already knows its faults.** The four staleness files diagnose dead pointers, borrowed titles, hand-kept counts and bloated done-lists better than any outside reader could. What this audit adds is that the same faults now live in ov's own notes — and that the diagnoses were written down and mostly never executed. So: the drift first, then the labels, then the structure of the notes, then what would keep all of it true without a person sweeping.
 
 ## 1 — The entry points mislead
 
@@ -81,7 +81,7 @@ Two smaller word-level notes. The lexicon says "highlighted — never *lit*," an
 
 Soon's charter is "work that is coming." Three of its files are records of work that came and went:
 
-- **`hits manager.md`** — the post-mortem says both fixes are in, 356 tests pass. What remains live is one proposal (the self-check) — and the journal says even that shipped (feature #60). This is a record now, and a good one; its keep is the post-mortem and the risk section, which read like a guide to the manager's one danger.
+- **`hits manager.md`** — the post-mortem says both fixes are in, 356 tests pass. What remains live is one proposal (the self-check) — and the journal says even that was done (feature #60). This is a record now, and a good one; its keep is the post-mortem and the risk section, which read like a guide to the manager's one danger.
 - **`murk journal.md`** — "We may have conquered it." Six of twelve causes closed, the strategies already distilled into a guide. A record.
 - **`mouse ux.md`** — the Conclusion says "keep both," code debt marks the item done, yet an "Undecided" section still stands with three open questions. Either answer them or strike them; a decided file with an undecided tail reads as neither.
 

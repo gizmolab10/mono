@@ -248,7 +248,7 @@ function names_below(lines: string[], at: number): string[] {
 }
 
 /**
- * The occasions a file names, in either shape: `use_when: [one, two]` on the one line, which is
+ * The occasions a file names, in either structure: `use_when: [one, two]` on the one line, which is
  * what this app writes, or one to a line below a bare `use_when:`, which is what Obsidian leaves
  * behind. Unlike tags there is no closed list — these are phrases, kept exactly as written.
  */

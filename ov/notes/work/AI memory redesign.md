@@ -27,7 +27,7 @@ Two terms this document relies on, defined under its own contract:
 
 - **Three time layers.** Truth files say what *is*. The log says what *happened recently*. Git says what *was*. Never mix layers: no history in truths, no current-state authority in logs.
 - **One fact, one file.** To change a design decision, you edit exactly one file. If another file needs the fact, it links to the single-source-of-truth file.
-- **Two shapes only.** The root has one shape; every project folder has one identical shape. Nothing else to learn.
+- **Two structures only.** The root has one structure; every project folder has one identical structure. Nothing else to learn.
 - **Small files, flat folders.** Truths stay under ~100 lines; `truth/` never grows subfolders. When a file outgrows its concept, split it and update the index.
 - **OKF-compliant throughout.** Every file carries frontmatter (`type` required); `index.md` and `log.md` are reserved names with reserved roles. This is what makes "find where the truth lives" mechanical — for you and for any agent.
 
@@ -36,12 +36,12 @@ Two terms this document relies on, defined under its own contract:
 ```
 memory/                      # a folder inside your existing repo; an OKF bundle
 ├── index.md                 # root map: every project, one line each — read first, always
-├── shared/                  # cross-project bundle, same shape as a project
+├── shared/                  # main bundle, same structure as a project
 │   ├── index.md
 │   ├── log.md
 │   ├── truth/
 │   │   ├── protocol.md      # the operating rules themselves — see "Where the rules live"
-│   │   ├── lexicon.md       # cross-project terms — see "Prose and terminology"
+│   │   ├── lexicon.md       # main terms — see "Prose and terminology"
 │   │   ├── taste.md         # your visual/design principles — see "Zone" below
 │   │   └── conventions.md   # how you like to work with AI
 │   └── zone/
