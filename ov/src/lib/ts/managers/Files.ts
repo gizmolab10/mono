@@ -735,7 +735,7 @@ class Files {
 		// so the picked tags stay in the question, and a tag that would empty the list grays out.
 		const set_aside = without === 'tags' && picking !== T_Picking.all;
 		return this.files.filter((guide) => {
-			if (without !== 'project' && !project_matches(projects, guide.bundle)) { return false; }
+			if (without !== 'project' && !project_matches(projects, project_of(guide))) { return false; }
 			if (without !== 'kind' && !kind_matches(kind, guide.kind, guide.labeled)) { return false; }
 			if (!set_aside && !tags_match(picking, tags, this.hierarchy.tag_names_of(guide.id))) { return false; }
 			if (!words_match(words, guide.name, guide.title, guide.description)) { return false; }

@@ -9,5 +9,5 @@ date: 2026-09-01
 
 This is going to be an extended core, providing a gallery of files (mostly images) and an ability to edit and add to them.
 
-- [ ] take out what is lv's and no use to gallery — the galleries, the captions, the photo order, the vineyard's own words
+- [ ] take out what is lv's and not used in gallery — the galleries, the captions, the photo order, the vineyard's own words
     - [ ] leave the netlify functions

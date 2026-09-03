@@ -9,6 +9,10 @@ date: 2026-09-01
 
 <!-- consolidated: 1 September 2026 -->
 
+## 3 September 2026
+
+- D: when the search text leaves a section nothing to offer, an unfolded projects, kinds or tags section shrinks to --gap high and its centered clickable is replaced by a plain label, not pressable, reading 'no options for current search' — recorded in truth/controls.md, not yet built
+
 ## 1 September 2026
 
 - D: ov lists mono's tooling folder — the hooks, the skills and the settings under `.claude`, forty files, at any depth and whatever the ending, since a hook is a shell script and a setting is json. Two places had to agree, as always: the dispatcher's own gate and its listing, and `site_of_file` in ov, which stands the test before the .md gate that would turn both away. They answer to mono. The worktrees folder is left out — 1214 files of it, whole copies of the repo, and the file to edit is always the one in the repo itself

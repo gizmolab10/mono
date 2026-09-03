@@ -8,11 +8,10 @@ date: 22 August 2026
 # Ideas
 
 - [ ] unmurk the entirety of our documentation 
-- [ ] create mj (gallery of girls)
+    - [ ] Co did very well at the start. Lately I can't understand about half of co's replies. Try to discover the cause of this recent incomprehensibility.
+- [ ] create mj (gallery of girls) -> mj.jonathansand.me
 
 ---
-
-- [ ] Co did very well at the start. Lately I can't understand about half of co's replies. Try to discover the cause of this recent incomprehensibility.
 
 ## Fully implement the [[handbook]]
 

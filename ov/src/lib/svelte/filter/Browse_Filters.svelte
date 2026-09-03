@@ -147,6 +147,13 @@
 	// because an area that draws nothing must not leave a wrapper behind holding a gap open.
 	let showing_areas = $derived(TAG_AREAS.filter((area) => tags_shown(area, tags_in_use, $w_tags).length !== 0));
 
+	// Search text can leave a row nothing to offer. Such a row is told it is empty, so the stack
+	// sizes it as a fold and folding it moves nothing below. Its line carries a plain word in place
+	// of the centered control — read, never pressed — folded or open, so the line never shifts.
+	let projects_starved = $derived($w_search_text !== '' && shown_projects.length === 0);
+	let kinds_starved    = $derived($w_search_text !== '' && kinds_offered === 0);
+	let tags_starved     = $derived($w_search_text !== '' && showing_areas.length === 0);
+
 	// Does a name ride above a pill in the topmost row of tags? Only then does the row hold a gap
 	// above itself, so that name stands clear of the line overhead.
 	let tags_row = $state<HTMLElement | null>(null);
@@ -221,6 +228,15 @@
 	const kinds_action    = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const tags_action     = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const picking_action  = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
+
+	// The word a starved row's line carries. Built only while the row is starved, so the line
+	// holds it then and nothing otherwise.
+	let projects_none = $state<HTMLElement | null>(null);
+	let kinds_none    = $state<HTMLElement | null>(null);
+	let tags_none     = $state<HTMLElement | null>(null);
+	const projects_none_action = $derived(Object.assign(new Action(), { element: projects_none, position: T_Position.center }));
+	const kinds_none_action    = $derived(Object.assign(new Action(), { element: kinds_none,    position: T_Position.center }));
+	const tags_none_action     = $derived(Object.assign(new Action(), { element: tags_none,     position: T_Position.center }));
 	const search_clearer   = $derived(Object.assign(new Action(), { element: search_clear,   position: T_Position.center }));
 	const projects_clearer = $derived(Object.assign(new Action(), { element: projects_clear, position: T_Position.center }));
 	const kinds_clearer    = $derived(Object.assign(new Action(), { element: kinds_clear,    position: T_Position.center }));
@@ -266,6 +282,11 @@
 			use:hit_target={{ id: 'list.clear.kinds', onpress: () => w_kind.set(''),
 				tip: 'show every kind of guide' }}>clear</button>
 	{/if}
+	{#if projects_starved}<span class='no-options' bind:this={projects_none}>no options for current search</span>{/if}
+	{#if kinds_starved}<span class='no-options' bind:this={kinds_none}>no options for current search</span>{/if}
+	{#if tags_starved}<span class='no-options' bind:this={tags_none}>no options for current search</span>{/if}
+	<!-- Folded with no tag picked, the control has nothing to say, so it is not built. -->
+	{#if !tags_starved && (show_tags || $w_tags.length > 0)}
 	<span class='picking' bind:this={picking_control}>
 		<!-- A picked one answers nothing: it is already what it says. -->
 		<button class='segment' class:current={$w_tag_picking === T_Picking.any}
@@ -284,6 +305,7 @@
 		<button class='segment press'
 			use:hit_target={{ id: 'list.picking.invert', onpress: invert_tags, tip: 'pick exactly the tags that are not picked' }}>invert</button>
 	</span>
+	{/if}
 </div>
 
 <!-- With the other filters leaving nothing, a row has no words to offer. The control itself is
@@ -350,6 +372,7 @@
      areas with nothing left to show are left out here rather than inside — an empty wrapper would
      still take a gap. -->
 {#snippet tags_picker()}
+	{#if !tags_starved}
 	<div class='bare-answers' role='presentation'
 		use:hit_target={{ id: 'list.tags', type: T_Hit_Target.section,
 			onrelease: () => toggle_all_areas(showing_areas.map((one) => one.name)),
@@ -365,6 +388,7 @@
 			{/each}
 		</div>
 	</div>
+	{/if}
 {/snippet}
 
 {#snippet projects_row()}
@@ -410,9 +434,9 @@
 		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below'
 			leads={[search_action, search_clearer]} sections={[
 			{ subsection: search_rows, folded: !show_search },
-			{ subsection: projects_row, rides: [projects_action, projects_clearer], folded: !show_projects },
-			{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_kinds },
-			{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_tags },
+			{ subsection: projects_row, rides: [projects_action, projects_clearer, projects_none_action], folded: !show_projects, empty: projects_starved },
+			{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer, kinds_none_action], folded: !show_kinds, empty: kinds_starved },
+			{ subsection: tags_picker,  rides: [tags_action, picking_action, tags_none_action], folded: !show_tags, empty: tags_starved },
 		]} />
 		{/snippet}
 	</Section>
@@ -560,6 +584,14 @@
 		background : var(--hover);
 	}
 
+	/* The word a starved row's line carries in place of its centered control: read, never pressed. */
+	.no-options {
+		font-size   : var(--font-faint);
+		color       : var(--darkgray);
+		padding     : 0 var(--gap);
+		white-space : nowrap;
+		cursor      : default;
+	}
 
 	/* A collection with no files yet: grayed and dead to the touch. */
 	.segment.empty {

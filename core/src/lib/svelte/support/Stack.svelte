@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import type { Stacked, T_Foot } from '../../ts/types';
-	import { T_Position } from '../../ts/types';
 	import type { Action } from '../../ts/types';
 	import { debug } from '../../ts/common';
 	import { k } from '../../ts/common';
@@ -34,15 +33,6 @@
 		leads?     : Action[] | null;    // a separator above the first section, where whatever holds this stack draws no boundary of its own
 	} = $props();
 
-	// A thing standing at a line's middle hangs above and below that line, unlike a word at an end
-	// which is read as riding it. So the gaps on both sides of such a line are widened.
-	//
-	// Only a thing that was actually built counts. A caller names every thing its line could carry,
-	// and hands over nothing where that thing is not there — a clearing pill with nothing to clear.
-	function centered(rides: Action[] | null): boolean {
-		return (rides ?? []).some((one) => one.position === T_Position.center && one.element !== null);
-	}
-
 	// What a section's separator carries — everything the caller handed it, folded or open. A thing
 	// at the middle hangs down into the fold below it, which is a run of accent; its own page-colored
 	// pill masks that accent, so it reads as standing on the line exactly as it does anywhere else.
@@ -55,15 +45,20 @@
 	// gap a caller asks for is the empty space it sees on each side, never the distance between
 	// two middles with a bar drawn across it.
 	//
-	// A separator carrying something at its middle takes two big gaps, since that thing hangs past
-	// the separator on both sides; every other one takes the stack's own gap.
-	function spacing(at: number): number {
-		return (centered(actions_at(at)) ? k.gap.fat : gap) + thickness;
+	// Every separator takes the stack's own gap, whatever it carries.
+	function spacing(_at: number): number {
+		return gap + thickness;
 	}
 
 	// How far the separator below a fold is drawn from the fold's own separator, middle to middle.
 	// One number for every fold on every screen, whether it folded one field or a run of tag rows.
 	const FOLDED = k.height.small;
+
+	// A section that takes a fold's height: folded, or open with nothing to show. Sizing an empty
+	// one as a fold means folding it moves nothing below it. Only the fold is filled with the accent.
+	function shut(one: Stacked): boolean {
+		return !!one.folded || !!one.empty;
+	}
 
 	// Where the leading line stands, measured from the stack's own top. Everything here is
 	// measured middle to middle, and the middle of the line above sits half its own thickness
@@ -102,8 +97,8 @@
 	const shown = $derived(sections.filter((one) => !one.hidden));
 	const add_end_separator = $derived(foot === 'stack'
 		&&   shown.length > 1
-		&&  !shown[shown.length - 2].folded
-		&& !!shown[shown.length - 1].folded);
+		&&  !shut(shown[shown.length - 2])
+		&&   shut(shown[shown.length - 1]));
 
 	// Whether a separator is drawn at the foot at all, by the stack or by whatever stands below it.
 	// A fold is the span between two separators, so this is what says whether the last one has a
@@ -116,7 +111,7 @@
 	//
 	// A fold ends exactly on the separator below it, so a folded last section leaves nothing at
 	// all: the space would show as a strip of page color between that fold's accent and the line.
-	const foot_gap = $derived(shown[shown.length - 1]?.folded ? 0 : gap / 2);
+	const foot_gap = $derived(shown.length > 0 && shut(shown[shown.length - 1]) ? 0 : gap / 2);
 
 	// Half the space above a section and half the space below it — the part of each gap that
 	// belongs to this section rather than to its neighbour. A section that answers a press reads
@@ -188,7 +183,7 @@
 			style:--under='{under_of(at)}px'
 			style:display={section.hidden ? 'none' : undefined}
 			style:margin-top={at > 0 && !section.hidden && shown[0] !== section ? `${spacing(at)}px` : undefined}
-			style:height={section.folded ? `${height_of(at)}px` : undefined}>
+			style:height={shut(section) ? `${height_of(at)}px` : undefined}>
 			<!-- The accent fills the whole span between the two separators, so no page color is left
 			     showing anywhere in it, and the hairline is drawn down the exact middle of that span
 			     — which puts it exactly halfway between the two separators' own middles. -->
