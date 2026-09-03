@@ -299,3 +299,18 @@ Same categories and reasoning as the ov section apply to the shared files (`word
 `yarn --cwd core test:run` — 91 passed, 0 failed. `yarn --cwd core run check` (svelte-check) — 468 files, 0 errors, 0 warnings.
 
 Total for this section: 9 files touched, 4 word-categories fixed (~22 individual edits), one explicitly-flagged incomplete category (anaphoric mark references), tests and type-check green.
+
+## Other top-level folders: gallery, ma, mj, mu, project template, s3
+
+Scope: every other top-level folder holding `.md`/`.ts`/`.svelte` files outside the exclusions — `gallery` (51 files), `ma` (15), `mj` (7), `mu` (5), `project template` (19), `s3` (79); `test-results` was checked and holds none of those extensions, nothing to sweep. None have a project-specific word table; mono table only. Given this was explicitly the lowest-priority, last-swept group, and several are clearly earlier snapshots or siblings of projects already swept in depth, this pass checked the small, high-confidence word categories across all six combined and spot-checked the biggest raw category (`tree`, 107) rather than repeating a full per-project audit.
+
+- **`tree` (107) confirmed not a hit**, the same finding as ws: `s3` is a sibling/predecessor of ws with the identical "tree mode" graph-layout feature and matching identifiers (`Tree_Graph.svelte`, `G_TreeGraph.svelte.ts`, a `tree/` component folder, plus its own separate `5 hierarchy.md` subsystem doc — the two concepts are already kept distinct in s3's own vocabulary). Left untouched.
+- **`gallery` duplicates lv's `bare bone website.md` and `work journal.md` word-for-word** (gallery appears to be lv's predecessor). Applied the identical fixes already made in lv: the AST-node `shape` → `type` passage, a `new-tab marker` → `new-tab decoration`, and the drawn hamburger `Menu mark` → `Menu decoration`.
+- **`ma`** — two duplicated instances of "the ecosystem should absorb that gracefully, not punish it" (`plan.md`, `done/proposal.md`) → "accommodate," since `absorb`'s table replacements (place/include/insert) don't fit "tolerate an outcome gracefully"; the neighboring "leave ample room for breakdowns" → "leave ample gap for breakdowns."
+- **`mj`, `mu`, `project template`** — checked against the small categories (`absorb`, `ship`, `owe`, `borrow`, `seam`); no hits found.
+
+### Verification
+
+Only `gallery` and `ma` received edits (both `.md` prose only, no code touched in any of the six folders). `yarn --cwd gallery run check` — 470 files, 0 errors. `yarn --cwd ma run check` — 1 pre-existing error (`main.ts`: implicit-any on an untyped `.svelte` import), confirmed identical on the main checkout at `/Users/sand/GitHub/mono/ma`, unrelated to this sweep. `mj`, `mu`, `project template`, `s3` received no edits, so were not re-verified.
+
+Total for this section: 4 files touched, 3 word-categories fixed (~6 individual edits), one large raw category confirmed as a false alarm (`tree`), two folders' `check` run to confirm no regression (one pre-existing, unrelated failure reported and left).

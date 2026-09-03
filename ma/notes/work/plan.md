@@ -112,7 +112,7 @@ These run through everything:
 - **leniency** over gatekeeping
 - **wisdom** over speed
 
-Systems fail. People fail. The ecosystem absorbs that gracefully, not punishes it.
+Systems fail. People fail. The ecosystem accommodates that gracefully, not punishes it.
 
 ---
 
