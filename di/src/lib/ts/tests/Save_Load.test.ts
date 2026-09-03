@@ -34,7 +34,7 @@ function make_so(name: string, bounds?: Partial<Record<Bound, number>>, parent_s
 	return so;
 }
 
-// Capture a small snapshot in the same shape the running app writes when it
+// Capture a small snapshot in the same structure the running app writes when it
 // saves: each SO gets its serialized form plus the id of its parent (if any),
 // and the camera contributes its own snapshot.
 type Saved_SO = ReturnType<Smart_Object['serialize']> & { parent_id?: string };

@@ -48,7 +48,7 @@ Phase 2 will call `perf_timer.start('cold_search')` / `perf_timer.stop('cold_sea
 
 ## Phase 2 — Build the new algorithm behind a feature flag
 
-Develop the new code alongside the old. A feature flag lets the renderer pick which placement runs. Old code keeps shipping until the new one passes every test.
+Develop the new code alongside the old. A feature flag lets the renderer pick which placement runs. Old code stays active until the new one passes every test.
 
 ### Task 2.1 — Compute viable (edge, direction) pairs and their DOF ranges per label — DONE
 
@@ -295,7 +295,7 @@ What the painter must respect:
 
 How this fits with the old code during transition:
 
-- Add a sub-flag (or extend the existing one) so the canvas can paint from old, new, or both side-by-side. Side-by-side is the cheapest way to spot a visual regression — same scene, two passes, eyeball the differences.
+- Add a sub-flag (or extend the existing one) so the canvas can paint from old, new, or both side-by-side. Side-by-side is the cheapest way to spot a visual regression — same scene, two passes, visually compare the differences.
 - Default to new-only once basic confirmation passes; keep the old path one toggle away for a soak window.
 
 - **Dependencies.** Task 3.1 (the new pipeline must be wired into every paint).
@@ -308,7 +308,7 @@ Load basement, drawer, kitchen wall, and any other scenes Jonathan reaches for. 
 
 - **Dependencies.** Task 3.2.
 - **Effort guess.** Half a day to one day.
-- **Risk.** A subtle behaviour difference looks bad in motion even when every test passes. Mitigation: record short videos of old vs new at matched camera moves, eyeball side-by-side.
+- **Risk.** A subtle behaviour difference looks bad in motion even when every test passes. Mitigation: record short videos of old vs new at matched camera moves, compare them visually side-by-side.
 
 ### Task 3.4 — Default the canvas to the new painter — DONE
 

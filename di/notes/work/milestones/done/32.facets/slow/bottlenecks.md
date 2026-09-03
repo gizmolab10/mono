@@ -34,7 +34,7 @@ Evidence (historical — before the fix):
 - The loop hookup: [Engine.ts:134-138](di/src/lib/ts/render/Engine.ts#L134-L138)
 - Render entry point: [Render.ts:188](di/src/lib/ts/render/Render.ts#L188)
 
-### What shipped
+### What was done
 
 Three layers of coverage, all done on 2026-04-15:
 
@@ -45,9 +45,9 @@ Three layers of coverage, all done on 2026-04-15:
 ### Decisions taken before the build
 
 - **Rot prevention:** strongest of the three options. Every canvas-affecting store write funnels through the wrapped-writable helper.
-- **Ship order:** three logical steps in one session — subscriptions and targeted marks first, then the early-return gate, then the writable migration.
+- **Completion order:** three logical steps in one session — subscriptions and targeted marks first, then the early-return gate, then the writable migration.
 - **Keystroke override:** skipped. The one-character rollback constant at the top of the renderer is enough.
-- **Targeted marks:** shipped alongside the subscriptions, not as a follow-up. Without them the gate would have left three categories silently stale — window resize, direct bound writes during drag, and propagation-driven changes.
+- **Targeted marks:** done alongside the subscriptions, not as a follow-up. Without them the gate would have left three categories silently stale — window resize, direct bound writes during drag, and propagation-driven changes.
 
 ### Rollback lever
 
@@ -73,7 +73,7 @@ Evidence (historical — before the fix):
 
 ### What this change did
 
-Landed on 2026-04-16 in one edit:
+Done on 2026-04-16 in one edit:
 
 - **Per-frame memo on the renderer.** A map from object id to its world matrix for the current frame.
 - **Cache check at the top of the builder.** If an entry exists for the requested object, return it immediately; otherwise compute and store the new matrix before returning.
@@ -83,7 +83,7 @@ Landed on 2026-04-16 in one edit:
 
 Four hundred and ninety-six tests still pass; five hundred and fourteen overall remain green. Type-check is clean.
 
-### What did not ship
+### What was not done
 
 The separable second optimization — swap the five fresh matrix allocations inside the builder for scratch matrices held on the renderer. Not required for correctness and not part of this step. Left as a follow-up.
 
@@ -97,7 +97,7 @@ Evidence (historical — before the fix):
 
 ### What this step did
 
-Landed on 2026-04-16 in one edit:
+Done on 2026-04-16 in one edit:
 
 - **Removed the per-corner walk.** No more visiting every corner of every shape and spinning each one into on-screen position.
 - **Read the scene extent already computed earlier in the same frame.** Three subtracts and two picks — same longest-side number, no per-corner math.
@@ -116,7 +116,7 @@ Evidence (historical — before the fix):
 
 ### What the face-pair prune did
 
-Landed on 2026-04-16 in one edit:
+Done on 2026-04-16 in one edit:
 
 - **Each face now carries its own small box.** While the world-space corners of a front face are built, a low corner and a high corner are tracked with one compare each. The same loop that already walks the corners gathers the box for free.
 - **Face-pair prune before the math.** The inner loop first checks whether the two faces' boxes overlap along all three directions. If they don't, the math is skipped. Six compares replace the expensive plane-crossing work for every face pair that doesn't touch.
@@ -129,7 +129,7 @@ All five hundred and fourteen tests still pass; type-check is clean.
 
 When tagging each edge as silhouette or internal, the code used to walk every other face of the same shape looking for one that shares both corner vertices. That was a quadratic scan per shape.
 
-Now an edge-to-adjacent-faces map is built once per shape before the tagging loop. Each edge looks up its neighbor face in constant time. Shipped on 2026-04-16.
+Now an edge-to-adjacent-faces map is built once per shape before the tagging loop. Each edge looks up its neighbor face in constant time. Done on 2026-04-16.
 
 ## 7.  ✅ DONE (by prior refactor) The spatial index used for edge clipping is rebuilt from scratch every frame — twice
 
@@ -143,7 +143,7 @@ Evidence as of 2026-04-16:
 
 Implication: a prior refactor already merged the two indexes into one. Nothing left to merge.
 
-### Not shipped — between-frame caching
+### Not done — between-frame caching
 
 The bottleneck text also hinted at reusing the index from the previous frame when nothing that affects it moved. That is a separate, meaningfully different optimization from "merge two indexes into one" and was not pursued. Reasoning:
 
@@ -164,7 +164,7 @@ Evidence (historical — before the fix):
 
 ### What the lookup map did
 
-Landed on 2026-04-16 in one edit:
+Done on 2026-04-16 in one edit:
 
 - **Parent-to-children map built once per frame at the top of the function.** One walk of the object list fills the map. The recursive descent then looks up children by parent identity in constant time instead of scanning the full list.
 - **Direct-children list also read from the map.** Replaced the earlier filter call that searched the full list for the root's children.
@@ -197,11 +197,11 @@ Proposal:
 
 After intersections are computed, a filter pass used to scan the full object list to find an object by id, then scan all edge segments to find one by edge key. Both lookups were linear.
 
-Now an object-id map and an edge-key-per-object map are built once at the top of the filter pass. Both lookups are constant-time. Shipped on 2026-04-16.
+Now an object-id map and an edge-key-per-object map are built once at the top of the filter pass. Both lookups are constant-time. Done on 2026-04-16.
 
 ## 11.  ✅ DONE Crossing-split application does a linear search per split
 
-When applying splits to edge segments, the code used to scan every segment of the owning shape looking for the matching edge key. Now a direct-lookup map from "shape plus edge key" to the segment is built once before the split loop runs. Same result, constant-time lookup. Shipped on 2026-04-16.
+When applying splits to edge segments, the code used to scan every segment of the owning shape looking for the matching edge key. Now a direct-lookup map from "shape plus edge key" to the segment is built once before the split loop runs. Same result, constant-time lookup. Done on 2026-04-16.
 
 ## 12. The occlusion clipper rebuilds the whole interval list for every occluder it considers
 
@@ -240,7 +240,7 @@ Proposal:
 
 ## 14.  ✅ DONE "Is this face in the occluder list?" uses a linear scan
 
-When building face data for intersection testing, the code used to check every face against the full occluder list with a linear scan. Now a set of "shape plus face number" strings is built once when the occluder list is finalized; the per-face check is a single set lookup. Shipped on 2026-04-16.
+When building face data for intersection testing, the code used to check every face against the full occluder list with a linear scan. Now a set of "shape plus face number" strings is built once when the occluder list is finalized; the per-face check is a single set lookup. Done on 2026-04-16.
 
 ## 15. String keys are built per edge per frame in the hottest compute loops
 
@@ -278,13 +278,13 @@ Everything above item 9 I am confident about from reading the code alone — tho
 ## Suggested order to tackle these
 
 - ✅ Bottleneck #1 — **done**. The second pipeline now only runs when the facets debug switch is on. Bottleneck #4 also stops running in the common case as a side effect, since it only fed data into #1.
-- ✅ Bottleneck #2 — **done**. The canvas-out-of-date flag with twenty-six subscriptions, three targeted marks, an early-return gate, and a wrapped-writable helper for rot prevention all shipped on 2026-04-15.
-- ✅ Bottleneck #3 — **done**. Per-frame memo on the renderer builds each object's world matrix once per frame instead of several times. Shipped on 2026-04-16.
-- ✅ Bottleneck #4 — **done**. The per-corner scene-extent walk was replaced with a read from the scene extent already computed earlier in the same frame. Still inside the facets gate, so normal use skips it entirely. Shipped on 2026-04-16.
-- ✅ Bottleneck #5 — **done**. Each front face carries its own small box, and the face-pair loop prunes by that box before running the expensive plane-crossing math. Shipped on 2026-04-16.
-- ✅ Bottleneck #7 — **done by prior refactor**. Only one spatial index is built per frame, not two — the merge the bottleneck called for already happened. Between-frame caching of the single index was left unshipped as unmeasured and narrow; revisit if profiling later points here. Verified on 2026-04-16.
-- ✅ Bottleneck #8 — **done**. A parent-to-children lookup map built once per frame replaces the per-level full-list scan in the camera-view-extent descent. Shipped on 2026-04-16.
-- ✅ Bottlenecks #6, #10, #11, #14 — **done**. All four map-lookup swaps shipped on 2026-04-16.
+- ✅ Bottleneck #2 — **done**. The canvas-out-of-date flag with twenty-six subscriptions, three targeted marks, an early-return gate, and a wrapped-writable helper for rot prevention all done on 2026-04-15.
+- ✅ Bottleneck #3 — **done**. Per-frame memo on the renderer builds each object's world matrix once per frame instead of several times. Done on 2026-04-16.
+- ✅ Bottleneck #4 — **done**. The per-corner scene-extent walk was replaced with a read from the scene extent already computed earlier in the same frame. Still inside the facets gate, so normal use skips it entirely. Done on 2026-04-16.
+- ✅ Bottleneck #5 — **done**. Each front face carries its own small box, and the face-pair loop prunes by that box before running the expensive plane-crossing math. Done on 2026-04-16.
+- ✅ Bottleneck #7 — **done by prior refactor**. Only one spatial index is built per frame, not two — the merge the bottleneck called for already happened. Between-frame caching of the single index was left undone as unmeasured and narrow; revisit if profiling later points here. Verified on 2026-04-16.
+- ✅ Bottleneck #8 — **done**. A parent-to-children lookup map built once per frame replaces the per-level full-list scan in the camera-view-extent descent. Done on 2026-04-16.
+- ✅ Bottlenecks #6, #10, #11, #14 — **done**. All four map-lookup swaps done on 2026-04-16.
 
 Remaining bottlenecks (#9, #12, #13, #15) are **mothballed**. All four are scratch-memory or allocation-reduction work with uncertain payoff — estimated five to fifteen percent of a painted frame, unmeasured. Revisit only if profiling points at allocation pressure as the top remaining cost.
 
@@ -340,7 +340,7 @@ Proposal:
 - Replace every allocating gl-matrix call in a hot loop with its in-place variant: `vec3.lerp(out, …)` with `out = this.scratch_world_a` instead of `vec3.lerp(vec3.create(), …)`. Same for `vec3.sub`, `vec3.cross`, `vec3.transformMat4`, `vec4.transformMat4`, `mat4.multiply`, `mat4.identity`.
 - The few places where a result genuinely needs to outlive the function (stored world corner, memoized world matrix) keep allocating — but only at the storage point, not on every intermediate step.
 - The identity matrix used inside the face-pair loop: hoist it to a per-paint field, built once at the top of the paint, reused every call. Today it gets rebuilt for every face pair.
-- Ship this in groups: projection first (highest hit count), then edge clipping, then intersection, then plane math. Each group is verifiable independently by pixel diff against a before-snapshot.
+- Write this in groups: projection first (highest hit count), then edge clipping, then intersection, then plane math. Each group is verifiable independently by pixel diff against a before-snapshot.
 
 ## C. Face-pair intersection builds three short strings for every face pair tested
 
@@ -389,11 +389,11 @@ Proposal:
 - **Pack vertex-pair edge keys as a single number.** Every current mesh has far fewer than sixty-five thousand vertices, so `(Math.max(i,j) << 16) | Math.min(i,j)` is unambiguous. The map storing per-object edge adjacency can use `Map<number, …>` just as easily as a string key.
 - For **compound keys that cross a module boundary** (an edge key plus an object id plus an occluder id, stored in a map that outlives the call): keep them as strings, but only build the string once the map write is certain to happen. Today some keys are built before the decision to store.
 - For **ephemeral compound keys** used only to compare inside the same loop: compute the comparison as a pair of numbers and avoid the string altogether.
-- Ship this one **last**, after B is done. Its payoff is real only when allocation pressure is already the top remaining cost — if the gl-matrix scratch migration leaves allocation off the critical path, this one becomes optional.
+- Write this one **last**, after B is done. Its payoff is real only when allocation pressure is already the top remaining cost — if the gl-matrix scratch migration leaves allocation off the critical path, this one becomes optional.
 
 ---
 
-## Suggested ship order for second pass
+## Suggested completion order for second pass
 
 A first — deepest loop, biggest single allocator. B next — broadest hit, moderate mechanical effort, needed by A and D to share scratch. D after B, because it is done almost free once the scratch-array pattern from A is in place. C any time after its own loop is done — it is self-contained and blocks nothing else. E last; skip entirely if B leaves allocation off the critical path.
 

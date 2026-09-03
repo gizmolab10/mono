@@ -1,6 +1,6 @@
 # Rules
 
-The standing rules for the project.
+The established rules for the project.
 
 ## Contents
 

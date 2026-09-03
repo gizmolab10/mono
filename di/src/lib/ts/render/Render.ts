@@ -100,7 +100,7 @@ class Render {
 
 	/** Same lifecycle as world_matrix_cache but holds the world matrix WITHOUT
 	 *  the root tumble applied. Used by the silhouette-box builder so the
-	 *  bounding box sits in the static room frame and tumbles with the scene
+	 *  bounding box sits in the untumbled frame and tumbles with the scene
 	 *  when projected through the camera. */
 	private static_world_matrix_cache = new Map<string, mat4>();
 
@@ -881,7 +881,7 @@ class Render {
 	/** Same as get_world_matrix but omits the root tumble (the camera-driven
 	 *  rotation stored at the root via stores.current_orientation()). Children
 	 *  still rotate by their own per-part orientation. Used by the silhouette-
-	 *  box builder so the bounding box sits in the static room frame and
+	 *  box builder so the bounding box sits in the untumbled frame and
 	 *  tumbles with the scene when projected through get_world_matrix output. */
 	get_static_world_matrix(obj: O_Scene): mat4 {
 		const cached = this.static_world_matrix_cache.get(obj.id);
@@ -915,7 +915,7 @@ class Render {
 		} else {
 			// Root: rotate by the tumble ONLY when root_tumble is true. The
 			// static variant skips this step so its output sits in the
-			// static room frame.
+			// untumbled frame.
 			if (root_tumble) {
 				const rot = mat4.create();
 				mat4.fromQuat(rot, stores.current_orientation());

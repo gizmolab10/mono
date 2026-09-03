@@ -15,7 +15,7 @@ Citation: `src/lib/svelte/details/D_Library.svelte`. The on-disk and in-memory p
 
 Two sources are merged into a single list.
 
-- **Bundled.** Files that ship with the app, picked up at build time from the assets folder. The bundle is read into memory eagerly, so the panel can paint immediately on first open.
+- **Bundled.** Files that are bundled with the app, picked up at build time from the assets folder. The bundle is read into memory eagerly, so the panel can paint immediately on first open.
 - **On-device.** Files the user has saved before, kept in the browser's local database. This source loads asynchronously after first paint; the list re-renders when it arrives.
 
 If a name collides between the two sources, the on-device file wins.

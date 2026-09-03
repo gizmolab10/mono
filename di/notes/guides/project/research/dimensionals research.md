@@ -7,11 +7,11 @@ date: 2026-06-12
 ---
 # Dimensionals — library research (2026-05-20)
 
-Research done on whether any browser-compatible constraint-satisfaction library beats the custom four-DOF search shape described in [dimensionals.md](dimensionals.md) rule 23 within the 25-millisecond cold-run budget. Conclusion was: **stick with the custom shape**. This file keeps the findings so the decision is revisitable when browser tooling changes.
+Research done on whether any browser-compatible constraint-satisfaction library beats the custom four-DOF search approach described in [dimensionals.md](dimensionals.md) rule 23 within the 25-millisecond cold-run budget. Conclusion was: **stick with the custom approach**. This file keeps the findings so the decision is revisitable when browser tooling changes.
 
 ## Top-line
 
-No off-the-shelf library fits the problem AND the budget. The shape of the problem — two discrete DOFs (edge, direction) plus two continuous DOFs (witness length, slidable position) per label — sits in an awkward gap. Most JS solvers handle one type or the other, not both. The general-purpose ones that handle both are too heavy for the browser at this budget.
+No off-the-shelf library fits the problem AND the budget. The structure of the problem — two discrete DOFs (edge, direction) plus two continuous DOFs (witness length, slidable position) per label — sits in an awkward gap. Most JS solvers handle one type or the other, not both. The general-purpose ones that handle both are too heavy for the browser at this budget.
 
 ## What was evaluated
 
@@ -28,11 +28,11 @@ No off-the-shelf library fits the problem AND the budget. The shape of the probl
 | **d3-force (quadtree collision)** | ISC | no (continuous only) | yes | I AM GUESSING 50–200 ms to converge for 100 nodes | not deterministic by default | ~30 KB | actively maintained |
 | **Leaflet / Mapbox label-collision plugins** | BSD-ish | partial (anchor choice from fixed set) | yes | hides overlapping labels rather than solving placement | yes | small | maintained |
 
-## Why no library beats the custom shape
+## Why no library beats the custom approach
 
 The problem is structured enough that a pure force layout (continuous) doesn't express the discrete edge-and-direction choice without bolting it on by hand — which is most of the work. And it's tight enough on time that a full-blown constraint engine eats the frame budget on cold initialization before any solving begins.
 
-The two halves the custom shape handles cleanly:
+The two halves the custom approach handles cleanly:
 
 - The discrete part — picking the (edge, direction) per label — is naturally a greedy step with optional repair and stochastic finish. Bounded, deterministic, exactly the right tool for a small discrete search.
 - The continuous part — picking (witness length, slidable position) inside a chosen pair — is a tiny optimization over a bounded rectangle, handled fine by a 5-by-5 grid sample.
@@ -41,7 +41,7 @@ A specialised constraint engine would do the same work, but with multi-megabyte 
 
 ## Upgrade path, if ever needed
 
-Keep the architecture (greedy seed plus repair plus stochastic finish). Swap the continuous inner loop for a small specialised quadratic-programming solver — for example, lift the gradient-projection routine from cola.js. This gets sub-grid precision without changing the outer shape.
+Keep the architecture (greedy seed plus repair plus stochastic finish). Swap the continuous inner loop for a small specialised quadratic-programming solver — for example, lift the gradient-projection routine from cola.js. This gets sub-grid precision without changing the outer approach.
 
 Do NOT adopt a general-purpose constraint engine — the cold-init cost alone disqualifies them at the current 25-millisecond budget.
 

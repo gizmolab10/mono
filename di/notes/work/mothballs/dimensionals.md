@@ -14,7 +14,7 @@ This guide will be updated when the new algorithm replaces the current code. Unt
 
 [R_Dimensions.ts](../../../../src/lib/ts/render/R_Dimensions.ts) — about 1100 lines. The interface at the top names everything the file borrows from the main renderer: the canvas, the projection, world matrices, face winding, point-in-polygon, arrow drawing, and the list of label rectangles that click-to-edit reads from.
 
-Three pieces do the heavy lifting. The entry point walks every part and orchestrates the three placement phases below. A per-axis preparation step builds one label candidate from one part and one axis. A drawing step paints the final candidate.
+Three pieces do a lot of the work. The entry point walks every part and orchestrates the three placement phases below. A per-axis preparation step builds one label candidate from one part and one axis. A drawing step paints the final candidate.
 
 Standalone helpers handle the convex hull of the drawing, the push that moves a point past a hull edge, the arrow-vs-polygon intersection, and the force simulation.
 
@@ -84,7 +84,7 @@ Evidence: [R_Dimensions.ts:432-440](../../../../src/lib/ts/render/R_Dimensions.t
 
 Every surviving candidate is treated as a particle. Three forces act on it during a fixed number of iterations per paint.
 
-A spring pulls each label toward its outside-the-silhouette anchor. The spring is currently off by default — measurements showed it wasn't earning its keep, so its strength ships as zero. The runtime setter stays in place so the measurement UI can flip it back on for comparison.
+A spring pulls each label toward its outside-the-silhouette anchor. The spring is currently off by default — measurements showed it wasn't earning its keep, so its strength defaults to zero. The runtime setter stays in place so the measurement UI can flip it back on for comparison.
 
 Repulsion pushes overlapping labels apart along the axis of least overlap. When two label rectangles (plus their padding) overlap, the lower-index label gets pushed positive and the higher-index label gets pushed negative, so two coincident labels split apart instead of clumping.
 

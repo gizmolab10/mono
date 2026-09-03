@@ -73,7 +73,7 @@ A face is excluded from EVERY witness-index level when its outward normal points
 - within 20 degrees of straight AT the camera, OR
 - within 45 degrees of straight AWAY from the camera.
 
-Camera direction is expressed in the room's static frame.
+Camera direction is expressed in the untumbled frame.
 
 ### 2.3 Frustum exclusion
 
@@ -102,7 +102,7 @@ An edge of a part is excluded (not measured) when any stretch of it is hidden be
 
 ### 3.1 Silhouette box
 
-A world-axis-aligned box. Its corners are every corner of every visible LEAF part whose eight corners ALL project inside the visible canvas after tumble plus projection. Container parts (parents with visible children) do not feed the silhouette. Parts partly off canvas are skipped. The box is computed in the room's STATIC (untumbled) frame, so it stays glued to the parts and tumbles with the view.
+A world-axis-aligned box. Its corners are every corner of every visible LEAF part whose eight corners ALL project inside the visible canvas after tumble plus projection. Container parts (parents with visible children) do not feed the silhouette. Parts partly off canvas are skipped. The box is computed in the untumbled frame, so it stays glued to the parts and tumbles with the view.
 
 When zero parts qualify (heavy zoom), the box collapses to a single point at the origin and the silhouette-clearance filter (chapter 5) becomes a no-op.
 

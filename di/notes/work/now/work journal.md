@@ -9,9 +9,9 @@ Record work performed during chat sessions, in reverse chronological order. Each
 ## Session — 2026-08-19 — The details column becomes a stack
 
 - **The sections spec is built in di.** A run of sections with a separator centred in every gap, ported the same way it was ported into ji. `Action` is new, the separator now carries what a caller builds, and `Stacked` and `Stack` came across mended to di's own names throughout — `k.gap.main`, `k.gap.large`, `k.thickness.separator.main`, and one new rung, `k.height.folded`, which is the floor a fold can never go below.
-- **`Hideable` is gone.** Each of its five uses is a section of one stack. A section's word rides the middle of the separator above it and folds that section when pressed; its buttons ride the two ends, where they stood inside the banner. The banner's own height, its radial fill and its two pinned corners went with it.
-- **A separator can now say two things it could not.** How thick to draw it, and how far it reaches past whatever holds it. The details column says zero for the second, so a line's ends — and the flares drawn on them — stand inside the column instead of past the edge that clips it.
-- **The accent moved off the ground and into the folds.** The column behind the stack stood in the accent, and so did every line drawn on it, so a 1px line and the gap around it read as one 11px band. The ground is the page color now and the accent shows only where a section is folded.
+- **`Hideable` is gone.** Each of its five uses is a section of one stack. A section's word rides the middle of the separator above it and folds that section when pressed; its buttons ride the two ends, where they sat inside the banner. The banner's own height, its radial fill and its two pinned corners went with it.
+- **A separator can now say two things it could not.** How thick to draw it, and how far it reaches past whatever holds it. The details column says zero for the second, so a line's ends — and the flares drawn on them — sit inside the column instead of past the edge that clips it.
+- **The accent moved off the ground and into the folds.** The column behind the stack sat in the accent, and so did every line drawn on it, so a 1px line and the gap around it read as one 11px band. The ground is the page color now and the accent shows only where a section is folded.
 - **The three add buttons draw their mark.** `x_cross` turned a quarter turn, so one path serves both the X elsewhere and the plus here. Each carries its own name, since a button holding only a drawing has nothing to say what it is.
 - **One padding for every button that carries words** — `--l-padding`, left and right. Seven buttons in the primary row had been taking whatever the browser gives a button, since `.toolbar-button` set none at all.
 - **Two faults mended that nothing asked about.** `blend` answered `offwhite`, which is not a color the browser knows, so every blend down that path drew nothing; its test had been failing. And `NodeJS.Timeout` was named in three projects with no project asking for `@types/node` — it resolved only because something else happened to install it. All fourteen now ask `setTimeout` what it answers with.
@@ -364,9 +364,9 @@ A long UI-and-fixes session driven by visual checks, working the code-debt list 
 
 - **Dimensions count slider.** The on/off "dimensions" segment became a count slider (0–100, default 2, logarithmic so small counts spread out, ticks every ten, the count rides inside the thumb in black). 0 means off; the placement gate keeps the biggest N dimensionals; the thumb shows the requested number.
 - **Frame loop made unkillable.** A throw in one frame used to stop the whole screen loop until a page refresh — the "zoom to the far right, slide back, canvas blank" bug. Each frame step now runs guarded, so one bad frame is logged and skipped and the next frame is still asked for.
-- **Hover and pick while the edit lock is on.** With the lock on you can light up the part under the cursor and click to pick it; a press-and-drag still tumbles; dragging, resizing, and dimension edits stay locked. Clicking a part's dimensional picks the part that owns it.
+- **Hover and pick while the edit lock is on.** With the lock on you can highlight the part under the cursor and click to pick it; a press-and-drag still tumbles; dragging, resizing, and dimension edits stay locked. Clicking a part's dimensional picks the part that owns it.
 - **COMMAND-C puts the hovered thing's full name on the clipboard.** A part puts its root-to-part name; a dimensional puts that plus its measurement word. New shared name builder in common/Names, also used by the debug readout.
-- **Editing a dimensional lights its part and that part's other dimensionals.**
+- **Editing a dimensional highlights its part and that part's other dimensionals.**
 - **"x-ray" view renamed to "wireframe."**
 - **Scaling slider:** "out" and "in" end words, tick marks now sit under the thumb, and the can't-shrink gap floor tightened from about 25px to about 17px.
 - **Words:** lexicon gained "part" (a smart object) and "subpart" (a corner, edge, face, or dimensional), plus a measurement-name helper; two learn entries added (answer honestly when asked if hung and propose a prevention; say "needs your visual confirmation").
@@ -438,7 +438,7 @@ A long, iterative session driven by visual quality of the dim placements. Each r
 
 - svelte-check zero errors at every intermediate step.
 - vitest 827 passing every step.
-- Visual tumble after each scoring change; Jonathan eyeballed every render before deciding the next move.
+- Visual tumble after each scoring change; Jonathan gave visual confirmation on every render before deciding the next move.
 
 ---
 
@@ -454,7 +454,7 @@ The new placement path stopped being "the new path" today and became the only pa
 
 **Old orchestrator and trace helpers gone.** run_new_placement — the top-level function that ran the old four-degree-of-freedom search, the conflict graph, the greedy seed, the retry pass, the stochastic finish, and the persistence — and its result type, its result accessor, and the diagnostic helpers (log_trace_target, log_trace_so, log_dim_summary, check_conflict_graph) all deleted. The greedy-seed-for-the-live-scene wrapper went out too. The internal helpers that still have non-Group-B unit tests (compute_reachable_regions, retry_pass, drop_duplicates, polish_pass, apply_drop_policy, compute_viability, re_project_persisted_list, the Persistence class, seed_string_from_regions, stochastic_finish, the witness_trapezoid_gap and is_face_front_facing utilities, is_occluder_for_dim, plus the Greedy_Placement/Viable_Pair/Reachable_Region/Candidate_Pair types) stay on disk for now — they are dead but tested, kept as salvage coverage until a future pass decides whether the tests are worth porting or just retiring.
 
-**Picks renamed to placements; record flattened.** The output record's per-entry shape changed twice. First the per-entry name went from "pick" (after an extended pros-and-cons pass through "dimension line", "choice", "assignment", "located", "location", "candidate", "placement" — placement won) to "placement" everywhere — in the type names, the record fields, the renderer's iterator variable, the hit-test entry type, the hovered-store name, the chime explanation strings, and the dispatcher log. Second, the per-entry record was flattened: the four-degree-of-freedom choices used to live nested under `placements[i].placement.field`, which read awkwardly at every call site, and now sit flat as `placements[i].field`. Every reading site — the placement code's own scoring loop, the renderer's draw walk, the diagnostic logging, the hover-popup label builder, the hit-test entry construction — updated to the flat shape.
+**Picks renamed to placements; record flattened.** The output record's per-entry structure changed twice. First the per-entry name went from "pick" (after an extended pros-and-cons pass through "dimension line", "choice", "assignment", "located", "location", "candidate", "placement" — placement won) to "placement" everywhere — in the type names, the record fields, the renderer's iterator variable, the hit-test entry type, the hovered-store name, the chime explanation strings, and the dispatcher log. Second, the per-entry record was flattened: the four-degree-of-freedom choices used to live nested under `placements[i].placement.field`, which read awkwardly at every call site, and now sit flat as `placements[i].field`. Every reading site — the placement code's own scoring loop, the renderer's draw walk, the diagnostic logging, the hover-popup label builder, the hit-test entry construction — updated to the flat structure.
 
 **Per-side flip switched to projection along the dim line.** The check that decides whether each end's arrow should flip outward used to use a rectangle-with-padding test in screen-axis space, which missed diagonal layouts. It now projects the anchor and the label centre along the dim direction and requires at least half-label-width plus arrow-length plus two pixels of clearance; the check runs independently per side so one end can flip while the other does not.
 
@@ -507,9 +507,9 @@ Phase 2 of the uniface transition advanced through several pieces, with two real
 
 **Step 1b — diagnostic draw of the silhouette box and the three nested uniface boxes.** The silhouette box draws as a red wireframe (twelve edges of the world-axis-aligned bounding box around every rendered part). The three nested uniface boxes draw on top, one box outline per witness level. Two boolean toggles at the top of the drawing block control whether kept faces (solid blue) and excluded faces (dashed grey) are drawn — current settings: excluded on, kept off. The diagnostic only runs when the new-path toggle is on; the old path is unaffected.
 
-**Static-frame fix for the silhouette box.** The first version of the silhouette box rotated with the screen instead of with the scene. The cause: the part transforms in this codebase already include the tumble at the root, so the corners passed to the bounding-box code were in a rotated-by-tumble frame. The fix added a second world-matrix variant — one without the root tumble — and used it to gather corners. The diagnostic then projects those static-frame corners through a "tumble matrix" (the difference between the full and static root matrices) so they appear on screen in the correct rotated position. Implementation: a new public method on the renderer for the static matrix, with its own per-frame cache, and a helper at the top of the placement file that builds the tumble matrix from the difference between the two root matrices. The silhouette box now sits in the static room and tumbles with the parts.
+**Untumbled-frame fix for the silhouette box.** The first version of the silhouette box rotated with the screen instead of with the scene. The cause: the part transforms in this codebase already include the tumble at the root, so the corners passed to the bounding-box code were in a rotated-by-tumble frame. The fix added a second world-matrix variant — one without the root tumble — and used it to gather corners. The diagnostic then projects those untumbled corners through a "tumble matrix" (the difference between the full and untumbled root matrices) so they appear on screen in the correct rotated position. Implementation: a new public method on the renderer for the untumbled matrix, with its own per-frame cache, and a helper at the top of the placement file that builds the tumble matrix from the difference between the two root matrices. The silhouette box now sits in the untumbled frame and tumbles with the parts.
 
-**Camera-axis filter rewritten.** The exclusion test previously used the camera's looking direction in the camera's own fixed frame; in this codebase the camera never moves (the world rotates instead), so the test always picked the same two opposite world faces regardless of view. The rewrite reads the camera-looking direction, rotates it backward by the current tumble to land in the room frame, and compares face normals to that. As the view changes, the set of excluded unifaces now tracks which faces actually point at the camera.
+**Camera-axis filter rewritten.** The exclusion test previously used the camera's looking direction in the camera's own fixed frame; in this codebase the camera never moves (the world rotates instead), so the test always picked the same two opposite world faces regardless of view. The rewrite reads the camera-looking direction, rotates it backward by the current tumble to land in the untumbled frame, and compares face normals to that. As the view changes, the set of excluded unifaces now tracks which faces actually point at the camera.
 
 **Asymmetric exclusion thresholds.** The placement code now uses two angles, not one. A uniface is rejected when its outward direction sits within twenty degrees of pointing straight AT the camera OR within forty-five degrees of pointing straight AWAY. The wider back tolerance reflects that even partly-back faces are hidden by the box itself, while only nearly-head-on front faces project to slivers. The unit test was rewritten to pin both thresholds on each side and the keep-zone in between. New constant added for the back angle.
 
@@ -559,11 +559,11 @@ A heavy session. The new uniface placement code was built through six rollout su
 
 **Compaction-resilient context.** A new PostCompact hook fires after the running conversation gets summarised and re-injects the contents of di/notes/work/refresh.md. The refresh file lists the two files the assistant must read on every fresh start: the uniface rules and the lexicon. So a session that runs long and gets compressed still reloads the spec verbatim before continuing.
 
-**Render-not-paint memory entry.** A standing memory rule bans "paint" / "painter" / "painting" in di in favour of "render" / "renderer" / "rendering" — in code, comments, test names, identifiers, and chat. A row added to the lexicon's banned-substitution table records the same rule.
+**Render-not-paint memory entry.** An established memory rule bans "paint" / "painter" / "painting" in di in favour of "render" / "renderer" / "rendering" — in code, comments, test names, identifiers, and chat. A row added to the lexicon's banned-substitution table records the same rule.
 
 **Transition proposal rebuilt.** A long file at di/notes/work/dimensions/uniface proposal.md now holds the full plan. Preparation: persist the new-path flag through local storage; reconcile the related names. Phase 1: split surviving tests into Group A (pin the new spec) and Group B (revert candidates that pin abandoned algorithm pieces). Each group has a per-rule or per-line-range breakdown. Phase 2: numbered code steps 1 through 8, each with stated dependencies and exit criteria. Steps originally missing got added during a "do you find ambiguities" review pass: a renderer-wiring step for the dim-text labels (was implicit, now numbered as step 3f), a visual review pass after the default-flip (step 3h), sub-steps for the overlapping-rotated-parts case (steps 4a and 4b), an interactive-layer audit (step 5.5), and a future placeholder for a manual user override (step 8). A "considerations" section calls out eight gaps the proposal might leave a reader with; six were closed by adding phase 2 steps; the remaining two — the implicit assumption that the world-aligned design produces clear visuals at all camera angles, and the lack of automated acceptance criteria per step — are now owned by the user: per-step visual inspection with an explicit accept-or-reject report.
 
-**Where the code stands at session end.** The placement file's bottom still holds the uniface helpers, the per-axis pickers (first-viable and closest), and the orchestrator function. The renderer file is back to the pre-uniface state with no uniface-render function. The control button still exists on the toolbar row and its session-level store still toggles a flag. Unit tests: the closest-picker test and the cap-equals-three test pass; placeholder tests sit under the "uniface design" describe block until phase 2 fills them.
+**The code's status at session end.** The placement file's bottom still holds the uniface helpers, the per-axis pickers (first-viable and closest), and the orchestrator function. The renderer file is back to the pre-uniface state with no uniface-render function. The control button still exists on the toolbar row and its session-level store still toggles a flag. Unit tests: the closest-picker test and the cap-equals-three test pass; placeholder tests sit under the "uniface design" describe block until phase 2 fills them.
 
 Files touched:
 
@@ -610,7 +610,7 @@ Files touched:
 
 A multi-session push that rebuilt the placement algorithm from scratch, behind a feature flag, alongside the old force-driven code. The flag flipped from off to on partway through. By the end of the window the new pipeline was the active path on launch, the old code lived in a thin wrapper, and the unit-test suite had grown by about a hundred tests.
 
-**Test scaffolding (first.)** Twelve new test hooks on the test-only window object covered min-silhouette-clearance, viable-pair counts, conflict-graph verification, drop reports, per-kind label tagging, label angles, hover state, popup text, edit state, layout freeze, cold-search timing, and search-skipped timing — plus two input actions for view-mode switch and forced-cold-search. Thirteen end-to-end specs were un-skipped at the same time. A trailing-comma bug in a JSON config file was fixed along the way.
+**Test stub-out (first.)** Twelve new test hooks on the test-only window object covered min-silhouette-clearance, viable-pair counts, conflict-graph verification, drop reports, per-kind label tagging, label angles, hover state, popup text, edit state, layout freeze, cold-search timing, and search-skipped timing — plus two input actions for view-mode switch and forced-cold-search. Thirteen end-to-end specs were un-skipped at the same time. A trailing-comma bug in a JSON config file was fixed along the way.
 
 **Determinism helpers.** A seeded random-number generator (linear congruential, with an FNV-1a hash for string seeds) gave reproducible randomness for the stochastic step. A per-phase timing helper exposed millisecond breakdowns for cold-search, search-skipped, greedy, repair, and stochastic. The performance hooks now read from the timer.
 
@@ -650,7 +650,7 @@ A short session window captured the uniface redesign as written documents and ad
 
 **Code flow chart captured.** Six Mermaid diagrams cover the top-level paint pipeline, the per-pair viability walk, the per-direction range computation with all reject reasons, the front-back greedy choice, the five-by-five grid scoring, the drop policy, and the persistence loop across renders. Lives at notes/guides/development/rules/dimensions.flow.md.
 
-**Pre-send check hook.** A pre-send script applies the same regex patterns as the three stop hooks (banned words, hedge phrases without disclaimer, diagnostic claims without citation). Every multi-sentence response gets piped through it before sending; clean exit means the stop hooks will not fire. A standing memory rule made this the required process. A separate memory captured the rule that when corrected, the assistant must not defend, explain, or refute — acknowledge and change behaviour.
+**Pre-send check hook.** A pre-send script applies the same regex patterns as the three stop hooks (banned words, hedge phrases without disclaimer, diagnostic claims without citation). Every multi-sentence response gets piped through it before sending; clean exit means the stop hooks will not fire. An established memory rule made this the required process. A separate memory captured the rule that when corrected, the assistant must not defend, explain, or refute — acknowledge and change behaviour.
 
 ---
 
@@ -829,13 +829,13 @@ Second part: the hover popup format for a dimension on a root smart object used 
 
 Files touched. [Events.ts](../../../src/lib/ts/events/Events.ts) (new OPTION-down signal that marks the canvas dirty on change; key-down, key-up, and window-blur handlers update it). [R_Dimensions.ts](../../../src/lib/ts/render/R_Dimensions.ts) (helper around the visibility check; reads the OPTION signal at the top of the dimension pass). [dimensionals.md](di/notes/work/now/dimensionals.md) (rule 10 rewritten). [Graph.svelte](../../../src/lib/svelte/main/Graph.svelte) (popup template computes ancestry path once and prefixes the dot only when non-empty).
 
-## Session — 2026-05-17 — parts row hover lights up the matching object in the drawing
+## Session — 2026-05-17 — parts row hover highlights the matching object in the drawing
 
-The other direction of the hover link. Previously, hovering an object in the drawing already lit up the matching row in the parts list (done last session). Now hovering a row in the parts list lights up the matching object in the drawing and shows its name popup next to the cursor.
+The other direction of the hover link. Previously, hovering an object in the drawing already highlighted the matching row in the parts list (done last session). Now hovering a row in the parts list highlights the matching object in the drawing and shows its name popup next to the cursor.
 
 Each row in the parts list now reacts to the cursor entering or leaving. On entry, it points the same hover signal the drawing already uses at its own object — using the object's most-forward-facing face the same way clicks already do. The existing drawing-side handling fires automatically: the object highlights on the canvas, and the name popup appears at the cursor position. On exit, the hover signal clears, and both effects disappear together.
 
-The reverse link (drawing-hover lights up the row) keeps working because both directions watch the same signal.
+The reverse link (drawing-hover highlights the row) keeps working because both directions watch the same signal.
 
 Files touched. [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte) (mouse-enter and mouse-leave handlers added to each row; two small helper functions to set and clear the hover signal).
 
@@ -853,7 +853,7 @@ Files touched. [Colors.ts](../../../src/lib/ts/utilities/Colors.ts) (new live ho
 
 ## Session — 2026-05-16 — parts row highlights on drawing hover
 
-Hovering an object in the drawing already lit up the object itself and showed a name popup. Now the matching row in the parts list panel on the right also paints itself with the same hovered color the parts list already uses for its own mouse-over. The two visual cues fire together so the user can see in both places which object the cursor is on.
+Hovering an object in the drawing already highlighted the object itself and showed a name popup. Now the matching row in the parts list panel on the right also paints itself with the same hovered color the parts list already uses for its own mouse-over. The two visual cues fire together so the user can see in both places which object the cursor is on.
 
 The parts list component now reads the drawing's hovered-object signal. Each row checks if its own object matches that signal, and if so applies a class that paints the row with the same hovered color, including matching rounded corners on the leftmost and rightmost cells. No new color was introduced — the existing hovered color is reused — so the two trigger paths look identical.
 
@@ -871,7 +871,7 @@ The hook fires under three line-level rules, scanned over each line of the user'
 
 Rules 1 and 2 cover the common bare-command and visual-confirmation patterns the user uses; rule 3 catches "done." mid-sentence so longer messages still trigger the reminder when the user signals completion. False-positive cases that intentionally do NOT fire: `done deal`, `i am done` (no period), `are you done?` (question mark, not period), `done implementing the feature` (no period after `done`).
 
-When any rule fires, the hook prints the checklist wrapped in the standard JSON envelope (`hookSpecificOutput.additionalContext`), the same shape the other user-prompt-submit hooks in this project use.
+When any rule fires, the hook prints the checklist wrapped in the standard JSON envelope (`hookSpecificOutput.additionalContext`), the same structure the other user-prompt-submit hooks in this project use.
 
 Files added or changed. New hook script at [di/.claude/hooks/done-checklist.sh](../../../.claude/hooks/done-checklist.sh). Wiring added to the workspace's `.claude/settings.local.json` under `hooks.UserPromptSubmit`, after the existing `inject-always.sh` entry.
 
@@ -957,7 +957,7 @@ Every delete in the app now goes through a single shared confirmation dialog. Th
 
 Confirming with the checkbox flipped saves a persistent preference; future deletes skip the dialog and go through silently. Confirming without the checkbox leaves the preference unchanged. Cancelling — by clicking no, clicking the dark backdrop, or pressing Escape — closes the dialog without doing anything. Pressing Enter is shorthand for clicking yes.
 
-The dialog is mounted at the top level of the main layout, sitting above everything else with a semi-transparent backdrop that absorbs clicks behind it.
+The dialog is mounted at the top level of the main layout, sitting above everything else with a semi-transparent backdrop that intercepts clicks behind it.
 
 Files: new manager [Confirm.ts](../../../src/lib/ts/managers/Confirm.ts) holding the request store and the ask/commit/cancel helpers. New component [Confirm.svelte](../../../src/lib/svelte/main/Confirm.svelte) rendering the dialog. [Preferences.ts](../../../src/lib/ts/managers/Preferences.ts) — added the skip-confirm preference key. [managers/index.ts](../../../src/lib/ts/managers/index.ts) — exported the new helper. [Main.svelte](../../../src/lib/svelte/main/Main.svelte) — mounted the dialog. [D_Parts.svelte](../../../src/lib/svelte/details/D_Parts.svelte), [D_Givens.svelte](../../../src/lib/svelte/details/D_Givens.svelte), and [Events.ts](../../../src/lib/ts/events/Events.ts) — three call sites now route through the helper.
 
@@ -1101,7 +1101,7 @@ First item: button placement. The round question-mark button in the main toolbar
 
 Second item: face buttons at launch. None of the six face buttons (bottom, top, left, right, back, front) showed as highlighted when the app started, even though the saved view points at a definite face. Cause: the number that tracks "which face is facing you" starts as "nothing", and the routine that would update it depends on geometry data built during drawing. At startup the routine fires once BEFORE the first paint, finds the data missing, and stashes "nothing yet" as the last seen value. After the paint clears the dirty flag, the routine never gets another chance. Fix: a tiny pure helper computes which face is facing you directly from an orientation — apply the inverse of the orientation to the camera-forward direction, then read off which of the resulting vector's three components has the largest absolute value (which names the axis) and the sign of that component (which picks the face on that axis). At app start, the helper is called once with the orientation that just loaded from saved preferences, and the highlight is set. The tick loop continues to update during tumbles after that.
 
-Friction during the second item. The proposal walked through three framings before landing on the right one. First framing imagined an order swap in the tick loop so the front-most-face routine ran AFTER the paint instead of before. The user redirected to the simpler approach: don't read the cache at all, derive the answer from the orientation directly. Second framing then over-described the math as "rotate each of the six fixed face arrows by the orientation and pick the largest Z". The user pushed back — the math is trivial, no loop, just dot products. The final form is what landed: one library call to transform the camera-forward direction by the inverse orientation, then a max-of-three with a sign check. Five lines.
+Friction during the second item. The proposal walked through three framings before settling on the right one. First framing imagined an order swap in the tick loop so the front-most-face routine ran AFTER the paint instead of before. The user redirected to the simpler approach: don't read the cache at all, derive the answer from the orientation directly. Second framing then over-described the math as "rotate each of the six fixed face arrows by the orientation and pick the largest Z". The user pushed back — the math is trivial, no loop, just dot products. The final form is what was written: one library call to transform the camera-forward direction by the inverse orientation, then a max-of-three with a sign check. Five lines.
 
 Files: [Controls.svelte](../../../src/lib/svelte/main/Controls.svelte) (help button moved to the right end of all three layouts); [UserGuide.svelte](../../../src/lib/svelte/main/UserGuide.svelte) (return button anchored at the right edge, bar's right padding removed, leftward button offset stripped); [Hits_3D.ts](../../../src/lib/ts/events/Hits_3D.ts) (new pure helper `front_most_face_from_orientation` alongside the existing front-most-face routine); [Engine.ts](../../../src/lib/ts/render/Engine.ts) (one-shot call in setup, right before the animation loop starts).
 
@@ -1115,7 +1115,7 @@ Carried the seven-test rewrite proposal from the handoff to done. The proposal h
 
 The renderer side first. Rule 66 says the background grid and the origin axes are not painted during print, so the canvas of an empty scene stays transparent and so a heavily-decorated scene shows just the picture itself on the printed page. Render.ts already had a print-mode flag for the dashed wireframe; the same flag now gates render_back_grid and render_axes. A duplicate `is_print` declaration that crept in during the first hop was collapsed to a single declaration at the top of the render() method.
 
-The test side. Three new helpers added to the spec file: read_painted_silhouette walks the canvas pixels and returns the bounding rectangle of non-transparent pixels (the same shape the production handler computes); expected_transform_from_silhouette runs the production fit-and-centre math against a known silhouette in drawing-pixel coordinates; setup_for_pixel_silhouette opens the test page, runs a caller-supplied scene-setup callback, activates print media (which fires the renderer's print-mode flag and triggers the production handler via the matchMedia listener), and waits for layout-and-paint to settle. Then the seven tests were rewritten one by one. Test one — single box — sets up the scene through the helper, reads the painted silhouette from the canvas, derives the expected transform, compares to the actual. Tests two through five follow the same shape. Test two (two boxes) keeps the sanity check that the two-box scale is smaller than the one-box scale. Test three (off-frame box) now asserts that the silhouette stays inside the canvas drawing surface — that is the painted-only-what-is-visible claim. Tests four and five compare the with-extra-but-suppressed silhouette to the ALPHA-only silhouette pixel-bounds, then verify the resulting transform. Test six (empty scene) now passes because rule 66 makes the canvas truly empty during print; the handler returns early and the canvas stays untouched. Test seven (the diagnostic) was deleted — the silhouette-stability test already covers determinism, and the projection-based comparison no longer matches the painted-pixel contract. The two now-unused helpers from the old corner-projection era, corners_of and expected_transform_for, were removed alongside the vec4 import that only they used.
+The test side. Three new helpers added to the spec file: read_painted_silhouette walks the canvas pixels and returns the bounding rectangle of non-transparent pixels (the same structure the production handler computes); expected_transform_from_silhouette runs the production fit-and-centre math against a known silhouette in drawing-pixel coordinates; setup_for_pixel_silhouette opens the test page, runs a caller-supplied scene-setup callback, activates print media (which fires the renderer's print-mode flag and triggers the production handler via the matchMedia listener), and waits for layout-and-paint to settle. Then the seven tests were rewritten one by one. Test one — single box — sets up the scene through the helper, reads the painted silhouette from the canvas, derives the expected transform, compares to the actual. Tests two through five follow the same structure. Test two (two boxes) keeps the sanity check that the two-box scale is smaller than the one-box scale. Test three (off-frame box) now asserts that the silhouette stays inside the canvas drawing surface — that is the painted-only-what-is-visible claim. Tests four and five compare the with-extra-but-suppressed silhouette to the ALPHA-only silhouette pixel-bounds, then verify the resulting transform. Test six (empty scene) now passes because rule 66 makes the canvas truly empty during print; the handler returns early and the canvas stays untouched. Test seven (the diagnostic) was deleted — the silhouette-stability test already covers determinism, and the projection-based comparison no longer matches the painted-pixel contract. The two now-unused helpers from the old corner-projection era, corners_of and expected_transform_for, were removed alongside the vec4 import that only they used.
 
 When I first tried to verify the rewrites end-to-end, every test failed with "Cannot navigate to invalid URL". I traced it through the runner's source: the address-stitching helper merges the path argument with the configured base address by feeding both to the standard URL constructor; if the constructor throws (which happens when the base address is missing), the helper returns the path unchanged, and the browser then refuses to navigate to a bare path. So the base address was reaching the runner as missing. I then ran the runner with the `--list` flag, no other arguments, and the output named unit-test files from `src/lib/ts/tests/` — files that are not in the configured tests directory. That ruled out the config being read at all. The cause was operator error on my part: invoking the runner directly while inside `e2e/` shifted Yarn back to the project root and the runner found no nearby config. The project already has a `yarn e2e` script that points the runner at the right config; using that script makes the smoke test pass and the runner picks up exactly the right specs. No code change needed.
 
@@ -1137,15 +1137,15 @@ Print pipeline polish. A half-inch default margin on every side of the printed s
 
 Vernacular bans. Three rounds of banned-substitution rules went into the vernacular file. First, "ship" in both senses — use "done" / "complete" for finished work, "write code" for the act of producing or submitting code. Second, "land" in both senses — use "add" / "insert" / "write" / "update" for content arrival, "do" / "perform" / "can be done" for action completion. Third, "absorb" in any sense — use "place" / "include" / "inserted" instead. After the rules went in, a full sweep through every notes prose file replaced "land" / "landed" / "lands" / "landing" everywhere outside the vernacular file's own rule statement. About 120 instances reduced to zero. Two test names in source code that used the word were also rewritten, plus their stipulations references, so the strings still match.
 
-Two new entries in the di learn file. Entry four says to wire diagnostics and read them before writing more code, especially for fixes that need real-browser confirmation; entry five says confidence levels are set too high and the bar for writing code should be real data plus a short verifiable reasoning chain. Both cite the print arc as the case study. The vernacular file mirrors these two entries plus the three earlier ones (don't act on guesses, stop speculating about what's on screen, never pad a pac) under a working-discipline section, so the vernacular file doubles as a one-stop reference for collaborator discipline.
+Two new entries in the di learn file. Entry four says to wire diagnostics and read them before writing more code, especially for fixes that need real-browser confirmation; entry five says confidence levels are set too high and the bar for writing code should be real data plus a short verifiable reasoning chain. Both cite the print arc as the case study. The vernacular file mirrors these two entries plus the three earlier ones (don't act on guesses, stop speculating about what's on screen, never pad a pac) under a working-discipline section, so the vernacular file doubles as a one-stop reference for co's discipline.
 
-CLAUDE-file infrastructure. The mono-root CLAUDE file and the di-project CLAUDE file were both updated to spell out two learn files at session start — one at the mono root for cross-project mistakes, one at the di project's notes folder for project-specific mistakes. The mono CLAUDE file's old path that pointed at the wrong learn-file location was corrected.
+CLAUDE-file infrastructure. The mono-root CLAUDE file and the di-project CLAUDE file were both updated to spell out two learn files at session start — one at the mono root for main mistakes, one at the di project's notes folder for project-specific mistakes. The mono CLAUDE file's old path that pointed at the wrong learn-file location was corrected.
 
 Details column reshaped. Two code-debt items addressed. First: the empty area below the last visible panel was painted accent (then briefly reverted to regular background after a misread of the ask, then put back at the user's request). Second: a background-coloured "lip" pseudo-element with rounded top corners that sat at the end of banner-zone was removed, so the accent area reaches the bottom of the last panel on a flat edge. Then the design revision: every element in the column is a div sharing the same corner-radius and the same width, with margins zeroed and 5-pixel gaps applied via flex on both the hideable container (banner-to-slot) and the banner-zone container (hideable-to-hideable). Two visibility flavors — banners always shown, hideable shown only when the banner says so. Same look as before, simpler structure. A self-acknowledged guess (a flatten-bottom-corner rule on the last hideable) was caught by the user and removed; the lesson is captured in the work journal and learn file.
 
 Handoff trim. The handoff went from 101 lines to roughly 50. Removed two superseded proposals (the older "accent below the last hideable" proposal and the older pill proposal with three open questions), the duplicated print-rule-39 open-items bullet, the "bundled work" paragraph from the test proposal, the no-cons line, and the test-plan sentence on the pill proposal. The remaining content: open items plus the rewrite-the-seven-red-tests proposal plus the simple pill proposal.
 
-Files: [App.svelte](../../../src/App.svelte) (body-padding margin, dashed-wireframe suppression, no diagnostic logs); [Render.ts](../../../src/lib/ts/render/Render.ts) (willReadFrequently on the 2D context, print-mode skip on the dashed-wireframe phase); [Details.svelte](../../../src/lib/svelte/details/Details.svelte) (banner-zone is a flex column with 5-pixel gap, accent background on the column, pseudo-element fillet gone); [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) (hideable is a flex column with 5-pixel gap, banner and slot margins both zero); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 65 added, rule 63 prose refined); [vernacular.md](../../guides/development/learn/vernacular.md) (three new banned-substitution rows plus a working-discipline section); [learn.md](di/notes/work/ai/learn.md) (entries four and five); [handoff.md](di/notes/work/now/handoff.md) (trimmed); [mono CLAUDE.md](../../../../CLAUDE.md) and [di CLAUDE.md](../../../CLAUDE.md) (cross-project learn paths spelled out).
+Files: [App.svelte](../../../src/App.svelte) (body-padding margin, dashed-wireframe suppression, no diagnostic logs); [Render.ts](../../../src/lib/ts/render/Render.ts) (willReadFrequently on the 2D context, print-mode skip on the dashed-wireframe phase); [Details.svelte](../../../src/lib/svelte/details/Details.svelte) (banner-zone is a flex column with 5-pixel gap, accent background on the column, pseudo-element fillet gone); [Hideable.svelte](../../../src/lib/svelte/details/Hideable.svelte) (hideable is a flex column with 5-pixel gap, banner and slot margins both zero); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 65 added, rule 63 prose refined); [vernacular.md](../../guides/development/learn/vernacular.md) (three new banned-substitution rows plus a working-discipline section); [learn.md](di/notes/work/ai/learn.md) (entries four and five); [handoff.md](di/notes/work/now/handoff.md) (trimmed); [mono CLAUDE.md](../../../../CLAUDE.md) and [di CLAUDE.md](../../../CLAUDE.md) (main learn paths spelled out).
 
 Verification. Tests: 20-of-23 e2e green; six rule-39 corner-projection tests still red (tracked as the open follow-up in the handoff). Visual: print preview shows the picture filling the page along the limiting side, centred on the other, with a half-inch white border. Details column visually unchanged from before the pill restructure — same look, simpler innards.
 
@@ -1181,9 +1181,9 @@ Files: [App.svelte](../../../src/App.svelte) (compute_silhouette rewritten as pi
 
 Verification. Visual: the print preview in real Chrome shows the picture filling the page along its limiting side, centred on the other. Tests: the structural tests (rules 61, 63, 64, the centring rule, the diagnostic) all pass; six rule-39 tests need rewriting against the painted-pixel contract and are tracked as follow-up.
 
-Post-print cleanup. After the print work was done, three meta-changes followed in the same session. First, two new entries went into the di project's learn file capturing the lessons of the print arc: entry four says to wire diagnostics and read them before writing more code, especially for fixes that need real-browser confirmation; entry five says confidence levels are set too high and the bar for writing code should be real data plus a short verifiable reasoning chain. Second, the vernacular file got a new banned-substitution entry: never use the verb "ship" in either sense; write "done" or "complete" for finished work and "write code" for the act of producing or submitting code. The corresponding memory file was extended to cover both senses. Third, the mono root CLAUDE file and the di project CLAUDE file were both updated to spell out two learn files at session start — one at the mono root for cross-project mistakes, one at the di project's `notes/work/now/learn.md` for project-specific mistakes — and the mono CLAUDE file's old path that pointed at the wrong location was corrected.
+Post-print cleanup. After the print work was done, three meta-changes followed in the same session. First, two new entries went into the di project's learn file capturing the lessons of the print arc: entry four says to wire diagnostics and read them before writing more code, especially for fixes that need real-browser confirmation; entry five says confidence levels are set too high and the bar for writing code should be real data plus a short verifiable reasoning chain. Second, the vernacular file got a new banned-substitution entry: never use the verb "ship" in either sense; write "done" or "complete" for finished work and "write code" for the act of producing or submitting code. The corresponding memory file was extended to cover both senses. Third, the mono root CLAUDE file and the di project CLAUDE file were both updated to spell out two learn files at session start — one at the mono root for main mistakes, one at the di project's `notes/work/now/learn.md` for project-specific mistakes — and the mono CLAUDE file's old path that pointed at the wrong location was corrected.
 
-Files (post-print): [learn.md](di/notes/work/ai/learn.md) (two new entries about evidence and confidence); [vernacular.md](../../guides/development/learn/vernacular.md) (new "write code" verb entry and banned-substitution row); [mono CLAUDE.md](../../../../CLAUDE.md) (cross-project learn path added, di learn path corrected); [di CLAUDE.md](../../../CLAUDE.md) (new LEARN: line pointing at both files).
+Files (post-print): [learn.md](di/notes/work/ai/learn.md) (two new entries about evidence and confidence); [vernacular.md](../../guides/development/learn/vernacular.md) (new "write code" verb entry and banned-substitution row); [mono CLAUDE.md](../../../../CLAUDE.md) (main learn path added, di learn path corrected); [di CLAUDE.md](../../../CLAUDE.md) (new LEARN: line pointing at both files).
 
 ---
 
@@ -1191,7 +1191,7 @@ Files (post-print): [learn.md](di/notes/work/ai/learn.md) (two new entries about
 
 After the print-stylesheet first cut was done, the printed page showed the drawing centred but small — the drawing area scaled to the page, but the picture inside the drawing area only occupied a sub-rectangle of the surface, and that sub-rectangle stayed small after the surface fit the paper. The next pass scaled to the picture's silhouette instead of to the drawing surface.
 
-The proposal at the time. The drawing surface is a rectangle whose pixel dimensions match the on-screen drawing area. Inside that rectangle, the picture itself (the projected scene with its lines, faces, and labels) occupies some sub-rectangle, surrounded by background. The current print rule scaled the whole rectangle to the page, so the sub-rectangle ended up scaled by the same factor as the empty room. What was needed: two extra numbers — how much bigger to scale (so the silhouette, not the drawing surface, filled the page) and how much to slide left or up (so the silhouette was centred on the page rather than offset by the empty room).
+The proposal at the time. The drawing surface is a rectangle whose pixel dimensions match the on-screen drawing area. Inside that rectangle, the picture itself (the projected scene with its lines, faces, and labels) occupies some sub-rectangle, surrounded by background. The current print rule scaled the whole rectangle to the page, so the sub-rectangle ended up scaled by the same factor as the empty gap. What was needed: two extra numbers — how much bigger to scale (so the silhouette, not the drawing surface, filled the page) and how much to slide left or up (so the silhouette was centred on the page rather than offset by the empty gap).
 
 Three ways were considered. Project the corners of every smart object through the camera — fast, exact, no rendering needed. Scan the picture pixels of the drawing surface — slower, but engine-independent. Move the camera to frame the silhouette and re-render — most code, most quality, most engine touching. The recommended path was option one: corner projection.
 
@@ -1261,7 +1261,7 @@ When the user clicked a part name in the parts list and the row went into edit m
 
 **Pass four — zero the cell padding.** The two cells holding eye icons in the same row had their padding zeroed out long ago, but the cell holding the part name did not. So the name cell carried the browser's default vertical cell padding, which wrapped the input with a small extra band of space on top and bottom. Zeroed that padding to match the eye cells. Got better, but the editing row was still a tiny bit taller.
 
-**Pass five — change the input from inline-block to block, lock its line-height to the cell height, and turn off platform-rendered widget styling.** A text input is by default inline-block, which means it participates in the parent line's calculation. The line is allowed to grow to fit any inherited line-height plus the input's own height — which can be taller than the input box itself. Switching the input to block removes it from the line entirely. Locking line-height to the cell height kills any internal stretching. Turning off the platform-default appearance overrides any browser-reserved extra room for native form-widget chrome.
+**Pass five — change the input from inline-block to block, lock its line-height to the cell height, and turn off platform-rendered widget styling.** A text input is by default inline-block, which means it participates in the parent line's calculation. The line is allowed to grow to fit any inherited line-height plus the input's own height — which can be taller than the input box itself. Switching the input to block removes it from the line entirely. Locking line-height to the cell height kills any internal stretching. Turning off the platform-default appearance overrides any browser-reserved extra gap for native form-widget chrome.
 
 After all five passes, the editing row holds the same height as its neighbours.
 
@@ -1463,7 +1463,7 @@ Fix: tell the help wrapper to use a radius equal to half the toolbar height inst
 
 ### Thread three — reference-guide links work, sidebar is curated
 
-The "What to read next" links in the walkthrough page pointed at pages inside the manual's `reference guide/` subfolder. None of them worked because of three independent problems stacked together. All five fixes shipped together:
+The "What to read next" links in the walkthrough page pointed at pages inside the manual's `reference guide/` subfolder. None of them worked because of three independent problems stacked together. All five fixes were completed together:
 
 - Folder renamed: `src/manual/reference guide/` → `src/manual/reference-guide/` (no space, so markdown actually parses the link).
 - Walkthrough page links updated to use the new folder name.
@@ -1500,9 +1500,9 @@ A long autonomous run that built an adherence-tracking system from scratch, then
 
 ### Thread one — dashboard build, ten steps
 
-The "logic driven design" guide had a ten-step plan for a small dashboard that scores the project against the development process. All ten shipped:
+The "logic driven design" guide had a ten-step plan for a small dashboard that scores the project against the development process. All ten were completed:
 
-1. Catalogue and test-index format — added a Format section to each file showing the expected shape.
+1. Catalogue and test-index format — added a Format section to each file showing the expected structure.
 2. Extractor — `notes/tools/extract-adherence.mjs` reads both files, cross-joins, returns matched / uncovered / orphan / malformed lists.
 3. Metrics — coverage by area, test binding, orphan tests, build-gate.
 4. Dashboard markdown — generated at `notes/guides/project/development/adherence dashboard.md` with a top-of-page badge and one section per metric.
@@ -1519,7 +1519,7 @@ Added an at-a-glance line below the badge that surfaces the legacy count, then m
 
 ### Thread three — rules catalogue migrated, all fifty-eight
 
-Walked every area in twelve passes, applying the per-rule recipe each time: pick the next un-audited area, give each rule a short stable name, find the proving test in its file, find the proving code line, add the back-pointer on the test entry, set the area's module count in `areas.json`, run the extractor, run the validator. Final state: zero rules on the old "Covered:" shape, fifty-eight matched, zero uncovered, zero orphan, zero malformed. Twenty-six areas audited; coverage runs from one rule per module up to three rules per module, all green.
+Walked every area in twelve passes, applying the per-rule recipe each time: pick the next un-audited area, give each rule a short stable name, find the proving test in its file, find the proving code line, add the back-pointer on the test entry, set the area's module count in `areas.json`, run the extractor, run the validator. Final state: zero rules on the old "Covered:" structure, fifty-eight matched, zero uncovered, zero orphan, zero malformed. Twenty-six areas audited; coverage runs from one rule per module up to three rules per module, all green.
 
 Four new browser-driven test entries went into the test index — for the editing-lock, view-mode-switch, rotation-snap, and drag-versus-tumble user flows — so the four user-flow rules have somewhere to point back from.
 
@@ -1622,9 +1622,9 @@ The click stack now skips two kinds of parts. Parts whose visibility flag is off
 
 ### Thread three — multi-selection
 
-The single-selected-part data shape became a list of selected parts. Empty list means nothing is selected. One item means the selected part, identical to the prior single-selection behavior. Two or more means multi-select. A small backwards-compat reader called "the only selected part" returns the single item when the list has exactly one, otherwise nothing — so every existing call site that reads "the selected part" keeps working without modification.
+The single-selected-part data structure became a list of selected parts. Empty list means nothing is selected. One item means the selected part, identical to the prior single-selection behavior. Two or more means multi-select. A small backwards-compat reader called "the only selected part" returns the single item when the list has exactly one, otherwise nothing — so every existing call site that reads "the selected part" keeps working without modification.
 
-A plain click on a part replaces the list with that one part. A command-click on a part toggles that part's membership in the list. The same rule applies in the parts table for row clicks. The parts table marks every row whose part is in the list, and the canvas draws the bold outline on every part in the list. When more than one is selected, the three-tab segmented control in the details panel (and the rest of the per-selection editing widgets) hides.
+A plain click on a part replaces the list with that one part. A command-click on a part toggles that part's membership in the list. The same rule applies in the parts table for row clicks. The parts table highlights every row whose part is in the list, and the canvas draws the bold outline on every part in the list. When more than one is selected, the three-tab segmented control in the details panel (and the rest of the per-selection editing widgets) hides.
 
 ### Thread four — parts-table drag-and-drop re-parenting
 
@@ -1711,7 +1711,7 @@ The zoom slider used to float at the top-right of the drawing area, taking half 
 
 Layout decisions, all from the user:
 
-- The zoom slider lives in all three responsive layouts (phone, mobile, desktop), keeps its end-cap step buttons, and flexes into whatever toolbar room is left after the buttons. The user set the upper limit at six hundred pixels wide. No minimum width.
+- The zoom slider lives in all three responsive layouts (phone, mobile, desktop), keeps its end-cap step buttons, and flexes into whatever toolbar gap is left after the buttons. The user set the upper limit at six hundred pixels wide. No minimum width.
 - The guides slider also lives in all three layouts and was rotated from vertical to horizontal. Its "guides" label sits directly above the slider track. The label is nudged five pixels upward so it reads cleanly above without crowding the row.
 - In the desktop layout, the buttons sit in one flex row on the left and the zoom slider sits in a second flex area on the right. The zoom slider's right edge is flush with the right edge of the toolbar — a negative right margin pulls it past the toolbar's own horizontal padding, and an automatic left margin pushes it to the right end of its area.
 - The new buttons wrapper carries an explicit flex layout so its spacers behave and its segmented blocks do not force line breaks.
@@ -1745,7 +1745,7 @@ Two threads.
 
 ### Thread one — center-letter feature confirmed in the browser
 
-The user exercised the formula editor in the running app and confirmed the "cannot drag a center" alert appears at the bottom of the canvas in red on a refused drag. With that confirmed, the temporary helper that exposed the status helper to the browser console (the one named `di_status`) was removed from the page-startup code. Center is now done end to end with no leftover scaffolding.
+The user exercised the formula editor in the running app and confirmed the "cannot drag a center" alert appears at the bottom of the canvas in red on a refused drag. With that confirmed, the temporary helper that exposed the status helper to the browser console (the one named `di_status`) was removed from the page-startup code. Center is now done end to end with nothing left stubbed out.
 
 ### Thread two — browser-driven tests running
 
@@ -1876,7 +1876,7 @@ Phase zero, phase one, and phase two are all done. The feature reaches end users
 
 ---
 
-## Session — 2026-04-29 — center-letter phase one shipped
+## Session — 2026-04-29 — center-letter phase one done
 
 One thread. Phase one of the center-letter milestone was done: the read-only side of the new letter end to end, with a silent refusal of any drag whose formula reads a center.
 
@@ -1907,9 +1907,9 @@ Seventeen new tests in [Center.test.ts](di/src/lib/ts/tests/Center.test.ts) cove
 
 The visible alert on a refused drag, the snap-back animation, and any change to the parts panel are explicitly out of scope. Those happen in phase two.
 
-Phase one is reviewable and revertable on its own as a code-change unit. It is **not** user-shippable on its own — the silent refusal of a drag is a usability gap that phase two closes. The two phases reach end users together.
+Phase one is reviewable and revertable on its own as a code-change unit. It is **not** user-ready on its own — the silent refusal of a drag is a usability gap that phase two closes. The two phases reach end users together.
 
-### What shipped — 2026-04-29
+### What was done — 2026-04-29
 
 - A new bare letter in formulas with a read-only resolver branch and a self-loop check at edit time.
 - Seventeen new unit tests; full suite passes at twenty-nine files, six hundred twenty-four checks; type-check clean.
@@ -1964,7 +1964,7 @@ The docs build had been failing on one dead link inside the handoff file: a refe
 
 A wording convention was also established for new content about this project: write "SO" or "smart object" rather than "block." The convention applies to new content only — existing prose was not swept. Saved as a persistent note so it carries across future sessions.
 
-### What shipped — 2026-04-28
+### What was done — 2026-04-28
 
 - Twenty new tests across new and existing test files. Twelve files now collectively pin down all forty-nine load-bearing rules. Twenty-five test files, five hundred eighty-seven checks, all green.
 - The rules catalog grew from thirty-three rules to forty-nine, with one user-interface rule removed mid-session and the rest renumbered. Every rule now carries a pointer to the test that pins it down.
@@ -1992,7 +1992,7 @@ A wording convention was also established for new content about this project: wr
 
 ## Session — 2026-04-28 (continued) — rules audit, eight more rules, center-letter proposal, status-strip phase zero
 
-Three threads, all design work. No code shipped beyond the testing additions in the earlier session today.
+Three threads, all design work. No code was written beyond the testing additions in the earlier session today.
 
 ### Thread one — audit of the codebase for missing rules
 
@@ -2021,7 +2021,7 @@ The status strip is a small new on-screen surface that displays brief transient 
 - Error-kind messages render in red text. Other messages render in the default text color. All messages are horizontally centered.
 - The implementation plan: a new strip component, a small status store with show, dismiss, and clear helpers, a click hook that drives the dismiss step, and a two-line wiring change in the graph component. A temporary placeholder caller goes in during the phase and comes out before merging.
 
-### What shipped — 2026-04-28 (continued)
+### What was done — 2026-04-28 (continued)
 
 - The rules catalog grew from forty-nine to fifty-seven rules. Eight new rules were added (with seven tests) plus a renumber-and-remove pass.
 - Twenty new tests across two new files (the engine-behavior file and the preferences file) and several extensions to existing files. Test count moved from five hundred fifty-three to five hundred ninety-five, all green.
@@ -2047,7 +2047,7 @@ Five threads.
 
 ### Thread one — working-features summary edits
 
-Two small touch-ups to the running feature list. Added "row numbers" and "persistent hide list" to the parts row to match what had already shipped. Trimmed "(font now large)" out of the editing row — the parenthetical read as a dated marker; the current font size is just the size.
+Two small touch-ups to the running feature list. Added "row numbers" and "persistent hide list" to the parts row to match what had already been done. Trimmed "(font now large)" out of the editing row — the parenthetical read as a dated marker; the current font size is just the size.
 
 ### Thread two — dead-link fixes inside the notes tree
 
@@ -2067,13 +2067,13 @@ Coupling: clicking the self-visibility eye on a row that has children now also f
 
 Investigation, fixed: Jonathan reported that typing a new formula on a cell did not make the shape on screen update. The value column also did not refresh. Tracing logs were added across the whole chain — the attributes-panel commit handler, the compile-and-write step inside the constraints manager, the start and end of the propagate routine, the after-hook that fires when propagate finishes, and the canvas-out-of-date flip on the renderer. The logs proved every link in the chain fires end to end. The fault sat one step in front of the invariant pass: a small helper inside the constraints manager was running on every formula edit and writing the new length value into the end-of-axis bound, regardless of which cell the axis's invariant marker pointed at. On art's y-axis, where the invariant marker is the start, the helper overwrote y_max with a value computed from the old y_min plus the new depth — the formula on y_max (which says "track parent's end") was silently stomped — and then the invariant pass that ran immediately after used that polluted y_max to compute a new y_min, which cancelled out to the same old y_min. Net: every cell wrote back the value it already had. The fix: delete the helper and its six call sites. The invariant pass alone is enough to keep an axis consistent. The UI gate that disables the formula slot on the invariant cell, plus the scene-load step that clears any formula that somehow got onto an invariant cell, together guarantee the invariant pass never has to deal with a formula on the invariant cell — which is the only situation the helper could ever have been useful for. Caveat: existing scenes may carry corrupted bound values from prior runs of the helper; a one-time scene reload triggers a full re-evaluation and clears them.
 
-### What shipped — 2026-04-24
+### What was done — 2026-04-24
 
 - Formula-doesn't-refresh bug fixed: the redundant length-syncing helper was deleted along with its six call sites. The invariant pass now keeps each axis consistent on its own.
 - The two-eyeball coupling on parent rows in the parts table.
 - The "Cadence" jump and four other broken markdown links inside the notes tree.
 - The docs-build config now ignores source-file links and parent-workspace links; many workspace-root-style paths inside the milestone-32 facets folder and the current-work handoff were rewritten to relative paths; subfolder names were restored on a handful of intra-facets links; the historical-paths header on the slow-handoff file was dropped.
-- Working-features summary trimmed and topped up to match the latest shipped state.
+- Working-features summary trimmed and topped up to match the latest completed state.
 - Tracing logs across the full constraints-and-render chain — used to find the formula-doesn't-refresh bug. Still wired; should be pulled in a small clean-up pass.
 
 ### Files touched — 2026-04-24
@@ -2101,7 +2101,7 @@ Five threads in sequence.
 
 ### Thread one — add-template button for repeaters
 
-Code-debt item shipped: when you select a part that has no children and open the repeat panel, the panel used to show only a small grey hint saying "need one child for the template". It now shows a real button labelled "add template". Clicking it creates one child sized identically to the parent — same width, depth, and height, placed at the parent's origin so it fills the parent exactly — names the new child "template", selects the new child, and re-renders the panel into the straight-or-diagonal chooser. The new child is always visible regardless of the parent's visibility flag.
+Code-debt item done: when you select a part that has no children and open the repeat panel, the panel used to show only a small grey hint saying "need one child for the template". It now shows a real button labelled "add template". Clicking it creates one child sized identically to the parent — same width, depth, and height, placed at the parent's origin so it fills the parent exactly — names the new child "template", selects the new child, and re-renders the panel into the straight-or-diagonal chooser. The new child is always visible regardless of the parent's visibility flag.
 
 ### Thread two — sibling-only name uniqueness
 
@@ -2109,7 +2109,7 @@ The name-validation rule used to reject any name that any other part anywhere in
 
 ### Thread three — investigated a delete-not-removing-part bug
 
-Jonathan reported: selecting a non-repeater grandchild and pressing delete clears the selection but the part stays in the parts table. Walked the delete routine in detail, ruled out the repeater-regeneration theory and the early-return paths, and arrived at the most likely remaining culprit — an exception thrown between the selection-clear step and the parts-list rewrite step, with the formula-reference walker being the most fragile candidate. Could not pin the failing step from static analysis alone. Open in the open-items section above; needs a console error message or a small repro scene.
+Jonathan reported: selecting a non-repeater grandchild and pressing delete clears the selection but the part stays in the parts table. Walked the delete routine in detail, ruled out the repeater-regeneration theory and the early-return paths, and arrived at the most likely remaining culprit — an exception thrown between the selection-clear step and the parts-list rewrite step, with the formula-reference walker being the most fragile candidate. Could not pin the failing step from static analysis alone. Open in the open-items section above; needs a console error message or a small mock scene.
 
 ### Thread four — formula rename helper, plus a structural-direction note
 
@@ -2123,7 +2123,7 @@ A small clean-up went with it: the template-child creator was simplified to alwa
 
 A two-column table of every keyboard binding in the app, grouped by the context the key fires in. Keys mean different things on the canvas, inside a value cell, inside a name cell, inside a dimension or angle input, and inside the build-notes modal. Lives at [key paths.md](key%20paths.md).
 
-### What shipped — 2026-04-20
+### What was done — 2026-04-20
 
 - "Add template" button in the repeat panel for parts without children, plus the engine and runtime helpers behind it. New child is sized identically to its parent, named "template", and selected.
 - The sibling-only name-uniqueness rule, with two new tests pinning the cousin-allowed and sibling-rejected directions.
@@ -2159,19 +2159,19 @@ The pass-through getter and setter that used to live on the hit-testing helper f
 
 ### Thread two — parts-triangle hit area
 
-A long thread of UI-pointer debugging. The visible triangle on each row had been drawn with a normal text character at a much-larger font size, sitting on a row whose own line height was set to zero. Two symptoms followed: the cursor over the visible triangle was the open-hand drag cursor of the canvas behind the panel rather than the pointing-hand cursor of a real button, and sliding the cursor across the title text of any row made the row below light up the moment the cursor crossed where the lower row's triangle would be drawn.
+A long thread of UI-pointer debugging. The visible triangle on each row had been drawn with a normal text character at a much-larger font size, sitting on a row whose own line height was set to zero. Two symptoms followed: the cursor over the visible triangle was the open-hand drag cursor of the canvas behind the panel rather than the pointing-hand cursor of a real button, and sliding the cursor across the title text of any row made the row below highlight the moment the cursor crossed where the lower row's triangle would be drawn.
 
 After several attempts that traded one symptom for another, the working layout is: the triangle button is a small fixed-size block sized to a line of the small body text. The painted character lives in a wrapper inside that block. The wrapper ignores the pointer entirely. So the visible character can grow on hover and poke above its row, but the part of the character outside the block is silent to the mouse — no row bleed, no flicker. On hover, the painted character grows to the largest preset size, fully opaque.
 
 ### Thread three — banner action buttons
 
-A code-debt item shipped: the factory-reset button moved out of the bottom of the preferences panel, and the reinstall button moved out of the bottom of the library panel. Both now sit at the far-left end of their respective glow-banner headers, mirroring the small plus button on the far-right end. The shared glow-banner component grew a second slot for buttons on the left side that mirrors the existing right-side slot. The center-aligned title is unaffected by either slot.
+A code-debt item was done: the factory-reset button moved out of the bottom of the preferences panel, and the reinstall button moved out of the bottom of the library panel. Both now sit at the far-left end of their respective glow-banner headers, mirroring the small plus button on the far-right end. The shared glow-banner component grew a second slot for buttons on the left side that mirrors the existing right-side slot. The center-aligned title is unaffected by either slot.
 
 The reinstall handler was lifted into the scenes manager as a one-call helper that wipes the user-saved files and bumps the library refresh signal. The library panel's refresh effect now also clears the highlighted row if it points to a file that no longer exists, so the wipe behaves the same as the in-panel button used to.
 
 A small shared font-size constant for these buttons was added in the constants table; the app root now publishes it as a style variable so the banner buttons can refer to it. A polish followed: eight pixels of empty space above and below the separator inside the library panel.
 
-### What shipped — 2026-04-19
+### What was done — 2026-04-19
 
 - A new parts-tree manager file, holding nine generation-walking helpers and the collapsed-rows set.
 - A new selection manager file, holding the current selection, with a property-style read and a property-style write.
@@ -2207,7 +2207,7 @@ Five smaller threads ran after the earlier session, each closing a code-debt ite
 
 ### Thread one — rename of the canvas-stale helper file
 
-Walked through the naming options in a short pros-and-cons cycle: render-gate, an interface-style prefix, stall-render, and finally the bare word "dirty". Picked the bare word — it matches the existing one-word file-naming pattern in the project, it is the long-standing software term for "modified, needs re-processing", and it leaves room for any future second consumer that wants to react to changes. Renamed the file, redirected the ten consumer files that imported it, and updated the file-map note.
+Walked through the naming options in a short pros-and-cons cycle: render-gate, an interface-style prefix, stall-render, and finally the bare word "dirty". Picked the bare word — it matches the existing one-word file-naming pattern in the project, it is the long-established software term for "modified, needs re-processing", and it leaves space for any future second consumer that wants to react to changes. Renamed the file, redirected the ten consumer files that imported it, and updated the file-map note.
 
 ### Thread two — face-label font
 
@@ -2215,7 +2215,7 @@ Bumped the on-canvas face name labels from a hard-coded ten-pixel size to the pr
 
 ### Thread three — undo and redo
 
-Investigated the long-standing redo question on the code-debt list. Found that the redo machinery was fully built — the stack, the method, the keyboard chord — but a single shared call inside both step-back and step-forward asked the scene-load routine to wipe history every time either ran. The doc comment on the scene-load routine already said the call should not wipe in this case; the code did not match the comment. Two-character fix in the engine. After the fix you can step back many times and step forward to undo each step back, and the chain holds together.
+Investigated the long-pending redo question on the code-debt list. Found that the redo machinery was fully built — the stack, the method, the keyboard chord — but a single shared call inside both step-back and step-forward asked the scene-load routine to wipe history every time either ran. The doc comment on the scene-load routine already said the call should not wipe in this case; the code did not match the comment. Two-character fix in the engine. After the fix you can step back many times and step forward to undo each step back, and the chain holds together.
 
 A small focused test was done alongside: it pretends the scene-capture call returns whatever marker we hand it, snapshots five marker values, walks back five steps, then walks forward five steps, and asserts the chain returns to where it started. A second test pins the existing rule that taking a fresh snapshot after stepping back wipes the forward chain.
 
@@ -2225,11 +2225,11 @@ The little X marker that signals an invariant in the attributes table was too fa
 
 ### Thread five — build-notes table
 
-Walked the git history from the previous build-notes entry through today, separated significant feature shipments from cosmetic tweaks, bug fixes, and mothballed branches, and added twenty-four new entries to the build-notes table. The bundler reads that markdown file at build time and turns each row into a small entry the in-app build-notes panel renders.
+Walked the git history from the previous build-notes entry through today, separated significant feature completions from cosmetic tweaks, bug fixes, and mothballed branches, and added twenty-four new entries to the build-notes table. The bundler reads that markdown file at build time and turns each row into a small entry the in-app build-notes panel renders.
 
 A couple of small clean-ups along the way: removed an unused separator import from the attributes panel that was a leftover from a prior edit; renamed a font-size constant the user had switched from one purpose name to another so the two consumers and the published style variable stayed aligned.
 
-### What shipped — 2026-04-19 (continued)
+### What was done — 2026-04-19 (continued)
 
 - The canvas-stale helper file is renamed to a one-word concept name; the ten consumers and the file-map note follow.
 - The on-canvas face name labels render at twenty-two pixels instead of ten; the white plate and the click footprint scale with the font.
@@ -2261,19 +2261,19 @@ Big session. Three threads ran in sequence:
 
 ### Thread one — generational triangles and the hide list
 
-I shipped the full generational behavior for the parts-table triangles. A click reveals one more generation outward; holding option while clicking hides one more outermost generation; the triangle points right only when no descendants of that row are currently showing; if option-click on a row that has nothing visible below it, the collapse "bubbles up" and the row's parent is collapsed instead, with the selection moving up accordingly. The hide list is now saved to the browser between reloads. Arrow-left and arrow-right on the selected row mirror the two click modes. Changing collapse state does not mark the render as stale unless the selection actually moves; changes that only affect the parts table do not trigger a repaint.
+I completed the full generational behavior for the parts-table triangles. A click reveals one more generation outward; holding option while clicking hides one more outermost generation; the triangle points right only when no descendants of that row are currently showing; if option-click on a row that has nothing visible below it, the collapse "bubbles up" and the row's parent is collapsed instead, with the selection moving up accordingly. The hide list is now saved to the browser between reloads. Arrow-left and arrow-right on the selected row mirror the two click modes. Changing collapse state does not mark the render as stale unless the selection actually moves; changes that only affect the parts table do not trigger a repaint.
 
 The data model stayed the same on purpose — one flat list of identifiers where each entry means "the children of this row are hidden". The new logic interprets that list at different relative depths to step layer by layer.
 
 ### Thread two — the render pipeline, second pass
 
-I audited where each paint spends its time, found five proposals, and wrote them into the bottlenecks file. Three shipped, two deferred. The full-status entries for each are in that file.
+I audited where each paint spends its time, found five proposals, and wrote them into the bottlenecks file. Three done, two deferred. The full-status entries for each are in that file.
 
 ### Thread three — measurement
 
 Instrumentation was wired in so we could see where the paint actually spends its time. The numbers, over a scene of roughly one hundred parts during tumble, showed that the dominant cost was the cross-object intersection compute. The pooled clipper saved about fifteen to twenty percent. The remaining cost is structural — dense scenes generate too many face-pair intersections to clip at interactive rates, and the outer bounding-box prune is useless when every part's box overlaps every other. Jonathan chose to accept the current limit rather than take on the risks of a further rewrite. The instrumentation is now silent but left in place for the next time we need to measure.
 
-### What shipped this session
+### What was done this session
 
 - Five parts-table code-debt items.
 - A generational collapse model, wired through click, option-click, right arrow, left arrow, and the reveal-on-select behavior.

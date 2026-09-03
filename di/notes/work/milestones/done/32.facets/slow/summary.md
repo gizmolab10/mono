@@ -1,10 +1,10 @@
 # Handoff
 
-## Where things stand
+## Status
 
-Two sessions of work captured in the handoff. Yesterday I audited the renderer and shipped the biggest single win. Today I cleaned up references after you reorganized the work folder.
+Two sessions of work captured in the handoff. Yesterday I audited the renderer and completed the biggest single win. Today I cleaned up references after you reorganized the work folder.
 
-## What is shipped right now
+## What is done right now
 
 The duplicate geometry pipeline that was running every frame for a turned-off feature is gated off. Tests pass, type-check is clean. Two pre-existing type errors that surfaced during the verification are also fixed.
 
@@ -17,7 +17,7 @@ A way to skip rendering when nothing has changed. The full design is in the bott
 - Which decay-prevention strategy to commit to (strong, middle, or weak).
 - One commit or three commits for the rollout.
 - Whether to include the temporary "force redraw" key in the first commit.
-- Whether the three hand-placed marks ship at the same time as the subscriptions or later.
+- Whether the three hand-placed marks are done at the same time as the subscriptions or later.
 - Whether to shorten the helper function name.
 
 ## Three small loose ends from the reorg cleanup
@@ -58,7 +58,7 @@ They sort into four loose groups by what kind of problem they are.
 - *Allocation pressure in hot loops.* Items nine, twelve, thirteen, fifteen — vector and matrix objects allocated by the thousands per frame, the occlusion clipper rebuilds its working array on every occluder, the hidden-wireframe pass calls a heavy clipper that throws away half its output, and edge keys are rebuilt as fresh strings every frame.
 - *Linear searches that want maps.* Items ten, eleven, fourteen — endpoint filtering, crossing-split application, and a "is this face in the occluder list" check, all linear scans that should be hash lookups.
 
-## The suggested ship order at the end of the file
+## The suggested completion order at the end of the file
 
 Bottleneck one is done. Two is the next big one. Three after that — once the world transform is built once per frame, it unlocks several others. Then five, seven, and eight in any order. Then the cluster of map-lookup swaps (six, ten, eleven, fourteen). Then four falls out for free as a side effect of one. Then the allocation cluster (nine, twelve, thirteen) together. Fifteen last, only if profiling still shows allocation as the dominant cost after everything above.
 
@@ -72,4 +72,4 @@ The file says items above number nine are structural and confident from reading 
 
 ## Bottom line
 
-The file is a punch list. One item shipped, fourteen left. The next concrete step is whichever direction you choose for bottleneck two — either the deep proposal in the sister file, or any of the smaller items below it.
+The file is a punch list. One item done, fourteen left. The next concrete step is whichever direction you choose for bottleneck two — either the deep proposal in the sister file, or any of the smaller items below it.

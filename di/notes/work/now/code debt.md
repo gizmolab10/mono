@@ -112,7 +112,7 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 - [ ] clean up guides again
     - [ ] does our current organization make sense?
 - [ ] move logic driven design -> alongside always
-    - [ ] convert to instructions that can do the heavy lifting
+    - [ ] convert to instructions that can do a lot of the work
 - [ ] read all the work md files and summarize the organization
 - [ ] [[cadence]]
 - [ ] Gemini pro is only $20
@@ -138,8 +138,8 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 ### 2026-08-19 — The details column becomes a stack
 
 - [x] implement the sections spec in di — a run of sections with a separator centred in every gap. `Action` and `Stacked` are new, the separator carries what a caller builds at three places, and `Stack` came across mended to di's own ladder throughout, with one new rung: `k.height.folded`, the floor a fold can never go below.
-- [x] `Hideable` folded into the stack — each of its five uses is now a section. A section's word rides the middle of the separator above it and folds that section when pressed; its buttons ride the two ends, where they stood inside the banner. The banner element is gone, and with it its height, its radial fill and its two pinned corners.
-- [x] a separator can be told how thick to draw and how far to reach — the details column says zero for the reach, so a line's ends and their flares stand inside the column instead of past the edge that clips it.
+- [x] `Hideable` folded into the stack — each of its five uses is now a section. A section's word rides the middle of the separator above it and folds that section when pressed; its buttons ride the two ends, where they sat inside the banner. The banner element is gone, and with it its height, its radial fill and its two pinned corners.
+- [x] a separator can be told how thick to draw and how far to reach — the details column says zero for the reach, so a line's ends and their flares sit inside the column instead of past the edge that clips it.
 - [x] the accent moved off the ground and into the folds — the column behind the stack and every line on it were both accent, so a 1px line and its gap read as one 11px band. The ground is page color now, and the accent shows only where a section is folded.
 - [x] the three add buttons draw their mark — `x_cross` turned a quarter turn, so one path serves both the X elsewhere and the plus here. Each carries its own name.
 - [x] one padding for every button that carries words, `--l-padding` left and right. The seven in the primary row had been taking the browser's own, since `.toolbar-button` set none.

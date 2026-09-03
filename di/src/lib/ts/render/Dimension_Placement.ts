@@ -426,8 +426,8 @@ export function build_uniface_box_for_scene(rendered_leaves: readonly O_Scene[])
 		return { x: p.x, y: p.y };
 	};
 	// Take the orientation, rotate the camera's looking direction backward
-	// by it to get the camera direction expressed in the room's static
-	// axes. Whichever room axis has the largest absolute component is the
+	// by it to get the camera direction expressed in the untumbled
+	// axes. Whichever untumbled axis has the largest absolute component is the
 	// one closest to camera-facing. Faces along that axis get rejected
 	// when the angle is under twenty degrees.
 	const orient_inv = quat.create();
@@ -1664,7 +1664,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	last_locked_count = 0;
 	last_skip_drifted = false;
 	const all_objects = scene.get_all();
-	// Camera looking direction expressed in the room's static (untumbled)
+	// Camera looking direction expressed in the untumbled
 	// axes. Read once per render; reused by the edge-on filter for every
 	// (axis, side) combination the search visits.
 	const cam_dir_in_room = vec3.create();
@@ -1761,7 +1761,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 
 	// Project the six face centers of the uniface box at witness index 1
 	// to screen pixels. Excluded faces (null shift) project to null and
-	// are never chosen by the picker. Box corners live in the static room
+	// are never chosen by the picker. Box corners live in the untumbled
 	// frame, so we project through the root tumble matrix to land on the
 	// same screen pixels the parts draw at.
 	const enum_idx = 0;

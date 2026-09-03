@@ -58,7 +58,7 @@ vertical:
   height:  stretch (or fixed via `length` prop)
 ```
 
-`--m` = `margin` prop (px), `--e` = `margin + end` prop (px). The 4px lateral margins give breathing room on the non-extension axis.
+`--m` = `margin` prop (px), `--e` = `margin + end` prop (px). The 4px lateral margins give a small gap on the non-extension axis.
 
 The negative-margin + overcalculated-width trick makes the separator bleed past its container edges so the flares end up centered on intersecting separators (same idea as the overlap rule in aesthetics.md).
 

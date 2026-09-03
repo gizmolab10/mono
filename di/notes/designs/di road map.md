@@ -25,7 +25,7 @@ date: 2026-08-19
 
 ### Dimensionals-placement redesign (decided, not yet built)
 
-The dimensions-label algorithm is being replaced with a four-degrees-of-freedom search per label (edge, direction, witness length, slidable position). The full 25-rule consolidated spec is at [guides/development/rules/dimensionals.md](di/notes/work/now/dimensionals.md). The library-versus-custom decision was settled in favour of a custom implementation — supporting research at [guides/project/research/dimensionals-research.md](dimensionals-research.md). Today's force-driven implementation still ships; the eighteen `dimensions-*.spec.ts` e2e files under [e2e/tests/](../../../e2e/tests/) capture the acceptance criteria, with most marked `test.skip` pending the test hooks listed in rule 25.
+The dimensions-label algorithm is being replaced with a four-degrees-of-freedom search per label (edge, direction, witness length, slidable position). The full 25-rule consolidated spec is at [guides/development/rules/dimensionals.md](di/notes/work/now/dimensionals.md). The library-versus-custom decision was settled in favour of a custom implementation — supporting research at [guides/project/research/dimensionals-research.md](dimensionals-research.md). Today's force-driven implementation is still the one in use; the eighteen `dimensions-*.spec.ts` e2e files under [e2e/tests/](../../../e2e/tests/) capture the acceptance criteria, with most marked `test.skip` pending the test hooks listed in rule 25.
 
 Phased task list with dependencies, effort guesses, and per-task risks at [dimensionals.work.md](../work/mothballs/dimensionals.work.md). Progress is recorded in the handoff per the first item in [code debt.md](di/notes/work/now/code%20debt.md).
 

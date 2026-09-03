@@ -54,7 +54,7 @@ This is a numbered description of what the dimensions code DOES today, written b
 
 ## D. Silhouette box and uniface box
 
-10. The silhouette box is the world-axis-aligned bounding box of every corner of every visible LEAF part whose eight bounding-box corners ALL project inside the visible canvas after tumble and projection. Container parts (parts with visible children) do NOT feed the silhouette — only their leaf descendants do (the leaves-only rule for silhouette membership). Parts whose corners fall partly off the canvas are skipped. The box is computed in the room's STATIC (untumbled) frame, so it stays glued to the parts and tumbles with the view rather than swinging around with the screen. When the qualifying-part set is empty (heavy zoom — no part is fully on canvas), the box collapses to a single point at the origin; the silhouette-clearance filter then becomes a no-op (its target polygon is empty) and parts fall through to the last-resort step (rule 20a).
+10. The silhouette box is the world-axis-aligned bounding box of every corner of every visible LEAF part whose eight bounding-box corners ALL project inside the visible canvas after tumble and projection. Container parts (parts with visible children) do NOT feed the silhouette — only their leaf descendants do (the leaves-only rule for silhouette membership). Parts whose corners fall partly off the canvas are skipped. The box is computed in the untumbled frame, so it stays glued to the parts and tumbles with the view rather than swinging around with the screen. When the qualifying-part set is empty (heavy zoom — no part is fully on canvas), the box collapses to a single point at the origin; the silhouette-clearance filter then becomes a no-op (its target polygon is empty) and parts fall through to the last-resort step (rule 20a).
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:2031-2046, 2120-2135
 
 11. The uniface box has six faces, one per world-axis outward direction (LEFT, RIGHT, FRONT, BACK, TOP, BOTTOM). Each face sits OUTSIDE the matching side of the silhouette box by a configured SCREEN-pixel margin (15 px). The shift in world units to achieve that screen distance is computed once per face by projecting one world-unit-along-the-outward-normal and measuring the resulting screen distance.
@@ -63,7 +63,7 @@ This is a numbered description of what the dimensions code DOES today, written b
 12. There are SIX nested uniface boxes, at screen distances 1×margin, 2×margin, 3×margin, 4×margin, 5×margin, 6×margin from the silhouette box. The witness-index cap is 6.
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:2077-2094, di/src/lib/ts/common/Constants.ts:160
 
-13. FACE EXCLUSION. A face is excluded for the entire nested-box family when its outward normal points WITHIN 20° of straight at the camera, OR WITHIN 45° of straight away from the camera. The camera direction is expressed in the room's static frame (the camera never actually moves — the room rotates around it instead).
+13. FACE EXCLUSION. A face is excluded for the entire nested-box family when its outward normal points WITHIN 20° of straight at the camera, OR WITHIN 45° of straight away from the camera. The camera direction is expressed in the untumbled frame (the camera never actually moves — the room rotates around it instead).
     - Source: di/src/lib/ts/render/Dimension_Placement.ts:2010-2026, 2141-2151, di/src/lib/ts/common/Constants.ts:165-166
 
 ## E. What the search decides per (part, axis)

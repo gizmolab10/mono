@@ -119,7 +119,7 @@ The dimensionals are still challenging to interpret. Might be easier if they are
 
     **Centering preference, shaped like a parabola.** When the label fits between the witnesses, a small additional penalty nudges the label toward the midpoint between the witness lines. The penalty is a parabola sized to the dim line, value is zero at the midpoint and a tunable number X at the witness anchors. Start with X = 20.
 
-    **The label must NEVER cover its own witness lines.** A candidate whose label rectangle is wider than the space between the witness lines must overhang. The overhang distance must leave room for a dimension line stretching between the label and the witness anchor on the overhang side.
+    **The label must NEVER cover its own witness lines.** A candidate whose label rectangle is wider than the space between the witness lines must overhang. The overhang distance must leave a gap for a dimension line stretching between the label and the witness anchor on the overhang side.
 
     **Two dim lines that are real-world-parallel must sit at least PAIR_CLEARANCE_PX apart in screen pixels** (5 px today; value lives in `Constants.ts`). See rule 27. When two dim lines sit too close their pair of arrows and labels become visually indistinct.
 
@@ -175,6 +175,6 @@ The dimensionals are still challenging to interpret. Might be easier if they are
 
     Labels must also avoid overlapping ANY lines or anchors.
 
-27. **Parallel lines need room.** Two dim lines that are parallel-in-3D must sit at least PAIR_CLEARANCE_PX (5 screen pixels, value lives in `Constants.ts`) apart, measured perpendicular to their shared axis. When two dim lines sit too close their arrows and labels become visually indistinct. This promotes easy reading.
+27. **Parallel lines need a gap.** Two dim lines that are parallel-in-3D must sit at least PAIR_CLEARANCE_PX (5 screen pixels, value lives in `Constants.ts`) apart, measured perpendicular to their shared axis. When two dim lines sit too close their arrows and labels become visually indistinct. This promotes easy reading.
 
 28. **2D mode is not a special case.** Every part gets all three axes considered for placement, regardless of view mode. The 2D-from-the-front view does NOT restrict a part to only the two axes of its front-most face — that was a quirk of the old code and is dropped in the new design. The placement algorithm, the DOF filters, the conflict definition, and the persistence map all behave identically in 2D and 3D modes. If a particular axis projects to nothing useful in the current view, the filters (camera-axis, witness-index) collapse its DOF ranges the same way they would in 3D.

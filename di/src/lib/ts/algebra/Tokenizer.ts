@@ -252,7 +252,7 @@ class Tokenizer {
 			if (t.type !== 'reference') { out.push(t); continue; }
 
 			if (t.object === 'self') {
-				// Self-ref start: absorb consecutive self-refs into a multi-word name.
+				// Self-ref start: include consecutive self-refs in a multi-word name.
 				let name = t.attribute;
 				while (i + 1 < tokens.length && tokens[i + 1].type === 'reference' && (tokens[i + 1] as any).object === 'self') {
 					i++;

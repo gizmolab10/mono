@@ -21,7 +21,7 @@
 
 ## shine
 
-**1. Where we shine (how we split the work)**
+**1. Where we shine (who does what)**
 
 You own _taste and intent_; I own _execution and documentation_. Concretely:
 
@@ -59,7 +59,7 @@ meaning, bans, tone, behavior, enforcement
 
 ## dimensions flag off
 
-_Paused 2026-06-22 (code-debt item 1). Where it stands and how to resume: handoff "Paused — flag-off / simplify arc". Bug 001 captured, not yet diagnosed._
+_Paused 2026-06-22 (code-debt item 1). Status and how to resume: handoff "Paused — flag-off / simplify arc". Bug 001 captured, not yet diagnosed._
 
 - [ ] proposal: gather many use cases
     - [ ] for each one, we need:
@@ -107,7 +107,7 @@ A separate canvas that draws our scoring equation as bubbles and arrows. It is d
 2. how far off-center the label sits along that line (penalty)
 3. how long the two perpendicular witness lines are (penalty)
 4. how much those witness lines cut through the part's outline (penalty)
-5. how much room there is before the canvas edge (reward)
+5. how much gap there is before the canvas edge (reward)
 6. whether the label sits on the back side, away from the camera (heavy penalty)
 7. whether the label faces flat-on to the camera (reward)
 
@@ -149,7 +149,7 @@ reward  visible-line    "how much of the line shows between anchors"
 penalty off-center      "how far the label drifts from the middle"      strength 20
 penalty witness-length  "how long the two perpendicular lines are"      strength 2
 penalty cuts-outline    "how much those lines cross the part"           strength 200
-reward  edge-room       "room before the canvas edge"                   strength 1
+reward  edge-gap        "gap before the canvas edge"                    strength 1
 penalty back-side       "label sitting away from the camera"            strength 50000
 reward  faces-camera    "label facing flat to the camera"              strength 500
 ```
@@ -180,6 +180,6 @@ There is no bubbles-and-arrows canvas today, but di already has these that draw 
 - **The still-open list** now reads: how a direction draws, and whether each operation's label is a word or a symbol.
 - **The open-question wording** lost the banned word — now "text form".
 
-Constants and the two arrow rules stand unchanged.
+Constants and the two arrow rules remain unchanged.
 
 Ripple to flag, not chased yet: that same rename broke other path references — including the lexicon path I just fixed inside the word-check hook, which now points at a notes folder that no longer exists. Say the word and I reconcile them.

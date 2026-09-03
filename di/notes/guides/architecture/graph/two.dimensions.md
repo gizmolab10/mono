@@ -88,7 +88,7 @@ Three options were evaluated:
 
 1. **Painter's algorithm** (~10 lines) — white fills, back-to-front per-object. **Failed.** Per-object interleaving killed intersection lines.
 2. **Ortho edge clipper** (~30–50 lines) — screen-space z-comparison clipping. Avoided — scope creep risk, second code path to maintain, "face-on rectangle" assumption breaks for rotated children.
-3. **Reuse 3D path** (~5 guard changes) — zero new rendering code, inherits all 3D occlusion features. **Shipped.**
+3. **Reuse 3D path** (~5 guard changes) — zero new rendering code, inherits all 3D occlusion features. **Done.**
 
 The 3D pipeline's phased rendering order (fills → intersections → clipped edges) is the key architectural property. Any approach that interleaves per-object breaks the phase boundaries.
 

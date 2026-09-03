@@ -410,7 +410,7 @@ export default class Smart_Object extends Identifiable {
 	// SERIALIZATION
 	// ═══════════════════════════════════════════════════════════════════
 
-	/** Serialize to Portable_SO shape (per-axis bundles) */
+	/** Serialize to Portable_SO structure (per-axis bundles) */
 	serialize(): { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater; rotation_order?: [number, number, number] } {
 		const out: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater; rotation_order?: [number, number, number] } = {
 			id: this.id,
@@ -427,7 +427,7 @@ export default class Smart_Object extends Identifiable {
 		return out;
 	}
 
-	/** Deserialize from Portable_SO shape (per-axis bundles) */
+	/** Deserialize from Portable_SO structure (per-axis bundles) */
 	static deserialize(data: { id: string; name: string; x: Portable_Axis; y: Portable_Axis; z: Portable_Axis; visible?: boolean; hide_children?: boolean; repeater?: Repeater; rotation_order?: [number, number, number] }): Smart_Object {
 		const so = new Smart_Object(data.name);
 		so.setID(data.id);

@@ -11,7 +11,7 @@ Stop the renderer from painting sixty times a second when nothing has changed. W
 
 ### 1. A stale flag and a mark function, on the renderer
 
-Add a private boolean on the renderer, starting `true` so the first frame always paints. Add a single public function that sets it to `true`. Add one constant at the top of the renderer module — an "always redraw" override — which, when true, forces the flag to stay dirty forever. Ship with the override set to `false`. Flipping it to `true` is the one-character rollback lever.
+Add a private boolean on the renderer, starting `true` so the first frame always paints. Add a single public function that sets it to `true`. Add one constant at the top of the renderer module — an "always redraw" override — which, when true, forces the flag to stay dirty forever. Complete this with the override set to `false`. Flipping it to `true` is the one-character rollback lever.
 
 ### 2. A "wire up stale-marking" helper, called once at setup
 
@@ -85,13 +85,13 @@ Evidence for where the tick callback lives:
 
 ### 6. The rot-prevention plan
 
-Pick one option and commit to it in the same commit that ships the gate, or the plan will decay as new mutation sites are added later. My recommendation, in order of strength:
+Pick one option and commit to it in the same commit that completes the gate, or the plan will decay as new mutation sites are added later. My recommendation, in order of strength:
 
 - **Strongest:** route every reactive-store write through a helper that also marks stale. Any new store added to the helper is auto-covered.
 - **Middle:** add a development-mode assertion that logs when a store writes without the flag being set in the same microtask.
 - **Weakest:** leave a prominent comment on the flag declaration naming the invariant. Relies on the next author reading the comment.
 
-## Ship order
+## Completion order
 
 This can be done in one commit or three. Splitting gives faster feedback:
 
@@ -139,14 +139,14 @@ Roughly fifty lines of new code plus whatever the rot-prevention option costs.
 - Any change to the tick store or its existing consumers. The side panels continue to refresh via the tick exactly as they do today.
 - Any change to the render function's internals. The gate is a wrapper around render, not a rewrite of render.
 - Any attempt to coalesce multiple mutations into a single mark. The flag naturally coalesces because many writes in one tick still produce one paint.
-- Any of the other bottlenecks. Item two stands on its own.
+- Any of the other bottlenecks. Item two is independent.
 
 ## Open questions for you to decide before I build
 
 - **Do you want the "every store write routes through a helper" option for rot prevention, or the assertion, or the comment?** Strongest first, pick based on how much plumbing you want in the stores module.
-- **Do you want the ship-in-three-commits split, or one commit?** The split is safer; the combined commit is faster.
-- **Do you want the keystroke override in the first commit or not?** Dropping it simplifies the ship; keeping it helps debug a silent-staleness bug if one slips through.
-- **Do you want me to file the three targeted marks inside their respective modules, or leave them as a follow-up?** They are independent of the subscription wiring and can ship in a later commit, though the gate is only safe to enable after they are in place.
+- **Do you want the split-into-three-commits approach, or one commit?** The split is safer; the combined commit is faster.
+- **Do you want the keystroke override in the first commit or not?** Dropping it simplifies the work; keeping it helps debug a silent-staleness bug if one slips through.
+- **Do you want me to file the three targeted marks inside their respective modules, or leave them as a follow-up?** They are independent of the subscription wiring and can be done in a later commit, though the gate is only safe to enable after they are in place.
 
 ### Risks
 

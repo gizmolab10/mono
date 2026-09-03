@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { full_name, measurement_name, dimensional_name } from '../common/Names';
 
-// Minimal stand-ins shaped like the only bits the name builder reads: a name,
+// Minimal stand-ins structured like the only bits the name builder reads: a name,
 // and a path up to the parent's smart object. ROOT has no parent above it.
 function node(name: string, parent: unknown | null): any {
 	return { name, scene: { parent: parent ? { so: parent } : null } };

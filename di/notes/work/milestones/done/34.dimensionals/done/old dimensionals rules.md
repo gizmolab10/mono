@@ -1,6 +1,6 @@
 # Uncrowded Dimensionals Redesign — consolidated requirements
 
-Everything the dimensionals layout has to do, in one place, in the simplest language. Each rule stands on its own. Rules are grouped by what they govern.
+Everything the dimensionals layout has to do, in one place, in the simplest language. Each rule is self-contained. Rules are grouped by what they govern.
 
 **Status:** rules 1, 3, 4, 8, 9, 10, 11, 12, 16, 18, 19, 20, 21, 15, 23, 24, 25 reflect the decided redesign — a four-degrees-of-freedom (4DOF) search replacing the force-driven simulation. Rules 19, 20, 21, 15, 23, 24, 25, and 26 are entirely new for the redesign; rule 18 was rewritten to fold the redesigned fireblock-as-obstacle rule into the existing repeater integration; rule 1 was rewritten to introduce the four degrees of freedom. The current code still implements the older force-driven version; see [dimensionals.md](../../architecture/graph/dimensionals.md) for what's actually running today.
 
@@ -51,7 +51,7 @@ Every distance test — silhouette clearance, label-versus-label clearance — u
 
 Labels must also avoid overlapping ANY lines or anchors.
 
-## 3. Parallel lines need room
+## 3. Parallel lines need a gap
 
 Two dim lines that are parallel-in-3D must sit at least PAIR_CLEARANCE_PX (15 screen pixels, value lives in `Constants.ts`) apart, measured perpendicular to their shared direction. When two dim lines sit too close their arrows and labels become visually indistinct. This promotes easy reading.
 
@@ -83,7 +83,7 @@ The label sits ON the dimension line (center point of the label rect is on that 
 
 **The dim line stretches from a witness anchor to the label, even when the label overhangs.** Thus two parts, one for each witness line. Two possibilities:
 
-- **Inside segment** (between the two witness ends): drawn only when the label fits between the witnesses (label width + enough room X to draw the dim lines, X is 20px in screen pixels).
+- **Inside segment** (between the two witness ends): drawn only when the label fits between the witnesses (label width + enough gap X to draw the dim lines, X is 20px in screen pixels).
 - **Overhang**: BOTH sides get an overhang line, and the inside is left empty. The line on the side the label actually overhangs stretches from the witness line to the label; the other side gets a fixed short length so the visual reads as symmetric. The full visual pattern is: "dim line — arrow — witness line — gap — witness line — arrow — dim line — label" (or vice versa).
 
 **Dim line arrowheads sit on the same side of each witness anchor as the dim line at that anchor.**
@@ -118,7 +118,7 @@ Search algorithm (sketched in rule 23): enumerate discrete (edge, direction) pai
 
 **Centering preference, shaped like a parabola.** When the label fits between the witnesses, a small additional penalty nudges the label toward the midpoint between the witness lines. The penalty is a parabola sized to the dim line, value is zero at the midpoint and a tunable number X at the witness anchors. Start with X = 20.
 
-**The label must NEVER cover its own witness lines.** A candidate whose label rectangle is wider than the space between the witness lines, must overhang. The overhang distance must leave room for a dimension line stretching between the label and the witness anchor on the overhang side.
+**The label must NEVER cover its own witness lines.** A candidate whose label rectangle is wider than the space between the witness lines, must overhang. The overhang distance must leave a gap for a dimension line stretching between the label and the witness anchor on the overhang side.
 
 **Two dim lines that are real-world-parallel must sit at least PAIR_CLEARANCE_PX apart in screen pixels** (15 px today; value lives in `Constants.ts`). See rule 3. When two dim lines sit too close their pair of arrows and labels become visually indistinct.
 
@@ -228,7 +228,7 @@ Every part gets all three axes considered for placement, regardless of view mode
 
 ## 23. 4D avoidance algorithm — library or custom?
 
-The avoidance problem is rule 10. The shape is two discrete DOF per label (small finite sets) and two continuous DOF per label (ranges bounded by rule 11). The performance budget is rule 20. The pair-check tiers in rule 24 are what keep that budget realistic on a custom implementation.
+The avoidance problem is rule 10. The structure is two discrete DOF per label (small finite sets) and two continuous DOF per label (ranges bounded by rule 11). The performance budget is rule 20. The pair-check tiers in rule 24 are what keep that budget realistic on a custom implementation.
 
 **Greedy step (the custom-path detail).** When a free label's turn comes up in the greedy seed, for each of its viable (edge, direction) pairs the algorithm finds the BEST achievable (witness length, slidable position) within that pair's continuous ranges — best meaning the values that maximize the minimum clearance from every already-placed label rectangle and from the silhouette outline. The label then commits to the (edge, direction) pair whose best-clearance value is largest. Final tie-break uses rule 21 (alphabetical by part ancestry path).
 

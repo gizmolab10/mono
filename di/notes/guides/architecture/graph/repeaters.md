@@ -37,7 +37,7 @@ The workhorse. called after any propagation that touches a repeater SO.
 
 - **gap constraints** (stairs): `resolve_gap(gap_length, gap_min, gap_max)` — finds count where `total / count` falls within [min, max], prefers even division
 - **spacing** (studs): `count = floor((parent_length - template_dim) / spacing)`
-- **bookend**: if the envelope extends past the last clone, a bookend clone is placed at the end. if the remaining space is less than the template thickness but more than zero, the last regular clone is shoved back to make room (tight bookend), and the fireblock between them shrinks to fit
+- **bookend**: if the envelope extends past the last clone, a bookend clone is placed at the end. if the remaining space is less than the template thickness but more than zero, the last regular clone is shoved back to open a gap (tight bookend), and the fireblock between them shrinks to fit
 
 ### Clone placement
 

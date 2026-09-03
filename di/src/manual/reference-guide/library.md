@@ -6,7 +6,7 @@ The library panel is where you go to start from a saved arrangement, drop a save
 
 The list shows two kinds of files merged together.
 
-- **Bundled.** Files that ship with the app. They appear immediately when you open the panel.
+- **Bundled.** Files that are bundled with the app. They appear immediately when you open the panel.
 - **Saved on this device.** Files you have saved before. They appear a moment later, after the on-device store has been read.
 
 If a name collides between the two sources, the on-device file wins.

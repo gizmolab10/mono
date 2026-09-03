@@ -103,7 +103,7 @@ The hard part isn't drawing the lines. It's *where* to put them. For each axis (
 
 Once it finds the edge, it computes a **witness direction** — the axis most perpendicular to the edge in screen space — and offsets the dimension line outward from the object's center. Then it checks whether another object's face is occluding the label. If so, it tries the next silhouette candidate.
 
-Two layout modes: normal (arrows point inward, text sits in the gap) and inverted (arrows point outward, extension lines reach beyond the edge). Inverted kicks in when there's not enough room for text between the arrows.
+Two layout modes: normal (arrows point inward, text sits in the gap) and inverted (arrows point outward, extension lines reach beyond the edge). Inverted kicks in when there's not enough gap for text between the arrows.
 
 ### R_Angulars.ts (~380 lines)
 

@@ -27,7 +27,7 @@ in wireframe mode, faces get tinted debug overlays instead — each face a diffe
 
 ## 4. Build the occlusion index
 
-heavy lifting here. for each front-facing face on each child object:
+a lot of work here. for each front-facing face on each child object:
 
 - figure out its plane in 3D and its shape on screen
 - tag each edge: silhouette (the body ends here) or internal (another front face continues)

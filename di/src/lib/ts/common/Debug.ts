@@ -194,7 +194,7 @@ export class Debug {
 			// silhouette polygon, in pixels. (TODO: compute from new path.)
 			dim_min_silhouette_clearance: () => 0,
 			// Per drawn label, the count of viable (edge, direction) pairs
-			// (legacy hook — new path uses a different shape). Returns
+			// (legacy hook — new path uses a different structure). Returns
 			// empty list.
 			dim_viable_pair_counts: () => [],
 			// Conflict-graph check is a legacy hook tied to the abandoned
@@ -203,7 +203,7 @@ export class Debug {
 			// Per dropped label, the reason and conflict count. (TODO:
 			// wire from new path's null-uniface filter.)
 			dim_drop_report: () => ({ dropped: [] }),
-			// Every drawn label from the new path, in the legacy shape
+			// Every drawn label from the new path, in the legacy structure
 			// the e2e tests expect.
 			dim_labels_by_kind: () => get_last_uniface_placement_result().placements.map(p => ({
 				so_name: p.so_name,

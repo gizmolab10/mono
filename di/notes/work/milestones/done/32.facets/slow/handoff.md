@@ -1,8 +1,8 @@
 # Slow
 
-**Dates:** 2026-04-10 (bottleneck audit), 2026-04-11 (work-folder reorg cleanup), 2026-04-15 (skip-when-clean gate shipped), 2026-04-16 (bottlenecks #3–8, #10, #11, #14 shipped; remaining mothballed) **Session topic:** render pipeline performance audit and bottleneck cleanup; work-folder reorganization cleanup; skip-the-paint-when-nothing-changed gate; world-matrix cache, face-pair prune, and map-lookup swaps
+**Dates:** 2026-04-10 (bottleneck audit), 2026-04-11 (work-folder reorg cleanup), 2026-04-15 (skip-when-clean gate done), 2026-04-16 (bottlenecks #3–8, #10, #11, #14 done; remaining mothballed) **Session topic:** render pipeline performance audit and bottleneck cleanup; work-folder reorganization cleanup; skip-the-paint-when-nothing-changed gate; world-matrix cache, face-pair prune, and map-lookup swaps
 
-**Next:** bottleneck work is complete. Eleven of fifteen shipped; four mothballed (scratch-memory group #9, #12, #13 and string-key #15 — revisit only if profiling points at allocation pressure). Still open: review the three semantically-suspicious handoff references flagged in the 2026-04-11 session below.
+**Next:** bottleneck work is complete. Eleven of fifteen done; four mothballed (scratch-memory group #9, #12, #13 and string-key #15 — revisit only if profiling points at allocation pressure). Still open: review the three semantically-suspicious handoff references flagged in the 2026-04-11 session below.
 
 ---
 
@@ -12,7 +12,7 @@
 
 I read every render file in the project and produced a ranked list of fifteen performance bottlenecks. Each one has a plain-English description, an evidence link to the file and line, and a concrete proposal for how to fix it. The whole list lives in a new work file at `bottlenecks.md` in this folder. We agreed the design of every bullet is sound; the file is the working document for the rest of this work.
 
-### Step two — shipped bottleneck one
+### Step two — completed bottleneck one
 
 The biggest single win on the list was the duplicate geometry pipeline that runs every frame even though its only consumer (the facets debug renderer) is mothballed. We wrapped the entire second-pipeline compute block in a single switch that matches the same debug flag the consumer is gated on. When the flag is off (its current state), the whole block is skipped. When the flag is on, behavior is identical to before.
 
@@ -30,7 +30,7 @@ Both were unrelated to bottleneck one but blocking a clean type-check. Per the u
 
 ### Step four — deep dive on bottleneck two (skip render when nothing has changed)
 
-Most of the session was on bottleneck two. We did a lot of analysis but did not ship any code. The plan now lives as the proposal section, the risks section, and the audit results section inside `bottlenecks.md` under heading "## 2."
+Most of the session was on bottleneck two. We did a lot of analysis but did not write any code. The plan now lives as the proposal section, the risks section, and the audit results section inside `bottlenecks.md` under heading "## 2."
 
 **Audit.** I delegated a thorough sweep of the codebase to find every site that mutates anything the canvas reflects. The audit returned roughly one hundred and forty distinct call sites grouped into fourteen categories — camera, selection, hover, drag, store tick, snap animation, tree changes, bound writes, history, constraints, resize, preferences, debug flags, and an "other" catch-all. Each site has a plain-English label and a clickable link. The audit lives inside the bottleneck-two section of `bottlenecks.md`.
 
@@ -43,11 +43,11 @@ Most of the session was on bottleneck two. We did a lot of analysis but did not 
 - *Subscribe only to the tick store.* Rejected because the tick is called from only twelve places and misses hover, selection, wheel zoom, snap animation, side-panel sliders, and window resize. With tick-only the canvas would freeze on most pointer interactions. Documented in the chat record.
 - *Replace the flag with a direct render call from the mark function.* Rejected because a single user action typically writes several stores in one stack frame, so the canvas would paint several times per visible change. The cleanest rescue (wrapping in a frame request) re-introduces a flag under a different name. Documented in the chat record.
 
-**Final wiring proposal.** I drafted a concrete proposal that names every piece: the flag, the helper function, the twenty-six subscriptions, the three targeted marks for the unstarred clusters, the gate in the animation tick, the rollback lever, the rot-prevention plan, the ship order, and the verification plan. The proposal is the second half of the long chat exchange — it has not been distilled back into the proposal section of the file yet. Bringing the file in line with the proposal is the next concrete editing task.
+**Final wiring proposal.** I drafted a concrete proposal that names every piece: the flag, the helper function, the twenty-six subscriptions, the three targeted marks for the unstarred clusters, the gate in the animation tick, the rollback lever, the rot-prevention plan, the completion order, and the verification plan. The proposal is the second half of the long chat exchange — it has not been distilled back into the proposal section of the file yet. Bringing the file in line with the proposal is the next concrete editing task.
 
 ### Step five — chime on the current proposal text
 
-I read the proposal section as it stands in `bottlenecks.md` and offered nine corrections. The biggest ones:
+I read the proposal section as currently written in `bottlenecks.md` and offered nine corrections. The biggest ones:
 
 - Bullet one is now obsolete (it asks for an audit that has been completed).
 - The helper function should not take a boolean argument — every caller should only ever set the flag to true; the clear should be a private field write inside the render function.
@@ -61,7 +61,7 @@ These corrections have not been applied to the file. They are queued.
 
 ---
 
-## What's shipped this session
+## What was done this session
 
 - Bottleneck one: second-pipeline compute is now gated on its debug switch.
 - Two pre-existing type-check errors fixed (unused import, moved field reference).
@@ -164,7 +164,7 @@ There are now two active handoffs — one in `now/slow/` for the render performa
 
 ---
 
-## Session 3 — 2026-04-15 — skip-when-clean gate shipped
+## Session 3 — 2026-04-15 — skip-when-clean gate done
 
 Wired the full skip-the-paint-when-nothing-changed gate for bottleneck two. All three layers of coverage are in place, every test still passes, and the type checker is clean.
 
@@ -173,11 +173,11 @@ Wired the full skip-the-paint-when-nothing-changed gate for bottleneck two. All 
 The four open questions were answered before building:
 
 - Rot prevention: strongest. Every write to a canvas-affecting input now funnels through a tiny wrapper that marks the canvas out of date, so new stores added later get coverage automatically when declared through that wrapper.
-- Ship order: three logical steps. Wiring first, then the gate, then the wrapper migration. All three were done in one session.
+- Completion order: three logical steps. Wiring first, then the gate, then the wrapper migration. All three were done in one session.
 - Keystroke override: skipped. The one-character rollback lever at the top of the render module is enough.
-- Targeted marks: shipped alongside the subscriptions, not as a follow-up. Without them the gate would leave three categories silently stale — window resize, direct bound writes, and propagation-driven changes.
+- Targeted marks: done alongside the subscriptions, not as a follow-up. Without them the gate would leave three categories silently stale — window resize, direct bound writes, and propagation-driven changes.
 
-### What shipped
+### What was done
 
 **A per-canvas out-of-date flag.** The render module now carries a private boolean that starts on, flips off at the start of every paint, and flips back on whenever any input the canvas cares about changes. A one-character rollback lever at the top of the module forces the flag to stay on forever, restoring the old always-paint behavior if something goes wrong.
 
@@ -202,7 +202,7 @@ The four open questions were answered before building:
 
 **Instrumentation in the tick loop.** The loop logs a rolling summary every two seconds showing how many ticks it painted and how many it skipped. Temporary — to be removed once the gate is proven in real use.
 
-### What did not ship
+### What was not done
 
 - Debug flag flips that are not wired through anything reactive will not mark the canvas. The original proposal called this out and left it for later.
 - Any mutation site the audit missed will be silent. The counter is the tool for finding those; use it during real interaction.

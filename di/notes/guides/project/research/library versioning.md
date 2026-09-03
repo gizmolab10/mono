@@ -40,7 +40,7 @@ Library objects carry version tags. Instances pin to a specific version. Updatin
 
 ## Leaning
 
-Tagged snapshots feel right. Frozen copies are too isolated. Live references are too fragile. A version tag gives you control — pin to what works, bump when you're ready. And if a formula shape changes between versions, the migration step is where you handle it.
+Tagged snapshots feel right. Frozen copies are too isolated. Live references are too fragile. A version tag gives you control — pin to what works, bump when you're ready. And if a formula structure changes between versions, the migration step is where you handle it.
 
 ## Priority
 

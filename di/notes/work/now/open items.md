@@ -124,7 +124,7 @@ Next: pick one, build it, look at the result, then keep tuning.
 
 Notes:
 
-- The lies-flat term scales by `max(0, −n_camera · n_front)`. When the front-most face points sideways, the term collapses to zero — intentional, but worth eyeballing across scenes.
+- The lies-flat term scales by `max(0, −n_camera · n_front)`. When the front-most face points sideways, the term collapses to zero — intentional, but worth checking visually across scenes.
 - The on-plane reward probably requires deciding between graded distance and per-part silhouette boxes. The per-part choice is the bigger structural change.
 - The "label inside part box" reject in the outer-edge step assumes one part box per dim. Multi-part dims would need a different check.
 
@@ -160,7 +160,7 @@ Two items left from the renderer rewrite. Add a unit test for the renderer's geo
 
 ### 4.4 Coordinate system mixing audit
 
-Standing item, fires on the next coordinate bug (a place where a number in one coordinate system is multiplied or compared with a number in another, with no conversion). Three escalating levels:
+Ongoing item, fires on the next coordinate bug (a place where a number in one coordinate system is multiplied or compared with a number in another, with no conversion). Three escalating levels:
 
 1. **Quick grep pass** (10-30 minutes). Scan the placement file, the renderer, and the helpers for places that multiply or compare numbers in different coordinate systems. **Things to look for:** a mm length multiplied by a px length with no tumble-then-projection between them, a px value treated as a fraction (or vice versa) without an explicit divide-or-multiply by a length, a dimensionless integer combined with a mm or px length without an explicit scale.
 2. **Manual code walk** (a couple of hours). Trace every coordinate-using path end to end, document what system each variable lives in (mm, px, fraction), check every multiplication and comparison for system consistency.

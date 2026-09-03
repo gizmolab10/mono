@@ -103,7 +103,7 @@ Four ways the user can fill the formula cell on the x position attribute, and wh
 | `.x * 2` | parent's x position times two |
 | `A.x * 2` | the part named A's x position times two |
 
-The same four shapes work for every position attribute (`x`, `y`, `z`, `X`, `Y`, `Z`). For length attributes (`w`, `d`, `h`), an empty cell resolves to the stored value rather than the parent-plus-offset rule above.
+The same four structures work for every position attribute (`x`, `y`, `z`, `X`, `Y`, `Z`). For length attributes (`w`, `d`, `h`), an empty cell resolves to the stored value rather than the parent-plus-offset rule above.
 
 Citation: the resolver lives in `src/lib/ts/algebra/Constraints.ts` (`resolve` and `bind_refs`); the empty-formula offset rule is described in the Empty-formula default section below.
 
@@ -119,7 +119,7 @@ Formulas may reference globally named numbers — for example `wall_thickness` o
 
 Every parse failure carries a message and a character span into the source. The failing cell shows a red underline under the bad span; hovering reveals the message. Errors persist on a cell until the cell is edited or cleared.
 
-The classifier distinguishes several shapes: unknown attribute on a known SO, unknown SO, leading dot at the start of a name, unexpected dot inside a path, bare SO name with no attribute, and a bare SO name typed where the user meant "self." Fuzzy-match suggestions help with typos in SO names.
+The classifier distinguishes several structures: unknown attribute on a known SO, unknown SO, leading dot at the start of a name, unexpected dot inside a path, bare SO name with no attribute, and a bare SO name typed where the user meant "self." Fuzzy-match suggestions help with typos in SO names.
 
 ## Where it lives
 
@@ -138,11 +138,11 @@ When a child's position attribute has no formula, Constraints treats it as `pare
 
 ## Constraints during stretching
 
-When the user drags a corner or an edge, the new value has to be placed somewhere. The algebra has two distinct paths for absorbing that change, and the user chooses between them at the time they fill in (or leave empty) the formula cells.
+When the user drags a corner or an edge, the new value has to be placed somewhere. The algebra has two distinct paths for placing that change, and the user chooses between them at the time they fill in (or leave empty) the formula cells.
 
 The first path is the empty-formula offset model described above. A child whose position attribute carries no formula tracks the parent — the parent's stretch slides the child along by the same amount, and the stored offset stays the same. This is the default; it requires nothing of the user.
 
-The second path is a named value (a given) that absorbs the stretch. When the user writes a formula that names a given (for instance, `wall_thickness * 2`), and the user later stretches a part whose value is computed from that formula, the engine looks for a single given referenced in the formula and solves the formula backward to find a new value for the given. Every other reference in the formula is held fixed so the solver only sees one unknown. A given that has been locked refuses to be solved for — the dragger finds nothing it can move and the drag does nothing.
+The second path is a named value (a given) that receives the stretch. When the user writes a formula that names a given (for instance, `wall_thickness * 2`), and the user later stretches a part whose value is computed from that formula, the engine looks for a single given referenced in the formula and solves the formula backward to find a new value for the given. Every other reference in the formula is held fixed so the solver only sees one unknown. A given that has been locked refuses to be solved for — the dragger finds nothing it can move and the drag does nothing.
 
 Citation: the search-and-solve helper sits in `src/lib/ts/algebra/Constraints.ts` lines 522-578; the freeze step that holds non-given references as literals is at lines 580-593; the locked-given check is at line 571.
 
@@ -258,7 +258,7 @@ Used by `try_solve_given` to adjust a given so a formula evaluates to a target v
 
 | File | Covers |
 | ---- | ------ |
-| `Compiler.test.ts` | Tokenizer: bare numbers, decimals, operators, parens, references, unit suffixes (in/ft/mm/cm), mixed expressions, end token, errors, bare self-refs, dot-prefix parent-refs. Compiler: AST shape for literals, refs, precedence, parens, unary minus, unit expressions, bare+dotted+dot-prefix, errors. |
+| `Compiler.test.ts` | Tokenizer: bare numbers, decimals, operators, parens, references, unit suffixes (in/ft/mm/cm), mixed expressions, end token, errors, bare self-refs, dot-prefix parent-refs. Compiler: AST structure for literals, refs, precedence, parens, unary minus, unit expressions, bare+dotted+dot-prefix, errors. |
 | `Evaluator.test.ts` | Forward eval: literal, ref, four ops, div-by-zero → 0, unary minus, precedence, parens. Reverse propagation: solve for single unknown through each op, nested, throws on zero/multiple refs. Cycle detection: acyclic, direct, indirect, self-ref, isolation. |
 | `Constraints.test.ts` | Formula on Attribute: set+eval, store, null compiled, bad formula error, cycle error, clear keeps value. Propagation: source→dependent, chain cascade, unrelated untouched. Serialize: round-trip, omit when absent, deserialize recompiles AST. Orientation: copy angles, survives serialize. Add child: min bounds track parent, update on move, max bounds, half-smallest-dimension cube. Alias resolution: resolve x/X/w/h/d + fallthrough, write x/w + fallthrough. Dot-prefix parent: .x binding, explicit SO, mixed, .w alias, no parent → 0, propagation, .w→parent width, add_child_so flow. Bare self: x self-ref, w self-width, mixed .x+x. Invariant formulas: lookup x/w/X, null for unknown, eval with self. Enforce invariants: inv=0/1/2, no override formulas, set_formula triggers, propagate triggers, multi-axis. Contextual aliases: self cross-axis, parent cross-axis, tokenizer round-trips, propagation. Translate formulas: same-axis bare (all 3 axes), cross-axis, parent dot-prefix, explicit SO refs, invariant agnostic/explicit, mixed mode normalization, values unchanged. |
 | `Orientation.test.ts` | from_bounds: flat→identity, non-square angle, 45° around each axis, 30° staircase. Use case S: staircase orientation stable on stretch. Use case W: fixed dimensions, slides with origin. recompute_max_bounds: 45°/30° redistribution, diagonal preserved. |

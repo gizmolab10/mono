@@ -1570,7 +1570,7 @@ class Engine {
 			const last_offset = count > 0 ? count * step : 0;
 			has_bookend = bookend_offset >= last_offset + template_dim;
 			// Tight bookend: envelope extends past last clone by less than template_dim —
-			// shove the last clone back to make room for one more at the end
+			// shove the last clone back to open a gap for one more at the end
 			if (!has_bookend && count > 0) {
 				const remaining = bookend_offset - last_offset;
 				if (remaining > 0 && remaining < template_dim) {
