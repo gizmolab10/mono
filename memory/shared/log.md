@@ -9,8 +9,22 @@ date: 2026-09-01
 
 <!-- consolidated: 1 September 2026 -->
 
+## 3 September 2026
+
+- D: relevance-check's haiku call runs detached — the hook logs a start row and exits at once, so the turn never waits. A watcher kills a call at 90 seconds and logs "killed", every start row gets an ending row (clean, warn, no-judgment, killed), and each run flags any earlier start left unpaired ("stale"). 5 mocked tests pass, and the hook's own run measured under a second and a half
+
 ## 2 September 2026
 
+- D: read-this-turn-check, hook-answer-check and relevance-check are log-only — they write warn rows but no longer wake co, so no turn opens and no "all good" reaches the screen. Rows are read on "check" and after corrections. banned-words-check keeps its wake-up. 11 tests pass
+- D: conventions.md joins the injection rotation (response, agency, lexicon, conventions — four in turn) and wears the always tag. The four label tests hold
+- D: the Writing a rule convention gained Jonathan's sentence — judgement based rules are soft, and make a good starting point for refinement towards solid checks
+- D: the compression rules no longer cut names and definitions — always #1 gained "A name repeated or a word defined is never fluff — cut everything else first". Motive: the 51 complained-about replies average 57 words against 70 for all replies, so over-compression, not length, drives complaints
+- D: the quiet-turn reply is "all good" — plain silence turned out impossible (the platform refuses an empty reply), so always #8's exception now reads: a turn opened by a hook, with no real fault to report, sends exactly "all good"
+- D: relevance-check.sh now hands haiku the last 8 spoken lines of the conversation, not just the final message — a message like "3" or "go" keeps its meaning. Proved with a real call: a reply answering a bare "3" judged clean
+- D: the always #8 / always #1 collision is resolved — a turn opened by a hook, with no real fault to report, sends nothing. One sentence added to always #8. The quiet-turn tokens ("nothing to add", the dot) are dead
+- D: relevance-check.sh joins the Stop hooks — the one hook with judgment: haiku reads Jonathan's message and the reply, names the sentences that answer nothing and the words he would have to ask about. Warn-only. Skips hook-opened turns and replies under 120 characters. 5 mocked tests pass and one real call caught both planted faults
+- D: hook-answer-check.sh joins the Stop hooks — warns when a reply talks to a hook instead of Jonathan (a hook-opened turn whose reply mentions the hook or verifies, or verifying words Jonathan never asked for). Warn-only, 6 tests pass
+- D: always.md rewritten as checks — each of the eight rules is now a yes/no test run on the draft, and #8's scan runs checks 1-7 plus the banned-words table, replacing the stale list that named the length limit
 - D: always opens with its purpose, in Jonathan's four words — offer the minimum, checkable wording. Minimum protects his reading, checkable protects his trust, offer means held back until asked. The eight rules are the how; this is the what they aim at
 - D: three facts about Jonathan, learned in conversation and written nowhere, found homes by pac — agency #20 says guide prose is a draft he finishes; response #6 carries why the unnamed-referent rule is heavy (he never guesses, he halts); response #2 says his questions are tests. Nothing joined always, whose membership is every-turn commands and whose force is its shortness
 - D: always #7 no longer collides with the shorthand table — one added sentence says a shorthand is an interpretation Jonathan already approved, performed at once. Checked finding 3 is closed

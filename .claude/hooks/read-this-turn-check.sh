@@ -88,8 +88,8 @@ if [ -z "$MISSING" ]; then
   exit 0
 fi
 
+# Log-only since 2 September 2026: a wake-up here opened a turn, the turn had to
+# end visibly, and Jonathan's screen filled with "all good". The complaint keeps
+# its row; co reads the rows on "check" and after any correction.
 log_event "warn" "$MISSING" "$TEXT_TAIL"
-cat <<JSON
-{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"NAMED BUT NOT READ THIS TURN: $MISSING — pitfalls #1 says a sentence naming a file carries a citation from a tool call in the same reply. Either read them and say what they actually hold, or mark each such sentence \"unread:\"."}}
-JSON
 exit 0

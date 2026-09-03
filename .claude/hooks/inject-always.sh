@@ -27,8 +27,10 @@ COUNT_FILE="$REPO/.claude/hooks/.turn-count"
 # the same thing about the same words — one as a wall, one as a word to reach for —
 # and only the second is any use while a sentence is being written. The table is
 # still read by the two scripts that check a finished reply.
+CONVENTIONS="$REPO/memory/shared/truth/conventions.md"
 IN_TURN=("$PRE_FLIGHT/response.md" "$PRE_FLIGHT/agency.md")
 [ -f "$LEXICON" ] && IN_TURN+=("$LEXICON")
+[ -f "$CONVENTIONS" ] && IN_TURN+=("$CONVENTIONS")
 [ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && IN_TURN+=("$BANNED_PROJECT")
 
 # Every file named here arrives with every message or in its turn, so every one of

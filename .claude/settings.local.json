@@ -160,12 +160,21 @@
           },
           {
             "type": "command",
+            "command": ".claude/hooks/hook-answer-check.sh"
+          },
+          {
+            "type": "command",
             "command": ".claude/hooks/murk-count.sh"
           },
           {
             "type": "command",
             "command": ".claude/hooks/check-ts.sh",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/relevance-check.sh",
+            "timeout": 60
           }
         ]
       }

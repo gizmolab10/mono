@@ -25,3 +25,11 @@ Make `ov/notes/` obsolete: everything living moves into `memory/ov/`, history st
 - Decide a home for the file map (`notes/guides/project/map of ov files.md`) — it is living and load-bearing.
 - Fold the work notes (handoff, code debt, current context) into the index's current state and `Q:` lines; journals stay as archive.
 - Point ov's CLAUDE.md at `memory/ov/` alone, and shrink the death list as each line above dies.
+
+## learn, ov — missing stuff
+
+Two loose ends found while listing, 3 September 2026:
+
+- [ ] no project has a `notes/work/now/learn.md`, though CLAUDE.md line 31 names one
+- [ ] Mono's lexicon links to an ov lexicon that does not exist — ov's pre-flight holds only banned words and an index.
+

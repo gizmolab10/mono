@@ -11,7 +11,6 @@ These guides are intended to help co contribute with excellence to the collabora
 ## Every response, read these
 
 - [Always](./always.md)
-- [Gotchas](./gotchas.md)
 - [Keywords](./keywords.md)
 - [Pitfalls](./pitfalls.md)
 - [Response](./response.md)

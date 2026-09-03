@@ -58,7 +58,9 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 | phrase-check.sh | Logs permission-asking and hollow reassurances |
 | required-disclaimer-check.sh | Logs a hedge that lacks "I AM GUESSING" |
 | diagnostic-citation-check.sh | Logs a cause-claim with no citation |
-| read-this-turn-check.sh | Names every file the reply mentions that no tool touched this turn, and says so as next-turn context |
+| read-this-turn-check.sh | Names every file the reply mentions that no tool touched this turn. Log-only: the rows are read on "check" and after corrections |
+| hook-answer-check.sh | Catches a reply talking to a hook instead of Jonathan: a turn opened by a hook's complaint whose reply mentions the hook or verifies, or verifying words Jonathan never asked for (response #8). Log-only, read the same way |
+| relevance-check.sh | The one hook with judgment: hands haiku the last 8 spoken lines and the reply, asking which sentences answer nothing (always #1) and which words Jonathan would have to ask about (response #6). Skips hook-opened turns and replies under 120 characters. Costs a fraction of a cent per reply. Log-only, read the same way. The call runs detached so the turn never waits: a start row always gets an ending row (clean, warn, no-judgment, or killed at 90 seconds), and each run flags any earlier start left unpaired |
 | murk-count.sh | Writes one row per reply, and a second row when any line of Jonathan's message begins with t, translate, rewrite, plain, simplify or murky. Each row carries the rule that counted it (`any-line` from 1 September 2026, `first-word` before) and the length of the reply it is about |
 | check-ts.sh | If a .ts/.svelte changed, runs svelte-check; injects any errors as next-turn context |
 
