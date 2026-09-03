@@ -21,7 +21,7 @@ Everything else gets replaced.
 
 ---
 
-## Phase 1: Fresh scaffold
+## Phase 1: Fresh stub-out
 
 **Goal:** clean Phaser + Svelte app running in the browser. Phaser canvas fills the screen. Svelte provides a minimal UI overlay (regard counter). Stores are wired up.
 

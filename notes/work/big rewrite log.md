@@ -122,3 +122,30 @@ Scope: all of `di/` — `.md` prose plus comment lines in `.ts`/`.svelte`. A pri
 `yarn --cwd di test:run` — 38 files, 859 passed, 1 skipped, 8 todo, 0 failed. `yarn --cwd di run check` (svelte-check) — 599 files, 0 errors, 0 warnings. (`di/node_modules` was a local, uncommitted symlink to the main checkout's `node_modules` — same lockfile, no dependency drift between the branch point and main — used only to run these two commands; not part of the commit.)
 
 Total for this section: 49 files touched, 11 categories of fixes beyond the prior session's already-correct swaps (roughly 45 individual edits), 9 categories of hits deliberately left in place, tests and type-check green.
+
+## ga
+
+Scope: all of `ga/` (29 `.md`/`.ts`/`.svelte` files). No project-specific banned-words/lexicon table exists for ga — only the mono table applies. A single sweep across both `.md` prose and code comments found 22 raw hits; all but three were literal Phaser/game senses (drawn shapes, circles as Phaser `add.circle` calls or spatial arrangement of faces, "species" as biology, "words" as literal spoken text, a JSDoc "marked" in the generic-flag sense, comment-delimiter "markers") or in-scope-excluded code (a string-literal narrative line, a CSS class name) — left untouched.
+
+### Swaps made (3)
+
+| File | Old → New |
+| --- | --- |
+| `notes/work/phaser.start.md` | "## Phase 1: Fresh scaffold" → "## Phase 1: Fresh stub-out" |
+| `notes/work/revisit.ga.md` | "(scaffold → map → booths → polish → colors → pentagons)" → "(stub-out → map → booths → polish → colors → pentagons)" (kept in sync with the phase-1 rename above) |
+| `notes/work/revisit.ga.md` | "Claude to begin building minimal carnival prototype" → "co to begin building minimal carnival prototype" |
+
+### Hits left in place, with reason
+
+- **`shape`/`shapes`/`circle`** (`phaser.start.md` ×4, `revisit.ga.md` ×2, `Boot_Scene.ts`, `Trust_Scene.ts`, `Map_Scene.ts`) — literal Phaser Graphics-API shapes and circles (drawn polygons, `this.add.circle(...)` calls), not the mono structure/decision sense.
+- **`species`** (`vision.md`) — "advance our species" = humanity, biological sense.
+- **`words`** (`keep.in.mind.md`) — "Action in the world (only words)," literal spoken/written text, the lexicon's own carve-out.
+- **`marked`/`markers`** (`phaser.editor.md` ×2) — comment-delimiter tags (`/* START-USER-CODE */`), the generic non-UI designate sense.
+- **`lit up`** (`Kindness_Scene.ts:180`) — inside a string literal shown to the player ("their eyes lit up"), out of scope: only comment lines are swept in `.ts`/`.svelte`, never strings.
+- **`needs-panel`** (`NeedsList.svelte`) — a CSS class name / code identifier, out of scope (not a comment; renaming identifiers is also forbidden).
+
+### Verification
+
+`ga` has no `vitest`/`test` script in `package.json`. `yarn --cwd ga run check` (svelte-check) — 0 errors, 0 warnings.
+
+Total for this section: 3 files touched, 3 swaps, 0 judgment rewrites beyond the mechanical scaffold→stub-out heading pair, 6 categories of hits left in place, type-check green.

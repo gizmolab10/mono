@@ -7,10 +7,10 @@
 ## Next Steps
 
 - [x] Jonathan to review this summary
-- [x] Claude to begin building minimal carnival prototype
+- [x] co to begin building minimal carnival prototype
 - [x] research [[game.engines]]
 - [x] create work plan in [[phaser.start]]
-- [x] Phases 1–6 complete (scaffold → map → booths → polish → colors → pentagons)
+- [x] Phases 1–6 complete (stub-out → map → booths → polish → colors → pentagons)
 - [ ] Phase 7: Phaser Editor integration (Jonathan installs editor)
 - [ ] Phase 8: deduplicate scene boilerplate — see [[phaser.start]]
 - [ ] Iterate based on Jonathan's reactions
