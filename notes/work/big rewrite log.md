@@ -189,3 +189,7 @@ None separate from the word choices already named — each swap above needed a s
 `yarn --cwd ji test:run` — 5 files, 112 passed, 0 failed. `yarn --cwd ji run check` (svelte-check) — 505 files, 0 errors, 0 warnings.
 
 Total for this section: 16 files touched, 5 systematic word-categories fixed (~55 individual edits) plus 2 one-off swaps, 9 categories of hits left in place with reasons, tests and type-check green. Given the raw-hit volume (825), this section is reported as a prioritized, not line-by-line-exhaustive, sweep — see the note at the top of this section.
+
+## me
+
+Scope: all of `me/` — 3 files, no `package.json` (notes only, nothing to verify). No project-specific word table. Checked all three files against the mono table: `mj.md` (a cannabis-growing reference) has one "room" instance ("hard to do organically in a sealed room" — a literal grow room) and no other hits; `jonathan.md` and `revisit.me.md` have zero hits (a "markdown" false-positive on `mark` was the only near-match, not a real one). No edits made, nothing to commit for this folder.
