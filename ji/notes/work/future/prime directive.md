@@ -21,7 +21,7 @@ The build, in stages (each a usable step on its own):
 1. **Reach the dots.** Get at the stored dots for the workspace's clips. *(First unknown to verify: the AI keeps them in its own vector store — check whether it hands them back through its interface, or whether ji must run the same dot-maker itself over the clips. Settle this before building.)*
 2. **Group them, loners allowed.** Cluster the dots with a method that leaves outliers ungrouped (so the lonely ones survive as candidates, not forced into a bucket). This gives the strong huddles and the weak tail. No AI — plain math.
 3. **Score each huddle.** Count the distinct people in it, how tight it is, and how it spreads over time (and how far it sits from the big crowds). Plain arithmetic.
-4. **Name the strong ones (easy win).** Let the AI read each strong huddle and put a short name to it. This is a real, shippable feature on its own — a "themes" view over the store.
+4. **Name the strong ones (easy win).** Let the AI read each strong huddle and put a short name to it. This is a real, complete feature on its own — a "themes" view over the store.
 5. **Triage + curate the weak ones.** Rank the weak huddles by the score, show the top ~20 with their real clips and who wrote them, and let a person keep / highlight / toss. Feed the calls back so the pile sharpens each round.
 
 Phase it: 1–4 first (reach the dots, cluster, score, name the strong huddles — a themes view). Then 5 (the weak-signal curate loop), which is the harder, judgment-heavy differentiator.

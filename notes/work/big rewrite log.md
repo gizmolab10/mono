@@ -149,3 +149,43 @@ Scope: all of `ga/` (29 `.md`/`.ts`/`.svelte` files). No project-specific banned
 `ga` has no `vitest`/`test` script in `package.json`. `yarn --cwd ga run check` (svelte-check) — 0 errors, 0 warnings.
 
 Total for this section: 3 files touched, 3 swaps, 0 judgment rewrites beyond the mechanical scaffold→stub-out heading pair, 6 categories of hits left in place, type-check green.
+
+## ji
+
+Scope: all of `ji/` (113 files). ji has its own `lexicon.md` (read; not edited) which defines ji's own vocabulary (document, folder, hierarchy, family, ending, filter, fold…) but no `banned words.md` of its own — only the mono table applies, on top of ji's already-settled "hierarchy, never tree" rule. A raw grep for all banned-word stems returned ~825 hits; the overwhelming majority were false positives from a coarse word-boundary search (`standard` matching `stand`, `words`/`copy`/`edge`/`shape`/`circle`/`mark` used constantly in ji's own literal or established senses) or CSS/layout prose. Given the volume, this pass worked highest-signal-first — categories with a real, systematic hit (`tree`, `shape`, `seam`, some `room`, a couple of `mark`/`land`/`owe`/`ship`) were checked and fixed everywhere they occurred; the long tail of plainly literal categories (`edge`, `copy`, `circle`, `split`, `glob`, `bar`/`band`/`gutter`, `padded`, `slid`, `drain`, `pour`, `liar`, `species`, `borrow`, most of `stand`, most of `owe`/`words`) was sampled rather than read line-by-line, on the same reasoning the notes+root and di sections already documented for these words. `ji/notes/work/future/wendy/Compass.md` (a coaching-persona document, not project prose) was excluded entirely — its `room`/`drain`/`absorb`/`species`/`scaffold`/`shape`/`tree`/`edge` hits are all literal human-psychology language.
+
+### Swaps made
+
+- **`tree`/`trees`/`subtree` → `hierarchy`/`hierarchies`/`sub-hierarchy`** (ji's own settled rule, not just the mono table) — comprehensive fix across `hierarchy spec.md` (~20 instances, the file's central subject), `work journal.md` (~12), `build LLM proposal.md` (2), and five `.ts` comments (`Hierarchy.ts` ×2, `Databases.ts` ×6, `DB_Common.ts`, `DB.test.ts`, `file.extension.test.ts`, `Hits.ts`).
+- **`shape` → `structure`** (data/API/record-format sense, not geometry) — 12 instances: `hierarchy spec.md` ×3, `work journal.md` ×3, `build LLM proposal.md` ×2, `thin proxy proposal.md`, `persistables proposal.md` ×2, plus one `persistables proposal.md` "shape change" → "structure change".
+- **`seam` → `plugin architecture`** (ji's storage-backend interface — the exact meaning the table row targets, used constantly as ji's own term for the pluggable local/AnythingLLM/future-Firestore backend boundary) — 12 instances: `db handoff.md` ×4, `db implementation proposal.md` ×3, `build LLM proposal.md` ×4, `work journal.md` ×3.
+- **`mark` → `decoration`** (a rendered triangle icon, the banned "stamped visual element" sense) — `work journal.md`, `View_Document.svelte`.
+- **`room` → `gap`** (literal CSS/layout empty space) — `work journal.md` ×3, `sideband storage proposal.md`.
+- **`land`/`landed` → `write`/`was done`** where it meant feature-completion, not a literal arrival — `work journal.md` ("This landed in two proven steps" → "was done"), `persistables proposal.md` ("not part of this landing" → "not part of this change").
+- **`shippable` → `complete`** — `prime directive.md` ("a real, shippable feature" → "a real, complete feature").
+- **`Claude` → `co`** — none found needing a swap in ji beyond what's already reported as legitimate product-name usage.
+
+### Judgment rewrites (class 3), beyond the mechanical swaps above
+
+None separate from the word choices already named — each swap above needed a sense-check (tree/shape/seam/mark all have legitimate alternate senses elsewhere in ji, listed below) but no sentence needed restructuring beyond the word itself.
+
+### Hits left in place, with reason
+
+- **`Compass.md`** (the "wendy" coaching-persona document) — excluded wholesale: `room`, `drain`/`drained`/`draining`, `absorbs`, `species`, `scaffold`, `shape`/`shaped`, `tree`, `edge`/`edges` all appear in genuine human-psychology/coaching senses (Human Design terms, therapeutic "growth edge," yin-yang imagery), unrelated to any software sense the table targets.
+- **`edge`** (~30 instances, `work journal.md`, `prime directive.md`, `thin proxy proposal.md`) — literal CSS edges/margins, or "leading edge"/"service's edge" as standard non-software idioms. None matched the "boundary/threshold value" sense.
+- **`copy`/`copies`/`copied`** (~35 instances, `work journal.md`, `hierarchy spec.md`, `.svelte`/`.ts` files) — clipboard actions, "keep a local copy," "removing the old copy" (deduplication) — all literal duplication, not the "said copy, meant move" confusion, same reasoning as the notes+root and di sections.
+- **`mark`/`marked`** (remaining ~90 instances) — ji's meta-passage in `work journal.md` documenting the sweep infrastructure's own "same"-column mechanism (quotes several banned words deliberately as examples, exempt); the browser's own internal auto-focus flag ("only honors that mark when nothing is focused" — a system-state flag, not a rendered highlight); everywhere else, the generic non-UI designate/flag sense ("one row marked wrong on purpose," "parts marked not visible").
+- **`stand`/`standard`** (~129 raw hits) — the great majority are the unrelated word `standard`; the true `stand` instances describe position/existence ("the ground everything else stands on," "what already stands"), the same narrower-scope carve-out the notes+root and di sections already used.
+- **`owe`/`owed`** (~12 instances) — "what's still owed" consistently means pending/unfinished work, not the table's specific "verification pending" sense.
+- **`words`** (~200 instances) — ji's own central, deliberately-chosen domain term (a document's extracted readable text: "words-readiness," "extracting words," "already words") as defined in ji's own `lexicon.md`; swapping to "content" throughout would destroy ji's actual vocabulary, not fix a misuse.
+- **`bar`/`band`/`gutter`** (~45 instances, mostly `.svelte` prose and CSS comments) — "top bar," "accent bar," "scroll bar," "address bar" are literal named UI elements (several matching real component/prop names), not the margin/padding sense.
+- **`panel`** (`work journal.md`, `handoff.md`) — "a data panel," "a rounded panel" — literal named UI sections, same reasoning as di's `panel` carve-out.
+- **`split`** (~29 instances) — "the record is split by kind," "split by purpose into separate notes" — literal data/file division, not "who does what."
+- **`glob`** (`Help.svelte`: `import.meta.glob<string>(...)`) — a real Vite API call, code not prose.
+- **`circle`, `drain`/`pour`, `padded`, `slid`, `liar`, `species`, `borrowed`** — each is either a single stray literal use (`replace claude.md`: "a borrowed M4" = a borrowed laptop; `View_Document.svelte`: "the left is padded to match," literal CSS padding) or did not occur outside `Compass.md`.
+
+### Verification
+
+`yarn --cwd ji test:run` — 5 files, 112 passed, 0 failed. `yarn --cwd ji run check` (svelte-check) — 505 files, 0 errors, 0 warnings.
+
+Total for this section: 16 files touched, 5 systematic word-categories fixed (~55 individual edits) plus 2 one-off swaps, 9 categories of hits left in place with reasons, tests and type-check green. Given the raw-hit volume (825), this section is reported as a prioritized, not line-by-line-exhaustive, sweep — see the note at the top of this section.

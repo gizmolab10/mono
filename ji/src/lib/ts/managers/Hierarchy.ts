@@ -25,9 +25,9 @@ export interface Listed_Document {
 	relationship_id : string | null;      // the id of the link that led into this row; null for a top-level row (no parent link) — tells a thing's two appearances apart
 }
 
-// The store's records and the living tree over them. It owns the in-memory record
+// The store's records and the living hierarchy over them. It owns the in-memory record
 // lists, the dirty bookkeeping, and the indexes; it holds the document lifecycle
-// (create / add / replace / add-folder / erase) and the tree operations (the walk,
+// (create / add / replace / add-folder / erase) and the hierarchy operations (the walk,
 // find-or-create, the tag graph, the delete cascades). Where the records and the
 // document blobs actually live is the DB it wraps — it asks the DB to load, save,
 // and hold bytes, and nothing more.

@@ -131,7 +131,7 @@ function file_for(row: Kind_Row): File {
 	return new File([part], row.name, { type: row.type, lastModified: 1_700_000_000_000 });
 }
 
-// A fresh store and the tree over it, the way a reload builds them.
+// A fresh store and the hierarchy over it, the way a reload builds them.
 function make(): { db: DB_Local; h: Hierarchy } {
 	const db = new DB_Local(T_Storage.private);
 	const h  = new Hierarchy(db);

@@ -11,25 +11,25 @@ DB API that talks to AnythingLLM
 
 ## Goal
 
-Make the **LLM** store a place where you can *ask questions of your documents*. It's a second storage backend, `DB_LLM`, that fills the same seam the local store fills — but instead of only keeping bytes in the browser, it hands each document's words to AnythingLLM (running on the mac) so the whole store can be searched and questioned, with answers that cite the documents they came from. The **mine** store is untouched: two stores, two namespaces, switch between them.
+Make the **LLM** store a place where you can *ask questions of your documents*. It's a second storage backend, `DB_LLM`, that fills the same plugin architecture the local store fills — but instead of only keeping bytes in the browser, it hands each document's words to AnythingLLM (running on the mac) so the whole store can be searched and questioned, with answers that cite the documents they came from. The **mine** store is untouched: two stores, two namespaces, switch between them.
 
 ## At a glance
 
-- **What already stands.** The storage seam (`DB_Common`), the registry that builds one backend-and-tree per storage and switches between them, per-store namespacing (just fixed), and phase 1 (every document knows if it's *viewable* and how ready its words are — **ready** / **quick** / **heavy**, with a `text` slot to hold pulled words).
+- **What already stands.** The storage plugin architecture (`DB_Common`), the registry that builds one backend-and-hierarchy per storage and switches between them, per-store namespacing (just fixed), and phase 1 (every document knows if it's *viewable* and how ready its words are — **ready** / **quick** / **heavy**, with a `text` slot to hold pulled words).
 - **The one prerequisite.** AnythingLLM needs *words*. Only plain text and markdown arrive ready; everything else is quick or heavy with an empty `text`. The **extraction pass (phase 2)** — the quick/heavy words-pull that fills `text` and flips a document to ready — is what widens what can be sent. Fine to build against ready-as-is text first and let extraction widen it later.
 - **The boundary.** **Localhost only** for now — ji and AnythingLLM on the same mac. External access (from a deployed ji) is a separate piece, scoped in [thin proxy proposal](thin%20proxy%20proposal.md).
 
 ## Design
 
-**The store fills the existing seam.** The tree (Hierarchy) owns all the record logic; a backend only decides *where things live*. So `DB_LLM` keeps the record lists and the bytes **local**, namespaced `LLM`, exactly like the mine store — reusing the local behavior — and adds the AnythingLLM hooks on top. AnythingLLM only holds the searchable words; the tree stays ji's own shape.
+**The store fills the existing plugin architecture.** The hierarchy (Hierarchy) owns all the record logic; a backend only decides *where things live*. So `DB_LLM` keeps the record lists and the bytes **local**, namespaced `LLM`, exactly like the mine store — reusing the local behavior — and adds the AnythingLLM hooks on top. AnythingLLM only holds the searchable words; the hierarchy stays ji's own structure.
 
-Each seam method, for `DB_LLM`:
+Each plugin architecture method, for `DB_LLM`:
 
 - **`load_list` / `save_list`** — local, `LLM` namespace (reuse the local store's browser-storage path).
 - **`write_blob` / `read_blob` / `delete_blob`** — local bytes (IndexedDB, `LLM` namespace) so a document still opens in the viewer; **plus**, when a document has words, `write_blob` pushes them to the AnythingLLM workspace and `delete_blob` removes them. (Full mechanics under **Phase B**.)
 - **`clear_blobs` / erase** — clears the local bytes *and* removes this store's documents from the workspace.
 
-**The ask is new — not part of the seam.** `DB_Common` has no "ask" method; searching and answering is a fresh capability. A query path (a method on `DB_LLM`, or a small separate manager) sends a question to the workspace and returns the answer plus citations, mapped back to ji documents by their ids. The UI for asking is a later, separate piece; the plumbing comes first.
+**The ask is new — not part of the plugin architecture.** `DB_Common` has no "ask" method; searching and answering is a fresh capability. A query path (a method on `DB_LLM`, or a small separate manager) sends a question to the workspace and returns the answer plus citations, mapped back to ji documents by their ids. The UI for asking is a later, separate piece; the plumbing comes first.
 
 **AnythingLLM, concretely.** It runs locally (installed) and exposes a developer REST API — a base URL and an API key. Documents live in a **workspace**: upload a document, it chunks and embeds it; chat against the workspace and get answers with sources. Use **one workspace per LLM store** for now (per-person workspaces come with remote support). Each ji document is identified inside AnythingLLM by its **id**, so a cited passage maps straight back to the document it came from.
 
@@ -74,7 +74,7 @@ Source: [AnythingLLM OpenAPI spec](https://raw.githubusercontent.com/Mintplex-La
 
 - **A local byte store for the `LLM` namespace** — reuse the local store's IndexedDB helpers (extend or delegate), so `DB_LLM` gets local read/write/delete/clear for free under its own namespace.
 - **A small AnythingLLM client (the transport).** Three calls only: *put an id's words into the workspace* (create or replace), *remove an id*, *ask a question*. `write_blob` uses the first; the ask path (Phase C) uses the third. Config — base URL and key — from the environment / a local-only preference; **localhost for now**.
-- **A reference scheme.** Each uploaded document carries the **ji id** as its identifier inside AnythingLLM, so remove and citations line up. For a readable citation title, `DB_LLM` looks the document's **name** up from its own in-memory records by id — no need to widen the seam.
+- **A reference scheme.** Each uploaded document carries the **ji id** as its identifier inside AnythingLLM, so remove and citations line up. For a readable citation title, `DB_LLM` looks the document's **name** up from its own in-memory records by id — no need to widen the plugin architecture.
 - **A pending-upload marker + a sync pass.** A small per-store set of document ids whose words still owe AnythingLLM — an upload failed, or the kind is binary and awaiting extraction. A "sync" pass drains it; **this is exactly the hook phase-2 extraction calls** when it finishes filling a document's `text`.
 
 **What gets uploaded, by kind**
@@ -105,10 +105,10 @@ On my machine, expose an endpoint ([[thin proxy proposal]]) that accepts data an
 
 ## Decisions (settled)
 
-- **Record lists live local** (namespaced `LLM`) — the tree is ji's shape, not AnythingLLM's.
+- **Record lists live local** (namespaced `LLM`) — the hierarchy is ji's structure, not AnythingLLM's.
 - **Sync is simple: push on save.** Revisit only if it turns out noisy.
 - **Localhost-only for now.** ji and AnythingLLM on the same mac; the browser talks straight to it, so no key travels and nothing is exposed.
-- **The seam stays as is.** `write_blob(document_id, content)` is enough — the string-vs-Blob of the content is the words-vs-bytes split, the id is the AnythingLLM reference, and the name is read from `DB_LLM`'s own records. No seam change.
+- **The plugin architecture stays as is.** `write_blob(document_id, content)` is enough — the string-vs-Blob of the content is the words-vs-bytes split, the id is the AnythingLLM reference, and the name is read from `DB_LLM`'s own records. No plugin architecture change.
 - **Extracted `text` moves to IndexedDB** (carried into phase 2). It currently sits on the document record ([Document.ts:172](../../ji/src/lib/ts/types/Document.ts#L172)), and record lists save to browser storage (~5 MB, varies by person) — so once extraction fills `text`, the record lists would balloon and blow the limit. Storing `text` as a blob in IndexedDB, like the bytes, keeps browser storage to light metadata. (For the LLM store the words live in AnythingLLM anyway, so ji may not need `text` locally beyond what the viewer and extraction need.)
 
 ## Open
@@ -117,4 +117,4 @@ On my machine, expose an endpoint ([[thin proxy proposal]]) that accepts data an
 
 ## Success criteria
 
-Switch to the **LLM** store, drop a text file, ask a question about it, and get an answer that cites that file — all while the **mine** store's documents, tags, and tree are untouched. Prove it end to end (drop → upload logged → ask → sourced answer) before widening to the quick/heavy kinds. And prove the safety net: with AnythingLLM down, the bytes still save, the document is marked pending, and a later sync uploads it.
+Switch to the **LLM** store, drop a text file, ask a question about it, and get an answer that cites that file — all while the **mine** store's documents, tags, and hierarchy are untouched. Prove it end to end (drop → upload logged → ask → sourced answer) before widening to the quick/heavy kinds. And prove the safety net: with AnythingLLM down, the bytes still save, the document is marked pending, and a later sync uploads it.

@@ -12,9 +12,9 @@ Tracks the build of [[db proposal]] against [[db spec]]. Design lives in the pro
   - `src/lib/ts/managers/Preferences.ts`
 - [x] **Indexes** — tagging by tag id, tagging by document id, relationships by parent id and by child id; derived roots and untagged. Rebuilt on load and after each change.
   - `src/lib/ts/database/Indexes.ts`
-- [x] **Shared base** — in-memory lists, load-all / save-all, per-record create hooks, the blob seam, the three reads, the delete cascade.
+- [x] **Shared base** — in-memory lists, load-all / save-all, per-record create hooks, the blob plugin architecture, the three reads, the delete cascade.
   - `src/lib/ts/database/DB_Common.ts`
-- [x] **Local storage** — record lists in browser storage; blob seam in browser storage (stand-in for disk files).
+- [x] **Local storage** — record lists in browser storage; blob plugin architecture in browser storage (stand-in for disk files).
   - `src/lib/ts/database/DB_Local.ts`
 - [x] **Three reads + graph walk** — list documents (acyclic walk from each root), filter by tag, untagged.
 - [x] **Delete cascade** — drop tagging + relationship rows, the record, and the blob; same for a tag.
@@ -31,7 +31,7 @@ Tracks the build of [[db proposal]] against [[db spec]]. Design lives in the pro
 ## Next
 
 - [ ] create DB_LLM
-- [ ] **Blobs as real files on disk** (proposal step 4) — the local blob seam is browser storage for now; the File System Access API path is pending (needs a user gesture).
-- [ ] **Firestore storage + Google blob store** (proposal step 6) — the seam and registry make it a drop-in; not started.
-- [ ] **Binary blobs** — the blob seam holds text (a string) today; binary needs an encoding decision.
+- [ ] **Blobs as real files on disk** (proposal step 4) — the local blob plugin architecture is browser storage for now; the File System Access API path is pending (needs a user gesture).
+- [ ] **Firestore storage + Google blob store** (proposal step 6) — the plugin architecture and registry make it a drop-in; not started.
+- [ ] **Binary blobs** — the blob plugin architecture holds text (a string) today; binary needs an encoding decision.
 - [ ] **Wire into the app** — nothing calls the store yet; Add.svelte's drop still only logs. That is the sibling "determine design and wire in" subpart.

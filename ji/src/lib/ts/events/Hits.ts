@@ -333,7 +333,7 @@ export default class Hits {
 	 * Where two overlap, the smaller thing wins: a control, then a section, then the page — and
 	 * within one kind, the one standing in the smaller area. Sections sit inside sections, so
 	 * without that last part the tags row inside the whole filter form would be answered for by
-	 * the form, whichever of the two the tree happened to hand over first.
+	 * the form, whichever of the two the hierarchy happened to hand over first.
 	 */
 	private targetOf_highest_precedence(matches: Array<S_Hit_Target>): S_Hit_Target | null {
 		return this.smallest_of(matches, T_Hit_Target.control)

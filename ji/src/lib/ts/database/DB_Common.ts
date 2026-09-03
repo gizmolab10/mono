@@ -1,7 +1,7 @@
 import { T_Record, T_Storage } from '../types/DB_Records';
 
 // The persistence seam every storage fills its own way. It holds no records and
-// no tree logic — those live on the Hierarchy that wraps it. A storage subclass
+// no hierarchy logic — those live on the Hierarchy that wraps it. A storage subclass
 // only decides where the record lists and the document blobs actually live.
 
 export abstract class DB_Common {

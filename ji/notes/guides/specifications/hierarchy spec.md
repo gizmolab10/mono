@@ -7,19 +7,19 @@ date: 2026-07-24
 ---
 # Hierarchy spec
 
-What ji's tree of documents and tags should become, read against what ws already does. Nothing here is built yet — this is the map before the plan. The shape below is settled; the open questions are narrow.
+What ji's hierarchy of documents and tags should become, read against what ws already does. Nothing here is built yet — this is the map before the plan. The structure below is settled; the open questions are narrow.
 
 ## 1. Where this comes from
 
 ji's whole store was ported from ws: five kinds of record (documents, tags, taggings, relationships, predicates) and the idea of a **relationship** — a parent, a child, a meaning (the predicate), and an order. ws calls its top record a *thing*; ji calls it a *document*. Same bones.
 
-What ji took was the **data**. What it left behind was the **living tree** ws builds on top of that data — and the two runtime habits that make that tree hold together: **uniqueness** and **remember/forget**. This spec is about all three.
+What ji took was the **data**. What it left behind was the **living hierarchy** ws builds on top of that data — and the two runtime habits that make that hierarchy hold together: **uniqueness** and **remember/forget**. This spec is about all three.
 
-Source read: [ws Hierarchy.ts](../../../ws/src/lib/ts/managers/Hierarchy.ts). ji's side: [DB_Records.ts](../../ji/src/lib/ts/types/DB_Records.ts) (the record shapes), [DB_Common.ts](../../ji/src/lib/ts/database/DB_Common.ts) (the store), [Indexes.ts](../../ji/src/lib/ts/database/Indexes.ts) (the in-memory lookups), and [Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte) (the table).
+Source read: [ws Hierarchy.ts](../../../ws/src/lib/ts/managers/Hierarchy.ts). ji's side: [DB_Records.ts](../../ji/src/lib/ts/types/DB_Records.ts) (the record structures), [DB_Common.ts](../../ji/src/lib/ts/database/DB_Common.ts) (the store), [Indexes.ts](../../ji/src/lib/ts/database/Indexes.ts) (the in-memory lookups), and [Documents.svelte](../../ji/src/lib/svelte/main/Documents.svelte) (the table).
 
 ## 2. Two runtime habits ji needs from ws
 
-These matter more than any single tree behavior — they're the ground everything else stands on.
+These matter more than any single hierarchy behavior — they're the ground everything else stands on.
 
 ### Uniqueness
 
@@ -33,46 +33,46 @@ ji already does this in patches: the one "contains" meaning is reused rather tha
 
 ws keeps two copies of the truth: what's on disk, and a set of in-memory lookups (by id, by parent, by child, by type) that answer questions fast. **Remember** adds a record to every lookup it belongs in; **forget** removes it from every one. Persisting to disk is a *separate* step — remember/forget is only the live index. This split is why ws can drop a record from the screen instantly and settle the disk afterward.
 
-ji has the seed of this: an `Indexes` object rebuilt on every change, and a dirty-flag tracker for what needs saving. The ws pattern is finer — remember/forget touch only the record that changed, instead of rebuilding every index from scratch. Whether ji needs that finer grain depends on how large its trees get; for now the rebuild-all is honest and simple, and this is noted as a later tightening, not a now.
+ji has the seed of this: an `Indexes` object rebuilt on every change, and a dirty-flag tracker for what needs saving. The ws pattern is finer — remember/forget touch only the record that changed, instead of rebuilding every index from scratch. Whether ji needs that finer grain depends on how large its hierarchies get; for now the rebuild-all is honest and simple, and this is noted as a later tightening, not a now.
 
 ## 3. What ws's hierarchy is
 
-A graph, not a plain tree. A record can hang off more than one parent, and every connection carries a **meaning** — "contains" (the folder-like tree), "is tagged", "is related to", and others. Because a record can sit in more than one place, ws needs a name for *one particular place* it sits: a full path from the root down through the links that led there. ws calls this an **ancestry**. A record isn't open or closed — a *place it sits* is. The same record open in one spot can be closed in another.
+A graph, not a plain hierarchy. A record can hang off more than one parent, and every connection carries a **meaning** — "contains" (the folder-like hierarchy), "is tagged", "is related to", and others. Because a record can sit in more than one place, ws needs a name for *one particular place* it sits: a full path from the root down through the links that led there. ws calls this an **ancestry**. A record isn't open or closed — a *place it sits* is. The same record open in one spot can be closed in another.
 
 On top of ancestries ws layers: open/close a branch, move a record to a new parent, reorder within a parent, focus (zoom a branch to be the temporary root), reveal (auto-open the closed branches above a selection), and add/duplicate/delete in place.
 
-## 4. ji's shape — settled decisions
+## 4. ji's structure — settled decisions
 
 ji is **not** ws's full graph. Here is what ji is, decided:
 
 ### Documents: one home each
 
-A document has exactly **one parent**. A drop makes one "contains" link and never a second. So a document is only ever in one place — which means documents need **no ancestry**. A folder is either open or closed, full stop; a document's spot is just "under its one folder". This keeps the document side of the tree as simple as the table already draws it.
+A document has exactly **one parent**. A drop makes one "contains" link and never a second. So a document is only ever in one place — which means documents need **no ancestry**. A folder is either open or closed, full stop; a document's spot is just "under its one folder". This keeps the document side of the hierarchy as simple as the table already draws it.
 
 ### Tags: hierarchical, and multi-parent
 
-Tags are a tree too — a tag can sit under another tag. And unlike a document, a tag **can have more than one parent**: the same tag may live under two different parent tags at once. That is exactly the case that needs an **ancestry** — a tag's identity is one thing, but its *places in the tree* are several, and each place opens and closes on its own. A place is told from its twin by the link that leads into it: one tag, two parents, two links, two places.
+Tags are a hierarchy too — a tag can sit under another tag. And unlike a document, a tag **can have more than one parent**: the same tag may live under two different parent tags at once. That is exactly the case that needs an **ancestry** — a tag's identity is one thing, but its *places in the hierarchy* are several, and each place opens and closes on its own. A place is told from its twin by the link that leads into it: one tag, two parents, two links, two places.
 
 **How a tag comes to sit under another tag is TBD** — this spec settles that tags *can* nest and have several parents, not yet the act that nests them.
 
 So ji splits cleanly:
 
-- **Documents** — single parent, no ancestry, a plain nested tree.
+- **Documents** — single parent, no ancestry, a plain nested hierarchy.
 - **Tags** — multiple parents, ancestries, the one place ji actually needs ws's full idea.
 
 ### Relationships already carry the split
 
-ji's relationship record already has a flag saying whether it links documents or tags ([DB_Records.ts:40](../../ji/src/lib/ts/types/DB_Records.ts#L40), `isDocument`), and its parent and child ids "refer to either a document or a tag" ([DB_Records.ts:34](../../ji/src/lib/ts/types/DB_Records.ts#L34)). The model was built for this from the start: document relationships and tag relationships live side by side, told apart by the flag. Nothing in the data has to change to make tags hierarchical — the shape is already there; what's missing is the behavior that reads it.
+ji's relationship record already has a flag saying whether it links documents or tags ([DB_Records.ts:40](../../ji/src/lib/ts/types/DB_Records.ts#L40), `isDocument`), and its parent and child ids "refer to either a document or a tag" ([DB_Records.ts:34](../../ji/src/lib/ts/types/DB_Records.ts#L34)). The model was built for this from the start: document relationships and tag relationships live side by side, told apart by the flag. Nothing in the data has to change to make tags hierarchical — the structure is already there; what's missing is the behavior that reads it.
 
 ### Order is set once
 
-A record's order among its siblings is assigned **once, when it's created**, and not changed after. There is **no drag, no nudge, no reorder** — a document lands where the drop put it, a tag lands where it was made. (ws's move-right/left, move-up/down, and drag-reparent are all out of scope.) This drops the whole hardest half of ws's hierarchy — the part with cycle-guards and order-renumbering — and leaves a tree you can open, close, and read, but not rearrange.
+A record's order among its siblings is assigned **once, when it's created**, and not changed after. There is **no drag, no nudge, no reorder** — a document lands where the drop put it, a tag lands where it was made. (ws's move-right/left, move-up/down, and drag-reparent are all out of scope.) This drops the whole hardest half of ws's hierarchy — the part with cycle-guards and order-renumbering — and leaves a hierarchy you can open, close, and read, but not rearrange.
 
 This will evolve -- TBD.
 
 ### Open / closed is remembered
 
-A folder's or tag-place's open-or-closed state **survives a reload**, saved the way ji already saves the details region's open sections. Reopen ji and the tree looks as you left it. The state is held as one set of ids — the id of the link that leads into each closed place. Because every id is unique, one set covers both trees, and a multi-parent tag's two places stay independent (each is reached by its own link).
+A folder's or tag-place's open-or-closed state **survives a reload**, saved the way ji already saves the details region's open sections. Reopen ji and the hierarchy looks as you left it. The state is held as one set of ids — the id of the link that leads into each closed place. Because every id is unique, one set covers both hierarchies, and a multi-parent tag's two places stay independent (each is reached by its own link).
 
 ## 5. Adding a document — drop and dedup processes
 
@@ -101,7 +101,7 @@ A dropped folder whose name is already here is examined before it's trusted: its
 
 ## 6. What ji has today
 
-The **data** for both trees, and one read of the document side:
+The **data** for both hierarchies, and one read of the document side:
 
 - Documents nest under folders through "contains" links, each with an order.
 - The store can link a parent to a child at the end of the order, walk the whole graph parent-first (each row carrying its depth and its chain of ancestors), and delete a whole branch at once.
@@ -110,7 +110,7 @@ The **data** for both trees, and one read of the document side:
 What ji does **not** have:
 
 - **No open/close.** Every folder is always open.
-- **No tag tree.** Tags exist and can be placed on documents, but there's no showing of a tag under a tag, and no ancestry for a tag with two parents.
+- **No tag hierarchy.** Tags exist and can be placed on documents, but there's no showing of a tag under a tag, and no ancestry for a tag with two parents.
 - **No move, no reorder** — and none wanted; order is set once.
 
 ## 7. The port, smallest-first
@@ -118,16 +118,16 @@ What ji does **not** have:
 Each is its own small piece with its own test against the store.
 
 1. **Find-or-create everywhere.** Make uniqueness the rule across every record kind, keyed on what makes each the same (a document by name — see the dedup process in section 5). Can ride along as the other pieces are built.
-2. **Open and close a folder, remembered.** A folder row gets a triangle; closed, its subtree drops out of the walk. Needs one saved set of closed ids and a walk that skips a closed folder's subtree. No ancestry — documents have one parent.
-3. **Show tags as a tree.** Read the tag-type relationships (the flag already tells them apart) and draw tags nested the way documents already nest. Single-parent tags first — the plain case.
+2. **Open and close a folder, remembered.** A folder row gets a triangle; closed, its sub-hierarchy drops out of the walk. Needs one saved set of closed ids and a walk that skips a closed folder's sub-hierarchy. No ancestry — documents have one parent.
+3. **Show tags as a hierarchy.** Read the tag-type relationships (the flag already tells them apart) and draw tags nested the way documents already nest. Single-parent tags first — the plain case.
 4. **Tag ancestries — multi-parent tags.** The one place ws's ancestry idea earns its keep: a tag under two parents appears in two spots, each opening and closing on its own. This is the hard, interesting piece, and it comes last because it's the only one that needs the full path-based identity. (The act that nests one tag under another is TBD — see section 4.)
 
-Out of scope, decided: move, reorder, drag-reparent, focus, and ws's sideways meanings (related, requires…). Reveal-on-select is a maybe-later, only if tag trees get deep.
+Out of scope, decided: move, reorder, drag-reparent, focus, and ws's sideways meanings (related, requires…). Reveal-on-select is a maybe-later, only if tag hierarchies get deep.
 
 ## 8. Still open
 
 - **How a tag comes to sit under another tag** — TBD. Tags can nest and can have several parents; the act that does the nesting is not yet designed.
-- **Reveal-on-select for tags** — out for now; tag trees are not expected to run deep early.
+- **Reveal-on-select for tags** — out for now; tag hierarchies are not expected to run deep early.
 
 ## 9. Method
 
@@ -170,11 +170,11 @@ The cases that cover this spec, driven against the store the way the drop tests 
 
 ### 10.5 Open / closed (section 4, port piece 2)
 
-- Closing a folder drops its subtree from the walk. **new**
+- Closing a folder drops its sub-hierarchy from the walk. **new**
 - Closed state survives a reload. **new**
-- One id-set covers both trees; a multi-parent tag's two places open and close independently. **new**
+- One id-set covers both hierarchies; a multi-parent tag's two places open and close independently. **new**
 
-### 10.6 Tags as a tree (section 4, port pieces 3–4)
+### 10.6 Tags as a hierarchy (section 4, port pieces 3–4)
 
 - Tag-type relationships draw a tag nested under a tag. **new**
 - A tag with two parents appears in two places. **new**

@@ -14,8 +14,8 @@ How to build the store [[db spec]] describes: the ws plugin architecture ported 
 Three layers plus bookkeeping, exactly as the spec's Layers 1–3:
 
 - **Registry** — holds one live storage instance per kind, tracks the active one in a store, reads the choice from a saved setting, swaps and rebuilds on change.
-- **Shared base** — the common load-all / save-all, the per-record create/change/delete hooks, the local save and load loops, and the read-blob / write-blob seam. Carries a persistence kind (local or remote) and the flags read off it.
-- **Backends** — thin subclasses. ji builds two: local (records in browser storage, blobs as files on disk) and firestore (records in the cloud, blobs in the Google blob store). Each fills the blob seam its own way.
+- **Shared base** — the common load-all / save-all, the per-record create/change/delete hooks, the local save and load loops, and the read-blob / write-blob plugin architecture. Carries a persistence kind (local or remote) and the flags read off it.
+- **Backends** — thin subclasses. ji builds two: local (records in browser storage, blobs as files on disk) and firestore (records in the cloud, blobs in the Google blob store). Each fills the blob plugin architecture its own way.
 - **Per-record bookkeeping** — a small object per record holding the in-memory dirty flag. The last-modified date lives on the Document record itself, not here (so it survives a reload).
 
 ## The data (five records + external blob)
@@ -25,7 +25,7 @@ Three layers plus bookkeeping, exactly as the spec's Layers 1–3:
 - **Tagging** — id, tag id, document id (many-to-many).
 - **Relationship** — id, predicate id, parent id, child id, sort position (ordered graph, many parents allowed).
 - **Predicate** — id, type.
-- **Blob** — the raw bytes, outside the db, reached by document id through the seam.
+- **Blob** — the raw bytes, outside the db, reached by document id through the plugin architecture.
 
 ## Derived in memory (never saved)
 
@@ -39,11 +39,11 @@ Three indexes, rebuilt from the records on load, updated as rows change: tagging
 
 ## Delete
 
-A cascade: drop the tagging rows, drop the relationship rows (as parent or child), drop the record, drop the blob through the seam. Same for a tag. No orphans left behind.
+A cascade: drop the tagging rows, drop the relationship rows (as parent or child), drop the record, drop the blob through the plugin architecture. Same for a tag. No orphans left behind.
 
 ## Proposed files (ji)
 
-- `database/DB_Common.ts` — the shared base: kind, flags, load-all / save-all, per-record hooks, local save/load loops, blob seam.
+- `database/DB_Common.ts` — the shared base: kind, flags, load-all / save-all, per-record hooks, local save/load loops, blob plugin architecture.
 - `database/DB_Local.ts` — local storage: records in browser storage, blobs as files on disk.
 - `database/DB_Firestore.ts` — firestore storage: records in the cloud, blobs in the Google blob store, the Document's blob reference holding the path.
 - `database/Databases.ts` — the registry: instance cache, active-storage store, saved choice, the ring.
@@ -57,9 +57,9 @@ A cascade: drop the tagging rows, drop the relationship rows (as parent or child
 1. Record shapes + the base with the local storage and local save/load loops. Prove save-a-document-and-list-it-back with browser storage.
 2. Indexes + the three reads.
 3. Relationships + the graph walk + delete cascade.
-4. The blob seam: local blobs as files on disk.
+4. The blob plugin architecture: local blobs as files on disk.
 5. Registry + storage switching.
-6. Firestore storage + the Google blob store (future; the seam and registry make it a drop-in).
+6. Firestore storage + the Google blob store (future; the plugin architecture and registry make it a drop-in).
 
 ## Verify
 
