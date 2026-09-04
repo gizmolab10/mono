@@ -35,6 +35,7 @@ as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop
 
 ## Raw Log
 
+- 8. 2026-09-03 **A table row applies to a sense, never to a word.** The sweep swapped by word; Jonathan reversed about 60 of its 260 changes, every one the same fault: "room to spare" turned into "gap to spare", a pressed fold mark turned into a decoration, "does the heavy lifting" turned into "does a lot of the work", "shape" turned into "structure" where the sentence meant format, API or protocol. Each row's Meaning column names the sense it governs; a word carrying another sense is left alone.
 - 7. 2026-09-02 **If a rule has two branches use the same grammar for each**. Jonathan rewrote entry 4's ending as "when they differ, name each and add a decision; when they are all the same, count them and nothing more" — parallel halves, read in one pass. Co's version gave each branch its own sentence form.
 - 6. 2026-09-02 **A statement referring to something dead says so**. Jonathan added one word — "an abandoned older rule" — and no future reader hunts for a rule that was never written. Co had left the dangling claim for the next reader to rediscover.
 - 5. 2026-09-02 Name what the problematic wording does to the reader, never what the text lacks. Co wrote "adds no fact"; Jonathan wrote "distracts attention and dilutes the message". The cost to the person reading is the problematic wording's real name.

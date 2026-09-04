@@ -70,7 +70,7 @@ TABLE_WORDS=$(awk -F'|' '{
 # The lexicon's own never-words, minus the ones it gives a kept sense.
 LEXICON_WORDS=$(grep -oiE 'never \*[^*]+\*' "$LEXICON" 2>/dev/null \
   | sed -E 's/^[Nn]ever \*//; s/\*$//' \
-  | grep -viE '^(copy|mark|marked|place|words|move|step|i|me|you)$' | sort -u)
+  | grep -viE '^(copy|mark|marked|place|room|words|move|step|i|me|you)$' | sort -u)
 
 WORDS=$(printf '%s\n%s\n' "$TABLE_WORDS" "$LEXICON_WORDS" | sort -u | grep -v '^$')
 

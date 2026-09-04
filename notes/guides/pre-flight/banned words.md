@@ -13,13 +13,15 @@ di's own vocabulary (smart objects, unifaces, placement, measurements) stays in 
 
 The **same** column marks a row whose two sides are the same kind of word, so an ending can carry across: mark it `y` and "copies" becomes "moves", "copied" becomes "moved". Leave it blank when the pair is a change of wording rather than a like-for-like word — "ship" to "done" is not a verb swapped for a verb, and carrying the ending over would invent "doned". A blank row swaps to the plain replacement, as it always has.
 
+Where a row's Use column offers several words, choose by the sentence's meaning; the last word listed is not the default. Every row governs the sense its Meaning column names — a sentence using the word in another sense is left alone.
+
 | Use                             | hooked | same | Never                                  | Meaning            |
 | ------------------------------- | :----: | :--: | -------------------------------------- | ------------------ |
 | place, include, insert          |   y    |  y   | absorb                                 |                    |
 | margin                          |   y    |  y   | band, bar, gutter             |                    |
-| more work, a lot of work        |   y    |      | bigger lift, heavy lift, heavy lifting |                    |
+| more work, a lot of work        |   y    |      | bigger lift, heavy lift                | an effort estimate; "does the heavy lifting" keeps its words |
 | move                            |   y    |  y   | copy                                   |                    |
-| main                            |   y    |      | cross-project                          |                    |
+| global                          |   y    |      | cross-project                          | belonging to every project; main is only the git branch |
 | visual confirmation             |   y    |      | eyeball, nod                           |                    |
 | easy to misuse                  |   y    |      | footgun                                | self-inflicted     |
 | discover files using regex and wildcards | y |      | glob, globbing                         | sweep the disk for files |
@@ -34,10 +36,10 @@ The **same** column marks a row whose two sides are the same kind of word, so an
 | button                          |   y    |  y   | mark                                   | a thing to press   |
 | decoration                      |   y    |  y   | mark                                   | a stamp on a thing |
 | mock                            |   y    |  y   | repro, reproduction                    |                    |
-| gap                             |   y    |  y   | room                                   | empty space        |
+| gap                             |   y    |  y   | room                                   | empty space in a layout; room as capacity keeps its word |
 | stub out                        |   y    |      | scaffold                               |                    |
 | plugin architecture             |   y    |      | seam                                   | storage interface  |
-| done, complete                  |   y    |      | ship                                   |                    |
+| done, complete                  |   y    |      | ship                                   | co reporting its own work; a product being shippable keeps the word |
 | write code                      |   y    |      | ship                                   |                    |
 | detour                          |   y    |  y   | side-build                             |                    |
 | drifted                         |        |      | slid                                   |                    |

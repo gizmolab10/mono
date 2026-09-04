@@ -76,9 +76,9 @@ The [banned words](banned%20words.md) turned the right way round — the word to
 - **content** — everything a file holds. Never *words*, which means words and nothing else: the words looked for, the word on a line, the words a link reads as.
 - **register** — tell the hits manager about a thing, so it knows where that thing stands and what it says. Never *hand over*, never *hand to*.
 - **stub out** — empty bodies ready to fill. Never *scaffold*.
-- **button** — a thing on screen that can be pressed. Never *mark*.
-- **decoration** — something stamped on a thing to say what it is: a number beside a row, a slash across a folder. Never *mark*.
-- **gap** — empty space. Never *room*.
+- **button** — a thing on screen that can be pressed. Never *mark*. Pressed, it is a button; only looked at, a decoration. Fold marks and step marks are pressed, so they are buttons.
+- **decoration** — something stamped on a thing to say what it is: a number beside a row, a slash across a folder. Never *mark*. Never a thing that is pressed — that is a button.
+- **gap** — empty space in a layout. Never *room* for that. Room keeps its everyday sense of capacity: room to spare, make room, not enough room.
 - **margin** — the empty strip at an edge. Never *band*, *bar*, *padding*, *gutter*.
 - **highlight**, **highlighted** — shown as picked, or shown as under the cursor. Never *lit*, never *mark*. Between these three, *mark* has no use left at all.
 - **hierarchy** — how things sit inside each other. Never *tree*.
@@ -86,10 +86,10 @@ The [banned words](banned%20words.md) turned the right way round — the word to
 - **mock** — a small made-up case that shows the fault. Never *repro*.
 - **detour** — work off the path of the task. Never *side-build*.
 - **bug**, **problem** — something wrong. Never *liar*.
-- **more work** — the next step is heavier than this one. Never *heavy lift*.
+- **more work** — the next step is heavier than this one. Never *a heavy lift* as an estimate. "Does the heavy lifting" — does most of the work — keeps its words.
 - **easy to misuse** — the shape invites the mistake. Never *footgun*.
 - **plugin architecture** — the shared storage interface. Never *seam*.
-- **main** — belonging to every project. Never *cross-project*.
+- **global** — belonging to every project. Never *cross-project*, never *main* — main is only the git branch.
 - **drifted** — moved off true over time. Never *slid*.
 - **who does what** — the division of labor. Never *split*.
 - **useless cruft** — what is there and does nothing. Never *padded*.

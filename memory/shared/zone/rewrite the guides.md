@@ -23,6 +23,8 @@ Rule #1 in [[agency]] is relaxed to allow access to and work in a worktree. Swee
 3. A stand-in word whose subject was named more than one sentence back — it, them, they, this, that, those, there. This includes nouns that have no clear reference — the table, the handler.
 4. A word Jonathan asked co to translate: co gave the plain version on screen, and the file still holds the murky one. Write the plain version into the file.
 
+**A row applies to a sense, never to a word.** Each row's Meaning column names the sense it governs; a sentence using the word in another sense is left alone and reported. Jonathan reversed about 60 of the first sweep's 260 changes, every one of them this fault.
+
 **How co runs without supervision.** A second Claude Code session, in a separate git worktree — by creating a branch off of `main`, so nothing moves under Jonathan while he works in this one. Co does the sweep and commits on a branch, NO COMMITS into the main branch. When this is done Jonathan merges the branch, or drops it, or reverts any single commit inside it.
 
 **What co writes as it goes.** One report at `notes/work/big rewrite log.md`: every file touched, including `memory/`, every word swapped, and every place where the banned-words table named no replacement and the sentence had to be rewritten. That last list is the one worth reading — a swap is mechanical, a rewrite is a judgment, and each of those judgments is a line Jonathan may want back.

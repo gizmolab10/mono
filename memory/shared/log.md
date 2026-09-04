@@ -11,6 +11,8 @@ date: 2026-09-01
 
 ## 3 September 2026
 
+- D: "global" is the word for belonging to every project; "main" is only the git branch. The lexicon and the banned-words table say so
+- D: the sweep-review lessons are in the rules files — lexicon: button against decoration decided by pressing, gap bounded to layout with room keeping its capacity sense, "does the heavy lifting" allowed; banned words: a row governs a sense and a multi-word Use column is chosen by meaning, the ship row narrowed to co's own reports; "room" on plain-english-check's skip list; learn.md entry 8; the sense rule in the sweep plan
 - S: the mechanical sweep is done on branch sweep/unmurk in the worktree — 11 commits, about 175 files, about 260 word changes, about 20 judgment rewrites, none to main, nothing pushed. Report with a summary at notes/work/big rewrite log.md on that branch. Two pre-existing test failures found and left (lv Gallery.test.ts, ma svelte-check). ji, ov, ws and core were sampled highest-signal-first, not read line by line. Awaiting Jonathan: merge, drop, or revert single commits
 - D: the sweep runs as its own claude process inside the worktree, not as a subagent — a subagent's every tool call was drawn into Jonathan's chat. Its words go to "claude session output.md" (shared-z); the detailed report stays in the worktree at notes/work/big rewrite log.md
 - D: the mechanical sweep is launched — an unsupervised session in its own worktree, branch sweep/unmurk, following the plan in "rewrite the guides.md" (shared-z). The plan's memory/ contradiction is resolved for the run as: memory/ files are never edited, hits there are reported. Report lands at notes/work/big rewrite log.md in the worktree. No commits to main

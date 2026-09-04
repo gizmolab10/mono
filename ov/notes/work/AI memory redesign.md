@@ -36,12 +36,12 @@ Two terms this document relies on, defined under its own contract:
 ```
 memory/                      # a folder inside your existing repo; an OKF bundle
 ├── index.md                 # root map: every project, one line each — read first, always
-├── shared/                  # main bundle, same structure as a project
+├── shared/                  # global bundle, same structure as a project
 │   ├── index.md
 │   ├── log.md
 │   ├── truth/
 │   │   ├── protocol.md      # the operating rules themselves — see "Where the rules live"
-│   │   ├── lexicon.md       # main terms — see "Prose and terminology"
+│   │   ├── lexicon.md       # global terms — see "Prose and terminology"
 │   │   ├── taste.md         # your visual/design principles — see "Zone" below
 │   │   └── conventions.md   # how you like to work with AI
 │   └── zone/
