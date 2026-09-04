@@ -156,7 +156,7 @@ Seven, each holding one kind of guidance.
 - [create a design](develop/create%20a%20design.md) — how the two of us write a design document together.
 - [create a proposal](develop/create%20a%20proposal.md) — a worked example of writing a proposal in short cycles.
 - [css](develop/css.md) — styling patterns and gotchas from real work.
-- [keep shop](develop/keep%20shop.md) — keeping the note files in a structure that still guides the next session.
+- [keep shop](develop/keep%20shop.md) — keeping the note files in a form that still guides the next session.
 - [lessons](develop/lessons.md) — patterns distilled from finished milestones that would mislead a successor.
 - [markdown structure](develop/markdown%20structure.md) — structuring markdown so every concept has a heading to link to.
 - [migrate](develop/migrate.md) — writing a migration document that breaks a big change into safe phases.

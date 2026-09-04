@@ -41,7 +41,7 @@ memory/                      # a folder inside your existing repo; an OKF bundle
 │   ├── log.md
 │   ├── truth/
 │   │   ├── protocol.md      # the operating rules themselves — see "Where the rules live"
-│   │   ├── lexicon.md       # main terms — see "Prose and terminology"
+│   │   ├── lexicon.md       # global terms — see "Prose and terminology"
 │   │   ├── taste.md         # your visual/design principles — see "Zone" below
 │   │   └── conventions.md   # how you like to work with AI
 │   └── zone/
@@ -219,7 +219,7 @@ What deliberately stays manual: settling, defining, promoting or culling ideas, 
 ## Sizing rules
 
 | Thing | Limit | When exceeded |
-|---|---|---|
+| --- | --- | --- |
 | truth file | ~100 lines | split by concept; update index |
 | truths per project | ~15 | merge cold ones; question the taxonomy |
 | log | ~30 entries | consolidate |

@@ -51,7 +51,7 @@ Reverse chronological log of finished work on ji (the Jeff intersection project)
 - **The family filter works again, and reaches into shut folders.** Two problems fixed. First, a loaded file's family was blank (the AI store's index didn't carry it), so the family filter couldn't see it — the family is now recomputed from the file's kind on load, the same as its viewable/status flags (folders keep their family). Second, the filter only searched the *open* rows, so files under a shut folder were missed; now an active filter searches the whole list, but the display still honors the folds — a shut folder that holds matches shows as the path to them, its matched children hidden until you open it. The folder-row counts still tally the matches after the filter.
 - **Tooltips step aside when they'd be noise.** Hushed for: the currently-selected storage segment, the ask button while its box is empty, the accent swatch while the native picker is open (its hover light too), and the per-row pencil is hidden entirely when the store has no tags. The family filter segments now show the same hover as the drop box's family words — that family's file endings.
 - **White fills.** The build-notes steppers and the viewer's file-steppers fill white inside (was page-colored), and the round close buttons in both are white inside too.
-- **Build-notes steppers are the viewer's fat triangles.** Newer (up) and older (down) now use the same fat-triangle decoration and hover as the viewer's file steppers, stacked one above the other; both slots are always placed, so hiding one never shifts the other.
+- **Build-notes steppers are the viewer's fat triangles.** Newer (up) and older (down) now use the same fat-triangle button and hover as the viewer's file steppers, stacked one above the other; both slots are always placed, so hiding one never shifts the other.
 
 ## 2026-07-28 — softer folder corners, steadier controls, a few polish passes
 
@@ -93,7 +93,7 @@ The popup is absolutely positioned inside the fixed backdrop and placed by inlin
 
 ## 2026-07-27 — a top bar that measures itself, and tighter edges
 
-- **The title bows out when there's no gap.** The centered "Intersection" title now hides when the top row is too narrow to hold it beside the hamburger, the operations pill, and the help button — measured from the real on-screen widths (not a fixed break-point), so it reacts to a resize *and* to browser zoom. When hidden it leaves the layout entirely, freeing its space; it returns, centered, the moment there's gap.
+- **The title bows out when there's no room.** The centered "Intersection" title now hides when the top row is too narrow to hold it beside the hamburger, the operations pill, and the help button — measured from the real on-screen widths (not a fixed break-point), so it reacts to a resize *and* to browser zoom. When hidden it leaves the layout entirely, freeing its space; it returns, centered, the moment there's room.
 - **The operations view bows out too.** When the details region is open and the window can't fit both it and the operations view (each at its own least width), the operations view drops and details fill the width — again measured from the live window width, so zoom counts. A log line records the window-vs-needed numbers on each flip.
 - **The app hugs the window.** The outer margin on all four edges tightened to half its old size; the frame's width math was moved to match, so no dead sliver is left at the sides.
 - **The chat drops its right gap when nothing's scrolling.** The conversation keeps a gap on its right for the scrollbar; when the list is short enough that there's no scrollbar, that gap now goes away and the answers reach the edge — restored the moment the scrollbar returns.
@@ -262,7 +262,7 @@ Foundational half of the ws hierarchy port — the data layer, not yet the visib
 
 ## 2026-07-20 — a drop on the table opens the drop box
 
-- **A drop that lands on the table now opens the add-documents view first**, then saves — so the count and any question report in the drop box, where there's gap for two lines. Reporting in the table's column-label row was tried and taken back out: a question is taller than one row and the columns re-measured when the labels stepped aside, so the whole table shrank and shifted for the length of a drop.
+- **A drop that lands on the table now opens the add-documents view first**, then saves — so the count and any question report in the drop box, where there's room for two lines. Reporting in the table's column-label row was tried and taken back out: a question is taller than one row and the columns re-measured when the labels stepped aside, so the whole table shrank and shifted for the length of a drop.
 
 ## 2026-07-20 — the drop box gets an edge
 

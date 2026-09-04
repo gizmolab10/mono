@@ -1,3 +1,0 @@
-- [ ] cabinet making
-- [ ] furniture
-- [ ] architecture

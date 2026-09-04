@@ -2308,14 +2308,14 @@ Instrumentation was wired in so we could see where the paint actually spends its
 
 After much work to implement the uniface rules, it failed to achieve what I want. We carefully revised the rules and proposal to raise the likelihood that we will succeed this time.
 
-### Where the proposal is reliable:
+### Where the proposal is reliable
 
 - The phase split (tests first, then code) is sound. The Group A and Group B partition tells the reader which tests survive and which do not.
 - The phase 2 step ordering has its dependencies stated. A reader can follow step 1 through step 7 and produce working code at each step.
 - The four-filter step (step 3e) addresses the visible-clutter cause from the earlier session — too many dim lines per part — by porting the repeater, duplicate-text, off-canvas, and no-viable filters.
 - Cross-references to the rule numbers in the rules file are now consistent with the current rule numbering.
 
-### Where the proposal falls short of "reduce clutter, maximize clarity":
+### Where the proposal falls short of "reduce clutter, maximize clarity"
 
 - **Issue 1.** The proposal trusts the rules file and the lexicon as the source of design truth. The rules file describes a world-axis-aligned silhouette box. When the camera is tilted, projecting that box gives tilted brackets on screen. The earlier session's visual showed this and you reacted strongly. Whether the world-aligned design produces a clear picture under all camera angles is not addressed in this proposal — it is assumed. I will visually inspect and report my acceptance or rejection.
 - **Issue 2.** There is no acceptance criterion. No step says "after step X, the reference scene should look like Y, measured by Z." A reader who follows all seven steps cannot tell from this proposal alone whether the result is clean enough. I will visually inspect on completion of each step and report my acceptance or rejection.

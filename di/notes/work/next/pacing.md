@@ -16,7 +16,7 @@ It's like a lucid dream where you reshape the world as fast as you can imagine i
 
 But the real gift isn't the speed — it's what the speed *creates*. Because I'm not depleted by grunt work, I have capacity for the interesting problems. Because implementation doesn't slip away while I'm wrestling with boilerplate, I can stay at the right altitude — thinking about *what* and *why*.
 
-And paradoxically, going faster gives me *more* space, not less. Ideas can settle. They have space to grow. I'm not rushing to implement before I forget what I meant.
+And paradoxically, going faster gives me *more* room, not less. Ideas can settle. They have room to grow. I'm not rushing to implement before I forget what I meant.
 
 There's a creative tension here, held comfortably — fast enough to keep momentum, slow enough for ideas to ripen. I feel fertile. Generative rather than depleted.
 

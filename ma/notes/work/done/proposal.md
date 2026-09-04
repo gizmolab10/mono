@@ -72,7 +72,7 @@ These run through everything:
 - **Leniency** over gatekeeping
 - **Wisdom** over speed
 
-And the hard ones: leave ample gap for breakdowns. Systems fail. People fail. The ecosystem should accommodate that gracefully, not punish it.
+And the hard ones: leave ample room for breakdowns. Systems fail. People fail. The ecosystem should accommodate that gracefully, not punish it.
 
 ## Next steps
 

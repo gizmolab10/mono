@@ -77,17 +77,17 @@ Two things had to be found on screen, neither visible from the code:
 
 **The title stays at the box's top however far the words scroll**, so it was always the first piece at the top and answered every reading. Anything that stays put is passed over now.
 
-## 2026-08-17 — a fold decoration drawn over the row that had covered its words
+## 2026-08-17 — a fold button drawn over the row that had covered its words
 
 Scrolled up, a heading's words went under the title row and its soft pointer was drawn whole across it. Both are covered by the same row, so the two disagreed.
 
-**Every button is put on the controls layer**, and a fold decoration is a button — so the mark and the title row held the same layer, and the mark, coming later in the page, won. The marks are on the common layer now and the title row is back on its own.
+**Every button is put on the controls layer**, and a fold button is a button — so the button and the title row held the same layer, and the button, coming later in the page, won. The marks are on the common layer now and the title row is back on its own.
 
-I guessed twice before measuring, and both guesses were wrong. What settled it was reading the computed layer off the browser: the mark said 2, the same as the row, where I had assumed `auto`.
+I guessed twice before measuring, and both guesses were wrong. What settled it was reading the computed layer off the browser: the button said 2, the same as the row, where I had assumed `auto`.
 
 ## 2026-08-17 — handing a file on, and why Windows never could
 
-The ⤴ mark hands the browser a `mailto:` address. Windows hands that to a program it knows about, and a browser tab is not one — so Gmail never sees it unless two separate things are set: Windows pointing `mailto:` at Chrome, and Chrome holding Gmail as its own handler. With Outlook holding the registration, the press works as designed and opens Outlook, which is a failure to whoever never uses it.
+The ⤴ button hands the browser a `mailto:` address. Windows hands that to a program it knows about, and a browser tab is not one — so Gmail never sees it unless two separate things are set: Windows pointing `mailto:` at Chrome, and Chrome holding Gmail as its own handler. With Outlook holding the registration, the press works as designed and opens Outlook, which is a failure to whoever never uses it.
 
 **ji proved the content is not the cause** — its ⤴ sends a bare address, 27 characters, and fails just the same.
 
@@ -149,7 +149,7 @@ Several banned words are also the names of real things. The hook that swaps them
 
 ## 2026-08-14 — the count holds a width of its own
 
-`4 of 10` at the far left of the editor's top row took exactly the width of its own characters, so the two step decorations beside it moved as the numbers changed. It holds one width now, with its words at the right end — they finish against the marks, and the marks stand in one place from `1 of 9` to `218 of 218`.
+`4 of 10` at the far left of the editor's top row took exactly the width of its own characters, so the two step buttons beside it moved as the numbers changed. It holds one width now, with its words at the right end — they finish against the marks, and the marks stand in one place from `1 of 9` to `218 of 218`.
 
 **The width went on the ladder** as `width.tiny`, and onto the page like every other size, so nothing writes a lone number. Jonathan set it at 50.
 
@@ -175,7 +175,7 @@ A link to `[[thin proxy proposal]]` would not open. The file is on disk; the app
 
 **It now names the likeliest file** for anything it cannot find: most shared folder words first, ties broken by the fewest folder steps from the file the link sits in, and nothing at all offered where two are equal on both. That rule came out of mono's own link-mending tool, which had been sitting in `notes/tools/docs/` the whole time.
 
-**One press was doing two things.** The manager said the press and started the repeating, and the repeating begins with a beat at once — so every step decoration stepped twice, and a back that went somewhere and then stepped again read as going nowhere. A row opened its file on the way down, which meant a drag could never begin. And a folder's mark acted on the way down while the row acted on the way up: the mark's shape turns when the folder does, so it moved out from under the cursor and the row turned the folder straight back. Everything in the list acts when the press is let go now.
+**One press was doing two things.** The manager said the press and started the repeating, and the repeating begins with a beat at once — so every step button stepped twice, and a back that went somewhere and then stepped again read as going nowhere. A row opened its file on the way down, which meant a drag could never begin. And a folder's mark acted on the way down while the row acted on the way up: the mark's shape turns when the folder does, so it moved out from under the cursor and the row turned the folder straight back. Everything in the list acts when the press is let go now.
 
 ## 2026-08-14 — a box that stands inside the piece it is changing
 
@@ -189,7 +189,7 @@ Opening a piece for changing moved its words. A heading jumped bigger-to-smaller
 
 **A thing to be done can hold a list of its own**, and that list has nothing to do with the one line being changed — so it comes back out to stand below the box while the item's own words are away.
 
-**Two faults in the hits manager, either of which stops every press landing.** It marks that a rebuild is queued, waits, then clears the mark — and the clearing sat after the waiting rather than inside it, so a wait that never came back left the mark standing, and a standing mark turns away every later request. Since a target asks for a rebuild the moment it arrives, nothing would ever be measured again. And redrawing the fold decorations adds rows and pointers across the whole page without telling the manager anything.
+**Two faults in the hits manager, either of which stops every press landing.** It marks that a rebuild is queued, waits, then clears the mark — and the clearing sat after the waiting rather than inside it, so a wait that never came back left the mark standing, and a standing mark turns away every later request. Since a target asks for a rebuild the moment it arrives, nothing would ever be measured again. And redrawing the fold button adds rows and pointers across the whole page without telling the manager anything.
 
 ## 2026-08-13 — the details column folds the way everything else does
 
@@ -247,7 +247,7 @@ The page color used to be worked out from the accent. It is a choice of its own,
 
 **A section's bare background answers a press and fills under the cursor**, the gap above and below its contents included. The two halves disagreed at first — the fill lit everywhere but inside the rows, the press worked only inside them — because each asked a different question of a different element. Both ask the section now, through a question narrower than the one deciding the way back to the list: a whole area is a background, not a thing that answers.
 
-**Whatever sits between a file's labels and its first heading is offered for removal.** The words start at that heading, whatever its rank — not every file opens with a top-level one — and spaces holding a heading off the left edge count as characters to take out. Nothing is written unless the button is pressed; dismissing the line is the answer no. Holding a step decoration or an arrow key stops at a file that raised something, and one more press goes on.
+**Whatever sits between a file's labels and its first heading is offered for removal.** The words start at that heading, whatever its rank — not every file opens with a top-level one — and spaces holding a heading off the left edge count as characters to take out. Nothing is written unless the button is pressed; dismissing the line is the answer no. Holding a step button or an arrow key stops at a file that raised something, and one more press goes on.
 
 ## 2026-08-12 — a word on a line is now the caller's own, and a bar only lends it a place
 
@@ -361,7 +361,7 @@ Every kind of measurement now uses the same nine words — micro, faint, tiny, s
 
 **A piece opened for changing holds what follows.** The box standing in for a piece is never quite that piece's height — different spacing above, a hair of room held inside it, whole-pixel rounding — so rather than accounting for each of those, the box measures where the piece below it stood and sets the room under itself to whatever puts it back. A subheading's box does the same for its own top, since the room above a subheading depends on what came before it. Both say in the log how far off they were.
 
-**A heading is a row now.** Its fold decoration used to be placed by two numbers that measured against different things — one against the heading's height, one against the mark's own — so neither could do the job alone and both were tuning knobs. The row holds the mark level with the words, and nothing says how far down it goes.
+**A heading is a row now.** Its fold button used to be placed by two numbers that measured against different things — one against the heading's height, one against the mark's own — so neither could do the job alone and both were tuning knobs. The row holds the mark level with the words, and nothing says how far down it goes.
 
 ## 2026-08-07 — the disk is the only source of files
 
@@ -405,7 +405,7 @@ Every bar was six pixels — chosen against the browser's heavy grey strip and o
 
 ## 2026-08-06 — the way out is the whole top of the view
 
-The way back to the list was a small circle at the far left — a lot of aim to demand for the commonest move in the app. It is gone. The two rows above the heavy line are one block now, and a press anywhere in it that isn't on something answering for itself goes back to the list. The things that answer are the step decorations, the search field, the count between its marks, and the file's name. Escape still does the same, and the words themselves are left alone so nothing typed is lost by a stray press.
+The way back to the list was a small circle at the far left — a lot of aim to demand for the commonest move in the app. It is gone. The two rows above the heavy line are one block now, and a press anywhere in it that isn't on something answering for itself goes back to the list. The things that answer are the step buttons, the search field, the count between its marks, and the file's name. Escape still does the same, and the words themselves are left alone so nothing typed is lost by a stray press.
 
 **The rule is proved without a page.** Walking up from the thing pressed to the block it sits in, every tag name and class name met along the way is gathered, and any one of them being a control settles it. That list of names is what the eight new tests exercise — the empty space leads back, each control does not, capitals read the same as small letters.
 
@@ -415,9 +415,9 @@ The way back to the list was a small circle at the far left — a lot of aim to 
 
 The reading view had a button that turned editing on and off, and a good half of it only ran while that was on. Editing is what the view is for, so the switch is gone: every file opens ready to change, a click on any piece opens that piece, the label form is always there, and the piece is named for what it now does. The way back is the close cross and the Escape key — a click on the words can no longer throw away what is being typed. The rename button went too, though the handler behind it stayed for whatever asks next.
 
-**The top rows were rearranged, twice.** The search takes the first row now, with the count and its two step decorations appearing beside the field once there is something to look for. The row below carries the way out at its far left, then the step decorations, then the folders above the file, with the file's name pinned to the middle of the whole width so nothing beside it can shift the name. The file's own name row is gone.
+**The top rows were rearranged, twice.** The search takes the first row now, with the count and its two step buttons appearing beside the field once there is something to look for. The row below carries the way out at its far left, then the step buttons, then the folders above the file, with the file's name pinned to the middle of the whole width so nothing beside it can shift the name. The file's own name row is gone.
 
-**One pixel of drift.** Going from the list to a file and back moved everything a pixel. The search row was one pixel taller than the list's own top row, having been padded to stop it growing when the step decorations arrive. The marks are now held to the row's height — they still show whole, since they are allowed to spill — and both rows are the same height again.
+**One pixel of drift.** Going from the list to a file and back moved everything a pixel. The search row was one pixel taller than the list's own top row, having been padded to stop it growing when the step buttons arrive. The marks are now held to the row's height — they still show whole, since they are allowed to spill — and both rows are the same height again.
 
 ## 2026-08-05 — one search, wherever you are
 
@@ -437,7 +437,7 @@ Every heading below the first now carries a small soft pointer out in the left m
 
 The button that hid the picking rows sat beside the search field, the last thing in the app still working that way. It is gone; the search field takes the whole row, and a heavy line under it carries one word that folds the whole set at a press anywhere along it. Shown, the word is just `filters`; folded, it says what every row holds — `filters ➜ designs, di, rule` — leaving out any row narrowing nothing, since "all" is not worth the room. The plain heavy line below the rows, and the gap under the word, are there only while the rows are.
 
-## 2026-08-05 — the step decorations became a piece of their own
+## 2026-08-05 — the step buttons became a piece of their own
 
 The two fat triangles that walk from one file to the next were written out inside the reading view — shapes, sizes, the repeating hold, and the markup. They are now one piece anywhere can use, taking whether it can go back or forward, what to do for each, whether it runs up-and-down, whether both show even when one leads nowhere, and the hover words. The reading view uses it twice: once between the close cross and the edit button, and once either side of the search count. Seven tests cover which way each mark points, when it is drawn, when it answers, and the hold — one step at the press, a patter after the pause, never two beats at once, safe to release when nothing is held.
 

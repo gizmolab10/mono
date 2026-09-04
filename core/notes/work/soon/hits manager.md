@@ -111,7 +111,7 @@ The presses among them (clear, invert) also take a stronger fill while held — 
 
 #### 2. a segment that would empty the list answers nothing
 
-A segment wearing `empty` is grayed and dead. A dead one still needs a rectangle — it stands in the run and the ones beside it must not answer for its space — so it registers with no press and no words, the same way a dead step decoration does.
+A segment wearing `empty` is grayed and dead. A dead one still needs a rectangle — it stands in the run and the ones beside it must not answer for its space — so it registers with no press and no words, the same way a dead step button does.
 
 #### 3. names
 

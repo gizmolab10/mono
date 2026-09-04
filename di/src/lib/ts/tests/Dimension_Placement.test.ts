@@ -182,7 +182,7 @@ describe('Dimension_Placement — uniface design (rules 1-8) (pending implementa
 		expect(dir_z[2]).toBeCloseTo(1, 6);
 	});
 
-	it('two dims along the same axis on different parts can share the same uniface when there is enough gap', () => {
+	it('two dims along the same axis on different parts can share the same uniface when there is room', () => {
 		// Two label rectangles at the same uniface but at separate
 		// positions along the dim line. Their pairwise clearance is
 		// enforced by the label-vs-label filter, not by the choice of

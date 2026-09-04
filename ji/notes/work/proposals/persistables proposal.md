@@ -31,7 +31,7 @@ ji chose **not to rehydrate** on load — records stay plain JSON, and behavior 
 2. **Persistable extends Identifiable** (rename/replace `types/Persistable.ts`) — adds one thing: `isDirty` (a flag) plus `mark_dirty()` / `clear()`. The current dirty-**manager** goes away; its job (the total unsaved count for the save button) becomes a scan over the records' own flags, as ws does with `dirty_count`.
 3. **The five records become classes** extending Persistable — Document (already a class, now extends Persistable), Tag, Tagging, Relationship, Predicate. Each gets a constructor that takes its fields (and can take a stored dict).
 4. **Load rehydrates** — `Hierarchy.fetch_all` turns each dict from `load_list` into a real instance of its kind. `records_byID`, `documents_byName`, and the walk keep working unchanged, now holding instances.
-5. **Save is unchanged in structure** — `JSON.stringify` of an instance writes its fields and drops its methods, which is exactly what we want; `load_list` reads the fields back and the constructor restores the instance.
+5. **Save structure is unchanged** — `JSON.stringify` of an instance writes its fields and drops its methods, which is exactly what we want; `load_list` reads the fields back and the constructor restores the instance.
 6. **Follow-on (optional, later):** the document **statics** can become instance methods now that a loaded document is a real Document — `document.family()` instead of `Document.family_of(...)`. Big, separate, not part of this change.
 
 ## What it touches
@@ -45,7 +45,7 @@ ji chose **not to rehydrate** on load — records stay plain JSON, and behavior 
 
 - **Rehydration must carry every field** — a missed field on the constructor silently drops data on the first save. Guard with a round-trip test (save → load → deep-equal) per kind.
 - **Name clash** — the existing `Persistable` (manager) and the new `Persistable` (base) can't both keep the name. Plan: the base takes the name; the manager is removed, its count re-derived.
-- **No behavior change intended** — this is a structure change. The 28 tests must stay green; add the round-trip tests on top.
+- **No behavior change intended** — this is a structural change. The 28 tests must stay green; add the round-trip tests on top.
 
 ## Order (small, proved between each)
 

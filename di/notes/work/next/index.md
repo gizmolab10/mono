@@ -7,7 +7,6 @@
 - [Data Schema For Wendy](./data schema for wendy.md)
 - [Musi Capp](./musi capp.md)
 - [Pacing](./pacing.md)
-- [Punch List](./punch list.md)
 - [Roots](./roots.md)
 - [Snap.pin](./snap.pin.md)
 

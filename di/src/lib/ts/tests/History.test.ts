@@ -12,7 +12,7 @@ vi.mock('../managers/Scenes', () => ({
 import { history } from '../managers/History';
 
 // History stores a Portable_Scene; in this test we hand it a tiny stand-in
-// structure and cast at the boundary so the test can read the marker number.
+// data structure and cast at the boundary so the test can read the marker number.
 const as_state = (v: unknown): { n: number } => v as { n: number };
 
 describe('history chain — back five, forward five', () => {

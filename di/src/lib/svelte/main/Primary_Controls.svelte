@@ -148,7 +148,7 @@
 		position     : relative;
 		top          : 2.5px;
 		left         : -4px;
-		/* Pull the next group 8px closer. When the row has a gap the spacer grows
+		/* Pull the next group 8px closer. When the row has room the spacer grows
 		   to refill, so wide layouts are unchanged; only the collapsed floor
 		   tightens — that gap was ~25px, now ~17px. */
 		margin-right : -8px;

@@ -11,7 +11,6 @@ Running a project according to code debt changes the dynamic. unpaid code debt m
 
 offer a proposal (#) for the first unchecked item, and add it to a new section at the top of open items.
 
-
 ## bugs
 
 - [x] stop -> Jeff
@@ -72,7 +71,7 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 ### sell
 
 - [ ] sell di subscription/license
-    - [ ] [[30.licensing]] 
+    - [ ] [[30.licensing]]
 
 ---
 
@@ -112,7 +111,7 @@ offer a proposal (#) for the first unchecked item, and add it to a new section a
 - [ ] clean up guides again
     - [ ] does our current organization make sense?
 - [ ] move logic driven design -> alongside always
-    - [ ] convert to instructions that can do a lot of the work
+    - [ ] convert to instructions that can do the heavy lifting
 - [ ] read all the work md files and summarize the organization
 - [ ] [[cadence]]
 - [ ] Gemini pro is only $20

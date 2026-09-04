@@ -21,7 +21,7 @@
 	let { document_id, onclose, can_step = false, onprev = () => {}, onnext = () => {} }:
 		{ document_id: string; onclose: () => void; can_step?: boolean; onprev?: () => void; onnext?: () => void } = $props();
 
-	// The step triangles: the same fat decoration as the folder rows, pointing left and
+	// The step triangles: the same fat button as the folder rows, pointing left and
 	// right. 20 across.
 	const STEP_TRIANGLE = k.size.cross * 1.1;
 	const prev_path     = svg_paths.fat_polygon(STEP_TRIANGLE, Direction.left);

@@ -105,7 +105,7 @@ When naming sections or concepts, favor warmth over mechanics:
 
 **paging.md:**
 
-> Three clusters of widgets nestle around the radial ring. Often enough, there's not enough gap. So, we show only a page at a time. The user can adjust the page. Lots of ghastly geometry goes into making it feel comfortable.
+> Three clusters of widgets nestle around the radial ring. Often enough, there's not enough room. So, we show only a page at a time. The user can adjust the page. Lots of ghastly geometry goes into making it feel comfortable.
 
 **styles.md:**
 
@@ -163,9 +163,9 @@ Two smaller habits from the same pass: an aside goes in parentheses, never betwe
 
 Two more, from his rewrite of [agency](../pre-flight/agency.md)'s opening line:
 
-- **Two sentences about the same thing become one.** Join the second with "which", never by naming the subject again. Mine: "Each rule ends with Jonathan's preferred wording. Each rule's preferred wording must not be improved any further."* His: *"Each rule ends with Jonathan's preferred wording, which MUST not be improved any further."*
-- **A prohibition wears capitals.** MUST, NEVER — seen without reading the line.
-- **One line per paragraph.** Never wrap prose at a column. Markdown joins the lines when it renders, so the page looks the same either way — but in the editor a wrapped sentence sits on two lines, and every edit has to work around the break. Fenced code keeps its own line breaks.
+* **Two sentences about the same thing become one.** Join the second with "which", never by naming the subject again. Mine: "Each rule ends with Jonathan's preferred wording. Each rule's preferred wording must not be improved any further."* His: *"Each rule ends with Jonathan's preferred wording, which MUST not be improved any further."*
+* **A prohibition wears capitals.** MUST, NEVER — seen without reading the line.
+* **One line per paragraph.** Never wrap prose at a column. Markdown joins the lines when it renders, so the page looks the same either way — but in the editor a wrapped sentence sits on two lines, and every edit has to work around the break. Fenced code keeps its own line breaks.
 
 ### Anti-Examples
 

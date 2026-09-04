@@ -13,7 +13,7 @@ Patterns and gotchas learned from actual work.
 
 **Static markup, dynamic appearance.**
 
-The DOM is structure. CSS is presentation. They're separate. Using toggle in JS, can change all manner of things — order, direction, visibility, colors, sizes, animations. CSS does a lot of the work. 
+The DOM is structure. CSS is presentation. They're separate. Using toggle in JS, can change all manner of things — order, direction, visibility, colors, sizes, animations. CSS does the heavy lifting.
 
 **Class lists** are the secret sauce. JS can use a classList object to alter the class list of an element, and CSS can watch the class list, translating it into all those manner of things.
 

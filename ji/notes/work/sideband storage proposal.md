@@ -26,7 +26,8 @@ Proven on the live instance: saved `{"hidden":[123,456],"note":"sideband test"}`
 
 ### AnythingLLM's SQLite store
 
-AnythingLLM keeps its own bookkeeping in a single SQLite database file on the machine (`server/storage/anythingllm.db`), managed through the Prisma toolkit. That database is the relational store — 
+AnythingLLM keeps its own bookkeeping in a single SQLite database file on the machine (`server/storage/anythingllm.db`), managed through the Prisma toolkit. That database is the relational store —
+
 1. the lists and records the app runs on:
     1. the workspaces
     2. one row per document (its name, its on-disk path, its details, whether it's pinned) <- **description**
@@ -70,7 +71,7 @@ The payload doesn't have to be a flat list — it can be an *entire small databa
 
 The read-merge-write rule carries straight over, and matters even more here: **decode the string you just read, apply your one change to that, then re-encode and write.** Writing out a database you decoded from an *earlier* read throws away every change another browser made in between — the whole-database write is the ultimate "here is the entire new note". Read fresh, change, write, back-to-back.
 
-**The gap is generous — measured, not guessed.** On the live instance the `description` field round-tripped *exactly* at every size tried, from 1 KB up to 4 MB (it's a plain text column in AnythingLLM's SQLite store, which has no small limit). So a small database — kilobytes to a few megabytes — fits with gap to spare. The real ceiling isn't the field; it's that **every read and every write moves the whole blob** over the network and re-encodes it, so a database that grows large makes each tiny edit expensive. Keep it modest, and split by purpose into separate notes (e.g. `intersection.tags`, `intersection.hidden`) so each edit only rewrites the part it touches.
+**Disk space is generous — measured, not guessed.** On the live instance the `description` field round-tripped *exactly* at every size tried, from 1 KB up to 4 MB (it's a plain text column in AnythingLLM's SQLite store, which has no small limit). So a small database — kilobytes to a few megabytes — fits with room to spare. The real ceiling isn't the field; it's that **every read and every write moves the whole blob** over the network and re-encodes it, so a database that grows large makes each tiny edit expensive. Keep it modest, and split by purpose into separate notes (e.g. `intersection.tags`, `intersection.hidden`) so each edit only rewrites the part it touches.
 
 ### Endpoints used
 

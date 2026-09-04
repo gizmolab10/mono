@@ -18,7 +18,6 @@ Active non-milestone work. The files in this folder are the current working docu
 - [Learn](./learn.md) — mistakes in di's own workings, never to be repeated.
 - [Open Items](./open items.md)
 - [Our Process](./our process.md)
-- [Revisit.di](./revisit.di.md)
 - [Steve Melville](./steve melville.md)
 - [Talk](./talk.md)
 - [Work Journal](./work journal.md)

@@ -31,7 +31,7 @@ export interface Exported_File {
 	version: string;
 }
 
-/** Legacy v2 structure (flat bounds, orientation) — used only by migration code. */
+/** Legacy v2 data structure (flat bounds, orientation) — used only by migration code. */
 interface Portable_SO_v2 {
 	rotations?: { axis: Axis_Name; angle: number }[];
 	formulas?: Record<string, string>;
