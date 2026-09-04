@@ -534,3 +534,12 @@ export default class Hits {
 }
 
 export const hits = new Hits();
+
+// A vite hot update moves things about — a changed size, a rule rewritten — and never tells the
+// hits manager, so every held rectangle above the change goes stale and the drift guard alerts the
+// moment the cursor rests on one. This is the mover saying so: after each hot update, every target
+// is asked again once the browser has drawn. Dev only, since hot updates never happen in a built
+// site; the guard against real drift, where app code moves a thing and stays silent, is untouched.
+if (import.meta.hot) {
+	import.meta.hot.on('vite:afterUpdate', () => hits.defer_recalibrate());
+}

@@ -15,7 +15,10 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
-- [x] edit — files that are not markdown, do not translate them, do not treat the first line as a title, never add properties
+- [ ] no truth folder
+- [ ] too many ideas in ov
+- [ ] too many tags for the same thing (progress, lifecycle, active, fate)
+- [ ] move the clear clickable next to search clickable
 - [ ] add 'reveal in finder' to the CONTROL-click popup menu
 - [ ] move all mono projects -> mono/projects, a new folder sibling to memory
     - [ ] create a new folder in projects 'shared'
@@ -45,6 +48,9 @@ sooner or later every project creates a knowledge base and a work manager. this 
 - [ ] read work/md audit (old location)
     - [ ] pac: if we execute it
 - [ ] 1127 occurrences of 'guide' -> many should be 'file'
+
+## soon
+
 - [ ] too many ts files are class-less
     - [ ] require LOOONG import statements
 - [ ] strip of icons to switch between my many apps
@@ -54,9 +60,6 @@ sooner or later every project creates a knowledge base and a work manager. this 
 - [ ] compose-an-email does not work on Windows
 - [ ] hermes agent
     - [ ] new ai memory project
-
-## soon
-
 - [ ] not show tt when mouse is swiping
 - [ ] replace '+' button with t-cross path
 - [ ] OPTION-click turns a tag red, search discards matches to it
@@ -92,6 +95,10 @@ sooner or later every project creates a knowledge base and a work manager. this 
 - [ ] do all the guide files read like a guide file?
     - [ ] propose to remove material that is no longer relevant
 - [ ] work on murky
+
+## done
+
+- [x] edit — files that are not markdown, do not translate them, do not treat the first line as a title, never add properties
 
 ## tabled
 

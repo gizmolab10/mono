@@ -335,8 +335,8 @@
 {/snippet}
 
 {#snippet kinds_picker()}
-	<div class='paired-rows'>
 	{#if kinds_offered > 0}
+	<div class='paired-rows'>
 	<div class='kinds' use:tip={'show particular kinds of guide'}>
 		<!-- The files carrying no labels at all — how they are found, so they can be opened and
 		     given some. With every file already labeled there is nothing for it to leave, so it
@@ -355,8 +355,8 @@
 					onpress: in_reach ? () => choose_kind(kind) : undefined }}>{kind}</button>
 		{/each}
 	</div>
-	{/if}
 	</div>
+	{/if}
 {/snippet}
 
 <!-- Twenty-four words in one row is more than an eye can scan, so the tags are gathered into six
@@ -392,9 +392,11 @@
 {/snippet}
 
 {#snippet projects_row()}
+	{#if shown_projects.length > 0}
 	<div class='paired-rows'>
 		{@render projects_picker()}
 	</div>
+	{/if}
 {/snippet}
 
 <!-- The search field, as the stack's first section. Plain text, not type "search": the
@@ -485,7 +487,7 @@
 	   sits on what it shows, and holds one gap under the field — a box with an edge of its own
 	   needs room a row of plain words does not. */
 	.search-rows {
-		margin  : calc(var(--over, 0px) * -1) 0 calc(var(--under, 0px) * -1);
+		margin  : calc(var(--over, 0px) * -1) 0 0;
 		padding : calc(var(--over, 0px) + var(--gap-small)) 0 var(--under, 0px);
 	}
 
@@ -497,7 +499,7 @@
 	   where they did while the whole slot answers. */
 	.bare-answers {
 		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
-		padding : var(--over) var(--gap) var(--under);
+		padding : calc(var(--over) + var(--gap-small)) var(--gap) calc(var(--under));
 	}
 
 	.bare-answers:global([data-hit]) {
@@ -508,6 +510,7 @@
 	/* The clearing pill and the control it belongs to, centered together with one gap between
 	   them — the same gap the tag pills hold. */
 	.paired-rows {
+		padding         : var(--gap-small) 0;
 		gap             : var(--gap);
 		justify-content : center;
 		align-items     : center;

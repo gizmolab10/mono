@@ -16,34 +16,34 @@
 
 	let {
 		id,
-		edge               = T_Edge.thin,
-		gap                = USUAL_GAP,
-		onbare             = undefined,
-		onhover            = undefined,
-		gap_at_foot        = undefined,
-		holds_subsections  = false,
-		fills_when_bare    = false,
-		folded             = false,
-		actions            = null,
-		bare_says          = '',
-		extra_when_folded  = 0,
-		accent_when_folded = false,
+		edge                = T_Edge.thin,
+		gap                 = USUAL_GAP,
+		onbare              = undefined,
+		onhover             = undefined,
+		gap_at_foot         = undefined,
+		accent_when_folded  = false,
+		holds_subsections   = false,
+		fills_when_bare     = false,
+		folded              = false,
+		actions             = null,
+		bare_says           = '',
+		extra_when_folded   = 0,
 		contents,
 	}: {
-		onhover?           : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
-		onbare?            : (() => void) | undefined;               // a press landed on the bare background, on nothing that answers for itself
-		actions?           : Action[] | null;         // things to sit on the line, each at its own end or middle
-		contents           : Snippet;                 // what it shows
-		holds_subsections? : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
-		fills_when_bare?   : boolean;                 // its whole background fills while the cursor is on bare space, because a press there does something
-		folded?            : boolean;                 // its content is put away, so it holds no gap
-		edge?              : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
-		id                 : string;                  // what this section is called, said once by whoever draws it
-		bare_says?         : string;                  // what a press on the bare background would do, shown while the cursor is on it
-		gap?               : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
-		gap_at_foot?       : number;                  // a different number below its content, where the two sides are drawn against different things
-		extra_when_folded? : number;                  // more than the one folded height, for the one section that needs it
-		accent_when_folded?: boolean;                 // folded, its space takes the accent — the same run of color a stack draws for a fold of its own
+		onhover?            : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
+		onbare?             : (() => void) | undefined;               // a press landed on the bare background, on nothing that answers for itself
+		actions?            : Action[] | null;         // things to sit on the line, each at its own end or middle
+		contents            : Snippet;                 // what it shows
+		accent_when_folded? : boolean;                 // folded, its space takes the accent — the same run of color a stack draws for a fold of its own
+		holds_subsections?  : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
+		fills_when_bare?    : boolean;                 // its whole background fills while the cursor is on bare space, because a press there does something
+		folded?             : boolean;                 // its content is put away, so it holds no gap
+		edge?               : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
+		id                  : string;                  // what this section is called, said once by whoever draws it
+		bare_says?          : string;                  // what a press on the bare background would do, shown while the cursor is on it
+		gap?                : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
+		gap_at_foot?        : number;                  // a different number below its content, where the two sides are drawn against different things
+		extra_when_folded?  : number;                  // more than the one folded height, for the one section that needs it
 	} = $props();
 
 	// Said once here, so the line and the gap can never disagree about what this section is.

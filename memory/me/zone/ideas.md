@@ -9,3 +9,4 @@ date: 2026-08-29
 
 - [ ] [[my story]]
 - [ ] [[iron carbonate]]
+- [ ] [[bonnie and mara]]

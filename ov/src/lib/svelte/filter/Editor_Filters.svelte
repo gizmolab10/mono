@@ -654,8 +654,8 @@
 
 	/* The bare space among the tag pills answers its own press, and reaches out the same way. */
 	.bare-answers {
-		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
-		padding : var(--over) var(--gap) calc(var(--under) + var(--gap-tiny));
+		margin  : calc( + var(--gap) - var(--over)) calc(var(--gap) * -1) calc(var(--under) * -1);
+		padding : var(--over) var(--gap) calc(var(--under) + var(--gap));
 	}
 
 	.bare-answers:global([data-hit]) {
@@ -665,6 +665,7 @@
 
 	/* Rows of one thing, so they sit closer together than sections do. */
 	.information-rows {
+		padding-top    : var(--gap);
 		gap            : var(--gap-tiny);
 		flex-direction : column;
 		display        : flex;

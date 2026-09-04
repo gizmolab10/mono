@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/gallery/zone/ideas.md",
+                "file": "memory/ws/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
@@ -36,20 +36,6 @@
             }
           },
           {
-            "id": "59edb0fd08ed8ac8",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/shared/zone/questions.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "questions"
-            }
-          },
-          {
             "id": "c376e045e76b9cad",
             "type": "leaf",
             "state": {
@@ -69,40 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "notes/work/learn.md",
+                "file": "memory/ov/zone/drive.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "learn"
-            }
-          },
-          {
-            "id": "2185d7d0567522ce",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/response.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "response"
-            }
-          },
-          {
-            "id": "5da725e643fea146",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/guides/pre-flight/lexicon.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "lexicon"
+              "title": "drive"
             }
           }
         ]
@@ -139,7 +97,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:worki",
+                "query": "file:shor",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -160,13 +118,11 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 270.0877342224121
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -244,7 +200,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/gallery/zone/ideas.md",
+                "file": "memory/ws/zone/ideas.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -268,8 +224,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 217.6181640625,
-    "collapsed": true
+    "width": 217.6181640625
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -285,42 +240,42 @@
   },
   "active": "c726350c99815c7a",
   "lastOpenFiles": [
+    "memory/gallery/zone/ideas.md",
+    "memory/ov/zone/drive.md",
+    "memory/ws/zone/ideas.md",
+    "memory/ws/log.md",
+    "memory/ws/index.md",
+    "memory/ws/zone",
+    "memory/ws/truth",
+    "memory/ws",
+    "memory/me/zone/bonnie and mara.md",
+    "memory/me/zone/ideas.md",
+    "memory/ov/zone/ideas.md",
+    "notes/guides/pre-flight/shorthand.md",
+    "notes/guides/collaborate/jonathan.md",
+    "memory/shared/truth/handbook.md",
+    "notes/work/learn.md",
+    "notes/guides/pre-flight/always.md",
+    "notes/guides/pre-flight/response.md",
+    "notes/guides/pre-flight/lexicon.md",
+    "memory/shared/truth/lexicon.md",
+    "memory/lv/truth/lexicon.md",
+    "memory/ov/truth/lexicon.md",
+    "memory/core/truth/lexicon.md",
     "notes/guides/pre-flight/gotchas.md",
     "di/notes/work/now/revisit.di.md",
     "di/notes/work/next/punch list.md",
     "di/notes/guides/pre-flight/banned.md",
     "gallery/notes/work/working features.md",
     "core/notes/guides/project/working features.md",
-    "memory/gallery/zone/ideas.md",
     "memory/lv/zone/ideas.md",
-    "di/notes/work/milestones/done/32.facets/slow/bottlenecks.md",
-    "notes/work/big rewrite log.md",
-    "memory/lv/zone/proposals.md",
-    "memory/shared/zone/ideas.md",
     "core/src/lib/svelte/support/Stack.svelte.tmp.31975.60a38e535a37",
     "core/src/lib/svelte/support/Stack.svelte.tmp.31975.0789c8fe3ac0",
-    "memory/shared/zone/claude session output.md",
-    "memory/shared/zone/rewrite the guides.md",
-    "memory/shared/zone/drive.md",
-    "notes/guides/pre-flight/always.md",
-    "notes/guides/pre-flight/keywords.md",
-    "memory/shared/zone/adopting new memory design — journal — ov.md",
-    "memory/shared/zone/unnamed.md",
     "notes/guides/pre-flight/gates.md.held",
     "notes/guides/pre-flight/agency.md.held",
-    "notes/work/learn.md",
-    "notes/guides/collaborate/jonathan.md",
-    "memory/shared/zone/questions.md",
-    "notes/guides/pre-flight/response.md",
-    "notes/guides/pre-flight/lexicon.md",
-    "memory/shared/truth/handbook.md",
-    "memory/shared/zone/fable.md",
     "ws/node_modules/ts-node/node_modules",
     "ws/node_modules/@sveltejs/vite-plugin-svelte/node_modules",
     "node_modules/sveld/node_modules/@rollup/plugin-node-resolve/node_modules/@rollup/pluginutils/node_modules",
-    "node_modules/scheduler/node_modules",
-    "lv/node_modules/svelte-check/node_modules",
-    "di/node_modules/svelte-check/node_modules",
     "gallery/src/assets/the vineyard/lcv.label.png",
     "gallery/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "gallery/src/assets/the vineyard/Versaison_20190803.jpg",
