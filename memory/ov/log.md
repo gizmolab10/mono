@@ -7,16 +7,12 @@ date: 2026-09-01
 ---
 # ov log
 
-<!-- consolidated: 1 September 2026 -->
+<!-- consolidated: 3 September 2026 -->
 
 ## 3 September 2026
 
-- D: when the search text leaves a section nothing to offer, an unfolded projects, kinds or tags section shrinks to --gap high and its centered clickable is replaced by a plain label, not pressable, reading 'no options for current search' — recorded in truth/controls.md, not yet built
-
-## 1 September 2026
-
-- D: ov lists mono's tooling folder — the hooks, the skills and the settings under `.claude`, forty files, at any depth and whatever the ending, since a hook is a shell script and a setting is json. Two places had to agree, as always: the dispatcher's own gate and its listing, and `site_of_file` in ov, which stands the test before the .md gate that would turn both away. They answer to mono. The worktrees folder is left out — 1214 files of it, whole copies of the repo, and the file to edit is always the one in the repo itself
-- D: four entries settled — the subfolder answer lives in `shared/truth/decisions.md`, the move to Claude Code and `/p` in CLAUDE.md and the skill itself, the core adoption in core's `truth/structure.md` and ov's map, and the two seg controls in `truth/controls.md`
+- D: within_reach in Files.ts asks project_of(guide), as the file list does — with shared picked, the kinds and tags rows offer words again; truth/controls.md line 11 already said matching goes by project_of, and now the code agrees
+- S: the starved-row label is built and committed in Browse_Filters.svelte, wired into the stack's new `empty` flag (core's Stack.svelte sizes such a row as a fold); truth/controls.md holds the fact as decided, one gap high. Jonathan tested the change and found it bad — what he saw is not yet recorded, asked in shared's zone/questions.md. Two 1 September lines dropped without a home: the tooling-folder listing, reverted the same day (the dispatcher names no .claude folder now), and a record of a settle already done
 
 ---
 

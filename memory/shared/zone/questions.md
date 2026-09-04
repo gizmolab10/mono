@@ -7,7 +7,7 @@ date: 2026-08-29
 ---
 # questions
 
-- [ ] fold conventions.md into always.md, or move always.md into memory/ and re-point inject-always.sh? (the hooks read the old notes; both files are on the death list)
+- [x] fold conventions.md into always.md, or move always.md into memory/ and re-point inject-always.sh? — answered 2 September 2026: conventions.md stays where it is and joins the injection rotation as the fourth file in turn
 
 ## Inconsistencies and duplications
 
@@ -18,6 +18,8 @@ date: 2026-08-29
 - [ ] ov↔core memory twins from the carve — truth: action type, claude-files, scope, lexicon; zone: ideas, handoff (code debt near-twin); merge or trim core's?
 - [ ] ov↔core code twins — ov's Debug.ts and Dirty.ts are core's verbatim; two instances run, Dirty's stores can diverge; same changes as with Extensions?
 - [ ] four shorthand rows still point at the old notes — rate, setup, done, claude; re-point into memory or hold until inception reaches them?
+- [ ] verify the 3 September 2026 settle in a new session — the shared and ov logs were cleared; the S: line under each marker names every group's home
+- [ ] the starved-row change: Jonathan tested it, found it bad, and discarded co's unwiring of the stack's `empty` flag along with the day's uncommitted edits — what did the test show, and which sizing rule survives (one gap, or the fold's height)?
 
 ## checked
 
@@ -30,7 +32,7 @@ From the check of 2 September 2026, the first to audit colliding rules across th
 - [x] 3. always #7 against the shorthand table — resolved 2 September 2026: #7 now says a shorthand is an interpretation Jonathan already approved, performed at once
 - [ ] 4. always #3 tail against conventions line 39 — "NEVER paint a rosy version of the truth" is written near-verbatim in both files. **Proposal**: always #3 is the home, since it arrives every turn; delete conventions line 39
 - [ ] 5. two compression rules disagree — conventions line 24 says compress by naming the parts, response #6 says compress by choosing a plainer verb. **Proposal**: response #6 becomes the one home, saying both moves and keeping conventions' warning that a reply which drops the pending action is incomplete; delete conventions line 24
-- [ ] 6. always #8's scan list names "the length limit", and always #1 no longer has one — the cap became a relevance test. **Proposal**: the scan item becomes "always #1's relevance test — anything not directly relevant"
+- [x] 6. always #8's scan list names "the length limit" — resolved 2 September 2026: the rewrite of always as checks dropped the scan list; #8 names no length limit
 - [ ] 7. handbook.md's date label is empty — `date: ` with no value, which the OKF labels require. **Proposal**: stamp 2 September 2026, the day the label is filled
 
 - [ ] the root map is five projects behind — `memory/index.md` lists shared, ov, lv; disk holds core, di, ji, lv, me, mu, ov, shared, wo, and its parenthetical names `ws` (no folder) and `musicology` (the folder is `mu`); rewrite the list from disk?
