@@ -110,6 +110,10 @@
 	const w_s_hover = hits.w_s_hover;
 	let way_out_lit = $derived(($w_s_hover?.id ?? '').includes(WAY_OUT));
 
+	// The way back to the list, said once for every section that is part of it. The stack puts it
+	// on each section's slot, so the whole slot answers and highlights, half-gaps and all.
+	const way_out = (part: string) => ({ id: `${WAY_OUT}.${part}`, type: T_Hit_Target.section, onpress: onclose, tip: 'resume browse' });
+
 	// The tag areas take four rows of their own, so the clickable above them folds them away — and
 	// says what the guide wears while they are gone, as the filters' own lines do. Which rows are
 	// folded is remembered between visits, named rather than numbered, the same as the list's.
@@ -436,10 +440,7 @@
      the manager knows about, so the way out standing behind them never answers for the space one
      of them occupies. -->
 {#snippet information_rows()}
-	<div class='label-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
-		class:lit={way_out_lit}
-		use:hit_target={{ id: `${WAY_OUT}.labels`, type: T_Hit_Target.section,
-			onpress: onclose, tip: 'resume browse' }}>
+	<div class='label-rows information'>
 		<div class='information-rows'>
 			<div class='filter-row'>
 				<span class='filter-word'>title</span>
@@ -468,10 +469,7 @@
 <!-- Looking through the file on screen. It stands bare here: its line, its gap and the place
      its word stands are this stack's, exactly as they are for the kinds and the tags. -->
 {#snippet search_rows()}
-	<div class='label-rows search-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
-		class:lit={way_out_lit}
-		use:hit_target={{ id: `${WAY_OUT}.search`, type: T_Hit_Target.section,
-			onpress: onclose, tip: 'resume browse' }}>
+	<div class='label-rows search-rows'>
 		<Search bare bind:this={find} {name} {page} {onclose} hovered={way_out_lit} />
 	</div>
 {/snippet}
@@ -485,10 +483,7 @@
 <!-- Which files point at this one. It stands bare here: its line, its gap and its clickable
      are this stack's, the same as the search's. -->
 {#snippet backlinks_rows()}
-	<div class='label-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
-		class:lit={way_out_lit}
-		use:hit_target={{ id: `${WAY_OUT}.backlinks`, type: T_Hit_Target.section,
-			onpress: onclose, tip: 'resume browse' }}>
+	<div class='label-rows'>
 		<Back_Links bare key={key_of(guide)} {name} />
 	</div>
 {/snippet}
@@ -496,10 +491,7 @@
 <!-- The kinds. No word beside them: the separator above already says what they are. Their own bare
      space carries the way out's name and press, so it lights and acts with the rows above it. -->
 {#snippet kinds_picker()}
-	<div class='label-rows kinds-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
-		class:lit={way_out_lit}
-		use:hit_target={{ id: `${WAY_OUT}.kinds`, type: T_Hit_Target.section,
-			onpress: onclose, tip: 'resume browse' }}>
+	<div class='label-rows kinds'>
 		<div class='filter-row wrapping'>
 			{#each KINDS as one (one)}
 				<!-- A guide wears one kind, so pressing the one it wears takes it off and pressing
@@ -520,10 +512,7 @@
      Each area is wrapped so it can be slid: opening one grows it from a word to a run of segments,
      and the pills after it move a long way at once. -->
 {#snippet tags_picker()}
-	<div class='bare-answers reaches' role='presentation'
-		use:hit_target={{ id: 'editor.tags', type: T_Hit_Target.section,
-			onrelease: () => toggle_all_areas(TAG_AREAS.map((one) => one.name)),
-			tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' }}
+	<div class='bare-answers' role='presentation'
 		onmouseenter={() => { tags_lit = true; }}
 		onmouseleave={() => { tags_lit = false; }}
 		onkeyup={() => {}}>
@@ -566,13 +555,19 @@
 				its middle like every other separator. -->
 			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[controls_action]} sections={[
 				{ subsection: controls_rows, folded: !$w_show_controls },
-				{ subsection: search_rows, rides: [search_action, search_clearer], folded: !$w_show_search },
+				// Four sections are the way back to the list: each slot answers with the way out's name
+				// and press, and all four highlight as one while the cursor is on any of them.
+				{ subsection: search_rows, rides: [search_action, search_clearer], folded: !$w_show_search, answers: way_out('search'), highlighted: way_out_lit },
 				// With nothing pointing here the section hides in place — no row, no line — but it
 				// never leaves the list, so the sections below it keep their own separators.
-				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0 },
-				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
-				{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds },
-				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags },
+				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0, answers: way_out('backlinks'), highlighted: way_out_lit },
+				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info, answers: way_out('labels'), highlighted: way_out_lit },
+				{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds, answers: way_out('kinds'), highlighted: way_out_lit },
+				// A press on the bare space among the tagsets shuts them all. The slot answers, not the row.
+				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags,
+					answers: { id: 'editor.tags', type: T_Hit_Target.section,
+						onrelease: () => toggle_all_areas(TAG_AREAS.map((one) => one.name)),
+						tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' } },
 			]} />
 			<!-- What closes the form off from the file's contents below. Always drawn, whatever is
 			     folded — the stack is told so, and leaves its last fold this line to end against
@@ -645,54 +640,47 @@
 		cursor     : pointer;
 	}
 
-	/* The reach: a row answers the cursor across the whole slot the stack gives it, so it reaches
-	   out over the half-gaps above and below and to the box's own edges, and holds all of that
-	   back as its own step-in. What shows sits exactly where it did. Any breathing gap a row wants
-	   is said as one number — --pad for both sides, or --pad-top / --pad-bottom — and folded in
-	   here; no row writes a margin or names --over or --under itself. */
-	.reaches {
-		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
-		padding : calc(var(--over) + var(--pad-top, var(--pad, 0px)))
-		          var(--gap)
-		          calc(var(--under) + var(--pad-bottom, var(--pad, 0px)));
-	}
-
-	/* A part of the form that is a way back to the list. One gap below what it shows. */
+	/* A part of the form that is a way back to the list. One gap below what it shows; the press
+	   and the highlight are the slot's, said in the stack's sections list. */
 	.label-rows {
-		--pad-bottom   : var(--gap);
-		cursor         : pointer;
+		padding-bottom : var(--gap);
 		flex-direction : column;
 		display        : flex;
 		gap            : 0;
 	}
 
-	/* The search field is a box with an edge of its own, so it needs room under it that a row of
-	   plain words does not. */
+	/* The search field sits a faint gap above the middle of its slot: a tiny gap less a faint one
+	   above, a tiny gap plus a faint one below. Together they are the one gap every label row
+	   holds below, so the section is no taller. */
 	.label-rows.search-rows {
-		--pad-bottom : var(--gap);
+		padding-top    : calc(var(--gap-tiny) - var(--gap-faint));
+		padding-bottom : calc(var(--gap-tiny) + var(--gap-faint));
 	}
 
-	/* The bare space among the tagsets answers its own press; a small gap above them, one gap below. */
+	/* The kinds sit a tiny gap lower than the other label rows, the row no taller. */
+	.label-rows.kinds {
+		padding-top    : var(--gap-tiny);
+		padding-bottom : calc(var(--gap) - var(--gap-tiny));
+	}
+
+	/* The information rows hold a small gap below, less than the other label rows. */
+	.label-rows.information {
+		padding-bottom : var(--gap-small);
+	}
+
+	/* A small gap above the tagsets, one gap below. The press on the bare space among them, and
+	   the fill that answers the cursor, are the slot's — said in the stack's sections list. */
 	.bare-answers {
-		--pad-top    : var(--gap-small);
-		--pad-bottom : var(--gap);
-	}
-
-	.bare-answers:global([data-hit]) {
-		background : var(--hover);
-		cursor     : pointer;
+		padding-top    : var(--gap-small);
+		padding-bottom : var(--gap);
 	}
 
 	/* Rows of one thing, so they sit closer together than sections do. */
 	.information-rows {
-		padding-top    : var(--gap);
+		padding-top    : var(--gap-small);
 		gap            : var(--gap-tiny);
 		flex-direction : column;
 		display        : flex;
-	}
-
-	.label-rows.lit {
-		background : var(--hover);
 	}
 
 	/* The wrapper that carries a pill's slide. It hugs whatever it holds, so the row measures

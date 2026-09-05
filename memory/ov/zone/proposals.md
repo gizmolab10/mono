@@ -1,5 +1,5 @@
 ---
-kind: analyze
+kind: specify
 title: "Proposals"
 description: "ov proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies."
 tags: [now, weighed]

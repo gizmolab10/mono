@@ -1,5 +1,5 @@
 ---
-kind: analyze
+kind: specify
 title: "Drive"
 description: "The one proposal being decided and implemented; it dissolves into truth when done."
 tags: [now, weighed]
@@ -13,7 +13,7 @@ date: 2026-09-03
 2. **The fault.** A row's vertical space comes from three layers (stack half-gaps, section padding, row padding), and one padding value does two jobs at once: the reach that lets hover and press cover the half-gaps, and the breathing gap that shows.
 3. **The scheme.** One shared `.reaches` rule per filter file does the reach and reads two tokens, `--pad-top` and `--pad-bottom`, or one `--pad` for both. Each row sets only that number. Rows that never answer the cursor keep plain padding.
 4. **Scope.** Choice 1, recommended first: the rule in Browse_Filters and Editor_Filters each. Choice 2, later: hoist it to a shared stylesheet.
-5. **Where it is now.** Choice 1 is built in both files, svelte-check clean, awaiting the look at the screen. One flag: the browse search row's bottom number is `var(--under)`, the stack's half-gap, not a rung. Open: choice 2, and whether Section.svelte's own reach joins the scheme.
+5. **Where it is now.** Choice 1 is built in both files, svelte-check clean, awaiting the look at the screen. One flag: the browse search row's bottom number is `var(--under)`, the stack's half-gap, not a rung. Next: the slot owns the reach, the last section of this file, decided and not yet built. Open: choice 2, and whether Section.svelte's own reach joins the scheme.
 
 ## the filter rows' gap
 
@@ -87,3 +87,37 @@ Every place in the code that sizes browse's tags section: its height, its `paddi
 13. Each pill, [Big_Pill.svelte:187](../../../core/src/lib/svelte/support/Big_Pill.svelte#L187): `height` 21.88 and `padding` gap-micro 1.3. Its name rides above at line 384, `top: −2px − gap-faint`.
 
 **The starved case:** nothing renders inside the slot, so 7 to 13 are absent. Item 4 is the whole height.
+
+## the slot owns the reach
+
+### **Slot: success criteria**
+
+Nothing on screen moves, confirmed by Jonathan on both screens. No row writes a negative margin; the reaches left are the stack's slots, Section.svelte's body, and the editor's whole form block. No filter file names `--over` or `--under`. The riding-name measurement is gone from both filter files. svelte-check clean, core's tests pass, ov's tests pass.
+
+### **Slot: the fault**
+
+Every row reaches out over the stack's half-gaps so its hover fill and press cover the whole slot. That one choice makes the stack export `--over` and `--under`, makes each filter file carry a `.reaches` rule, folds every breathing gap into a calc, and leaves the search row a bottom number that is not a rung. Separately, the tags run measures whether a name rides above its top row and toggles a margin, with a ResizeObserver in each filter file.
+
+### **Slot: the scheme**
+
+1. The stack puts the half-gaps inside each slot as the slot's own `padding`, not as a margin plus two exported variables. A slot's box then runs from the middle of the line above to the middle of the line below, and its separator sits on its top edge. A shut slot is FOLDED tall, border-box, less what a heavy line below adds.
+2. A section that answers the cursor says so in its `Stacked` entry — the hit target's id, type, press or release, tip, and whether it is highlighted — and the stack puts the hit target and the fill on the slot itself. No row reaches anywhere.
+3. A row's breathing gap is plain `padding-top` and `padding-bottom` in a rung.
+4. The tags run always holds the name's headroom above itself, one small gap, whether or not a name rides.
+
+### **What goes**
+
+Stack: `over_of`, `under_of`, the exported `--over` and `--under`. Both filter files: `.reaches`, the reaches on `.bare-answers`, `.label-rows` and `.search-rows`, the `--pad` tokens, the `var(--under)` bottom number, `names_riding`, `look_for_names`, the ResizeObserver effects, and `.named`. Tag_Rows' `names_ride_in` and `placements_of` lose their last callers: reported, not removed.
+
+### **What stays**
+
+`under` and its give-back. The fold's accent fill. `smooth_height` on the tags run. The editor's way-out highlighting, now a highlighted flag the section hands the stack.
+
+### **Order**
+
+1. Stack: padding-based slots, hit target and fill on the slot, the answering fields on Stacked. Core's tests.
+2. Browse_Filters: rows to plain padding, sections declare what they answer. Screen check.
+3. Editor_Filters: the same. Screen check.
+4. Headroom held always, both files. Screen check.
+
+Where it is now: stages 1, 2 and 3 are built, core's tests and svelte-check clean. The stack's slot holds its half-gaps as padding and carries the target and the fill. Browse's and the editor's rows have plain padding and name no variable. Browse is confirmed on screen. One number changed there: the search row's bottom gap is the small rung, 4.32, where it was the half-gap, 5.42. In the editor the four way-out sections answer and highlight through the slot, and the tags section's press is the slot's. The editor awaits the screen check. Stage 4 next.

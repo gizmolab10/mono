@@ -1,5 +1,5 @@
 ---
-kind: analyze
+kind: specify
 title: "Memory System Design"
 description: "A fresh design for a persistent, tweakable memory that carries context across chats, survives consolidation, and supports several concurrent long-term projec..."
 tags: [keep, now, proposal]

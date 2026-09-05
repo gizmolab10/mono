@@ -1,5 +1,6 @@
 import type { Snippet } from 'svelte';
 import type Action from './Action';
+import type { Hit_Target_Options } from '../events/Hit_Target';
 
 // One section of a stack: what it shows, the word riding the line above it, and whether it is
 // put away.
@@ -19,4 +20,6 @@ export type Stacked = {
 	folded?      : boolean;			// Folded: nothing is drawn, and the two separators around it become one
 	empty?       : boolean;			// Empty: open, but with nothing to show. It takes a folded section's height, so folding it moves nothing below
 	hidden?      : boolean;			// Hidden: not there at all — no line, no height, no fold to bring back — but the slot stays, so nothing below it shifts
+	answers?     : Hit_Target_Options | null;	// How the whole slot answers the cursor — id, press, tip — put on the slot by the stack, so the section reaches over no gap itself. Asleep while the section is shut
+	highlighted? : boolean;			// Highlighted from outside, as the editor's way out is: the slot takes the hover fill
 };

@@ -374,8 +374,8 @@
      pill at the front.
 
      A press on the bare space beside the pills shuts every area at once, so getting back to six
-     words never means pressing six crosses. The child answers that press itself: the whole
-     background fills while the cursor is on it, and it reaches out to the box's own edges.
+     words never means pressing six crosses. The stack's slot answers that press, not this: it is
+     said in the sections list, and the whole slot fills while the cursor is on it.
 
      Each area is wrapped so it can be slid: opening one grows it from a word to a run of segments,
      and the pills after it move a long way at once. The wrapper is what carries the slide, and
@@ -383,11 +383,7 @@
      still take a gap. -->
 {#snippet tags_picker()}
 	{#if !tags_starved}
-	<div class='bare-answers reaches' role='presentation'
-		use:hit_target={{ id: 'list.tags', type: T_Hit_Target.section,
-			onrelease: () => toggle_all_areas(showing_areas.map((one) => one.name)),
-			tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' }}
-		onkeyup={() => {}}>
+	<div class='bare-answers'>
 		<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
 			{#each showing_areas as area (area.name)}
 				<span class='pill-slot' transition:fade={{ duration: FADE }}>
@@ -410,10 +406,10 @@
 {/snippet}
 
 <!-- The search field, as the stack's first section. Plain text, not type "search": the
-     browser's own clear cross is gone, since the line above carries a clear of ours. It reaches
-     over the stack's half-gaps the way every row does, so its hover area sits on what it shows. -->
+     browser's own clear cross is gone, since the line above carries a clear of ours. It holds a
+     small gap above and below itself, inside the slot the stack gives it. -->
 {#snippet search_rows()}
-	<div class='search-rows reaches'>
+	<div class='search-rows'>
 		<input
 			type='text'
 			class='search'
@@ -448,7 +444,13 @@
 			{ subsection: search_rows, folded: !show_search },
 			{ subsection: projects_row, rides: [projects_action, projects_clearer, projects_none_action], folded: !show_projects, empty: projects_starved },
 			{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer, kinds_none_action], folded: !show_kinds, empty: kinds_starved },
-			{ subsection: tags_picker,  rides: [tags_action, picking_action, tags_none_action], folded: !show_tags, empty: tags_starved },
+			// The bare space beside the tag pills answers a press by shutting every area at once, so
+			// getting back to six words never means pressing six crosses. The slot answers, not the
+			// row: the stack puts the target and the fill on the whole slot, half-gaps and all.
+			{ subsection: tags_picker,  rides: [tags_action, picking_action, tags_none_action], folded: !show_tags, empty: tags_starved,
+				answers: { id: 'list.tags', type: T_Hit_Target.section,
+					onrelease: () => toggle_all_areas(showing_areas.map((one) => one.name)),
+					tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' } },
 		]} />
 		{/snippet}
 	</Section>
@@ -493,36 +495,19 @@
 		gap            : 0;
 	}
 
-	/* The reach: a row answers the cursor across the whole slot the stack gives it, so it reaches
-	   out over the half-gaps above and below and to the box's own edges, and holds all of that
-	   back as its own step-in. What shows sits exactly where it did. Any breathing gap a row wants
-	   is said as one number — --pad for both sides, or --pad-top / --pad-bottom — and folded in
-	   here; no row writes a margin or names --over or --under itself. */
-	.reaches {
-		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
-		padding : calc(var(--over) + var(--pad-top, var(--pad, 0px)))
-		          var(--gap)
-		          calc(var(--under) + var(--pad-bottom, var(--pad, 0px)));
-	}
-
-	/* The search field is a box with an edge of its own, so it holds a small gap above and, below,
-	   the stack's own half-gap once more — the one row whose bottom number is not a rung; swap it
-	   for one with a look at the screen. */
+	/* The search field is a box with an edge of its own, so it holds a small gap above and below,
+	   over and above the half-gaps the stack's slot already holds. */
 	.search-rows {
-		--pad-top    : var(--gap-small);
-		--pad-bottom : var(--under);
+		padding-top    : var(--gap-small);
+		padding-bottom : var(--gap-small);
 	}
 
 	/* The toggle at the far left, the search field taking whatever is left. Not a section, so it
 	   holds its own gap below — the gap the line under it would otherwise stand clear of. */
-	/* The bare space beside the tag pills answers its own press; a small gap above the pills. */
+	/* A small gap above the tag pills. The press on the bare space beside them, and the fill that
+	   answers the cursor, are the slot's — said in the stack's sections list. */
 	.bare-answers {
-		--pad-top : var(--gap-small);
-	}
-
-	.bare-answers:global([data-hit]) {
-		background : var(--hover);
-		cursor     : pointer;
+		padding-top : var(--gap-small);
 	}
 
 	/* The clearing pill and the control it belongs to, centered together with one gap between

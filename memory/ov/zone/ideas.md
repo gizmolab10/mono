@@ -1,8 +1,8 @@
 ---
-kind: analyze
+kind: specify
 title: "Ideas"
 description: "ov ideas. Append freely; triaged at every settle."
-tags: [now, born]
+tags: [born, now]
 date: 25 August 2026
 ---
 # Ideas
@@ -15,28 +15,28 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
+- [ ] edit
+    - [ ] rename editor -> edit (browse is a verb)
+    - [ ] move the steppers and file title -> the top row
+- [ ] speed up launch by reading files a few at a time
+    - [ ] start with the file the editor is presenting
+    - [ ] then just enough to render the visible part of browse's file list
 - [ ] move the clear clickable next to search clickable
 - [x] [[memory/ov/zone/drive]]
 - [ ] RETURN -> another checkbox line
 - [ ] TAB -> indents (command-TAB outdents)
 - [ ] too many ideas in ov
-- [ ] too many tags for the same thing (progress, lifecycle, active, fate)
+- [ ] [[ov/notes/work/soon/tag drift]] — too many tags for the same thing (progress, lifecycle, active, fate)
 - [ ] add 'reveal in finder' to the CONTROL-click popup menu
 - [ ] move all mono projects -> mono/projects, a new folder sibling to memory
     - [ ] create a new folder in projects 'shared'
         - [ ] move notes into it
-- [ ] speed up launch by reading files a few at a time
-    - [ ] start with the file the editor is presenting
-    - [ ] then just enough to render the visible part of browse's file list
 - [ ] search — enter something, click clear -> the selected match remains highlighted
 - [ ] when a section is closed
     - [ ] hide its middle clickable
     - [ ] replace it with the chosen filter (as a pill shaped label)
     - [ ] show nothing if no filter is chosen
 - [ ] edit
-    - [ ] add --gap below tags content
-    - [ ] rename editor -> edit (browse is a verb)
-    - [ ] move the steppers and file title -> the top row
     - [ ] keys
         - [ ] option-command b -> add checkbox | bullet
         - [ ] command ] -> indent, \[ -> outdent

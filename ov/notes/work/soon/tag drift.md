@@ -7,6 +7,8 @@ date: 2026-08-09
 ---
 # Tag drift
 
+- [ ] too many tags for the same thing (progress, lifecycle, active, fate)
+
 Four tags were renamed in place, across every guide that wore them, without anyone reading the guides:
 
 | was | is now |
