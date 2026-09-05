@@ -193,7 +193,18 @@
 
 	function look_for_names() {
 		names_riding = tags_row === null ? false : names_ride_in(placements_of(tags_row));
-		// The structure of the run just changed, so every tag in it stands somewhere new. Asked at the next
+		// Every number that decides how tall the tags section is drawn, so a section that looks too
+		// tall can be read in the log rather than guessed at: the height the run states, the height
+		// it is drawn at, the lowest child's bottom, and the two boxes around it.
+		if (tags_row !== null) {
+			const row = tags_row.getBoundingClientRect();
+			const bottoms = [...tags_row.children].map((one) => one.getBoundingClientRect().bottom - row.top);
+			const lowest = bottoms.length === 0 ? 0 : Math.max(...bottoms);
+			const reach = tags_row.parentElement?.getBoundingClientRect().height ?? 0;
+			const slot = tags_row.parentElement?.parentElement?.getBoundingClientRect().height ?? 0;
+			debug.log(`Editor tags: run stated ${tags_row.style.height || 'nothing'}, drawn ${row.height.toFixed(2)}, lowest child ${lowest.toFixed(2)}; reach ${reach.toFixed(2)}, slot ${slot.toFixed(2)}; ${$w_areas_open.length} area(s) open, name riding ${names_riding}.`);
+		}
+		// The structure of the run just changed, so every tag in it sits somewhere new. Asked at the next
 		// drawing, since a run re-wrapping says this many times over.
 		hits.recalibrate_when_drawn();
 	}
@@ -425,7 +436,7 @@
      the manager knows about, so the way out standing behind them never answers for the space one
      of them occupies. -->
 {#snippet information_rows()}
-	<div class='label-rows' role='button' tabindex='-1' onkeyup={() => {}}
+	<div class='label-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
 		class:lit={way_out_lit}
 		use:hit_target={{ id: `${WAY_OUT}.labels`, type: T_Hit_Target.section,
 			onpress: onclose, tip: 'resume browse' }}>
@@ -457,7 +468,7 @@
 <!-- Looking through the file on screen. It stands bare here: its line, its gap and the place
      its word stands are this stack's, exactly as they are for the kinds and the tags. -->
 {#snippet search_rows()}
-	<div class='label-rows search-rows' role='button' tabindex='-1' onkeyup={() => {}}
+	<div class='label-rows search-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
 		class:lit={way_out_lit}
 		use:hit_target={{ id: `${WAY_OUT}.search`, type: T_Hit_Target.section,
 			onpress: onclose, tip: 'resume browse' }}>
@@ -474,7 +485,7 @@
 <!-- Which files point at this one. It stands bare here: its line, its gap and its clickable
      are this stack's, the same as the search's. -->
 {#snippet backlinks_rows()}
-	<div class='label-rows' role='button' tabindex='-1' onkeyup={() => {}}
+	<div class='label-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
 		class:lit={way_out_lit}
 		use:hit_target={{ id: `${WAY_OUT}.backlinks`, type: T_Hit_Target.section,
 			onpress: onclose, tip: 'resume browse' }}>
@@ -485,7 +496,7 @@
 <!-- The kinds. No word beside them: the separator above already says what they are. Their own bare
      space carries the way out's name and press, so it lights and acts with the rows above it. -->
 {#snippet kinds_picker()}
-	<div class='label-rows kinds-rows' role='button' tabindex='-1' onkeyup={() => {}}
+	<div class='label-rows kinds-rows reaches' role='button' tabindex='-1' onkeyup={() => {}}
 		class:lit={way_out_lit}
 		use:hit_target={{ id: `${WAY_OUT}.kinds`, type: T_Hit_Target.section,
 			onpress: onclose, tip: 'resume browse' }}>
@@ -509,7 +520,7 @@
      Each area is wrapped so it can be slid: opening one grows it from a word to a run of segments,
      and the pills after it move a long way at once. -->
 {#snippet tags_picker()}
-	<div class='bare-answers' role='presentation'
+	<div class='bare-answers reaches' role='presentation'
 		use:hit_target={{ id: 'editor.tags', type: T_Hit_Target.section,
 			onrelease: () => toggle_all_areas(TAG_AREAS.map((one) => one.name)),
 			tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' }}
@@ -634,12 +645,21 @@
 		cursor     : pointer;
 	}
 
-	/* A part of the form that is a way back to the list. It reaches out to the box's left and right
-	   edges and holds that width back as its own step-in, so what it shows stands exactly where it
-	   did and the lit color covers the gap the box holds around its contents. */
+	/* The reach: a row answers the cursor across the whole slot the stack gives it, so it reaches
+	   out over the half-gaps above and below and to the box's own edges, and holds all of that
+	   back as its own step-in. What shows sits exactly where it did. Any breathing gap a row wants
+	   is said as one number — --pad for both sides, or --pad-top / --pad-bottom — and folded in
+	   here; no row writes a margin or names --over or --under itself. */
+	.reaches {
+		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
+		padding : calc(var(--over) + var(--pad-top, var(--pad, 0px)))
+		          var(--gap)
+		          calc(var(--under) + var(--pad-bottom, var(--pad, 0px)));
+	}
+
+	/* A part of the form that is a way back to the list. One gap below what it shows. */
 	.label-rows {
-		margin         : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
-		padding        : var(--over) var(--gap) calc(var(--under) + var(--gap));
+		--pad-bottom   : var(--gap);
 		cursor         : pointer;
 		flex-direction : column;
 		display        : flex;
@@ -649,13 +669,13 @@
 	/* The search field is a box with an edge of its own, so it needs room under it that a row of
 	   plain words does not. */
 	.label-rows.search-rows {
-		padding-bottom : calc(var(--under) + var(--gap));
+		--pad-bottom : var(--gap);
 	}
 
-	/* The bare space among the tag pills answers its own press, and reaches out the same way. */
+	/* The bare space among the tagsets answers its own press; a small gap above them, one gap below. */
 	.bare-answers {
-		margin  : calc( + var(--gap) - var(--over)) calc(var(--gap) * -1) calc(var(--under) * -1);
-		padding : var(--over) var(--gap) calc(var(--under) + var(--gap));
+		--pad-top    : var(--gap-small);
+		--pad-bottom : var(--gap);
 	}
 
 	.bare-answers:global([data-hit]) {
@@ -735,11 +755,11 @@
 		line-height : var(--height);
 	}
 
-	/* With a name riding above a pill in the topmost row, the run holds one gap above itself so
-	   that name stands clear of the line overhead. It is a margin, so it sits outside the height
+	/* With a name riding above a pill in the topmost row, the run holds a small gap above itself so
+	   that name sits clear of the line overhead. It is a margin, so it sits outside the height
 	   this box is told to hold and never joins the slide. */
 	.tags-row.named {
-		margin-top : var(--gap);
+		margin-top : var(--gap-small);
 	}
 
 	/* Between one row of tags and the next, where they wrap. A between-row gap only exists once

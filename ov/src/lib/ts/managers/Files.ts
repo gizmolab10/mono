@@ -2,7 +2,7 @@ import { address_of_file, delete_file, file_path_of, folder_path_of, files_on_di
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { blank_file, free_name, has_labels, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
-import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, project_of, type File, type Labels, type Filtered_File } from '../types/File';
+import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, project_of, project_at, type File, type Labels, type Filtered_File } from '../types/File';
 import { links_in, plain_links } from '../utilities/Markdown_Blocks';
 import { resolved_from } from '../utilities/Following_Links';
 import { show_status, type Finding } from './Status';
@@ -647,9 +647,13 @@ class Files {
 			// hidden, so the counts never include one.
 			if (name === 'index') { skipped += 1; continue; }
 
-			const top = this.hierarchy.folder_at(site.bundle, '', site.bundle);
-			if (site.bundle !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
-			const done = await this.hang_one_file(site.bundle, site.path, address_of_file(`${on_disk.root}${where}`), site.is_design, top);
+			// A memory file whose first folder names a project belongs to that project — the same
+			// rule the filters go by — so it hangs under that project's top, its folders beside the
+			// guides, rather than under memory's top inside a folder of the project's name.
+			const project = project_at(site.bundle, site.path);
+			const top = this.hierarchy.folder_at(project, '', project);
+			if (project !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
+			const done = await this.hang_one_file(site.bundle, site.path, address_of_file(`${on_disk.root}${where}`), site.is_design, top, project !== site.bundle);
 			read      += done.read;
 			failed    += done.failed;
 			unlabeled += done.unlabeled;
@@ -672,7 +676,7 @@ class Files {
 	 * the three purposes can never collide — and each of those two gets a folder of its own,
 	 * standing beside the files inside its project.
 	 */
-	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: File): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
+	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: File, first_is_top: boolean = false): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
 		const under = is_design ? 'designs' : path.startsWith('work/') ? 'work' : '';
 		const inside = under === '' ? path : path.slice(under.length + 1);
 		const roof = under === '' ? top : this.hierarchy.folder_at(bundle, under, under);
@@ -680,7 +684,10 @@ class Files {
 		const parts = inside.split('/');
 		const name = parts[parts.length - 1].replace(/\.md$/i, '');
 		let parent = roof;
-		for (let i = 0; i < parts.length - 1; i++) {
+		// With the first part already the top it hangs under — a memory file's project folder —
+		// no folder is made for it, though every folder path below still begins with it, so each
+		// folder's own path on disk is unchanged.
+		for (let i = first_is_top ? 1 : 0; i < parts.length - 1; i++) {
 			const so_far = under === '' ? parts.slice(0, i + 1).join('/') : `${under}/${parts.slice(0, i + 1).join('/')}`;
 			const folder = this.hierarchy.folder_at(bundle, so_far, parts[i]);
 			this.hierarchy.add_relationship(parent.id, folder.id);

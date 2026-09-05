@@ -9,6 +9,17 @@ date: 2026-09-01
 
 <!-- consolidated: 3 September 2026 -->
 
+## 5 September 2026
+
+- D: the "no options" label on a starved row's line is drawn as the clickables are — the same thick-small black edge, the pill radius and the page-colored fill that masks the line; Browse_Filters `.no-options`; controls.md line 15 says it; the ideas box is cleared
+- D: the line below browse's tags stays heavy while they are open, starved included, and the shut row gives back the extra thickness: the stack takes `under`, the thickness of the line drawn below it, and a shut last section subtracts what exceeds its own lines, so the heavy line's bottom edge sits as far from the tags line as the thin one's does folded; Browse says the count edge once and hands its thickness to Browse_Filters; the earlier thin-line-when-starved fix is undone; controls.md line 25 says it
+- D: a starved unfolded section keeps the bottom edge of the separator below it as far from the separator above as when folded, for every foldable section — the drive's success criterion, replacing the center-to-center wording
+
+## 4 September 2026
+
+- D: the drive's choice 1 is built — one `.reaches` rule per filter file does the reach, each reaching row sets one number (`--pad`, or `--pad-top` / `--pad-bottom`); Browse_Filters and Editor_Filters, svelte-check clean, awaiting the look at the screen; the browse search row's bottom number is `var(--under)`, flagged in the drive
+- D: a memory file hangs under the top of the project `project_at` names — memory/ov/truth shows as ov → truth in the folder view — with no folder made for the project's own name; Files.ts listing and hang_one_file, one rule shared with project_of in File.ts; truth/controls.md line 11 says it
+
 ## 3 September 2026
 
 - D: within_reach in Files.ts asks project_of(guide), as the file list does — with shared picked, the kinds and tags rows offer words again; truth/controls.md line 11 already said matching goes by project_of, and now the code agrees

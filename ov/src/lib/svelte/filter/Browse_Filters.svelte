@@ -20,6 +20,10 @@
 	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
+	// How thick the count section's line below this stack is drawn, handed in by whoever draws it,
+	// so a shut tags row can give back the extra a heavy line takes below the stack's bottom edge.
+	let { under = 0 }: { under?: number } = $props();
+
 	function toggle_filters() {
 		const next = !$w_show_filters;
 		w_show_filters.set(next);
@@ -153,6 +157,12 @@
 	let projects_starved = $derived($w_search_text !== '' && shown_projects.length === 0);
 	let kinds_starved    = $derived($w_search_text !== '' && kinds_offered === 0);
 	let tags_starved     = $derived($w_search_text !== '' && showing_areas.length === 0);
+
+	// Said whenever any of the three changes, with every value that decides them, so a row that
+	// looks starved but is not counted so can be read in the log rather than guessed at.
+	$effect(() => {
+		debug.log(`Filters: starved — projects ${projects_starved}, kinds ${kinds_starved}, tags ${tags_starved}; search "${$w_search_text}", ${shown_projects.length} project(s) shown, ${kinds_offered} kind(s) offered, ${showing_areas.length} area(s) showing, ${$w_tags.length} tag(s) picked.`);
+	});
 
 	// Does a name ride above a pill in the topmost row of tags? Only then does the row hold a gap
 	// above itself, so that name stands clear of the line overhead.
@@ -373,7 +383,7 @@
      still take a gap. -->
 {#snippet tags_picker()}
 	{#if !tags_starved}
-	<div class='bare-answers' role='presentation'
+	<div class='bare-answers reaches' role='presentation'
 		use:hit_target={{ id: 'list.tags', type: T_Hit_Target.section,
 			onrelease: () => toggle_all_areas(showing_areas.map((one) => one.name)),
 			tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' }}
@@ -403,7 +413,7 @@
      browser's own clear cross is gone, since the line above carries a clear of ours. It reaches
      over the stack's half-gaps the way every row does, so its hover area sits on what it shows. -->
 {#snippet search_rows()}
-	<div class='search-rows'>
+	<div class='search-rows reaches'>
 		<input
 			type='text'
 			class='search'
@@ -433,7 +443,7 @@
 		     row away, and it is drawn by whatever holds us — so we say how thick it is, and the
 		     stack measures from its middle like every other line. This goes when what holds us is
 		     itself a stack and draws its own line in its own gap. -->
-		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below'
+		<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} under={under} foot='below'
 			leads={[search_action, search_clearer]} sections={[
 			{ subsection: search_rows, folded: !show_search },
 			{ subsection: projects_row, rides: [projects_action, projects_clearer, projects_none_action], folded: !show_projects, empty: projects_starved },
@@ -483,23 +493,31 @@
 		gap            : 0;
 	}
 
-	/* The search row reaches over the half-gaps the stack leaves around it, so its hover area
-	   sits on what it shows, and holds one gap under the field — a box with an edge of its own
-	   needs room a row of plain words does not. */
+	/* The reach: a row answers the cursor across the whole slot the stack gives it, so it reaches
+	   out over the half-gaps above and below and to the box's own edges, and holds all of that
+	   back as its own step-in. What shows sits exactly where it did. Any breathing gap a row wants
+	   is said as one number — --pad for both sides, or --pad-top / --pad-bottom — and folded in
+	   here; no row writes a margin or names --over or --under itself. */
+	.reaches {
+		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
+		padding : calc(var(--over) + var(--pad-top, var(--pad, 0px)))
+		          var(--gap)
+		          calc(var(--under) + var(--pad-bottom, var(--pad, 0px)));
+	}
+
+	/* The search field is a box with an edge of its own, so it holds a small gap above and, below,
+	   the stack's own half-gap once more — the one row whose bottom number is not a rung; swap it
+	   for one with a look at the screen. */
 	.search-rows {
-		margin  : calc(var(--over, 0px) * -1) 0 0;
-		padding : calc(var(--over, 0px) + var(--gap-small)) 0 var(--under, 0px);
+		--pad-top    : var(--gap-small);
+		--pad-bottom : var(--under);
 	}
 
 	/* The toggle at the far left, the search field taking whatever is left. Not a section, so it
 	   holds its own gap below — the gap the line under it would otherwise stand clear of. */
-	/* The bare space beside the tag pills answers its own press. It reaches out to the box's own
-	   edges and up and down over half of each gap around it — the part of those gaps that belongs
-	   to this section — and holds all of that back as its own step-in, so the pills stand exactly
-	   where they did while the whole slot answers. */
+	/* The bare space beside the tag pills answers its own press; a small gap above the pills. */
 	.bare-answers {
-		margin  : calc(var(--over) * -1) calc(var(--gap) * -1) calc(var(--under) * -1);
-		padding : calc(var(--over) + var(--gap-small)) var(--gap) calc(var(--under));
+		--pad-top : var(--gap-small);
 	}
 
 	.bare-answers:global([data-hit]) {
@@ -587,13 +605,19 @@
 		background : var(--hover);
 	}
 
-	/* The word a starved row's line carries in place of its centered control: read, never pressed. */
+	/* The word a starved row's line carries in place of its centered control: read, never pressed.
+	   Drawn as the clickables are — the same edge, the same pill, the same page-colored fill
+	   masking the line — so it sits on the line exactly as they do. */
 	.no-options {
-		font-size   : var(--font-faint);
-		color       : var(--darkgray);
-		padding     : 0 var(--gap);
-		white-space : nowrap;
-		cursor      : default;
+		border        : var(--thick-small) solid var(--black);
+		background    : var(--section-bg, var(--bg));
+		border-radius : var(--radius-pill);
+		font-size     : var(--font-faint);
+		color         : var(--darkgray);
+		padding       : 0 var(--gap);
+		box-sizing    : border-box;
+		white-space   : nowrap;
+		cursor        : default;
 	}
 
 	/* A collection with no files yet: grayed and dead to the touch. */
@@ -621,7 +645,7 @@
 	   that name stands clear of the line overhead. It is a margin, so it sits outside the height
 	   this box is told to hold and never joins the slide. */
 	.tags.named {
-		margin-top : var(--gap);
+		margin-top : var(--gap-small);
 	}
 
 

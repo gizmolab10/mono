@@ -92,9 +92,14 @@ export enum T_Bundle {
  * on the list with no folder of guides). Anything else in memory stays memory's.
  */
 export function project_of(file: File): string {
-	if (file.bundle !== T_Bundle.memory) { return file.bundle; }
-	const first = file.path.split('/')[0];
-	return (Object.values(T_Bundle) as string[]).includes(first) ? first : T_Bundle.memory;
+	return project_at(file.bundle, file.path);
+}
+
+/** The same answer for a file not yet made: the listing asks before it hangs the file anywhere. */
+export function project_at(bundle: T_Bundle, path: string): T_Bundle {
+	if (bundle !== T_Bundle.memory) { return bundle; }
+	const first = path.split('/')[0];
+	return (Object.values(T_Bundle) as string[]).includes(first) ? first as T_Bundle : T_Bundle.memory;
 }
 
 // The labels off a file's top. A folder carries none of them.

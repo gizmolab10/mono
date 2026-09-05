@@ -23,11 +23,13 @@
 		leads      = null,
 		foot       = 'stack',
 		over       = 0,
+		under      = 0,
 		sections,
 	}: {
 		thickness? : number;             // how thick the separator in each gap is drawn
 		gap?       : number;             // how far apart two sections stand, said once for all of them
 		over?      : number;             // how thick the separator is that whatever holds this stack draws above it; nothing, where it draws none
+		under?     : number;             // how thick the separator is that whatever holds this stack draws below it, its top on the stack's bottom edge; nothing, where none is drawn there
 		foot?      : T_Foot;             // who draws the separator at the stack's foot
 		sections   : Stacked[];          // the sections, in the order they stand
 		leads?     : Action[] | null;    // a separator above the first section, where whatever holds this stack draws no boundary of its own
@@ -69,16 +71,16 @@
 	// Folding or opening moves everything below, and every rectangle the hits manager holds was
 	// measured where its control stood then. They are all asked again once the browser has drawn.
 	$effect(() => {
-		sections.map((one) => one.folded);
+		sections.map((one) => [one.folded, one.empty]);
 		hits.defer_recalibrate();
 	});
 
 	// What this stack settled on, every time a fold moves: how many sections, which of them are
 	// folded, how far apart the pairs stand, and whether it closes itself at the foot.
 	$effect(() => {
-		const folds = sections.map((one, at) => `${at}${one.folded ? ' folded' : ' open'}`).join(', ');
-		const bands = sections.map((one, at) => one.folded
-			? `${at} folded ${height_of(at).toFixed(2)} tall, its separator at ${line_at(at).toFixed(2)} and the next ${FOLDED.toFixed(2)} below it`
+		const folds = sections.map((one, at) => `${at}${one.folded ? ' folded' : one.empty ? ' empty' : ' open'}`).join(', ');
+		const bands = sections.map((one, at) => shut(one)
+			? `${at} ${one.folded ? 'folded' : 'empty'} ${height_of(at).toFixed(2)} tall, its separator at ${line_at(at).toFixed(2)} and the next ${FOLDED.toFixed(2)} below it`
 			: `${at} open`).join('; ');
 		debug.log(`Stack of ${sections.length}: ${folds}. Gap ${gap.toFixed(2)}, spacings [${sections.map((_, at) => spacing(at).toFixed(2)).join(', ')}], leading line ${leads ? `${lead_at.toFixed(2)} down under a ${over.toFixed(2)}-thick one` : 'none'}, closing separator ${add_end_separator ? 'drawn by the stack' : (foot === 'below' ? 'drawn below it' : 'not drawn')}. Folds: ${bands}.`);
 	});
@@ -145,7 +147,12 @@
 	function height_of(at: number): number {
 		const next = next_shown(at);
 		if (next === null && !line_at_foot) { return 0; }
-		return FOLDED - spacing(at) / 2 - (next === null ? 0 : spacing(next) / 2);
+		// A line drawn below the stack by whatever holds it grows downward from the stack's bottom
+		// edge. Where it is thicker than the stack's own lines, the last shut section gives back the
+		// extra, so that line's bottom edge sits where a usual line's would and the section reads
+		// the same height whatever closes it.
+		const extra = next === null && foot === 'below' ? Math.max(0, under - thickness) : 0;
+		return FOLDED - spacing(at) / 2 - (next === null ? 0 : spacing(next) / 2) - extra;
 	}
 </script>
 

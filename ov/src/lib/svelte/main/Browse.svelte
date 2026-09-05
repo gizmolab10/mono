@@ -4,7 +4,7 @@
 	import { report_line_spacing } from '../../ts/common/Core';
 	import { words_that_fit } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/common/Core';
-	import { T_Edge } from '../../ts/common/Core';
+	import { T_Edge, thickness_of } from '../../ts/common/Core';
 	import Browse_Filters from '../filter/Browse_Filters.svelte';
 	import { files } from '../../ts/managers/Files';
 	import { T_Hit_Target } from '../../ts/common/Core';
@@ -87,12 +87,19 @@
 		debug.log(`Folders are now ${next ? 'shown' : 'hidden'} in the list.`);
 	}
 
+
+	// The count section's edge: nothing while the filters are away, thin while the tags are folded,
+	// heavy while they are open. Said once here, and its thickness handed to the filters, so a shut
+	// tags row can give back the extra a heavy line takes below the stack.
+	const count_edge = $derived(!$w_show_filters ? T_Edge.view
+		: $w_filters_folded.includes('tags') ? T_Edge.thin
+		: T_Edge.thick);
 </script>
 
 <!-- The three parts stack flush against each other: each already holds its own gap above and
      below what it shows, so a gap here would be a second helping of the same thing. -->
 <div class='browse'>
-<Browse_Filters />
+<Browse_Filters under={thickness_of(count_edge)} />
 <!-- How many the filters leave, as a section of its own. The heavy line above it is what closes
      the picking rows off from the list, and it is drawn whenever those rows are on screen at all —
      whatever is folded among them. The stack above is told so, and leaves its last fold this line
@@ -100,7 +107,9 @@
      there is nothing to close, so this section stands at an edge of the view and draws no line.
 
      Thin where the tags are folded: what it closes off is then a run of accent rather than a row
-     of pills, and the heavy line reads as a second boundary on top of one already drawn. -->
+     of pills, and the heavy line reads as a second boundary on top of one already drawn. Starved
+     but open, the tags keep the heavy line, and the stack is told its thickness so the shut row
+     gives back the extra: the line's bottom edge sits where the thin one's does when folded. -->
 <!-- The count and the rows under it are one area to the cursor — the third kind of target, standing
      behind everything drawn in them. Anything inside that answers for itself wins the cursor
      first: the count row's own section, the folders button, a row's triangle. -->
@@ -108,9 +117,7 @@
 <Section
 	id='browse.count'
 	gap={k.gap.normal}
-	edge={!$w_show_filters ? T_Edge.view
-		: $w_filters_folded.includes('tags') ? T_Edge.thin
-		: T_Edge.thick}>
+	edge={count_edge}>
 	{#snippet contents()}
 		<div class='count-row' bind:this={count_row}>
 			<!-- With nothing left after the filters there are no folders to show or hide, so the

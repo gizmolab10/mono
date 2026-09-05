@@ -33,8 +33,9 @@ export function children_of(box: HTMLElement): Array<{ top: number; height: numb
 }
 
 /**
- * Watch a box and keep its stated height equal to the height it would find on its own. The
- * sliding itself is the styling's — this only supplies a number for it to slide between.
+ * Watch an html box element and keep its stated height equal to the height it would find
+ * on its own. The sliding itself is the styling's — this only supplies a number for it to
+ * slide between.
  */
 export function smooth_height(box: HTMLElement) {
 	let stated = -1;

@@ -15,12 +15,12 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
-- [ ] no truth folder
+- [ ] move the clear clickable next to search clickable
+- [x] [[memory/ov/zone/drive]]
 - [ ] RETURN -> another checkbox line
 - [ ] TAB -> indents (command-TAB outdents)
 - [ ] too many ideas in ov
 - [ ] too many tags for the same thing (progress, lifecycle, active, fate)
-- [ ] move the clear clickable next to search clickable
 - [ ] add 'reveal in finder' to the CONTROL-click popup menu
 - [ ] move all mono projects -> mono/projects, a new folder sibling to memory
     - [ ] create a new folder in projects 'shared'
