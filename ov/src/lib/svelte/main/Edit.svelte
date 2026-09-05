@@ -1,21 +1,21 @@
 <script lang='ts'>
-	import { report_gaps_below_lines, report_line_spacing } from '../../ts/common/Core';
 	import { w_file_back, w_file_forward, w_file_site, w_search_at, w_search_for, open_view } from '../../ts/managers/Operations';
+	import { report_gaps_below_lines, report_line_spacing } from '../../ts/common/Core';
 	import { obsidian_link, file_path_of, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of, type File } from '../../ts/types/File';
-	import Markdown_Editor from '../content/Markdown_Editor.svelte';
-	import Editor_Filters from '../filter/Editor_Filters.svelte';
-	import { T_Hit_Target } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/common/Core';
-	import { WAY_OUT } from '../../ts/common/Core';
+	import Edit_Markdown from '../content/Edit_Markdown.svelte';
 	import { w_search_text } from '../../ts/managers/Filters';
+	import Edit_Filters from '../filter/Edit_Filters.svelte';
+	import { T_Hit_Target } from '../../ts/common/Core';
+	import { hit_target } from '../../ts/common/Core';
+	import { svg_paths } from '../../ts/common/Core';
 	import { Steppers } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
+	import { WAY_OUT } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
-	import { k } from '../../ts/common/Core';
 	import Search from '../filter/Search.svelte';
 	import { hits } from '../../ts/common/Core';
+	import { k } from '../../ts/common/Core';
 	import { get } from 'svelte/store';
 
 	// Show one file. This is the frame: the top row that says which file it is and what can be
@@ -290,9 +290,9 @@
 {/snippet}
 
 <div class='viewer'>
-	<Editor_Filters {name} {guide} {tags} {page} {onclose} onshow={say} controls={controls_rows}
+	<Edit_Filters {name} {guide} {tags} {page} {onclose} onshow={say} controls={controls_rows}
 		bind:find bind:text={text_of_file} bind:folded={filters_folded} />
-	<Markdown_Editor {name} {address} {guide} onshow={say}
+	<Edit_Markdown {name} {address} {guide} onshow={say}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds.

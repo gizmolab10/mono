@@ -11,7 +11,9 @@ date: 2026-09-01
 
 ## 5 September 2026
 
-- D: the editor's kinds line carries a clear clickable at its middle while the guide wears a kind, and none while it wears none — the same as browse's kinds clearer; decided, not built
+- D: the drive's stage 4 is built — both tags runs always hold a small gap above themselves, and the riding-name measurement is gone from both filter files, the editor's tags measurement log with it; Tag_Rows and its test have no caller left, reported, not removed; svelte-check and both test suites clean, both screens await the check
+- D: the editor's kinds row sits one tiny gap lower, the row no taller — `.label-rows.kinds` in Editor_Filters, a tiny gap each side; the search row's top gap is faint, where it was tiny less faint — both rungs, no arithmetic
+- D: the editor's kinds line carries a clear clickable at its middle while the guide wears a kind, and none while it wears none — the same as browse's kinds clearer; built in Editor_Filters; controls.md line 25 says it
 - D: the stack will own each slot's reach and hit target, rows keep plain padding in rungs, and the tags run always holds the name's headroom — the drive's last section says the plan and its order, decided, not built
 - D: the "no options" label on a starved row's line is drawn as the clickables are — the same thick-small black edge, the pill radius and the page-colored fill that masks the line; Browse_Filters `.no-options`; controls.md line 15 says it; the ideas box is cleared
 - D: the line below browse's tags stays heavy while they are open, starved included, and the shut row gives back the extra thickness: the stack takes `under`, the thickness of the line drawn below it, and a shut last section subtracts what exceeds its own lines, so the heavy line's bottom edge sits as far from the tags line as the thin one's does folded; Browse says the count edge once and hands its thickness to Browse_Filters; the earlier thin-line-when-starved fix is undone; controls.md line 25 says it

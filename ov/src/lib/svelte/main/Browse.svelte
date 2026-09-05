@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_projects, w_tags } from '../../ts/managers/Filters';
-	import Files_List, { w_scrollbar_showing } from '../content/Files_List.svelte';
+	import List_Files, { w_scrollbar_showing } from '../content/List_Files.svelte';
 	import { report_line_spacing } from '../../ts/common/Core';
 	import { words_that_fit } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/common/Core';
@@ -162,7 +162,7 @@
 		</div>
 	{/snippet}
 </Section>
-<Files_List />
+<List_Files />
 </div>
 </div>
 

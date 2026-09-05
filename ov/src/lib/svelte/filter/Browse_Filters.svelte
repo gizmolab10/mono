@@ -6,9 +6,7 @@
 	import { Action, T_Position } from '../../ts/common/Core';
 	import { TAG_AREAS, area_reads, tags_shown } from '../../ts/types/Tag_Areas';
 	import { fade } from 'svelte/transition';
-	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
 	import { hit_target } from '../../ts/common/Core';
-	import { hits } from '../../ts/common/Core';
 	import { smooth_height } from '../../ts/common/Core';
 	import { Section } from '../../ts/common/Core';
 	import { Stack } from '../../ts/common/Core';
@@ -162,33 +160,6 @@
 	// looks starved but is not counted so can be read in the log rather than guessed at.
 	$effect(() => {
 		debug.log(`Filters: starved — projects ${projects_starved}, kinds ${kinds_starved}, tags ${tags_starved}; search "${$w_search_text}", ${shown_projects.length} project(s) shown, ${kinds_offered} kind(s) offered, ${showing_areas.length} area(s) showing, ${$w_tags.length} tag(s) picked.`);
-	});
-
-	// Does a name ride above a pill in the topmost row of tags? Only then does the row hold a gap
-	// above itself, so that name stands clear of the line overhead.
-	let tags_row = $state<HTMLElement | null>(null);
-	let names_riding = $state(false);
-
-
-	function look_for_names() {
-		names_riding = tags_row === null ? false : names_ride_in(placements_of(tags_row));
-		// The run just changed structure, so every tag in it stands somewhere new. Asked at the next
-		// drawing, since a run re-wrapping says this many times over.
-		hits.recalibrate_when_drawn();
-	}
-
-	// Measured again whenever the pills change, and again whenever the run changes shape — it
-	// wraps differently at a different width, and a pill opening slides its neighbors onto
-	// another line partway through.
-	$effect(() => {
-		showing_areas; $w_areas_open; $w_tags; tags_in_use;
-		look_for_names();
-		const row = tags_row;
-		if (!row) { return; }
-		const watcher = new ResizeObserver(look_for_names);
-		watcher.observe(row);
-		for (const pill of [...row.children]) { watcher.observe(pill); }
-		return () => watcher.disconnect();
 	});
 
 	// What the clickable on the bar says: just the name while the row is there, the name and what
@@ -384,7 +355,7 @@
 {#snippet tags_picker()}
 	{#if !tags_starved}
 	<div class='bare-answers'>
-		<div class='tags' class:named={names_riding} bind:this={tags_row} use:smooth_height>
+		<div class='tags' use:smooth_height>
 			{#each showing_areas as area (area.name)}
 				<span class='pill-slot' transition:fade={{ duration: FADE }}>
 					<Big_Pill row='list' name={area.name} items={area.tags} shown={tags_shown(area, tags_in_use, $w_tags)}
@@ -626,15 +597,11 @@
 	   each would make the other larger, over and over. */
 	/* Nothing is clipped here: each pill's own name rides above its top edge, so a box that cut
 	   off what falls outside it would take the names with it. */
-	/* With a name riding above a pill in the topmost row, the run holds one gap above itself so
-	   that name stands clear of the line overhead. It is a margin, so it sits outside the height
-	   this box is told to hold and never joins the slide. */
-	.tags.named {
-		margin-top : var(--gap-small);
-	}
-
-
+	/* The run always holds a small gap above itself, so a name riding above a pill in the topmost
+	   row sits clear of the line overhead. It is a margin, so it sits outside the height this box
+	   is told to hold and never joins the slide. */
 	.tags {
+		margin-top      : var(--gap-small);
 		transition      : height var(--slide-rows) linear;
 		gap             : var(--gap);
 		align-content   : flex-start;

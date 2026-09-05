@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { w_operation, w_viewed, w_can_back, w_can_forward, T_Operation, step_view, close_view } from '../../ts/managers/Operations';
-	import Editor from './Editor.svelte';
 	import Report from '../content/Report.svelte';
 	import { debug } from '../../ts/common/Core';
 	import Browse from './Browse.svelte';
+	import Edit from './Edit.svelte';
 
 	// The content box. It holds whichever of the two things is happening: looking through
 	// the guides, or reading one.
@@ -23,7 +23,7 @@
 	{#if $w_operation === T_Operation.report}
 		<Report />
 	{:else if $w_operation === T_Operation.edit && $w_viewed}
-		<Editor
+		<Edit
 			name={$w_viewed.file.name}
 			address={$w_viewed.file.address}
 			tags={$w_viewed.tag_names}

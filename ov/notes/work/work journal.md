@@ -121,7 +121,7 @@ A stack owns the gaps between its sections and draws a line centred in each one.
 
 ## 2026-08-16 — three filters found a folder of their own
 
-Browse's filters, the editor's label form and the search moved into `src/lib/svelte/filter/`, and the list component became `Files_List.svelte` — the manager beside it is `files` now, so the two stopped sharing a name.
+Browse's filters, the editor's label form and the search moved into `src/lib/svelte/filter/`, and the list component became `List_Files.svelte` — the manager beside it is `files` now, so the two stopped sharing a name.
 
 **The row numbers had vanished from the reader.** One page variable was never pushed — `--size-pointer` — and a `calc()` naming an undefined variable makes the browser drop the whole declaration. The page's left step-in fell back to nothing and every number was pushed off the edge.
 

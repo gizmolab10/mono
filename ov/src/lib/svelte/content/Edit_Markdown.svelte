@@ -1320,7 +1320,6 @@
 		background : transparent;
 	}
 
-
 	/* With the option key held, the words can be dragged over and picked up. The whole app
 	   otherwise refuses that, so it is turned back on here and on everything inside. */
 	.view-page.selecting,

@@ -2,7 +2,6 @@
 	import { foot_is_all_folds, inverted, toggle_all_areas, toggle_area, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
 	import { with_labels_replaced, title_from_name } from '../../ts/utilities/Labels';
 	import { ALL_TAGS, T_Kind, in_order, key_of, type File } from '../../ts/types/File';
-	import { names_ride_in, placements_of } from '../../ts/utilities/Tag_Rows';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
 	import { smooth_height } from '../../ts/common/Core';
@@ -161,71 +160,34 @@
 	// button below, out of sight; the browser makes it one drawing after we ask, so each of these
 	// holds nothing on the first drawing and the made button on the next — which is itself a
 	// change, so the line it stands on is told at once.
-	let filters_button = $state<HTMLElement | null>(null);
-	let controls_button = $state<HTMLElement | null>(null);
-	let search_button  = $state<HTMLElement | null>(null);
-	let search_clear   = $state<HTMLElement | null>(null);
 	let backlinks_button = $state<HTMLElement | null>(null);
-	let info_button    = $state<HTMLElement | null>(null);
-	let kinds_button   = $state<HTMLElement | null>(null);
-	let tags_button    = $state<HTMLElement | null>(null);
+	let controls_button  = $state<HTMLElement | null>(null);
+	let filters_button   = $state<HTMLElement | null>(null);
+	let search_button    = $state<HTMLElement | null>(null);
+	let search_clear     = $state<HTMLElement | null>(null);
+	let kinds_button     = $state<HTMLElement | null>(null);
+	let kinds_clear      = $state<HTMLElement | null>(null);
+	let info_button      = $state<HTMLElement | null>(null);
+	let tags_button      = $state<HTMLElement | null>(null);
 
 	// The two presses that change which tags the guide wears. They stand on the tags line at the
 	// middle, beside the word that folds the areas rather than inside what that word folds away.
 	let picking_control = $state<HTMLElement | null>(null);
-
-	const picking_action = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
-	const filters_action = $derived(Object.assign(new Action(), { element: filters_button, position: T_Position.left }));
 	// The two title tools stand on the same line, right of the word that folds the form —
 	// and only while the form shows: folded, they would act on a hidden field.
 	let title_tools = $state<HTMLElement | null>(null);
-	const title_tools_action = $derived(Object.assign(new Action(),
-		{ element: $w_show_filters ? title_tools : null, position: T_Position.center, transparent: true }));
-	const controls_action = $derived(Object.assign(new Action(), { element: controls_button, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
-	const backlinks_action = $derived(Object.assign(new Action(), { element: backlinks_count > 0 ? backlinks_button : null, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
-	const search_clearer = $derived(Object.assign(new Action(), { element: search_clear, position: T_Position.center }));
-	const search_action  = $derived(Object.assign(new Action(), { element: search_button,  position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
-	const info_action    = $derived(Object.assign(new Action(), { element: info_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
-	const kinds_action   = $derived(Object.assign(new Action(), { element: kinds_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
-	const tags_action    = $derived(Object.assign(new Action(), { element: tags_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 
-	// Does a name ride above a pill in the topmost row of tags? Only then does the row hold a gap
-	// above itself, so that name stands clear of the line overhead.
-	let tags_row = $state<HTMLElement | null>(null);
-	let names_riding = $state(false);
-
-
-	function look_for_names() {
-		names_riding = tags_row === null ? false : names_ride_in(placements_of(tags_row));
-		// Every number that decides how tall the tags section is drawn, so a section that looks too
-		// tall can be read in the log rather than guessed at: the height the run states, the height
-		// it is drawn at, the lowest child's bottom, and the two boxes around it.
-		if (tags_row !== null) {
-			const row = tags_row.getBoundingClientRect();
-			const bottoms = [...tags_row.children].map((one) => one.getBoundingClientRect().bottom - row.top);
-			const lowest = bottoms.length === 0 ? 0 : Math.max(...bottoms);
-			const reach = tags_row.parentElement?.getBoundingClientRect().height ?? 0;
-			const slot = tags_row.parentElement?.parentElement?.getBoundingClientRect().height ?? 0;
-			debug.log(`Editor tags: run stated ${tags_row.style.height || 'nothing'}, drawn ${row.height.toFixed(2)}, lowest child ${lowest.toFixed(2)}; reach ${reach.toFixed(2)}, slot ${slot.toFixed(2)}; ${$w_areas_open.length} area(s) open, name riding ${names_riding}.`);
-		}
-		// The structure of the run just changed, so every tag in it sits somewhere new. Asked at the next
-		// drawing, since a run re-wrapping says this many times over.
-		hits.recalibrate_when_drawn();
-	}
-
-	// Measured again whenever the picks change, and again whenever the run changes shape — it
-	// wraps differently at a different width, and a pill opening slides its neighbors onto
-	// another line partway through.
-	$effect(() => {
-		form_tags; $w_areas_open; show_form_tags;
-		look_for_names();
-		const row = tags_row;
-		if (!row) { return; }
-		const watcher = new ResizeObserver(look_for_names);
-		watcher.observe(row);
-		for (const pill of [...row.children]) { watcher.observe(pill); }
-		return () => watcher.disconnect();
-	});
+	const picking_action     = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
+	const search_clearer     = $derived(Object.assign(new Action(), { element: search_clear,    position: T_Position.center }));
+	const kinds_clearer      = $derived(Object.assign(new Action(), { element: kinds_clear,     position: T_Position.center }));
+	const filters_action     = $derived(Object.assign(new Action(), { element: filters_button,  position: T_Position.left }));
+	const controls_action    = $derived(Object.assign(new Action(), { element: controls_button, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
+	const search_action      = $derived(Object.assign(new Action(), { element: search_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
+	const info_action        = $derived(Object.assign(new Action(), { element: info_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
+	const kinds_action       = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
+	const tags_action        = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
+	const title_tools_action = $derived(Object.assign(new Action(), { element: $w_show_filters ? title_tools : null, position: T_Position.center, transparent: true }));
+	const backlinks_action   = $derived(Object.assign(new Action(), { element: backlinks_count > 0 ? backlinks_button : null, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 
 	/** Put the whole form away, or bring it back. */
 	function toggle_filters() {
@@ -253,8 +215,8 @@
 
 	// Whenever another guide comes on screen, the form starts from what that guide says.
 	$effect(() => {
-		form_description = guide.description;
 		form_use_when    = (guide.use_when ?? []).join('\n');
+		form_description = guide.description;
 		form_title       = guide.title;
 		form_kind        = guide.kind;
 		form_date        = guide.date;
@@ -407,17 +369,23 @@
 		use:hit_target={{ id: 'editor.fold.info', onpress: toggle_info }}>{form_info_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={kinds_button}
 		use:hit_target={{ id: 'editor.fold.kinds', onpress: toggle_kinds }}>{form_kinds_word}</button>
+	<!-- Drawn only while the guide wears a kind: with none, there is nothing to take off. -->
+	{#if form_kind !== ''}
+		<button class='clear' bind:this={kinds_clear}
+			use:hit_target={{ id: 'editor.clear.kinds', onpress: () => { form_kind = ''; save_filters(); },
+				tip: 'take the kind off this guide' }}>clear</button>
+	{/if}
 	<button type='button' class='clickable' class:forced={tags_lit || way_out_lit} bind:this={tags_button}
 		use:hit_target={{ id: 'editor.fold.tags', onpress: toggle_tags }}>{form_tags_word}</button>
 	<span class='title-tools' bind:this={title_tools}>
-		<button class='title-button'
-			use:hit_target={{ id: 'editor.title.to-h1', onpress: () => H1_copy(true), tip: "copy exactly this title onto the file's top heading" }}>⮕ H1</button>
 		<button class='title-button'
 			use:hit_target={{ id: 'editor.title.from-h1', onpress: () => H1_copy(false), tip: "copy exactly this title from the file's top heading" }}>H1 ⮕</button>
 		<button class='title-button'
 			use:hit_target={{ id: 'editor.title.to-name', onpress: () => filename_copy(true), tip: "copy the title onto the file's own name, capitalized" }}>⮕ filename</button>
 		<button class='title-button'
 			use:hit_target={{ id: 'editor.title.from-name', onpress: () => filename_copy(false), tip: "copy the title from the file's own name, capitalized" }}>filename ⮕</button>
+		<button class='title-button'
+			use:hit_target={{ id: 'editor.title.to-h1', onpress: () => H1_copy(true), tip: "copy exactly this title onto the file's top heading" }}>⮕ H1</button>
 	</span>
 	<!-- Two presses. Neither is a state — a guide wears the tags it wears — so neither ever reads
 	     as picked; they answer under the cursor only. -->
@@ -516,8 +484,7 @@
 		onmouseenter={() => { tags_lit = true; }}
 		onmouseleave={() => { tags_lit = false; }}
 		onkeyup={() => {}}>
-		<div class='filter-row wrapping tags-row' class:named={names_riding}
-			bind:this={tags_row} use:smooth_height>
+		<div class='filter-row wrapping tags-row' use:smooth_height>
 			{#each TAG_AREAS as area (area.name)}
 				<span class='pill-slot'>
 					<Big_Pill row='editor' name={area.name} items={area.tags} shown={tags_shown(area, ALL_TAGS, form_tags)}
@@ -562,7 +529,7 @@
 				// never leaves the list, so the sections below it keep their own separators.
 				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0, answers: way_out('backlinks'), highlighted: way_out_lit },
 				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info, answers: way_out('labels'), highlighted: way_out_lit },
-				{ subsection: kinds_picker, rides: [kinds_action], folded: !show_form_kinds, answers: way_out('kinds'), highlighted: way_out_lit },
+				{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_form_kinds, answers: way_out('kinds'), highlighted: way_out_lit },
 				// A press on the bare space among the tagsets shuts them all. The slot answers, not the row.
 				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags,
 					answers: { id: 'editor.tags', type: T_Hit_Target.section,
@@ -649,18 +616,18 @@
 		gap            : 0;
 	}
 
-	/* The search field sits a faint gap above the middle of its slot: a tiny gap less a faint one
-	   above, a tiny gap plus a faint one below. Together they are the one gap every label row
-	   holds below, so the section is no taller. */
+	/* The search field sits a faint gap above the middle of its slot: a faint gap above, a tiny gap
+	   plus a faint one below. Together they are the one gap every label row holds below, so the
+	   section is no taller. */
 	.label-rows.search-rows {
-		padding-top    : calc(var(--gap-tiny) - var(--gap-faint));
+		padding-top    : var(--gap-faint);
 		padding-bottom : calc(var(--gap-tiny) + var(--gap-faint));
 	}
 
-	/* The kinds sit a tiny gap lower than the other label rows, the row no taller. */
+	/* The kinds sit a tiny gap lower than the other label rows, a tiny gap each side, the row no taller. */
 	.label-rows.kinds {
 		padding-top    : var(--gap-tiny);
-		padding-bottom : calc(var(--gap) - var(--gap-tiny));
+		padding-bottom : var(--gap-tiny);
 	}
 
 	/* The information rows hold a small gap below, less than the other label rows. */
@@ -743,17 +710,14 @@
 		line-height : var(--height);
 	}
 
-	/* With a name riding above a pill in the topmost row, the run holds a small gap above itself so
-	   that name sits clear of the line overhead. It is a margin, so it sits outside the height
-	   this box is told to hold and never joins the slide. */
-	.tags-row.named {
-		margin-top : var(--gap-small);
-	}
-
-	/* Between one row of tags and the next, where they wrap. A between-row gap only exists once
-	   there is more than one row, so no counting is needed — one row shows none of it. */
+	/* The run always holds a small gap above itself, so a name riding above a pill in the topmost
+	   row sits clear of the line overhead. It is a margin, so it sits outside the height this box
+	   is told to hold and never joins the slide. Between one row of tags and the next, where they
+	   wrap, another small gap: a between-row gap only exists once there is more than one row, so no
+	   counting is needed — one row shows none of it. */
 	.filter-row.wrapping.tags-row {
-		row-gap : var(--gap-small);
+		margin-top : var(--gap-small);
+		row-gap    : var(--gap-small);
 	}
 
 

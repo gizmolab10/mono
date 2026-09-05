@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_operation, T_Operation, close_view } from '../../ts/managers/Operations';
-	import { Hamburger } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/common/Core';
+	import { Hamburger } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/common/Core';
 	import { Direction } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';

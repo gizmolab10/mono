@@ -16,8 +16,8 @@ sooner or later every project creates a knowledge base and a work manager. this 
 ## next
 
 - [ ] edit
-    - [ ] rename editor -> edit (browse is a verb)
-    - [ ] move the steppers and file title -> the top row
+    - [x] rename editor -> edit (browse is a verb)
+    - [ ] move the steppers and file title -> the Controls.svelte
 - [ ] speed up launch by reading files a few at a time
     - [ ] start with the file the editor is presenting
     - [ ] then just enough to render the visible part of browse's file list

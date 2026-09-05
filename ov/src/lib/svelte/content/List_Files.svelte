@@ -15,20 +15,20 @@
 	import { w_shut, w_show_folders, w_projects, w_kind, w_tags, ordered_tags, w_sorts, T_Sort } from '../../ts/managers/Filters';
 	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { free_thumb, type Free_Thumb } from '../../ts/common/Core';
-	import { T_Hit_Target } from '../../ts/common/Core';
 	import { project_of, type Filtered_File } from '../../ts/types/File';
-	import { in_thousands } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/common/Core';
+	import { free_thumb, type Free_Thumb } from '../../ts/common/Core';
 	import { show_status } from '../../ts/managers/Status';
+	import { T_Hit_Target } from '../../ts/common/Core';
+	import { in_thousands } from '../../ts/common/Core';
+	import { hit_target } from '../../ts/common/Core';
+	import { svg_paths } from '../../ts/common/Core';
 	import { Separator } from '../../ts/common/Core';
-	import { Point } from '../../ts/common/Core';
 	import { Direction } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
+	import { Point } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
-	import { k } from '../../ts/common/Core';
 	import { hits } from '../../ts/common/Core';
+	import { k } from '../../ts/common/Core';
 	import { get } from 'svelte/store';
 
 	// The file list: every folder and file, folders leading their contents, each row

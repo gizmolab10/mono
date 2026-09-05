@@ -250,7 +250,7 @@ Scope: all of `ov/` (85 files). ov has its own `notes/guides/pre-flight/banned w
 
 - **`shape` → `structure`** (data/file-format/folder-layout sense, not geometry) — 14 instances: `ov - goals.md`, `AI memory redesign.md` ×3, `AI on my mac.md`, `hits manager.md`, `assessment of our guides.md`, `work journal.md`, `vitest.config.ts`, `Browse_Filters.svelte`, `Editor_Filters.svelte`, `labels.test.ts` ×2, `Labels.ts`.
 - **`cross-project` → `main`** — `AI memory redesign.md` ×2 (a diagram comment: "cross-project bundle" and "cross-project terms").
-- **`ship`/`shipped` → `is bundled with`/`was done`** — `Markdown_Editor.svelte` comment ("the six heading colors Obsidian ships with" — bundled, not completed-work sense), `md audit.md` ("even that shipped" → "even that was done").
+- **`ship`/`shipped` → `is bundled with`/`was done`** — `Edit_Markdown.svelte` comment ("the six heading colors Obsidian ships with" — bundled, not completed-work sense), `md audit.md` ("even that shipped" → "even that was done").
 
 ### Judgment rewrites (class 3)
 

@@ -56,9 +56,9 @@ these do not need conversison
 
 | file | line |
 | --- | --- |
-| [Markdown_Editor.svelte](../../../src/lib/svelte/content/Markdown_Editor.svelte#L784) | 784 |
-| [Markdown_Editor.svelte](../../../src/lib/svelte/content/Markdown_Editor.svelte#L804) | 804 |
-| [Files_List.svelte](../../../src/lib/svelte/content/Files_List.svelte#L411) | 411 |
+| [Edit_Markdown.svelte](../../../src/lib/svelte/content/Edit_Markdown.svelte#L784) | 784 |
+| [Edit_Markdown.svelte](../../../src/lib/svelte/content/Edit_Markdown.svelte#L804) | 804 |
+| [List_Files.svelte](../../../src/lib/svelte/content/List_Files.svelte#L411) | 411 |
 
 ## done
 
