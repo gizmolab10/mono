@@ -163,8 +163,8 @@ export default class DB_Filesystem extends DB_Common {
 		if (depth >= 5) return;
 		
 		let order = 0;
-		
-		for await (const handle of dirHandle.values()) {
+
+		for await (const handle of this.entries_of(dirHandle, parentPath)) {
 			const path = parentPath ? `${parentPath}/${handle.name}` : handle.name;
 			const id = this.generateId(handle.name, path);
 			const isDirectory = handle.kind === 'directory';
@@ -229,10 +229,29 @@ export default class DB_Filesystem extends DB_Common {
 		}
 	}
 	
+	// A folder can vanish between the handle being saved and this walk: moved, renamed, deleted,
+	// or a broken symlink. The browser then throws NotFoundError on the next read. Unguarded, that
+	// error climbed to the load's timer and left the app with things remembered but no root
+	// ancestry, no focus, and a blank graph. Caught here: the path is logged, the rest of this
+	// folder is skipped, and the walk goes on.
+	private async *entries_of(dirHandle: File_System_Directory_Handle, parentPath: string): AsyncGenerator<File_System_Handle> {
+		try {
+			for await (const handle of dirHandle.values()) {
+				yield handle;
+			}
+		} catch (error) {
+			const e = error as Error;
+			console.warn(`Skipped the rest of "${parentPath || dirHandle.name}" while scanning: ${e.name} — ${e.message}`);
+		}
+	}
+
 	private generateId(name: string, path: string): string {
-		// Create a stable ID from the path
+		// A stable id from the whole path. It was once cut to 50 characters, so every deep entry
+		// sharing a prefix took one id: relationships outnumbered things, and a child could take
+		// an ancestor's id and close a cycle. The hash of the raw path closes the one collision
+		// left, two paths that differ only in punctuation.
 		const combined = path || name;
-		return combined.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 50);
+		return `${combined.replace(/[^a-zA-Z0-9]/g, '_')}_${combined.hash()}`;
 	}
 	
 	private colorForFile(filename: string): string {

@@ -16,6 +16,8 @@ sooner or later every project creates a knowledge base and a work manager. this 
 ## next
 
 - [ ] no truth folder
+- [ ] RETURN -> another checkbox line
+- [ ] TAB -> indents (command-TAB outdents)
 - [ ] too many ideas in ov
 - [ ] too many tags for the same thing (progress, lifecycle, active, fate)
 - [ ] move the clear clickable next to search clickable

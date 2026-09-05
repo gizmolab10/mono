@@ -2,7 +2,7 @@
 kind: analyze
 title: "Drive"
 description: "The one proposal being decided and implemented; it dissolves into truth when done."
-tags: [now, driving]
+tags: [now, weighed]
 date: 2026-09-03
 ---
 # Drive

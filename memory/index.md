@@ -15,7 +15,7 @@ Before any work: read [shared/truth/handbook.md](shared/truth/handbook.md) — t
 - [lv](lv/index.md) — Tommy's Vineyard Space: the vineyard in descriptions and photos.
 - [gallery](gallery/index.md) — drag and drop: lv's whole code copied and renamed, waiting to be taken apart.
 - [mj](mj/index.md) — brought up with boilerplate only; what it is for is not written yet.
-- [ws](ws/index.md) — webseriously: graph visualization. Memory folder up; nothing moved in yet.
+- [ws](ws/index.md) — webseriously: graph visualization. First truth: the filesystem database.
 
 *(Remaining projects — di, musicology — join here once ov's rhythm holds.)*
 
