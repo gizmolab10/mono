@@ -5,7 +5,7 @@ description: ov (Overview) — a browser and editor for every markdown file in t
 
 A browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place. Ported from ji. Built with Svelte.
 
-**Current state:** both views share one structure — a filters stack whose heavy line sits on the region's top edge, search first inside it; the editor's stack also holds its controls, back links, information, kinds and tags. Everything ov adopts from core lives in `common/Core.ts`, one line each, through the "core" alias. Browse offers the lifecycle tag area, neither shows nor counts log files, and its projects control lists every project — memory subfolders answer to their own projects, so memory itself owns no files. handoff.md is dissolved; the map lives in `truth/`; the three proposals sit in `zone/proposals.md`.
+**Current state:** both views share one structure — a filters stack whose heavy line sits on the region's top edge, search first inside it; the editor's stack also holds its back links, information, kinds and tags, and while a file is open the row across the top holds the file's controls in a section of its own. The stack's slots hold the half-gaps and answer the cursor; rows hold plain padding in rungs. Everything ov adopts from core lives in `common/Core.ts`, one line each, through the "core" alias. Browse offers the lifecycle tag area, neither shows nor counts log files, and its projects control lists every project — memory subfolders answer to their own projects, so memory itself owns no files. handoff.md is dissolved; the map lives in `truth/`; the proposals sit in `zone/proposals.md`, the newest built and confirmed; the filter rows' gap drive, all four stages built and confirmed, is `zone/simplify gaps.md`, Jonathan's to dissolve.
 
 The adoption is finished and measured: no file in ov is a copy of anything in core, proved by comparing both source folders — zero identical, zero near, zero paired by name. Thirty-two of core's files arrive through `Core.ts`, plus `Extensions` as a bare import there and `main.css` at `main.ts`. Those are the only two doors through the alias, and `core_alias.test.ts` fails if a third opens: code goes through `Core.ts`, the stylesheet through `main.ts`, since where a stylesheet loads decides which rule wins between two that match equally. core now checks and tests itself — its own first check found that `Big_Pill` had never compiled. Three files say where the alias points, not two: `tsconfig.json`, `vite.config.ts` and `vitest.config.ts`, the last read in place of the second. ov is clean at 529 files with 336 tests; core at 466 with 91. How a host does all this is core's now — [adopting core.md](../core/truth/adopting%20core.md).
 
@@ -13,6 +13,7 @@ The adoption is finished and measured: no file in ov is a copy of anything in co
 
 - [ideas.md](zone/ideas.md) — ov ideas, appended freely; every settle triages each one.
 - [proposals.md](zone/proposals.md) — the proposals being weighed; one leaves when it becomes the drive, dissolves into truth, or dies.
+- [simplify gaps.md](zone/simplify%20gaps.md) — the filter rows' gap drive: the slot owns the reach, rows hold plain padding, the tags run always holds its headroom; all four stages built and confirmed.
 
 ## Truths
 

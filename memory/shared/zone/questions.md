@@ -19,7 +19,7 @@ date: 2026-08-29
 - [ ] ov↔core code twins — ov's Debug.ts and Dirty.ts are core's verbatim; two instances run, Dirty's stores can diverge; same changes as with Extensions?
 - [ ] four shorthand rows still point at the old notes — rate, setup, done, claude; re-point into memory or hold until inception reaches them?
 - [ ] verify the 3 September 2026 settle in a new session — the shared and ov logs were cleared; the S: line under each marker names every group's home
-- [ ] the starved-row change: Jonathan tested it, found it bad, and discarded co's unwiring of the stack's `empty` flag along with the day's uncommitted edits — what did the test show, and which sizing rule survives (one gap, or the fold's height)?
+- [x] the starved-row change: Jonathan tested it, found it bad, and discarded co's unwiring of the stack's `empty` flag along with the day's uncommitted edits — what did the test show, and which sizing rule survives (one gap, or the fold's height)? — answered 5 September 2026: the fold's height; a starved unfolded section keeps the separator below it as far from the one above as when folded, for every foldable section, and browse's tags keep the heavy line either way; ov's truth/controls.md says it
 
 ## checked
 

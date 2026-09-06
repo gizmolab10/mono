@@ -19,7 +19,6 @@
 	import { debug } from '../../ts/common/Core';
 	import { hits } from '../../ts/common/Core';
 	import { Stack } from '../../ts/common/Core';
-	import type { Snippet } from 'svelte';
 	import Back_Links from '../content/Back_Links.svelte';
 	import Search from './Search.svelte';
 
@@ -29,10 +28,9 @@
 	// where it matters: the kind and the tags are picked from the only lists the app accepts.
 
 	let {
-		name, guide, tags, text = $bindable(''), page = null, controls,
+		name, guide, tags, text = $bindable(''), page = null,
 		find = $bindable(null), folded = $bindable(false), onclose, onshow,
 	}: {
-		controls    : Snippet;               	// the editor's top block — steppers, name, buttons — placed at the top of this stack
 		guide       : File;                 	// the record of the file being read
 		name        : string;                	// what the file is called
 		page        : HTMLElement | null;    	// the drawn words, handed through to the search row
@@ -73,15 +71,6 @@
 	// Whether the search row inside the form is shown. Read here as well as inside the row, since
 	// the stack has to leave the folded space for it — one remembered value, two readers.
 	const w_show_search = preferences.persistent<boolean>(T_Preference.show_search, true);
-
-	// Whether the editor's controls — the steppers, the name, the four buttons — are shown.
-	const w_show_controls = preferences.persistent<boolean>(T_Preference.show_controls, true);
-
-	/** Put the controls away, or bring them back. */
-	function toggle_controls() {
-		w_show_controls.set(!$w_show_controls);
-		debug.log(`Editing "${name}": the controls are now ${!$w_show_controls ? 'folded away' : 'shown'}.`);
-	}
 
 	// Whether the back links row is shown, and how many point here. The count is read here as
 	// well as inside the row, since the folded clickable is ours and has to say it.
@@ -161,7 +150,6 @@
 	// holds nothing on the first drawing and the made button on the next — which is itself a
 	// change, so the line it stands on is told at once.
 	let backlinks_button = $state<HTMLElement | null>(null);
-	let controls_button  = $state<HTMLElement | null>(null);
 	let filters_button   = $state<HTMLElement | null>(null);
 	let search_button    = $state<HTMLElement | null>(null);
 	let search_clear     = $state<HTMLElement | null>(null);
@@ -181,7 +169,6 @@
 	const search_clearer     = $derived(Object.assign(new Action(), { element: search_clear,    position: T_Position.center }));
 	const kinds_clearer      = $derived(Object.assign(new Action(), { element: kinds_clear,     position: T_Position.center }));
 	const filters_action     = $derived(Object.assign(new Action(), { element: filters_button,  position: T_Position.left }));
-	const controls_action    = $derived(Object.assign(new Action(), { element: controls_button, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const search_action      = $derived(Object.assign(new Action(), { element: search_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const info_action        = $derived(Object.assign(new Action(), { element: info_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const kinds_action       = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
@@ -354,8 +341,6 @@
 		use:hit_target={{ id: 'editor.fold.filters', onpress: toggle_filters }}>{filter_rows_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={search_button}
 		use:hit_target={{ id: 'editor.fold.search', onpress: toggle_search, tip: 'search this file' }}>{search_word}</button>
-	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={controls_button}
-		use:hit_target={{ id: 'editor.fold.controls', onpress: toggle_controls, tip: 'the steppers, the name, and the buttons' }}>controls</button>
 	<!-- Drawn only with something to clear: an empty field offers nothing to press for.
 	     Clearing also puts the highlighted words back. -->
 	{#if $w_search_text !== ''}
@@ -442,11 +427,6 @@
 	</div>
 {/snippet}
 
-<!-- The editor's controls, handed in whole. The block answers for itself — its own way-out
-     press, its own lighting — so no wrapper stands around it. -->
-{#snippet controls_rows()}
-	{@render controls()}
-{/snippet}
 
 <!-- Which files point at this one. It stands bare here: its line, its gap and its clickable
      are this stack's, the same as the search's. -->
@@ -503,7 +483,7 @@
 	use:hit_target={{ id: `${WAY_OUT}.block`, type: T_Hit_Target.section,
 		dormant: $w_show_filters, onpress: onclose, tip: 'resume browse' }}>
 	<!-- What the guide is labeled, as a section of its own: its line carries the word that folds
-		the whole form away, and holds four subsections — the search, the information, the kinds, the tags.
+		the whole form away, and holds five subsections — the search, the back links, the information, the kinds, the tags.
 
 		It asks for no gap at all, which is how a section says it should stand flat when folded: the
 		words below come straight up under its line, and the line that would have stood under it is
@@ -516,15 +496,15 @@
 		folded={!$w_show_filters}
 		actions={[filters_action]}>
 		{#snippet contents()}
-			<!-- The form is one stack of four subsections: looking through the file, what the guide says about itself in words, its
-				one kind, and its tags. The heavy line carrying the clickable that folds the whole form away
+			<!-- The form is one stack of five subsections: looking through the file, the back links, what the guide says about
+				itself in words, its one kind, and its tags. The heavy line carrying the clickable that folds the whole form away
 				is drawn by the section holding us, so we say how thick it is and the stack measures from
 				its middle like every other separator. -->
-			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[controls_action]} sections={[
-				{ subsection: controls_rows, folded: !$w_show_controls },
+			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[search_action, search_clearer]} sections={[
 				// Four sections are the way back to the list: each slot answers with the way out's name
-				// and press, and all four highlight as one while the cursor is on any of them.
-				{ subsection: search_rows, rides: [search_action, search_clearer], folded: !$w_show_search, answers: way_out('search'), highlighted: way_out_lit },
+				// and press, and all four highlight as one while the cursor is on any of them. The
+				// search is first, so its clickable and its clear ride the stack's own leading line.
+				{ subsection: search_rows, folded: !$w_show_search, answers: way_out('search'), highlighted: way_out_lit },
 				// With nothing pointing here the section hides in place — no row, no line — but it
 				// never leaves the list, so the sections below it keep their own separators.
 				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0, answers: way_out('backlinks'), highlighted: way_out_lit },

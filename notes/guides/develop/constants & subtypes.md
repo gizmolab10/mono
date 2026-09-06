@@ -1,11 +1,11 @@
 ---
 kind: specify
-title: "Constants and subtypes"
+title: "Constants & subtypes"
 description: ""
 tags: [data, keep, now, program, proposal]
 date: 2026-08-07
 ---
-# Constants and subtypes
+# Constants & subtypes
 
 ## constants
 

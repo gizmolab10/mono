@@ -7,6 +7,22 @@ date: 2026-08-31
 ---
 # Proposals
 
+## proposal: the form's controls section moves into the top row (5 September 2026)
+
+**Success criteria.** In edit, the row across the top holds, right of the back button, a section on `--bg` with a thick upright line at its left, holding exactly what the form's controls section holds today: the count, the steppers, the folders, the name field, the four buttons and the delete question. The dispatcher and build buttons are not drawn in edit; in browse the row is as today. The form's stack has five sections, and 'more' folds them all. Every press does what it did: step, rename, new, Obsidian, send, delete; the section's bare space is the way out and lights with the label rows. svelte-check clean, ov's tests pass, confirmed on screen.
+
+**What moves**, from Edit.svelte into Controls.svelte: the row's markup, `typed_name` and `handle_rename`, `asking_to_delete` and `handle_delete`, `handle_create`, `handle_obsidian`, `handle_send`, the two effects, and the rules for the head, the count, the folders, the spacers, the buttons, the question and the name. Controls reads the file from `w_viewed` and the stepping from `w_can_back`, `w_can_forward`, `w_file_back`, `w_file_forward`, `w_file_site` and `step_view`, all in Operations, so Edit passes nothing. Send reads the file's text through `read_file` at the moment of sending, since the text lives in Edit.
+
+**What goes.** Edit_Filters: the `controls` prop and its snippet, `w_show_controls`, `toggle_controls`, `controls_button`, `controls_action`, the 'controls' clickable, and the stack's first section with its `leads`. Edit.svelte: the `controls_rows` snippet and the `.view-top` rules. `T_Preference.show_controls` loses its only user: reported, not removed.
+
+**The section.** Right of the back button, core's Separator drawn `vertical` at `k.thickness.huge`, then a box with `background: var(--bg)` taking the rest of the row, holding the moved row. Its bare space is the `WAY_OUT.top` hit target, a section, pressing back to the list.
+
+**Open.** 1. The stack's leading line, today the controls section's with its clickable: the search section's line becomes the first, its clickable riding it as now. 2. Whether the section's corners are rounded, matching the content box below, or square. 3. The row's height: today the head is `--height` plus a small gap below; in the top row the hamburger and back button set it.
+
+**Cost.** Controls.svelte grows by the whole row, Edit.svelte shrinks by the same; Controls gains imports from Files, Saving and the File types.
+
+**Decided**, 5 September 2026: the search section is the stack's first; the section's corners are rounded; the hamburger sets the row's height, and the back button is two pixels smaller. Built in Controls.svelte, Edit.svelte, Operation.svelte and Edit_Filters, svelte-check and ov's tests clean, awaiting the screen. `T_Preference.show_controls` has no user left: reported, not removed.
+
 ## proposal: every project moves into mono/projects (1 September 2026)
 
 **Success criteria.** Every app still starts with `yarn dev` from its own folder and serves on the port it served on before. `yarn vitest` passes in core, ov and lv with no test edited except the ones that spell a path. Every cross-collection link inside the notes still resolves — the dead-link report finds no more than it found the day before. ov's file list shows the same count of files under the same project names.

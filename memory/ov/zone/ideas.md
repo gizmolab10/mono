@@ -15,14 +15,10 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
-- [ ] edit
-    - [x] rename editor -> edit (browse is a verb)
-    - [ ] move the steppers and file title -> the Controls.svelte
 - [ ] speed up launch by reading files a few at a time
     - [ ] start with the file the editor is presenting
     - [ ] then just enough to render the visible part of browse's file list
 - [ ] move the clear clickable next to search clickable
-- [x] [[memory/ov/zone/drive]]
 - [ ] RETURN -> another checkbox line
 - [ ] TAB -> indents (command-TAB outdents)
 - [ ] too many ideas in ov
@@ -68,7 +64,6 @@ sooner or later every project creates a knowledge base and a work manager. this 
 - [ ] blank line following checkbox line is missing
 - [ ] cannot edit
     - [ ] colon at the end of an H3
-    - [x] checkbox text when it has sub items
 - [ ] animate tag relayout during window resize and details hide <-> show
 
 - [ ] incorporate source code, hooks and CLAUDE

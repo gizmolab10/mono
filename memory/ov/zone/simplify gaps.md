@@ -5,7 +5,7 @@ description: "The one proposal being decided and implemented; it dissolves into 
 tags: [now, weighed]
 date: 2026-09-03
 ---
-# Drive
+# Simplify gaps
 
 ## synopsis
 

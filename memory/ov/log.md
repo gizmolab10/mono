@@ -7,27 +7,11 @@ date: 2026-09-01
 ---
 # ov log
 
-<!-- consolidated: 3 September 2026 -->
+<!-- consolidated: 5 September 2026 -->
 
 ## 5 September 2026
 
-- D: the drive's stage 4 is built — both tags runs always hold a small gap above themselves, and the riding-name measurement is gone from both filter files, the editor's tags measurement log with it; Tag_Rows and its test have no caller left, reported, not removed; svelte-check and both test suites clean, both screens await the check
-- D: the editor's kinds row sits one tiny gap lower, the row no taller — `.label-rows.kinds` in Editor_Filters, a tiny gap each side; the search row's top gap is faint, where it was tiny less faint — both rungs, no arithmetic
-- D: the editor's kinds line carries a clear clickable at its middle while the guide wears a kind, and none while it wears none — the same as browse's kinds clearer; built in Editor_Filters; controls.md line 25 says it
-- D: the stack will own each slot's reach and hit target, rows keep plain padding in rungs, and the tags run always holds the name's headroom — the drive's last section says the plan and its order, decided, not built
-- D: the "no options" label on a starved row's line is drawn as the clickables are — the same thick-small black edge, the pill radius and the page-colored fill that masks the line; Browse_Filters `.no-options`; controls.md line 15 says it; the ideas box is cleared
-- D: the line below browse's tags stays heavy while they are open, starved included, and the shut row gives back the extra thickness: the stack takes `under`, the thickness of the line drawn below it, and a shut last section subtracts what exceeds its own lines, so the heavy line's bottom edge sits as far from the tags line as the thin one's does folded; Browse says the count edge once and hands its thickness to Browse_Filters; the earlier thin-line-when-starved fix is undone; controls.md line 25 says it
-- D: a starved unfolded section keeps the bottom edge of the separator below it as far from the separator above as when folded, for every foldable section — the drive's success criterion, replacing the center-to-center wording
-
-## 4 September 2026
-
-- D: the drive's choice 1 is built — one `.reaches` rule per filter file does the reach, each reaching row sets one number (`--pad`, or `--pad-top` / `--pad-bottom`); Browse_Filters and Editor_Filters, svelte-check clean, awaiting the look at the screen; the browse search row's bottom number is `var(--under)`, flagged in the drive
-- D: a memory file hangs under the top of the project `project_at` names — memory/ov/truth shows as ov → truth in the folder view — with no folder made for the project's own name; Files.ts listing and hang_one_file, one rule shared with project_of in File.ts; truth/controls.md line 11 says it
-
-## 3 September 2026
-
-- D: within_reach in Files.ts asks project_of(guide), as the file list does — with shared picked, the kinds and tags rows offer words again; truth/controls.md line 11 already said matching goes by project_of, and now the code agrees
-- S: the starved-row label is built and committed in Browse_Filters.svelte, wired into the stack's new `empty` flag (core's Stack.svelte sizes such a row as a fold); truth/controls.md holds the fact as decided, one gap high. Jonathan tested the change and found it bad — what he saw is not yet recorded, asked in shared's zone/questions.md. Two 1 September lines dropped without a home: the tooling-folder listing, reverted the same day (the dispatcher names no .claude folder now), and a record of a settle already done
+- S: settled 5 September 2026 — sixteen lines. Every D: about the filters' rows, the top row's file section, the starved rows, the heavy line below browse's tags and a memory file's project is in truth/controls.md; the state lines are in index.md; the 4 September `.reaches` line is dropped as superseded by the slot scheme the same truth now says. Jonathan renamed the drive to zone/simplify gaps.md, his to dissolve. The four edit-related renames of 5 September (commit 34b4aeed — Edit, Edit_Filters, Edit_Markdown, List_Files) are in the map, and Tag_Rows is marked there as having no caller. The starved-row question in shared's zone/questions.md is answered. Three ticked ideas are cleared; one ticked box remains — "files that are not markdown" — since no record says what was done
 
 ---
 
