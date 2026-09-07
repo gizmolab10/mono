@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/ideas.md",
+                "file": "memory/ov/zone/simplify gaps.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ideas"
+              "title": "simplify gaps"
             }
           },
           {
@@ -41,16 +41,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ov/notes/work/soon/tag drift.md",
+                "file": "memory/ov/log.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "tag drift"
+              "title": "log"
+            }
+          },
+          {
+            "id": "c667e91a97f584b4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/truth/handbook.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "handbook"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -84,7 +98,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "file:shor",
+                "query": "file:handboo",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -187,7 +201,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/ov/zone/ideas.md",
+                "file": "memory/shared/truth/handbook.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -226,44 +240,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "01db19f654c74bbd",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
-    "memory/ov/zone/simplify gaps.md",
-    "memory/ov/zone/simplify.md",
-    "notes/guides/develop/constants & subtypes.md",
-    "ov/src/lib/svelte/content/List_Files.svelte",
-    "ov/src/lib/svelte/content/Edit_Markdown.svelte",
-    "ov/src/lib/svelte/main/Edit.svelte",
-    "ov/src/lib/svelte/filter/Edit_Filters.svelte",
-    "ov/notes/work/soon/tag drift.md",
-    "memory/ov/zone/ideas.md",
-    "memory/ov/zone/drive.md",
-    "memory/gallery/zone/questions.md",
-    "memory/ws/zone/ideas.md",
-    "memory/ws/zone/questions.md",
-    "memory/ws/truth/filesystem database.md",
-    "ws/vite.config.js.timestamp-1788560281500-845eb755df9c2.mjs",
-    "memory/gallery/zone/ideas.md",
-    "memory/ws/log.md",
-    "memory/ws/index.md",
-    "memory/ws/zone",
-    "memory/ws/truth",
-    "memory/ws",
-    "memory/me/zone/bonnie and mara.md",
-    "memory/me/zone/ideas.md",
-    "notes/guides/pre-flight/shorthand.md",
-    "notes/guides/collaborate/jonathan.md",
-    "memory/shared/truth/handbook.md",
-    "notes/work/learn.md",
-    "notes/guides/pre-flight/always.md",
-    "notes/guides/pre-flight/response.md",
-    "notes/guides/pre-flight/lexicon.md",
-    "memory/shared/truth/lexicon.md",
-    "memory/lv/truth/lexicon.md",
-    "memory/ov/truth/lexicon.md",
-    "memory/core/truth/lexicon.md",
-    "core/src/lib/svelte/support/Stack.svelte.tmp.31975.60a38e535a37",
-    "core/src/lib/svelte/support/Stack.svelte.tmp.31975.0789c8fe3ac0",
+    "memory/shared/notes/work/done/docs/test/fixtures/advanced/test-moved.md",
+    "memory/shared/notes/work/done/docs/test/merge-fixtures/test-links.md",
+    "memory/shared/notes/work/done/docs/test/merge-fixtures/file-b.md.original",
+    "memory/shared/notes/work/done/docs/test/merge-fixtures/file-b.md",
+    "memory/shared/notes/work/done/docs/test/merge-fixtures/file-a.md.original",
+    "memory/shared/notes/work/done/docs/test/merge-fixtures/file-a.md",
+    "memory/shared/notes/work/done/docs/test/fixtures/vitepress.build.txt",
+    "memory/shared/notes/work/done/docs/test/fixtures/index.md",
+    "memory/shared/notes/work/done/docs/test/fixtures/config.mts",
+    "memory/shared/notes/work/done/docs/test/fixtures/advanced",
+    "memory/shared/notes/work/done/docs/test/test-runner.mjs",
+    "memory/shared/notes/work/done/docs/test/test-fix-links.sh",
+    "memory/shared/notes/work/done/docs/test/run-test.sh",
+    "memory/shared/notes/work/done/docs/test/merge-fixtures",
+    "memory/shared/notes/work/done/docs/test/fixtures",
+    "memory/shared/notes/work/done/docs/test/README.md",
+    "memory/shared/notes/work/done/docs/test/HOW-TO-TEST.md",
+    "memory/shared/notes/work/done/docs/history/REORGANIZATION.md",
+    "memory/shared/notes/work/done/docs/history/PHASE2-MINIMIZED.md",
+    "memory/shared/notes/work/done/docs/history/PHASE2-FINAL.md",
+    "memory/shared/notes/work/done/docs/history/PHASE2-COMPLETE.md",
+    "memory/shared/notes/work/done/docs/history/PHASE1-RESULTS.md",
+    "memory/shared/notes/work/done/docs/history/PHASE1-FINAL.md",
+    "memory/shared/notes/work/done/docs/history/PHASE1-COMPLETE.md",
+    "memory/shared/notes/work/done/docs/history/FIXTURES-RELOCATED.md",
+    "memory/shared/notes/work/done/docs/history/FINAL-ORGANIZATION.md",
+    "memory/shared/notes/work/done/docs/history/CLAUDE-MD-UPDATED.md",
+    "memory/shared/notes/work/done/docs/docs.md",
+    "memory/shared/notes/work/done/docs/combined-docs.md",
+    "memory/shared/notes/work/done/docs/README.md",
+    "memory/shared/notes/work/next/retention-test.md",
+    "memory/shared/notes/work/next/pacing.md",
+    "memory/shared/notes/work/next/personas.md",
+    "memory/shared/notes/work/next/index.md",
+    "memory/shared/notes/work/next/curiosity.md",
+    "memory/shared/notes/work/next/commoditize.md",
     "gallery/src/assets/the vineyard/lcv.label.png",
     "gallery/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "gallery/src/assets/the vineyard/Versaison_20190803.jpg",

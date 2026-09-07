@@ -6,7 +6,7 @@ A walk-through of your first few minutes with the app. Each step describes what 
 
 Open your browser and go to `designintuition.app`. The page loads in a few seconds; the app runs entirely in the browser.
 
-Citation: the deployment is documented in `notes/work/milestones/done/3.docs.md`.
+Citation: the deployment is documented in `memory/di/notes/work/milestones/done/3.docs.md`.
 
 ## The first drawing — a drawer
 

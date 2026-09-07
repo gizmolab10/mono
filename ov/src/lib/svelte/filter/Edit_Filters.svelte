@@ -92,15 +92,10 @@
 		folded = !$w_show_filters || foot_is_all_folds(!show_form_kinds, !show_form_tags);
 	});
 
-	// The way back to the list is two areas — these label rows and the two rows above the heavy
-	// line — and they light as one. Both carry the one name, so whichever the manager has under
-	// the cursor lights both.
+	// Folded, the whole block is a way back to the list, and the clickables' edges show while the
+	// cursor is on it. Open, no row's bare space goes back: the way back is the top row's button.
 	const w_s_hover = hits.w_s_hover;
 	let way_out_lit = $derived(($w_s_hover?.id ?? '').includes(WAY_OUT));
-
-	// The way back to the list, said once for every section that is part of it. The stack puts it
-	// on each section's slot, so the whole slot answers and highlights, half-gaps and all.
-	const way_out = (part: string) => ({ id: `${WAY_OUT}.${part}`, type: T_Hit_Target.section, onpress: onclose, tip: 'resume browse' });
 
 	// The tag areas take four rows of their own, so the clickable above them folds them away — and
 	// says what the guide wears while they are gone, as the filters' own lines do. Which rows are
@@ -139,9 +134,9 @@
 	}
 
 	// The word on the line above the form folds the whole form away. With the form on screen it
-	// is just the one word; folded, it says what the file is filtered, since that is the only
-	// place left to read it.
-	let filter_rows_word = $derived($w_show_filters ? 'more'
+	// reads 'less'; folded, it reads 'more' and says what the file is labeled, since that is the
+	// only place left to read it.
+	let filter_rows_word = $derived($w_show_filters ? 'less'
 		: `more ➜ ${[form_kind, ...[...form_tags].sort(in_order)]
 			.filter((one) => one !== '').join(', ') || 'none'}`);
 
@@ -330,9 +325,8 @@
 	}
 </script>
 
-<!-- Folded, the section's own empty area joins the way back to the list: it is bare space above
-     the file's contents, the same as the two top rows, and it lights with them. Open, the rows
-     inside answer for themselves and this stands aside. -->
+<!-- Folded, the section's own empty area is a way back to the list: bare space above the file's
+     contents. Open, the rows inside answer for themselves, and their bare space answers nothing. -->
 <!-- The four clickables that fold these sections away, built here rather than by the lines they stand
      on. Each is written out of sight, since the moment the browser has made it, it is taken and
      put on its line instead. -->
@@ -386,12 +380,8 @@
 
 <!-- What a guide says about itself in words: its title, its date, and one line saying what it is
      for. They sit closer together than sections do, since they are rows of one thing rather than
-     things of their own.
-
-     The bare space among them is another way back to the list, the same as the two rows above the
-     heavy line — and the two light together, since they are one way out. Each field is a control
-     the manager knows about, so the way out standing behind them never answers for the space one
-     of them occupies. -->
+     things of their own. Each field is a control the manager knows about; the bare space among
+     them answers nothing. -->
 {#snippet information_rows()}
 	<div class='label-rows information'>
 		<div class='information-rows'>
@@ -436,8 +426,7 @@
 	</div>
 {/snippet}
 
-<!-- The kinds. No word beside them: the separator above already says what they are. Their own bare
-     space carries the way out's name and press, so it lights and acts with the rows above it. -->
+<!-- The kinds. No word beside them: the separator above already says what they are. -->
 {#snippet kinds_picker()}
 	<div class='label-rows kinds'>
 		<div class='filter-row wrapping'>
@@ -501,15 +490,14 @@
 				is drawn by the section holding us, so we say how thick it is and the stack measures from
 				its middle like every other separator. -->
 			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[search_action, search_clearer]} sections={[
-				// Four sections are the way back to the list: each slot answers with the way out's name
-				// and press, and all four highlight as one while the cursor is on any of them. The
-				// search is first, so its clickable and its clear ride the stack's own leading line.
-				{ subsection: search_rows, folded: !$w_show_search, answers: way_out('search'), highlighted: way_out_lit },
+				// The search is first, so its clickable and its clear ride the stack's own leading line.
+				// None of these four answers the cursor on its bare space.
+				{ subsection: search_rows, folded: !$w_show_search },
 				// With nothing pointing here the section hides in place — no row, no line — but it
 				// never leaves the list, so the sections below it keep their own separators.
-				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0, answers: way_out('backlinks'), highlighted: way_out_lit },
-				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info, answers: way_out('labels'), highlighted: way_out_lit },
-				{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_form_kinds, answers: way_out('kinds'), highlighted: way_out_lit },
+				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0 },
+				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
+				{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_form_kinds },
 				// A press on the bare space among the tagsets shuts them all. The slot answers, not the row.
 				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags,
 					answers: { id: 'editor.tags', type: T_Hit_Target.section,
@@ -587,8 +575,7 @@
 		cursor     : pointer;
 	}
 
-	/* A part of the form that is a way back to the list. One gap below what it shows; the press
-	   and the highlight are the slot's, said in the stack's sections list. */
+	/* A row of the form. One gap below what it shows; its bare space answers nothing. */
 	.label-rows {
 		padding-bottom : var(--gap);
 		flex-direction : column;
@@ -819,7 +806,10 @@
 		background : var(--hover);
 	}
 
+	/* Picked, it wears the accent, and its words read the color that stays legible on it — white
+	   on a dark accent, black on a light one — the same as every other picked thing. */
 	.filter-pick.on {
 		background : var(--accent);
+		color      : var(--text-on-accent);
 	}
 </style>

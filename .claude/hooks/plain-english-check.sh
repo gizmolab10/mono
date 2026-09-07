@@ -45,10 +45,10 @@ fi
 
 # --- the words ---------------------------------------------------------------
 
-BANNED_SHARED="$REPO/notes/guides/pre-flight/banned words.md"
+BANNED_SHARED="$REPO/memory/shared/notes/guides/pre-flight/banned words.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
-BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
-LEXICON="$REPO/notes/guides/pre-flight/lexicon.md"
+BANNED_PROJECT="$REPO/memory/$PROJECT/notes/guides/pre-flight/banned words.md"
+LEXICON="$REPO/memory/shared/notes/guides/pre-flight/lexicon.md"
 
 BANNED_FILES=("$BANNED_SHARED")
 [ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && BANNED_FILES+=("$BANNED_PROJECT")

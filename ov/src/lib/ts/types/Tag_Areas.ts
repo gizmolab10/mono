@@ -25,7 +25,7 @@ export const TAG_AREAS: Tag_Area[] = [
 	{ name: 'bedrock',  tags: ['build', 'deploy', 'platform', 'setup', 'tools'] },
 	{ name: 'progress', tags: ['proposal', 'journal'] },
 	{ name: 'active',   tags: ['now', 'next', 'soon', 'later', 'tabled'] },
-	{ name: 'lifecycle', tags: ['born', 'weighed', 'waiting', 'incorporated', 'settled'] },
+	{ name: 'lifecycle', tags: ['born', 'weighed', 'waiting', 'incorporated'] },
 	{ name: 'think',    tags: ['notes', 'plans', 'research', 'vision'] },
 	{ name: 'ux',       tags: ['geometry', 'UX', 'visual'] },
 ];
@@ -42,10 +42,11 @@ export function tags_without_area(): string[] {
 
 /**
  * The tags of one area that are still worth showing: those something is left wearing, plus
- * any already picked, so a choice never vanishes from under the cursor.
+ * any already picked, so a choice never vanishes from under the cursor. In the area's own
+ * order, which for the lifecycle and the active areas is the order things happen in.
  */
 export function tags_shown(area: Tag_Area, in_reach: string[], chosen: string[]): string[] {
-	return area.tags.filter((tag) => in_reach.includes(tag) || chosen.includes(tag)).sort(in_order);
+	return area.tags.filter((tag) => in_reach.includes(tag) || chosen.includes(tag));
 }
 
 /**

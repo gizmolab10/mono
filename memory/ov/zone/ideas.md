@@ -15,6 +15,16 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
+- [x] rename 'way out' -> 'resume browse' — decided 5 September 2026, not built: 34 places in 11 code files, the constant `WAY_OUT` and its ids among them, and 4 lines in ov's memory
+- [ ] move all old guides -> memory
+    - [ ] manual
+    - [ ] milestones
+    - [ ] features
+    - [ ] components
+    - [ ] architecture
+    - [ ] design
+- [ ] browse, show folders. only show soft pointer in header row when there is more than one root
+    - [ ] if it is shown, align it with the root ones, centered on the header separator line
 - [ ] speed up launch by reading files a few at a time
     - [ ] start with the file the editor is presenting
     - [ ] then just enough to render the visible part of browse's file list
@@ -22,7 +32,7 @@ sooner or later every project creates a knowledge base and a work manager. this 
 - [ ] RETURN -> another checkbox line
 - [ ] TAB -> indents (command-TAB outdents)
 - [ ] too many ideas in ov
-- [ ] [[ov/notes/work/soon/tag drift]] — too many tags for the same thing (progress, lifecycle, active, fate)
+- [ ] [[memory/ov/notes/work/soon/tag drift]] — too many tags for the same thing (progress, lifecycle, active, fate)
 - [ ] add 'reveal in finder' to the CONTROL-click popup menu
 - [ ] move all mono projects -> mono/projects, a new folder sibling to memory
     - [ ] create a new folder in projects 'shared'
@@ -93,10 +103,6 @@ sooner or later every project creates a knowledge base and a work manager. this 
     - [ ] propose to remove material that is no longer relevant
 - [ ] work on murky
 
-## done
-
-- [x] edit — files that are not markdown, do not translate them, do not treat the first line as a title, never add properties
-
 ## tabled
 
 - [ ] encapsulate in a new file ts/common/okf.md
@@ -104,7 +110,5 @@ sooner or later every project creates a knowledge base and a work manager. this 
     - [ ] ALL the kinds, tags, project 2-char names
     - [ ] and associated logic
 - [ ] when a link's target is an anchor, add the anchor to the fifo
-
-Churn
 
 [[my story]]

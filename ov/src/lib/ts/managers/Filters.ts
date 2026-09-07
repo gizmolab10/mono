@@ -29,8 +29,8 @@ export function toggle_project(name: string): void {
 	if (typeof remembered === 'string') { w_projects.set(remembered === '' ? [] : [remembered]); }
 }
 
-// One kind at a time; empty means every kind. One more word than the seven kinds: this one
-// asks for the files that carry no labels at all, which is how they are found and given some.
+// One kind at a time; empty means every kind. One more word than the kinds: this one asks for
+// the files that carry no labels at all, or labels with no kind — how they are found and given one.
 export const UNLABELED = 'none';
 
 export const w_kind = preferences.persistent<string>(T_Preference.filter_kind, '');
@@ -38,7 +38,7 @@ export const w_kind = preferences.persistent<string>(T_Preference.filter_kind, '
 /** Does a file survive the kind that is picked? */
 export function kind_matches(kind: string, its_kind: string, labeled: boolean): boolean {
 	if (kind === '')          { return true; }
-	if (kind === UNLABELED)   { return !labeled; }
+	if (kind === UNLABELED)   { return !labeled || its_kind === ''; }
 	return its_kind === kind;
 }
 

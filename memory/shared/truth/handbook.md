@@ -2,12 +2,12 @@
 kind: specify
 title: "Handbook"
 description: "The operating rules of the memory system. Every session loads this at start; every skill points here."
-tags: [always, team, incorporated]
+tags: [always, incorporated, now, team]
 date: 
 ---
 # Handbook
 
-The authority for how the memory system runs. The design rationale lives in `ov/notes/work/AI memory redesign.md`; this file is the law. Tune the system by editing this file — nowhere else.
+The authority for how the memory system runs. The design rationale lives in `memory/ov/notes/work/AI memory redesign.md`; this file is the law. Tune the system by editing this file — nowhere else.
 
 ## Session phases
 
@@ -128,14 +128,13 @@ Hooks only read, check, and remind — they never write truths, settle, coin, or
 
 ## Inception
 
-The old notes (CLAUDE.md's reading-on-load list, `notes/guides/`, per-project `notes/work/` files) is being abandoned completely. Until it's gone:
+The old notes (CLAUDE.md's reading-on-load list, the `guides/` and `work/` folders under each `memory/<project>/notes/`) is being abandoned completely. Until it's gone:
 
-- Move truths, not history: only currently-true content a session would act on enters `memory/`; journals, handoffs, mothballs, and stories stay behind as the archive, abandoned in place.
-- Pull, don't push: move a thing the day work actually reaches for it; never bulk-import.
+- Moved 7 September 2026: every project's notes folder sits whole at `memory/<project>/notes/`, and mono's own at `memory/shared/notes/` — journals, handoffs, mothballs and stories included, as they were. Only `notes/tools/` remains outside. A moved folder is still the old notes: its truths enter `truth/` one at a time, the day work reaches for them.
 - A move is a move: delete what the old file loses — content never lives in both systems.
 - Write nothing new into the old notes, ever. All new rules, terms, decisions, and notes go into `memory/`.
 - Keep `truth/inception.md` current: it lists what still lives only in the old notes; remove a line when its content moves in or is declared dead. When the list is empty, delete the file, shrink CLAUDE.md's "Reading on load" to `start` alone — done.
-- Exception: `notes/guides/pre-flight/shorthand.md` stays — it is the trigger surface; its rows point here.
+- Exception: `memory/shared/notes/guides/pre-flight/shorthand.md` stays — it is the trigger surface; its rows point here.
 
 ## Sizing rules
 

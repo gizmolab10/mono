@@ -1,4 +1,4 @@
-// Tests for the gallery rules in `notes/work/photo gallery.md`:
+// Tests for the gallery rules in `memory/lv/notes/work/photo gallery.md`:
 // a folder of photos read in the order its own list names, the markdown that
 // asks for one, and the walk from photo to photo with its caption.
 

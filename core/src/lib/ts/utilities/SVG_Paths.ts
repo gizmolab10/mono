@@ -3,7 +3,7 @@ import { Angle } from '../types';
 
 // How far, as a fraction of each side, the soft-pointer pulls back from every tip before the corner
 // curves: 0 = sharp tips, toward 0.5 = the pull-backs meet mid-side and it's all curve.
-const POINTER_SOFTEN = 0.55 ;
+const POINTER_SOFTEN = 0.58 ;
 
 // How wide the box beside a thing to be done is drawn, and how far its corners curve. Said here
 // so whatever gives the shape its slot on the page can ask for the very same numbers.

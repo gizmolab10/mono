@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 //
-// Tests for the persistence rules in `notes/work/code debt.md`:
+// Tests for the persistence rules in `memory/lv/notes/work/code debt.md`:
 // the sidebar remembers, across a full page reload, whether it is shown and
 // which folders are open. Both are kept in the browser's local storage, and a
 // fresh visitor falls back to a sensible default.

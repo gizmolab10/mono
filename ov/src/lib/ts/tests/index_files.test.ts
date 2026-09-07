@@ -189,24 +189,24 @@ describe('giving the file an address names a different name', () => {
 
 describe('naming a file from inside a folder', () => {
 	it('names one sitting right there', () => {
-		expect(relative_address('notes/guides/setup', 'notes/guides/setup/access.md')).toBe('./access.md');
+		expect(relative_address('memory/shared/notes/guides/setup', 'memory/shared/notes/guides/setup/access.md')).toBe('./access.md');
 	});
 
 	it('names one further down', () => {
-		expect(relative_address('di/notes/guides/architecture', 'di/notes/guides/architecture/core/units.md')).toBe('./core/units.md');
+		expect(relative_address('memory/di/notes/guides/architecture', 'memory/di/notes/guides/architecture/core/units.md')).toBe('./core/units.md');
 	});
 
 	it('climbs to name one in a folder alongside', () => {
-		expect(relative_address('ws/notes/guides/architecture/ux', 'ws/notes/guides/architecture/core/ux.md')).toBe('../core/ux.md');
+		expect(relative_address('memory/ws/notes/guides/architecture/ux', 'memory/ws/notes/guides/architecture/core/ux.md')).toBe('../core/ux.md');
 	});
 
 	it('climbs as far as it must', () => {
-		expect(relative_address('di/notes/guides/architecture/graph', 'notes/guides/setup/access.md'))
-			.toBe('../../../../../notes/guides/setup/access.md');
+		expect(relative_address('memory/di/notes/guides/architecture/graph', 'memory/shared/notes/guides/setup/access.md'))
+			.toBe('../../../../../shared/notes/guides/setup/access.md');
 	});
 
 	it('spells out a space', () => {
-		expect(relative_address('notes/guides/setup', 'notes/guides/setup/add a guide.md')).toBe('./add%20a%20guide.md');
+		expect(relative_address('memory/shared/notes/guides/setup', 'memory/shared/notes/guides/setup/add a guide.md')).toBe('./add%20a%20guide.md');
 	});
 });
 

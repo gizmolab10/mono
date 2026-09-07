@@ -1,4 +1,4 @@
-// Tests for the rules in `notes/work/bare bone website.md` that the parser owns:
+// Tests for the rules in `memory/lv/notes/work/bare bone website.md` that the parser owns:
 // the standard markdown syntax, frontmatter removal, callouts, image embeds,
 // wiki-links (plain and aliased), and the relaxed link-with-spaces form.
 //

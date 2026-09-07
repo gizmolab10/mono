@@ -240,11 +240,11 @@
 	<Section
 		gap={k.gap.big}
 		onbare={onclose}
-		bare_says='resume browse'
 		actions={[to_do]}
 		edge={T_Edge.thick}
 		id={`${WAY_OUT}.search`}
-		folded={!$w_show_search}>
+		folded={!$w_show_search}
+		bare_says='resume browse'>
 		{#snippet contents()}{@render search_row()}{/snippet}
 	</Section>
 {/if}

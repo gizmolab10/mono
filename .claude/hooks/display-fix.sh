@@ -20,9 +20,9 @@ REPO="$HOOK_DIR/../.."
 # spot, exactly like the always files — so no project is named here. A project's
 # own words must not leak into another's prose: this hook swaps silently on
 # screen, and di bans "shape" and "glass", ordinary words elsewhere.
-BANNED_SHARED="$REPO/notes/guides/pre-flight/banned words.md"
+BANNED_SHARED="$REPO/memory/shared/notes/guides/pre-flight/banned words.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
-BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
+BANNED_PROJECT="$REPO/memory/$PROJECT/notes/guides/pre-flight/banned words.md"
 
 BANNED_FILES=()
 [ -f "$BANNED_SHARED" ] && BANNED_FILES+=("$BANNED_SHARED")

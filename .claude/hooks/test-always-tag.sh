@@ -9,8 +9,8 @@
 # Run it with: bash .claude/hooks/test-always-tag.sh
 REPO="/Users/sand/GitHub/mono"
 HOOK="$REPO/.claude/hooks/inject-always.sh"
-ARRIVES="$REPO/notes/guides/pre-flight/agency.md"        # arrives with every message
-STAYS_HOME="$REPO/notes/guides/pre-flight/gates.md"      # never does
+ARRIVES="$REPO/memory/shared/notes/guides/pre-flight/agency.md"        # arrives with every message
+STAYS_HOME="$REPO/memory/shared/notes/guides/pre-flight/gates.md"      # never does
 FAILED=0
 
 say_pass() { echo "  pass — $1"; }

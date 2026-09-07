@@ -1,6 +1,6 @@
 # The thin proxy
 
-A tiny server that sits on the mac, next to AnythingLLM, so a deployed ji (in a browser, off the mac) can reach it safely. The proxy holds the AnythingLLM address and key on this side — the browser never sees them — and forwards **only** ji's calls. See the design in [thin proxy proposal](../notes/work/proposals/thin%20proxy%20proposal.md).
+A tiny server that sits on the mac, next to AnythingLLM, so a deployed ji (in a browser, off the mac) can reach it safely. The proxy holds the AnythingLLM address and key on this side — the browser never sees them — and forwards **only** ji's calls. See the design in [thin proxy proposal](../../memory/ji/notes/work/proposals/thin%20proxy%20proposal.md).
 
 This is **Phase A** (stand it up with one shared token). Phase B (per-person tokens tied to remote support) comes later.
 

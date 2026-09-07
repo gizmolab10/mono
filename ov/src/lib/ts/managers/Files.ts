@@ -764,9 +764,9 @@ class Files {
 		return seen.sort(in_order);
 	}
 
-	/** How many files carrying no labels at all are within reach of the other filters. */
+	/** How many files carrying no labels, or labels with no kind, are within reach of the other filters. */
 	unlabeled_within_reach(): number {
-		return this.within_reach('kind').filter((guide) => !guide.labeled).length;
+		return this.within_reach('kind').filter((guide) => !guide.labeled || guide.kind === '').length;
 	}
 
 	/** Every tag still within reach of the other filters, in alphabetical order. */

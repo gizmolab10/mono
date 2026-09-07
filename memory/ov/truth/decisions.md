@@ -2,7 +2,7 @@
 kind: 
 title: "Decisions"
 description: "Live rationales, and the pac responses that weigh coming choices."
-tags: [maybe, incorporated]
+tags: [incorporated]
 date: 
 ---
 # Decisions

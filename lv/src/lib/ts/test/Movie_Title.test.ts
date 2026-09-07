@@ -1,4 +1,4 @@
-// Tests for a caption inside a movie, per `notes/work/photo gallery.md`: it is
+// Tests for a caption inside a movie, per `memory/lv/notes/work/photo gallery.md`: it is
 // written into a `©nam` block inside the movie's description, and only where
 // that description is the last block in the file.
 //

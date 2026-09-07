@@ -41,7 +41,7 @@
 	const w_showing = files.w_showing;
 
 	// The open/shut triangle: pointing down when the folder is open, right when shut.
-	const TRIANGLE = k.size.small;
+	const TRIANGLE = k.size.big;
 	function triangle_path(open: boolean): string {
 		return svg_paths.soft_pointer(TRIANGLE, open ? Direction.down : Direction.right);
 	}
@@ -52,6 +52,9 @@
 	// press on it shuts every folder or opens every folder — the same either-or the top
 	// heading's mark has while reading a file.
 	let tops_open = $derived($w_showing.some((row) => row.file.is_folder && row.depth === 0 && !$w_shut.includes(row.key)));
+	// How many root folders the list shows. With one, that root's own pointer shuts everything
+	// under it, so the header draws none.
+	let roots = $derived($w_showing.filter((row) => row.file.is_folder && row.depth === 0).length);
 
 	function toggle_all_folders() {
 		if (tops_open) {
@@ -465,17 +468,20 @@
 						{#each columns as col}
 							{@const place = can_sort ? place_of.get(col.sort) : undefined}
 							<th class:name-head={col.label === 'name'} class:flat={!$w_show_folders} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'} class:tags-head={col.label === 'tags'}>
-								<!-- A mark in the name column's own lane while the folders show, its
-								     right edge 20px clear of the word. -->
-								{#if col.label === 'name' && $w_show_folders}
+								<!-- A soft pointer in the name column, drawn only while the folders show and more
+								     than one root does. It sits in a slot the width of a row's, at the cell's
+								     start, so it lines up with the root rows' own pointers. -->
+								{#if col.label === 'name' && $w_show_folders && roots > 1}
 									{@const b = triangle_bounds(tops_open)}
-									<button class='head-mark' aria-label={tops_open ? 'shut every folder' : 'open every folder'}
-										use:hit_target={{ id: 'list.folders.all', onrelease: toggle_all_folders,
-											tip: tops_open ? 'shut every folder' : 'open every folder' }}>
-										<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
-											<path d={triangle_path(tops_open)} />
-										</svg>
-									</button>
+									<span class='head-slot' style:width='{TRIANGLE}px'>
+										<button class='head-mark' aria-label={tops_open ? 'shut every folder' : 'open every folder'}
+											use:hit_target={{ id: 'list.folders.all', onrelease: toggle_all_folders,
+												tip: tops_open ? 'shut every folder' : 'open every folder' }}>
+											<svg overflow='visible' width={b.width} height={b.height} viewBox='{b.minX} {b.minY} {b.width} {b.height}'>
+												<path d={triangle_path(tops_open)} />
+											</svg>
+										</button>
+									</span>
 								{/if}
 								<!-- A column with no title of its own draws nothing here, so the line
 								     behind runs unbroken. -->
@@ -687,22 +693,29 @@
 		text-align   : left;
 	}
 
-	/* The mark in that lane, its right edge held 20px clear of the word. */
-	/* One gap wider on each side, and moved that gap left, so the mark itself stays put while the
-	   page color around it breaks a longer run of the line. */
+	/* The slot the header's pointer sits in: the cell's full height at its start, the pointer
+	   centered both ways — so its center is the line's, since the header's table is lifted by
+	   half its height to put the line through the titles' middle. */
+	.head-slot {
+		position        : absolute;
+		justify-content : center;
+		align-items     : center;
+		display         : flex;
+		bottom          : 0;
+		left            : 0;
+		top             : 0;
+	}
+
+	/* The pointer's box is wider than the shape, and page-colored, so the line breaks around it
+	   the way it breaks around a word. */
 	.head-mark {
 		width           : calc(var(--size-small) + var(--gap) - 14px + var(--gap) * 2);
 		background      : var(--bg);
-		position        : absolute;
 		cursor          : pointer;
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
 		border          : none;
-		/* The whole header is lifted two pixels so its words sit square on the line; the mark is
-		   a drawn shape rather than a letter, so it takes those two back. */
-		top             : calc(39% + 2px);
-		left            : calc(3px - var(--gap));
 		padding         : 0;
 	}
 
@@ -883,16 +896,12 @@
 		padding         : 0;
 	}
 
-	/* White inside an accent outline whichever way it points, filling to the hover color under
-	   the cursor — the same look every drawn mark wears. */
+	/* White inside an accent outline whichever way it points. It shows nothing under the cursor:
+	   the row it sits in fills, and that is enough. The header's own pointer still fills. */
 	.tri path {
 		stroke       : var(--accent);
 		fill         : var(--white);
 		stroke-width : 1;
-	}
-
-	.tri:global([data-hit]) path {
-		fill : var(--hover);
 	}
 
 	/* The name is capped by its column. Clipping lives on this inner block, not the cell
@@ -919,7 +928,7 @@
 	/* A folder standing open reads gray — its contents are on screen, so the folder itself
 	   is no longer the thing to look at. */
 	.files-table .file.folder.opened .name-text {
-		color : var(--lightgray);
+		color : var(--gray);
 	}
 
 	.tags-cell {

@@ -7,7 +7,7 @@ date: 2026-08-09
 ---
 # Map of di guides
 
-A bird's-eye view of every page under `notes/guides/` with a super-brief description.
+A bird's-eye view of every page under `memory/di/notes/guides/` with a super-brief description.
 
 ```text
 guides/

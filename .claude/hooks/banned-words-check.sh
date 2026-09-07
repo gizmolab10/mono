@@ -1,6 +1,6 @@
 #!/bin/bash
 # Stop hook: enforces the banned-words table that lives in
-#   di/notes/guides/pre-flight/banned words.md
+#   memory/di/notes/guides/pre-flight/banned words.md
 # That table is the SINGLE SOURCE OF TRUTH — no word list is hardcoded here.
 #
 # Two columns decide how each row is enforced:
@@ -21,9 +21,9 @@ LOG_FILE="$HOOK_DIR/log.jsonl"
 # Two lists: the shared every-project one, plus the list belonging to whichever
 # project is being worked on. Every project keeps its list at the same relative
 # spot, exactly like the always files — so no project is named here.
-BANNED_SHARED="$REPO/notes/guides/pre-flight/banned words.md"
+BANNED_SHARED="$REPO/memory/shared/notes/guides/pre-flight/banned words.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
-BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
+BANNED_PROJECT="$REPO/memory/$PROJECT/notes/guides/pre-flight/banned words.md"
 CAP=3
 LOG_KEEP=500   # newest lines kept; the log is a rolling window, not an archive
 

@@ -11,15 +11,16 @@ import { k } from '../common/Core';
 
 export type Saved = { ok: boolean; why: string };
 
-// A collection's notes folder, counting from the top of the repo. The shared collection is
-// the repo itself, so its notes have no project folder above them; every other one does.
+// A collection's notes folder, counting from the top of the repo. Every one sits inside the
+// memory system, under its project's folder there; the shared collection's sits under shared.
 function notes_of(bundle: T_Bundle): string {
-	return bundle === T_Bundle.mono ? 'notes' : `${bundle}/notes`;
+	return `memory/${bundle === T_Bundle.mono ? 'shared' : bundle}/notes`;
 }
 
 /**
- * The memory system, at the top of the repo beside notes. It belongs to no collection, so the
- * shared one carries it, and its path is the whole way there — no notes folder above it.
+ * The memory system, at the top of the repo. A file in it that is not inside a collection's notes
+ * folder belongs to no collection, so the shared one carries it, and its path is the whole way
+ * there.
  */
 const MEMORY = 'memory/';
 
@@ -68,7 +69,8 @@ export function site_of_file(where: string): File_Site | null {
 		return null;
 	}
 	if (!where.endsWith('.md')) { return null; }
-	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.memory, path: where.slice(MEMORY.length), is_design: false }; }
+	// A collection's notes folder sits inside memory, so it is asked for before memory's own
+	// catch-all: a guide keeps its collection and its path inside guides.
 	for (const bundle of Object.values(T_Bundle)) {
 		const notes = `${notes_of(bundle)}/`;
 		if (!where.startsWith(notes)) { continue; }
@@ -83,6 +85,7 @@ export function site_of_file(where: string): File_Site | null {
 		}
 		return null;
 	}
+	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.memory, path: where.slice(MEMORY.length), is_design: false }; }
 	return null;
 }
 

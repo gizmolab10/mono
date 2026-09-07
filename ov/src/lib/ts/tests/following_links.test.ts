@@ -51,24 +51,24 @@ describe('whether the guide found really answers the link', () => {
 describe('a link written the long way round', () => {
 	it('takes a file named by its whole path in the repo', () => {
 		expect(link_agrees(parts_of_link('../../../notes/guides/pre-flight/always.md'),
-			'notes/guides/pre-flight/always.md')).toBe(true);
+			'memory/shared/notes/guides/pre-flight/always.md')).toBe(true);
 		expect(link_agrees(parts_of_link('../../../di/notes/guides/pre-flight/lexicon.md'),
-			'di/notes/guides/pre-flight/lexicon.md')).toBe(true);
+			'memory/di/notes/guides/pre-flight/lexicon.md')).toBe(true);
 	});
 
 	it('takes a file named from part way along', () => {
 		expect(link_agrees(parts_of_link('../guides/pre-flight/lexicon.md'),
-			'ji/notes/guides/pre-flight/lexicon.md')).toBe(true);
+			'memory/ji/notes/guides/pre-flight/lexicon.md')).toBe(true);
 	});
 
 	it('takes a work note named by its whole path', () => {
 		expect(link_agrees(parts_of_link('../../ov/notes/work/code%20debt.md'.replace(/%20/g, ' ')),
-			'ov/notes/work/code debt.md')).toBe(true);
+			'memory/ov/notes/work/code debt.md')).toBe(true);
 	});
 
 	it('still refuses a file the link does not actually name', () => {
-		expect(link_agrees(parts_of_link('collaborate/organize.md'), 'ov/notes/work/organize.md')).toBe(false);
-		expect(link_agrees(parts_of_link('../work/db spec.md'), 'ji/notes/guides/project/db spec.md')).toBe(false);
+		expect(link_agrees(parts_of_link('collaborate/organize.md'), 'memory/ov/notes/work/organize.md')).toBe(false);
+		expect(link_agrees(parts_of_link('../work/db spec.md'), 'memory/ji/notes/guides/project/db spec.md')).toBe(false);
 	});
 });
 
@@ -82,41 +82,41 @@ describe('a link written the long way round', () => {
 
 describe('where a link points, counting from the top of the repo', () => {
 	it('puts the link under the folder holding the file it sits in', () => {
-		expect(resolved_from('ji/notes/work/handoff.md', 'proposals/full family support.md'))
-			.toBe('ji/notes/work/proposals/full family support.md');
+		expect(resolved_from('memory/ji/notes/work/handoff.md', 'proposals/full family support.md'))
+			.toBe('memory/ji/notes/work/proposals/full family support.md');
 	});
 
 	it('climbs one folder for each pair of dots', () => {
-		expect(resolved_from('ov/notes/work/murk.md', '../../../notes/guides/pre-flight/always.md'))
-			.toBe('notes/guides/pre-flight/always.md');
-		expect(resolved_from('ji/notes/work/handoff.md', '../guides/pre-flight/lexicon.md'))
-			.toBe('ji/notes/guides/pre-flight/lexicon.md');
+		expect(resolved_from('memory/ov/notes/work/murk.md', '../../../shared/notes/guides/pre-flight/always.md'))
+			.toBe('memory/shared/notes/guides/pre-flight/always.md');
+		expect(resolved_from('memory/ji/notes/work/handoff.md', '../guides/pre-flight/lexicon.md'))
+			.toBe('memory/ji/notes/guides/pre-flight/lexicon.md');
 	});
 
 	it('stands still for a single dot', () => {
-		expect(resolved_from('ws/notes/guides/core/state.md', './ux.md')).toBe('ws/notes/guides/core/ux.md');
+		expect(resolved_from('memory/ws/notes/guides/core/state.md', './ux.md')).toBe('memory/ws/notes/guides/core/ux.md');
 	});
 
 	it('spells out an address and drops a heading', () => {
-		expect(resolved_from('ov/notes/work/murk.md', '../../../notes/guides/collaborate/chat.md#L249'))
-			.toBe('notes/guides/collaborate/chat.md');
-		expect(resolved_from('ji/notes/work/handoff.md', 'db%20proposal.md'))
-			.toBe('ji/notes/work/db proposal.md');
+		expect(resolved_from('memory/ov/notes/work/murk.md', '../../../shared/notes/guides/collaborate/chat.md#L249'))
+			.toBe('memory/shared/notes/guides/collaborate/chat.md');
+		expect(resolved_from('memory/ji/notes/work/handoff.md', 'db%20proposal.md'))
+			.toBe('memory/ji/notes/work/db proposal.md');
 	});
 
 	it('stops at the top of the repo rather than climbing past it', () => {
-		expect(resolved_from('notes/work/learn.md', '../../../../elsewhere.md')).toBe('elsewhere.md');
+		expect(resolved_from('memory/shared/notes/work/learn.md', '../../../../elsewhere.md')).toBe('elsewhere.md');
 	});
 });
 
 describe('how far apart two files stand', () => {
 	it('counts the steps up and the steps down, dropping the folders they share', () => {
-		expect(steps_between('ov/notes/work/murk.md', 'ov/notes/guides/pre-flight/always.md')).toBe(3);
-		expect(steps_between('ov/notes/work/murk.md', 'notes/guides/pre-flight/always.md')).toBe(6);
+		expect(steps_between('memory/ov/notes/work/murk.md', 'memory/ov/notes/guides/pre-flight/always.md')).toBe(3);
+		expect(steps_between('memory/ov/notes/work/murk.md', 'memory/shared/notes/guides/pre-flight/always.md')).toBe(7);
 	});
 
 	it('is nothing at all for two files in the same folder', () => {
-		expect(steps_between('ov/notes/work/murk.md', 'ov/notes/work/handoff.md')).toBe(0);
+		expect(steps_between('memory/ov/notes/work/murk.md', 'memory/ov/notes/work/handoff.md')).toBe(0);
 	});
 
 	it('counts the same either way round', () => {
@@ -126,16 +126,16 @@ describe('how far apart two files stand', () => {
 
 describe('how many words a link and a path share', () => {
 	it('counts the words that turn up in both', () => {
-		expect(words_shared(['pre-flight', 'always'], 'notes/guides/pre-flight/always.md')).toBe(2);
-		expect(words_shared(['work', 'handoff'], 'ov/notes/work/handoff.md')).toBe(2);
+		expect(words_shared(['pre-flight', 'always'], 'memory/shared/notes/guides/pre-flight/always.md')).toBe(2);
+		expect(words_shared(['work', 'handoff'], 'memory/ov/notes/work/handoff.md')).toBe(2);
 	});
 
 	it('counts nothing shared as nothing', () => {
-		expect(words_shared(['elsewhere', 'entirely'], 'notes/guides/pre-flight/always.md')).toBe(0);
+		expect(words_shared(['elsewhere', 'entirely'], 'memory/shared/notes/guides/pre-flight/always.md')).toBe(0);
 	});
 
 	it('ignores capitals, the way every other name in the app does', () => {
-		expect(words_shared(['Pre-Flight'], 'notes/guides/pre-flight/always.md')).toBe(1);
+		expect(words_shared(['Pre-Flight'], 'memory/shared/notes/guides/pre-flight/always.md')).toBe(1);
 	});
 });
 
@@ -143,28 +143,28 @@ describe('the file a dead link most likely meant', () => {
 	const link = parts_of_link('pre-flight/always.md');
 
 	it('takes the only one there is', () => {
-		expect(likeliest(link, 'ov/notes/work/murk.md', ['notes/guides/pre-flight/always.md']))
-			.toBe('notes/guides/pre-flight/always.md');
+		expect(likeliest(link, 'memory/ov/notes/work/murk.md', ['memory/shared/notes/guides/pre-flight/always.md']))
+			.toBe('memory/shared/notes/guides/pre-flight/always.md');
 	});
 
 	it('takes the one sharing the most words', () => {
-		expect(likeliest(parts_of_link('collaborate/chat.md'), 'ov/notes/work/murk.md',
-			['ov/notes/guides/design/chat.md', 'notes/guides/collaborate/chat.md']))
-			.toBe('notes/guides/collaborate/chat.md');
+		expect(likeliest(parts_of_link('collaborate/chat.md'), 'memory/ov/notes/work/murk.md',
+			['memory/ov/notes/guides/design/chat.md', 'memory/shared/notes/guides/collaborate/chat.md']))
+			.toBe('memory/shared/notes/guides/collaborate/chat.md');
 	});
 
 	it('breaks a tie on shared words by taking the closer one', () => {
-		expect(likeliest(link, 'ov/notes/work/murk.md',
-			['notes/guides/pre-flight/always.md', 'ov/notes/guides/pre-flight/always.md']))
-			.toBe('ov/notes/guides/pre-flight/always.md');
+		expect(likeliest(link, 'memory/ov/notes/work/murk.md',
+			['memory/shared/notes/guides/pre-flight/always.md', 'memory/ov/notes/guides/pre-flight/always.md']))
+			.toBe('memory/ov/notes/guides/pre-flight/always.md');
 	});
 
 	it('offers nothing where two are equal on both counts', () => {
-		expect(likeliest(parts_of_link('lexicon.md'), 'notes/work/murk.md',
-			['di/notes/lexicon.md', 'ji/notes/lexicon.md'])).toBe(null);
+		expect(likeliest(parts_of_link('lexicon.md'), 'memory/shared/notes/work/murk.md',
+			['memory/di/notes/lexicon.md', 'memory/ji/notes/lexicon.md'])).toBe(null);
 	});
 
 	it('offers nothing where there is nothing to offer', () => {
-		expect(likeliest(link, 'ov/notes/work/murk.md', [])).toBe(null);
+		expect(likeliest(link, 'memory/ov/notes/work/murk.md', [])).toBe(null);
 	});
 });

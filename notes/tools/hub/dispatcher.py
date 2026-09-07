@@ -24,6 +24,11 @@ UPDATE_DOCS = os.path.join(GITHUB_DIR, 'notes/tools/docs/update-project-docs.sh'
 # that folder's own top. Overview draws the same line in `ov/src/lib/ts/utilities/Saving.ts`, and
 # the two lists have to agree — a file sent from here that it will not place is read and thrown away.
 WORK_FOLDERS = ('next', 'milestones', 'now', 'soon', 'done', 'proposals')
+# Every collection's notes folder sits inside the memory system, under the collection's own
+# folder there; the shared collection's sits under shared. The claimed set is the folders
+# under memory/ whose notes are listed by the notes rules, not as memory files.
+COLLECTIONS = ('', 'core', 'di', 'gallery', 'ji', 'lv', 'me', 'mj', 'mu', 'ov', 'wo', 'ws')
+CLAIMED = {c or 'shared' for c in COLLECTIONS}
 
 # Load ports.json — single source of truth
 with open(os.path.join(SCRIPT_DIR, 'ports.json'), 'r') as f:
@@ -338,7 +343,10 @@ def is_listed_note(where):
     if parts[-1].lower() == 'claude.md':
         return len(parts) == 1 or (len(parts) == 2 and parts[0] in ('di', 'ws', 'ji', 'lv', 'mu', 'ov'))
     if inside.startswith('memory/'):
-        return True
+        # A claimed collection's notes folder sits inside the memory system now, and keeps
+        # the notes rules below; every other memory file is readable at any depth.
+        if not (len(parts) > 3 and parts[1] in CLAIMED and parts[2] == 'notes'):
+            return True
     if any(part in where for part in ('notes/guides/', 'notes/designs/')):
         return True
     at = where.find('notes/work/')
@@ -511,9 +519,9 @@ class APIHandler(BaseHTTPRequestHandler):
             try:
                 root = os.path.realpath(GITHUB_DIR)
                 found = []
-                for collection in ('', 'di', 'ws', 'ji', 'lv', 'mu', 'ov'):
+                for collection in COLLECTIONS:
                     for purpose in ('guides', 'designs'):
-                        inside = os.path.join(collection, 'notes', purpose) if collection else os.path.join('notes', purpose)
+                        inside = os.path.join('memory', collection or 'shared', 'notes', purpose)
                         start = os.path.join(root, inside)
                         if not os.path.isdir(start):
                             continue
@@ -529,7 +537,7 @@ class APIHandler(BaseHTTPRequestHandler):
                     #
                     # Overview draws the same line for itself, in `site_of_file`. The two have to
                     # agree: a file sent from here that it will not place is read and thrown away.
-                    work = os.path.join(root, os.path.join(collection, 'notes', 'work') if collection else os.path.join('notes', 'work'))
+                    work = os.path.join(root, 'memory', collection or 'shared', 'notes', 'work')
                     if os.path.isdir(work):
                         for one in sorted(os.listdir(work)):
                             whole = os.path.join(work, one)
@@ -548,12 +556,15 @@ class APIHandler(BaseHTTPRequestHandler):
                         for one in sorted(os.listdir(top_dir)):
                             if one.lower() == 'claude.md' and os.path.isfile(os.path.join(top_dir, one)):
                                 found.append(os.path.relpath(os.path.join(top_dir, one), root))
-                # The memory system sits at the top of the repo, beside notes, and belongs to
-                # no collection. Every file inside it is listed, however deep it sits.
+                # The memory system sits at the top of the repo and belongs to no collection.
+                # Every file inside it is listed, however deep it sits — except a claimed
+                # collection's notes folder, which the walk above has already listed as guides.
                 memory = os.path.join(root, 'memory')
                 if os.path.isdir(memory):
                     for here, folders, files in os.walk(memory):
                         folders[:] = [f for f in folders if not f.startswith('.')]
+                        if os.path.dirname(here) == memory and os.path.basename(here) in CLAIMED:
+                            folders[:] = [f for f in folders if f != 'notes']
                         for one in files:
                             if one.endswith('.md'):
                                 found.append(os.path.relpath(os.path.join(here, one), root))

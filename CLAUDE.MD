@@ -33,16 +33,16 @@ Collaborator (or "co") = Claude.
 
 Read every `.md` file in:
 
-* `notes/guides/collaborate/` — chat roles, prose voice, workflow discipline, folders to skip when mapping
-* `notes/guides/pre-flight/` — `always.md` and the two it names (`response.md`, `agency.md`), plus `keywords.md` and `shorthand.md`, apply every response; `lexicon.md`, `gates.md`, `kinds.of.tasks.md`, `pitfalls.md` apply at session start
-* `<X>/notes/work/` (top level only, where X is the active project)
+* `memory/shared/notes/guides/collaborate/` — chat roles, prose voice, workflow discipline, folders to skip when mapping
+* `memory/shared/notes/guides/pre-flight/` — `always.md` and the two it names (`response.md`, `agency.md`), plus `keywords.md` and `shorthand.md`, apply every response; `lexicon.md`, `gates.md`, `kinds.of.tasks.md`, `pitfalls.md` apply at session start
+* `memory/<X>/notes/work/` (top level only, where X is the active project)
 
 Also read:
 
-* `notes/work/learn.md` — past mistakes that apply across every project; never repeat them. Read at session start, not on every response.
-* `<X>/notes/work/now/learn.md` — past mistakes specific to the active project; never repeat them. If twenty or more entries, say: "Feedstock: \[N\] — time to distill."
-* `<X>/notes/guides/pre-flight/always.md` — the active project's own always file. Every project keeps its own at the same relative spot (di's is at `di/notes/guides/pre-flight/always.md`).
-* The project's file map — one per project, at the path that project's own CLAUDE names (locations vary; not every project has one). Read it instead of discovering files using regex and wildcards. Update it when files are added, moved, or removed. Skip folders listed in `notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
+* `memory/shared/notes/work/learn.md` — past mistakes that apply across every project; never repeat them. Read at session start, not on every response.
+* `memory/<X>/notes/work/now/learn.md` — past mistakes specific to the active project; never repeat them. If twenty or more entries, say: "Feedstock: \[N\] — time to distill."
+* `memory/<X>/notes/guides/pre-flight/always.md` — the active project's own always file. Every project keeps its own at the same relative spot (di's is at `memory/di/notes/guides/pre-flight/always.md`).
+* The project's file map — one per project, at the path that project's own CLAUDE names (locations vary; not every project has one). Read it instead of discovering files using regex and wildcards. Update it when files are added, moved, or removed. Skip folders listed in `memory/shared/notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
 
 If any keyword matches, read the listed guide(s). If any shorthand matches, perform the action.
 

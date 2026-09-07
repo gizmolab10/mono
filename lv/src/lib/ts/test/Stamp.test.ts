@@ -1,4 +1,4 @@
-// Tests for writing a caption into a picture, per `notes/work/photo gallery.md`:
+// Tests for writing a caption into a picture, per `memory/lv/notes/work/photo gallery.md`:
 // a PNG carries it in a `tEXt` chunk keyed "Title", a JPEG in an XMP block, and
 // anything else is refused. What is written must be what `plugins/photo-titles.ts`
 // reads back.

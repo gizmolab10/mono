@@ -4,7 +4,7 @@ import { T_Bundle } from '../types/File';
 
 describe('reading a path in the repo back into a collection and a folder', () => {
 	it('reads a shared guide', () => {
-		expect(site_of_file('notes/guides/pre-flight/always.md'))
+		expect(site_of_file('memory/shared/notes/guides/pre-flight/always.md'))
 			.toEqual({ bundle: T_Bundle.mono, path: 'pre-flight/always.md', is_design: false });
 	});
 
@@ -21,40 +21,40 @@ describe('reading a path in the repo back into a collection and a folder', () =>
 	});
 
 	it('places no CLAUDE file below a collection\'s top', () => {
-		expect(site_of_file('lv/notes/CLAUDE.MD')).toBeNull();
+		expect(site_of_file('memory/lv/notes/CLAUDE.MD')).toBeNull();
 	});
 
 	it('reads a project\'s guide', () => {
-		expect(site_of_file('di/notes/guides/core/units.md'))
+		expect(site_of_file('memory/di/notes/guides/core/units.md'))
 			.toEqual({ bundle: T_Bundle.di, path: 'core/units.md', is_design: false });
 	});
 
 	it('keeps the designs folder in the path, so it can never collide with a guide', () => {
-		expect(site_of_file('ws/notes/designs/styles.md'))
+		expect(site_of_file('memory/ws/notes/designs/styles.md'))
 			.toEqual({ bundle: T_Bundle.ws, path: 'designs/styles.md', is_design: true });
 	});
 
 	it('keeps the work folder in the path, the same as designs', () => {
-		expect(site_of_file('ov/notes/work/handoff.md'))
+		expect(site_of_file('memory/ov/notes/work/handoff.md'))
 			.toEqual({ bundle: T_Bundle.ov, path: 'work/handoff.md', is_design: false });
-		expect(site_of_file('notes/work/learn.md'))
+		expect(site_of_file('memory/shared/notes/work/learn.md'))
 			.toEqual({ bundle: T_Bundle.mono, path: 'work/learn.md', is_design: false });
 	});
 
 	it('keeps a work note inside one of the named folders, and its folder in the path', () => {
-		expect(site_of_file('di/notes/work/now/learn.md'))
+		expect(site_of_file('memory/di/notes/work/now/learn.md'))
 			.toEqual({ bundle: T_Bundle.di, path: 'work/now/learn.md', is_design: false });
-		expect(site_of_file('ji/notes/work/proposals/ov.md'))
+		expect(site_of_file('memory/ji/notes/work/proposals/ov.md'))
 			.toEqual({ bundle: T_Bundle.ji, path: 'work/proposals/ov.md', is_design: false });
 	});
 
 	it('reads a work note in a folder nothing links to as nothing', () => {
-		expect(site_of_file('di/notes/work/mothballs/old.md')).toBe(null);
-		expect(site_of_file('notes/work/jeff/a.md')).toBe(null);
+		expect(site_of_file('memory/di/notes/work/mothballs/old.md')).toBe(null);
+		expect(site_of_file('memory/shared/notes/work/jeff/a.md')).toBe(null);
 	});
 
 	it('reads a work note two folders down as nothing, whatever it sits under', () => {
-		expect(site_of_file('notes/work/done/docs/README.md')).toBe(null);
+		expect(site_of_file('memory/shared/notes/work/done/docs/README.md')).toBe(null);
 	});
 
 	it('is the other way round from working out where a guide sits', () => {
@@ -79,7 +79,7 @@ describe('reading a path in the repo back into a collection and a folder', () =>
 
 	it('reads anything that is not a guide as nothing', () => {
 		expect(site_of_file('ov/src/lib/main.css')).toBe(null);
-		expect(site_of_file('notes/guides/a folder')).toBe(null);
+		expect(site_of_file('memory/shared/notes/guides/a folder')).toBe(null);
 		expect(site_of_file('')).toBe(null);
 	});
 });
@@ -109,7 +109,7 @@ describe('a link reaching under a work folder', () => {
 	});
 
 	it('turns away anything two folders down, whatever it sits under', () => {
-		expect(reaches_under_work('notes/work/done/docs/history/PHASE1-FINAL.md')).toBe(true);
+		expect(reaches_under_work('memory/shared/notes/work/done/docs/history/PHASE1-FINAL.md')).toBe(true);
 	});
 
 	it('lets a link naming no work folder through', () => {
@@ -124,12 +124,12 @@ describe('a link reaching under a work folder', () => {
 	});
 
 	it('agrees with the line drawn by reading a path in the repo', () => {
-		for (const where of ['ov/notes/work/handoff.md', 'notes/work/learn.md',
-			'di/notes/work/now/learn.md', 'ji/notes/work/proposals/ov.md']) {
+		for (const where of ['memory/ov/notes/work/handoff.md', 'memory/shared/notes/work/learn.md',
+			'memory/di/notes/work/now/learn.md', 'memory/ji/notes/work/proposals/ov.md']) {
 			expect(site_of_file(where)).not.toBe(null);
 			expect(reaches_under_work(where)).toBe(false);
 		}
-		for (const where of ['di/notes/work/mothballs/old.md', 'notes/work/done/docs/README.md']) {
+		for (const where of ['memory/di/notes/work/mothballs/old.md', 'memory/shared/notes/work/done/docs/README.md']) {
 			expect(site_of_file(where)).toBe(null);
 			expect(reaches_under_work(where)).toBe(true);
 		}
@@ -142,52 +142,52 @@ describe('a link reaching under a work folder', () => {
 
 describe('working out where a guide sits', () => {
 	it('puts a shared guide straight under the shared guides folder', () => {
-		expect(file_path_of(T_Bundle.mono, 'pre-flight/always.md')).toBe('notes/guides/pre-flight/always.md');
+		expect(file_path_of(T_Bundle.mono, 'pre-flight/always.md')).toBe('memory/shared/notes/guides/pre-flight/always.md');
 	});
 
 	it('puts a project guide under that project', () => {
-		expect(file_path_of(T_Bundle.di, 'architecture/core/units.md')).toBe('di/notes/guides/architecture/core/units.md');
-		expect(file_path_of(T_Bundle.ov, 'map.md')).toBe('ov/notes/guides/map.md');
+		expect(file_path_of(T_Bundle.di, 'architecture/core/units.md')).toBe('memory/di/notes/guides/architecture/core/units.md');
+		expect(file_path_of(T_Bundle.ov, 'map.md')).toBe('memory/ov/notes/guides/map.md');
 	});
 
 	it('handles a guide sitting at the top of its collection', () => {
-		expect(file_path_of(T_Bundle.ws, 'roadmap.md')).toBe('ws/notes/guides/roadmap.md');
+		expect(file_path_of(T_Bundle.ws, 'roadmap.md')).toBe('memory/ws/notes/guides/roadmap.md');
 	});
 
 	it('adds the ending when the path has none', () => {
-		expect(file_path_of(T_Bundle.ji, 'roadmap')).toBe('ji/notes/guides/roadmap.md');
+		expect(file_path_of(T_Bundle.ji, 'roadmap')).toBe('memory/ji/notes/guides/roadmap.md');
 	});
 
 	it('puts a design in the designs folder, not under guides', () => {
-		expect(file_path_of(T_Bundle.ws, 'designs/styles.md')).toBe('ws/notes/designs/styles.md');
-		expect(file_path_of(T_Bundle.mono, 'designs/a plan.md')).toBe('notes/designs/a plan.md');
+		expect(file_path_of(T_Bundle.ws, 'designs/styles.md')).toBe('memory/ws/notes/designs/styles.md');
+		expect(file_path_of(T_Bundle.mono, 'designs/a plan.md')).toBe('memory/shared/notes/designs/a plan.md');
 	});
 
 	it('puts a work note in the work folder, not under guides', () => {
-		expect(file_path_of(T_Bundle.ov, 'work/handoff.md')).toBe('ov/notes/work/handoff.md');
-		expect(file_path_of(T_Bundle.mono, 'work/learn.md')).toBe('notes/work/learn.md');
+		expect(file_path_of(T_Bundle.ov, 'work/handoff.md')).toBe('memory/ov/notes/work/handoff.md');
+		expect(file_path_of(T_Bundle.mono, 'work/learn.md')).toBe('memory/shared/notes/work/learn.md');
 	});
 });
 
 describe('working out where a folder sits', () => {
 	it('answers with a collection\'s own guides folder when the folder has no path inside it', () => {
-		expect(folder_path_of(T_Bundle.mono, '')).toBe('notes/guides');
-		expect(folder_path_of(T_Bundle.di, '')).toBe('di/notes/guides');
+		expect(folder_path_of(T_Bundle.mono, '')).toBe('memory/shared/notes/guides');
+		expect(folder_path_of(T_Bundle.di, '')).toBe('memory/di/notes/guides');
 	});
 
 	it('adds the folder\'s path inside its collection', () => {
-		expect(folder_path_of(T_Bundle.di, 'architecture/core')).toBe('di/notes/guides/architecture/core');
-		expect(folder_path_of(T_Bundle.mono, 'pre-flight')).toBe('notes/guides/pre-flight');
+		expect(folder_path_of(T_Bundle.di, 'architecture/core')).toBe('memory/di/notes/guides/architecture/core');
+		expect(folder_path_of(T_Bundle.mono, 'pre-flight')).toBe('memory/shared/notes/guides/pre-flight');
 	});
 
 	it('puts the designs folder beside guides rather than inside it', () => {
-		expect(folder_path_of(T_Bundle.ws, 'designs')).toBe('ws/notes/designs');
-		expect(folder_path_of(T_Bundle.ji, 'designs/older')).toBe('ji/notes/designs/older');
+		expect(folder_path_of(T_Bundle.ws, 'designs')).toBe('memory/ws/notes/designs');
+		expect(folder_path_of(T_Bundle.ji, 'designs/older')).toBe('memory/ji/notes/designs/older');
 	});
 
 	it('puts the work folder beside guides too', () => {
-		expect(folder_path_of(T_Bundle.ov, 'work')).toBe('ov/notes/work');
-		expect(folder_path_of(T_Bundle.mono, 'work')).toBe('notes/work');
+		expect(folder_path_of(T_Bundle.ov, 'work')).toBe('memory/ov/notes/work');
+		expect(folder_path_of(T_Bundle.mono, 'work')).toBe('memory/shared/notes/work');
 	});
 });
 
@@ -261,19 +261,19 @@ describe('the address a file\'s words are read from', () => {
 
 describe('the path a file sits at, from one record of it to the next', () => {
 	it('reads as the very same text, so a fresh record of one file says nothing new', () => {
-		expect(file_path_of(T_Bundle.ov, 'notes/guides/always.md'))
-			.toBe(file_path_of(T_Bundle.ov, 'notes/guides/always.md'));
+		expect(file_path_of(T_Bundle.ov, 'memory/shared/notes/guides/always.md'))
+			.toBe(file_path_of(T_Bundle.ov, 'memory/shared/notes/guides/always.md'));
 	});
 });
 
 describe('handing a file to obsidian', () => {
 	it('names the vault and the file inside it', () => {
-		expect(obsidian_link('mono', 'notes/guides/pre-flight/always.md'))
-			.toBe('obsidian://open?vault=mono&file=notes%2Fguides%2Fpre-flight%2Falways.md');
+		expect(obsidian_link('mono', 'memory/shared/notes/guides/pre-flight/always.md'))
+			.toBe('obsidian://open?vault=mono&file=memory%2Fshared%2Fnotes%2Fguides%2Fpre-flight%2Falways.md');
 	});
 
 	it('spells out a space in a name', () => {
-		expect(obsidian_link('mono', 'ov/notes/guides/adding a guide.md'))
+		expect(obsidian_link('mono', 'memory/ov/notes/guides/adding a guide.md'))
 			.toContain('adding%20a%20guide.md');
 	});
 

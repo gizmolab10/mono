@@ -1,4 +1,4 @@
-// Tests for the name-resolver rules in `notes/work/bare bone website.md`:
+// Tests for the name-resolver rules in `memory/lv/notes/work/bare bone website.md`:
 // a wiki-link's bare name becomes either a page address or, for an image,
 // the bundled image address. It also reports whether a page exists and hands
 // back a page's raw text.

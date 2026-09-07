@@ -80,7 +80,7 @@
 	let trailing_projects = $derived(shown_projects.filter((p) => !LEADING.includes(p)));
 
 	// How many words the kinds row actually offers — the kinds themselves, and the one that asks
-	// for the files carrying no labels, which is only there while there are some.
+	// for the files carrying no labels or no kind, which is only there while there are some.
 	let kinds_offered = $derived(shown_kinds.length + (bare > 0 || $w_kind === UNLABELED ? 1 : 0));
 
 	// A plain press turns one project on or off. With the option key held, the press means
@@ -319,13 +319,13 @@
 	{#if kinds_offered > 0}
 	<div class='paired-rows'>
 	<div class='kinds' use:tip={'show particular kinds of guide'}>
-		<!-- The files carrying no labels at all — how they are found, so they can be opened and
-		     given some. With every file already labeled there is nothing for it to leave, so it
-		     goes rather than standing there unanswering. -->
+		<!-- The files carrying no labels at all, or labels with no kind — how they are found, so
+		     they can be opened and given one. With every file already labeled and kinded there is
+		     nothing for it to leave, so it goes rather than sitting there unanswering. -->
 		{#if bare > 0 || $w_kind === UNLABELED}
 			<button class='segment' class:current={$w_kind === UNLABELED}
 				use:hit_target={{ id: `list.kind.${UNLABELED}`, onpress: () => choose_kind(UNLABELED),
-					tip: 'show only the files that carry no labels' }}>none</button>
+					tip: 'show only the files that carry no labels, or no kind' }}>none</button>
 		{/if}
 		{#each shown_kinds as kind}
 			{@const in_reach = kinds.includes(kind)}
@@ -492,11 +492,16 @@
 	}
 
 	/* One pill with a segment per kind; the chosen one fills with the accent. */
-	/* The two seg controls of the projects row, one gap apart. */
+	/* The two seg controls of the projects row wrap exactly as the tagsets do: side by side, one
+	   gap apart, while both fit inside the section; otherwise one above the other, one gap
+	   apart. Each row is centered. */
 	.project-groups {
-		align-items : center;
-		display     : flex;
-		gap         : var(--gap);
+		gap             : var(--gap);
+		align-content   : flex-start;
+		justify-content : center;
+		align-items     : center;
+		flex-wrap       : wrap;
+		display         : flex;
 	}
 
 	.kinds {

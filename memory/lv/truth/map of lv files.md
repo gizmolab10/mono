@@ -105,7 +105,7 @@ The four skipped, each with its reason in the file:
 
 ## Notes
 
-In `notes/work/`:
+In `memory/lv/notes/work/`:
 
 - [code debt.md](../work/code%20debt.md) — what is still owed
 - [work journal.md](../work/work%20journal.md) — decisions and finished work, newest first
@@ -114,6 +114,6 @@ In `notes/work/`:
 - [photo gallery.md](../work/photo%20gallery.md) — how a gallery works, piece by piece
 - [editing the published site.md](../work/editing%20the%20published%20site.md) — editing from the live site, and what it cannot do yet
 
-In `notes/guides/`:
+In `memory/lv/notes/guides/`:
 
 - `map of lv files.md` — this page

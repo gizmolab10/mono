@@ -1,4 +1,4 @@
-// Tests for the loader rules in `notes/work/bare bone website.md`:
+// Tests for the loader rules in `memory/lv/notes/work/bare bone website.md`:
 // it grabs every md file and every image at build time, keying md files by
 // name without the .md ending and images by name with their extension.
 

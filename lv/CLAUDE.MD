@@ -21,7 +21,7 @@ Structure emerges as needed — don't over-organize early.
 
 ## Map
 
-The file map is `notes/guides/map of lv files.md`. Read it instead of hunting, and update it when files are added, moved or removed.
+The file map is `memory/lv/truth/map of lv files.md`. Read it instead of hunting, and update it when files are added, moved or removed.
 
 ## Words
 

@@ -1,4 +1,4 @@
-// Tests for the rules in `notes/work/editing the published site.md` — Reorder.
+// Tests for the rules in `memory/lv/notes/work/editing the published site.md` — Reorder.
 // The order belongs to the folder, in one list; a file's line is its place.
 
 import { describe, it, expect } from 'vitest';

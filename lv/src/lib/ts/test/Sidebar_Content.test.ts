@@ -1,5 +1,5 @@
 // Tests for the runtime sidebar builder described in
-// `notes/work/bare bone website.md`: the sidebar is built from each page's
+// `memory/lv/notes/work/bare bone website.md`: the sidebar is built from each page's
 // top settings, the home page is pinned first in bold with a divider and
 // labelled by its title, and every other page follows alphabetically.
 

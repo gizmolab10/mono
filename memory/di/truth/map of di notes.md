@@ -7,7 +7,7 @@ date: 2026-08-20
 ---
 # Map of di notes
 
-Every folder under `notes/`. Update when notes files are added, moved, or removed. The map of the source code is [map of di files](map%20of%20di%20files.md); the map of the guides themselves is [map of di guides](map%20of%20di%20guides.md).
+Every folder under `memory/di/notes/`. Update when notes files are added, moved, or removed. The map of the source code is [map of di files](map%20of%20di%20files.md); the map of the guides themselves is [map of di guides](map%20of%20di%20guides.md).
 
 ## guides/ — reference
 

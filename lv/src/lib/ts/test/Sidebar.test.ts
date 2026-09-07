@@ -1,4 +1,4 @@
-// Tests for the rule in `notes/work/bare bone website.md`: the hamburger hides or
+// Tests for the rule in `memory/lv/notes/work/bare bone website.md`: the hamburger hides or
 // shows the sidebar, driven by one shared on/off value. (How that value paints the
 // screen is left to the styling and the click-through tests.)
 //

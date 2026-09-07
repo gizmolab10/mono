@@ -2,11 +2,9 @@
 kind: analyze
 title: "Ideas"
 description: "lv ideas. Append freely; triaged at every settle."
-tags: [now, stale, born]
+tags: [born, now]
 date: 2026-08-27
 ---
-<!-- lv ideas. Append freely; triaged at every settle. -->
-
 # Ideas
 
 write a proposal for the first unchecked item to the top of handoff.

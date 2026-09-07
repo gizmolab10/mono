@@ -9,6 +9,8 @@ date: 2026-08-29
 
 - [x] fold conventions.md into always.md, or move always.md into memory/ and re-point inject-always.sh? — answered 2 September 2026: conventions.md stays where it is and joins the injection rotation as the fourth file in turn
 
+- [ ] should `notes/tools/` follow the notes into memory? co left it at `notes/tools/` on 7 September 2026 as infrastructure — the hub dispatcher, the docs scripts, ports.json — not notes; say so if it should move too
+
 ## Inconsistencies and duplications
 
 - [ ] pac destination has three claimants — handbook line 83 says `zone/decisions.md`, its Skills pac entry and all practice say `truth/decisions.md`; which yields?

@@ -41,7 +41,6 @@ export const ALL_TAGS: string[] = [
 	'refactor',
 	'research',
 	'session',
-	'settled',
 	'setup',
 	'soon',
 	'stale',

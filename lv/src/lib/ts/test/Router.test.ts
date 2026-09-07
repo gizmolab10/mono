@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 //
-// Tests for the router rules in `notes/work/bare bone website.md`:
+// Tests for the router rules in `memory/lv/notes/work/bare bone website.md`:
 // the address bar holds the current page name, going to a page updates both
 // the name and the address, the home name maps to the root address, and going
 // to a missing page shows a not-found message that the next good move clears.

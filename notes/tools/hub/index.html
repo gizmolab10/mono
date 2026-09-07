@@ -879,14 +879,14 @@
     function doRevisit() {
       // Map project to revisit file path
       const revisitPaths = {
-        di: 'di/notes/work/revisit.di.md',
-        ga: 'ga/notes/work/revisit.ga.md',
-        me: 'me/notes/work/revisit.me.md',
-        mo: 'notes/work/revisit.mo.md',
-        s3: 's3/notes/work/revisit.s3.md',
-        ws: 'ws/notes/work/revisit.ws.md',
+        di: 'memory/di/notes/work/revisit.di.md',
+        ga: 'memory/ga/notes/work/revisit.ga.md',
+        me: 'memory/me/notes/work/revisit.me.md',
+        mo: 'memory/shared/notes/work/revisit.mo.md',
+        s3: 'memory/s3/notes/work/revisit.s3.md',
+        ws: 'memory/ws/notes/work/revisit.ws.md',
       };
-      const path = revisitPaths[project] || 'notes/work/revisit.mo.md';
+      const path = revisitPaths[project] || 'memory/shared/notes/work/revisit.mo.md';
       fetch(`http://localhost:${ports.dispatcher.port}/obsidian/${path}`)
         .then(res => res.json())
         .catch(() => { });
@@ -1377,14 +1377,14 @@
       'btn-ai': () => AI_URL,
       'btn-revisit': () => {
         const revisitPaths = {
-          di: 'di/notes/work/revisit.di.md',
-          ga: 'ga/notes/work/revisit.ga.md',
-          me: 'me/notes/work/revisit.me.md',
-          mo: 'notes/work/revisit.mo.md',
-          ws: 'ws/notes/work/revisit.ws.md',
+          di: 'memory/di/notes/work/revisit.di.md',
+          ga: 'memory/ga/notes/work/revisit.ga.md',
+          me: 'memory/me/notes/work/revisit.me.md',
+          mo: 'memory/shared/notes/work/revisit.mo.md',
+          ws: 'memory/ws/notes/work/revisit.ws.md',
         };
         const p = getDisplayProject();
-        const path = revisitPaths[p] || 'notes/work/revisit.mo.md';
+        const path = revisitPaths[p] || 'memory/shared/notes/work/revisit.mo.md';
         return `obsidian://open?vault=mono&file=${path}`;
       }
     };

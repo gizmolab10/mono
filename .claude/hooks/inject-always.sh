@@ -13,11 +13,11 @@
 #
 # Run .claude/hooks/test-always-tag.sh to prove the labels and the sending agree.
 REPO="/Users/sand/GitHub/mono"
-PRE_FLIGHT="$REPO/notes/guides/pre-flight"
+PRE_FLIGHT="$REPO/memory/shared/notes/guides/pre-flight"
 ALWAYS_FILE="$PRE_FLIGHT/always.md"
 LEXICON="$PRE_FLIGHT/lexicon.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
-BANNED_PROJECT="$REPO/$PROJECT/notes/guides/pre-flight/banned words.md"
+BANNED_PROJECT="$REPO/memory/$PROJECT/notes/guides/pre-flight/banned words.md"
 COUNT_FILE="$REPO/.claude/hooks/.turn-count"
 
 # What goes round in part B, in order. A project with no list of its own simply
@@ -54,12 +54,12 @@ fi
 # guide whose labels lie the other way round. Two sorts are let off:
 #   - every project's own list of banned words, since only one arrives on any given day;
 #   - a guide of the "explain" kind, which is about this machinery and is never sent.
-SENT=$(printf '%s\n' "$ALWAYS_FILE" "${IN_TURN[@]}" "$REPO"/*/notes/guides/pre-flight/"banned words.md")
+SENT=$(printf '%s\n' "$ALWAYS_FILE" "${IN_TURN[@]}" "$REPO"/memory/*/notes/guides/pre-flight/"banned words.md")
 STRAY=()
 while IFS= read -r FILE; do
   grep -q '^kind: *explain *$' "$FILE" && continue
   printf '%s\n' "$SENT" | grep -qxF "$FILE" || STRAY+=("${FILE#$REPO/}")
-done < <(grep -rl '^tags:.*\balways\b' "$REPO"/notes/guides "$REPO"/*/notes/guides 2>/dev/null)
+done < <(grep -rl '^tags:.*\balways\b' "$REPO"/memory/*/notes/guides 2>/dev/null)
 
 if [ ${#STRAY[@]} -gt 0 ]; then
   echo "--- LABELS ARE WRONG ---"

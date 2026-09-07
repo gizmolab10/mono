@@ -10,7 +10,7 @@
 
 	let {
 		radius    = k.radius.corner.tiny,
-		thickness = k.thickness.normal,
+		thickness = k.thickness.huge,
 		z_layer   = k.layer.controls,
 		reach     = 'var(--gap)',
 		vertical  = false,

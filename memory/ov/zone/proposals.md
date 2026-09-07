@@ -7,6 +7,16 @@ date: 2026-08-31
 ---
 # Proposals
 
+## proposal: the work journal moves into memory (7 September 2026)
+
+**Success criteria.** `memory/ov/notes/work/work journal.md` is gone from memory/ov/notes/work and sits in memory/ov, whole, its 52 entries unchanged. The map names its new path. The done row in shorthand.md sends ticked items to the file where it now is, and the handbook's inception rule — write nothing new into the old notes — no longer collides with it. Every link that named the old path resolves.
+
+**Where in memory.** `memory/ov/archive/work journal.md`. The handbook names archive/ as the home for a no-longer-current, carefully composed file: kept readable, never loaded at start, no sizing limit. The journal is 78k and is history by its own brief, "what has been finished, newest first", which the design keeps out of truth/. The other choice is the project root beside log.md, as a second record of what happened; that puts two histories a folder apart, and the handbook's sizing table would have to except it.
+
+**What changes with it.** The map's journal line, one link. The done row's target. The handbook's inception list of what still lives only in the old notes, if it names the journal. ov's browse shows the file under memory/ov once it moves, since memory files answer to their project.
+
+**Open.** Whether done writes new entries into the moved journal, or the log's D: lines and the settle are the record of finished work and the journal is closed at its last entry, 19 August 2026.
+
 ## proposal: the form's controls section moves into the top row (5 September 2026)
 
 **Success criteria.** In edit, the row across the top holds, right of the back button, a section on `--bg` with a thick upright line at its left, holding exactly what the form's controls section holds today: the count, the steppers, the folders, the name field, the four buttons and the delete question. The dispatcher and build buttons are not drawn in edit; in browse the row is as today. The form's stack has five sections, and 'more' folds them all. Every press does what it did: step, rename, new, Obsidian, send, delete; the section's bare space is the way out and lights with the label rows. svelte-check clean, ov's tests pass, confirmed on screen.
@@ -36,7 +46,7 @@ date: 2026-08-31
 1. `package.json` — `workspaces.packages` names ten folders bare; each becomes `projects/<name>`. The nohoist patterns name the package, not the folder, so they are untouched.
 2. Every cross-collection link in the notes. A guide reaches a sibling project as `../../../<name>/...`, counting from the repo top. One more folder makes it `../../../../<name>/...` for a project-to-project link, while a project-to-shared link keeps its depth only if `notes` moves too. This is the largest part of the work and the one that can be measured — the dead-link report is the measurement.
 3. ov's own path arithmetic. `T_Bundle` names each collection by its folder, and `project_of` reads a memory file's first folder against that list; both keep working, since the names do not change. What changes is where the app roots each collection, and `following_links.test.ts` spells the old depths.
-4. The hub dispatcher and the hooks. `inject-always.sh` builds `$REPO/$PROJECT/notes/...` and scans `$REPO/*/notes/guides`; both gain `projects/`. The `/p` skill checks `~/GitHub/mono/<name>/`.
+4. The hub dispatcher and the hooks. `inject-always.sh` builds `$REPO/memory/$PROJECT/notes/...` and scans `$REPO/memory/*/notes/guides`; since 7 September 2026 neither names a project folder, so neither changes. The `/p` skill checks `~/GitHub/mono/<name>/`.
 5. `CLAUDE.md` and the guides that spell paths.
 
 **Cost.** One rename of thirteen folders, then a re-pointing pass whose size is the number of relative links between collections. `git mv` keeps the history. The risk is not the move but the links, and the dead-link report already exists to say when they are right.
@@ -51,7 +61,7 @@ That is what the move on 27 August already did, by hand. This proposal is for ma
 
 **What follows from it**
 
-- **`zone/debt.md` is the one place work is owed.** One file per project. Nothing new is ever written to the old `notes/work/` files.
+- **`zone/debt.md` is the one place work is owed.** One file per project. Nothing new is ever written to the old `memory/<project>/notes/work/` files.
 - **The done section stops growing.** A finished item is deleted, and a `D:` line in the log says what was done. Git holds the corpse; the log holds the recent; the debt list holds only what is still owed. The 292 finished checkboxes now in the file are history that came along with the move — they can be cut at the next settle without losing anything.
 - **Settle triages debt the way it triages ideas.** Ideas get promote, keep, or cull. Debt gets: done (delete it, log a `D:`), still owed (leave it), or dead (delete it, log why). Three settles untouched is the same signal it is for an idea — do it or drop it.
 - **An idea promoted becomes debt, not truth.** That is the missing step in the arc: `propose` puts a thing in `ideas.md`; deciding to build it moves the line to `debt.md`; building it writes the truth and deletes the debt line. Today `propose` has nowhere to hand a thing off to.

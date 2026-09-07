@@ -10,7 +10,7 @@ Personal sandbox. Collecting, researching, fleshing out ideas. Some wild, some p
 
 READ before proposing. SEARCH before claiming nothing exists.
 
-Ideas live in `notes/ideas/`. Research in `notes/research/`. Structure emerges as needed — don't over-organize early.
+Ideas live in `memory/me/notes/ideas/`. Research in `memory/me/notes/research/`. Structure emerges as needed — don't over-organize early.
 
 ## Tone
 

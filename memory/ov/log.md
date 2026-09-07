@@ -7,11 +7,15 @@ date: 2026-09-01
 ---
 # ov log
 
-<!-- consolidated: 5 September 2026 -->
+<!-- consolidated: 6 September 2026 -->
 
-## 5 September 2026
+## 7 September 2026
 
-- S: settled 5 September 2026 — sixteen lines. Every D: about the filters' rows, the top row's file section, the starved rows, the heavy line below browse's tags and a memory file's project is in truth/controls.md; the state lines are in index.md; the 4 September `.reaches` line is dropped as superseded by the slot scheme the same truth now says. Jonathan renamed the drive to zone/simplify gaps.md, his to dissolve. The four edit-related renames of 5 September (commit 34b4aeed — Edit, Edit_Filters, Edit_Markdown, List_Files) are in the map, and Tag_Rows is marked there as having no caller. The starved-row question in shared's zone/questions.md is answered. Three ticked ideas are cleared; one ticked box remains — "files that are not markdown" — since no record says what was done
+- D: ov roots every collection's notes at `memory/<project>/notes/`, mono's at `memory/shared/notes/` — Saving.ts's `notes_of`, and `site_of_file` tries each collection's notes before the memory rule, so a moved guide still answers to its project; six test files re-pointed, five hand-written expectations fixed by hand; 336 pass, svelte-check clean; the map's notes section is rewritten against the new place and its other links, broken since the map entered truth/, are re-pointed at `ov/src/`
+
+## 6 September 2026
+
+- S: settled again 6 September 2026 — five lines. The header's soft pointer, the 'less' clickable and the tagsets' order are in truth/controls.md; the drive's closed question and its build are in zone/drive.md, confirmed on screen and waiting on Jonathan's word to dissolve; the morning settle's summary is in index.md. No source file was added, moved or removed, so the map is unchanged. One ticked idea is the 'way out' rename, ticked by Jonathan and not built, so no D: can say what was done — left in place
 
 ---
 

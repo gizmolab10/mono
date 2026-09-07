@@ -2,7 +2,7 @@
 type: spec
 title: Scope
 description: What belongs in ov and what deliberately does not.
-tags: [scope, boundaries, settled]
+tags: [scope, boundaries, incorporated]
 use_when: [adding features, deciding where something belongs, ov vs ji questions]
 updated: 22 August 2026
 ---
@@ -12,4 +12,4 @@ In: browsing and editing the repo's markdown files; tags, kinds, and labels — 
 
 Out (deliberately): ji's documents, storage, and chat — they belong nowhere here.
 
-The fuller statement lives in [ov - goals](../../../ov/notes/guides/design/ov%20-%20goals.md).
+The fuller statement lives in [ov - goals](../notes/guides/design/ov%20-%20goals.md).
