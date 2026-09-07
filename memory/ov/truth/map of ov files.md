@@ -112,4 +112,4 @@ Nothing new is written here; what lives on has entered `truth/` (the lexicon, ac
 - [assessment of our guides](../notes/work/assessment%20of%20our%20guides.md), [stale guides](../notes/work/soon/stale%20guides.md), `work/soon/repair staleness of files.md`, `work/soon/tag drift.md`, `work/soon/organize.md` — the state of the collection itself.
 - Every folder carries its own `index.md` saying what it holds.
 
-The proposal that started this project lives in ji, at `ji/notes/work/proposals/ov.md`.
+The proposal that started this project was written in ji; it became [ov - goals.md](../notes/guides/design/ov%20-%20goals.md).

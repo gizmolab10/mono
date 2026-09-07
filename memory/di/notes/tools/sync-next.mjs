@@ -7,7 +7,7 @@
 // handoff's Next section. The block is bounded by HTML markers so re-running
 // the script is idempotent.
 //
-// Run with: node notes/tools/sync-next.mjs
+// Run with: node ../memory/di/notes/tools/sync-next.mjs
 //
 // Run it with yarn next.
 

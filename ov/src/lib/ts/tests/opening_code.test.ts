@@ -17,8 +17,8 @@ describe('which links are code', () => {
 		expect(is_code_link('../../index.html')).toBe(true);
 		expect(is_code_link('../../package.json')).toBe(true);
 		expect(is_code_link('../../netlify.toml')).toBe(true);
-		expect(is_code_link('notes/tools/hub/dispatcher.py')).toBe(true);
-		expect(is_code_link('notes/tools/hub/servers.sh')).toBe(true);
+		expect(is_code_link('tools/hub/dispatcher.py')).toBe(true);
+		expect(is_code_link('tools/hub/servers.sh')).toBe(true);
 	});
 
 	it('leaves the line off the reckoning', () => {

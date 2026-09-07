@@ -1,5 +1,5 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import ports from '../notes/tools/hub/ports.json';
+import ports from '../tools/hub/ports.json';
 import { defineConfig } from 'vite';
 
 export default defineConfig({

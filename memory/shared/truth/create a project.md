@@ -36,7 +36,7 @@ Copy ov's structure, and no more of it than the project uses:
 
 - `package.json` — the name, and only the dependencies it actually has.
 - `index.html` — the title, and a script tag pointing at `src/lib/ts/main.ts`.
-- `vite.config.ts` — reads its port from `notes/tools/hub/ports.json`.
+- `vite.config.ts` — reads its port from `tools/hub/ports.json`.
 - `tsconfig.json`, `svelte.config.js`, `.gitignore`, `src/vite-env.d.ts` — copied from ov unchanged.
 - `src/lib/ts/main.ts` — mounts one component, nothing else.
 - `src/lib/svelte/main/App.svelte` — the whole app on day one.
@@ -44,7 +44,7 @@ Copy ov's structure, and no more of it than the project uses:
 
 Then two registrations, both easy to forget:
 
-1. **`notes/tools/hub/ports.json`** — a new entry with the next free port and the repo url.
+1. **`tools/hub/ports.json`** — a new entry with the next free port and the repo url.
 2. **mono's `package.json`** — the name added to `workspaces.packages`, in alphabetical order.
 
 Finally, `yarn install` at mono's top, on the Mac. Nothing runs until that links the new folder.
@@ -55,7 +55,7 @@ Finally, `yarn install` at mono's top, on the Mac. Nothing runs until that links
 
 Only a project with a port belongs here — the hub launches dev servers and opens sites, so a memory-only project would get a button that opens nothing.
 
-Three edits, all in `notes/tools/hub/index.html`:
+Three edits, all in `tools/hub/index.html`:
 
 1. **The button**, in the `project-row` group beside the others: `<button class="project" data-project="<name>"><name><span class="badge">?</span></button>` The badge is one free letter. Taken so far: M, J, W, V, I, Z, O, U — and the action badges B, E, X, R, G, Y, N, P, L, D.
 2. **Both config maps** — one line each in `config.app` and `config.docs`: `<name>: buildProjectConfig('<name>', 'app'),` `buildProjectConfig` reads `ports.json` and answers null where a mode has nothing, so a project with no docs needs no special case.

@@ -19,7 +19,7 @@
 Option 3 + A + di CSS:
 * **Store**: normalized reactive tables (`$state`), no god-object Hierarchy
 * **Reactivity**: Svelte 5 runes only (`$state`, `$derived`, `$effect`), no typed-signals
-* **Layout**: flex + gap + border-radius, no SVG draw components See ws/notes/work/w2.md for full rationale.
+* **Layout**: flex + gap + border-radius, no SVG draw components.
 
 ## Contents
 

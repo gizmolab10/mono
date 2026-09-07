@@ -1,7 +1,7 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { photoTitles } from './plugins/photo-titles';
 import { captionDrop } from './plugins/caption-drop';
-import ports from '../notes/tools/hub/ports.json';
+import ports from '../tools/hub/ports.json';
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 

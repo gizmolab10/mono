@@ -371,7 +371,7 @@ rm -f "$ERROR_LOG"
 touch "$ERROR_LOG"
 
 # Source project-specific config if it exists
-CONFIG_FILE="notes/tools/config.sh"
+CONFIG_FILE="tools/config.sh"
 [ -f "$CONFIG_FILE" ] && source "$CONFIG_FILE"
 
 # Find shared tools directory (SCRIPT_DIR already set at top)

@@ -18,7 +18,7 @@ import urllib.parse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 GITHUB_DIR = os.path.expanduser('~/GitHub/mono')
-UPDATE_DOCS = os.path.join(GITHUB_DIR, 'notes/tools/docs/update-project-docs.sh')
+UPDATE_DOCS = os.path.join(GITHUB_DIR, 'tools/docs/update-project-docs.sh')
 
 # The folders inside a work folder whose notes go out with the guides, beside the notes standing at
 # that folder's own top. Overview draws the same line in `ov/src/lib/ts/utilities/Saving.ts`, and

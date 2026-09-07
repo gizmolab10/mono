@@ -67,7 +67,7 @@ PORT_MA_DOCS=$(get_port "['ma']['docs']")
 
 # Site definitions: name|port|dir|command
 SITES=(
-  "hub|$PORT_DISPATCH|notes/tools/hub|python3 -m http.server $PORT_DISPATCH"
+  "hub|$PORT_DISPATCH|tools/hub|python3 -m http.server $PORT_DISPATCH"
   "ws|$PORT_WS|ws|yarn dev"
   "ws-docs|$PORT_WS_DOCS|ws|VITE_PORT=$PORT_WS_DOCS yarn docs:dev"
   "di|$PORT_DI|di|yarn dev"

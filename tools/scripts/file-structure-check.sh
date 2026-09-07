@@ -50,7 +50,7 @@ run_step() {
   fi
 }
 
-run_step "Path Validator" "npx tsx notes/tools/validate-paths.ts" || FAILED_STEPS+=("Path Validator")
+run_step "Path Validator" "npx tsx tools/scripts/validate-paths.ts" || FAILED_STEPS+=("Path Validator")
 run_step "Workspace Integrity" "yarn workspaces info" || FAILED_STEPS+=("Workspace Integrity")
 run_step "Build (ws)" "cd ~/GitHub/mono/ws && yarn build" || FAILED_STEPS+=("Build (ws)")
 run_step "Build (di)" "cd ~/GitHub/mono/di && yarn build" || FAILED_STEPS+=("Build (di)")

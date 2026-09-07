@@ -21,7 +21,7 @@ No NVM needed - yarn handles Node version.
 
 ### Tool Scripts
 
-Go to `/notes/tools`:
+Go to `/tools`:
 
 ```bash
 ./update-docs.sh  # full workflow: build, fix links, sync sidebar
@@ -30,7 +30,7 @@ Go to `/notes/tools`:
 
 ### TypeScript Tools
 
-Go to `/notes/tools`. Source in `lib/`, compiled to `dist/`. Run `npx tsc`, then run the compiled js in `dist` using the `node` command. The first two can be passed a `-v` option for verbose information.
+Go to `/tools`. Source in `lib/`, compiled to `dist/`. Run `npx tsc`, then run the compiled js in `dist` using the `node` command. The first two can be passed a `-v` option for verbose information.
 
 | File | Options | Purpose |
 |----|----|----|

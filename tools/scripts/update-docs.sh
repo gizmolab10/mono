@@ -17,18 +17,18 @@ if [ "$1" = "?" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 if [ "$1" = "ws" ]; then
-  bash ~/GitHub/mono/notes/tools/docs/update-project-docs.sh ~/GitHub/mono/ws
+  bash ~/GitHub/mono/tools/docs/update-project-docs.sh ~/GitHub/mono/ws
   exit $?
 fi
 
 if [ "$1" = "di" ]; then
-  bash ~/GitHub/mono/notes/tools/docs/update-project-docs.sh ~/GitHub/mono/di
+  bash ~/GitHub/mono/tools/docs/update-project-docs.sh ~/GitHub/mono/di
   exit $?
 fi
 
 if [ "$1" = "ma" ]; then
-  bash ~/GitHub/mono/notes/tools/docs/update-project-docs.sh ~/GitHub/mono/ma
+  bash ~/GitHub/mono/tools/docs/update-project-docs.sh ~/GitHub/mono/ma
   exit $?
 fi
 
-bash ~/GitHub/mono/notes/tools/docs/update-project-docs.sh all
+bash ~/GitHub/mono/tools/docs/update-project-docs.sh all

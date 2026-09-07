@@ -41,7 +41,7 @@ TypeScript tools for VitePress documentation management:
 Projects compile these tools locally:
 
 ```bash
-cd <project>/notes/tools
+cd memory/<project>/notes/tools
 npx tsc -p ../../shared/tools/tsconfig.json --outDir ./dist
 node dist/fix-links.js
 ```

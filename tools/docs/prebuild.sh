@@ -8,7 +8,7 @@ cd "$(dirname "$0")/../.."
 rm -rf notes/ws notes/di
 
 # Copy (not symlink) so VitePress sees correct paths
-cp -r projects/ws/notes notes/ws
-cp -r projects/di/notes notes/di
+cp -r memory/ws/notes notes/ws
+cp -r memory/di/notes notes/di
 
 echo "✅ Copied project docs to notes/ws and notes/di"

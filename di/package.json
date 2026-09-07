@@ -18,7 +18,7 @@
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
-    "next": "node notes/tools/sync-next.mjs"
+    "next": "node ../memory/di/notes/tools/sync-next.mjs"
   },
   "dependencies": {
     "@types/rbush": "^4.0.0",

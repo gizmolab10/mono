@@ -9,7 +9,7 @@ date: 2026-08-31
 
 ## the notes folders move into memory (7 September 2026)
 
-Decided and built 7 September 2026. Mono's own `notes/` followed the same day into `memory/shared/notes/`, all but `notes/tools/`. Every reader below is re-pointed and both test suites pass; the shared log holds the account. Waits only on Jonathan's word to dissolve.
+Decided and built 7 September 2026. Mono's own `notes/` followed the same day into `memory/shared/notes/`; `notes/tools/` became `tools/` at the top of the repo, and `notes/` is gone. Every reader below is re-pointed and both test suites pass; the shared log holds the account. Waits only on Jonathan's word to dissolve.
 
 **Success criteria.** Every project's `notes/` folder except mono's sits at `memory/<project>/notes/`, whole, with git history kept by `git mv`. No project keeps a `notes/` folder of its own. Every link into a moved folder resolves — the dead-link report finds no more than it found the day before. ov lists the same files under the same projects, memory files answering to their projects as they do now. The hooks and the two CLAUDE files that read the old paths read the new ones. svelte-check and the tests pass where the paths are code.
 
@@ -19,14 +19,14 @@ Decided and built 7 September 2026. Mono's own `notes/` followed the same day in
 
 1. `CLAUDE.md` line 38, `<X>/notes/work/`, and the nine project CLAUDE files that name a `notes/` path: ji, core, me, di, lv, project template, ws, ov, s3.
 2. Six hooks in `.claude/hooks/`: inject-always, plain-english-check, banned-words-check, test-always-tag, display-fix, and the two jsonl records they write — inject-always builds `$REPO/$PROJECT/notes/guides/pre-flight/banned words.md` and scans `*/notes/guides`.
-3. ov: Saving.ts, which builds a file's path as `<notes>/guides/...`; File.ts's closed tag list; the dispatcher at `notes/tools/hub/dispatcher.py`, under mono's own notes, and its test; the maps in every project's truth folder, which link into notes/.
+3. ov: Saving.ts, which builds a file's path as `<notes>/guides/...`; File.ts's closed tag list; the dispatcher at `tools/hub/dispatcher.py` and its test; the maps in every project's truth folder, which link into notes/.
 4. Sixty-eight links across memory and the notes folders point into a project's notes folder.
 
 **What it reverses.** The handbook's inception rules "pull, don't push; never bulk-import" and "journals and handoffs stay behind in place", rewritten 7 September 2026.
 
 **Cost.** Twelve `git mv`, four new memory folders, the path readers above, and one re-pointing pass over the links, measured by the dead-link report.
 
-**Open.** Whether `notes/tools/` follows too — asked in zone/questions.md. The inception rule now reads: a moved folder is still the old notes; write nothing new into it.
+**Open.** Nothing. The inception rule now reads: a moved folder is still the old notes; write nothing new into it.
 
 ## life cycle (30 August 2026)
 

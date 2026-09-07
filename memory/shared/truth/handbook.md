@@ -130,7 +130,7 @@ Hooks only read, check, and remind — they never write truths, settle, coin, or
 
 The old notes (CLAUDE.md's reading-on-load list, the `guides/` and `work/` folders under each `memory/<project>/notes/`) is being abandoned completely. Until it's gone:
 
-- Moved 7 September 2026: every project's notes folder sits whole at `memory/<project>/notes/`, and mono's own at `memory/shared/notes/` — journals, handoffs, mothballs and stories included, as they were. Only `notes/tools/` remains outside. A moved folder is still the old notes: its truths enter `truth/` one at a time, the day work reaches for them.
+- Moved 7 September 2026: every project's notes folder sits whole at `memory/<project>/notes/`, and mono's own at `memory/shared/notes/` — journals, handoffs, mothballs and stories included, as they were. `notes/tools/` became `tools/` at the top of the repo, and `notes/` is gone. A moved folder is still the old notes: its truths enter `truth/` one at a time, the day work reaches for them.
 - A move is a move: delete what the old file loses — content never lives in both systems.
 - Write nothing new into the old notes, ever. All new rules, terms, decisions, and notes go into `memory/`.
 - Keep `truth/inception.md` current: it lists what still lives only in the old notes; remove a line when its content moves in or is declared dead. When the list is empty, delete the file, shrink CLAUDE.md's "Reading on load" to `start` alone — done.

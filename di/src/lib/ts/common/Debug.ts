@@ -189,7 +189,7 @@ export class Debug {
 			// ─── Redesign hooks (rule 25 of Uncrowded Dimensionals Redesign) ──
 			// Stubs return placeholder values where the new placement code
 			// doesn't exist yet. They will be filled in during Phase 2 of
-			// the redesign work (see notes/work/now/dimensionals.work.md).
+			// the redesign work (see memory/di/notes/work/mothballs/dimensionals.work.md).
 			// Smallest gap between any drawn label rectangle and the
 			// silhouette polygon, in pixels. (TODO: compute from new path.)
 			dim_min_silhouette_clearance: () => 0,

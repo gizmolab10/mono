@@ -1827,7 +1827,7 @@ export function run_uniface_placement(): Uniface_Placement_Result {
 	// actually sees. Bug 001 fix: the inside/outside guard previously used the
 	// box-corner hull above, which under perspective does not match the visible
 	// silhouette, so a label could read inside the visible outline while the
-	// guard called it outside (notes/work/now/bugs/001 dim is inside silho).
+	// guard called it outside.
 	const qualifying_parts_corners_screen: { x: number; y: number }[] = [];
 	if (!silhouette_empty) {
 		for (const obj_q of fully_visible_leaves) {

@@ -12,7 +12,7 @@ PROJECT_ROOT="${1:-$(pwd)}"
 cd "$PROJECT_ROOT" || exit 1
 
 # Source project-specific config if it exists
-CONFIG_FILE="notes/tools/config.sh"
+CONFIG_FILE="tools/config.sh"
 [ -f "$CONFIG_FILE" ] && source "$CONFIG_FILE"
 
 # Defaults (can be overridden by config.sh)

@@ -9,6 +9,6 @@ Unified documentation for all projects.
 ## Contents
 
 - [Guides](./guides/)
-- [Tools](../../../notes/tools/)
+- [Tools](../../../tools/)
 - [Work](./work/)
 

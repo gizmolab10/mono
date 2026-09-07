@@ -37,7 +37,7 @@ The folders and the build commands above are what this repo actually holds. The 
 | lv app    | <https://littlecloudvineyard.netlify.app>           | <https://littlecloudvineyard.com>  |
 | ji app    | <https://jeff-intersection.netlify.app>             | <https://intersection.lol>         |
 
-Every one of these addresses is written down in one place: `notes/tools/hub/ports.json`. Nothing else keeps its own copy.
+Every one of these addresses is written down in one place: `tools/hub/ports.json`. Nothing else keeps its own copy.
 
 ## Dashboards
 
@@ -77,14 +77,14 @@ It hands back whether the site is building, done or broken, when the build start
 3. Set the build command: `yarn build` for an app, `yarn docs:build` for docs.
 4. Set the publish folder: `dist` for an app, `.vitepress/dist` for docs.
 5. Rename the Netlify site to match the naming above.
-6. Write the site address and its deploy page into that project's entry in `notes/tools/hub/ports.json`. An app uses the plain names, docs use the docs ones. Add the custom address too, if it has one.
+6. Write the site address and its deploy page into that project's entry in `tools/hub/ports.json`. An app uses the plain names, docs use the docs ones. Add the custom address too, if it has one.
 
 That last step is usually the whole of it. The hub's deploy-status list builds itself from the ports file, and so do the hub's buttons for a live site, a published site and a deploy page — an entry that gains an address gains its button.
 
 Two things do **not** build themselves:
 
-- **A brand-new project needs a button.** Add it to the project row, give it a free letter on the keyboard, and add it to both the app list and the docs list in `notes/tools/hub/index.html`.
-- **A local dev server needs a line.** Give the project a port in the ports file, then add it to the site list in `notes/tools/hub/servers.sh` (read the port, one line saying how to start it, and add its name to the list the script accepts).
+- **A brand-new project needs a button.** Add it to the project row, give it a free letter on the keyboard, and add it to both the app list and the docs list in `tools/hub/index.html`.
+- **A local dev server needs a line.** Give the project a port in the ports file, then add it to the site list in `tools/hub/servers.sh` (read the port, one line saying how to start it, and add its name to the list the script accepts).
 
 ## When it goes wrong
 
@@ -92,7 +92,7 @@ Two things do **not** build themselves:
 
 1. Look at the line number in the error.
 2. Look for a missing comma after a `link:` line.
-3. Run `notes/tools/docs/update-project-docs.sh` to rebuild the sidebar with the commas right.
+3. Run `tools/docs/update-project-docs.sh` to rebuild the sidebar with the commas right.
 
 ### It built the wrong thing
 
@@ -112,7 +112,7 @@ Not an error. Netlify skips a build when nothing changed, and the hub hides thes
 
 ## Clearing out old deploys (Jonathan only)
 
-`notes/tools/scripts/delete-netlify-deploys.sh` clears old deploys away.
+`tools/scripts/delete-netlify-deploys.sh` clears old deploys away.
 
 ### Setup
 
@@ -138,7 +138,7 @@ Then: `source ~/.zshrc`
 ### Running it
 
 ```bash
-~/GitHub/mono/notes/tools/scripts/delete-netlify-deploys.sh
+~/GitHub/mono/tools/scripts/delete-netlify-deploys.sh
 ```
 
 ### Keeping the token safe

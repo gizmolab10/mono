@@ -10,7 +10,7 @@
 #   NETLIFY_SITE_ID      - Site ID (can also be passed as $1)
 
 # Source project-specific config if it exists
-CONFIG_FILE="notes/tools/config.sh"
+CONFIG_FILE="tools/config.sh"
 [ -f "$CONFIG_FILE" ] && . "$CONFIG_FILE"
 
 # === CONFIGURATION ===

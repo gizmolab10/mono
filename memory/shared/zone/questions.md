@@ -9,7 +9,7 @@ date: 2026-08-29
 
 - [x] fold conventions.md into always.md, or move always.md into memory/ and re-point inject-always.sh? — answered 2 September 2026: conventions.md stays where it is and joins the injection rotation as the fourth file in turn
 
-- [ ] should `notes/tools/` follow the notes into memory? co left it at `notes/tools/` on 7 September 2026 as infrastructure — the hub dispatcher, the docs scripts, ports.json — not notes; say so if it should move too
+- [x] should `notes/tools/` follow the notes into memory? — answered 7 September 2026: it moves to `tools/` at the top of the repo, and `notes/` is deleted
 
 ## Inconsistencies and duplications
 

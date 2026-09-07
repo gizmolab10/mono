@@ -46,7 +46,7 @@ Do not name it `index` — those are left out on purpose, since the folders do t
 The list of which files exist is settled when the app's code is prepared; reloading the page re-reads the files it already knows but never asks whether new ones appeared.
 
 ```
-~/GitHub/mono/notes/tools/hub/servers.sh ov
+~/GitHub/mono/tools/hub/servers.sh ov
 ```
 
 Then reload the page. The count should go up by one.

@@ -1,7 +1,7 @@
 """
 The dispatcher's routes, asked of a running dispatcher.
 
-Run it with: python3 notes/tools/hub/test_dispatcher.py
+Run it with: python3 tools/hub/test_dispatcher.py
 
 A route in the wrong half of the file — an ask written among the tells — is perfectly good
 code that simply never runs. Nothing but asking the running server catches that, which is
@@ -16,7 +16,7 @@ import urllib.parse
 import urllib.request
 
 WHERE = 'http://localhost:5171'
-REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 
 def ask(route, **params):

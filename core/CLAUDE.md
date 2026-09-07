@@ -11,8 +11,8 @@ date: 2026-08-24
 
 Ported from ji. What belongs here — and what deliberately does not — is [ov - goals](../memory/core/notes/guides/design/ov%20-%20goals.md).
 
-Read `memory/ov/truth/lexicon.md` at session start. It names everything in this project: use those words in prose, comments, log lines and test names, and invent no synonyms.
+Read `memory/core/truth/lexicon.md` at session start. It names everything in this project: use those words in prose, comments, log lines and test names, and invent no synonyms.
 
-The file map is `notes/guides/project/map of ov files.md`. Read it instead of discovering files using regex and wildcards, and update it when files are added, moved, or removed.
+core has no file map. `memory/core/truth/structure.md` says what core is and the rules that keep it core.
 
 Tags, kinds and labels are the app's own vernacular.
