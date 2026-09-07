@@ -161,7 +161,7 @@ No bold, no reason, no advice. Notice the third one is *longer* than mine was �
 
 Two smaller habits from the same pass: an aside goes in parentheses, never between dashes. And the thing we are building on is **ours** — *"This is our spot."*, where co had written *"This is the one field ji can store into."*
 
-Two more, from his rewrite of [agency](../pre-flight/agency.md)'s opening line:
+Two more, from his rewrite of [agency](../../../truth/agency.md)'s opening line:
 
 * **Two sentences about the same thing become one.** Join the second with "which", never by naming the subject again. Mine: "Each rule ends with Jonathan's preferred wording. Each rule's preferred wording must not be improved any further."* His: *"Each rule ends with Jonathan's preferred wording, which MUST not be improved any further."*
 * **A prohibition wears capitals.** MUST, NEVER — seen without reading the line.

@@ -11,4 +11,4 @@ One registration is deliberately missing: the dispatcher's two collection lists,
 
 ## Truths
 
-None yet.
+- [working features.md](truth/working%20features.md) — what the site does today, and what each thing cannot do; lv's, copied.

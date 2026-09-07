@@ -42,6 +42,8 @@ Closes the four doors: pacs live in zone with the ideas they weigh, questions.md
 
 ## proposal: the hooks do not reach this session (27 August 2026)
 
+Resolved 7 September 2026: the hooks read `truth/` — conventions.md (always, response and the banned words folded in), agency.md, lexicon.md, and each project's `truth/banned words.md`. The open question below is answered the second way: always.md moved into the memory system, as a section of conventions.md, and the hook follows it there.
+
 I broke the "stands" rule the day after it was written. I first blamed my memory. Reading the hooks says otherwise.
 
 **What already exists.** `mono/.claude/hooks/` holds a working enforcement apparatus, aimed at exactly this problem:

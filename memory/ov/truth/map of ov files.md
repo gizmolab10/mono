@@ -96,10 +96,8 @@ Overview's files. Update this when files are added, moved, or removed.
 
 ## memory/ov/notes/ — the old notes, moved whole on 7 September 2026
 
-Nothing new is written here; what lives on has entered `truth/` (the lexicon, action type, scope, this map).
+Nothing new is written here; what lives on has entered `truth/` (the lexicon, action type, scope, working features, banned words, this map).
 
-- [guides/project/working features.md](../notes/guides/project/working%20features.md) — what the app can do, newest first.
-- [guides/pre-flight/banned words.md](../notes/guides/pre-flight/banned%20words.md) — overview's own word substitutions.
 - [editing](../notes/guides/design/editing.md) — the plan we followed for changing a guide from inside the app.
 - `guides/design/` — what the app is for and how it got here: [okf — is it worth it?](../notes/guides/design/okf%20—%20is%20it%20worth%20it%3F.md), the OKF and its midway review, [ov - goals.md](../notes/guides/design/ov%20-%20goals.md), [compose an email.md](../notes/guides/design/compose%20an%20email.md), [rewrite guides.md](../notes/work/soon/rewrite%20guides.md).
 - [work/work journal.md](../notes/work/work%20journal.md) — what's been finished, newest first.

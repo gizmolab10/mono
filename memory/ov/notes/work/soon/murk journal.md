@@ -47,7 +47,7 @@ Another rule says: say what a thing does, not what it is called. No names of cod
 
 This is the strongest cause on the list. A word invented fresh each turn is a word the reader has to decode each turn.
 
-*Repaired.* [lexicon.md](../../../../shared/notes/guides/pre-flight/lexicon.md) now holds 44 words, gathered from three project lexicons, the guides, the hooks and one session's chat.
+*Repaired.* [lexicon.md](../../../../shared/truth/lexicon.md) now holds 44 words, gathered from three project lexicons, the guides, the hooks and one session's chat.
 
 ### 3. Two thirds of the rules are absent from any given turn
 
@@ -57,7 +57,7 @@ The rules do not fit in what can be sent, so they arrive one file in three, in r
 
 ### 4. A forced swap can change the meaning
 
-The [banned words](../../../../shared/notes/guides/pre-flight/banned%20words.md) table was applied word for word. `move` for `copy` are different acts. `gap` for `room` loses the sense of capacity. A sentence bent around a word that does not fit is murky by construction — the reader feels the strain and reads the strain instead of the meaning.
+The [banned words](../../../../shared/truth/conventions.md) table was applied word for word. `move` for `copy` are different acts. `gap` for `room` loses the sense of capacity. A sentence bent around a word that does not fit is murky by construction — the reader feels the strain and reads the strain instead of the meaning.
 
 *Repaired, half.* The table no longer arrives before a message, the lexicon does, saying the same 21 pairs the right way round. The table stays on disk, where the two scripts that check a finished reply still read it.
 

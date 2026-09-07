@@ -13,6 +13,8 @@ A library with no entry point, carved out of ov: what every mono app can share. 
 - [adopting core.md](truth/adopting%20core.md) — how a host takes core: the three files that say where the alias points, the one file holding every adoption, what the host owes at startup, and the lessons each paid for. Read it before adopting anything.
 - [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
 - [lexicon.md](truth/lexicon.md) — core's terms.
+- [banned words.md](truth/banned%20words.md) — core's own word substitutions; the hooks read it.
+- [working features.md](truth/working%20features.md) — what the app can do, newest first; ov's, from the carve.
 - [scope.md](truth/scope.md) — what belongs in core and what deliberately does not.
 - [claude-files.md](truth/claude-files.md) — how CLAUDE files are listed, placed, read, and written.
 - [action type.md](truth/action%20type.md) — the type that hands Separator more than one title, each with its handler and its position.

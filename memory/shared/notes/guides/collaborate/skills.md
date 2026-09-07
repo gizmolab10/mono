@@ -50,4 +50,4 @@ Two of them do not write the project name: `/ji` and `/lv` only read and offer.
 
 ## Skills against shorthand
 
-A skill is a whole instruction, typed alone. [Shorthand](../pre-flight/shorthand.md) is a word typed inside an ordinary sentence — `pac`, `loc`, `v:` — which changes how that one reply is written. The two never overlap: a skill starts with a slash and stands on its own line.
+A skill is a whole instruction, typed alone. [Shorthand](../../../truth/shorthand.md) is a word typed inside an ordinary sentence — `pac`, `loc`, `v:` — which changes how that one reply is written. The two never overlap: a skill starts with a slash and stands on its own line.

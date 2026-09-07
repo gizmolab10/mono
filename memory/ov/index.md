@@ -20,6 +20,8 @@ The adoption is finished and measured: no file in ov is a copy of anything in co
 
 - [scope.md](truth/scope.md) — what belongs in ov and what deliberately does not.
 - [lexicon.md](truth/lexicon.md) — ov's terms, the one home; the old pre-flight lexicon is merged in and gone.
+- [banned words.md](truth/banned%20words.md) — overview's own word substitutions; the hooks read it.
+- [working features.md](truth/working%20features.md) — what the app can do, newest first.
 - [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
 - [controls.md](truth/controls.md) — how the list's filters and the editor's controls behave.
 - [claude-files.md](truth/claude-files.md) — how CLAUDE files are listed, placed, read, and written; the three places that must agree.

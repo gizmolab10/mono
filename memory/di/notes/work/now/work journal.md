@@ -1177,7 +1177,7 @@ Production code now. The compute-silhouette function does a getImageData call ag
 
 Open follow-ups. Six of the existing browser-driven tests for rule 39 were written against the corner-projection contract and now fail against the painted-pixel rule. They need to be rewritten to read canvas pixels and compute expected silhouette from those, or replaced with sanity-checks that pin the new contract. Not done in this session; the production code and the catalog are correct and the visual confirmation is in hand, so the test debt is logged here for the next pass.
 
-Files: [App.svelte](../../../../../di/src/App.svelte) (compute_silhouette rewritten as pixel scan, diagnostic logs removed, html/body/#app height anchor added to print stylesheet); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 39 prose rewritten; rules 63 and 64 added); [working features.md](working%20features.md) (adherence row updated to 64 rules total).
+Files: [App.svelte](../../../../../di/src/App.svelte) (compute_silhouette rewritten as pixel scan, diagnostic logs removed, html/body/#app height anchor added to print stylesheet); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 39 prose rewritten; rules 63 and 64 added); [working features.md](../../../truth/working%20features.md) (adherence row updated to 64 rules total).
 
 Verification. Visual: the print preview in real Chrome shows the picture filling the page along its limiting side, centred on the other. Tests: the structural tests (rules 61, 63, 64, the centring rule, the diagnostic) all pass; six rule-39 tests need rewriting against the painted-pixel contract and are tracked as follow-up.
 
@@ -1245,7 +1245,7 @@ The driver spreadsheet was deleted by Jonathan once the renames were done. No no
 
 Verification: grep for every old short name across the whole repository returns no matches outside the (now deleted) spreadsheet. Type-check and tests not re-run since this pass touched only documentation.
 
-Files: [stipulations.md](di/notes/guides/development/rules/stipulations.md) (renames, prose swaps, redundant rule removed, renumbered, header refreshed, link tails repaired); [testing.md](di/notes/guides/project/philosophy/testing.md) (eight short-name updates, removed reference, coverage summary refreshed); [working features.md](working%20features.md) (adherence row updated to 58 of 62 with TBD callout).
+Files: [stipulations.md](di/notes/guides/development/rules/stipulations.md) (renames, prose swaps, redundant rule removed, renumbered, header refreshed, link tails repaired); [testing.md](di/notes/guides/project/philosophy/testing.md) (eight short-name updates, removed reference, coverage summary refreshed); [working features.md](../../../truth/working%20features.md) (adherence row updated to 58 of 62 with TBD callout).
 
 ---
 
@@ -2079,7 +2079,7 @@ Investigation, fixed: Jonathan reported that typing a new formula on a cell did 
 ### Files touched — 2026-04-24
 
 - Eyeball coupling: [D_Parts.svelte](di/src/lib/svelte/details/D_Parts.svelte).
-- Working features: [working features.md](working%20features.md).
+- Working features: [working features.md](../../../truth/working%20features.md).
 - Dead-link fixes (first pass): [work index](di/notes/work/index.md), [milestones index](di/notes/work/milestones/index.md), [code-debt list](di/notes/work/now/code%20debt.md).
 - Dead-link sweep (second pass): docs config `di/.vitepress/config.mts`, [26.lacemaker.md](26.lacemaker.md), [32.facets.md](32.facets.md), [theory.md](theory.md), [32.facets handoff](di/notes/work/milestones/done/32.facets/handoff.md), [32.facets history](di/notes/work/milestones/done/32.facets/history.md), [bottlenecks](bottlenecks.md), [slow handoff](di/notes/work/milestones/done/32.facets/slow/handoff.md), [current work handoff](di/notes/work/now/handoff.md), [road map](di%20road%20map.md).
 - Tracing logs (still wired): [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte), [Constraints.ts](di/src/lib/ts/algebra/Constraints.ts), [Engine.ts](di/src/lib/ts/render/Engine.ts), [Render.ts](di/src/lib/ts/render/Render.ts).

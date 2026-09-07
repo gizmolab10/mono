@@ -19,14 +19,14 @@ ov project first
 
 Later shared, then other projects
 
-- [ ] `memory/shared/notes/guides/pre-flight/` — always, response, agency, keywords, gates, kinds.of.tasks, pitfalls, lexicon (mono-wide terms)
+- [x] `memory/shared/notes/guides/pre-flight/` — done 7 September 2026: always, response and banned words folded into truth/conventions.md, the mono-wide lexicon into truth/lexicon.md; agency, keywords, gates, kinds of tasks, pitfalls and shorthand moved whole into truth/
 - [ ] `memory/shared/notes/guides/collaborate/` — chat roles, voice, workflow, exclude, gating
 - [ ] `memory/shared/notes/work/learn.md` — cross-project lessons (the rules they taught, not the stories)
 - [ ] `CLAUDE.md` "Reading on load" list itself — shrinks as the lines above die
 
 Stays by design (not on the death list): 
 
-- [ ] `memory/shared/notes/guides/pre-flight/shorthand.md`, the trigger surface.
+- [x] `memory/shared/truth/shorthand.md`, the trigger surface — moved into truth/ 7 September 2026.
 
 ## remaining duplicates
 
@@ -34,9 +34,9 @@ Duplicated sources of truth (logs do not count).
 
 Found 29 August 2026, each a topic living in two places — the merge direction is always into memory/.
 
-- **conduct rules** — `memory/shared/truth/conventions.md` vs the old notes's `pre-flight/always.md`, `response.md`, `collaborate/voice.md`: all four say how Claude speaks and works. The hooks read only the old ones.
-- **banned words** — `conventions.md` bans "lands" and "stands"; `pre-flight/banned words.md` carries the same stands row in its table. The hooks read only the table.
-- **shared terms** — `memory/shared/truth/lexicon.md` vs `pre-flight/lexicon.md` (mono-wide): two lexicons for cross-project words; the old one still points at ov's dead pre-flight lexicon.
+- **conduct rules** — `memory/shared/truth/conventions.md` vs the old notes's `pre-flight/always.md`, `response.md`, `collaborate/voice.md`: all four say how Claude speaks and works. The hooks read only the old ones. — Folded 7 September 2026: always.md and response.md are sections of conventions.md, and the hooks read it; `collaborate/voice.md` remains apart.
+- **banned words** — `conventions.md` bans "lands" and "stands"; `pre-flight/banned words.md` carries the same stands row in its table. The hooks read only the table. — Folded 7 September 2026: the table is a section of conventions.md, whose prose bans of the same words are gone.
+- **shared terms** — `memory/shared/truth/lexicon.md` vs `pre-flight/lexicon.md` (mono-wide): two lexicons for cross-project words; the old one still points at ov's dead pre-flight lexicon. — Folded 7 September 2026: one lexicon, `memory/shared/truth/lexicon.md`.
 - **taste** — `memory/shared/truth/taste.md` vs `memory/shared/notes/guides/develop/aesthetics.md`: both hold visual principles.
 - **the design's own story** — `memory/ov/notes/work/AI memory redesign.md` (rationale), `memory/shared/truth/handbook.md` (law), and `truth/publish — can an AI actually learn?.md` (the article): three tellings; only the rationale/law split is by design.
 - **ov, where to pick up** — resolved: code debt merged into zone (done section dead at the door), handoff dissolved — state to index.md, proposals to zone/proposals.md, history to git.

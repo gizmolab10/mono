@@ -11,7 +11,6 @@ Every folder under `memory/di/notes/`. Update when notes files are added, moved,
 
 ## guides/ — reference
 
-- `pre-flight/` — read at session start: always, lexicon, banned words.
 - `project/` — the maps (files, guides, notes), and `overview/`, `philosophy/`, `research/`.
 - `architecture/` — how the program is built, one page per part.
 - `development/` — how work is done here: rules, testing, tooling.

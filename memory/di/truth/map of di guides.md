@@ -59,11 +59,6 @@ guides/
 │       ├── index.md ..................... rules table of contents
 │       ├── dimensionals.md .............. how a measurement label finds its place on every redraw
 │       └── stipulations.md .............. the load-bearing rules, each pinned by a test
-├── pre-flight/
-│   ├── index.md ......................... pre-flight table of contents
-│   ├── always.md ........................ di's own standing rules, read every session
-│   ├── banned words.md .................. di's own words to use and never use
-│   └── lexicon.md ....................... the exact words di uses, no near-synonyms
 └── project/
     ├── index.md ......................... project table of contents
     ├── map of di files.md ............... where everything lives in the di source

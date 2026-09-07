@@ -31,5 +31,5 @@ Make `ov/notes/` obsolete: everything living moves into `memory/ov/`, history st
 Two loose ends found while listing, 3 September 2026:
 
 - [ ] no project has a `memory/<project>/notes/work/now/learn.md`, though CLAUDE.md names one
-- [ ] Mono's lexicon links to an ov lexicon that does not exist — ov's pre-flight holds only banned words and an index.
+- [x] Mono's lexicon links to an ov lexicon that does not exist — fixed 7 September 2026: the shared lexicon links to `memory/ov/truth/lexicon.md`.
 

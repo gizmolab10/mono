@@ -7,16 +7,16 @@ date: 2026-07-15
 ---
 # Always (di)
 
-Rules specific to the di project. Read alongside the global always file at `~/GitHub/mono/notes/guides/pre-flight/always.md` and the project file at `~/GitHub/mono/di/CLAUDE.md`.
+Rules specific to the di project. Read alongside the global always file at `~/GitHub/mono/memory/shared/truth/conventions.md` and the project file at `~/GitHub/mono/di/CLAUDE.md`.
 
 > **TOP RULE — every reply, no exceptions: plain English only.** Use only everyday words or terms written in `lexicon.md` / `banned words.md`. Never invent a term, never bend a word to a private meaning. Never state a fact or a cause you cannot quote from the spec, the code, or a tool result — if you cannot quote it, say "I don't know." This overrides any urge to sound precise.
 
-1. **Lexicon enforcement** — replies are checked automatically when they finish, by the Stop hooks (banned words, conciseness, required disclaimer, diagnostic citation). There is no manual precheck step; if a Stop hook rejects a reply, rewrite it and it re-checks. Word choice has two sources of truth, both live: `notes/guides/pre-flight/banned words.md` at the repo root holds the words banned in every project, and `di/notes/guides/pre-flight/banned words.md` holds di's own vocabulary (smart objects, unifaces, placement, measurements). `di/notes/guides/pre-flight/lexicon.md` covers the rest.
+1. **Lexicon enforcement** — replies are checked automatically when they finish, by the Stop hooks (banned words, conciseness, required disclaimer, diagnostic citation). There is no manual precheck step; if a Stop hook rejects a reply, rewrite it and it re-checks. Word choice has two sources of truth, both live: the table in `memory/shared/truth/conventions.md` holds the words banned in every project, and `memory/di/truth/banned words.md` holds di's own vocabulary (smart objects, unifaces, placement, measurements). `memory/di/truth/lexicon.md` covers the rest.
 2. **Yarn, never npx** — every package binary call uses yarn.
 3. **Snap hook for reverts** — `di/.claude/hooks/snap` handles file reverts; never restore files manually.
 4. **Read on load** — these four `di` files
     - [ ] `notes/work/ai/learn.md`
-    - [ ] `notes/guides/pre-flight/lexicon.md`
+    - [ ] `memory/di/truth/lexicon.md`
     - [ ] `notes/work/now/handoff.md`
     - [ ] `CLAUDE.md`.
 5. **Implication** — Before stating a conclusion, ask yourself: if this is true, what else must be true? Follow the chain. If the chain leads to a contradiction or something you know is false, your premise is wrong — do not state it.

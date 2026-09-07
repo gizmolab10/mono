@@ -47,25 +47,25 @@ Today Jonathan's edits followed roughly every third translation. When a full ses
 
 Injected every turn or in rotation (mono-pre-flight + shared-t):
 
-1. [always.md](../notes/guides/pre-flight/always.md) (mono-pre-flight) — the nine
-2. [response.md](../notes/guides/pre-flight/response.md) (mono-pre-flight) — 9 reply rules
-3. [agency.md](../notes/guides/pre-flight/agency.md) (mono-pre-flight) — 21 work rules
-4. [lexicon.md](../notes/guides/pre-flight/lexicon.md) (mono-pre-flight) — the word rules
+1. [always.md](../truth/conventions.md) (mono-pre-flight) — the nine
+2. [response.md](../truth/conventions.md) (mono-pre-flight) — 9 reply rules
+3. [agency.md](../truth/agency.md) (mono-pre-flight) — 21 work rules
+4. [lexicon.md](../truth/lexicon.md) (mono-pre-flight) — the word rules
 5. [conventions.md](../truth/conventions.md) (shared-t) — about 30 conventions
 
 Read on trigger and at session start (mono-pre-flight):
 
-6. [banned words.md](../notes/guides/pre-flight/banned%20words.md) — the table the hooks grep
-7. [keywords.md](../notes/guides/pre-flight/keywords.md) — which words trigger which guide
-8. [shorthand.md](../notes/guides/pre-flight/shorthand.md) — Jonathan's short commands
-9. [kinds of tasks.md](../notes/guides/pre-flight/kinds%20of%20tasks.md)
+6. [banned words.md](../truth/conventions.md) — the table the hooks grep
+7. [keywords.md](../truth/keywords.md) — which words trigger which guide
+8. [shorthand.md](../truth/shorthand.md) — Jonathan's short commands
+9. [kinds of tasks.md](../truth/kinds%20of%20tasks.md)
 
 Per project (each project's pre-flight):
 
-10. di: [always.md](../../di/notes/guides/pre-flight/always.md), [lexicon.md](../../di/notes/guides/pre-flight/lexicon.md), [banned words.md](../../di/notes/guides/pre-flight/banned%20words.md), [banned.md](../../di/notes/guides/pre-flight/banned.md)
-11. ji: [lexicon.md](../../ji/notes/guides/pre-flight/lexicon.md)
-12. ov: [banned words.md](../../ov/notes/guides/pre-flight/banned%20words.md)
-13. core: [banned words.md](../../core/notes/guides/pre-flight/banned%20words.md)
+10. di: [always.md](../../di/truth/always.md), [lexicon.md](../../di/truth/lexicon.md), [banned words.md](../../di/truth/banned%20words.md), [banned.md](../../di/notes/guides/pre-flight/banned.md)
+11. ji: [lexicon.md](../../ji/truth/lexicon.md)
+12. ov: [banned words.md](../../ov/truth/banned%20words.md)
+13. core: [banned words.md](../../core/truth/banned%20words.md)
 
 Rules about working:
 
@@ -75,10 +75,10 @@ Rules about working:
 
 at session start (CLAUDE.md names them):
 
-17. [gates.md](../notes/guides/pre-flight/gates.md)
+17. [gates.md](../truth/gates.md)
 18. the fifteen guides in [collaborate](../notes/guides/collaborate/) (mono-collaborate) — voice, chat, workflow, hooks, cadence and the rest
 
 at session start (CLAUDE.md names it), and again after every correction from Jonathan ([[agency]] rule 17) and from [[keywords]].md when Jonathan types "doesn't exist", "not found" or "which one"
 
-19. [pitfalls.md](../notes/guides/pre-flight/pitfalls.md)
+19. [pitfalls.md](../truth/pitfalls.md)
 

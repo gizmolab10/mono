@@ -2,7 +2,7 @@
 kind: specify
 title: "Handbook"
 description: "The operating rules of the memory system. Every session loads this at start; every skill points here."
-tags: [always, incorporated, now, team]
+tags: [session, incorporated, now, team]
 date: 
 ---
 # Handbook
@@ -134,7 +134,7 @@ The old notes (CLAUDE.md's reading-on-load list, the `guides/` and `work/` folde
 - A move is a move: delete what the old file loses — content never lives in both systems.
 - Write nothing new into the old notes, ever. All new rules, terms, decisions, and notes go into `memory/`.
 - Keep `truth/inception.md` current: it lists what still lives only in the old notes; remove a line when its content moves in or is declared dead. When the list is empty, delete the file, shrink CLAUDE.md's "Reading on load" to `start` alone — done.
-- Exception: `memory/shared/notes/guides/pre-flight/shorthand.md` stays — it is the trigger surface; its rows point here.
+- `memory/shared/truth/shorthand.md` is the trigger surface; its rows point here.
 
 ## Sizing rules
 

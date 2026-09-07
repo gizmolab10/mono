@@ -32,8 +32,8 @@ From the check of 2 September 2026, the first to audit colliding rules across th
 - [x] 1. always #4 against response #2 — resolved 2 September 2026: #2 now says "say which wrong reading was ruled out, in plain words", its evidence held like any claim's
 - [x] 2. always #4 against the lexicon's evidence entry — resolved 2 September 2026: evidence is now "the line and its file, held back for every claim; shown when Jonathan asks, on its own line, after the plain words"
 - [x] 3. always #7 against the shorthand table — resolved 2 September 2026: #7 now says a shorthand is an interpretation Jonathan already approved, performed at once
-- [ ] 4. always #3 tail against conventions line 39 — "NEVER paint a rosy version of the truth" is written near-verbatim in both files. **Proposal**: always #3 is the home, since it arrives every turn; delete conventions line 39
-- [ ] 5. two compression rules disagree — conventions line 24 says compress by naming the parts, response #6 says compress by choosing a plainer verb. **Proposal**: response #6 becomes the one home, saying both moves and keeping conventions' warning that a reply which drops the pending action is incomplete; delete conventions line 24
+- [x] 4. always #3 tail against conventions line 39 — resolved 7 September 2026 by the fold: always #3 is the one home, inside conventions.md; the duplicate bullet is gone
+- [x] 5. two compression rules disagree — resolved 7 September 2026 by the fold: response #6 is the one home, inside conventions.md, saying both moves and keeping the pending-action warning
 - [x] 6. always #8's scan list names "the length limit" — resolved 2 September 2026: the rewrite of always as checks dropped the scan list; #8 names no length limit
 - [ ] 7. handbook.md's date label is empty — `date: ` with no value, which the OKF labels require. **Proposal**: stamp 2 September 2026, the day the label is filled
 

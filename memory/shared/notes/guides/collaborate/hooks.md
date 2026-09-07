@@ -15,9 +15,9 @@ What a hook incorporates is cut off at about 2000 characters.
 
 
 
-**Part A** — (first 2000) the always file, whole, every single turn. It holds the nine rules that govern every single reply. It is kept short deliberately, so it always survives the cut.
+**Part A** — (first 2000) the Always section of `memory/shared/truth/conventions.md`, whole, every single turn. It holds the nine rules that govern every single reply. It is kept short deliberately, so it always survives the cut.
 
-**Part B** — (everything else): the reply rules, how the work is done, and the two lists of banned words. These are divided into three smaller pieces. One of them is incorporated per turn, in rotation. The rotation pointer is kept in a tiny file. 
+**Part B** — (everything else): the rest of conventions.md (how a reply is written, the conduct rules, the banned words), agency.md, the shared lexicon, and the project's own banned words. Four pieces, one incorporated per turn, in rotation. The rotation pointer is kept in a tiny file. 
 
 The cost is minimal: a rule in part B is out of sight for two or three turns at a time.
 

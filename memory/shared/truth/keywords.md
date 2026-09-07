@@ -12,7 +12,7 @@ Words in input that trigger reading a guide before acting.
 | Keyword          | Guide                                                      |
 | ---------------- | ---------------------------------------------------------- |
 | refactor         | develop/refactoring.md                                     |
-| rename           | develop/refactoring.md, pre-flight/pitfalls.md#exact-match |
+| rename           | develop/refactoring.md, pitfalls.md#exact-match            |
 | remove           | develop/refactoring.md                                     |
 | delete           | develop/refactoring.md                                     |
 | move             | develop/refactoring.md                                     |
@@ -36,7 +36,7 @@ Words in input that trigger reading a guide before acting.
 | build notes      | develop/build notes.md                                     |
 |                  |                                                            |
 | prose            | collaborate/voice.md                                       |
-| write            | collaborate/voice.md, pre-flight/always.md                 |
+| write            | collaborate/voice.md, conventions.md                       |
 | tone             | collaborate/voice.md                                       |
 | guide            | collaborate/voice.md                                       |
 | journal          | collaborate/journals.md                                    |
@@ -51,13 +51,13 @@ Words in input that trigger reading a guide before acting.
 | start over       | collaborate/breakdown.md                                   |
 | going in circles | collaborate/breakdown.md                                   |
 |                  |                                                            |
-| cd               | pre-flight/always.md                                       |
-| go               | pre-flight/always.md                                       |
-| create           | pre-flight/always.md                                       |
-| path             | pre-flight/always.md                                       |
-| doesn't exist    | pre-flight/pitfalls.md#show-evidence                       |
-| not found        | pre-flight/pitfalls.md#show-evidence                       |
-| which one        | pre-flight/pitfalls.md#task-list-order                     |
+| cd               | conventions.md                                             |
+| go               | conventions.md                                             |
+| create           | conventions.md                                             |
+| path             | conventions.md                                             |
+| doesn't exist    | pitfalls.md#show-evidence                                  |
+| not found        | pitfalls.md#show-evidence                                  |
+| which one        | pitfalls.md#task-list-order                                |
 |                  |                                                            |
 | fresh            | hub/port.md                                                |
 | port             | hub/port.md                                                |

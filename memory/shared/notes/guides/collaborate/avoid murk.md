@@ -40,6 +40,6 @@ That record is still open. Six of the twelve causes are closed, and three parts 
 ## What it touches
 
 - [voice.md](voice.md) — how prose in files should read.
-- [lexicon.md](../pre-flight/lexicon.md) — the replacement half of strategy 2.
-- [banned words.md](../pre-flight/banned%20words.md) — the ban half, kept where it does no harm.
+- [lexicon.md](../../../truth/lexicon.md) — the replacement half of strategy 2.
+- [banned words.md](../../../truth/conventions.md) — the ban half, kept where it does no harm.
 - [hooks.md](hooks.md) — what fires before a message and after a reply, including the counter.

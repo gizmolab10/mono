@@ -21,5 +21,4 @@ Active non-milestone work. The files in this folder are the current working docu
 - [Steve Melville](./steve melville.md)
 - [Talk](./talk.md)
 - [Work Journal](./work journal.md)
-- [Working Features](./working features.md)
 

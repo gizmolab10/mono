@@ -9,7 +9,7 @@ date: 2026-07-30
 
 The words used in this project. When writing prose, comments, log lines, or test names, use these words exactly, even when near synonyms exist. If it's here, that's its name.
 
-The shared [banned words](../../../../shared/notes/guides/pre-flight/banned%20words.md) list holds the words that mean nothing to Jonathan, each with the word to use instead.
+The shared [banned words](../../shared/truth/conventions.md) list holds the words that mean nothing to Jonathan, each with the word to use instead.
 
 Use good grammar.
 
