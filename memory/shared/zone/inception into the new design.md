@@ -1,9 +1,9 @@
 ---
-kind: howto
+kind: specify
 title: "Inception into the new design"
 description: "The death list — what still lives only in the old notes. Empty means the old notes can be deleted."
 use_when: [reaching into notes/guides or notes/work, settling, deciding where an old file's content belongs]
-tags: [now, born]
+tags: [born, now]
 date: 
 ---
 # Inception into the new design

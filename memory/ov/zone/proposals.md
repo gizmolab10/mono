@@ -35,6 +35,8 @@ date: 2026-08-31
 
 ## proposal: every project moves into mono/projects (1 September 2026)
 
+Weighed again 7 September 2026 in shared's truth/decisions.md, after the notes and tools moves: item 2 below is now the 383 links from memory into the project folders, item 4 the dispatcher, servers.sh and two hooks, and lv's and gallery's Netlify base folder is set outside the repo. Undecided.
+
 **Success criteria.** Every app still starts with `yarn dev` from its own folder and serves on the port it served on before. `yarn vitest` passes in core, ov and lv with no test edited except the ones that spell a path. Every cross-collection link inside the notes still resolves — the dead-link report finds no more than it found the day before. ov's file list shows the same count of files under the same project names.
 
 **What moves.** Thirteen folders at the top of the repo are projects: core, di, ga, gallery, ji, lv, ma, me, mj, mu, ov, s3, ws. They go into a new `projects/` folder, a sibling of `memory/`. What stays at the top: `memory`, `notes`, `logs`, `package.json`, `yarn.lock`, `node_modules`, `CLAUDE.md`, `README.md`.

@@ -35,11 +35,12 @@
 
 	// Where the file sits as well as what it is called: every folder above it, from the top down.
 	// A file in a project starts with that project; one belonging to no project starts with the
-	// repo's own name instead.
+	// repo's own name instead. A file in the memory system starts with its project's folder
+	// there — the memory folder itself is left off, since every one of them sits in it.
 	const sits_at = $derived.by(() => {
 		if (!guide) { return ''; }
 		const folders = guide.path.split('/').slice(0, -1);
-		const top = guide.bundle === T_Bundle.mono ? ['mono'] : [guide.bundle];
+		const top = guide.bundle === T_Bundle.mono ? ['mono'] : guide.bundle === T_Bundle.memory ? [] : [guide.bundle];
 		return [...top, ...folders].join(' / ');
 	});
 

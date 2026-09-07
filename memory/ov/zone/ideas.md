@@ -15,19 +15,17 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
+- [ ] speed up launch by reading files a few at a time
+    - [ ] start with the file the editor is presenting
+    - [ ] then just enough to render the visible part of browse's file list
 - [x] rename 'way out' -> 'resume browse' — decided 5 September 2026, not built: 34 places in 11 code files, the constant `WAY_OUT` and its ids among them, and 4 lines in ov's memory
-- [ ] move all old guides -> memory
+- [ ] move all old guides from notes -> truth
     - [ ] manual
     - [ ] milestones
     - [ ] features
     - [ ] components
     - [ ] architecture
     - [ ] design
-- [ ] browse, show folders. only show soft pointer in header row when there is more than one root
-    - [ ] if it is shown, align it with the root ones, centered on the header separator line
-- [ ] speed up launch by reading files a few at a time
-    - [ ] start with the file the editor is presenting
-    - [ ] then just enough to render the visible part of browse's file list
 - [ ] move the clear clickable next to search clickable
 - [ ] RETURN -> another checkbox line
 - [ ] TAB -> indents (command-TAB outdents)

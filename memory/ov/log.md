@@ -11,6 +11,9 @@ date: 2026-09-01
 
 ## 7 September 2026
 
+- D: in the launch drive, a kind or tag filter chosen while files are still arriving narrows as they arrive — the list re-narrows on each batch, not once at w_ready; the drive's open question is closed, the drive itself not yet go
+- D: done — two built, ticked ideas cleared from zone/ideas.md (the notes move, the header's soft pointer), each with a D: line already; the 'way out' rename stays ticked and unbuilt; the header-pointer drive dissolved, its truth in controls.md; the drive now holds the proposal for the first unchecked idea, launch reading a few files at a time; truth/working features.md gains rows 73 to 77; the map is current; the work journal is untouched — an old note, and the pac to move it is undecided
+- D: the top row's ancestry leaves the memory folder off — a file in the memory system starts at its project's folder there; Controls.svelte's sits_at, truth/controls.md line 39; svelte-check clean
 - D: ov roots every collection's notes at `memory/<project>/notes/`, mono's at `memory/shared/notes/` — Saving.ts's `notes_of`, and `site_of_file` tries each collection's notes before the memory rule, so a moved guide still answers to its project; six test files re-pointed, five hand-written expectations fixed by hand; 336 pass, svelte-check clean; the map's notes section is rewritten against the new place and its other links, broken since the map entered truth/, are re-pointed at `ov/src/`
 
 ## 6 September 2026

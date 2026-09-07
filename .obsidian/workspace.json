@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/handbook.md",
+                "file": "memory/shared/zone/inception into the new design.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "handbook"
+              "title": "inception into the new design"
             }
           }
         ],
@@ -201,7 +201,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/truth/handbook.md",
+                "file": "memory/shared/zone/inception into the new design.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -240,8 +240,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "26b78cd156d15e82",
+  "active": "c667e91a97f584b4",
   "lastOpenFiles": [
+    "memory/ov/zone/ideas.md",
+    "memory/shared/truth/handbook.md",
+    "projects",
     "memory/shared/truth/gates.md.held",
     "memory/shared/truth/agency.md.held",
     "memory/di/truth/working features.md",
@@ -269,15 +272,12 @@
     "tools/hub/__pycache__/test_dispatcher.cpython-310.pyc",
     "tools/hub/__pycache__/dispatcher.cpython-310.pyc",
     "tools/docs/src/lib",
-    "tools/docs/dist/sync-sidebar.js",
-    "tools/docs/dist/merge-files.js",
     "tools/scripts/index.md",
     "tools/hub/index.md",
     "tools/index.md",
     "memory/shared/notes/work/done/docs/test/fixtures/advanced/test-moved.md",
     "memory/shared/notes/work/done/docs/test/merge-fixtures/test-links.md",
     "memory/shared/notes/work/done/docs/test/merge-fixtures/file-b.md",
-    "memory/shared/notes/work/done/docs/test/merge-fixtures/file-a.md",
     "gallery/src/assets/the vineyard/lcv.label.png",
     "gallery/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "gallery/src/assets/the vineyard/Versaison_20190803.jpg",
