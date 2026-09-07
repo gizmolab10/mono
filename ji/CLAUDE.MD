@@ -1,7 +1,7 @@
 ---
 kind: specify
 title: "ji — Jeffrey's Space"
-description: "Read memory/ji/notes/guides/pre-flight/lexicon.md at session start"
+description: "Read memory/ji/truth/lexicon.md at session start"
 tags: [always, keep, now, session]
 date: 2026-08-24
 ---
@@ -9,4 +9,4 @@ date: 2026-08-24
 
 > implementation of Jeff's intersection project
 
-Read `memory/ji/notes/guides/pre-flight/lexicon.md` at session start. It names everything in this project: use those words in prose, comments, log lines and test names, and invent no synonyms.
+Read `memory/ji/truth/lexicon.md` at session start. It names everything in this project: use those words in prose, comments, log lines and test names, and invent no synonyms.

@@ -5,7 +5,7 @@ description: ov (Overview) — a browser and editor for every markdown file in t
 
 A browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place. Ported from ji. Built with Svelte.
 
-**Current state:** both views share one structure — a filters stack whose heavy line sits on the region's top edge, search first inside it; the editor's stack also holds its back links, information, kinds and tags, and while a file is open the row across the top holds the file's controls in a section of its own. The stack's slots hold the half-gaps and answer the cursor; rows hold plain padding in rungs. Everything ov adopts from core lives in `common/Core.ts`, one line each, through the "core" alias. Browse offers the lifecycle tag area, neither shows nor counts log files, and its projects control lists every project — memory subfolders answer to their own projects, so memory itself owns no files. handoff.md is dissolved; the map lives in `truth/`; the proposals sit in `zone/proposals.md`, the newest built and confirmed; `zone/simplify gaps.md` says how the filter stacks size their rows.
+**Current state:** both views share one structure — a filters stack whose heavy line sits on the region's top edge, search first inside it; the editor's stack also holds its back links, information, kinds and tags, and while a file is open the row across the top holds the file's controls in a section of its own. The stack's slots hold the half-gaps and answer the cursor; rows hold plain padding in rungs. Everything ov adopts from core lives in `common/Core.ts`, one line each, through the "core" alias. Browse offers the lifecycle tag area, neither shows nor counts log files, and its projects control lists every project — memory subfolders answer to their own projects, so memory itself owns no files. handoff.md is dissolved; the map lives in `truth/`; the proposals sit in `zone/proposals.md`, the newest built and confirmed; `zone/simplify gaps.md` says how the filter stacks size their rows. Launch draws the list from the dispatcher's listing alone and reads the labels after — the edited file first, then the rows in view, then the rest, twelve at a time — the list narrowing as they arrive. Two guide folders moved whole from `notes/guides/` into `truth/` 7 September 2026 — `design/` (6 files), `project/` (1) — unsorted.
 
 The adoption is finished and measured: no file in ov is a copy of anything in core, proved by comparing both source folders — zero identical, zero near, zero paired by name. Thirty-two of core's files arrive through `Core.ts`, plus `Extensions` as a bare import there and `main.css` at `main.ts`. Those are the only two doors through the alias, and `core_alias.test.ts` fails if a third opens: code goes through `Core.ts`, the stylesheet through `main.ts`, since where a stylesheet loads decides which rule wins between two that match equally. core now checks and tests itself — its own first check found that `Big_Pill` had never compiled. Three files say where the alias points, not two: `tsconfig.json`, `vite.config.ts` and `vitest.config.ts`, the last read in place of the second. ov is clean at 529 files with 336 tests; core at 466 with 91. How a host does all this is core's now — [adopting core.md](../core/truth/adopting%20core.md).
 
@@ -13,7 +13,8 @@ The adoption is finished and measured: no file in ov is a copy of anything in co
 
 - [ideas.md](zone/ideas.md) — ov ideas, appended freely; every settle triages each one.
 - [proposals.md](zone/proposals.md) — the proposals being weighed; one leaves when it becomes the drive, dissolves into truth, or dies.
-- [drive.md](zone/drive.md) — the header's soft pointer, drawn only with more than one root and placed as the root rows place theirs; built and confirmed 6 September 2026, waiting on Jonathan's word to dissolve.
+- [consolidate.md](zone/consolidate.md) — what becomes of the 142 old guides: 91 enter truth, 17 fold into one, 22 go to archive, 6 to zone, 9 to ws's manual, 6 die; three deciding questions.
+- [drive.md](zone/drive.md) — every old guide from notes into truth; proposed 7 September 2026, refined by consolidate.md, undecided — waiting on Jonathan's word to dissolve.
 - [simplify gaps.md](zone/simplify%20gaps.md) — how the two filter stacks size their rows: the slot owns the reach, rows hold plain padding in rungs, the tags run holds its own headroom, a starved section sizes as a fold.
 
 ## Truths
@@ -23,8 +24,10 @@ The adoption is finished and measured: no file in ov is a copy of anything in co
 - [banned words.md](truth/banned%20words.md) — overview's own word substitutions; the hooks read it.
 - [working features.md](truth/working%20features.md) — what the app can do, newest first.
 - [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
-- [controls.md](truth/controls.md) — how the list's filters and the editor's controls behave.
-- [claude-files.md](truth/claude-files.md) — how CLAUDE files are listed, placed, read, and written; the three places that must agree.
+- [controls.md](truth/design/controls.md) — how the list's filters and the editor's controls behave.
+- [claude-files.md](truth/design/claude-files.md) — how CLAUDE files are listed, placed, read, and written; the three places that must agree.
 - [map of ov files.md](truth/map%20of%20ov%20files.md) — every source file in overview; read it instead of discovering files using regex and wildcards, and update it when files move.
-- [action type.md](truth/action%20type.md) — the type that hands Separator more than one title, each with its handler and its position.
-- [okf.md](truth/okf.md) — the open format the guides are kept in: one concept per file, labels at the top, version control underneath.
+- [action type.md](truth/design/action%20type.md) — the type that hands Separator more than one title, each with its handler and its position.
+- `design/` — what the app is for and how it got here; moved whole from `notes/guides/design/`, unsorted.
+- `project/` — the file map and what the app can do; moved whole from `notes/guides/project/`, unsorted.
+- [okf.md](okf.md) — the open format the guides are kept in: one concept per file, labels at the top, version control underneath.

@@ -1,0 +1,448 @@
+Diagnostic log: on — this page is served from "localhost", which is this machine. Anywhere else, every logged line gives up at once.
+Renamed the saved settings: 0 moved to a new name, 0 kept aside because the new name was already taken, 0 of them from the old "ji:" start to "ji_". All zeros means every name was already spelled the one way.
+Swept the saved settings: 20 of ours found, 0 removed (0 character(s) reclaimed), 20 kept; 37 name(s) count as valid.
+Filters for the "AI" storage: 0 tag(s) [all], name text "", families [image]. Saved changes from here on go to "AI" only.
+AI store: records and content live in AnythingLLM; set up.
+Shut folders for the "AI" storage: filled in for the first time with 0 (nothing shut — this store never saves its folds).
+Hierarchy: derived flags for 0 document(s); recomputed the family of 0 file(s) from its kind.
+AI connection: heartbeat on — checking every 8 seconds.
+AnythingLLM: the address is already being read — waiting for that one instead of asking again.
+Details sections open: [data, preferences].
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 0 content row(s) of 0.
+List: filter on — searched all 0 row(s); 0 match(es); showing 0 open row(s) (a shut folder keeps its matches hidden until opened).
+AnythingLLM: read the current address "https://chambers-ontario-melbourne-ignored.trycloudflare.com" from the pointer.
+AnythingLLM: using existing workspace "intersection" (slug "intersection").
+AnythingLLM: read 10 embedded document(s) from the workspace.
+AI documents: the workspace holds 10.
+AnythingLLM: read the record index (relationships 33, predicates 1, documents 37, taggings 3, tags 2).
+AI store: primed the record index — relationships 33, predicates 1, documents 37, taggings 3, tags 2.
+Hierarchy: derived flags for 37 document(s); recomputed the family of 30 file(s) from its kind.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [19.44, 19.44, 19.44], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 20ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 18ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 31.11, spacings [34.22, 19.44, 34.22], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 25ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 23ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [19.44, 19.44, 19.44], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 26ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 25ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [22.56, 22.56, 22.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 22ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 21ms.
+Press at 543,20 found nothing at all among 0 overlapping target(s).
+Press at 444,16 found nothing at all among 0 overlapping target(s).
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Press at 548,18 found nothing at all among 0 overlapping target(s).
+Press at 440,21 found nothing at all among 0 overlapping target(s).
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Press at 490,17 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [22.56, 22.56, 22.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 15ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 0ms, drawing 14ms.
+Press at 447,18 found nothing at all among 0 overlapping target(s).
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Press at 544,89 found nothing at all among 0 overlapping target(s).
+Press at 543,88 found nothing at all among 0 overlapping target(s).
+Press at 485,18 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [22.56, 22.56, 22.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 16ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 0ms, drawing 15ms.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 19,21 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [22.56, 22.56, 22.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 32ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 30ms.
+Press at 20,20 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Details sections open: [data, preferences].
+Press at 70,67 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 folded, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 folded 11.15 tall, its separator at -6.48 and the next 24.11 below it; 1 open.
+Details sections open: [data].
+Press at 71,66 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Details sections open: [data, preferences].
+Press at 45,100 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: [preferences].
+Press at 45,100 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Details sections open: [preferences, data].
+Press at 44,100 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: [preferences].
+Press at 58,67 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 folded, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 folded 11.15 tall, its separator at -6.48 and the next 24.11 below it; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: none — both shut.
+Press at 58,64 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: [preferences].
+Press at 48,104 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Details sections open: [preferences, data].
+Press at 119,152 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 9.33], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -4.67 and the next 24.11 below it.
+Press at 116,150 found nothing at all among 0 overlapping target(s).
+Press at 45,102 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: [preferences].
+Press at 45,102 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 9.33], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -4.67 and the next 24.11 below it.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Details sections open: [preferences, data].
+Press at 52,66 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 folded, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 folded 11.15 tall, its separator at -6.48 and the next 24.11 below it; 1 open.
+Details sections open: [data].
+Press at 121,138 found nothing at all among 0 overlapping target(s).
+Press at 77,63 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Details sections open: [data, preferences].
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [22.56, 22.56, 22.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Press at 118,177 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 121,175 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Press at 121,175 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 118,180 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Press at 120,179 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [22.56, 22.56, 22.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 9.33], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 9.33], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 121,177 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Press at 120,177 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 120,177 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Press at 439,18 found nothing at all among 0 overlapping target(s).
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Press at 545,87 found nothing at all among 0 overlapping target(s).
+Press at 548,84 found nothing at all among 0 overlapping target(s).
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 9.33], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 537,76 found nothing at all among 0 overlapping target(s).
+Press at 537,77 found nothing at all among 0 overlapping target(s).
+Press at 538,77 found nothing at all among 0 overlapping target(s).
+Press at 538,77 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Press at 46,116 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: [preferences].
+Stack of 2: 0 open, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Press at 67,66 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 folded, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 folded 11.15 tall, its separator at -6.48 and the next 24.11 below it; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: none — both shut.
+Press at 67,65 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 folded 17.63 tall, its separator at -6.48 and the next 24.11 below it.
+Details sections open: [preferences].
+Press at 48,113 found nothing at all among 0 overlapping target(s).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Details sections open: [preferences, data].
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [9.44, 6.85], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [10.89, 8.30], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [14.00, 11.41], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [14.00, 37.33], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [14.00, 22.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [15.56, 24.11], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 492,18 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [24.11, 24.11, 24.11], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 21ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 20ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [24.11, 24.11, 24.11], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 22ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 21ms.
+Press at 326,239 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 10 open row(s) (a shut folder keeps its matches hidden until opened).
+Press at 326,239 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Press at 322,218 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 9 open row(s) (a shut folder keeps its matches hidden until opened).
+Press at 322,219 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Press at 545,145 found nothing at all among 0 overlapping target(s).
+Press at 275,73 found nothing at all among 0 overlapping target(s).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 16.33, spacings [24.11, 24.11, 24.11], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 18ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 17ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 7.78, spacings [15.56, 24.11, 15.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 25ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 23ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 7.78, spacings [15.56, 24.11, 15.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 20ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 19ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [11.67, 24.11, 11.67], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 21ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 19ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 1.94, spacings [9.72, 24.11, 9.72], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 27ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 25ms.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+List: filter on — searched all 37 row(s); 12 match(es); showing 17 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [image] kept 12 content row(s) of 37.
+Folder counts: 5 folder(s) hold at least one matching file; 12 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [11.67, 24.11, 11.67], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+List timing: 26ms from start to rows on screen for 17 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 24ms.
+Press at 498,86 found nothing at all among 0 overlapping target(s).
+Family filter: "image" removed — now [].
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Press at 607,89 found nothing at all among 0 overlapping target(s).
+Family filter: "book" added — now [book].
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [book] kept 0 content row(s) of 37.
+List: filter on — searched all 37 row(s); 0 match(es); showing 0 open row(s) (a shut folder keeps its matches hidden until opened).
+Press at 607,89 found nothing at all among 0 overlapping target(s).
+Family filter: "book" removed — now [].
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Press at 565,85 found nothing at all among 0 overlapping target(s).
+Family filter: "text" added — now [text].
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 11 content row(s) of 37.
+List: filter on — searched all 37 row(s); 11 match(es); showing 14 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 11 content row(s) of 37.
+Folder counts: 3 folder(s) hold at least one matching file; 11 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Press at 564,84 found nothing at all among 0 overlapping target(s).
+Family filter: "text" removed — now [].
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Press at 675,86 found nothing at all among 0 overlapping target(s).
+Family filter: "spreadsheet" added — now [spreadsheet].
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [spreadsheet] kept 6 content row(s) of 37.
+List: filter on — searched all 37 row(s); 6 match(es); showing 9 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [spreadsheet] kept 6 content row(s) of 37.
+Folder counts: 3 folder(s) hold at least one matching file; 6 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Press at 675,86 found nothing at all among 0 overlapping target(s).
+Family filter: "spreadsheet" removed — now [].
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [5.00, 17.44, 5.00], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 25ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 24ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [11.67, 24.11, 11.67], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 25ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 0ms, drawing 23ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [6.11, 18.56, 6.11], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 32ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 31ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [5.56, 18.00, 5.56], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 31ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 29ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [6.11, 18.56, 6.11], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 29ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 28ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [5.44, 17.89, 5.44], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 34ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 32ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [7.00, 19.44, 7.00], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 32ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 30ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Press at 442,17 found nothing at all among 0 overlapping target(s).
+Chat: connection came up — reading the history.
+AnythingLLM: read 31 exchange(s) from 62 stored message(s) (newest first, limit 50).
+Chat: loaded 31 exchange(s) from the workspace.
+Chat: applied saved "replies shown" = false on launch — 31 collapsed.
+Stack of 2: 0 open, 1 open. Gap 7.78, spacings [15.56, 24.11], leading line none, closing separator not drawn. Folds: 0 open; 1 open.
+Press at 492,17 found nothing at all among 0 overlapping target(s).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [7.00, 19.44, 7.00], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 21ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 0ms, drawing 20ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
+Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [7.00, 22.56, 5.44], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 36ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 35ms.
+Table scroll: top spot is now "styuffen" (row 1).
+Press at 532,155 found nothing at all among 0 overlapping target(s).
+Press at 273,73 found nothing at all among 0 overlapping target(s).
+Search: nothing picked — all 37 row(s) shown.
+List: no filter — searched open 37 row(s); 37 match(es); showing 37 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: nothing picked — all 37 row(s) shown.
+Folder counts: 6 folder(s) hold at least one matching file; 37 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [7.00, 22.56, 5.44], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+Table scroll: restored to "styuffen" (row 1) — scrolled 20.909090042114258 of a wanted 21, after 0 extra frame(s).
+List timing: 22ms from start to rows on screen for 37 row(s) of 37 in the store — walking and building 0ms, narrowing 0ms, folder counts 1ms, drawing 21ms.
+Table scroll: top spot is now "styuffen" (row 1).

@@ -365,8 +365,16 @@ if [ -z "$STATUS_FILE" ]; then
   echo "Starting..." > "$STATUS_FILE"
 fi
 
-# Set up error log (per-project so they don't clobber each other)
-ERROR_LOG="$LOGS_DIR/update-docs.error.$PROJECT_NAME.log"
+# Set up error log (per-project so they don't clobber each other). Each project's own log
+# sits beside its other logs in memory/<project>/logs/; mono names no memory project and
+# keeps the shared logs folder at the top.
+if [ "$PROJECT_NAME" = "mono" ]; then
+  ERROR_LOG="$LOGS_DIR/update-docs.error.$PROJECT_NAME.log"
+else
+  ERROR_LOGS_DIR="$PROJECT_ROOT/../memory/$PROJECT_NAME/logs"
+  mkdir -p "$ERROR_LOGS_DIR"
+  ERROR_LOG="$ERROR_LOGS_DIR/update-docs.error.$PROJECT_NAME.log"
+fi
 rm -f "$ERROR_LOG"
 touch "$ERROR_LOG"
 

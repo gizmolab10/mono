@@ -20,7 +20,8 @@ ov project first
 Later shared, then other projects
 
 - [x] `memory/shared/notes/guides/pre-flight/` — done 7 September 2026: always, response and banned words folded into truth/conventions.md, the mono-wide lexicon into truth/lexicon.md; agency, keywords, gates, kinds of tasks, pitfalls and shorthand moved whole into truth/
-- [ ] `memory/shared/notes/guides/collaborate/` — chat roles, voice, workflow, exclude, gating
+- [ ] `memory/shared/notes/guides/collaborate/` — chat roles, voice, workflow, exclude, gating. Physically in `truth/collaborate/` since 7 September 2026; the fold and archive judgments in ov's zone/consolidate.md are not yet carried out.
+- [ ] The other five shared guide folders (`develop/`, `philosophy/`, `setup/`, `test/`, `tools/`) and every project's own (core, di, ji, ov, ws) are physically in `truth/` since 7 September 2026 too, unsorted; ov's zone/consolidate.md proposes each file's fold, archive or death.
 - [ ] `memory/shared/notes/work/learn.md` — cross-project lessons (the rules they taught, not the stories)
 - [ ] `CLAUDE.md` "Reading on load" list itself — shrinks as the lines above die
 

@@ -12,8 +12,5 @@ dist/
 *.swp
 *.swo
 
-# Logs
-*.log
-
 # Other
 *.zip

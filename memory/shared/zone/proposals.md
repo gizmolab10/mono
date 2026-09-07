@@ -2,10 +2,68 @@
 kind: analyze
 title: "Proposals"
 description: "shared proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies."
-tags: [now, weighed]
+tags: [now, proposal, weighed]
 date: 2026-08-31
 ---
 # Proposals
+
+## a logs/ folder inside each memory project (7 September 2026)
+
+Decided and built 7 September 2026: the four judgment calls answered — move the three old-named logs, move core-docs.log, delete s3's two, leave the eleven unmatched files at `mono/logs/` for now.
+
+**Success criteria.** Each memory project's own log lives at `memory/<project>/logs/`, `git mv`'d from `mono/logs/`, history kept. `.gitignore`'s existing `**/logs/` line covers the new location without a change. `servers.sh`, `dispatcher.py` and every app's own debug logging write to the new place; a fresh page load writes a fresh log where co looks for it. Cross-project and infrastructure logs stay at `mono/logs/`, since they belong to no one project.
+
+**What moves — 22 files, clean project match.**
+
+| project | files |
+| --- | --- |
+| di | di.log, di.debug.log, di-docs.log |
+| ji | ji.log, ji.debug.log |
+| ov | ov.log, ov.debug.log |
+| lv | lv.log |
+| mj | mj.log |
+| ma | ma.log, ma-docs.log |
+| ga | ga.log |
+| ws | ws.log, ws-docs.log |
+| core | core-docs.log |
+| di, ji, ga, ma, ws | update-docs.error.\<project\>.log, one each |
+
+**What reads them, and changes with the move.**
+
+1. `tools/hub/servers.sh` line 8, `LOG_DIR="$GITHUB_DIR/logs"` and line 127's `logfile="$LOG_DIR/$name.log"` — one fixed folder for every server today; becomes one per project, `memory/$name/logs/$name.log`, for the thirteen named in `SITES` (di, ji, ov, lv, mj, ma, ga, ws and their docs variants) — `hub` and `mono-docs` are not a memory project and stay at `mono/logs/`.
+2. `tools/hub/dispatcher.py` — the four `os.path.join(GITHUB_DIR, 'logs', ...)` calls: `rebuild-status.txt`, `restart-status.txt`, `tests-status.txt` and `dispatcher-restart.log` are the dispatcher's own status, no project — stay. Line 737's `log_path = os.path.join(GITHUB_DIR, 'logs', f'{where}.log')`, the `/save-log` route every app's own debug logging writes through, needs to know which project `where` names and write to that project's `memory/<project>/logs/` instead.
+3. `memory/shared/truth/conventions.md`'s response rule 5, "Every app writes its own into `logs/`" — becomes "into `memory/<project>/logs/`".
+4. Each app's own debug logger (`core`'s `debug.log`, adopted by every host through `Core.ts`) — reads whichever path the dev server hands it at build time; unread whether that path is already a build-time constant per project or hardcoded to `logs/` inside `core` itself.
+
+**Judgment calls, as decided.** Move the three old-named logs (`designintuition.log`, `dimensionals.log` to di; `intersection.log` to ji). Move `core-docs.log` to `memory/core/logs/`. Delete `s3.log` and `update-docs.error.s3.log` outright, s3 being gone entirely. Leave the eleven unmatched files at `mono/logs/` for now.
+
+**Cost.** Thirteen `git mv` (the twenty-two files, several projects taking more than one), three script edits (servers.sh, dispatcher.py, conventions.md), and the four judgment calls above settled one way or the other before the move, so it happens once.
+
+**Where it is now.** Built. `.gitignore`'s `**/logs/` line already meant none of these files were ever tracked by git, so the move was a plain `mv`, not `git mv` — no history to keep. `tools/hub/servers.sh`'s `start_site` now picks a project's own `memory/<dir>/logs/` when `dir` names one, the shared `logs/` folder otherwise; `tools/hub/dispatcher.py`'s `/log` route and `DOC_ERROR_LOGS` do the same, keyed off the name a write or a project asks for; `tools/docs/update-project-docs.sh`'s per-project error log follows the same rule. `memory/shared/truth/conventions.md`'s response rule 5 reads `memory/<project>/logs/`. A live write to `/log?where=ov.debug` confirmed it reaches `memory/ov/logs/ov.debug.log`; ov's 336 tests, svelte-check and the dispatcher's 32 tests all pass.
+
+## a shorthand for cleanup after moving files inside memory (7 September 2026)
+
+Decided and built 7 September 2026: the row below is live in [shorthand.md](../truth/shorthand.md).
+
+**Why.** Three moves today did the same five things by hand: the notes folders into `memory/<project>/notes/`, the pre-flight files into truth, the guides subfolders into truth. Each time: `git mv`, a link pass, a set of known readers fixed one by one, the tests run, the move logged. Naming the steps once means they run the same way every time, and none is forgotten.
+
+**What triggers it.** Jonathan says `cleanup` right after moving or renaming files or folders inside `memory/` — by hand, by `d:`, or as the last step of a bigger move already done.
+
+**What it does, in order.**
+
+1. Re-point every relative link the move broke: resolve each against the file's OLD place, and only rewrite it if it names a real file there and the new place has one too — a link already dead, before or after, is left alone.
+2. Fix every reader that names the old path by hand: `CLAUDE.md`, the hooks in `.claude/hooks/`, `shorthand.md`, `keywords.md`, `gates.md`, the project's own maps, and its `index.md` catalog.
+3. Remove what the move leaves empty: an index file with nothing left to index, a folder with nothing left in it.
+4. Run what exercises paths — `yarn vitest`, `yarn svelte-check`, the dispatcher's own test — and fix a failure the move caused, one at a time.
+5. Log it: one `D:` line naming what moved, what got re-pointed, and what still needs a hand — in the project's own log, and in shared's too when the move crosses projects.
+
+**Proposed row, for `shorthand.md`'s Instructions table:**
+
+| `cleanup` | after files or folders move inside `memory/`: re-point every link the move broke, resolved against its old place, never one already dead; fix `CLAUDE.md`, the hooks, `shorthand.md`, `keywords.md`, `gates.md`, the project's map and index; drop what the move emptied; run vitest, svelte-check and the dispatcher's test, fixing what broke; log it with one `D:` line naming what moved and what still needs a hand |
+
+**Evidence this is the real pattern, not a guess.** Today's three `D:` lines under [7 September 2026](../log.md) in this project's log say it each time, in the same order: the notes move, the pre-flight fold, the guides-subfolder move.
+
+**Open.** Whether it also throws away a folder's leftover `.DS_Store` and calls `rmdir`, which today's three moves all did by hand.
 
 ## the notes folders move into memory (7 September 2026)
 

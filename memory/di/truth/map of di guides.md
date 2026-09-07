@@ -7,11 +7,10 @@ date: 2026-08-09
 ---
 # Map of di guides
 
-A bird's-eye view of every page under `memory/di/notes/guides/` with a super-brief description.
+A bird's-eye view of every page under `memory/di/truth/architecture/`, `development/` and `project/` — moved there whole from `notes/guides/` on 7 September 2026 — with a super-brief description.
 
 ```text
-guides/
-├── index.md ............................. top-level table of contents
+truth/
 ├── architecture/
 │   ├── index.md ......................... architecture table of contents
 │   ├── components/
@@ -80,4 +79,4 @@ guides/
         └── occlusion performance.md ..... ways to speed up working out what hides what
 ```
 
-The user-manual markdown files no longer live under `notes/guides/project/`. They are now in `src/manual/` (the in-app help component imports them directly). See the file map for the full listing.
+The user-manual markdown files no longer live under `notes/guides/project/`. They are now in `src/manual/` (the in-app help component imports them directly). See the file map for the full listing. The three folders drawn above sit under `truth/` since 7 September 2026, not under `notes/guides/`.

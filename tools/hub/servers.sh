@@ -57,7 +57,6 @@ PORT_WS_DOCS=$(get_port "['ws']['docs']")
 PORT_MONO_DOCS=$(get_port "['mono']['docs']")
 PORT_DI_DOCS=$(get_port "['di']['docs']")
 PORT_GA=$(get_port "['ga']['port']")
-PORT_S3=$(get_port "['s3']['port']")
 PORT_LV=$(get_port "['lv']['port']")
 PORT_JI=$(get_port "['ji']['port']")
 PORT_OV=$(get_port "['ov']['port']")
@@ -74,7 +73,6 @@ SITES=(
   "di-docs|$PORT_DI_DOCS|di|VITE_PORT=$PORT_DI_DOCS yarn docs:dev"
   "mono-docs|$PORT_MONO_DOCS|.|yarn docs:dev"
   "ga|$PORT_GA|ga|yarn dev"
-  "s3|$PORT_S3|s3|yarn dev"
   "lv|$PORT_LV|lv|yarn dev"
   "ji|$PORT_JI|ji|yarn dev"
   "ov|$PORT_OV|ov|yarn dev"
@@ -125,8 +123,15 @@ start_site() {
   local port=$2
   local dir=$3
   local cmd=$4
-  
-  local logfile="$LOG_DIR/$name.log"
+
+  # A site whose dir is a memory project writes into that project's own logs/; one with no
+  # project of its own (hub, mono-docs) keeps writing to the shared logs/ folder at the top.
+  local log_home="$LOG_DIR"
+  if [ "$dir" != "." ] && [[ "$dir" != tools* ]]; then
+    log_home="$GITHUB_DIR/memory/$dir/logs"
+    mkdir -p "$log_home"
+  fi
+  local logfile="$log_home/$name.log"
   cd "$GITHUB_DIR/$dir"
   eval $cmd > "$logfile" 2>&1 &
   sleep 1
@@ -154,7 +159,7 @@ for arg in "$@"; do
     --kill-only) KILL_ONLY=true ;;
     --no-verify) NO_VERIFY=true ;;
     --verify-only) VERIFY_ONLY=true ;;
-    ws|ws-docs|di|di-docs|mono-docs|hub|ga|s3|ma|ma-docs|ji|ov|mj) TARGET=$arg ;;
+    ws|ws-docs|di|di-docs|mono-docs|hub|ga|ma|ma-docs|ji|ov|mj) TARGET=$arg ;;
   esac
 done
 

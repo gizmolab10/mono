@@ -1,0 +1,143 @@
+yarn run v1.22.19
+$ vite
+4:20:34 PM [vite] (client) Forced re-optimization of dependencies
+
+  VITE v6.4.2  ready in 604 ms
+
+  ➜  Local:   http://localhost:5184/
+  ➜  Network: use --host to expose
+4:20:38 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:19:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+4:23:15 PM [vite] ../notes/tools/hub/ports.json changed, restarting server...
+4:23:15 PM [vite] server restarted.
+1:21:22 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:19:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+1:21:34 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+1:22:06 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+1:22:06 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/in/src/lib/svelte/main/Main.svelte:6:0 This element is implicitly closed by the following `</div>`, which can cause an unexpected DOM structure. Add an explicit `</p>` to avoid surprises.
+https://svelte.dev/e/element_implicitly_closed
+1:22:36 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+1:23:01 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+1:27:17 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+1:27:21 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+1:27:27 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+1:37:49 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+1:37:53 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+1:46:43 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+2:51:15 PM [vite] vite.config.ts changed, restarting server...
+2:51:15 PM [vite] server restarted.
+2:51:23 PM [vite] vite.config.ts changed, restarting server...
+2:51:23 PM [vite] server restarted.
+2:54:10 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:19:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+2:59:09 PM [vite] (client) page reload src/lib/md/builds.html
+3:01:25 PM [vite] (client) page reload src/lib/md/builds.html
+3:07:01 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte, /src/lib/svelte/main/BuildNotes.svelte?svelte&type=style&lang.css
+3:07:02 PM [vite] (client) ✨ new dependencies optimized: markdown-it
+3:07:02 PM [vite] (client) ✨ optimized dependencies changed. reloading
+3:07:02 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:19:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+3:07:09 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+3:07:16 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+3:07:27 PM [vite] vite.config.ts changed, restarting server...
+failed to load config from /Users/sand/GitHub/mono/in/vite.config.ts
+3:07:27 PM [vite] buildNotes is not defined
+3:07:27 PM [vite] server restart failed
+3:07:34 PM [vite] vite.config.ts changed, restarting server...
+3:07:34 PM [vite] server restarted.
+3:07:35 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:19:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+3:08:20 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:08:33 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:10:58 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte, /src/lib/svelte/main/BuildNotes.svelte?svelte&type=style&lang.css
+3:14:56 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:15:19 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:16:51 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:17:07 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:17:26 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:17:42 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:17:51 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:18:17 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:18:25 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:21:02 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:21:29 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:23:22 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte?svelte&type=style&lang.css
+3:24:02 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+3:25:15 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte?svelte&type=style&lang.css
+3:26:40 PM [vite] (client) page reload src/lib/md/builds.html
+3:31:45 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte
+3:31:53 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte
+3:32:05 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte?svelte&type=style&lang.css
+3:46:10 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:15 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:19 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:22 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:37 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:40 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:43 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:45 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:46:48 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:06 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:13 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:15 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:18 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:20 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:22 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:47 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:49 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:50 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:50 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:52 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:53 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:54 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:55 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:48:57 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:05 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:08 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:10 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:13 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:16 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:18 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:22 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:26 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:36 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:42 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:45 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+3:49:46 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+5:24:08 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+5:24:16 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+5:24:20 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+5:24:29 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/BuildNotes.svelte
+5:37:46 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+6:00:11 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+6:05:27 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte
+6:05:27 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:40:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+6:05:27 PM [vite] (client) ✨ new dependencies optimized: color2k
+6:05:27 PM [vite] (client) ✨ optimized dependencies changed. reloading
+6:05:28 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:40:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+6:08:41 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+6:23:12 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+7:27:05 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+7:27:11 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte
+9:43:27 PM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+12:18:46 AM [vite-plugin-svelte] svelte config changed: restarting vite server. - file: /Users/sand/GitHub/mono/in/svelte.config.js
+12:18:46 AM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/in/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+12:18:46 AM [vite] vite.config.ts changed, restarting server...
+12:18:46 AM [vite] (client) page reload index.html
+12:18:46 AM [vite] (client) page reload src/lib/md/builds.md
+12:18:46 AM [vite] (client) hmr update /src/lib/svelte/main/App.svelte, /src/lib/svelte/main/App.svelte?svelte&type=style&lang.css
+12:18:46 AM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte, /src/lib/svelte/main/BuildNotes.svelte?svelte&type=style&lang.css
+12:18:46 AM [vite] (client) hmr update /src/lib/svelte/main/Main.svelte, /src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
+12:18:46 AM [vite] (client) hmr update /src/lib/svelte/details/Hideable.svelte, /src/lib/svelte/details/Hideable.svelte?svelte&type=style&lang.css
+12:18:46 AM [vite] (client) hmr update /src/lib/svelte/details/D_Preferences.svelte, /src/lib/svelte/details/D_Preferences.svelte?svelte&type=style&lang.css
+12:18:46 AM [vite] (client) page reload src/lib/ts/common/Extensions.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/common/Dirty.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/common/Configuration.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/main.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/types/Angle.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/types/Coordinates.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/utilities/SVG_Paths.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/utilities/Colors.ts
+12:18:46 AM [vite] (client) page reload src/lib/ts/managers/Preferences.ts
+12:18:46 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
+12:18:46 AM [vite] server restarted.
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+error Command failed with signal "SIGKILL".
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

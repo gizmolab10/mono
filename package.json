@@ -13,7 +13,6 @@
       "mj",
       "mu",
       "ov",
-      "s3",
       "ws"
     ],
     "comment": "ws pins svelte 4 and every other project wants 5. Held down in ws alone, the root hoists 5 for everyone else — without it yarn lifts 4 to the root, where the checker finds it and refuses svelte 5's own syntax.",

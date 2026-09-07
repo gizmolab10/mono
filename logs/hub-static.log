@@ -1,0 +1,7 @@
+::1 - - [07/Sep/2026 12:27:28] "GET /index.html HTTP/1.1" 200 -
+::1 - - [07/Sep/2026 16:28:27] "GET / HTTP/1.1" 200 -
+::1 - - [07/Sep/2026 16:28:27] "GET /ports.json?v=1788823707178 HTTP/1.1" 200 -
+::1 - - [07/Sep/2026 16:28:27] code 404, message File not found
+::1 - - [07/Sep/2026 16:28:27] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [07/Sep/2026 16:29:27] "GET / HTTP/1.1" 304 -
+::1 - - [07/Sep/2026 16:29:27] "GET /ports.json?v=1788823767840 HTTP/1.1" 200 -

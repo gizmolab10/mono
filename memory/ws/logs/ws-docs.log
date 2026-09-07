@@ -1,0 +1,7 @@
+yarn run v1.22.19
+$ vitepress dev
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5174/
+  ➜  Network: use --host to expose

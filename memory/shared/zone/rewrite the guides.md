@@ -71,12 +71,12 @@ Rules about working:
 
 14. [CLAUDE.md](../../../CLAUDE.md) (mono) — principles, defaults, reading on load
 15. [handbook.md](../truth/handbook.md) (shared-t) — the memory system's rules
-16. [learn.md](../notes/work/learn.md) (mono-work) — past mistakes as rules-in-waiting
+16. [learn.md](work/learn.md) (mono-work) — past mistakes as rules-in-waiting
 
 at session start (CLAUDE.md names them):
 
 17. [gates.md](../truth/gates.md)
-18. the fifteen guides in [collaborate](../notes/guides/collaborate/) (mono-collaborate) — voice, chat, workflow, hooks, cadence and the rest
+18. the fifteen guides in [collaborate](../truth/collaborate/) (mono-collaborate) — voice, chat, workflow, hooks, cadence and the rest
 
 at session start (CLAUDE.md names it), and again after every correction from Jonathan ([[agency]] rule 17) and from [[keywords]].md when Jonathan types "doesn't exist", "not found" or "which one"
 

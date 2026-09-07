@@ -1,0 +1,49 @@
+::1 - - [12/Jan/2026 16:40:08] "GET / HTTP/1.1" 200 -
+::1 - - [12/Jan/2026 16:40:08] "GET /ports.json HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:25:59] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:25:59] "GET /ports.json HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:33:17] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:34:55] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:39:26] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:39:45] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:40:17] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:41:24] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:41:24] "GET /ports.json HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:41:24] code 404, message File not found
+::1 - - [13/Jan/2026 11:41:24] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [13/Jan/2026 11:43:07] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:44:48] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:44:58] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:45:22] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:45:22] "GET /ports.json HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:45:22] code 404, message File not found
+::1 - - [13/Jan/2026 11:45:22] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [13/Jan/2026 11:46:52] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:46:52] "GET /ports.json HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:46:52] code 404, message File not found
+::1 - - [13/Jan/2026 11:46:52] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [13/Jan/2026 11:46:59] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:48:32] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:48:36] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:48:36] "GET /ports.json HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:48:36] code 404, message File not found
+::1 - - [13/Jan/2026 11:48:36] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [13/Jan/2026 11:55:11] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:55:11] "GET /ports.json HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:58:34] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:58:34] "GET /ports.json HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 11:58:34] code 404, message File not found
+::1 - - [13/Jan/2026 11:58:34] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [13/Jan/2026 11:58:45] "GET / HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 11:58:45] "GET /ports.json HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 12:02:47] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 12:02:47] "GET /ports.json HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 12:05:14] "GET / HTTP/1.1" 200 -
+::1 - - [13/Jan/2026 12:05:14] "GET /ports.json HTTP/1.1" 304 -
+::1 - - [13/Jan/2026 12:54:12] code 404, message File not found
+::1 - - [13/Jan/2026 12:54:12] "GET / HTTP/1.1" 404 -
+::1 - - [13/Jan/2026 12:54:50] code 404, message File not found
+::1 - - [13/Jan/2026 12:54:50] "GET / HTTP/1.1" 404 -
+::1 - - [13/Jan/2026 12:54:51] code 404, message File not found
+::1 - - [13/Jan/2026 12:54:51] "GET / HTTP/1.1" 404 -
+./servers.sh: line 57: 26583 Killed: 9               python3 -m http.server 5170

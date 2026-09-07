@@ -9,6 +9,7 @@ date:
 
 ## Decisions made during 2026
 
+- 7 September 2026; **`truth/` may hold sub-folders.** The rationale's "truth/ never grows subfolders" is removed; a folder inside truth names a design's parts, and a file's kind stays its `type` label.
 - 7 September 2026; **every working features file and every pre-flight file is in truth/** — always, response and the banned words folded into shared's conventions.md, the mono-wide lexicon into shared's lexicon.md; the rest moved whole. Fold chosen over side by side.
 - 27 August 2026; the set of skills is named the **toolkit** — replacing 'control surface' and the sizing table's stray 'verbs'; the members stay **skills**.
 - 25 August 2026; **pac** responses live in the most relevant project's decisions.md, reporting the decision each weighs. when its deciding question is answered, it is rewritten in one short statement about the decision made.

@@ -8,6 +8,4 @@
 **/node_modules/
 **/.DS_Store
 **/aside/
-**/*.log
 **/dist/
-**/logs/

@@ -1,6 +1,0 @@
-# Notes
-
-## Contents
-
-- [Work](./work/)
-

@@ -15,22 +15,12 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
-- [ ] speed up launch by reading files a few at a time
-    - [ ] start with the file the editor is presenting
-    - [ ] then just enough to render the visible part of browse's file list
-- [x] rename 'way out' -> 'resume browse' — decided 5 September 2026, not built: 34 places in 11 code files, the constant `WAY_OUT` and its ids among them, and 4 lines in ov's memory
-- [ ] move all old guides from notes -> truth
-    - [ ] manual
-    - [ ] milestones
-    - [ ] features
-    - [ ] components
-    - [ ] architecture
-    - [ ] design
+- [ ] browse. add an 'edit' button to the count row at far left
 - [ ] move the clear clickable next to search clickable
 - [ ] RETURN -> another checkbox line
 - [ ] TAB -> indents (command-TAB outdents)
 - [ ] too many ideas in ov
-- [ ] [[memory/ov/notes/work/soon/tag drift]] — too many tags for the same thing (progress, lifecycle, active, fate)
+- [ ] [[memory/ov/zone/work/soon/tag drift]] — too many tags for the same thing (progress, lifecycle, active, fate)
 - [ ] add 'reveal in finder' to the CONTROL-click popup menu
 - [ ] move all mono projects -> mono/projects, a new folder sibling to memory
     - [ ] create a new folder in projects 'shared'
@@ -62,7 +52,7 @@ sooner or later every project creates a knowledge base and a work manager. this 
 - [ ] strip of icons to switch between my many apps
     - [ ] localhost only
 - [ ] write installation instructions in
-    - [ ] [[ov installer]]
+    - [ ] [[memory/ov/zone/work/soon/ov installer]]
 - [ ] compose-an-email does not work on Windows
 - [ ] hermes agent
     - [ ] new ai memory project

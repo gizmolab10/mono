@@ -1,0 +1,489 @@
+yarn run v1.22.22
+$ vitepress dev
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+6:36:17 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+Port 5181 is in use, trying another one...
+Port 5182 is in use, trying another one...
+Port 5183 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5184/
+  ➜  Network: use --host to expose
+6:45:20 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+6:48:30 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+Port 5181 is in use, trying another one...
+Port 5182 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5183/
+  ➜  Network: use --host to expose
+6:49:20 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+7:00:55 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+Port 5181 is in use, trying another one...
+Port 5182 is in use, trying another one...
+Port 5183 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5184/
+  ➜  Network: use --host to expose
+7:01:46 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+7:02:03 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+Port 5181 is in use, trying another one...
+Port 5182 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5183/
+  ➜  Network: use --host to expose
+10:00:50 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Re-optimizing dependencies because lockfile has changed
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+10:01:40 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5177/
+  ➜  Network: use --host to expose
+10:07:22 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+Port 5181 is in use, trying another one...
+Port 5182 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5183/
+  ➜  Network: use --host to expose
+10:07:31 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5179/
+  ➜  Network: use --host to expose
+10:08:25 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5181/
+  ➜  Network: use --host to expose
+10:08:43 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+Port 5181 is in use, trying another one...
+Port 5182 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5183/
+  ➜  Network: use --host to expose
+10:24:22 AM [vitepress] sites/ports.json changed, restarting server...
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5179/
+  ➜  Network: use --host to expose
+10:35:07 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5179/
+  ➜  Network: use --host to expose
+10:35:58 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5181/
+  ➜  Network: use --host to expose
+10:36:15 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5179/
+  ➜  Network: use --host to expose
+10:43:45 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5176/
+  ➜  Network: use --host to expose
+10:55:45 AM [vitepress] hmr update /guides/index.md
+11:01:37 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+✘ [ERROR] Expected "}" but found "collapsed"
+
+    .vitepress/config.mts:127:14:
+      127 │               collapsed: true,
+          │               ~~~~~~~~~
+          ╵               }
+
+failed to load config from /Users/sand/GitHub/mono/.vitepress/config.mts
+Error: Build failed with 1 error:
+.vitepress/config.mts:127:14: ERROR: Expected "}" but found "collapsed"
+    at failureErrorWithLog (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1472:15)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:943:7)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:970:16
+    at responseCallbacks.<computed> (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:524:28)
+    at addChunk (node:internal/streams/readable:561:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+11:34:49 AM [vitepress] hmr update /index.md
+11:36:29 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+✘ [ERROR] Expected "}" but found "collapsed"
+
+    .vitepress/config.mts:127:14:
+      127 │               collapsed: true,
+          │               ~~~~~~~~~
+          ╵               }
+
+failed to load config from /Users/sand/GitHub/mono/.vitepress/config.mts
+Error: Build failed with 1 error:
+.vitepress/config.mts:127:14: ERROR: Expected "}" but found "collapsed"
+    at failureErrorWithLog (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1472:15)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:943:7)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:970:16
+    at responseCallbacks.<computed> (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:524:28)
+    at addChunk (node:internal/streams/readable:561:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+11:41:49 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+✘ [ERROR] Expected "}" but found "collapsed"
+
+    .vitepress/config.mts:695:14:
+      695 │               collapsed: true,
+          │               ~~~~~~~~~
+          ╵               }
+
+failed to load config from /Users/sand/GitHub/mono/.vitepress/config.mts
+Error: Build failed with 1 error:
+.vitepress/config.mts:695:14: ERROR: Expected "}" but found "collapsed"
+    at failureErrorWithLog (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1472:15)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:943:7)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:970:16
+    at responseCallbacks.<computed> (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:524:28)
+    at addChunk (node:internal/streams/readable:561:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+11:41:53 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5179/
+  ➜  Network: use --host to expose
+11:48:03 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5181/
+  ➜  Network: use --host to expose
+11:53:28 AM [vitepress] page reload ws/archives/2025/index copy.html
+11:53:28 AM [vitepress] page reload ws/archives/bubble/1/bundle.test.html
+11:53:28 AM [vitepress] page reload ws/archives/bubble/3/index.html
+11:53:28 AM [vitepress] page reload ws/archives/bubble/3/webseriously.html
+11:53:28 AM [vitepress] page reload ws/archives/dist/goo.html
+11:53:28 AM [vitepress] page reload ws/archives/dist/index.html
+11:53:28 AM [vitepress] page reload ws/archives/experiments/simulate bubble/simulate.html
+11:54:46 AM [vitepress] page reload ws/archives/experiments/simulate bubble/simulate.html
+11:54:46 AM [vitepress] page reload ws/archives/bubble/3/index.html
+11:54:46 AM [vitepress] page reload ws/archives/bubble/3/webseriously.html
+11:54:46 AM [vitepress] page reload ws/archives/bubble/1/bundle.test.html
+11:54:46 AM [vitepress] page reload ws/archives/2025/index copy.html
+11:56:50 AM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+Port 5176 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5177/
+  ➜  Network: use --host to expose
+12:34:15 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+Port 5176 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5177/
+  ➜  Network: use --host to expose
+3:45:47 PM [vitepress] page reload ws/experiments/quaternion-poc/index.html
+3:45:52 PM [vitepress] page reload ws/experiments/quaternion-poc/index.html
+3:45:52 PM [vitepress] page reload ws/work/experiments/quaternion-poc/index.html
+3:45:59 PM [vitepress] page reload ws/work/experiments/quaternion-poc/index.html
+3:45:59 PM [vitepress] page reload ws/work/done/experiments/quaternion-poc/index.html
+ ➜  Network: use --host to expose
+12:34:15 PM [vitepress] .vitepress/config.mts changed, restarting server...
+
+
+The language '1725:1731:src/lib/ts/managers/hierarchy.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '111:145:src/lib/ts/managers/preferences.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '128:142:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '39:71:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '107:107:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '8:14:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '16:25:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '87:103:src/lib/ts/geometry/g_treegraph.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+
+The language '73:80:src/lib/ts/managers/ux.ts' is not loaded, falling back to 'txt' for syntax highlighting.
+Port 5176 is in use, trying another one...
+Port 5177 is in use, trying another one...
+Port 5178 is in use, trying another one...
+Port 5179 is in use, trying another one...
+Port 5180 is in use, trying another one...
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5181/
+  ➜  Network: use --host to expose
+3:45:47 PM [vitepress] page reload ws/experiments/quaternion-poc/index.html
+3:45:52 PM [vitepress] page reload ws/experiments/quaternion-poc/index.html
+3:45:52 PM [vitepress] page reload ws/work/experiments/quaternion-poc/index.html
+3:45:59 PM [vitepress] page reload ws/work/experiments/quaternion-poc/index.html
+3:45:59 PM [vitepress] page reload ws/work/done/experiments/quaternion-poc/index.html
+aternion-poc/index.html
+3:45:52 PM [vitepress] page reload ws/work/experiments/quaternion-poc/index.html
+3:45:59 PM [vitepress] page reload ws/work/experiments/quaternion-poc/index.html
+3:45:59 PM [vitepress] page reload ws/work/done/experiments/quaternion-poc/index.html
+error Command failed with signal "SIGKILL".
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

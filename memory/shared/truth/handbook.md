@@ -7,7 +7,7 @@ date:
 ---
 # Handbook
 
-The authority for how the memory system runs. The design rationale lives in `memory/ov/notes/work/AI memory redesign.md`; this file is the law. Tune the system by editing this file — nowhere else.
+The authority for how the memory system runs. The design rationale lives in `memory/core/zone/work/AI memory redesign.md`; this file is the law. Tune the system by editing this file — nowhere else.
 
 ## Session phases
 
@@ -42,6 +42,7 @@ Never summarize prose into vaguer prose. Settling moves facts to their one home 
 ## Design churn
 
 - Truths are current-only. On a pivot, rewrite the truth wholesale; one `D:` line records the pivot; git records the old words.
+- `truth/` may hold folders: a folder there names a design's parts. A file's kind of truth stays its `type` label, wherever it sits, and every lookup over `truth/` reads the folders too.
 - A no-longer-current but carefully composed file moves whole into the project's `archive/` — kept readable, never loaded at start, no sizing limit.
 - `decisions.md` holds live rationales only — choices likely to be revisited, one line of "why" each. Delete a line when its decision becomes final.
 

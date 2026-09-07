@@ -1,0 +1,29 @@
+yarn run v1.22.19
+warning package.json: No license field
+$ vite
+
+  VITE v6.4.1  ready in 574 ms
+
+  ➜  Local:   http://localhost:5177/
+  ➜  Network: use --host to expose
+10:50:19 PM [vite-plugin-svelte] src/App.svelte:39:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+11:04:13 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/ci/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+11:04:13 PM [vite] vite.config.ts changed, restarting server...
+11:04:13 PM [vite] (client) page reload index.html
+11:04:13 PM [vite] (client) hmr update /src/App.svelte, /src/App.svelte?svelte&type=style&lang.css
+11:04:13 PM [vite] (client) hmr update /src/lib/CarnivalMap.svelte, /src/lib/CarnivalMap.svelte?svelte&type=style&lang.css
+11:04:13 PM [vite] (client) hmr update /src/lib/RewardBar.svelte, /src/lib/RewardBar.svelte?svelte&type=style&lang.css
+11:04:13 PM [vite] (client) hmr update /src/lib/booths/KindnessExchange.svelte, /src/lib/booths/KindnessExchange.svelte?svelte&type=style&lang.css
+11:04:13 PM [vite] (client) hmr update /src/lib/booths/NeedsSpotter.svelte, /src/lib/booths/NeedsSpotter.svelte?svelte&type=style&lang.css
+11:04:13 PM [vite] (client) hmr update /src/lib/booths/TrustCircle.svelte, /src/lib/booths/TrustCircle.svelte?svelte&type=style&lang.css
+11:04:13 PM [vite] (client) page reload src/lib/stores/needs.ts
+11:04:13 PM [vite] (client) page reload src/lib/stores/regard.ts
+11:04:13 PM [vite] (client) page reload src/main.ts
+11:04:13 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
+11:04:13 PM [vite] server restarted.
+error Command failed with signal "SIGKILL".
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

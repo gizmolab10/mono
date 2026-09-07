@@ -75,6 +75,10 @@
 		return () => clearTimeout(soon);
 	});
 
+	// Not wired to anything yet — pressing it does nothing.
+	function edit_pressed() {
+	}
+
 	function toggle_folders() {
 		const next = !$w_show_folders;
 		w_show_folders.set(next);
@@ -120,6 +124,13 @@
 	edge={count_edge}>
 	{#snippet contents()}
 		<div class='count-row' bind:this={count_row}>
+			<!-- Sits at the row's own left edge, ahead of the folders button's own lane. -->
+			<span class='edit-lane'>
+				<button class='edit-button'
+						use:hit_target={{ id: 'browse.edit', onpress: edit_pressed, tip: 'edit' }}>
+					✏️
+				</button>
+			</span>
 			<!-- With nothing left after the filters there are no folders to show or hide, so the
 				button has nothing to act on. -->
 			{#if matching > 0}
@@ -251,6 +262,37 @@
 	   words hold back the same, and the two end on the same edge. */
 	.chosen-tags.has-bar {
 		margin-right : calc(var(--thick-fat) + var(--gap));
+	}
+
+	/* The lane the edit button sits in, flush against the row's own left edge — one gap in, the
+	   same as any other row content, and no further. */
+	.edit-lane {
+		padding-left    : var(--gap-tiny);
+		justify-content : flex-start;
+		box-sizing      : border-box;
+		flex            : 0 0 auto;
+		align-items     : center;
+		display         : flex;
+	}
+
+	.edit-button {
+		border          : var(--thick-small) solid var(--black);
+		border-radius   : var(--radius-pill);
+		width           : var(--size);
+		height          : var(--size);
+		background      : var(--white);
+		color           : var(--text);
+		box-sizing      : border-box;
+		cursor          : pointer;
+		padding         : 0;
+		justify-content : center;
+		align-items     : center;
+		display         : flex;
+	}
+
+	.edit-button:global([data-hit]) {
+		border-color : var(--black);
+		background   : var(--hover);
 	}
 
 	/* The lane the folders button sits in. It holds the button's left edge a fixed distance in

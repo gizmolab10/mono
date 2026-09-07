@@ -33,12 +33,20 @@ function addresses_in(text: string): string[] {
 	return links_in(plain_links(text)).map((one) => one.address);
 }
 
+// How many files are read at once while the labels come in. Enough to keep the dev server busy,
+// few enough that the file the editor is showing is never made to wait behind them.
+const IN_FLIGHT = 12;
+
 class Files {
 
 	hierarchy = new Hierarchy();
 
-	// Flips to true once every file has been read. Anything showing the files watches
-	// this, since at first launch there is nothing yet to show.
+	// Flips to true once every file is hung on the structure — names and folders known, no text
+	// read yet. The list draws on this; anything that needs the labels waits on w_ready instead.
+	w_listed = writable(false);
+
+	// Flips to true once every file has been read. The filter rows' last word, the links between
+	// files and the dead-link check watch this, since each needs every label in.
 	w_ready = writable(false);
 
 	// True when the dispatcher did not answer at launch. It is the only thing that
@@ -607,16 +615,20 @@ class Files {
 	}
 
 	/**
-	 * Read every guide once, keep its labels, let its text go. The dispatcher says what
-	 * is on disk; that list is the whole truth, so nothing here is settled when the app's code
-	 * is prepared, and a file added, moved or thrown away shows straight away.
+	 * List every guide, hang each on the structure, then read them a few at a time. The
+	 * dispatcher says what is on disk; that list is the whole truth, so nothing here is settled
+	 * when the app's code is prepared, and a file added, moved or thrown away shows straight away.
 	 *
 	 * Each file is hung under a folder for its collection and one for each folder in its path,
 	 * so the shape of the folders comes out of where the files sit rather than being written
-	 * down anywhere.
+	 * down anywhere. Hanging needs only the path, so every file is hung from the listing alone
+	 * and the list can draw — names and folders — before a single text is read. The texts follow:
+	 * the ones `read_first` names, in that order, then the rest, several at a time. This settles
+	 * once everything is hung; the reading goes on after it and turns `w_ready` on when it ends.
 	 */
-	async load(): Promise<void> {
-		let read = 0, failed = 0, unlabeled = 0, bytes = 0, skipped = 0;
+	async load(read_first: () => string[] = () => []): Promise<void> {
+		const began = performance.now();
+		let skipped = 0;
 
 		// The shared collection's folder is the repo itself, and every project's folder sits
 		// directly inside it — so the shared one is the single top and the other four hang
@@ -628,6 +640,7 @@ class Files {
 		if (on_disk.paths.length === 0) {
 			this.w_no_server.set(true);
 			debug.log('Guides: the dispatcher did not answer, so there are no files to show — it is the only thing that knows what is on disk.');
+			this.w_listed.set(true);
 			this.w_ready.set(true);
 			return;
 		}
@@ -637,6 +650,7 @@ class Files {
 		// tell a link naming a real file it cannot open from a link naming nothing at all.
 		this.paths_on_disk = new Set(on_disk.paths);
 
+		const hung: File[] = [];
 		for (const where of on_disk.paths) {
 			const site = site_of_file(where);
 			if (!site) { continue; }
@@ -653,36 +667,58 @@ class Files {
 			const project = project_at(site.bundle, site.path);
 			const top = this.hierarchy.folder_at(project, '', project);
 			if (project !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
-			const done = await this.hang_one_file(site.bundle, site.path, address_of_file(`${on_disk.root}${where}`), site.is_design, top, project !== site.bundle);
-			read      += done.read;
-			failed    += done.failed;
-			unlabeled += done.unlabeled;
-			bytes     += done.bytes;
+			hung.push(this.hang_one_file(site.bundle, site.path, name, address_of_file(`${on_disk.root}${where}`), site.is_design, top, project !== site.bundle));
 		}
-
 		this.hierarchy.reindex();
-		this.say_what_was_found(read, failed, unlabeled, bytes, skipped);
 		this.renarrow();
+		this.w_listed.set(true);
+		debug.log(`Listed: ${hung.length} files hung under their folders ${Math.round(performance.now() - began)} ms after the listing was asked for, ${skipped} index files left out — the list can draw. Their labels are read next, ${IN_FLIGHT} at a time.`);
+		void this.read_all(hung, read_first(), skipped, began);
+	}
+
+	/**
+	 * Read every hung file's text for its labels: first the ones named, in that order — the file
+	 * the editor is presenting, alone, then the rows the list has in view — then the rest, a
+	 * fixed number of fetches in flight at once. The list is worked out again after each batch,
+	 * so a filter chosen while files are still arriving narrows as they arrive. When the last has
+	 * answered, the links are related and `w_ready` turns on.
+	 */
+	private async read_all(hung: File[], first: string[], skipped: number, began: number): Promise<void> {
+		const by_key = new Map(hung.map((guide) => [key_of(guide), guide]));
+		const ahead = first.map((key) => by_key.get(key)).filter((guide): guide is File => !!guide);
+		const queue = [...new Set([...ahead, ...hung])];
+		const batches: File[][] = [];
+		if (ahead.length > 0) { batches.push([queue.shift()!]); }
+		for (let at = 0; at < queue.length; at += IN_FLIGHT) { batches.push(queue.slice(at, at + IN_FLIGHT)); }
+
+		let read = 0, failed = 0, unlabeled = 0, bytes = 0;
+		for (const batch of batches) {
+			const done = await Promise.all(batch.map((guide) => this.read_one(guide)));
+			for (const one of done) { read += one.read; failed += one.failed; unlabeled += one.unlabeled; bytes += one.bytes; }
+			this.hierarchy.reindex();
+			this.renarrow();
+		}
+		this.say_what_was_found(read, failed, unlabeled, bytes, skipped);
 		// Answering a link needs every guide findable by where it sits, and that map is filled by
 		// the narrowing — so this comes after it, never before.
 		this.relate_the_links();
 		this.w_ready.set(true);
+		debug.log(`Read: every label is in, ${Math.round(performance.now() - began)} ms after the listing was asked for — ${ahead.length} read ahead of the rest.`);
 	}
 
-
 	/**
-	 * Read one file and hang it under the folders its path names, making each folder the first
-	 * time it is met. The path begins with "designs" for a design and "work" for a work note, so
-	 * the three purposes can never collide — and each of those two gets a folder of its own,
-	 * standing beside the files inside its project.
+	 * Hang one file under the folders its path names, making each folder the first time it is
+	 * met — with no labels yet, since its text is read later by `read_one`. The path begins with
+	 * "designs" for a design and "work" for a work note, so the three purposes can never
+	 * collide — and each of those two gets a folder of its own, standing beside the files inside
+	 * its project.
 	 */
-	private async hang_one_file(bundle: T_Bundle, path: string, address: string, is_design: boolean, top: File, first_is_top: boolean = false): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
+	private hang_one_file(bundle: T_Bundle, path: string, name: string, address: string, is_design: boolean, top: File, first_is_top: boolean = false): File {
 		const under = is_design ? 'designs' : path.startsWith('work/') ? 'work' : '';
 		const inside = under === '' ? path : path.slice(under.length + 1);
 		const roof = under === '' ? top : this.hierarchy.folder_at(bundle, under, under);
 		if (under !== '') { this.hierarchy.add_relationship(top.id, roof.id); }
 		const parts = inside.split('/');
-		const name = parts[parts.length - 1].replace(/\.md$/i, '');
 		let parent = roof;
 		// With the first part already the top it hangs under — a memory file's project folder —
 		// no folder is made for it, though every folder path below still begins with it, so each
@@ -693,33 +729,42 @@ class Files {
 			this.hierarchy.add_relationship(parent.id, folder.id);
 			parent = folder;
 		}
+		const unread: Labels = { kind: '', title: name, description: '', use_when: [], date: '', labeled: false };
+		const guide = this.hierarchy.add_file(bundle, path, name, address, unread, is_design, 0);
+		this.hierarchy.add_relationship(parent.id, guide.id);
+		return guide;
+	}
+
+	/**
+	 * Read one hung file's text once, keep its labels and the addresses it points at, and let
+	 * the text go. A file that cannot be read is taken down again, so the list never shows a
+	 * file whose words nobody can reach. The lookups are not rebuilt here — the batch that asked
+	 * rebuilds them once, when every file in it has answered.
+	 */
+	private async read_one(guide: File): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
+		const where = key_of(guide);
 		let text = '';
 		try {
-			const answer = await fetch(address);
+			const answer = await fetch(guide.address);
 			if (!answer.ok) { throw new Error(`the server answered ${answer.status}`); }
 			text = await answer.text();
 		} catch (e) {
-			debug.log(`Could not read the guide "${bundle}/${path}" from ${address}: ${e instanceof Error ? e.message : e}. It is left out.`);
+			debug.log(`Could not read the guide "${where}" from ${guide.address}: ${e instanceof Error ? e.message : e}. It is left out.`);
+			this.hierarchy.forget(guide);
 			return { read: 0, failed: 1, unlabeled: 0, bytes: 0 };
 		}
 		// A file that has never been labeled is left exactly as it is. It shows in the list with
 		// nothing in its kind column, and gets a block composed for it the first time someone
 		// opens it to edit — nothing is written to a file nobody asked about.
 		if (!has_labels(text)) {
-			debug.log(`Guides: "${bundle}/${path}" carries no labels. It is left as it is and will be given some the first time it is opened for editing.`);
+			debug.log(`Guides: "${where}" carries no labels. It is left as it is and will be given some the first time it is opened for editing.`);
 		}
-		const { labels, tags } = labels_from(text, `${bundle}/${path}`);
-		const guide = this.hierarchy.add_file(bundle, path, name, address, {
-			...labels,
-			title: labels.title || name,
-		}, is_design, text.length);
-		this.hierarchy.add_relationship(parent.id, guide.id);
-		for (const tag of tags) {
-			this.hierarchy.add_tagging(this.hierarchy.add_tag(tag).id, guide.id);
-		}
+		const { labels, tags } = labels_from(text, where);
+		this.hierarchy.relabel(guide, { ...labels, title: labels.title || guide.name }, tags, false);
+		guide.size = text.length;
 		// The one moment this file's whole text is in hand. What it points at is taken out of it
-		// here; where those links lead is worked out once every guide is hung on the structure.
-		this.links_from.set(key_of(guide), addresses_in(text));
+		// here; where those links lead is worked out once every guide has been read.
+		this.links_from.set(where, addresses_in(text));
 		return { read: 1, failed: 0, unlabeled: labels.labeled ? 0 : 1, bytes: text.length };
 	}
 

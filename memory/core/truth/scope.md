@@ -12,4 +12,4 @@ In: browsing and editing the repo's markdown files; tags, kinds, and labels — 
 
 Out (deliberately): ji's documents, storage, and chat — they belong nowhere here.
 
-The fuller statement lives in [ov - goals](../../ov/notes/guides/design/ov%20-%20goals.md).
+The fuller statement lives in [ov - goals](../../ov/truth/design/ov%20-%20goals.md).

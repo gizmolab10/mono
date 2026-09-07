@@ -1,12 +1,3 @@
-# Logs
-lerna-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-npm-debug.log*
-*.log
-logs
-
 # Build files
 node_modules
 .svelte-kit

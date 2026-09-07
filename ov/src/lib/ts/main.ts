@@ -4,6 +4,8 @@ import { files } from './managers/Files';
 import { c } from './common/Core';
 import { debug } from './common/Core';
 import { preferences, T_Preference } from './managers/Preferences';
+import { w_operation, w_view_file, T_Operation } from './managers/Operations';
+import { get } from 'svelte/store';
 import { colors } from './common/Core';
 import { mount } from 'svelte';
 import 'core/main.css';
@@ -33,12 +35,23 @@ c.configure_inks();
 const on_page = getComputedStyle(document.documentElement);
 debug.log(`Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "${on_page.getPropertyValue('--gap').trim()}", the region corner radius is "${on_page.getPropertyValue('--radius').trim()}", the ink black is "${on_page.getPropertyValue('--black').trim()}". Empty values would mean the bridge from the numbers to the stylesheets is broken.`);
 
-// Read every guide file once, for its labels only. Nothing but the setting-up words
-// shows until this finishes, so no part of the app ever draws itself against a
-// structure that isn't there yet.
-files.load().then(() => {
+// Every guide is hung on the structure from the dispatcher's listing, and the app shows itself
+// the moment that is done — names and folders, no labels yet. The labels are read after, in
+// this order: the file the editor is presenting, so its words are on screen first; then the
+// rows the list has in view, counting from the row it was left scrolled to; then the rest.
+const ROWS_IN_VIEW = 60;
+files.load(() => {
+	const first: string[] = [];
+	const viewed = get(w_operation) === T_Operation.edit ? get(w_view_file) : null;
+	if (viewed) { first.push(viewed); }
+	const rows = get(files.w_showing);
+	const top = preferences.read<string>(T_Preference.scroll_files_to);
+	const at = Math.max(0, rows.findIndex((row) => row.key === top));
+	for (const row of rows.slice(at, at + ROWS_IN_VIEW)) { if (!row.file.is_folder) { first.push(row.key); } }
+	return first;
+}).then(() => {
 	w_app.set(S_App.ready);
-	debug.log(`Startup: the files are read and the app is showing itself.`);
+	debug.log(`Startup: the files are listed and the app is showing itself; their labels are still coming in.`);
 });
 
 const app = mount(App, {

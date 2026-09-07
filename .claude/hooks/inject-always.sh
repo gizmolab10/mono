@@ -65,7 +65,7 @@ STRAY=()
 while IFS= read -r FILE; do
   grep -q '^kind: *explain *$' "$FILE" && continue
   printf '%s\n' "$SENT" | grep -qxF "$FILE" || STRAY+=("${FILE#$REPO/}")
-done < <(grep -rl '^tags:.*\balways\b' "$REPO"/memory/*/notes/guides "$REPO"/memory/*/truth 2>/dev/null)
+done < <(grep -rl '^tags:.*\balways\b' "$REPO"/memory/*/truth 2>/dev/null)
 
 if [ ${#STRAY[@]} -gt 0 ]; then
   echo "--- LABELS ARE WRONG ---"

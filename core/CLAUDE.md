@@ -9,7 +9,7 @@ date: 2026-08-24
 
 > a browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place.
 
-Ported from ji. What belongs here — and what deliberately does not — is [ov - goals](../memory/core/notes/guides/design/ov%20-%20goals.md).
+Ported from ji. What belongs here — and what deliberately does not — is [ov - goals](../memory/core/truth/design/ov%20-%20goals.md).
 
 Read `memory/core/truth/lexicon.md` at session start. It names everything in this project: use those words in prose, comments, log lines and test names, and invent no synonyms.
 

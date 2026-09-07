@@ -51,7 +51,7 @@ When presenting a clickable link to a specific line in a file, add the line numb
 
 ### 5. Co reads the log itself
 
-Never ask Jonathan to paste a log. Every app writes its own into `logs/`, and reading a file is the one thing co can always do. When a measurement is needed, add it, ask him to do the thing on screen once, then go and read what it wrote.
+Never ask Jonathan to paste a log. Every app writes its own into `memory/<project>/logs/`, and reading a file is the one thing co can always do. When a measurement is needed, add it, ask him to do the thing on screen once, then go and read what it wrote.
 
 And read it FIRST, before touching a single file. The log holds everything since he last loaded the page; co's first edit sends a reload through the dev server, and the reload wipes it. co lost a whole alert that way — every detail co needed, gone, because co started fixing before co started reading.
 

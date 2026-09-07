@@ -54,28 +54,23 @@
     "docs": 5181,
     "repo": "https://github.com/gizmolab10/mono/tree/main/ga"
   },
-  "s3": {
-    "port": 5182,
-    "docs": 5183,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/s3"
-  },
   "ji": {
-    "port": 5184,
+    "port": 5182,
     "public": "https://intersection.lol",
     "netlify": "https://jeff-intersection.netlify.app",
     "deploy": "https://app.netlify.com/projects/jeff-intersection/deploys",
     "repo": "https://github.com/gizmolab10/mono/tree/main/ji"
   },
   "ov": {
-    "port": 5185,
+    "port": 5183,
     "repo": "https://github.com/gizmolab10/mono/tree/main/ov"
   },
   "mu": {
-    "port": 5186,
+    "port": 5184,
     "repo": "https://github.com/gizmolab10/mono/tree/main/mu"
   },
   "mj": {
-    "port": 5187,
+    "port": 5185,
     "repo": "https://github.com/gizmolab10/mono/tree/main/mj"
   },
   "me": {

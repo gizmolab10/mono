@@ -16,7 +16,7 @@ Task-specific checkpoints. BEFORE the task, read the guide.
 | Updating journal | Read journals.md |
 | Creating new md files | Read markdown.md |
 | Multi-file edits | Search ALL files first, list scope, then proceed |
-| Starting a work session | Read the relevant notes/work/\*.md file |
+| Starting a work session | Read the relevant zone/work/\*.md file |
 | The same fix tried twice | Read breakdown.md and walk its four steps, or run /br |
 | Three rounds with nothing measured | Read breakdown.md and walk its four steps, or run /br |
 | **Claims about codebase** | **Search first. No "X is unused" or "X is only called from Y" without grep evidence.** |

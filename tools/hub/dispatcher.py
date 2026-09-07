@@ -9,6 +9,7 @@ import subprocess
 import sys
 import json
 import os
+import re
 import threading
 import time
 import urllib.request
@@ -28,7 +29,6 @@ WORK_FOLDERS = ('next', 'milestones', 'now', 'soon', 'done', 'proposals')
 # folder there; the shared collection's sits under shared. The claimed set is the folders
 # under memory/ whose notes are listed by the notes rules, not as memory files.
 COLLECTIONS = ('', 'core', 'di', 'gallery', 'ji', 'lv', 'me', 'mj', 'mu', 'ov', 'wo', 'ws')
-CLAIMED = {c or 'shared' for c in COLLECTIONS}
 
 # Load ports.json — single source of truth
 with open(os.path.join(SCRIPT_DIR, 'ports.json'), 'r') as f:
@@ -110,9 +110,11 @@ _settings_beside_this_file()
 NETLIFY_TOKEN = os.environ.get('NETLIFY_ACCESS_TOKEN', '')
 ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 
-# Derive error log paths from projects with docs
+# Derive error log paths from projects with docs. Each project's own error log sits beside its
+# other logs in memory/<proj>/logs/; mono names no memory project of its own and keeps the top.
 DOC_ERROR_LOGS = {
-    proj: os.path.join(GITHUB_DIR, 'logs', f'update-docs.error.{proj}.log')
+    proj: os.path.join(GITHUB_DIR, 'logs', f'update-docs.error.{proj}.log') if proj == 'mono'
+    else os.path.join(GITHUB_DIR, 'memory', proj, 'logs', f'update-docs.error.{proj}.log')
     for proj in PROJECT_PATHS
 }
 
@@ -342,20 +344,18 @@ def is_listed_note(where):
     parts = inside.split('/')
     if parts[-1].lower() == 'claude.md':
         return len(parts) == 1 or (len(parts) == 2 and parts[0] in ('di', 'ws', 'ji', 'lv', 'mu', 'ov'))
-    if inside.startswith('memory/'):
-        # A claimed collection's notes folder sits inside the memory system now, and keeps
-        # the notes rules below; every other memory file is readable at any depth.
-        if not (len(parts) > 3 and parts[1] in CLAIMED and parts[2] == 'notes'):
-            return True
-    if any(part in where for part in ('notes/guides/', 'notes/designs/')):
-        return True
-    at = where.find('notes/work/')
-    if at < 0:
+    if not inside.startswith('memory/'):
         return False
-    parts = where[at + len('notes/work/'):].split('/')
-    if len(parts) == 1:
+    # A work note follows its own rule -- at the very top of a zone/work folder, or one level
+    # down inside any of WORK_FOLDERS. Every other memory file -- truth, zone's other files,
+    # archive -- is readable at any depth, the same as a guide always was.
+    at = inside.find('/zone/work/')
+    if at < 0:
         return True
-    return len(parts) == 2 and parts[0].lower() in WORK_FOLDERS
+    tail = inside[at + len('/zone/work/'):].split('/')
+    if len(tail) == 1:
+        return True
+    return len(tail) == 2 and tail[0].lower() in WORK_FOLDERS
 
 def is_skippable_deploy(deploy):
     """Check if a deploy should be skipped (canceled or failed build)."""
@@ -520,16 +520,6 @@ class APIHandler(BaseHTTPRequestHandler):
                 root = os.path.realpath(GITHUB_DIR)
                 found = []
                 for collection in COLLECTIONS:
-                    for purpose in ('guides', 'designs'):
-                        inside = os.path.join('memory', collection or 'shared', 'notes', purpose)
-                        start = os.path.join(root, inside)
-                        if not os.path.isdir(start):
-                            continue
-                        for here, folders, files in os.walk(start):
-                            folders[:] = [f for f in folders if not f.startswith('.')]
-                            for one in files:
-                                if one.endswith('.md'):
-                                    found.append(os.path.relpath(os.path.join(here, one), root))
                     # The work folder gives up what sits at its very top — the handoff, the debt,
                     # the journal, the working features — and what sits one folder down inside the
                     # five named here. Those are the ones a guide links to. Anything deeper, and
@@ -537,7 +527,7 @@ class APIHandler(BaseHTTPRequestHandler):
                     #
                     # Overview draws the same line for itself, in `site_of_file`. The two have to
                     # agree: a file sent from here that it will not place is read and thrown away.
-                    work = os.path.join(root, 'memory', collection or 'shared', 'notes', 'work')
+                    work = os.path.join(root, 'memory', collection or 'shared', 'zone', 'work')
                     if os.path.isdir(work):
                         for one in sorted(os.listdir(work)):
                             whole = os.path.join(work, one)
@@ -557,14 +547,14 @@ class APIHandler(BaseHTTPRequestHandler):
                             if one.lower() == 'claude.md' and os.path.isfile(os.path.join(top_dir, one)):
                                 found.append(os.path.relpath(os.path.join(top_dir, one), root))
                 # The memory system sits at the top of the repo and belongs to no collection.
-                # Every file inside it is listed, however deep it sits — except a claimed
-                # collection's notes folder, which the walk above has already listed as guides.
+                # Every file inside it is listed, however deep it sits — except a project's own
+                # zone/work, which the walk above has already listed, depth-limited, as work notes.
                 memory = os.path.join(root, 'memory')
                 if os.path.isdir(memory):
                     for here, folders, files in os.walk(memory):
                         folders[:] = [f for f in folders if not f.startswith('.')]
-                        if os.path.dirname(here) == memory and os.path.basename(here) in CLAIMED:
-                            folders[:] = [f for f in folders if f != 'notes']
+                        if os.path.basename(here) == 'zone' and os.path.dirname(os.path.dirname(here)) == memory:
+                            folders[:] = [f for f in folders if f != 'work']
                         for one in files:
                             if one.endswith('.md'):
                                 found.append(os.path.relpath(os.path.join(here, one), root))
@@ -747,7 +737,14 @@ class APIHandler(BaseHTTPRequestHandler):
                     return
                 content_length = int(self.headers.get('Content-Length', 0))
                 body = self.rfile.read(content_length).decode()
-                log_path = os.path.join(GITHUB_DIR, 'logs', f'{where}.log')
+                # A name like "di", "di.debug" or "di-docs" names its own project's log; one
+                # naming no memory project (the bare default "debug", among others) keeps
+                # writing to the shared logs folder at the top, same as before.
+                project = re.sub(r'-docs$', '', where.split('.')[0])
+                if os.path.isdir(os.path.join(GITHUB_DIR, 'memory', project)):
+                    log_path = os.path.join(GITHUB_DIR, 'memory', project, 'logs', f'{where}.log')
+                else:
+                    log_path = os.path.join(GITHUB_DIR, 'logs', f'{where}.log')
                 os.makedirs(os.path.dirname(log_path), exist_ok=True)
                 erase = params.get('erase', ['0'])[0] == '1'
                 mode = 'w' if erase else 'a'

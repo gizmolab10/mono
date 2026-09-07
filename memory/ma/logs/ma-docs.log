@@ -1,0 +1,17 @@
+yarn run v1.22.19
+$ vitepress dev
+failed to start server. error:
+ENOENT: no such file or directory, scandir '/Users/sand/GitHub/mono/ma/notes'
+Error: ENOENT: no such file or directory, scandir '/Users/sand/GitHub/mono/ma/notes'
+    at readdirSync (node:fs:1507:26)
+    at walk (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1788823798425-8bde233f12aff.mjs:12:25)
+    at buildFileMap (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1788823798425-8bde233f12aff.mjs:25:3)
+    at Function.wikilinkPlugin (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1788823798425-8bde233f12aff.mjs:33:19)
+    at MarkdownIt.use (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:31618:10)
+    at Object.config (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1788823798425-8bde233f12aff.mjs:103:10)
+    at createMarkdownRenderer (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:35796:13)
+    at async localSearchPlugin (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:40442:14)
+    at async createVitePressPlugin (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:45194:5)
+    at async createServer (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:53201:14)
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

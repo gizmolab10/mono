@@ -13,9 +13,10 @@ import { files } from './Files';
  */
 
 export enum T_Operation {
-	edit   = 'edit one guide',
-	browse = 'browse the guides',
-	report = 'read a long report',
+	edit     = 'edit one file',
+	browse   = 'browse the files',
+	report   = 'read a long report',
+	multiple = 'select multiple files',
 }
 
 export const w_operation = preferences.persistent<T_Operation>(T_Preference.current_op, T_Operation.browse);

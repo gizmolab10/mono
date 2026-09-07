@@ -9,11 +9,9 @@ date: 2026-08-20
 
 Every folder under `memory/di/notes/`. Update when notes files are added, moved, or removed. The map of the source code is [map of di files](map%20of%20di%20files.md); the map of the guides themselves is [map of di guides](map%20of%20di%20guides.md).
 
-## guides/ — reference
+## guides/ — gone, moved into truth/
 
-- `project/` — the maps (files, guides, notes), and `overview/`, `philosophy/`, `research/`.
-- `architecture/` — how the program is built, one page per part.
-- `development/` — how work is done here: rules, testing, tooling.
+Moved whole into `truth/` on 7 September 2026, folders and all: `project/` (the maps, and `overview/`, `philosophy/`, `research/`), `architecture/` (how the program is built, one page per part), `development/` (rules, testing, tooling). See [map of di guides](map%20of%20di%20guides.md).
 
 ## designs/ — direction
 

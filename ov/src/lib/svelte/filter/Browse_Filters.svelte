@@ -40,25 +40,29 @@
 	//         the rows shrink and grow as the filters move.
 	const test: string = 'b';
 
-	// The files are read at launch, so what kinds and tags exist isn't known until that
-	// finishes. Both lists fill themselves in the moment it does.
+	// The files' labels come in a few at a time after launch, so what kinds and tags exist grows
+	// as they arrive: each row is worked out again on every batch, since the list is. A picked
+	// word that nothing matches yet is kept until every file is read, so a remembered choice is
+	// not let go before the file wearing it has arrived.
 	// What each row offers is worked out against every other filter — no row judges itself,
 	// so picking a kind never grays out the other kinds. Every filter is named below so the
 	// rows are worked out again whenever any of them moves.
 	const w_ready = files.w_ready;
-	let kinds = $derived.by(() => { $w_projects; $w_tags; $w_search_text; return $w_ready ? files.kinds_present() : []; });
-	let bare = $derived.by(() => { $w_projects; $w_tags; $w_search_text; return $w_ready ? files.unlabeled_within_reach() : 0; });
+	const w_listed = files.w_listed;
+	const w_showing = files.w_showing;
+	let kinds = $derived.by(() => { $w_projects; $w_tags; $w_search_text; $w_showing; return $w_listed ? files.kinds_present() : []; });
+	let bare = $derived.by(() => { $w_projects; $w_tags; $w_search_text; $w_showing; return $w_listed ? files.unlabeled_within_reach() : 0; });
 	// The tags row names the picked tags and which way they pick, unlike the other two rows: with
 	// every picked tag required, it cannot set its own filter aside, so what it offers changes as
 	// the picks do.
-	let tags_in_use = $derived.by(() => { $w_projects; $w_kind; $w_search_text; $w_tags; $w_tag_picking; return $w_ready ? files.tags_present() : []; });
+	let tags_in_use = $derived.by(() => { $w_projects; $w_kind; $w_search_text; $w_tags; $w_tag_picking; $w_showing; return $w_listed ? files.tags_present() : []; });
 	const projects = Object.values(T_Bundle);
 	// The projects control is two seg controls, a gap apart. These four lead, in this order;
 	// every other project follows in the second.
 	const LEADING = [T_Bundle.mono, T_Bundle.core, T_Bundle.gallery, T_Bundle.shared];
 	let counts = $derived.by(() => {
-		$w_kind; $w_tags; $w_search_text;
-		return $w_ready ? new Map(projects.map((p) => [p, files.files_in(p)])) : new Map();
+		$w_kind; $w_tags; $w_search_text; $w_showing;
+		return $w_listed ? new Map(projects.map((p) => [p, files.files_in(p)])) : new Map();
 	});
 
 	// What each row actually draws: everything on the closed lists one way, only what is

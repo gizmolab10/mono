@@ -1,0 +1,220 @@
+yarn run v1.22.22
+$ vitepress dev
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+4:47:13 PM [vitepress] projects/shared/.vitepress/theme/index.ts deleted, restarting server...
+
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/404.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/collaborate/access.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/collaborate/chat.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/collaborate/evolve.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/collaborate/index.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/collaborate/repo.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/collaborate/voice.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/collaborate/workflow.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/aesthetics.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/css.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/deploy.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/index.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/jonathan.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/markdown.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/migration.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/onboarding.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/refactoring.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/develop/style.html
+4:47:13 PM [vitepress] page reload projects/shared/.vitepress/dist/index.html
+4:47:13 PM [vitepress] page reload projects/shareerror Command failed with signal "SIGKILL".
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+PM [vitepress] page reload projects/shared/.vitepress/dist/test/testing.html
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:09:01 PM [vitepress] page reload projects/di/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/tools/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Gull_Wings.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Separator.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Preferences.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Graph.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Details.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Main.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Fillets.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Box.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/designs/Controls.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/404.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/architecture/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/architecture/rendering.types.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/architecture/files.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/architecture/project.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/architecture/managers.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/guides/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/guides/develop/best.practices.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/guides/develop/gotchas.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/guides/develop/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/guides/road.map.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/simplicity.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/pacing.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/done/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/done/quaternions.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/done/article.first.draft.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/done/svelte.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/4.hits.manager.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/1.solid.foundation.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/3.docs.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/2.panel/index.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/2.panel/components.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/2.panel/architecture.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/2.panel/milestone 2.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/milestones/2.panel/implement.html
+5:09:01 PM [vitepress] page reload projects/di/.vitepress/dist/work/layout-algorithm.html
+5:09:02 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/di/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/index.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/index.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/css.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/aesthetics.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/refactoring.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/style.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/jonathan.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/markdown.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/migration.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/deploy.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/develop/onboarding.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/test/index.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/test/debugging.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/test/testing.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/404.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/collaborate/voice.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/collaborate/index.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/collaborate/evolve.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/collaborate/access.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/collaborate/repo.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/collaborate/workflow.html
+5:09:02 PM [vitepress] page reload projects/sh/.vitepress/dist/collaborate/chat.html
+5:09:02 PM [vitepress] projects/sh/.vitepress/theme/index.ts deleted, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:09:03 PM [vitepress] page reload projects/ws/public/goo.html
+5:09:03 PM [vitepress] page reload projects/ws/notes/archives/2025/index copy.html
+5:09:03 PM [vitepress] page reload projects/ws/notes/archives/dist/index.html
+5:09:03 PM [vitepress] page reload projects/ws/notes/archives/dist/goo.html
+5:09:03 PM [vitepress] page reload projects/ws/notes/archives/experiments/simulate bubble/simulate.html
+5:09:03 PM [vitepress] page reload projects/ws/notes/archives/bubble/1/bundle.test.html
+5:09:03 PM [vitepress] page reload projects/ws/notes/archives/bubble/3/index.html
+5:09:03 PM [vitepress] page reload projects/ws/notes/archives/bubble/3/webseriously.html
+5:09:03 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/ws/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+5:09:03 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/ws/.svelte-kit/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+Error:   Failed to scan for dependencies from entries:
+  /Users/sand/GitHub/mono/notes/tools/sites/index.html
+/Users/sand/GitHub/mono/notes/ws/archives/2025/index copy.html
+/Users/sand/GitHub/mono/notes/ws/archives/bubble/1/bundle.test.html
+/Users/sand/GitHub/mono/notes/ws/archives/bubble/3/index.html
+/Users/sand/GitHub/mono/notes/ws/archives/bubble/3/webseriously.html
+/Users/sand/GitHub/mono/notes/ws/archives/experiments/simulate bubble/simulate.html
+/Users/sand/GitHub/mono/projects/ws/notes/archives/2025/index copy.html
+/Users/sand/GitHub/mono/projects/ws/notes/archives/bubble/1/bundle.test.html
+/Users/sand/GitHub/mono/projects/ws/notes/archives/bubble/3/index.html
+/Users/sand/GitHub/mono/projects/ws/notes/archives/bubble/3/webseriously.html
+/Users/sand/GitHub/mono/projects/ws/notes/archives/experiments/simulate bubble/simulate.html
+
+  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mENOENT: no such file or directory, open '/Users/sand/GitHub/mono/projects/ws/notes/archives/2025/index copy.html'[0m [1m[35m[plugin vite:dep-scan][0m
+
+    node_modules/vitepress/node_modules/esbuild/lib/main.js:1275:21:
+[37m      1275 │         let result = [32m[37mawait callback({
+           ╵                      [32m^[0m
+
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.readFile (node:internal/fs/promises:1246:14)
+    at async htmlTypeOnLoadCallback (file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49701:19)
+    at async requestCallbacks.on-load (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1275:22)
+    at async handleRequest (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:647:11)
+
+  This error came from the "onLoad" callback registered here:
+
+    node_modules/vitepress/node_modules/esbuild/lib/main.js:1150:20:
+[37m      1150 │       let promise = [32m[37msetup({
+           ╵                     [32m^[0m
+
+    at setup (file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49785:13)
+    at handlePlugins (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1150:21)
+    at buildOrContextImpl (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:873:5)
+    at Object.buildOrContext (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:699:5)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:2032:68
+    at new Promise (<anonymous>)
+    at Object.context (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:2032:27)
+    at Object.context (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1874:58)
+    at prepareEsbuildScanner (file:///Users/sand/GitHub/mono/node_modules/vitepress/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49576:24)
+
+  The plugin "vite:dep-scan" was triggered by this import
+
+    <stdin>:7:7:
+[37m      7 │ import [32m"/Users/sand/GitHub/mono/projects/ws/notes/archives/2025/ind[37m...
+        ╵        [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+    at failureErrorWithLog (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1472:15)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:943:7)
+    at /Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/Users/sand/GitHub/mono/node_modules/vitepress/node_modules/esbuild/lib/main.js:600:7)
+5:09:05 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/ws/.svelte-kit/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+5:09:05 PM [vitepress] projects/ws/.vitepress/theme/index.ts created, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:09:06 PM [vitepress] page reload projects/ws/public/goo.html
+5:09:06 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/ws/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+5:09:07 PM [vitepress] projects/sh/.vitepress/theme/index.ts created, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:16:11 PM [vitepress] projects/sh/.vitepress/theme/index.ts deleted, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:21:13 PM [vitepress] page reload projects/di/index.html
+5:21:13 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/di/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+5:21:15 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/ws/.svelte-kit/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+5:21:15 PM [vitepress] projects/ws/.vitepress/theme/index.ts created, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+5:21:15 PM [vitepress] page reload projects/ws/public/goo.html
+5:21:15 PM [vitepress] changed tsconfig file detected: /Users/sand/GitHub/mono/projects/ws/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+5:21:16 PM [vitepress] projects/sh/.vitepress/theme/index.ts created, restarting server...
+
+
+  vitepress v1.6.4
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+error Command failed with signal "SIGKILL".
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

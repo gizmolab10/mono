@@ -1,0 +1,53 @@
+Diagnostic log: on — this page is served from "localhost", which is this machine. Anywhere else, every logged line gives up at once.
+Renamed the saved settings: 0 moved to a new name, 0 kept aside because the new name was already taken, 0 of them from the old "ji:" start to "ji_". All zeros means every name was already spelled the one way.
+Swept the saved settings: 20 of ours found, 0 removed (0 character(s) reclaimed), 20 kept; 37 name(s) count as valid.
+Filters for the "AI" storage: 0 tag(s) [all], name text "", families [text]. Saved changes from here on go to "AI" only.
+AI store: records and content live in AnythingLLM; set up.
+Shut folders for the "AI" storage: filled in for the first time with 0 (nothing shut — this store never saves its folds).
+Hierarchy: derived flags for 0 document(s); recomputed the family of 0 file(s) from its kind.
+AI connection: heartbeat on — checking every 8 seconds.
+AnythingLLM: the address is already being read — waiting for that one instead of asking again.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 0 content row(s) of 0.
+List: filter on — searched all 0 row(s); 0 match(es); showing 0 open row(s) (a shut folder keeps its matches hidden until opened).
+AnythingLLM: read the current address "https://cache-mike-wiring-logs.trycloudflare.com" from the pointer.
+AnythingLLM: using existing workspace "intersection" (slug "intersection").
+AnythingLLM: read 11 embedded document(s) from the workspace.
+AI documents: the workspace holds 11.
+AnythingLLM: read the record index (relationships 34, predicates 1, documents 38, taggings 0, tags 2).
+AI store: primed the record index — relationships 34, predicates 1, documents 38, taggings 0, tags 2.
+Hierarchy: derived flags for 38 document(s); recomputed the family of 31 file(s) from its kind.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 12 content row(s) of 38.
+List: filter on — searched all 38 row(s); 12 match(es); showing 15 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 12 content row(s) of 38.
+Folder counts: 3 folder(s) hold at least one matching file; 12 file(s) of 38 row(s) match the filter (folders themselves are never counted).
+List timing: 1669813ms from start to rows on screen for 15 row(s) of 38 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 1669811ms.
+AnythingLLM: fetched 59 char(s) of text for "191c687f-3d88-4a5c-85af-e89cb0b7e177".
+Viewer: read 59 character(s) of text for document 191c687f-3d88-4a5c-85af-e89cb0b7e177.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 12 content row(s) of 38.
+List: filter on — searched all 38 row(s); 12 match(es); showing 15 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 12 content row(s) of 38.
+Folder counts: 3 folder(s) hold at least one matching file; 12 file(s) of 38 row(s) match the filter (folders themselves are never counted).
+List timing: 15ms from start to rows on screen for 15 row(s) of 38 in the store — walking and building 0ms, narrowing 1ms, folder counts 1ms, drawing 14ms.
+AnythingLLM: removed the stored content for "191c687f-3d88-4a5c-85af-e89cb0b7e177".
+AnythingLLM: removed "191c687f-3d88-4a5c-85af-e89cb0b7e177" ("custom-documents/matrix-security-key.txt-094c28b5-d55f-452f-902b-a9d24c3e2ddc.json") from the workspace.
+Deleted a group of 1 document(s) starting at 191c687f-3d88-4a5c-85af-e89cb0b7e177, plus their tag links, relationships, and bytes.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 11 content row(s) of 37.
+List: filter on — searched all 37 row(s); 11 match(es); showing 14 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 11 content row(s) of 37.
+Folder counts: 3 folder(s) hold at least one matching file; 11 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+AnythingLLM: read 10 embedded document(s) from the workspace.
+AI documents: the workspace holds 10.
+AnythingLLM: wrote the record index (19176 char(s); relationships 34, predicates 1, documents 38, taggings 0, tags 2).
+AnythingLLM: wrote the record index (18650 char(s); relationships 33, predicates 1, documents 37, taggings 0, tags 2).
+AnythingLLM: read the current address "https://cache-mike-wiring-logs.trycloudflare.com" from the pointer.
+AnythingLLM: using existing workspace "intersection" (slug "intersection").
+AnythingLLM: read 10 embedded document(s) from the workspace.
+AI documents: the workspace holds 10.
+AnythingLLM: read the record index (relationships 33, predicates 1, documents 37, taggings 0, tags 2).
+AI store: primed the record index — relationships 33, predicates 1, documents 37, taggings 0, tags 2.
+Hierarchy: derived flags for 37 document(s); recomputed the family of 30 file(s) from its kind.
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 11 content row(s) of 37.
+List: filter on — searched all 37 row(s); 11 match(es); showing 14 open row(s) (a shut folder keeps its matches hidden until opened).
+Search: 0 tag(s) [all] + text "" + 1 family(ies) [text] kept 11 content row(s) of 37.
+Folder counts: 3 folder(s) hold at least one matching file; 11 file(s) of 37 row(s) match the filter (folders themselves are never counted).
+List timing: 8165157ms from start to rows on screen for 14 row(s) of 37 in the store — walking and building 0ms, narrowing 1ms, folder counts 0ms, drawing 8165156ms.
