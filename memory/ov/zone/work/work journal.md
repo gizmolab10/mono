@@ -9,6 +9,20 @@ date: 2026-08-19
 
 What's been finished, newest first.
 
+## 2026-09-07 — picking many files at once
+
+Browse's count row grew a pencil at its far left. Pressing it turns selecting on, and a slash lies across the pencil while it is off — the same mark and rule the folders button already uses for its own mode. The state is `w_edit_multiple`, a remembered boolean; `w_selected_files` holds the picked files by where they sit, also remembered.
+
+While selecting, the file list grows a column at its far left, a checkbox in every row. A file's own checkbox picks that file; a folder's picks every file among its progeny — its own and every nested folder's, at any depth — read off the matched set rather than what is on screen, so a shut folder in between is reached all the same. The header of that column carries one more checkbox, centered on the divider, that picks every file at once; it shows only with more than one root, since one root's own checkbox already does that job.
+
+Each checkbox is its own hit target, so pressing one never reaches the row's own click, and hovering one lights only itself — the row stays unlit, and the checkbox takes `--hover` off its `data-hit` stamp. Every checkbox sits on the controls layer. An `apply` button waits to the right of the pencil, shown only while selecting; it does nothing yet.
+
+### Also
+
+- **`progeny`** entered ov's lexicon: everything under a folder, files and folders, recursively — never *children*, which reads as one level.
+- **Launch reads a few files at a time** now: the list draws from the dispatcher's listing alone, then the labels come in — the edited file first, the rows in view next, the rest twelve at a time — the list narrowing as each batch answers. Measured at 226 ms to the drawn list against 1958 ms for every label in.
+- **The top row's ancestry** leaves the memory folder off: a file in the memory system starts at its project's folder there.
+
 ## 2026-08-19 — the kinds are five
 
 `analyze` is a kind now: a taking apart of something to find out how it works. Two went out. Every screen reads the whole list off the one place it is written, so adding and removing reached the browse filters, the editor filters and the filter's own list with no further change.

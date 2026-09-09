@@ -1,17 +1,10 @@
 <script lang='ts'>
+	import { T_Edge, thickness_of, report_line_spacing, words_that_fit, hit_target, T_Hit_Target, svg_paths, Section, debug, k } from '../../ts/common/Core';
 	import { w_show_folders, w_show_filters, w_filters_folded, w_sorts, w_kind, w_projects, w_tags } from '../../ts/managers/Filters';
 	import List_Files, { w_scrollbar_showing } from '../content/List_Files.svelte';
-	import { report_line_spacing } from '../../ts/common/Core';
-	import { words_that_fit } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/common/Core';
-	import { T_Edge, thickness_of } from '../../ts/common/Core';
+	import { w_edit_multiple } from '../../ts/managers/Operations';
 	import Browse_Filters from '../filter/Browse_Filters.svelte';
 	import { files } from '../../ts/managers/Files';
-	import { T_Hit_Target } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/common/Core';
-	import { Section } from '../../ts/common/Core';
-	import { debug } from '../../ts/common/Core';
-	import { k } from '../../ts/common/Core';
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
 	const MARK = k.size.normal;
@@ -23,6 +16,7 @@
 	// How many files the filters allow — counted before the folds, so shutting a folder
 	// hides its files from the list without changing what the count says.
 	let matching = $derived.by(() => { $w_showing; return files.hierarchy.matched_count; });
+
 	// How many there are to be had at all.
 	// Logs neither show nor count in browse, so the total leaves them out too.
 	let total = $derived(files.files.filter((f) => f.name !== 'log' && f.name !== 'log.md').length);
@@ -31,10 +25,10 @@
 	// space for the tags is what is left between the count's right edge and the row's, less the
 	// gap the tags hold off that edge. The count's own width changes with the numbers in it, so
 	// this is measured rather than reckoned.
-	let count_row = $state<HTMLElement | null>(null);
 	let count_words = $state<HTMLElement | null>(null);
-	let tags_words = $state<HTMLElement | null>(null);
-	let shown_tags = $state('');
+	let tags_words  = $state<HTMLElement | null>(null);
+	let count_row   = $state<HTMLElement | null>(null);
+	let shown_tags  = $state('');
 
 	/** How wide a string is drawn in the tags' own typeface, asked of a canvas rather than the page. */
 	let ruler: CanvasRenderingContext2D | null = null;
@@ -75,8 +69,13 @@
 		return () => clearTimeout(soon);
 	});
 
-	// Not wired to anything yet — pressing it does nothing.
+	// Turns multiple-selection on or off.
 	function edit_pressed() {
+		w_edit_multiple.set(!$w_edit_multiple);
+	}
+
+	// Not wired to anything yet — pressing it does nothing.
+	function apply_pressed() {
 	}
 
 	function toggle_folders() {
@@ -126,10 +125,24 @@
 		<div class='count-row' bind:this={count_row}>
 			<!-- Sits at the row's own left edge, ahead of the folders button's own lane. -->
 			<span class='edit-lane'>
+				<!-- A plain pencil once selecting is on; a slash through it while browsing, the
+					same way the folders button marks its own mode as off. -->
 				<button class='edit-button'
-						use:hit_target={{ id: 'browse.edit', onpress: edit_pressed, tip: 'edit' }}>
+						use:hit_target={{ id: 'browse.edit', onpress: edit_pressed,
+						tip: $w_edit_multiple ? 'stop selecting' : 'select files' }}>
 					✏️
+					{#if !$w_edit_multiple}
+						<svg class='shut-mark' overflow='visible' viewBox='0 0 {MARK} {MARK}'>
+							<path d={svg_paths.circle_slash(MARK)} fill-rule='nonzero' />
+						</svg>
+					{/if}
 				</button>
+				{#if $w_edit_multiple}
+					<button class='apply-button'
+							use:hit_target={{ id: 'browse.apply', onpress: apply_pressed, tip: 'apply' }}>
+						apply
+					</button>
+				{/if}
 			</span>
 			<!-- With nothing left after the filters there are no folders to show or hide, so the
 				button has nothing to act on. -->
@@ -203,8 +216,8 @@
 	   own above or below — the gap on both sides is the section's — and it stands exactly as
 	   tall as the folders button, so the section is that button and one gap either side. */
 	.count-row {
-		min-height  : var(--size);
 		gap         : var(--gap-tiny);
+		min-height  : var(--size);
 		position    : relative;
 		align-items : center;
 		display     : flex;
@@ -272,6 +285,7 @@
 		box-sizing      : border-box;
 		flex            : 0 0 auto;
 		align-items     : center;
+		gap             : var(--gap-tiny);
 		display         : flex;
 	}
 
@@ -285,6 +299,7 @@
 		box-sizing      : border-box;
 		cursor          : pointer;
 		padding         : 0;
+		position        : relative;
 		justify-content : center;
 		align-items     : center;
 		display         : flex;
@@ -293,6 +308,24 @@
 	.edit-button:global([data-hit]) {
 		border-color : var(--black);
 		background   : var(--hover);
+	}
+
+	/* To the right of the edit button, only while selecting. */
+	.apply-button {
+		border        : var(--thick-small) solid var(--gray);
+		border-radius : var(--radius-pill);
+		padding       : var(--pad-control);
+		font-size     : var(--font-tiny);
+		background    : var(--white);
+		height        : var(--size);
+		color         : var(--text);
+		box-sizing    : border-box;
+		cursor        : pointer;
+		white-space   : nowrap;
+	}
+
+	.apply-button:global([data-hit]) {
+		background : var(--hover);
 	}
 
 	/* The lane the folders button sits in. It holds the button's left edge a fixed distance in
@@ -310,7 +343,7 @@
 		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
-		font-size     : var(-font-label);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
 		height        : var(--size);
 		color         : var(--text);

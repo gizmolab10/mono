@@ -9,7 +9,7 @@ date: 7 September 2026
 
 ## Success criteria
 
-**Moved 7 September 2026:** all 19 folders sit whole under `truth/` in their project, `git mv`, links re-pointed, no `notes/guides/` folder remains anywhere. **Not yet done:** the sorting below — nothing has folded, archived, or died; every file that entered truth sits there unsorted, waiting for the fold/archive/dead judgments this file proposes.
+**Drive dissolved 7 September 2026:** the mechanical move is done and logged; this file is now the detail behind a pending pac in shared's `truth/decisions.md`, no longer the drive. **Moved 7 September 2026:** all 19 folders sit whole under `truth/` in their project, `git mv`, links re-pointed, no `notes/guides/` folder remains anywhere. **Not yet done:** the sorting below — nothing has folded, archived, or died; every file that entered truth sits there unsorted, waiting for the fold/archive/dead judgments this file proposes.
 
 No `memory/<project>/notes/guides/` folder remains. Every one of the 142 guides has one of four fates, each recorded by a D: line in its project's log: it is a truth in `truth/`; it is folded into a truth that already holds its topic, and gone; it sits in `archive/`, readable and never loaded; or it is deleted. Every link into a moved guide resolves — the dead-link report finds **none**. CLAUDE.MD, the hooks, keywords.md and the maps name the new places. ov lists the same projects. `yarn vitest` 336 pass, `yarn svelte-check` clean, the dispatcher's 32 tests pass.
 

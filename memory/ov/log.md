@@ -7,22 +7,12 @@ date: 2026-09-01
 ---
 # ov log
 
-<!-- consolidated: 6 September 2026 -->
+<!-- consolidated: 9 September 2026 -->
 
-## 7 September 2026
+## 9 September 2026
 
-- D: the 19 guides subfolders in `notes/guides/` moved whole into `truth/` — core (design, project), di (architecture, development, project), ji (project, setup, specifications), ov (design, project), 185 files; `git mv`, six leftover `notes/guides/index.md` files removed with their now-empty folders; 44 links in 15 files re-pointed; di's and ji's guides maps rewritten for the new root; the drive's blanket move is mechanically done, its fold/archive/dead sorting from consolidate.md not yet carried out; ov's map, index and the di/ji catalogs updated; 336 tests pass, svelte-check clean
-- I: proposal — zone/consolidate.md sorts the 142 old guides in eight notes/guides folders, folder by folder: 91 enter truth as they are (ws's and di's architecture as designs, di's rules as specs), 17 fold into a truth that holds their topic, 22 go to archive, 6 to zone, ws's 9 manuals to ws/src/manual, 6 die; three deciding questions — sub-folders in truth or flat, fold on entry or later, cut the 28 over the limit on entry or later; the drive's blanket move points at it
-- D: launch reading a few files at a time is confirmed on screen by Jonathan — the list at 226 ms, every label at 1958 ms, 426 files, none failed; done: the idea and its two sub-items cleared from zone/ideas.md, the drive dissolved into okf.md, the map, index.md and working features row 78; the drive now holds the proposal for the next idea, every old guide from notes into truth, with its deciding question; the map is current; the work journal is untouched, an old note whose move is undecided
-- D: launch reads a few files at a time — built: Files.load hangs every file from the listing with no labels and turns w_listed on, main.ts shows the app on that and names the reading order (the edited file when the app opens in edit, then sixty rows from the remembered top row), read_all reads the edited file alone then the rest twelve in flight, relabeling each and re-narrowing per batch, w_ready at the end; Hierarchy.relabel keeps the file's own labeled flag and can leave the rebuild to its caller; Browse_Filters' rows fill in on w_listed and each batch, the dropped-pick effect waits on w_ready; okf.md, the map's main.ts line, index.md's state and working features row 78 say it; drive.md holds where it is; svelte-check clean, 336 pass; the timings wait on one page load, in the app's log
-- D: in the launch drive, a kind or tag filter chosen while files are still arriving narrows as they arrive — the list re-narrows on each batch, not once at w_ready; the drive's open question is closed, the drive itself not yet go
-- D: done — two built, ticked ideas cleared from zone/ideas.md (the notes move, the header's soft pointer), each with a D: line already; the 'way out' rename stays ticked and unbuilt; the header-pointer drive dissolved, its truth in controls.md; the drive now holds the proposal for the first unchecked idea, launch reading a few files at a time; truth/working features.md gains rows 73 to 77; the map is current; the work journal is untouched — an old note, and the pac to move it is undecided
-- D: the top row's ancestry leaves the memory folder off — a file in the memory system starts at its project's folder there; Controls.svelte's sits_at, truth/controls.md line 39; svelte-check clean
-- D: ov roots every collection's notes at `memory/<project>/notes/`, mono's at `memory/shared/notes/` — Saving.ts's `notes_of`, and `site_of_file` tries each collection's notes before the memory rule, so a moved guide still answers to its project; six test files re-pointed, five hand-written expectations fixed by hand; 336 pass, svelte-check clean; the map's notes section is rewritten against the new place and its other links, broken since the map entered truth/, are re-pointed at `ov/src/`
-
-## 6 September 2026
-
-- S: settled again 6 September 2026 — five lines. The header's soft pointer, the 'less' clickable and the tagsets' order are in truth/controls.md; the drive's closed question and its build are in zone/drive.md, confirmed on screen and waiting on Jonathan's word to dissolve; the morning settle's summary is in index.md. No source file was added, moved or removed, so the map is unchanged. One ticked idea is the 'way out' rename, ticked by Jonathan and not built, so no D: can say what was done — left in place
+- D: the outer div's class is app, not frame, in App.svelte. Check clean
+- S: settled 25 dated lines of 6 to 8 September. The multi-select build is in working features rows 79 to 82, row 82 new (checkboxes as hit targets on the controls layer, hover on the checkbox alone) and row 80 now saying shut folders included. progeny is in the lexicon. The ancestry is in truth/controls.md. Launch reading is in row 78. The drive's dissolution is in index.md, consolidate.md and shared's decisions. The bridge rename is in the map and the lexicon. The notes-rooting line is superseded by the reorg, its Saving.ts gap carried into zone/ideas.md. Two done records and one settle record dismissed. The original work log below the rule carries forward untouched: untagged, finished work, whose one home would be zone/work/work journal.md
 
 ---
 

@@ -54,6 +54,7 @@ Everything else here has been distilled into a rule; the table below says where 
 | ------------------------------------------- | ----------------------------------------------------------------- |
 | Stale reads                                 | `always.md` — "Re-read before editing"                            |
 | Wrong year/path assumptions                 | `always.md` — "Verify Before Writing"                             |
+| Coining a name for a thing that does not exist | `conventions.md` Always #2 — "Every name I use must already exist", and the hook that checks it |
 | Tool failure deflection                     | `workarounds.md` — "Tool Failure Recovery"                        |
 | Incomplete rename                           | `workflow.md` — "Rename with mv, then search"                     |
 | Project-specific swap                       | `workflow.md` — "Remove, don't swap"                              |

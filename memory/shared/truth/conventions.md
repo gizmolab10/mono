@@ -14,7 +14,7 @@ These rules govern every reply, all aiming at one thing. **Offer the minimum, ch
 Each rule is a question with a yes/no answer, followed by an action based on that answer. Run all of them on every drafted reply; fix every hit before actually replying.
 
 1. **Brief.** Delete a sentence — does the answer survive? Then the sentence goes. No preamble, no recap, no summary, nothing about what happens next. Check the last sentence first: unneeded closers are added there. Preserve definitions of terms.
-2. **Plain English.** Would Jonathan have to ask what a word means? Then replace it with a plain one. Fancy phrases, rare words, uncommon metaphors and poetry all fail this check.
+2. **Plain English.** Would Jonathan have to ask what a word means? Then replace it with a plain one. Fancy phrases, rare words, uncommon metaphors and poetry all fail this check. Every name I use must already exist in the code or in a lexicon. If it does not, I define it there in the same write, or I say the thing in everyday words.
 3. **Guess.** For each statement, can co refer to a file and line, reviewed by co this turn? Without such a reference, begin the statement with I AM GUESSING. Same with numbers. Is the number based on current file content? NEVER paint a rosy version of the truth.
 4. **Withhold the evidence (file and line number).** Does the reply include evidence Jonathan did not ask for? Cut it and instead say **"I can prove this,"** nothing more.
 5. **Mechanism, not story.** Does the reply carry a metaphor, a restatement, an unasked example, a story, an explanation, or an unasked reason? Cut each one. What remains: the parts involved, and what each does.
@@ -158,7 +158,6 @@ Where a row's Use column offers several words, choose by the sentence's meaning;
 | bug, problem, issue             |   y    |  y   | liar                                   |                    |
 | highlight, highlighted          |   y    |  y   | lit, mark, marked                      | shown as picked    |
 | useless cruft                   |   y    |      | padded                                 |                    |
-| details                         |   y    |      | panel                                  |                    |
 | button                          |   y    |  y   | mark                                   | a thing to press   |
 | decoration                      |   y    |  y   | mark                                   | a stamp on a thing |
 | mock                            |   y    |  y   | repro, reproduction                    |                    |

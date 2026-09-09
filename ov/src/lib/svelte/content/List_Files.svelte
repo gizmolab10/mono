@@ -11,9 +11,9 @@
 </script>
 
 <script lang='ts'>
-	import { VAULT, file_path_of, folder_path_of, obsidian_link, show_folder } from '../../ts/utilities/Saving';
 	import { w_shut, w_show_folders, w_projects, w_kind, w_tags, ordered_tags, w_sorts, T_Sort } from '../../ts/managers/Filters';
-	import { open_view, w_command_down, w_option_down } from '../../ts/managers/Operations';
+	import { open_view, w_command_down, w_option_down, w_edit_multiple, w_selected_files } from '../../ts/managers/Operations';
+	import { VAULT, file_path_of, folder_path_of, obsidian_link, show_folder } from '../../ts/utilities/Saving';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { project_of, type Filtered_File } from '../../ts/types/File';
 	import { free_thumb, type Free_Thumb } from '../../ts/common/Core';
@@ -299,6 +299,45 @@
 		{ label: 'size', width: '30px', sort: T_Sort.size },
 	]);
 
+	// A column of its own at the far left, only while files are being picked rather than
+	// browsed — nothing to sort by, so it sits apart from the columns above.
+	const show_select = $derived($w_edit_multiple);
+
+	function toggle_selected(key: string): void {
+		w_selected_files.update((keys) => keys.includes(key) ? keys.filter((k) => k !== key) : [...keys, key]);
+	}
+
+	/** Every file among a folder's progeny — its own and every nested folder's, at any depth —
+	 *  that the filters match, whether or not some folder in between is shut. Read off the whole
+	 *  matched set rather than $w_showing, which a shut folder already hides files from. Progeny's
+	 *  own folders are left out: a folder is never one of the picked files. */
+	function files_under(folder_key: string): string[] {
+		return files.hierarchy.matched_files
+			.filter((r) => !r.file.is_folder && r.ancestor_keys.includes(folder_key)).map((r) => r.key);
+	}
+
+	/** Selects every file among a folder's progeny if any of it is unpicked; clears it once all of it is. */
+	function toggle_progeny(folder_key: string): void {
+		const under = files_under(folder_key);
+		w_selected_files.update((keys) => {
+			const all_picked = under.every((k) => keys.includes(k));
+			return all_picked ? keys.filter((k) => !under.includes(k)) : [...new Set([...keys, ...under])];
+		});
+	}
+
+	// Every file the filters currently leave on screen, folders left out — what the header's
+	// own checkbox picks or clears in one press.
+	const every_file = $derived($w_showing.filter((r) => !r.file.is_folder).map((r) => r.key));
+
+	function toggle_all_selected(): void {
+		const all_picked = every_file.every((k) => $w_selected_files.includes(k));
+		w_selected_files.set(all_picked ? [] : [...every_file]);
+	}
+
+	// With one root that root's own checkbox already picks or clears everything, so the header
+	// carries none — the same reasoning the folders' own soft pointer already goes by.
+	const show_header_select = $derived(show_select && $w_show_folders && roots > 1);
+
 	// The count row above draws its folders button in a lane this wide, so the button's right
 	// edge falls where the first title's words end. A width of "auto" means no fixed column is
 	// left, and the row goes back to hugging the far left.
@@ -411,6 +450,26 @@
 
 <!-- The three cells of a row: kind, name (with the open/shut triangle), and tags. -->
 {#snippet file_row(row: Filtered_File)}
+	{#if show_select}
+		<td class='select-cell'>
+			{#if row.file.is_folder}
+				{@const under = files_under(row.key)}
+				<!-- Picks or clears every file under this folder, not the folder itself — a folder
+					is never one of the picked files. A control of its own, so the row underneath
+					never sees the press; its own mouseenter and mouseleave, firing after and before
+					the row's own, keep the row's hover off it too — only the checkbox itself lights. -->
+				<input type='checkbox' checked={under.length > 0 && under.every((k) => $w_selected_files.includes(k))}
+					onchange={() => toggle_progeny(row.key)} aria-label={`select everything under "${row.file.name}"`}
+					onmouseenter={() => hovered_row = null} onmouseleave={() => hovered_row = row.key}
+					use:hit_target={{ id: `list.select.${row.key}` }} />
+			{:else}
+				<input type='checkbox' checked={$w_selected_files.includes(row.key)}
+					onchange={() => toggle_selected(row.key)} aria-label={`select "${row.file.name}"`}
+					onmouseenter={() => hovered_row = null} onmouseleave={() => hovered_row = row.key}
+					use:hit_target={{ id: `list.select.${row.key}` }} />
+			{/if}
+		</td>
+	{/if}
 	{#if shows_kind}
 		<!-- A folder shows how many matching files it holds. A file shows its kind, unless one
 		     kind is picked — then every file would read the same, so the cell stays blank. -->
@@ -462,9 +521,23 @@
 				<Separator thickness={k.thickness.fat} />
 			</div>
 			<table class='files-table'>
-				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
+				<colgroup>{#if show_select}<col style:width='30px' />{/if}{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<thead>
 					<tr class='head'>
+						{#if show_select}
+							<th class='select-head'>
+								<!-- Picks or clears every file on screen, centered on the divider the same way the
+								     folders' own pointer is — drawn only with more than one root, since with one
+								     that root's own checkbox already does the same job. -->
+								{#if show_header_select}
+									<span class='head-slot' style:width='100%'>
+										<input type='checkbox' checked={every_file.length > 0 && every_file.every((k) => $w_selected_files.includes(k))}
+											onchange={toggle_all_selected} aria-label='select every file'
+											use:hit_target={{ id: 'list.select.all' }} />
+									</span>
+								{/if}
+							</th>
+						{/if}
 						{#each columns as col}
 							{@const place = can_sort ? place_of.get(col.sort) : undefined}
 							<th class:name-head={col.label === 'name'} class:flat={!$w_show_folders} class:kind-head={col.sort === T_Sort.kind} class:project-head={col.label === 'project'} class:tags-head={col.label === 'tags'}>
@@ -508,7 +581,7 @@
 		{/if}
 		<div class='table-scroll' class:has-bar={scrollbar_showing} bind:this={scroller} onscroll={on_scroll}>
 			<table class='files-table'>
-				<colgroup>{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
+				<colgroup>{#if show_select}<col style:width='30px' />{/if}{#each columns as col}<col style:width={col.width} />{/each}</colgroup>
 				<tbody>
 					{#each shown as row, row_number (row.key)}
 						<!-- A row opens when the press is let go, never on the way down: a file is
@@ -691,6 +764,12 @@
 		padding-left : calc(var(--size-small) + var(--gap));
 		position     : relative;
 		text-align   : left;
+	}
+
+	/* The select column's own header cell, so its select-all checkbox — a slot the same way
+	   the name column's own pointer is — has something to center itself on. */
+	.head th.select-head {
+		position : relative;
 	}
 
 	/* The slot the header's pointer sits in: the cell's full height at its start, the pointer
@@ -940,6 +1019,25 @@
 		font-size     : var(--font-micro);
 		padding-right : var(--gap-small);
 		text-align    : right;
+	}
+
+	/* The checkbox sits centered in its column, only while files are being picked. */
+	.select-cell {
+		text-align     : center;
+		vertical-align : middle;
+	}
+
+	/* Every checkbox in the table, a row's own and the header's, on the controls layer. */
+	.select-cell input[type='checkbox'],
+	.select-head input[type='checkbox'] {
+		z-index  : var(--z-controls);
+		position : relative;
+	}
+
+	/* Its own background under the cursor, asked of the stamp rather than the row's hover —
+	   a row's own checkbox lights on its own, never the row underneath it. */
+	.select-cell input[type='checkbox']:global([data-hit]) {
+		background : var(--hover);
 	}
 
 	.tag-names {

@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/gallery/zone/questions.md",
+                "file": "memory/shared/zone/questions.md",
                 "mode": "source",
                 "source": false
               },
@@ -22,17 +22,45 @@
             }
           },
           {
+            "id": "94cc7eed23e63c1f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/truth/shorthand.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "shorthand"
+            }
+          },
+          {
             "id": "f4587981fc0ddbe5",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/ideas.md",
+                "file": "memory/core/truth/design/ov - goals.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ideas"
+              "title": "ov - goals"
+            }
+          },
+          {
+            "id": "85284a086b3d75b6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/panel/zone/questions.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "questions"
             }
           },
           {
@@ -41,16 +69,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/drive.md",
+                "file": "memory/shared/truth/create a project.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "drive"
+              "title": "create a project"
+            }
+          },
+          {
+            "id": "377c973d2b759719",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/mu/zone/ideas.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ideas"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -187,7 +229,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/ov/zone/ideas.md",
+                "file": "memory/panel/zone/questions.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -211,8 +253,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 217.6181640625,
-    "collapsed": true
+    "width": 217.6181640625
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -226,44 +267,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "f4587981fc0ddbe5",
+  "active": "85284a086b3d75b6",
   "lastOpenFiles": [
-    "ov/src/lib/svelte/main/Browse.svelte.tmp.43279.4ec06df34eb6",
+    "memory/panel/truth/decisions.md",
+    "memory/shared/zone/big picture.md",
+    "memory/di/zone/learn.md",
+    "memory/shared/zone/learn.md",
+    "memory/shared/truth/create a project.md",
+    "memory/shared/zone/drive.md",
+    "memory/mu/truth/design.md",
+    "memory/core/truth/design/ov - goals.md",
+    "memory/shared/zone/questions.md",
+    "memory/shared/zone/rewrite the guides.md",
+    "memory/shared/zone/proposals.md",
+    "tools/test_big_picture.py",
+    "tools/big-picture.py",
     "memory/shared/truth/shorthand.md",
-    "ws/vite.config.js.timestamp-1788823777499-7fd7e11dc45ee.mjs",
-    "memory/core/logs/core-docs.log",
-    "memory/core/logs",
-    "memory/ws/logs/ws.log",
-    "memory/ws/logs/ws-docs.log",
-    "memory/ws/logs/update-docs.error.ws.log",
-    "memory/ws/logs",
-    "memory/ga/logs/update-docs.error.ga.log",
-    "memory/ga/logs/ga.log",
-    "memory/ga/logs",
-    "2026-06-11.md",
-    "memory/ov/truth/scope.md",
-    "memory/core/zone/AI memory redesign.md",
-    "memory/core/notes/work/AI memory redesign.md",
-    "memory/ga/zone/work/revisit.ga.md",
-    "memory/ga/zone/work/phaser.start.md",
-    "memory/ga/zone/work/phaser.editor.md",
-    "memory/ga/zone/work/map.md",
-    "memory/ga/zone/work/index.md",
-    "memory/ga/zone/design/project.md",
-    "memory/ga/zone/design/vision.md",
-    "memory/ga/zone/design/original.sites.md",
-    "memory/ga/zone/design/keep.in.mind.md",
-    "memory/ga/zone/design/game.engines.md",
-    "memory/ga/zone/design/index.md",
-    "memory/ga/zone/design/file.layout.md",
-    "memory/ga/zone/index.md",
-    "memory/ma/zone/work/done/proposal.md",
-    "memory/ma/zone/work/done/next steps.md",
-    "memory/ma/zone/work/done/jonathan.md",
-    "memory/ma/zone/work/done/index.md",
-    "memory/ma/zone/work/done/describe.md",
-    "memory/ma/zone/work/wendy.md",
-    "memory/ma/zone/work/revisit.ma.md",
+    "memory/shared/zone/library projects.md",
+    "memory/shared/zone/ideas.md",
+    "memory/shared/zone/incorporating a project.md",
+    "memory/gallery/zone/questions.md",
+    "memory/mu/zone/project goal.md",
+    "memory/shared/zone/inception into the new design.md",
+    "memory/ov/zone/ideas.md",
+    "memory/mj/zone/ideas.md",
+    "mj/dist/assets/index-DSZrAkcz.js",
+    "mj/dist/assets/index-DKFuhotT.css",
+    "mj/dist/index.html",
+    "mj/dist/assets",
+    "mj/dist",
+    "mu/dist/assets/index-C8RRb-KP.css",
+    "mu/dist/assets/index-_qVxtOG9.js",
+    "mu/dist/index.html",
+    "memory/shared/zone/collisions.md",
+    "ws/node_modules/uuid/CONTRIBUTING.md",
+    "ws/node_modules/uuid/README.md",
+    "ws/node_modules/uuid/LICENSE.md",
+    "ws/node_modules/uuid/CHANGELOG.md",
+    "panel/node_modules/readdirp/README.md",
     "gallery/src/assets/the vineyard/lcv.label.png",
     "gallery/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
     "gallery/src/assets/the vineyard/Versaison_20190803.jpg",

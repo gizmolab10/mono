@@ -6,7 +6,7 @@ class Configuration {
 	/**
 	 * Push the stacking-layer numbers onto the document root as CSS variables,
 	 * so plain stylesheets (main.css) can read them with var(...). Called once at
-	 * startup — the numbers are static. This is the bridge that lets CSS use the
+	 * startup — the numbers are static. This is what lets CSS use the
 	 * values that live in Constants (CSS can't import a TypeScript module).
 	 */
 	configure_layers(): void {

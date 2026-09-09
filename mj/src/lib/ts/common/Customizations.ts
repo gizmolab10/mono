@@ -6,4 +6,5 @@
 // Gathered into one value, so a caller names the file rather than every switch.
 
 export const customizations = {
+	name : 'mj',		// what the controls row calls this project, centered in it
 };

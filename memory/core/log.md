@@ -7,8 +7,8 @@ date: 2026-09-01
 ---
 # core log
 
-<!-- consolidated: 1 September 2026 -->
+<!-- consolidated: 9 September 2026 -->
 
-## 1 September 2026
+## 9 September 2026
 
-- D: fourteen entries settled — the rules that keep core core are in `truth/structure.md`, which now also holds the styling boundary, the one import that names a file to break the ring, and how core checks itself. The state is in index.md; the three pacs are decided in `truth/decisions.md`
+- S: settled 6 lines of 1, 7 and 8 September. The bridge is in truth/adopting core.md and the lexicon. The pac's decision is in truth/decisions.md. The hosts and the Hamburger are in index.md. Two settle records dismissed as done. The ov-journey idea cleared from zone/ideas.md, its telling being truth/adopting core.md

@@ -168,7 +168,7 @@
 	</div>
 {/if}
 
-<div class='frame' style:width='{width}px' style:height='{height}px'>
+<div class='app' style:width='{width}px' style:height='{height}px'>
 	<Controls onclick={toggle_details} detailsShown={$w_show_details} {buildNumber} {restarting} onRestart={restart} onBuildOpen={() => { showBuildNotes = true; debug.log(`Build notes: opened, showing build ${buildNumber}.`); }} />
 	<div class='boxes'>
 		{#if $w_show_details}
@@ -206,7 +206,7 @@
 		inset           : 0;
 	}
 
-	.frame {
+	.app {
 		background     : var(--accent);
 		padding        : var(--gap);
 		gap            : var(--gap);

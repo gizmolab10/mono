@@ -28,7 +28,7 @@ WORK_FOLDERS = ('next', 'milestones', 'now', 'soon', 'done', 'proposals')
 # Every collection's notes folder sits inside the memory system, under the collection's own
 # folder there; the shared collection's sits under shared. The claimed set is the folders
 # under memory/ whose notes are listed by the notes rules, not as memory files.
-COLLECTIONS = ('', 'core', 'di', 'gallery', 'ji', 'lv', 'me', 'mj', 'mu', 'ov', 'wo', 'ws')
+COLLECTIONS = ('', 'core', 'di', 'gallery', 'ji', 'lv', 'me', 'mj', 'mu', 'ov', 'ws')
 
 # Load ports.json — single source of truth
 with open(os.path.join(SCRIPT_DIR, 'ports.json'), 'r') as f:

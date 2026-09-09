@@ -24,6 +24,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **settle** — consolidation's line-by-line step: each log line moved into its one home, dismissed with a stated reason, or carried forward unsettled. Not: summarizing.
 - **toolkit** — the set of skills that act on the memory system: start, pac, define, propose, settle, check, where, summary. Not: the shorthand file (the trigger surface), not any one skill.
 - **adoption** — a core file taken in by a host: one line in the host's Core.ts, the host's own copy deleted. Never "borrowing."
+- **bridge** — the host's one file that imports what it needs from a library, `Core.ts` for core: every other host file imports from the bridge, never from the library. A stylesheet has no exports, so `main.ts` is the one other bridge, for `main.css` alone. Not: `Configuration.ts`, which pushes core's numbers onto the page.
 - **drive** — the current undertaking: the one proposal being decided and implemented, held in `zone/drive.md` until it dissolves into truth.
 - **zone** — the folder holding a project's live thinking: active plans, research, considerations, bright ideas, visual references. Named for the state of mind that fills it and the zoning-in that empties it. Not: truth, not a waiting room for belief.
 
@@ -94,7 +95,7 @@ The [banned words](conventions.md#banned-words) turned the right way round — t
 - **margin** — the empty strip at an edge. Never *band*, *bar*, *padding*, *gutter*.
 - **highlight**, **highlighted** — shown as picked, or shown as under the cursor. Never *lit*, never *mark*. Between these three, *mark* has no use left at all.
 - **hierarchy** — how things sit inside each other. Never *tree*.
-- **details** — the column at the side. Never *panel*.
+- **details** — the column at the side.
 - **mock** — a small made-up case that shows the fault. Never *repro*.
 - **detour** — work off the path of the task. Never *side-build*.
 - **bug**, **problem** — something wrong. Never *liar*.

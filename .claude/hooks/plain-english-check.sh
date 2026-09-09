@@ -1,6 +1,6 @@
 #!/bin/bash
-# PostToolUse hook: reads every edit as it is written, and says when a banned word
-# or a word the lexicon settles just went into a file.
+# PostToolUse hook: reads every edit as it is written, and says when a banned word,
+# a word the lexicon settles, or a name that names nothing just went into a file.
 #
 # What is checked:
 #   .md files            -> the whole edit
@@ -17,6 +17,12 @@
 #      machine cannot tell. The same line as above, drawn by hand because the
 #      lexicon has no hooked column.
 #   3. di's twenty identifiers, kept from the first version of this hook.
+#
+# And one check that reads no list at all — names in code style, .md files only:
+#   4. Every span in backticks names a thing in the code, a term in a lexicon, or a
+#      path on disk. One that names none of those is a coinage, and every name must
+#      already exist in the code or a lexicon. Each span is looked up, case-sensitive,
+#      since Frame and frame were two different things; the misses are reported.
 #
 # The two word files themselves are passed over — quoting banned words is their job.
 # Warn-only: the edit is already written; this says so as next-turn context.
@@ -91,7 +97,57 @@ if echo "$CHECK" | grep -qiE '(fi_key|occ_face|ep_key|clip_identity|edge_points|
   FOUND="${FOUND}${JARGON}"
 fi
 
-[ -z "$FOUND" ] && exit 0
-FOUND=${FOUND%, }
+# --- names in code style -----------------------------------------------------
+#
+# Where a name may be found: the code (every project's src and the tools — not the hooks,
+# whose scripts and tests quote names on purpose), a lexicon (as a bold term — in this very
+# edit first, since a term may be defined in the write that first uses it), or the disk (as
+# a file or folder).
+# Spans that are not one name — a phrase with spaces, a command, a quoted or bracketed
+# thing — are left alone. Word-boundary, case-sensitive.
 
-echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"BANNED WORD WRITTEN INTO A FILE: ${FOUND} — the banned-words table and the lexicon govern files as well as replies. Redo the edit using the word the table's Use column or the lexicon names.\"}}"
+NAMELESS=""
+if [[ "$FILE" == *.md ]]; then
+  SPANS=$(echo "$NEW" | grep -oE '`[^`]+`' | sed 's/^`//; s/`$//' | sort -u)
+  while IFS= read -r span; do
+    [ -z "$span" ] && continue
+    case "$span" in *" "*|*"*"*|*"("*|*"'"*|*'"'*|*"<"*|*"["*|*"{"*|*"="*|*"#"*) continue ;; esac
+    clean=${span%/}
+    token=$(basename "$clean")
+    token=${token#--}
+    token=${token#\$}
+    token=${token%%.*}
+    [[ "$token" =~ ^[A-Za-z_][A-Za-z0-9_-]*$ ]] || continue
+    # 1. The code.
+    if grep -rqwF --include='*.ts' --include='*.svelte' --include='*.py' --include='*.sh' \
+         --include='*.json' --include='*.css' --include='*.html' --include='*.js' \
+         -- "$token" "$REPO"/*/src "$REPO/tools" 2>/dev/null; then continue; fi
+    # 2. A lexicon, this edit first.
+    if echo "$NEW" | grep -qF -- "**$token**"; then continue; fi
+    if grep -qF -- "**$token**" "$REPO"/memory/*/truth/lexicon.md 2>/dev/null; then continue; fi
+    # 3. The disk: a path as written, or a file or folder of that name anywhere.
+    if [ -e "$REPO/$clean" ]; then continue; fi
+    if [[ "$clean" == */* ]]; then
+      hit=$(find "$REPO" -path '*/node_modules' -prune -o -path '*/.git' -prune -o -path "*/$clean" -print -quit 2>/dev/null)
+    else
+      hit=$(find "$REPO" -path '*/node_modules' -prune -o -path '*/.git' -prune -o -name "$clean" -print -quit 2>/dev/null)
+    fi
+    [ -n "$hit" ] && continue
+    NAMELESS="${NAMELESS}\`${span}\`, "
+  done <<< "$SPANS"
+fi
+
+# --- the report --------------------------------------------------------------
+
+[ -z "$FOUND" ] && [ -z "$NAMELESS" ] && exit 0
+MESSAGE=""
+if [ -n "$FOUND" ]; then
+  FOUND=${FOUND%, }
+  MESSAGE="BANNED WORD WRITTEN INTO A FILE: ${FOUND} — the banned-words table and the lexicon govern files as well as replies. Redo the edit using the word the table's Use column or the lexicon names."
+fi
+if [ -n "$NAMELESS" ]; then
+  NAMELESS=${NAMELESS%, }
+  [ -n "$MESSAGE" ] && MESSAGE="${MESSAGE} "
+  MESSAGE="${MESSAGE}NAME THAT NAMES NOTHING: ${NAMELESS} — in no code, no lexicon, and not on disk. Every name must already exist in the code or in a lexicon. Define it there in this write, or say the thing in everyday words."
+fi
+jq -cn --arg m "$MESSAGE" '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$m}}'

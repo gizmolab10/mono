@@ -7,6 +7,134 @@ date: 2026-08-31
 ---
 # Proposals
 
+## a name for the outer div, for every project (9 September 2026)
+
+Proposal — one class for the outer div in every App.svelte, in place of `frame`, which in html names an embedded document and does not match this div.
+
+Decided and built 9 September 2026: `.app`, in ov, panel, mu and mj. Four checks clean.
+
+**The div.** Fixed to the window's size, one gap in from its edges, on the accent, holding the controls row, the two regions and, in ov, the status line. It is the app's whole drawn area. Eight lines in four files carry the class.
+
+**Names that fit, best first.**
+
+1. `.app` — says what the div is: everything the app draws. index.html already mounts at `#app`, so this div is `#app`'s one child, the same thing named twice, id and class. Plain, no other sense in the code.
+2. `.outer` — says where it sits: outermost. Says nothing about what it holds.
+3. `.whole` — the whole app on screen. Plain, unused anywhere.
+4. `.edges` — it sits at the window's edges. Says the placement, not the thing.
+
+**Names that are out, and why.** `.main`: the lexicon says never main. `.page`: a hit-target kind in ov's code. `.root`: the css document root. `.body`: the html element. `.box`: ov's regions are the boxes, `.boxes` is their row. `.screen`: ov's lexicon says screen for the files list and the editor. `.shell`: rejected 7 September.
+
+**Cost.** Eight code lines, four checks, four memory mentions. No lexicon entry for `.app`, since it is the id's own word.
+
+**Open.** Whether the div is needed at all, or its styles go onto `#app` itself, which would end the question. That is a structure change, not a rename, and is not weighed here.
+
+## learn files: one path that exists (9 September 2026)
+
+Proposal — CLAUDE.md names a per-project learn file at `zone/work/now/learn.md`. No project has one. Two learn files exist: shared's at `zone/work/learn.md` and di's at `zone/work/ai/learn.md`. The `learn` shorthand says add it to learn and names no path.
+
+**Decided 9 September 2026, Jonathan's way, not the one below.** A project's learn file is `memory/<X>/zone/learn.md`, made the day it is first needed. Every project's CLAUDE.md points to it. Built: shared's and di's files moved there, the root CLAUDE.md, eleven project CLAUDE files, the shorthand row and every link re-pointed.
+
+**The fix, as first proposed.** One rule: a project's mistakes go in `memory/<X>/zone/work/learn.md` where that file exists, and in shared's otherwise. Three edits: CLAUDE.md line 43 names that path and says where one exists. di's file moves from `work/ai/` to `work/`, with its links re-pointed. The shorthand row names both homes.
+
+**Not the fix.** Making an empty learn file in every project. A file with nothing in it is a guess.
+
+**Success criteria.** Every path CLAUDE.md names exists. The learn shorthand has one place to write for any project.
+
+**Cost.** One line in CLAUDE.md, one git mv, one shorthand row, the links into di's learn.
+
+**Open.** The question in zone/questions.md that learn has no home is half this one. Whether the twenty-entry distill count applies per file or across all of them.
+
+## big picture (9 September 2026)
+
+Proposal — a script writes `memory/shared/zone/big picture.md`: one line per memory file that holds unfinished work, across every project. A shorthand runs it.
+
+**The row.** One table per project, under its own heading, three columns: z/t, file as a link, verb. Root files carry no letter. Two examples: `| z | [ideas.md](../../ov/zone/ideas.md) | 34 open |`, `| shared-t | decisions.md | decide 3 pacs |`. Decided 9 September 2026, from bullets.
+
+**The counts, one pattern each.** Robust means grep, not reading. A file gets a line for each nonzero count, joined with "and".
+
+| file | pattern | verb clause |
+| --- | --- | --- |
+| any .md | lines starting with a dash and an empty checkbox | N open |
+| decisions.md | pac bullets without "Decided" | decide N pacs |
+| proposals.md | `##` sections without "Decided" or "dead" | decide N proposals |
+| questions.md | list lines | answer N questions |
+| log.md | lines starting with a dash, after the consolidated marker and before any rule, S: and D: lines left out | settle N lines |
+| learn.md | raw-log entries `- N.` | distill N entries |
+| collisions.md | `##` entries | rewrite N collisions |
+| drive.md | the file exists | dissolve the drive |
+
+**The script.** A python file in `tools/`, named in the write that makes it, about sixty lines. It walks `memory/*/`, applies the table, writes the file whole with today's date, and prints the line count. No judgment anywhere in it.
+
+**The shorthand.** `big picture` — run the script, reply with the count of lines and the file's path.
+
+**Success criteria.** The file lists every file that any pattern hits and no other. Running it twice writes the same file. A new project appears the day it has an unchecked box.
+
+**Cost.** One script, one shorthand row, one test that feeds it a made-up project folder.
+
+**Decided.** The file sits in shared's zone. A truth with unchecked boxes is a finding worth its own verb.
+
+**Built 9 September 2026.** `tools/big-picture.py` and `tools/test_big_picture.py`, thirteen checks passing. The truth verb is "N open truths". The shorthand row is in shorthand.md. Folders named archive, done and logs are skipped.
+
+## fewer words, same facts (8 September 2026)
+
+Proposal — one rule for Always, and a hook that counts.
+
+**The fault, measured.** One D: line from today: "bridge freed from Configuration's sense first: core's own comment, both goals truths, ov's map and startup line, the entry files of lv, mj, mu and panel, and mu's and mj's operation views now say pushes onto the page." 43 words, one sentence, one fact. The same fact: "Eleven places called Configuration the bridge. Now they say it pushes onto the page." 15 words.
+
+**Where the words come from.** Four habits, each visible in that line. A dash that hides a second sentence. A name followed by its description, when the lexicon already holds the description. A list of every file touched, when a count and git would do. A reason nobody asked for, hung on with "since" or "so that".
+
+**The rule, for Always.** State. Does a sentence bend — a dash, a "since", a name followed by what it means, a list where a count would do? Cut it in two, or cut the second half. One fact per sentence. A thing with a name gets its name and nothing after it.
+
+**The hook.** conciseness-check.sh already runs on every reply. It gains two counts: sentences over 25 words, and dashes per sentence. Over the cap, it reports the sentence. The same counts run on every D: line written into a log.
+
+**The caps.** A sentence: 25 words. A D: line: one sentence. A reply: one sentence per fact, no restating.
+
+**Success criteria.** Every reply and every log line passes the hook. Jonathan reads a week of log lines without asking what one means.
+
+**Cost.** One rule, about thirty lines of shell, one test case.
+
+**Open.** Whether the pac format, one paragraph per pac, keeps its length or takes the same cap per part.
+
+## panel into ov, and the duplicated originals out (7 September 2026)
+
+Proposal — ov takes panel as its own, and what ov holds that panel now holds too goes.
+
+Reading (3) is dead, 7 September 2026: panel imports core, not the other way. Nothing of panel moves into core.
+
+**What is duplicated, counted.** ov's four — App 264 lines, Controls 489, Details 173, Operation 53 — against panel's four — 119, 69, 36, 22. What panel holds is what ov's four hold in common with every host: the `.app` div and its width arithmetic, the cursor fed to the hits manager, the hint, the hamburger and its styling, the two regions' wrappers and their styling — panel's 246 lines, of which ov's are the originals. The other 980 lines of ov's four are ov's own: the dispatcher's polling and restart, the four colors read from preferences, the command and option keys, the build notes, the status line, the launch states, the editing tools, the details sections, the switch among report, edit and browse.
+
+**Three readings of "incorporate", and they differ.**
+
+1. ov rewrites its four so the lines are panel's, word for word, and ov's own sit inside them. Nothing is shared; four versions of panel remain — ov, panel, mu, mj — and the duplicated originals are ov's old frame lines, gone in favor of identical ones. ov gains the centered name and a shape matching the other three, at the cost of four files rewritten for no change on screen
+2. panel becomes a library: panel is one component with the controls row, the details column, the content box and a foot as snippet slots, a prop saying whether details shows, and the toggle handed back; ov, mu and mj take it through an alias for panel, as `core` is one for core, and a second bridge, and their four files shrink to fillings. Every host's own version of panel goes. But a second alias means a second entry in tsconfig, vite.config and, for ov, vitest.config; a second bridge beside Core.ts; and ov's `core_alias.test.ts`, which expects exactly two files to name the alias, gains a twin or fails. The adopting-core rules would each need a second reading
+3. panel moves into core as the one component core's pac of 7 September weighs — the same component as (2), one alias, one bridge, no new rule — and ov, mu, mj and panel each host it; panel keeps a twenty-line App as the smallest host. Every host's own version goes the same way as in (2).
+
+**Success criteria, for (2) or (3).** panel as one component, in one place. ov's App.svelte holds only what is ov's; its Controls, Details and Operation are fillings handed to it as snippets. mu, mj and panel hand theirs the same way. ov's 336 tests, its check, and the three hosts' checks pass; ov draws exactly as it did — measured, not reasoned.
+
+**What reads it.** For (3): core's `svelte/support` and its index, `adopting core.md`'s steps, each host's Core.ts (one line), each host's App.svelte, and ov's Details, Controls and Operation as they lose their wrappers. For (2): the same, plus three config files per host, a second bridge, and the one-bridge rule with its test.
+
+**Cost.** (1): four files rewritten in ov, nothing else. (3): one core component of about panel's App, the component's own shape (four snippets, one prop, one callback), four hosts' App.svelte rewritten around it, ov's three regions unwrapped — and ov's screen checked pixel by pixel after. (2): (3)'s cost plus the second-library machinery.
+
+**Open.** Which reading is meant? If (2) or (3), where does ov's status line go — a fourth slot below the boxes, or ov's own, outside the panel component? And is panel then a project, or the name of a component?
+
+## panel into mu and mj (7 September 2026)
+
+Decided and built 7 September 2026: way (1), both hosts. mu and mj each hold their own version of the four files, mj on its own paths; both check clean at 411 files and build. The first open question is answered — mj took it too; the second, whether panel remains, is now panel's own question.
+
+Proposal — mu and mj each take panel's four components as their own starting shape, and grow their own flesh inside it.
+
+**Success criteria.** mu and mj each open on what panel draws — the controls row with its hamburger, the details column, the content box — with their own name in the content box, and `yarn run check` clean in each. Two hosts then draw ov's three regions, which is the test core's pac of 7 September says a library cut should wait for.
+
+**What each host takes.** panel's `App.svelte` (the `.app` div, its width arithmetic, the cursor fed to the hits manager, core's default colors pushed onto the page), `Controls.svelte`, `Details.svelte` and `Operation.svelte`, as its own files under `svelte/main/`; the eight lines panel's `Core.ts` has beyond the three both hosts already hold — Colors, S_Mouse, Point, hit_target, hits, the tooltip's two, Hamburger and ToolTip; and, for mj alone, the `core/main.css` import its `Main.ts` lacks. mu's App.svelte already sits under `svelte/main/`; mj's sits at `svelte/App.svelte` and its entry file is `Main.ts`, so either mj takes panel's paths or panel's files take mj's.
+
+**What the flesh is.** mu's is written: its goal reads "ov's structure, with tags and kinds swapped for metadata" — the details column holds the filters (artist, album, alphabet), the content box the list and the player. mj's is not written: its one open question is what it is for.
+
+**Two ways, and they differ.** (1) Each host takes its own version of the four files and changes them freely — three of the same 200-line panel in the repo, each drifting, which is the duplication the core adoption spent a week removing. (2) panel is cut once — the one component the core pac names as its first middle path, the three regions as snippet slots — and mu, mj and panel each host it; panel is then the proving ground and the smallest host. (1) can be done today. (2) waits on the pac's decision, and reads better with two real hosts to read the bone from — which (1) supplies.
+
+**Cost.** (1): four files and eight Core.ts lines per host, mj's css import, one check each — no core change. (2): the pac's cost — one core component of the sixty lines App.svelte holds, three call sites, three blocks of styling.
+
+**Open.** Does mj take panel now, before it knows what it is for — the shared principle says nothing speculative — or only mu, with mj following when its purpose is written? And once mu and mj carry panel, does panel remain, a template with no app of its own?
+
 ## a logs/ folder inside each memory project (7 September 2026)
 
 Decided and built 7 September 2026: the four judgment calls answered — move the three old-named logs, move core-docs.log, delete s3's two, leave the eleven unmatched files at `mono/logs/` for now.

@@ -14,4 +14,3 @@ date: 2026-08-31
     - [ ] adopt it into lv
     - [ ] create 'mj' and adopt core into it
 - [ ] merge mono -> shared
-- [x] record the ov journey for projects later — one telling, now core/truth/'adopting core.md'

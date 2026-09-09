@@ -78,7 +78,6 @@ export enum T_Bundle {
 	ji      = 'ji',
 	lv      = 'lv',
 	ov      = 'ov',
-	wo      = 'wo',
 	mu      = 'mu',
 	mj      = 'mj',
 	gallery = 'gallery',
@@ -87,7 +86,7 @@ export enum T_Bundle {
 /**
  * The project a file answers to. Memory's project sub-folders belong to their projects —
  * memory/mu to mu, memory/ov to ov — so a memory file's project is its first folder whenever
- * that folder names a project on the list (core, me, shared and wo are memory-only projects,
+ * that folder names a project on the list (core, me and shared are memory-only projects,
  * on the list with no folder of guides). Anything else in memory stays memory's.
  */
 export function project_of(file: File): string {

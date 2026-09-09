@@ -1,63 +1,56 @@
 Diagnostic log: on — this page is served from "localhost", which is this machine. Anywhere else, every logged line gives up at once.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
-Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "7.777777777777778px", the region corner radius is "17.5px", the ink black is "#1a1a1a". Empty values would mean the bridge from the numbers to the stylesheets is broken.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 0 of 0 rows match; showing 0, of which 0 are folders. 0 folder(s) hold at least one match.
+Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "7.777777777777778px", the region corner radius is "17.5px", the ink black is "#1a1a1a". Empty values would mean the push from the numbers to the stylesheets is broken.
 Layout: the window is 1114 wide and 618 is needed for both (details column 245 + content 350 + three gaps of 8) — details are hidden, so content has the whole 1098.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Listed: 402 files hung under their folders 81 ms after the listing was asked for, 70 index files left out — the list can draw. Their labels are read next, 12 at a time.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Listed: 405 files hung under their folders 44 ms after the listing was asked for, 70 index files left out — the list can draw. Their labels are read next, 12 at a time.
 Startup: the files are listed and the app is showing itself; their labels are still coming in.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 1 kind(s) offered, 0 area(s) showing, 0 tag(s) picked.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 1 kind(s) offered, 0 area(s) showing, 0 tag(s) picked.
 List scrollbar: the rows are 466 tall and 466 is on screen — everything fits, so no room is held back.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.all, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.tags, 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.kinds.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.all, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.tags, 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.kinds.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 2 kind(s) offered, 1 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.tags.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.picking.invert, 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.tags.
-Guide "memory/ov/truth/lexicon.md" names 2 tag(s) that are not on the closed list of 39: lexicon, terminology. They are ignored.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.picking.invert.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.picking.invert, 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert.
+List scroll: back to "mo" (row 0) — scrolled 0 of a wanted 0, after 0 extra frame(s).
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search.
 Guides: "me/CLAUDE.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guide "memory/core/truth/claude-files.md" names 3 tag(s) that are not on the closed list of 39: claude-files, dispatcher, placement. They are ignored.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 5 kind(s) offered, 5 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Guides: "memory/core/truth/design/okf — is it worth it?.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guide "memory/core/truth/lexicon.md" names 2 tag(s) that are not on the closed list of 39: lexicon, terminology. They are ignored.
 Guide "memory/core/truth/scope.md" names 2 tag(s) that are not on the closed list of 39: scope, boundaries. They are ignored.
 Guide "memory/core/truth/structure.md" names 2 tag(s) that are not on the closed list of 39: structure, library. They are ignored.
-Guides: "memory/core/truth/design/okf — is it worth it?.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.picking.invert, 0-list.clear.projects, 0-list.picking.any, 0-list.fold.search.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.picking.invert, 0-list.clear.projects, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any, 0-list.fold.search.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.clear.projects, 0-list.fold.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.clear.projects, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.clear.projects.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.invert, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.invert, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.invert, 0-list.clear.projects.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any, 0-list.picking.invert, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any, 0-list.picking.invert, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.fold.tags.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.any, 0-list.picking.invert.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert, 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert, 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.picking.invert.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.invert.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.any.
 Guides: "memory/di/truth/working features.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/article.first.draft.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/chat.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
@@ -65,280 +58,202 @@ Guides: "memory/di/zone/work/done/cruft.md" carries no labels. It is left as it 
 Guides: "memory/di/zone/work/done/invisible.root.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/layout-algorithm.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/pipeline.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Lines in browse: 2 of them, middle to middle — 42.98.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
 Guides: "memory/di/zone/work/done/propagating value changes.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/quaternions.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.any, 0-list.picking.invert.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.any, 0-list.picking.invert.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.any, 0-list.picking.invert.
-Guides: "memory/di/zone/work/done/render.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/rotation.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/scene.model.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/di/zone/work/done/separators.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/di/zone/work/done/skills.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/di/zone/work/done/render.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/svelte.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/di/zone/work/done/separators.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/topology.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/di/zone/work/done/update.guides.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/version.9.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/di/zone/work/done/skills.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/done/what.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/di/zone/work/done/update.guides.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
 Guides: "memory/di/zone/work/milestones/28.cut.lists.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.any, 0-list.picking.invert.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.any, 0-list.picking.invert.
 Guides: "memory/di/zone/work/milestones/31.marketing.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/di/zone/work/next/collaboration priorities.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/next/colors.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/next/data schema for wendy.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/di/zone/work/next/snap.pin.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/di/zone/work/next/collaboration priorities.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/next/musi capp.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/next/pacing.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/di/zone/work/next/snap.pin.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/next/roots.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.any, 0-list.picking.invert, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects.
-Guides: "memory/di/zone/work/now/open items.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
 Guides: "memory/di/zone/work/now/our process.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/now/steve melville.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/di/zone/work/now/open items.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/now/talk.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/di/zone/work/now/work journal.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/ga/zone/design/game.engines.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ga/zone/design/file.layout.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ga/zone/design/keep.in.mind.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ga/zone/design/original.sites.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ga/zone/design/project.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
 Guides: "memory/ga/zone/design/vision.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/ga/zone/design/game.engines.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.fold.projects, 0-list.picking.any.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.fold.projects, 0-list.picking.any.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
 Guides: "memory/ji/zone/work/done/db handoff.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all.
-Lines in browse: 2 of them, middle to middle — 42.98.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.picking.any, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
 Guides: "memory/ji/zone/work/sideband storage proposal.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.tags, 0-list.fold.kinds.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but.
 Guide "memory/lv/truth/gallery.md" names 4 tag(s) that are not on the closed list of 39: gallery, pictures, captions, assets. They are ignored.
 Guide "memory/lv/truth/lexicon.md" names 2 tag(s) that are not on the closed list of 39: lexicon, terminology. They are ignored.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.tags.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.search.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any.
 Guides: "memory/me/zone/bonnie and mara.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/me/zone/my story.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/me/zone/research/mj.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/me/zone/work/jonathan.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
 Guides: "memory/me/zone/work/revisit.me.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 4 kind(s) offered, 7 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
 Guide "memory/ov/truth/design/claude-files.md" names 3 tag(s) that are not on the closed list of 39: claude-files, dispatcher, placement. They are ignored.
 Guide "memory/ov/truth/design/controls.md" names 3 tag(s) that are not on the closed list of 39: filters, controls, editor. They are ignored.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.all, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.picking.all, 0-list.clear.projects.
+Guide "memory/ov/truth/lexicon.md" names 2 tag(s) that are not on the closed list of 39: lexicon, terminology. They are ignored.
 Guides: "memory/ov/truth/design/okf — is it worth it?.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.all, 0-list.clear.projects.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.picking.all.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.picking.all.
 Guide "memory/shared/truth/create a project.md" names 2 tag(s) that are not on the closed list of 39: howto, projects. They are ignored.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all.
 Guides: "memory/shared/truth/develop/constants & subtypes.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.all, 0-list.clear.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.tags, 0-list.fold.kinds.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
 Guide "memory/shared/truth/lexicon.md" names 2 tag(s) that are not on the closed list of 39: lexicon, terminology. They are ignored.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.tags.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.picking.all, 0-list.clear.projects.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
 Guide "memory/shared/truth/taste.md" names 2 tag(s) that are not on the closed list of 39: taste, design. They are ignored.
 Guides: "memory/shared/truth/publish — can an AI actually learn?.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.picking.all, 0-list.clear.projects.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all.
+Guide "memory/shared/zone/incorporating a project.md" names 1 tag(s) that are not on the closed list of 39: howto. They are ignored.
 Guides: "memory/shared/zone/work/done/class-lists.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/done/code.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/shared/zone/truth and zone and design?.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
 Guides: "memory/shared/zone/work/done/gating.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/done/guides-clutter.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/shared/zone/truth and zone and design?.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.picking.all.
 Guides: "memory/shared/zone/work/done/january.2026.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/done/jonathan-old.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/shared/zone/work/done/migrations.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/done/monorepo.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/done/repo-old.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/shared/zone/work/done/single-line-progress.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/shared/zone/work/done/migrations.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
 Guides: "memory/shared/zone/work/done/sites-hub.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/done/tools-sites.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/shared/zone/work/done/single-line-progress.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/next/commoditize.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.picking.all.
-Guides: "memory/shared/zone/work/next/curiosity.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/next/pacing.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/shared/zone/work/next/personas.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/shared/zone/work/next/retention-test.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/shared/zone/work/next/curiosity.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/shared/zone/work/next/personas.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/archive/bubble/2/bubble tears.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
 Guides: "memory/ws/archive/experiments/simulate bubble/README-test.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.all, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.all.
 Guide "memory/ws/truth/filesystem database.md" names 2 tag(s) that are not on the closed list of 39: database, filesystem. They are ignored.
 Guides: "memory/ws/truth/manuals/plugin/bubble.plugin.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.all, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert.
 Guides: "memory/ws/truth/manuals/user/3.the.graph.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/truth/manuals/user/4.working.with.items.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.kinds.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects.
 Guides: "memory/ws/truth/manuals/user/5.details.panel.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/truth/manuals/user/6.search.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/truth/manuals/user/7.import.export.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/truth/manuals/user/8.preferences.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/zone/work/done/february.1.2026.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/zone/work/next/Resize_Optimization_AI.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.all, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.all, 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert.
 Guides: "memory/ws/zone/work/next/amnesia.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Guides: "memory/ws/zone/work/next/holons.api.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/zone/work/next/search-links.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.clear.projects.
 Guides: "memory/ws/zone/work/next/search.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
+Guides: "memory/ws/zone/work/next/holons.api.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
 Guides: "memory/ws/zone/work/next/user.manual.md" carries no labels. It is left as it is and will be given some the first time it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 2 folder(s) shut (hiding what they hold), folders shown — 36 of 498 rows match; showing 16, of which 5 are folders. 6 folder(s) hold at least one match.
+Narrowed: project(s) "all", kind "all", any of the tags [any], words "none", 96 folder(s) shut (hiding what they hold), folders shown — 393 of 501 rows match; showing 13, of which 13 are folders. 96 folder(s) hold at least one match.
 Shape: 1 top folder(s) — mo. One means the four project folders hang under the shared one, so going up from a guide can reach another project.
-Guides read: 402 files (mo 1, memory 391, shared 0, core 1, ws 1, me 1, di 1, ji 1, lv 1, ov 1, wo 0, mu 1, mj 1, gallery 1), 70 index files left out, 0 could not be read, hung under 96 folders. 85 carry no labels at all. Kinds found: analyze, arch, explain, howto, specify. Tags found: 17 of the 39 on the closed list, across 722 tag placements. 2993605 characters of text passed through and none of it was kept.
-Link from "lexicon" to "../../shared/truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "lexicon" to "banned words": found "banned words" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "map of ov files" to "../../../ov/vite.config.ts": no file named "vite.config.ts" under any of the 3 folders above it. It points at ov/vite.config.ts. Nothing opens.
-Link from "map of ov files" to "../../../package.json": no file named "package.json" under any of the 3 folders above it. It points at package.json. Nothing opens.
-Link from "map of ov files" to "../../../ov/svelte.config.js": no file named "svelte.config.js" under any of the 3 folders above it. It points at ov/svelte.config.js. Nothing opens.
-Link from "map of ov files" to "../../../ov/tsconfig.json": no file named "tsconfig.json" under any of the 3 folders above it. It points at ov/tsconfig.json. Nothing opens.
-Link from "map of ov files" to "../../../vitest.config.ts": no file named "vitest.config.ts" under any of the 3 folders above it. It points at vitest.config.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/index.html": no file named "index.html" under any of the 3 folders above it. It points at ov/index.html. Nothing opens.
-Link from "map of ov files" to "../../../CLAUDE": found "CLAUDE" in ov after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/main/App.svelte": no file named "App.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/App.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Controls.svelte": no file named "Controls.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Controls.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Details.svelte": no file named "Details.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Details.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Operation.svelte": no file named "Operation.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Operation.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Browse.svelte": no file named "Browse.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Browse.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Edit.svelte": no file named "Edit.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Edit.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/List_Files.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/content/Back_Links.svelte": no file named "Back_Links.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/Back_Links.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/content/D_Preferences.svelte": no file named "D_Preferences.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/D_Preferences.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/content/D_Repair.svelte": no file named "D_Repair.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/D_Repair.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/content/Report.svelte": no file named "Report.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/Report.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/filter/Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/filter/Browse_Filters.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/filter/Edit_Filters.svelte": no file named "Edit_Filters.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/filter/Edit_Filters.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/svelte/filter/Search.svelte": no file named "Search.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/filter/Search.svelte. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/main.ts": no file named "main.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/main.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/common/Core.ts": no file named "Core.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/common/Core.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Files.ts": no file named "Files.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Files.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Hierarchy.ts": no file named "Hierarchy.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Hierarchy.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Filters.ts": no file named "Filters.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Filters.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Operations.ts": no file named "Operations.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Operations.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Status.ts": no file named "Status.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Status.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Preferences.ts": no file named "Preferences.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Preferences.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/database/Indexes.ts": no file named "Indexes.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/database/Indexes.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/types/File.ts": no file named "File.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/File.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/types/Tag_Areas.ts": no file named "Tag_Areas.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/Tag_Areas.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/types/App.ts": no file named "App.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/App.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/types/DB_Records.ts": no file named "DB_Records.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/DB_Records.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Markdown_Blocks.ts": no file named "Markdown_Blocks.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Markdown_Blocks.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Index_Files.ts": no file named "Index_Files.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Index_Files.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Emphasis.ts": no file named "Emphasis.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Emphasis.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Searching.ts": no file named "Searching.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Searching.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Labels.ts": no file named "Labels.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Labels.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Saving.ts": no file named "Saving.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Saving.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Tag_Rows.ts": no file named "Tag_Rows.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Tag_Rows.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Following_Links.ts": no file named "Following_Links.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Following_Links.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Opening_Code.ts": no file named "Opening_Code.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Opening_Code.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/markdown_blocks.test.ts": no file named "markdown_blocks.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/markdown_blocks.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/saving.test.ts": no file named "saving.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/saving.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/labels.test.ts": no file named "labels.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/labels.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/index_files.test.ts": no file named "index_files.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/index_files.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/following_links.test.ts": no file named "following_links.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/following_links.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/opening_code.test.ts": no file named "opening_code.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/opening_code.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/tag_rows.test.ts": no file named "tag_rows.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/tag_rows.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/tag_areas.test.ts": no file named "tag_areas.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/tag_areas.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/core_alias.test.ts": no file named "core_alias.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/core_alias.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/filters.test.ts": no file named "filters.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/filters.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/code_blocks.test.ts": no file named "code_blocks.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/code_blocks.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/emphasis.test.ts": no file named "emphasis.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/emphasis.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/searching.test.ts": no file named "searching.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/searching.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/ts/tests/wiki_links.test.ts": no file named "wiki_links.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/wiki_links.test.ts. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/lib/md/builds": no file named "builds" under any of the 3 folders above it. It points at ov/src/lib/md/builds.md. Nothing opens.
-Link from "map of ov files" to "../../../ov/src/vite-env.d.ts": no file named "vite-env.d.ts" under any of the 3 folders above it. It points at ov/src/vite-env.d.ts. Nothing opens.
-Link from "map of ov files" to "design/editing": found "editing" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "map of ov files" to "design/okf — is it worth it?": found "okf — is it worth it?" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "map of ov files" to "design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "map of ov files" to "design/compose an email": found "compose an email" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/soon/rewrite guides": found "rewrite guides" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/work journal": found "work journal" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/current context": found "current context" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/AI memory redesign": found "AI memory redesign" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../../shared/truth/handbook": found "handbook" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/soon/hits manager": found "hits manager" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/soon/mouse ux": found "mouse ux" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../../shared/truth/develop/sections": found "sections" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/soon/murk journal": found "murk journal" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/assessment of our guides": found "assessment of our guides" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "../zone/work/soon/stale guides": found "stale guides" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "map of ov files" to "design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "drive" to "consolidate": found "consolidate" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "ideas" to "memory/ov/zone/work/soon/tag drift": found "tag drift" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "ideas" to "adopting new memory design — journal — ov": no file named "adopting new memory design — journal — ov" under any of the 3 folders above it. It points at memory/ov/zone/adopting new memory design — journal — ov.md. Nothing opens.
-Link from "ideas" to "inception into the new design": found "inception into the new design" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "ideas" to "memory/ov/zone/work/soon/ov installer": found "ov installer" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "ideas" to "my story": found "my story" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "simplify gaps" to "constants & subtypes": found "constants & subtypes" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "CLAUDE" to "../memory/ov/truth/design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 2 above it.
+Guides read: 405 files (mo 1, memory 394, shared 0, core 1, ws 1, me 1, di 1, ji 1, lv 1, ov 1, mu 1, mj 1, gallery 1), 70 index files left out, 0 could not be read, hung under 96 folders. 85 carry no labels at all. Kinds found: analyze, arch, explain, howto, specify. Tags found: 36 of the 39 on the closed list, across 727 tag placements. 3051753 characters of text passed through and none of it was kept.
 Link from "CLAUDE" to "../memory/core/truth/design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "CLAUDE" to "../memory/gallery/": nothing named "gallery" stands where the link says. The nearest of that name sits at memory/lv/truth/gallery.md — nothing opens.
-Link from "CLAUDE" to "../memory/lv/truth/lexicon": found "lexicon" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "action type" to "../../../src/lib/svelte/support/Section.svelte": no file named "Section.svelte" under any of the 3 folders above it. It points at src/lib/svelte/support/Section.svelte. Nothing opens.
 Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 3 folders above it. It points at src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
 Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 3 folders above it. It points at src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
@@ -352,6 +267,7 @@ Link from "action type" to "../../../src/lib/svelte/main/Browse.svelte": no file
 Link from "action type" to "../../../src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 3 folders above it. It points at src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
 Link from "action type" to "../../../src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 3 folders above it. It points at src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
 Link from "action type" to "../../../src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 3 folders above it. It points at src/lib/svelte/content/List_Files.svelte. Nothing opens.
+Link from "CLAUDE" to "../memory/lv/truth/lexicon": found "lexicon" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "compose an email" to "../../../../../ji/src/lib/svelte/main/Controls.svelte": no file named "Controls.svelte" under any of the 4 folders above it. It points at ji/src/lib/svelte/main/Controls.svelte. Nothing opens.
 Link from "lexicon" to "../../shared/truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "lexicon" to "../../ov/truth/banned words": found "banned words" in memory after climbing 3 folder(s) of the 3 above it.
@@ -478,11 +394,18 @@ Link from "assessment of our guides" to "tools/hub-app": found "hub-app" in memo
 Link from "assessment of our guides" to "tools/single line of progress": found "single line of progress" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "tools/code both sides": found "code both sides" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "md improvements" to "md audit": found "md audit" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "mouse ux" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "mouse ux" to "../../../../../core/src/lib/ts/events/S_Mouse.ts": no file named "S_Mouse.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/S_Mouse.ts. Nothing opens.
-Link from "mouse ux" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "mouse ux" to "../../../../../core/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/List_Files.svelte. Nothing opens.
-Link from "mouse ux" to "../../../../../core/src/lib/svelte/support/Steppers.svelte": no file named "Steppers.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/support/Steppers.svelte. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hit_Target.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/List_Files.svelte. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hit_Target.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/List_Files.svelte. Nothing opens.
+Link from "hits manager" to "../../../../../core/src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
 Link from "murk journal" to "../../../../shared/truth/collaborate/avoid murk": found "avoid murk" in memory after climbing 5 folder(s) of the 5 above it.
 Link from "murk journal" to "../../../../shared/truth/lexicon": found "lexicon" in memory after climbing 5 folder(s) of the 5 above it.
 Link from "murk journal" to "../../../../../.claude/hooks/inject-always.sh": no file named "inject-always.sh" under any of the 5 folders above it. It points at .claude/hooks/inject-always.sh. Nothing opens.
@@ -491,18 +414,6 @@ Link from "murk journal" to "../../../../shared/truth/develop/refactor": found "
 Link from "murk journal" to "../../../../../.claude/hooks/murk-count.sh": no file named "murk-count.sh" under any of the 5 folders above it. It points at .claude/hooks/murk-count.sh. Nothing opens.
 Link from "murk journal" to "../../../../../.claude/hooks/murk-count.test.sh": no file named "murk-count.test.sh" under any of the 5 folders above it. It points at .claude/hooks/murk-count.test.sh. Nothing opens.
 Link from "murk journal" to "../../../../../.claude/hooks/murk.jsonl": no file named "murk.jsonl" under any of the 5 folders above it. It points at .claude/hooks/murk.jsonl. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hit_Target.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/List_Files.svelte. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hit_Target.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/List_Files.svelte. Nothing opens.
-Link from "hits manager" to "../../../../../core/src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
 Link from "organize" to "Voice": no file named "Voice" under any of the 5 folders above it. It points at memory/core/zone/work/soon/Voice.md. Nothing opens.
 Link from "organize" to "replying": no file named "replying" under any of the 5 folders above it. It points at memory/core/zone/work/soon/replying.md. Nothing opens.
 Link from "organize" to "chat": found "chat" in memory after climbing 5 folder(s) of the 5 above it.
@@ -511,6 +422,11 @@ Link from "organize" to "sparse replies": found "sparse replies" in memory after
 Link from "organize" to "CLAUDE": found "CLAUDE" in core after climbing 4 folder(s) of the 5 above it.
 Link from "organize" to "guides.layout": no file named "guides.layout" under any of the 5 folders above it. It points at memory/core/zone/work/soon/guides.layout.md. Nothing opens.
 Link from "organize" to "memory/ov/notes/guides/pre-flight/lexicon": nothing named "lexicon" stands where the link says. The nearest of that name sits at memory/core/truth/lexicon.md — nothing opens.
+Link from "mouse ux" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "mouse ux" to "../../../../../core/src/lib/ts/events/S_Mouse.ts": no file named "S_Mouse.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/S_Mouse.ts. Nothing opens.
+Link from "mouse ux" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "mouse ux" to "../../../../../core/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/content/List_Files.svelte. Nothing opens.
+Link from "mouse ux" to "../../../../../core/src/lib/svelte/support/Steppers.svelte": no file named "Steppers.svelte" under any of the 5 folders above it. It points at core/src/lib/svelte/support/Steppers.svelte. Nothing opens.
 Link from "work journal" to "soon/ov installer": found "ov installer" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "work journal" to "../../../shared/truth/develop/sections": found "sections" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "work journal" to "../../../shared/truth/develop/sections spec": found "sections spec" in memory after climbing 4 folder(s) of the 4 above it.
@@ -537,6 +453,7 @@ Link from "di road map" to "../../../../di/guides/architecture/graph/dimensional
 Link from "di road map" to "di/notes/guides/architecture/components/Controls": nothing named "Controls" stands where the link says. The nearest of that name sits at memory/di/truth/architecture/components/Controls.md — nothing opens.
 Link from "di road map" to "di/notes/work/now/code debt": nothing named "code debt" stands where the link says. The nearest of that name sits at memory/di/zone/work/now/code debt.md — nothing opens.
 Link from "di road map" to "1.solid.foundation": no file named "1.solid.foundation" under any of the 4 folders above it. It points at memory/di/truth/designs/1.solid.foundation.md. Nothing opens.
+Link from "lexicon" to "banned words": found "banned words" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "stipulations" to "../../../../../../di/e2e/tests/": no file named "tests" under any of the 5 folders above it. It points at di/e2e/tests. Nothing opens.
 Link from "stipulations" to "../../../../../../di/src/lib/ts/tests/Data_Layout.test.ts": no file named "Data_Layout.test.ts" under any of the 5 folders above it. It points at di/src/lib/ts/tests/Data_Layout.test.ts. Nothing opens.
 Link from "stipulations" to "../../../../../../di/src/lib/ts/runtime/Smart_Object.ts": no file named "Smart_Object.ts" under any of the 5 folders above it. It points at di/src/lib/ts/runtime/Smart_Object.ts. Nothing opens.
@@ -671,7 +588,10 @@ Link from "stipulations" to "../../../../../../di/e2e/tests/print-notifications.
 Link from "stipulations" to "../../../../../../di/src/App.svelte": no file named "App.svelte" under any of the 5 folders above it. It points at di/src/App.svelte. Nothing opens.
 Link from "stipulations" to "../../../../../../di/e2e/tests/print-notifications.spec.ts": no file named "print-notifications.spec.ts" under any of the 5 folders above it. It points at di/e2e/tests/print-notifications.spec.ts. Nothing opens.
 Link from "stipulations" to "../../../../../../di/src/lib/ts/render/Render.ts": no file named "Render.ts" under any of the 5 folders above it. It points at di/src/lib/ts/render/Render.ts. Nothing opens.
-Link from "lexicon" to "banned words": found "banned words" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "project" to "algebra": found "algebra" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "project" to "three.dimensions": found "three.dimensions" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "project" to "Hits_3D": found "Hits_3D" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "project" to "di/notes/guides/architecture/core/managers": nothing named "managers" stands where the link says. The nearest of that name sits at memory/di/truth/architecture/core/managers.md — nothing opens.
 Link from "map of di notes" to "map of di files": found "map of di files" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "map of di notes" to "map of di guides": found "map of di guides" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "map of di notes" to "map of di guides": found "map of di guides" in memory after climbing 1 folder(s) of the 3 above it.
@@ -683,19 +603,15 @@ Link from "map of di notes" to "../../work/now/working features": nothing named 
 Link from "map of di notes" to "../../work/now/revisit.di": no file named "revisit.di" under any of the 3 folders above it. It points at memory/work/now/revisit.di.md. Nothing opens.
 Link from "map of di notes" to "../../tools/sync-next.mjs": no file named "sync-next.mjs" under any of the 3 folders above it. It points at memory/tools/sync-next.mjs. Nothing opens.
 Link from "map of di notes" to "../../work/now/code debt": found "code debt" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "project" to "algebra": found "algebra" in memory after climbing 3 folder(s) of the 5 above it.
-Link from "project" to "three.dimensions": found "three.dimensions" in memory after climbing 3 folder(s) of the 5 above it.
-Link from "project" to "Hits_3D": found "Hits_3D" in memory after climbing 3 folder(s) of the 5 above it.
-Link from "project" to "di/notes/guides/architecture/core/managers": nothing named "managers" stands where the link says. The nearest of that name sits at memory/di/truth/architecture/core/managers.md — nothing opens.
 Link from "update guides" to "map of di guides": found "map of di guides" in memory after climbing 3 folder(s) of the 5 above it.
 Link from "update guides" to "map of di guides": found "map of di guides" in memory after climbing 3 folder(s) of the 5 above it.
 Link from "dimensionals research" to "dimensionals": found "dimensionals" in memory after climbing 3 folder(s) of the 5 above it.
 Link from "dimensionals research" to "../../../src/lib/ts/common/Seeded_Random.ts": no file named "Seeded_Random.ts" under any of the 5 folders above it. It points at memory/di/src/lib/ts/common/Seeded_Random.ts. Nothing opens.
 Link from "dimensionals research" to "../../../src/lib/ts/common/Seeded_Random.ts": no file named "Seeded_Random.ts" under any of the 5 folders above it. It points at memory/di/src/lib/ts/common/Seeded_Random.ts. Nothing opens.
-Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
-Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "working features" to "uniface proposal": no file named "uniface proposal" under any of the 3 folders above it. It points at memory/di/truth/uniface proposal.md. Nothing opens.
 Link from "working features" to "uniface rules": no file named "uniface rules" under any of the 3 folders above it. It points at memory/di/truth/uniface rules.md. Nothing opens.
+Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
+Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "rotation" to "axes": found "axes" in memory after climbing 4 folder(s) of the 5 above it.
 Link from "roots" to "versions": found "versions" in memory after climbing 4 folder(s) of the 5 above it.
 Link from "code debt" to "27.selection.algorithm": found "27.selection.algorithm" in memory after climbing 1 folder(s) of the 5 above it.
@@ -1179,13 +1095,6 @@ Link from "ideas" to "proposals/sample files": found "sample files" in memory af
 Link from "ideas" to "sideband storage proposal": found "sideband storage proposal" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "db handoff" to "db proposal": no file named "db proposal" under any of the 5 folders above it. It points at memory/ji/zone/work/done/db proposal.md. Nothing opens.
 Link from "db handoff" to "db spec": found "db spec" in memory after climbing 4 folder(s) of the 5 above it.
-Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
-Link from "build LLM proposal" to "../../ji/src/lib/ts/managers/Hierarchy.ts": no file named "Hierarchy.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/managers/Hierarchy.ts. Nothing opens.
-Link from "build LLM proposal" to "../../ji/src/lib/ts/database/DB_Local.ts": no file named "DB_Local.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/database/DB_Local.ts. Nothing opens.
-Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
-Link from "build LLM proposal" to "../../ji/src/lib/ts/types/Document.ts": no file named "Document.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/types/Document.ts. Nothing opens.
-Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
-Link from "cancel" to "../../../../../ji/src/lib/ts/managers/Drop.ts": no file named "Drop.ts" under any of the 5 folders above it. It points at ji/src/lib/ts/managers/Drop.ts. Nothing opens.
 Link from "handoff" to "work journal": found "work journal" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "handoff" to "ji/notes/work/code debt": nothing named "code debt" stands where the link says. The nearest of that name sits at memory/di/zone/work/now/code debt.md — nothing opens.
 Link from "handoff" to "ji/notes/work/code debt": nothing named "code debt" stands where the link says. The nearest of that name sits at memory/di/zone/work/now/code debt.md — nothing opens.
@@ -1201,6 +1110,13 @@ Link from "handoff" to "sparse replies": found "sparse replies" in memory after 
 Link from "handoff" to "db spec": found "db spec" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "handoff" to "db implementation proposal": found "db implementation proposal" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "handoff" to "db handoff": found "db handoff" in memory after climbing 1 folder(s) of the 4 above it.
+Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
+Link from "build LLM proposal" to "../../ji/src/lib/ts/managers/Hierarchy.ts": no file named "Hierarchy.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/managers/Hierarchy.ts. Nothing opens.
+Link from "build LLM proposal" to "../../ji/src/lib/ts/database/DB_Local.ts": no file named "DB_Local.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/database/DB_Local.ts. Nothing opens.
+Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
+Link from "build LLM proposal" to "../../ji/src/lib/ts/types/Document.ts": no file named "Document.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/types/Document.ts. Nothing opens.
+Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
+Link from "cancel" to "../../../../../ji/src/lib/ts/managers/Drop.ts": no file named "Drop.ts" under any of the 5 folders above it. It points at ji/src/lib/ts/managers/Drop.ts. Nothing opens.
 Link from "db implementation proposal" to "db spec": found "db spec" in memory after climbing 4 folder(s) of the 5 above it.
 Link from "db implementation proposal" to "db spec": found "db spec" in memory after climbing 4 folder(s) of the 5 above it.
 Link from "full family support" to "../../../../../ji/src/lib/ts/types/Document.ts": no file named "Document.ts" under any of the 5 folders above it. It points at ji/src/lib/ts/types/Document.ts. Nothing opens.
@@ -1208,6 +1124,7 @@ Link from "persistables proposal" to "ws/src/lib/ts/runtime/Identifiable.ts": no
 Link from "persistables proposal" to "ws/src/lib/ts/persistable/Persistable.ts": no file named "Persistable.ts" under any of the 5 folders above it. It points at memory/ji/zone/work/proposals/ws/src/lib/ts/persistable/Persistable.ts, which sits below the top of a work folder — this app lists none of those. Nothing opens.
 Link from "persistables proposal" to "../ji/src/lib/ts/types/DB_Records.ts": no file named "DB_Records.ts" under any of the 5 folders above it. It points at memory/ji/zone/work/ji/src/lib/ts/types/DB_Records.ts, which sits below the top of a work folder — this app lists none of those. Nothing opens.
 Link from "persistables proposal" to "../ji/src/lib/ts/types/Persistence.ts": no file named "Persistence.ts" under any of the 5 folders above it. It points at memory/ji/zone/work/ji/src/lib/ts/types/Persistence.ts, which sits below the top of a work folder — this app lists none of those. Nothing opens.
+Link from "thin proxy proposal" to "build LLM proposal": found "build LLM proposal" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "work journal" to "proposals/full family support": found "full family support" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "work journal" to "proposals/sideband storage proposal": nothing named "sideband storage proposal" stands where the link says. The nearest of that name sits at memory/ji/zone/work/sideband storage proposal.md — nothing opens.
 Link from "work journal" to "proposals/build LLM proposal": found "build LLM proposal" in memory after climbing 1 folder(s) of the 4 above it.
@@ -1216,7 +1133,6 @@ Link from "work journal" to "proposals/thin proxy proposal": found "thin proxy p
 Link from "work journal" to "persistables proposal": found "persistables proposal" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "work journal" to "db spec": found "db spec" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "work journal" to "db proposal": no file named "db proposal" under any of the 4 folders above it. It points at memory/ji/zone/work/db proposal.md. Nothing opens.
-Link from "thin proxy proposal" to "build LLM proposal": found "build LLM proposal" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "map of lv files" to "../../src/md/Little Cloud Vineyard": no file named "Little Cloud Vineyard" under any of the 3 folders above it. It points at memory/src/md/Little Cloud Vineyard.md. Nothing opens.
 Link from "map of lv files" to "../../src/assets/photo list": no file named "photo list" under any of the 3 folders above it. It points at memory/src/assets/photo list.md. Nothing opens.
 Link from "map of lv files" to "../../src/css/Main.css": no file named "Main.css" under any of the 3 folders above it. It points at memory/src/css/Main.css. Nothing opens.
@@ -1283,6 +1199,7 @@ Link from "ideas" to "my story": found "my story" in memory after climbing 1 fol
 Link from "ideas" to "iron carbonate": found "iron carbonate" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "ideas" to "bonnie and mara": found "bonnie and mara" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "jonathan" to "personas": found "personas" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "ideas" to "create a project": found "create a project" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "ideas" to "project goal": found "project goal" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "log" to "memory/ov/zone/work/soon/mouse ux": found "mouse ux" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "log" to "tags hierarchy": found "tags hierarchy" in memory after climbing 2 folder(s) of the 2 above it.
@@ -1303,7 +1220,90 @@ Link from "compose an email" to "../../../../../ji/src/lib/svelte/main/Controls.
 Link from "okf" to "../../../../notes/guides/assessment of our guides": nothing named "assessment of our guides" stands where the link says. The nearest of that name sits at memory/ov/zone/work/assessment of our guides.md — nothing opens.
 Link from "okf" to "../../../../notes/guides/assessment of our guides": nothing named "assessment of our guides" stands where the link says. The nearest of that name sits at memory/ov/zone/work/assessment of our guides.md — nothing opens.
 Link from "okf" to "ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "AI on my mac" to "./proposals/replace claude": found "replace claude" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "lexicon" to "../../shared/truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 3 above it.
+Link from "lexicon" to "banned words": found "banned words" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "map of ov files" to "../../../ov/vite.config.ts": no file named "vite.config.ts" under any of the 3 folders above it. It points at ov/vite.config.ts. Nothing opens.
+Link from "map of ov files" to "../../../package.json": no file named "package.json" under any of the 3 folders above it. It points at package.json. Nothing opens.
+Link from "map of ov files" to "../../../ov/svelte.config.js": no file named "svelte.config.js" under any of the 3 folders above it. It points at ov/svelte.config.js. Nothing opens.
+Link from "map of ov files" to "../../../ov/tsconfig.json": no file named "tsconfig.json" under any of the 3 folders above it. It points at ov/tsconfig.json. Nothing opens.
+Link from "map of ov files" to "../../../vitest.config.ts": no file named "vitest.config.ts" under any of the 3 folders above it. It points at vitest.config.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/index.html": no file named "index.html" under any of the 3 folders above it. It points at ov/index.html. Nothing opens.
+Link from "map of ov files" to "../../../CLAUDE": found "CLAUDE" in ov after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/main/App.svelte": no file named "App.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/App.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Controls.svelte": no file named "Controls.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Controls.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Details.svelte": no file named "Details.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Details.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Operation.svelte": no file named "Operation.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Operation.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Browse.svelte": no file named "Browse.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Browse.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/main/Edit.svelte": no file named "Edit.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/main/Edit.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/List_Files.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/content/Back_Links.svelte": no file named "Back_Links.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/Back_Links.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/content/D_Preferences.svelte": no file named "D_Preferences.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/D_Preferences.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/content/D_Repair.svelte": no file named "D_Repair.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/D_Repair.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/content/Report.svelte": no file named "Report.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/content/Report.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/filter/Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/filter/Browse_Filters.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/filter/Edit_Filters.svelte": no file named "Edit_Filters.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/filter/Edit_Filters.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/svelte/filter/Search.svelte": no file named "Search.svelte" under any of the 3 folders above it. It points at ov/src/lib/svelte/filter/Search.svelte. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/main.ts": no file named "main.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/main.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/common/Core.ts": no file named "Core.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/common/Core.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Files.ts": no file named "Files.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Files.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Hierarchy.ts": no file named "Hierarchy.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Hierarchy.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Filters.ts": no file named "Filters.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Filters.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Operations.ts": no file named "Operations.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Operations.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Status.ts": no file named "Status.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Status.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/managers/Preferences.ts": no file named "Preferences.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/managers/Preferences.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/database/Indexes.ts": no file named "Indexes.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/database/Indexes.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/types/File.ts": no file named "File.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/File.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/types/Tag_Areas.ts": no file named "Tag_Areas.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/Tag_Areas.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/types/App.ts": no file named "App.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/App.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/types/DB_Records.ts": no file named "DB_Records.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/types/DB_Records.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Markdown_Blocks.ts": no file named "Markdown_Blocks.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Markdown_Blocks.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Index_Files.ts": no file named "Index_Files.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Index_Files.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Emphasis.ts": no file named "Emphasis.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Emphasis.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Searching.ts": no file named "Searching.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Searching.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Labels.ts": no file named "Labels.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Labels.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Saving.ts": no file named "Saving.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Saving.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Tag_Rows.ts": no file named "Tag_Rows.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Tag_Rows.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Following_Links.ts": no file named "Following_Links.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Following_Links.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/utilities/Opening_Code.ts": no file named "Opening_Code.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/utilities/Opening_Code.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/markdown_blocks.test.ts": no file named "markdown_blocks.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/markdown_blocks.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/saving.test.ts": no file named "saving.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/saving.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/labels.test.ts": no file named "labels.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/labels.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/index_files.test.ts": no file named "index_files.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/index_files.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/following_links.test.ts": no file named "following_links.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/following_links.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/opening_code.test.ts": no file named "opening_code.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/opening_code.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/tag_rows.test.ts": no file named "tag_rows.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/tag_rows.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/tag_areas.test.ts": no file named "tag_areas.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/tag_areas.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/core_alias.test.ts": no file named "core_alias.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/core_alias.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/filters.test.ts": no file named "filters.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/filters.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/code_blocks.test.ts": no file named "code_blocks.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/code_blocks.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/emphasis.test.ts": no file named "emphasis.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/emphasis.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/searching.test.ts": no file named "searching.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/searching.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/ts/tests/wiki_links.test.ts": no file named "wiki_links.test.ts" under any of the 3 folders above it. It points at ov/src/lib/ts/tests/wiki_links.test.ts. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/lib/md/builds": no file named "builds" under any of the 3 folders above it. It points at ov/src/lib/md/builds.md. Nothing opens.
+Link from "map of ov files" to "../../../ov/src/vite-env.d.ts": no file named "vite-env.d.ts" under any of the 3 folders above it. It points at ov/src/vite-env.d.ts. Nothing opens.
+Link from "map of ov files" to "design/editing": found "editing" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "map of ov files" to "design/okf — is it worth it?": found "okf — is it worth it?" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "map of ov files" to "design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "map of ov files" to "design/compose an email": found "compose an email" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/soon/rewrite guides": found "rewrite guides" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/work journal": found "work journal" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/current context": found "current context" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/AI memory redesign": found "AI memory redesign" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../../shared/truth/handbook": found "handbook" in memory after climbing 3 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/soon/hits manager": found "hits manager" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/soon/mouse ux": found "mouse ux" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../../shared/truth/develop/sections": found "sections" in memory after climbing 3 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/soon/murk journal": found "murk journal" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/assessment of our guides": found "assessment of our guides" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "../zone/work/soon/stale guides": found "stale guides" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "map of ov files" to "design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "ideas" to "memory/ov/zone/work/soon/tag drift": found "tag drift" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "ideas" to "adopting new memory design — journal — ov": no file named "adopting new memory design — journal — ov" under any of the 3 folders above it. It points at memory/ov/zone/adopting new memory design — journal — ov.md. Nothing opens.
+Link from "ideas" to "inception into the new design": found "inception into the new design" in memory after climbing 3 folder(s) of the 3 above it.
+Link from "ideas" to "memory/ov/zone/work/soon/ov installer": found "ov installer" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "ideas" to "my story": found "my story" in memory after climbing 3 folder(s) of the 3 above it.
+Link from "simplify gaps" to "constants & subtypes": found "constants & subtypes" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "assessment of our guides" to "pre-flight/always": nothing named "always" stands where the link says. The nearest of that name sits at memory/di/truth/always.md — nothing opens.
 Link from "assessment of our guides" to "pre-flight/response": no file named "response" under any of the 4 folders above it. It points at memory/ov/zone/work/pre-flight/response.md, which sits below the top of a work folder — this app lists none of those. Nothing opens.
 Link from "assessment of our guides" to "pre-flight/agency": nothing named "agency" stands where the link says. The nearest of that name sits at memory/shared/truth/agency.md — nothing opens.
@@ -1423,6 +1423,7 @@ Link from "assessment of our guides" to "tools/git": found "git" in memory after
 Link from "assessment of our guides" to "tools/hub-app": found "hub-app" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "tools/single line of progress": found "single line of progress" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "tools/code both sides": found "code both sides" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "AI on my mac" to "./proposals/replace claude": found "replace claude" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "md improvements" to "md audit": found "md audit" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
 Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hit_Target.ts. Nothing opens.
@@ -1457,20 +1458,20 @@ Link from "organize" to "sparse replies": found "sparse replies" in memory after
 Link from "organize" to "CLAUDE": found "CLAUDE" in ov after climbing 4 folder(s) of the 5 above it.
 Link from "organize" to "guides.layout": no file named "guides.layout" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/guides.layout.md. Nothing opens.
 Link from "organize" to "memory/ov/notes/guides/pre-flight/lexicon": nothing named "lexicon" stands where the link says. The nearest of that name sits at memory/ov/truth/lexicon.md — nothing opens.
-Link from "agency" to "pitfalls": found "pitfalls" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "work journal" to "soon/ov installer": found "ov installer" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "work journal" to "sections": found "sections" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "work journal" to "sections spec": found "sections spec" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "agency" to "pitfalls": found "pitfalls" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "avoid murk" to "../../../ov/zone/work/soon/murk journal": found "murk journal" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "avoid murk" to "voice": found "voice" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "avoid murk" to "../../../truth/lexicon": found "lexicon" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "avoid murk" to "../../../truth/conventions": found "conventions" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "avoid murk" to "hooks": found "hooks" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "breakdown" to "../../zone/work/learn": found "learn" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "chat" to "shorthand": found "shorthand" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "chat" to "workflow": found "workflow" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "chat" to "../test/debugging": found "debugging" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "chat" to "../develop/refactor": found "refactor" in memory after climbing 2 folder(s) of the 4 above it.
+Link from "breakdown" to "../../zone/work/learn": found "learn" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "skills" to "breakdown": found "breakdown" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "skills" to "../../../truth/shorthand": found "shorthand" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "voice" to "../../../truth/agency": found "agency" in memory after climbing 2 folder(s) of the 4 above it.
@@ -1484,13 +1485,11 @@ Link from "workflow" to "create a design": found "create a design" in memory aft
 Link from "conventions" to "agency": found "agency" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "conventions" to "../../ov/zone/ideas": found "ideas" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "conventions" to "../../di/truth/banned words": found "banned words" in memory after climbing 3 folder(s) of the 3 above it.
+Link from "decisions" to "../../ov/zone/consolidate": found "consolidate" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "conceptual composition" to "composition": found "composition" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "keep shop" to "workflow": found "workflow" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "lessons" to "../../../di/zone/work/milestones/done/32.facets/lessons": nothing named "lessons" stands where the link says. The nearest of that name sits at memory/shared/truth/develop/lessons.md — nothing opens.
 Link from "lessons" to "../../../di/zone/work/milestones/33.drag/lessons": nothing named "lessons" stands where the link says. The nearest of that name sits at memory/shared/truth/develop/lessons.md — nothing opens.
-Link from "sections spec" to "sections": found "sections" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "sections spec" to "../../../../../notes/src/lib/svelte/support/Stack.svelte": no file named "Stack.svelte" under any of the 4 folders above it. It points at notes/src/lib/svelte/support/Stack.svelte. Nothing opens.
-Link from "sections spec" to "../../../../../notes/src/lib/ts/utilities/Separator_Spacing.ts": no file named "Separator_Spacing.ts" under any of the 4 folders above it. It points at notes/src/lib/ts/utilities/Separator_Spacing.ts. Nothing opens.
 Link from "sections" to "../../../../../notes/src/lib/svelte/filter/Search.svelte": no file named "Search.svelte" under any of the 4 folders above it. It points at notes/src/lib/svelte/filter/Search.svelte. Nothing opens.
 Link from "sections" to "../../../../../notes/src/lib/svelte/support/Stack.svelte": no file named "Stack.svelte" under any of the 4 folders above it. It points at notes/src/lib/svelte/support/Stack.svelte. Nothing opens.
 Link from "sections" to "../../../../../notes/src/lib/ts/types/Stacked.ts": no file named "Stacked.ts" under any of the 4 folders above it. It points at notes/src/lib/ts/types/Stacked.ts. Nothing opens.
@@ -1501,12 +1500,12 @@ Link from "sections" to "../../../../../notes/src/lib/svelte/filter/Search.svelt
 Link from "sections" to "../../../../../notes/src/lib/svelte/main/Browse.svelte": no file named "Browse.svelte" under any of the 4 folders above it. It points at notes/src/lib/svelte/main/Browse.svelte. Nothing opens.
 Link from "sections" to "../../../../../notes/src/lib/ts/utilities/Sectioning.ts": no file named "Sectioning.ts" under any of the 4 folders above it. It points at notes/src/lib/ts/utilities/Sectioning.ts. Nothing opens.
 Link from "sections" to "../../../../../notes/src/lib/svelte/support/Section.svelte": no file named "Section.svelte" under any of the 4 folders above it. It points at notes/src/lib/svelte/support/Section.svelte. Nothing opens.
+Link from "sections spec" to "sections": found "sections" in memory after climbing 1 folder(s) of the 4 above it.
+Link from "sections spec" to "../../../../../notes/src/lib/svelte/support/Stack.svelte": no file named "Stack.svelte" under any of the 4 folders above it. It points at notes/src/lib/svelte/support/Stack.svelte. Nothing opens.
+Link from "sections spec" to "../../../../../notes/src/lib/ts/utilities/Separator_Spacing.ts": no file named "Separator_Spacing.ts" under any of the 4 folders above it. It points at notes/src/lib/ts/utilities/Separator_Spacing.ts. Nothing opens.
 Link from "unit testing" to "di/notes/guides/development/rules/stipulations": nothing named "stipulations" stands where the link says. The nearest of that name sits at memory/di/truth/development/rules/stipulations.md — nothing opens.
 Link from "unit testing" to "di/notes/guides/development/rules/stipulations": nothing named "stipulations" stands where the link says. The nearest of that name sits at memory/di/truth/development/rules/stipulations.md — nothing opens.
 Link from "unit testing" to "../../../../e2e/tests/": no file named "tests" under any of the 4 folders above it. It points at e2e/tests. Nothing opens.
-Link from "logic driven design" to "adherence log": no file named "adherence log" under any of the 4 folders above it. It points at memory/shared/truth/philosophy/adherence log.md. Nothing opens.
-Link from "logic driven design" to "adherence dashboard": no file named "adherence dashboard" under any of the 4 folders above it. It points at memory/shared/truth/philosophy/adherence dashboard.md. Nothing opens.
-Link from "logic driven design" to "dashboard guide": no file named "dashboard guide" under any of the 4 folders above it. It points at memory/shared/truth/philosophy/dashboard guide.md. Nothing opens.
 Link from "lexicon" to "../../core/truth/lexicon": found "lexicon" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "lexicon" to "../../di/truth/lexicon": found "lexicon" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "lexicon" to "../../ji/truth/lexicon": found "lexicon" in memory after climbing 3 folder(s) of the 3 above it.
@@ -1515,17 +1514,29 @@ Link from "lexicon" to "../../ov/truth/lexicon": found "lexicon" in memory after
 Link from "lexicon" to "conventions": found "conventions" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "lexicon" to "conventions": found "conventions" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "lexicon" to "conventions": found "conventions" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "logic driven design" to "adherence log": no file named "adherence log" under any of the 4 folders above it. It points at memory/shared/truth/philosophy/adherence log.md. Nothing opens.
+Link from "logic driven design" to "adherence dashboard": no file named "adherence dashboard" under any of the 4 folders above it. It points at memory/shared/truth/philosophy/adherence dashboard.md. Nothing opens.
+Link from "logic driven design" to "dashboard guide": no file named "dashboard guide" under any of the 4 folders above it. It points at memory/shared/truth/philosophy/dashboard guide.md. Nothing opens.
 Link from "shorthand" to "add a guide": no file named "add a guide" under any of the 3 folders above it. It points at memory/shared/truth/add a guide.md. Nothing opens.
 Link from "shorthand" to "memory/ov/zone/work/current context": found "current context" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "shorthand" to "handbook": found "handbook" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "adopting the ai memory design" to "../../ov/truth/design/claude-files": found "claude-files" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "adopting the ai memory design" to "memory/ov/truth/lexicon": found "lexicon" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "adopting the ai memory design" to "truth/scope": found "scope" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "ideas" to "handbook": found "handbook" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "drive" to "rewrite the guides": found "rewrite the guides" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "fable" to "drive": found "drive" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "ideas" to "collisions": found "collisions" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "ideas" to "library projects": found "library projects" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "ideas" to "handbook": found "handbook" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "incorporating a project" to "../../core/truth/adopting core": found "adopting core" in memory after climbing 3 folder(s) of the 3 above it.
+Link from "incorporating a project" to "proposals": found "proposals" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "big rewrite log" to "rewrite the guides": found "rewrite the guides" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "proposals" to "../truth/shorthand": found "shorthand" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "proposals" to "../log": found "log" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "library projects" to "incorporating a project": found "incorporating a project" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "claude agent skills" to "Agentic AI": no file named "Agentic AI" under any of the 4 folders above it. It points at memory/shared/zone/work/Agentic AI.md. Nothing opens.
+Link from "claude agent skills" to "Prompt Engineering": no file named "Prompt Engineering" under any of the 4 folders above it. It points at memory/shared/zone/work/Prompt Engineering.md. Nothing opens.
+Link from "claude agent skills" to "Tool Use": no file named "Tool Use" under any of the 4 folders above it. It points at memory/shared/zone/work/Tool Use.md. Nothing opens.
 Link from "rewrite the guides" to "always": found "always" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 2 folder(s) of the 3 above it.
@@ -1553,22 +1564,14 @@ Link from "rewrite the guides" to "../truth/collaborate/": no file named "collab
 Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "rewrite the guides" to "keywords": found "keywords" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "rewrite the guides" to "../truth/pitfalls": found "pitfalls" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "big rewrite log" to "rewrite the guides": found "rewrite the guides" in memory after climbing 2 folder(s) of the 4 above it.
-Link from "claude agent skills" to "Agentic AI": no file named "Agentic AI" under any of the 4 folders above it. It points at memory/shared/zone/work/Agentic AI.md. Nothing opens.
-Link from "claude agent skills" to "Prompt Engineering": no file named "Prompt Engineering" under any of the 4 folders above it. It points at memory/shared/zone/work/Prompt Engineering.md. Nothing opens.
-Link from "claude agent skills" to "Tool Use": no file named "Tool Use" under any of the 4 folders above it. It points at memory/shared/zone/work/Tool Use.md. Nothing opens.
 Link from "hub-app-spec-old" to "../develop/hub-app": nothing named "hub-app" stands where the link says. The nearest of that name sits at memory/shared/truth/tools/hub-app.md — nothing opens.
-Link from "journal" to "relative": no file named "relative" under any of the 4 folders above it. It points at memory/shared/zone/work/relative. Nothing opens.
 Link from "learn" to "../../../di/notes/work/now/learn": nothing named "learn" stands where the link says. The nearest of that name sits at memory/shared/zone/work/learn.md — nothing opens.
+Link from "journal" to "relative": no file named "relative" under any of the 4 folders above it. It points at memory/shared/zone/work/relative. Nothing opens.
 Link from "personas" to "../../../../me/zone/work/jonathan": found "jonathan" in memory after climbing 5 folder(s) of the 5 above it.
 Link from "components" to "./managers": found "managers" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "components" to "./state": found "state" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "components" to "./hits": found "hits" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "databases" to "../internals/persistable": found "persistable" in memory after climbing 2 folder(s) of the 5 above it.
-Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
-Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
-Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
-Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
 Link from "managers" to "./state": found "state" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "managers" to "./hits": found "hits" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "managers" to "./databases": found "databases" in memory after climbing 1 folder(s) of the 5 above it.
@@ -1576,21 +1579,31 @@ Link from "state" to "./components": found "components" in memory after climbing
 Link from "state" to "./managers": found "managers" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "state" to "./hits": found "hits" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "state" to "../internals/styles": nothing named "styles" stands where the link says. The nearest of that name sits at memory/ws/truth/architecture/core/styles.md — nothing opens.
+Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
+Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
+Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
+Link from "hits" to "../internals/timers": found "timers" in memory after climbing 2 folder(s) of the 5 above it.
 Link from "persistable" to "../core/databases": found "databases" in memory after climbing 2 folder(s) of the 5 above it.
 Link from "persistable" to "../core/state": found "state" in memory after climbing 2 folder(s) of the 5 above it.
 Link from "persistable" to "../core/managers": found "managers" in memory after climbing 2 folder(s) of the 5 above it.
+Link from "plugin" to "./bubble": found "bubble" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "overview" to "./core/state": found "state" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "overview" to "./core/managers": found "managers" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "overview" to "./core/hits": found "hits" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "overview" to "./core/ux": found "ux" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "overview" to "./core/geometry": found "geometry" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "bubble" to "plugin.md": found "plugin" in memory after climbing 1 folder(s) of the 5 above it.
-Link from "plugin" to "./bubble": found "bubble" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "details" to "../core/ux": found "ux" in memory after climbing 2 folder(s) of the 5 above it.
 Link from "CLAUDE" to "../memory/mj/": nothing named "mj" stands where the link says. The nearest of that name sits at memory/me/zone/research/mj.md — nothing opens.
-Links: 402 guide(s) hold links. 394 of 1825 link(s) name a guide the app lists, so 159 guide(s) have something pointing at them.
-Read: every label is in, 1953 ms after the listing was asked for — 11 read ahead of the rest.
-Filters: starved — projects false, kinds false, tags false; search "", 14 project(s) shown, 6 kind(s) offered, 9 area(s) showing, 0 tag(s) picked.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.clear.projects.
-Hits: asked all 42 target(s) again — 9 measured no size at all, so a press there reaches nothing: 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.projects, 0-list.picking.any, 0-list.fold.search, 0-list.fold.tags, 0-list.picking.all, 0-list.clear.projects.
+Link from "CLAUDE" to "../memory/ov/truth/design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 2 above it.
+Links: 405 guide(s) hold links. 400 of 1831 link(s) name a guide the app lists, so 164 guide(s) have something pointing at them.
+Read: every label is in, 2402 ms after the listing was asked for — 0 read ahead of the rest.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.all.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.fold.search, 0-list.fold.projects, 0-list.picking.invert, 0-list.picking.any, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.all.
+Filters: starved — projects false, kinds false, tags false; search "", 13 project(s) shown, 6 kind(s) offered, 10 area(s) showing, 0 tag(s) picked.
+List scrollbar: the rows are 466 tall and 466 is on screen — everything fits, so no room is held back.
+Layout: the window is 1114 wide and 618 is needed for both (details column 245 + content 350 + three gaps of 8) — details are hidden, so content has the whole 1098.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search, 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert.
+Hits: asked all 47 target(s) again — 8 measured no size at all, so a press there reaches nothing: 0-list.fold.projects, 0-list.fold.kinds, 0-list.picking.but, 0-list.picking.invert, 0-list.fold.tags, 0-list.picking.any, 0-list.picking.all, 0-list.fold.search.
+Lines in browse: 2 of them, middle to middle — 42.98.

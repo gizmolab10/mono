@@ -1,16 +1,13 @@
 yarn run v1.22.19
 warning package.json: No license field
 $ vite
+8:31:49 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
 
-  VITE v6.4.2  ready in 923 ms
+  VITE v6.4.2  ready in 876 ms
 
   ➜  Local:   http://localhost:5183/
   ➜  Network: use --host to expose
-4:36:06 PM [vite] (client) hmr update /src/lib/svelte/main/Browse.svelte
-4:36:08 PM [vite] (client) hmr update /src/lib/svelte/main/Browse.svelte
-4:36:33 PM [vite] (client) page reload src/lib/ts/managers/Operations.ts
-4:36:33 PM [vite] (client) hmr update /src/lib/svelte/main/Browse.svelte?svelte&type=style&lang.css
-4:36:46 PM [vite] (client) hmr update /src/lib/svelte/main/Browse.svelte
-4:36:48 PM [vite] (client) hmr update /src/lib/svelte/main/Browse.svelte?svelte&type=style&lang.css
-4:36:56 PM [vite] (client) page reload src/lib/ts/managers/Operations.ts
-4:36:56 PM [vite] (client) page reload src/lib/ts/managers/Operations.ts
+1:13:28 AM [vite] (client) page reload src/lib/ts/types/File.ts
+1:18:08 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
+1:18:58 PM [vite] (client) page reload src/lib/ts/main.ts
+12:02:39 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte, /src/lib/svelte/main/App.svelte?svelte&type=style&lang.css

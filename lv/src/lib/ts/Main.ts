@@ -3,7 +3,7 @@ import App from '../svelte/App.svelte';
 import { c } from './common/Core';
 import { mount } from 'svelte';
 
-// The bridge from core's one source of sizes to the stylesheet: a plain css file
+// From core's one source of sizes to the stylesheet: a plain css file
 // cannot import a typescript module, so the numbers are pushed onto the page as
 // style names once, before anything draws.
 c.configure_layers();

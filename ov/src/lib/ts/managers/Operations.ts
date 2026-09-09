@@ -16,7 +16,6 @@ export enum T_Operation {
 	edit     = 'edit one file',
 	browse   = 'browse the files',
 	report   = 'read a long report',
-	multiple = 'select multiple files',
 }
 
 export const w_operation = preferences.persistent<T_Operation>(T_Preference.current_op, T_Operation.browse);
@@ -25,8 +24,14 @@ export const w_operation = preferences.persistent<T_Operation>(T_Preference.curr
 // to the same one; if it is gone from the list, reading falls back to browsing.
 export const w_view_file = preferences.persistent<string | null>(T_Preference.view_file, null);
 
+// Which files are picked while w_edit_multiple is on, each named by where it sits. Remembered
+// across a reload, the same as the file being read.
+export const w_selected_files = preferences.persistent<string[]>(T_Preference.selected_files, []);
+
 // Leaving the reading view drops what it pointed at.
 w_operation.subscribe((op) => { if (op !== T_Operation.edit) { w_view_file.set(null); } });
+
+export const w_edit_multiple = preferences.persistent<boolean>(T_Preference.edit_multiple, false);
 
 // --- stepping through the files on screen ---------------------------------
 //
@@ -41,8 +46,8 @@ w_operation.subscribe((op) => { if (op !== T_Operation.edit) { w_view_file.set(n
 // triangles walk it instead of the list: back goes one down, forward one up. Backing
 // out past the bottom empties the stack and hands the triangles back to the list.
 
-export const w_link_stack = writable<string[]>([]);
-export const w_stack_at   = writable<number>(-1);
+export const w_link_stack    = writable<string[]>([]);
+export const w_stack_at      = writable<number>(-1);
 
 // --- where each guide was left ---------------------------------------------
 //

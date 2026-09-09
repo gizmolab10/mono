@@ -7,8 +7,8 @@ date: 2026-09-01
 ---
 # gallery log
 
-<!-- consolidated: 1 September 2026 -->
+<!-- consolidated: 9 September 2026 -->
 
-## 1 September 2026
+## 9 September 2026
 
-- D: one entry settled into index.md. Renamed from dd to gallery the same day, in mono and in memory both
+- S: settled 1 line of 1 September. The rename is in index.md. The line was a settle record, dismissed

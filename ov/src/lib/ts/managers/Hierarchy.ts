@@ -49,6 +49,10 @@ export class Hierarchy {
 	// folder hides files from the list without changing what the count says.
 	matched_count: number = 0;
 
+	// The files themselves, before the folds have their say — so a folder's own progeny is
+	// answered the same way whether or not some folder inside it is shut.
+	matched_files: Filtered_File[] = [];
+
 	relationships:   Relationship[] = [];
 	predicates:      Predicate[]    = [];
 	taggings:        Tagging[]      = [];
@@ -452,6 +456,7 @@ export class Hierarchy {
 
 		const matched = readable.filter((r) => this.matches(r, projects, kind, tags, words, picking));
 		this.matched_count = matched.length;
+		this.matched_files = matched;
 		const keep = new Set(matched.map((r) => r.key));
 		for (const r of matched) { for (const a of r.ancestor_keys) { keep.add(a); } }
 

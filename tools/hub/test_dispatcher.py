@@ -74,7 +74,7 @@ check('listing the guides succeeds', said.get('success'), True)
 
 listed = said.get('paths', [])
 check('the top of a work folder is listed', 'memory/ov/zone/work/current context.md' in listed, True)
-check('the shared collection\'s work is listed too', 'memory/shared/zone/work/learn.md' in listed, True)
+check('the shared collection\'s work is listed too', 'memory/shared/zone/work/co.md' in listed, True)
 deeper = [one for one in listed if '/notes/work/' in f'/{one}' and one.count('/') > 5]
 check('nothing deeper than the top of a work folder is listed', deeper, [])
 

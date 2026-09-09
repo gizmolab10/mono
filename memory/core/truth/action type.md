@@ -28,7 +28,7 @@ i want to pass **Separator** more than one title. each title needs its own handl
         - [x] Browse_Filters (four) — filters, projects, kinds, tags
     - [x] place button in an **action** -> `position.left`
     - [x] add logic to use it — **Separator** lends each given **element** a place at its own end or middle
-- [ ] leave all plain titles as is
+- [x] leave all plain titles as is
 - [x] remove from **separator** and **section**
     - [x] all hover logic
     - [x] onclick

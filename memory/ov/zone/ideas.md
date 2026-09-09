@@ -15,7 +15,7 @@ sooner or later every project creates a knowledge base and a work manager. this 
 
 ## next
 
-- [ ] browse. add an 'edit' button to the count row at far left
+- [ ] Saving.ts still roots a collection's files at a notes/ folder that no longer exists, so every file falls to the memory rule and is_design is always false. Say how a design is told apart now
 - [ ] move the clear clickable next to search clickable
 - [ ] RETURN -> another checkbox line
 - [ ] TAB -> indents (command-TAB outdents)

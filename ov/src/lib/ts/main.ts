@@ -33,7 +33,7 @@ c.configure_inks();
 // Proof the numbers really landed on the page: read three of them back off the
 // page itself rather than trusting that setting them worked.
 const on_page = getComputedStyle(document.documentElement);
-debug.log(`Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "${on_page.getPropertyValue('--gap').trim()}", the region corner radius is "${on_page.getPropertyValue('--radius').trim()}", the ink black is "${on_page.getPropertyValue('--black').trim()}". Empty values would mean the bridge from the numbers to the stylesheets is broken.`);
+debug.log(`Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "${on_page.getPropertyValue('--gap').trim()}", the region corner radius is "${on_page.getPropertyValue('--radius').trim()}", the ink black is "${on_page.getPropertyValue('--black').trim()}". Empty values would mean the push from the numbers to the stylesheets is broken.`);
 
 // Every guide is hung on the structure from the dispatcher's listing, and the app shows itself
 // the moment that is done — names and folders, no labels yet. The labels are read after, in

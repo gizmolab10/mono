@@ -45,7 +45,7 @@ In build order, in four phases. Each phase ends with something i can look at, so
 - [x] 2.6 Point the page at the launch file
 - [x] 2.7 `main.ts` pushes the layers, sizes and inks, then reads three of them back off the page and says so in the log. No mounting yet — that line arrives with the app frame at 3.1.
 
-**Ends with:** the page is still blank, but every size and fixed ink is already on it. `yarn build` and the type check both come back clean, and the log line proves the bridge works before a single component exists.
+**Ends with:** the page is still blank, but every size and fixed ink is already on it. `yarn build` and the type check both come back clean, and the log line proves the numbers reached the page before a single component exists.
 
 ### Phase 3 — the room takes shape
 
@@ -101,7 +101,7 @@ The details column holds one collapsible section, "preferences," and that sectio
 ### The numbers, straight across
 
 - `Constants.ts` — unchanged. Every font size, margin, gap, corner radius, layer number, thickness. It's already free of ji's subject matter, so there is nothing to strip.
-- `Configuration.ts` — unchanged. This is the bridge: it pushes every number from Constants onto the page as a CSS variable so plain stylesheets can read them. It also pushes the fixed inks and, reactively, the four theme colors.
+- `Configuration.ts` — unchanged. It pushes every number from Constants onto the page as a CSS variable so plain stylesheets can read them. It also pushes the fixed inks and, reactively, the four theme colors.
 - `main.css` — unchanged. The layer classes and the long comment cataloguing every variable.
 
 These three are the heart of the ask. They port with zero edits.

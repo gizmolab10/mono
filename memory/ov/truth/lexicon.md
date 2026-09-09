@@ -18,6 +18,7 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **editor** — the screen showing one guide. Never *viewer*.
 - **filters** — the things that narrow the list: search text, any number of projects, one kind, any number of tags.
 - **count row** — the row above the files list, holding the folders button, how many files are left, and what is picked.
+- **progeny** — everything under a folder: its own files and folders, and everything under any folder nested inside it, at any depth, recursively. Never *children*, which reads as one level only.
 - **header row** — the row at the top of the files list naming its columns. Never *the titles row*.
 
 ## The elements

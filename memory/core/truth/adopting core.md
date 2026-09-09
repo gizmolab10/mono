@@ -9,7 +9,7 @@ date: 2026-09-01
 ---
 # Adopting core
 
-Written out of ov's adoption, finished 31 August 2026, for whichever host comes next — lv, s3, di. What ov actually did is at the bottom, file by file; the wiring, the lessons and the steps above it are the part that carries over.
+Written out of ov's adoption, finished 31 August 2026, for whichever host comes next — lv, di. mj took it 1 September 2026 and mu 7 September, each as three files: Core.ts of three lines, an empty Customizations.ts, and a main.ts that configures core before mounting. What ov actually did is at the bottom, file by file; the wiring, the lessons and the steps above it are the part that carries over.
 
 ## what is core?
 
@@ -38,7 +38,7 @@ export { c } from 'core/ts/common/Configuration';
 export { Colors, colors } from 'core/ts/utilities/Colors';
 ```
 
-Every host file imports from `common/Core`; for code, only Core.ts reaches through the alias. The one thing that does not pass through it is the stylesheet: `main.ts` imports `core/main.css` itself, last, after the app and the managers. A stylesheet has no exports to re-export, and where it loads decides which rule wins between two that match equally — through Core.ts it would arrive with whichever file happens to be pulled in first. So the doors are two, and both are named: Core.ts for everything with exports, `main.ts` for the stylesheet alone.
+Every host file imports from `common/Core`; for code, only Core.ts reaches through the alias. The one thing that does not pass through it is the stylesheet: `main.ts` imports `core/main.css` itself, last, after the app and the managers. A stylesheet has no exports to re-export, and where it loads decides which rule wins between two that match equally — through Core.ts it would arrive with whichever file happens to be pulled in first. So the bridges are two, and both are named: Core.ts for everything with exports, `main.ts` for the stylesheet alone.
 
 The criterion for what goes in is *adopted from core*, never *small* — a host's own small file keeps its own name. The day the host disagrees with a constant, the re-export grows into a spread: import core's k, spread it, override the one value; a touched group is spread too, or its other members vanish.
 

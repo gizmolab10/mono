@@ -28,3 +28,5 @@ This project's terms live in [memory/gallery/](../memory/gallery/) — read them
 ## Tone
 
 Plain english. Casual. First person. Short sentences. Let ideas breathe.
+
+Past mistakes never to repeat, this project's own, are in `memory/gallery/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.

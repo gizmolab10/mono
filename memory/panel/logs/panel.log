@@ -1,0 +1,15 @@
+yarn run v1.22.19
+warning package.json: No license field
+$ vite
+8:31:53 PM [vite] (client) Forced re-optimization of dependencies
+
+  VITE v6.4.2  ready in 684 ms
+
+  ➜  Local:   http://localhost:5186/
+  ➜  Network: use --host to expose
+9:37:23 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte
+9:37:25 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+1:18:08 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
+1:18:17 PM [vite] (client) page reload src/lib/ts/main.ts
+12:02:39 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte, /src/lib/svelte/main/App.svelte?svelte&type=style&lang.css
+12:03:20 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte

@@ -1,1 +1,1 @@
-✓ UP: hub, ws, ws-docs, di, di-docs, ga, lv, ji, ov, mj, ma    DOWN: mono-docs, ma-docs
+✓ UP: hub, ws, ws-docs, di, di-docs, ga, lv, ji, ov, mj, mu, panel, ma    DOWN: mono-docs, ma-docs

@@ -30,3 +30,5 @@ This project's terms live in [memory/lv/truth/lexicon.md](../memory/lv/truth/lex
 ## Tone
 
 Plain english. Casual. First person. Short sentences. Let ideas breathe.
+
+Past mistakes never to repeat, this project's own, are in `memory/lv/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.

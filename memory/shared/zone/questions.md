@@ -7,9 +7,7 @@ date: 2026-08-29
 ---
 # questions
 
-- [x] fold conventions.md into always.md, or move always.md into memory/ and re-point inject-always.sh? — answered 2 September 2026: conventions.md stays where it is and joins the injection rotation as the fourth file in turn
 
-- [x] should `notes/tools/` follow the notes into memory? — answered 7 September 2026: it moves to `tools/` at the top of the repo, and `notes/` is deleted
 
 ## Inconsistencies and duplications
 
@@ -20,8 +18,9 @@ date: 2026-08-29
 - [ ] ov↔core memory twins from the carve — truth: action type, claude-files, scope, lexicon; zone: ideas, handoff (code debt near-twin); merge or trim core's?
 - [ ] ov↔core code twins — ov's Debug.ts and Dirty.ts are core's verbatim; two instances run, Dirty's stores can diverge; same changes as with Extensions?
 - [ ] four shorthand rows still point at the old notes — rate, setup, done, claude; re-point into memory or hold until inception reaches them?
+- [ ] `~/.zshrc` lines 1 and 20 still say `notes/tools`, outside the repo, Jonathan's to edit
+- [ ] verify the 9 September 2026 settle in a new session — eight logs cleared (core, gallery, lv, mj, mu, ov, panel, shared), each S: line names every group's home
 - [ ] verify the 3 September 2026 settle in a new session — the shared and ov logs were cleared; the S: line under each marker names every group's home
-- [x] the starved-row change: Jonathan tested it, found it bad, and discarded co's unwiring of the stack's `empty` flag along with the day's uncommitted edits — what did the test show, and which sizing rule survives (one gap, or the fold's height)? — answered 5 September 2026: the fold's height; a starved unfolded section keeps the separator below it as far from the one above as when folded, for every foldable section, and browse's tags keep the heavy line either way; ov's truth/controls.md says it
 
 ## checked
 
@@ -29,20 +28,13 @@ From the check of 31 August 2026, against all of `memory/`. Nothing fixed; each 
 
 From the check of 2 September 2026, the first to audit colliding rules across the always-tagged guides. Nothing fixed.
 
-- [x] 1. always #4 against response #2 — resolved 2 September 2026: #2 now says "say which wrong reading was ruled out, in plain words", its evidence held like any claim's
-- [x] 2. always #4 against the lexicon's evidence entry — resolved 2 September 2026: evidence is now "the line and its file, held back for every claim; shown when Jonathan asks, on its own line, after the plain words"
-- [x] 3. always #7 against the shorthand table — resolved 2 September 2026: #7 now says a shorthand is an interpretation Jonathan already approved, performed at once
-- [x] 4. always #3 tail against conventions line 39 — resolved 7 September 2026 by the fold: always #3 is the one home, inside conventions.md; the duplicate bullet is gone
-- [x] 5. two compression rules disagree — resolved 7 September 2026 by the fold: response #6 is the one home, inside conventions.md, saying both moves and keeping the pending-action warning
-- [x] 6. always #8's scan list names "the length limit" — resolved 2 September 2026: the rewrite of always as checks dropped the scan list; #8 names no length limit
 - [ ] 7. handbook.md's date label is empty — `date: ` with no value, which the OKF labels require. **Proposal**: stamp 2 September 2026, the day the label is filled
 
-- [ ] the root map is five projects behind — `memory/index.md` lists shared, ov, lv; disk holds core, di, ji, lv, me, mu, ov, shared, wo, and its parenthetical names `ws` (no folder) and `musicology` (the folder is `mu`); rewrite the list from disk?
+- [ ] the root map is five projects behind — `memory/index.md` lists shared, ov, lv; disk holds core, di, ji, lv, me, mu, ov, shared, and its parenthetical names `ws` (no folder) and `musicology` (the folder is `mu`); rewrite the list from disk?
 - [ ] the two indexes disagree on the count — `shared/index.md` line 8 says eight are up and omits di; the root says three; which yields?
 - [ ] four of core's six truths are copies of ov's — `lexicon.md` byte-identical, `action type.md`, `scope.md` and `claude-files.md` differing only in `settled` against `incorporated`; already asked above as the ov↔core memory twins
 - [ ] seventeen truth files carry no `type`, which `memory/index.md` line 21 requires — all four maps, every `decisions.md`, `handbook.md`, `cases.md`, `conventions.md`, `okf.md`, both `action type.md`, and `publish — can an AI actually learn?.md`; stamp each or drop the requirement?
 - [ ] `shared/truth/create a project.md` reads `type: howto`, which is not in the five-word list; pick one from the list or add howto?
 - [ ] three skills point at "Session protocol"; the heading reads `## Session phases` — `handbook.md` line 12, named at lines 102 and 103 and at `shorthand.md` line 40; rename the heading or re-point all three?
-- [x] settle is five steps at `handbook.md` line 108 and six at lines 26 to 31 — answered 1 September 2026 when a seventh step was added: both now say seven
 - [ ] the consolidation marker is on the wrong side — `handbook.md` line 26 says read every entry above it; in all three logs every entry sits below it; move the marker or reword the step?
 - [ ] `shared/index.md` names `zone/truth and zone.md`, while disk has `truth and zone and design?.md`; it omits `proposals.md`, `drive.md` and `adoption journal.md` from Zone, omits `cases.md` from Truths, and its `create a project.md` link carries raw spaces where its neighbours use `%20`

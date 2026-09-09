@@ -10,7 +10,7 @@ date: 2026-09-03
 
 Jonathan and co worked on [[always]] for a long time. we achieved a very significant improvement. that's the good news. the bad news is Jonathan worked closely with co throughout. The goal — give co enough rules to do it solo.
 
-## Mechanical sweep — solo now
+## Mechanical sweep — DONE
 
 Rule #1 in [[agency]] is relaxed to allow access to and work in a worktree. Sweep every comment and every md file for — banned words and lexicon. Jonathan is asked nothing during the sweep.
 
@@ -71,7 +71,7 @@ Rules about working:
 
 14. [CLAUDE.md](../../../CLAUDE.md) (mono) — principles, defaults, reading on load
 15. [handbook.md](../truth/handbook.md) (shared-t) — the memory system's rules
-16. [learn.md](work/learn.md) (mono-work) — past mistakes as rules-in-waiting
+16. [learn.md](learn.md) (mono-work) — past mistakes as rules-in-waiting
 
 at session start (CLAUDE.md names them):
 
