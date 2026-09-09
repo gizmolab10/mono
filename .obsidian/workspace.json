@@ -213,6 +213,7 @@
   },
   "active": "287f4cb5e8fc82de",
   "lastOpenFiles": [
+    "mj/netlify.toml",
     "ws/vite.config.js.timestamp-1788992204123-6c9812005e7ac.mjs",
     "ws/vite.config.js.timestamp-1788992173669-90ccfff25a5bf.mjs",
     "mj/dist/assets/index-Di52d0Xf.js",
@@ -233,7 +234,6 @@
     "mj/dist/assets/index-CwDkaeET.js",
     "mj/dist/assets/index-Bx4Gsf5R.css",
     "mj/dist/assets/index-u20Zt0rm.js",
-    "mj/src/lib/ts/managers/Preferences.ts",
     "mj/src/assets/mj/order.md",
     "memory/shared/zone/big picture.md",
     "memory/mu/zone/ideas.md",

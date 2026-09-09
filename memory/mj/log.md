@@ -23,3 +23,4 @@ date: 2026-09-01
 - D: the accent and the page color are remembered between visits, as mj.color_accent and mj.color_background. Main.ts reads each into core's store before mounting and writes every change back, the way ov's main.ts does. Two keys added to managers/Preferences.ts
 - D: the controls row calls the project 2026 planting, in Customizations.ts. The home page name and the pictures folder still say mj
 - D: the browser tab says our flourishing 2026 planting, in index.html. mj is to live at mj.jonathansand.me as a view-only site, with no netlify functions. Jonathan added its public address to the hub's ports file
+- D: netlify.toml, new, holds one rule: Netlify builds mj only when mj, gallery or core changed since the last deploy. Netlify's own pages have no field for it. Takes effect on the push after this one
