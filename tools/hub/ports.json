@@ -61,6 +61,12 @@
     "deploy": "https://app.netlify.com/projects/jeff-intersection/deploys",
     "repo": "https://github.com/gizmolab10/mono/tree/main/ji"
   },
+  "mj": {
+    "port": 5185,
+    "public": "https://mj.jonathansand.me",
+    "netlify": "https://mj.jonathansand.me",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/mj"
+  },
   "ov": {
     "port": 5183,
     "repo": "https://github.com/gizmolab10/mono/tree/main/ov"
@@ -68,10 +74,6 @@
   "mu": {
     "port": 5184,
     "repo": "https://github.com/gizmolab10/mono/tree/main/mu"
-  },
-  "mj": {
-    "port": 5185,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/mj"
   },
   "panel": {
     "port": 5186,

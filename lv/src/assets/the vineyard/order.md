@@ -1,7 +1,7 @@
 # the order this folder is shown in — one file to a line
 
-Harvest2021_3673.jpg
 Versaison_20190803.jpg
+Harvest2021_3673.jpg
 LCV sketch 0.jpg
 LCV sketch 1.jpg
 LCV_Label_v3B.jpg
