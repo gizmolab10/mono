@@ -1,11 +1,11 @@
 ---
-description: gallery (drag and drop) — lv's whole code, copied and renamed, waiting to be taken apart.
+description: gallery — a library lv and mj import: pages from md files, and one folder of pictures shown one at a time, with editing.
 ---
 # gallery
 
-Drag and drop. What that means is not written yet.
+A library two hosts import through the `gallery` alias: lv, whose code this was, and mj. Drag and drop, decided 9 September 2026: image files are dragged and dropped, and all of lv's code that supports this remains in gallery.
 
-**Current state:** brought up 1 September 2026 as a whole copy of lv with the name changed — every file, every test, every netlify function, all still saying what lv means by them. Named `dd` for the first hour, renamed to `gallery` the same day, in mono and in memory both. It has no port and is not in the hub, by decision, so `yarn dev` there takes whatever vite offers. It reaches core through the alias exactly as lv does, and its checks and tests pass — 470 files, 122 tests — because they are lv's checks and lv's tests. Nothing about drag and drop exists.
+**Current state:** since 9 September 2026 nothing of lv's is left in it. The vineyard's pictures, its photo list, its icon and its home page are gone. In their place a sample page, `src/md/Home.md`, and three sample pictures under `src/assets/sample pictures`, which the tests read. The netlify functions stay, asking for `GALLERY_PASSPHRASE`. A host sets gallery's three switches in `Customizations.ts` before it mounts — the home page's name, the prefix its remembered values are saved under, whether the sidebar is drawn — and Persistence, Technical, S_Sidebar and Router read them only when asked, never while their files load. The stylesheet is two files: `Main.css` for the page shell, `Gallery.css` for the pictures, the edit button, the drop box and the file-and-caption table. lv imports Main.svelte and both stylesheets. mj imports Gallery.svelte, Edit.svelte, photosInFolder, technical and Gallery.css. gallery's own App.svelte and Main.ts are the smallest host of the library. No port, not in the hub, by decision. Check clean at 471 files, 122 tests pass and 4 are skipped, build 375 modules.
 
 One registration is deliberately missing: the dispatcher's two collection lists, which decide whose files ov reads. Add `gallery` there when ov should list them.
 

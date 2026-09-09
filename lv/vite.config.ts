@@ -1,17 +1,22 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { photoTitles } from './plugins/photo-titles';
-import { captionDrop } from './plugins/caption-drop';
+import { photoTitles } from '../gallery/plugins/photo-titles';
+import { captionDrop } from '../gallery/plugins/caption-drop';
 import ports from '../tools/hub/ports.json';
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
+  // gallery's two plugins, run here over lv's own assets: the titles inside every picture,
+  // and the dev server's routes for editing.
   plugins: [svelte(), photoTitles(), captionDrop()],
   resolve: {
-    // "core" is an alias for the shared library one folder over; tsconfig teaches
-    // the checker the same alias, and the two must always agree. lv keeps no
+    // "core" and "gallery" are aliases for the two libraries one folder over; tsconfig
+    // teaches the checker the same aliases, and the two must always agree. lv keeps no
     // vitest config of its own, so the test runner reads this one too.
-    alias: { core: resolve(__dirname, '../core/src/lib') },
+    alias: {
+      core: resolve(__dirname, '../core/src/lib'),
+      gallery: resolve(__dirname, '../gallery/src'),
+    },
   },
   build: {
     rollupOptions: {

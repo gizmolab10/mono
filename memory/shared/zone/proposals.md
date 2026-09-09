@@ -7,6 +7,24 @@ date: 2026-08-31
 ---
 # Proposals
 
+## lv and mj import gallery (9 September 2026)
+
+Proposal — gallery becomes a library two hosts import: lv, whose code it is, and mj, which mj's ideas say will be a gallery.
+
+Decided and built 9 September 2026. gallery holds nothing of lv's. The `gallery` alias points at `gallery/src` in lv's and mj's tsconfig and vite config, and each has `common/Gallery.ts` beside Core.ts. lv imports Main.svelte and the stylesheet, hands gallery its three switches in Main.ts, keeps App.svelte, Main.ts, Core.ts, Customizations.ts, its netlify functions, its pages and its pictures, and deleted the 34 files gallery now provides. mj imports Gallery.svelte and photosInFolder into its operation view, with no pictures yet, and gallery's edit button into its controls row. Of gallery's two stylesheets it takes Gallery.css, the pictures and their editing, and not Main.css, whose page shell and hamburger rules fight panel's. Every check, test and build passes, and Aliases.test.ts in each host proves only the bridges name an alias. Still open: which of mj's two layouts goes, and where mj's pictures live.
+
+**Where each is today.** gallery is lv's code file for file, 51 files each, the vineyard's pictures and words included. gallery's ideas say what it is meant to be: an extended core, a gallery of files, mostly images, with editing and adding. Its two questions are unanswered: what it drags and drops onto, and how much of lv's code survives that answer. lv draws the vineyard site from that code. mj draws panel, and its ideas say it will be a gallery, a subdomain of jonathansand.me. No project imports gallery. Both already import core.
+
+**What happens in gallery first.** lv's own content goes, its ideas' one item: the vineyard folder under assets, the photo list, the vineyard's markdown. Then each remaining file is named library or app. The svelte pieces and the utilities are the library. App.svelte and Main.ts are the app, and gallery's App becomes the smallest host of its own library, as panel's would. The twelve test files stay beside the code they prove.
+
+**What happens in a host.** The `gallery` alias in tsconfig and vite config, two lines, as for core. One bridge for gallery beside Core.ts. Then, one file at a time, the host imports gallery's and deletes its own. lv ends with none of the 51 of its own but App.svelte, Main.ts, its assets and its words. mj gains a gallery of its own pictures through the same lines.
+
+**Success criteria.** lv draws exactly as today, measured, with no file of its own that gallery holds. mj shows its own pictures through gallery's pieces. Every host's check, build and tests pass, and one test per host proves only its bridge names the alias.
+
+**Cost.** gallery: the removal, then the naming of each file. lv: two config lines, one bridge, one deletion per piece, forty or so. mj: two config lines, one bridge, its pictures, and the fitting of gallery's sidebar and renderer to panel's three regions or the other way.
+
+**Open.** gallery's own two questions come first. mj has two layouts on offer, panel's three regions and gallery's sidebar beside a renderer, and one must go. Where mj's pictures live, since lv's gallery truth names the repo today and remote storage as the alternative. Whether Router, Parser and Persistence are gallery's or the host's, weighed in [gallery's proposals](../../gallery/zone/proposals.md). The library pac in truth/decisions.md, undecided, is answered for gallery by this: a project made to be taken.
+
 ## a name for the outer div, for every project (9 September 2026)
 
 Proposal — one class for the outer div in every App.svelte, in place of `frame`, which in html names an embedded document and does not match this div.

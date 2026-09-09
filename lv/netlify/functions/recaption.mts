@@ -18,7 +18,7 @@
 //   GITHUB_REPO     owner/name, e.g. gizmolab10/mono   (optional)
 //   GITHUB_BRANCH   which branch to commit on          (optional, main)
 
-import { canHoldACaption, stamp } from '../../plugins/stamp';
+import { canHoldACaption, stamp } from '../../../gallery/plugins/stamp';
 
 const REPO = process.env.GITHUB_REPO ?? 'gizmolab10/mono';
 const BRANCH = process.env.GITHUB_BRANCH ?? 'main';

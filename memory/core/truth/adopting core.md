@@ -13,7 +13,7 @@ Written out of ov's adoption, finished 31 August 2026, for whichever host comes 
 
 ## what is core?
 
-A library with no entry point: four ts folders (common, events, types, utilities), each behind an index.ts barrel, and eight support components. It holds no state — no preferences, no managers, no app. A host keeps the state, wires it in, and draws the app around it. core principle: state lives in the host, behavior in core; anything in core reaching for a manager is a bug.
+A library with no entry point: four ts folders (common, events, types, utilities), each behind an index.ts barrel, and eight support components. It holds no state — no remembered values, only the way to read and write one under a host's prefix — no managers, no app. A host keeps the state, wires it in, and draws the app around it. core principle: state lives in the host, behavior in core; anything in core reaching for a manager is a bug.
 
 ## the wiring — two lines
 

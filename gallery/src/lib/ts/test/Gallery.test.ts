@@ -1,6 +1,9 @@
 // Tests for the gallery rules in `notes/work/photo gallery.md`:
 // a folder of photos read in the order its own list names, the markdown that
 // asks for one, and the walk from photo to photo with its caption.
+//
+// The folder read is gallery's own sample, `src/assets/sample pictures`: three
+// pictures, and a list naming two of them in the other order.
 
 import { describe, it, expect } from 'vitest';
 import { photosInFolder, loadAssetFolders, loadAssetOrders } from '../utilities/Loader';
@@ -10,22 +13,23 @@ import { render } from '../utilities/Parser';
 
 describe('a folder of photos', () => {
   it('finds the photos in the folder, in the order its own list names', () => {
-    const names = photosInFolder('the-vineyard').map((one) => one.name);
+    const names = photosInFolder('sample-pictures').map((one) => one.name);
     expect(names.length).toBeGreaterThan(1);
-    const listed = (loadAssetOrders().get('the vineyard') ?? []).filter((one) => names.includes(one));
+    const listed = (loadAssetOrders().get('sample pictures') ?? []).filter((one) => names.includes(one));
     expect(listed.length).toBeGreaterThan(0);
     expect(names.slice(0, listed.length)).toEqual(listed);
   });
 
   it('puts a photo the list does not name after the ones it does, by name', () => {
-    const names = photosInFolder('the-vineyard').map((one) => one.name);
-    const listed = (loadAssetOrders().get('the vineyard') ?? []).filter((one) => names.includes(one));
+    const names = photosInFolder('sample-pictures').map((one) => one.name);
+    const listed = (loadAssetOrders().get('sample pictures') ?? []).filter((one) => names.includes(one));
     const rest = names.slice(listed.length);
+    expect(rest.length).toBeGreaterThan(0);
     expect(rest).toEqual([...rest].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
   });
 
   it('hands back an address for each one', () => {
-    for (const one of photosInFolder('the-vineyard')) {
+    for (const one of photosInFolder('sample-pictures')) {
       expect(one.url.length).toBeGreaterThan(0);
     }
   });
@@ -35,9 +39,9 @@ describe('a folder of photos', () => {
   });
 
   it('finds the folder however the name is written', () => {
-    const many = photosInFolder('the-vineyard').length;
-    expect(photosInFolder('The Vineyard')).toHaveLength(many);
-    expect(photosInFolder('the_vineyard')).toHaveLength(many);
+    const many = photosInFolder('sample-pictures').length;
+    expect(photosInFolder('Sample Pictures')).toHaveLength(many);
+    expect(photosInFolder('sample_pictures')).toHaveLength(many);
   });
 
   it('leaves out the images sitting at the top of assets', () => {
@@ -49,15 +53,15 @@ describe('a folder of photos', () => {
 
 describe('asking for a gallery in markdown', () => {
   it('turns into an empty box carrying the folder name', () => {
-    expect(render('> [!gallery] the-vineyard')).toContain('<div class="gallery" data-folder="the-vineyard"></div>');
+    expect(render('> [!gallery] sample-pictures')).toContain('<div class="gallery" data-folder="sample-pictures"></div>');
   });
 
   it('draws every photo at the height said after the bar', () => {
-    expect(render('> [!gallery] the-vineyard|400')).toContain('<div class="gallery" data-folder="the-vineyard" data-height="400"></div>');
+    expect(render('> [!gallery] sample-pictures|400')).toContain('<div class="gallery" data-folder="sample-pictures" data-height="400"></div>');
   });
 
   it('says no height where none is asked for', () => {
-    expect(render('> [!gallery] the-vineyard')).not.toContain('data-height');
+    expect(render('> [!gallery] sample-pictures')).not.toContain('data-height');
   });
 
   it('leaves every other callout to the callout plugin', () => {
@@ -65,7 +69,7 @@ describe('asking for a gallery in markdown', () => {
   });
 
   it('leaves a plain image embed alone', () => {
-    const html = render('![[lcv.label.png]]');
+    const html = render('![[one.png]]');
     expect(html).toContain('<img');
     expect(html).not.toContain('class="gallery"');
   });
@@ -86,7 +90,7 @@ describe('a movie among the photos', () => {
 
 describe('what a photo is called', () => {
   it('uses the title the file carries', () => {
-    expect(nameOf({ name: 'IMG_5305.jpg', url: '/x', title: 'Tom at the crush pad' })).toBe('Tom at the crush pad');
+    expect(nameOf({ name: 'IMG_5305.jpg', url: '/x', title: 'Morning fog over the rows' })).toBe('Morning fog over the rows');
   });
 
   it('falls back to the file name, extension taken off', () => {
@@ -107,7 +111,7 @@ describe('what a photo is called', () => {
 });
 
 describe('walking the photos', () => {
-  const photos = photosInFolder('the-vineyard');
+  const photos = photosInFolder('sample-pictures');
 
   it('steps 1 to 2 to 3 and wraps back to 1', () => {
     expect(step(0, 3, 1)).toBe(1);

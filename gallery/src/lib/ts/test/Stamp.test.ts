@@ -91,7 +91,7 @@ describe('writing a caption into a gif', () => {
   });
 
   it('carries a caption longer than one piece', () => {
-    const long = 'the vineyard '.repeat(40).trim();
+    const long = 'a long caption '.repeat(40).trim();
     expect(gifComment(stampGif(tinyGif(), long))).toBe(long);
   });
 });
@@ -119,7 +119,7 @@ describe('writing a caption into a png', () => {
 });
 
 describe('writing a caption into a jpeg', () => {
-  const stamped = stampJpeg(tinyJpeg(), 'Tom at the crush pad');
+  const stamped = stampJpeg(tinyJpeg(), 'Morning fog over the rows');
 
   it('keeps it a jpeg', () => {
     expect(stamped[0]).toBe(0xff);
@@ -131,18 +131,18 @@ describe('writing a caption into a jpeg', () => {
     const words = stamped.toString('latin1');
     expect(words).toContain('http://ns.adobe.com/xap/1.0/');
     expect(words).toContain('<dc:title>');
-    expect(words).toContain('Tom at the crush pad');
+    expect(words).toContain('Morning fog over the rows');
   });
 
   it('leaves one caption behind, never two', () => {
     const twice = stampJpeg(stamped, 'Harvest, 2021');
     const words = twice.toString('latin1');
     expect(words).toContain('Harvest, 2021');
-    expect(words).not.toContain('Tom at the crush pad');
+    expect(words).not.toContain('Morning fog over the rows');
   });
 
   it('writes the ampersand and the angle brackets so the block still reads', () => {
-    const odd = stampJpeg(tinyJpeg(), 'Tom & <Haley>').toString('latin1');
-    expect(odd).toContain('Tom &amp; &lt;Haley&gt;');
+    const odd = stampJpeg(tinyJpeg(), 'Salt & <Pepper>').toString('latin1');
+    expect(odd).toContain('Salt &amp; &lt;Pepper&gt;');
   });
 });

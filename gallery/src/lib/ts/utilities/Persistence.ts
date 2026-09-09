@@ -1,28 +1,34 @@
 // Remembers small bits of sidebar state across a full page reload, using the
 // browser's local storage. Each read takes a fallback so a fresh visitor (or a
 // browser with storage turned off) still gets a sensible default.
+//
+// The way to read and write is core's. What is gallery's: the keys. The prefix every
+// one is saved under is the host's, read from its switches the first time anything is
+// remembered — after the host has set them, never while this file loads.
 
-const SIDEBAR_VISIBLE_KEY = 'gallery.sidebar.visible';
-const TECHNICAL_KEY = 'gallery.technical';
-const EDITING_KEY = 'gallery.editing';
-const PASS_KEY = 'gallery.pass';
-const FOLDER_OPEN_PREFIX = 'gallery.folder.open.';
+import { customizations } from '../common/Customizations';
+import { Preferences } from '../common/Core';
+
+let held: Preferences | null = null;
+
+function preferences(): Preferences {
+  if (held === null) { held = new Preferences(customizations.prefix); }
+  return held;
+}
+
+const SIDEBAR_VISIBLE_KEY = 'sidebar.visible';
+const TECHNICAL_KEY = 'technical';
+const EDITING_KEY = 'editing';
+const PASS_KEY = 'pass';
+const FOLDER_OPEN_PREFIX = 'folder.open.';
 
 function readFlag(key: string, fallback: boolean): boolean {
-  try {
-    const saved = localStorage.getItem(key);
-    return saved === null ? fallback : saved === 'true';
-  } catch {
-    return fallback;
-  }
+  const saved = preferences().read_text(key);
+  return saved === null ? fallback : saved === 'true';
 }
 
 function writeFlag(key: string, value: boolean): void {
-  try {
-    localStorage.setItem(key, String(value));
-  } catch {
-    // Storage unavailable — nothing to remember, carry on.
-  }
+  preferences().write_text(key, String(value));
 }
 
 export function loadSidebarVisible(fallback: boolean): boolean {
@@ -37,14 +43,10 @@ export function saveSidebarVisible(visible: boolean): void {
 //   nothing   the preference was never set — this browser only reads
 //   false     the files and their captions can be seen and typed into
 //   true      a file may also be added
-// Set by hand: localStorage.setItem('gallery.technical', 'true')
+// Set by hand, under the host's prefix: localStorage.setItem('gallery.technical', 'true')
 export function loadTechnical(): boolean | null {
-  try {
-    const saved = localStorage.getItem(TECHNICAL_KEY);
-    return saved === null ? null : saved === 'true';
-  } catch {
-    return null;
-  }
+  const saved = preferences().read_text(TECHNICAL_KEY);
+  return saved === null ? null : saved === 'true';
 }
 
 export function saveTechnical(technical: boolean): void {
@@ -65,19 +67,11 @@ export function saveEditing(editing: boolean): void {
 // The word the published site asks for before it writes anything. Typed once,
 // remembered in this browser, and never in the code.
 export function loadPass(): string {
-  try {
-    return localStorage.getItem(PASS_KEY) ?? '';
-  } catch {
-    return '';
-  }
+  return preferences().read_text(PASS_KEY) ?? '';
 }
 
 export function savePass(pass: string): void {
-  try {
-    localStorage.setItem(PASS_KEY, pass);
-  } catch {
-    // Storage unavailable — the word is asked for again next time.
-  }
+  preferences().write_text(PASS_KEY, pass);
 }
 
 export function loadFolderOpen(folder: string, fallback: boolean): boolean {

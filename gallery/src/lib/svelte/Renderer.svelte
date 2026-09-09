@@ -15,11 +15,11 @@
   import { mount, unmount } from 'svelte';
   import Gallery from './Gallery.svelte';
 
-  const source = $derived(getMdText(router.name));
+  const source = $derived(getMdText(router.page));
   const html = $derived(
     source !== undefined
       ? render(source)
-      : `<h1>Missing</h1><p>No md file named "${router.name}".</p>`
+      : `<h1>Missing</h1><p>No md file named "${router.page}".</p>`
   );
 
   let content: HTMLElement | null = $state(null);

@@ -1,6 +1,6 @@
 <script lang='ts'>
   import { c, colors, hits, Point, S_Mouse } from '../ts/common/Core';
-  import Main from './Main.svelte';
+  import { Main } from '../ts/common/Gallery';
 
   const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
 

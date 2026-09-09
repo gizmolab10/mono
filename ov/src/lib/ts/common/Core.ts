@@ -8,6 +8,7 @@ export { c } from 'core/ts/common/Configuration';
 export { debug } from 'core/ts/common/Debug';
 export { default, k } from 'core/ts/common/Constants';	// VITAL for Colors
 export { Colors, colors } from 'core/ts/utilities/Colors';
+export { Preferences } from 'core/ts/utilities/Preferences';
 
 // Action and S_Mouse are default exports in core; Constants already owns the default
 // here, so each takes its own name on the way through.

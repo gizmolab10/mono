@@ -1,0 +1,172 @@
+/* ===== The gallery's own look =====
+   One folder of pictures shown one at a time, and its editing: the edit button,
+   the drop box and the file-and-caption table. Imported at a host's entry point
+   beside the host's own stylesheet — lv's Main.css, which draws its page shell,
+   or mj's core stylesheet. Where the edit button sits on a page is the page
+   shell's business, so that rule stays in Main.css.
+*/
+
+/* ----- Gallery ----- */
+/* One folder of photos, one showing. The photo is the button, so a click
+   anywhere on it steps to the next; the button itself draws nothing. Each
+   picture and its caption center themselves, so a host need not wrap them,
+   and no picture is drawn wider or taller than the one size below, whatever
+   its file holds. */
+:root {
+  --gallery-photo-max: 700px;
+}
+
+.gallery {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+/* The cap is the button's, not the image's: a cap written on the image as a share of the
+   button is dropped while the button's own width is found, so the button would fill its box
+   and leave the auto margins nothing to center. Capped here, the button is as wide as the
+   picture, and the image inside takes all of it. */
+.gallery-photo {
+  max-width: min(100%, var(--gallery-photo-max));
+  background: none;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  border: none;
+  padding: 0;
+}
+
+video.gallery-photo {
+  max-height: var(--gallery-photo-max);
+  display: block;
+  margin: 0 auto;
+}
+
+.gallery-photo img {
+  max-height: var(--gallery-photo-max);
+  object-fit: contain;
+  max-width: 100%;
+  display: block;
+  height: auto;
+  width: auto;
+}
+
+.gallery-caption {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+/* ----- Editing ----- */
+/* The edit button, shown only in a technical browser. */
+.shell-edit {
+  border: var(--thick) solid rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.shell-edit:hover {
+  background: #fff;
+}
+
+/* Where a gallery stands while editing is on: a box to drop a file into. */
+.gallery-drop {
+  border: var(--thick-big) dashed rgba(0, 0, 0, 0.3);
+  color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.gallery-drop.over {
+  border-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.gallery-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+}
+
+/* The files in a gallery's folder while editing: what each is called, and the
+   caption, which can be typed into. */
+.gallery-captions {
+  border-collapse: collapse;
+  margin: 1rem auto 0;
+  font-size: 0.85rem;
+  max-width: 40rem;
+  text-align: left;
+  width: 100%;
+}
+
+.gallery-captions th,
+.gallery-captions td {
+  border-bottom: var(--thick-faint) solid lightgrey;
+  padding: 0.35rem 0.5rem;
+  vertical-align: top;
+}
+
+.gallery-captions th {
+  color: #666;
+  font-weight: normal;
+}
+
+.gallery-captions td[contenteditable] {
+  background: rgba(0, 0, 0, 0.03);
+  cursor: text;
+}
+
+.gallery-captions td[contenteditable]:focus {
+  background: #fff;
+  outline: var(--thick) solid rgba(0, 0, 0, 0.4);
+}
+
+/* The row being worked on: up and down move the highlight, and option with
+   them moves that file up or down the folder's own order. Drawn as a pill, the
+   same shape the sidebar gives the page you are on — a row is many cells, so
+   the first takes the left end and the last takes the right. */
+.gallery-captions tr.picked td {
+  background: rgba(255, 214, 102, 0.35);
+  border-bottom-color: transparent;
+}
+
+.gallery-captions tr.picked td:first-child {
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.gallery-captions tr.picked td:last-child {
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+/* Where a file sits in the folder's order — the first column of the table. */
+.gallery-row {
+  text-align: right;
+  color: #666;
+  width: 1%;
+}
+
+/* The throw-away button in the last column of the editing table. */
+.gallery-throw {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.gallery-throw button {
+  border: var(--thick) solid rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-pill);
+  padding: 0.1rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font: inherit;
+  color: #a33;
+}
+
+.gallery-throw button:hover {
+  border-color: #a33;
+  background: #fff;
+}

@@ -9,7 +9,7 @@
 // long way — a blob, a tree, a commit, then the branch moved. Netlify sees the
 // commit and rebuilds.
 
-import { canHoldACaption, stamp } from '../../plugins/stamp';
+import { canHoldACaption, stamp } from '../../../gallery/plugins/stamp';
 
 const REPO = process.env.GITHUB_REPO ?? 'gizmolab10/mono';
 const BRANCH = process.env.GITHUB_BRANCH ?? 'main';

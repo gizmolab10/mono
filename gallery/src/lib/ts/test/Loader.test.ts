@@ -1,6 +1,9 @@
 // Tests for the loader rules in `notes/work/bare bone website.md`:
 // it grabs every md file and every image at build time, keying md files by
 // name without the .md ending and images by name with their extension.
+//
+// What is on disk is gallery's own sample: one page, `src/md/Home.md`, and the
+// pictures under `src/assets/sample pictures`.
 
 import { describe, it, expect } from 'vitest';
 import { loadMdFiles, loadAssets, loadMdEntries } from '../utilities/Loader';
@@ -9,7 +12,7 @@ describe('md file loader', () => {
   const map = loadMdFiles();
 
   it('finds the home page', () => {
-    expect(map.has('Little Cloud Vineyard')).toBe(true);
+    expect(map.has('Home')).toBe(true);
   });
 
   it('holds every page on disk', () => {
@@ -23,7 +26,7 @@ describe('md file loader', () => {
   });
 
   it('hands back the actual text of a file', () => {
-    expect(map.get('Little Cloud Vineyard')).toContain('Little Cloud Vineyard');
+    expect(map.get('Home')).toContain('Home');
   });
 });
 
@@ -31,7 +34,7 @@ describe('md file folders', () => {
   const entries = loadMdEntries();
 
   it('reports the top level as no folder for the home page', () => {
-    const home = entries.find((e) => e.name === 'Little Cloud Vineyard');
+    const home = entries.find((e) => e.name === 'Home');
     expect(home?.folder).toBe('');
   });
 
@@ -46,8 +49,8 @@ describe('md file folders', () => {
 describe('image loader', () => {
   const map = loadAssets();
 
-  it('finds the vineyard label image', () => {
-    expect(map.has('lcv.label.png')).toBe(true);
+  it('finds a sample picture', () => {
+    expect(map.has('one.png')).toBe(true);
   });
 
   it('keys images by name with their extension', () => {
@@ -57,7 +60,7 @@ describe('image loader', () => {
   });
 
   it('hands back a usable address for each image', () => {
-    const url = map.get('lcv.label.png');
+    const url = map.get('one.png');
     expect(typeof url).toBe('string');
     expect((url ?? '').length).toBeGreaterThan(0);
   });

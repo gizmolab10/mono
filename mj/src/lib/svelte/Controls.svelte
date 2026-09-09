@@ -1,10 +1,12 @@
 <script lang='ts'>
 	import { customizations } from '../ts/common/Customizations';
+	import { Edit, technical } from '../ts/common/Gallery';
 	import { Hamburger } from '../ts/common/Core';
 
 	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
-	// left shows or hides details; the project's name keeps the middle of the whole row. Nothing
-	// else in it yet.
+	// left shows or hides details; the project's name keeps the middle of the whole row. At its
+	// right, gallery's edit button, shown while this browser's technical preference says true,
+	// whether or not there are pictures yet.
 	let { onclick, detailsShown }: { onclick: () => void; detailsShown: boolean } = $props();
 </script>
 
@@ -15,6 +17,9 @@
 	     over, so it never drifts as the row's other contents come and go. -->
 	<span class='name'>{customizations.name}</span>
 	<span class='spacer'></span>
+	{#if technical.on}
+		<Edit />
+	{/if}
 </div>
 
 <style>

@@ -24,7 +24,7 @@ function said(request: { headers: Record<string, string | string[] | undefined> 
 }
 
 // A folder name, flattened for matching — the same rule the loader uses, so a
-// page asking for "the-vineyard" writes into the folder called "the vineyard".
+// page asking for "sample-pictures" writes into the folder called "sample pictures".
 function flatten(folder: string): string {
   return folder.trim().toLowerCase().replace(/[ _-]+/g, '-');
 }

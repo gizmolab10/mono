@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { c, colors, hits, k, Point, S_Mouse, start_tips, ToolTip, w_tip } from '../ts/common/Core';
+	import { preferences, T_Preference } from '../ts/managers/Preferences';
 	import Operation from './Operation.svelte';
 	import Controls from './Controls.svelte';
 	import Details from './Details.svelte';
@@ -35,20 +36,21 @@
 		hits.defer_recalibrate();
 	}
 
-	// Whether details shows at all is the hamburger's doing. Not remembered between visits yet.
-	let show_details = $state(true);
+	// Whether details shows at all is the hamburger's doing. Remembered between visits, shown
+	// on the first.
+	const w_show_details = preferences.persistent<boolean>(T_Preference.show_details, true);
 
 	// Is there room for both the details column (its fixed width) and the content region beside
 	// it (its own smallest useful width), with the two outer margins and the one between?
 	let room_for_both = $derived(width - gap * 3 >= k.width.small + k.width.big);
 	// Too narrow for both: the content region is dropped and details fill the width.
-	let details_only  = $derived(show_details && !room_for_both);
+	let details_only  = $derived($w_show_details && !room_for_both);
 	let details_width = $derived(details_only ? width - gap * 2 : k.width.small - gap * 2);
 	// With details hidden, content has the whole width to itself.
-	let content_width = $derived(show_details ? width - details_width - gap * 3 : width - gap * 2);
+	let content_width = $derived($w_show_details ? width - details_width - gap * 3 : width - gap * 2);
 
 	function toggle_details() {
-		show_details = !show_details;
+		w_show_details.set(!$w_show_details);
 	}
 </script>
 
@@ -62,9 +64,9 @@
 	onmouseup={(event) => hits.handle_s_mouse_at(new Point(event.clientX, event.clientY), S_Mouse.up(event, null))} />
 
 <div class='app' style:width='{width}px' style:height='{height}px'>
-	<Controls onclick={toggle_details} detailsShown={show_details} />
+	<Controls onclick={toggle_details} detailsShown={$w_show_details} />
 	<div class='boxes'>
-		{#if show_details}
+		{#if $w_show_details}
 			<Details width={details_width} />
 		{/if}
 		{#if !details_only}

@@ -2,6 +2,7 @@
 export * from './Colors';
 export * from './Fitting';
 export * from './Numbers';
+export * from './Preferences';
 export * from './SVG_Paths';
 export * from './Sectioning';
 export * from './Sections';

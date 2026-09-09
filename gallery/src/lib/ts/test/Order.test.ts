@@ -56,9 +56,14 @@ describe('moving one file', () => {
     expect(moved(names, 2, -1)).toEqual({ names: ['a.png', 'c.png', 'b.png'], at: 1 });
   });
 
-  it('wraps at both ends, swapping the last with the first', () => {
-    expect(moved(names, 2, 1)).toEqual({ names: ['c.png', 'b.png', 'a.png'], at: 0 });
-    expect(moved(names, 0, -1)).toEqual({ names: ['c.png', 'b.png', 'a.png'], at: 2 });
+  it('past either end, goes in at the other end and the rest shift one place', () => {
+    expect(moved(names, 2, 1)).toEqual({ names: ['c.png', 'a.png', 'b.png'], at: 0 });
+    expect(moved(names, 0, -1)).toEqual({ names: ['b.png', 'c.png', 'a.png'], at: 2 });
+  });
+
+  it('swaps, never shifts, between two files', () => {
+    expect(moved(['a.png', 'b.png'], 1, 1)).toEqual({ names: ['b.png', 'a.png'], at: 0 });
+    expect(moved(['a.png', 'b.png'], 0, -1)).toEqual({ names: ['b.png', 'a.png'], at: 1 });
   });
 
   it('does nothing to a folder holding one file, or none', () => {

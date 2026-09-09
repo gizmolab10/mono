@@ -9,4 +9,5 @@ date: 2026-09-01
 
 mj stands for cannabis. will be a gallery. subdomain of jonathansand.me
 
-- [ ] say what mj is for, and what its two letters stand for
+- [ ] import gallery
+- [ ] persistence is missing details open/closed

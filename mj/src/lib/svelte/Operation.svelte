@@ -1,27 +1,34 @@
 <script lang='ts'>
-	import { k } from '../ts/common/Core';
+	import { Gallery, photosInFolder, technical } from '../ts/common/Gallery';
 
-	// The content box. The frame computes its width. One line in it for now, drawn with core's
-	// own sizes so the push from Constants to the page is proved the moment it opens.
+	// The content box. App.svelte computes its width. In it, gallery's own component, showing
+	// the pictures of mj's one folder. A picture and its caption sit at the middle of the box's
+	// height. While editing is on, the drop box and the table start at the top instead.
 	let { width }: { width: number } = $props();
+
+	const FOLDER = 'mj';
 </script>
 
-<div class='region content' style:width='{width}px'>
-	<div style:padding='{k.gap.fat}px' style:font-size='{k.font.normal}px'>mj is running.</div>
+<div class='region content' class:centered={!technical.editing} style:width='{width}px'>
+	<Gallery folder={FOLDER} photos={photosInFolder(FOLDER)} />
 </div>
 
 <style>
 	.content {
 		border-radius  : var(--radius);
-		padding        : var(--gap);
 		box-sizing     : border-box;
+		padding        : var(--gap);
 		gap            : var(--gap);
 		background     : var(--bg);
 		position       : relative;
-		flex-direction : column;
 		overflow       : visible;
+		flex-direction : column;
 		display        : flex;
 		flex-shrink    : 0;
 		min-height     : 0;
+	}
+
+	.content.centered {
+		justify-content : center;
 	}
 </style>

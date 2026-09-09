@@ -21,10 +21,10 @@ describe('reading a page top settings', () => {
 describe('composing the sidebar list', () => {
   it('pins the home page first, in bold, with a divider, labelled by its title', () => {
     const pages: PageInfo[] = [
-      { name: 'Little Cloud Vineyard', title: 'Home', home: true, folder: '' },
+      { name: 'Front Page', title: 'Home', home: true, folder: '' },
     ];
     const md = composeSidebarMd(pages);
-    expect(md).toContain('**[Home](Little Cloud Vineyard)**');
+    expect(md).toContain('**[Home](Front Page)**');
     expect(md).toContain('---');
   });
 
@@ -32,7 +32,7 @@ describe('composing the sidebar list', () => {
     const pages: PageInfo[] = [
       { name: 'Cherry', home: false, folder: '' },
       { name: 'Apple', home: false, folder: '' },
-      { name: 'Little Cloud Vineyard', title: 'Home', home: true, folder: '' },
+      { name: 'Front Page', title: 'Home', home: true, folder: '' },
       { name: 'Banana', home: false, folder: '' },
     ];
     const md = composeSidebarMd(pages);
@@ -43,7 +43,7 @@ describe('composing the sidebar list', () => {
     expect(apple).toBeLessThan(banana);
     expect(banana).toBeLessThan(cherry);
     // The home page is not repeated in the plain list.
-    expect(md).not.toContain('[[Little Cloud Vineyard]]');
+    expect(md).not.toContain('[[Front Page]]');
   });
 
   it('falls back to the file name when a page has no title', () => {
@@ -67,10 +67,10 @@ describe('grouping pages by folder', () => {
   it('puts each folder under a heading with its pages nested below', () => {
     const pages: PageInfo[] = [
       { name: 'Home', home: true, folder: '' },
-      { name: 'Page 1', home: false, folder: 'The Vineyard' },
+      { name: 'Page 1', home: false, folder: 'Sample Pictures' },
     ];
     const md = composeSidebarMd(pages);
-    const heading = md.indexOf('## The Vineyard');
+    const heading = md.indexOf('## Sample Pictures');
     const page = md.indexOf('[[Page 1]]');
     expect(heading).toBeGreaterThan(-1);
     expect(heading).toBeLessThan(page);
@@ -92,9 +92,9 @@ describe('grouping pages by folder', () => {
   it('keeps top-level pages above the folder sections', () => {
     const pages: PageInfo[] = [
       { name: 'About', home: false, folder: '' },
-      { name: 'Page 1', home: false, folder: 'The Vineyard' },
+      { name: 'Page 1', home: false, folder: 'Sample Pictures' },
     ];
     const md = composeSidebarMd(pages);
-    expect(md.indexOf('[[About]]')).toBeLessThan(md.indexOf('## The Vineyard'));
+    expect(md.indexOf('[[About]]')).toBeLessThan(md.indexOf('## Sample Pictures'));
   });
 });

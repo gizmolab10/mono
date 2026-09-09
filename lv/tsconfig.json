@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "core/*": ["../core/src/lib/*"]
+      "core/*": ["../core/src/lib/*"],
+      "gallery/*": ["../gallery/src/*"]
     },
     "useDefineForClassFields": true,
     "target": "ES2020",
@@ -26,7 +27,6 @@
   },
   "include": [
     "src/**/*.svelte",
-    "src/**/*.ts",
-    "plugins/**/*.ts"
+    "src/**/*.ts"
   ]
 }

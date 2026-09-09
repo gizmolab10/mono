@@ -17,3 +17,4 @@ $ vite
 1:18:17 PM [vite] (client) page reload src/lib/ts/main.ts
 1:18:19 PM [vite] (client) hmr update /src/lib/svelte/main/Operation.svelte
 12:02:39 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte, /src/lib/svelte/main/App.svelte?svelte&type=style&lang.css
+12:31:22 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/utilities/index.ts

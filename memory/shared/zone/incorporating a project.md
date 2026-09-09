@@ -42,6 +42,8 @@ ov. ov's own four hold 980 lines that panel does not, and the way ov incorporate
 
 Proposal, 8 September 2026 — core, panel and gallery each become a library a host imports, the way every host imports core today: an alias, a bridge, one line per thing taken. panel and gallery import core themselves. The steps above, which take panel by file, are then replaced by importing it.
 
+gallery's half was built 9 September 2026: lv and mj import it, recorded under "lv and mj import gallery" in [proposals](proposals.md). panel's half is not built.
+
 **Where each is today.** core is imported through the `core` alias by ov, lv, gallery, mj, mu and panel. panel is imported by nobody: mu and mj hold their own version of its four files. gallery is lv's whole code duplicated and renamed, with no alias in lv and nothing lv imports from it. panel and gallery both already import core.
 
 **What changes in the library.** panel's `App.svelte` is an app, and an app cannot be imported. It becomes a component that draws the outer box, the controls row with its hamburger and name, the details column and the operation view, and takes from the host what to draw inside each region as snippets, the host's name as a prop, and whether details shows as a prop with the toggle handed back — state in the host, as core's rule says. panel's own `App.svelte` shrinks to the smallest host of that component, with nothing in the snippets. gallery is taken apart into the drag-and-drop pieces lv will import; which files those are is unread.

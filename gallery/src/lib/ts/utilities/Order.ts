@@ -40,12 +40,20 @@ export function inOrder<T extends { name: string }>(photos: T[], names: string[]
   return [...listed, ...rest];
 }
 
-// One file moved by a step, and where it now sits. The run wraps, the same way
-// stepping a picture does: the last file moved down swaps with the first.
+// One file moved by a step, and where it now sits. Inside the run it swaps with its
+// neighbor. Past either end it comes out and goes in at the other end, and everything
+// else shifts one place — so the last file moved down becomes the first, and what was
+// first is second, not last.
 export function moved(names: string[], at: number, by: number): { names: string[]; at: number } {
   if (at < 0 || at >= names.length || names.length < 2) { return { names, at }; }
   const to = step(at, names.length, by);
   const now = [...names];
-  [now[at], now[to]] = [now[to], now[at]];
+  const wraps = (by > 0 && to < at) || (by < 0 && to > at);
+  if (wraps) {
+    const [one] = now.splice(at, 1);
+    now.splice(to, 0, one);
+  } else {
+    [now[at], now[to]] = [now[to], now[at]];
+  }
   return { names: now, at: to };
 }

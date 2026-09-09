@@ -10,6 +10,7 @@ import 'core/ts/common/Extensions';
 export { c } from 'core/ts/common/Configuration';
 export { default, k } from 'core/ts/common/Constants';	// VITAL for Colors
 export { Colors, colors } from 'core/ts/utilities/Colors';
+export { Preferences } from 'core/ts/utilities/Preferences';
 
 // Who is under the cursor, and what a press on them means. The host owes it the
 // cursor itself — App.svelte hands over every move, press and release.

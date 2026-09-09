@@ -1,52 +1,15 @@
 # gallery
 
-Little Cloud Vineyard.
+A library, imported by lv and mj. Pages are md files, drawn with Obsidian's syntax. A gallery is one folder of pictures shown one at a time, each captioned by the title written inside its own file. Editing — a picture added, a caption changed, a file thrown out, a folder reordered — is done by the dev server's plugins here, and by the netlify functions on a published site.
 
-## Stack
-
-* Svelte 5 (runes, no slots)
-* TypeScript
-* Vite
-* Vitest
+What is here for its own sake: `App.svelte` and `Main.ts`, the smallest host of the library, and the sample page and pictures its tests read.
 
 ## Setup
 
 ```bash
 yarn install
 yarn dev
-```
-
-## Structure
-
-```
-src/
-├── App.svelte
-├── lib/
-│   ├── svelte/
-│   │   └── layout/
-│   │       ├── Main.svelte      # Root layout
-│   │       ├── Controls.svelte  # Top bar
-│   │       ├── Graph.svelte     # Canvas + 3D rendering
-│   │       └── Details.svelte   # Left sidebar
-│   └── ts/
-│       ├── render/              # Camera, Input, Render, Animation, Scene
-│       └── types/               # Coordinates, Interfaces
-notes/
-├── guides/                      # Development documentation
-└── work/                        # Milestones and tasks
-```
-
-## Layout
-
-```
-┌─────────────────────────────────────────────────────┐
-│                     Controls                        │
-├───────────────┬─────────────────────────────────────┤
-│               │                                     │
-│    Details    │              Graph                  │
-│   (280px)     │         (canvas, flex)              │
-│               │                                     │
-└───────────────┴─────────────────────────────────────┘
+yarn test
 ```
 
 ## License

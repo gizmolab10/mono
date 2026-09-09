@@ -9,6 +9,10 @@ date: 2026-09-07
 
 Always rule 9: when two rules collide, one must go, and co reports each collision so the pair can be rewritten as one rule. This is where the reports go. Each entry names the two rules, what happened, and the smallest rewrite that would end it.
 
+## a never-word inside a standard technical term (9 September 2026)
+
+**The rules.** Always rule 2, since today: a standard technical term any programmer knows is used as it is, never spelled out in other words. lexicon.md's *margin* entry: never *bar*. The hook matches the never-word wherever it appears. **What happened.** gallery's proposal says "the browser's address bar", the standard term, and the hook reported bar. **A rewrite.** The hook skips a never-word that sits inside a standard technical term, or the entry says the ban is for the margin sense only, which the hook cannot judge.
+
 ## sweep, one word for three acts (8 September 2026)
 
 **The rules.** agency.md 14, "Never sweep": a checker names a line, fix that line and no other. agency.md 1: "a session sweeping the whole repo unsupervised", scanning everything for work. handbook.md's redefinition rule: "sweep old-sense uses", replace one named word everywhere. conventions.md's table gives glob the meaning "sweep the disk for files". **What happened.** Co took the handbook's word for replacing door with bridge and wrote "swept" in a reply. Jonathan read agency 14's sense, the forbidden one. The word cannot be obeyed and forbidden at once. **A rewrite.** One act keeps the word. The others say what they do: "fix that line and no other" for 14, "reads the whole repo" for 1, "replace every old-sense use" for the handbook, "find files by pattern" for glob.

@@ -122,7 +122,7 @@ export function loadAssetFolders(): Map<string, Photo[]> {
 
 // A folder name, flattened for matching: case ignored, and a space, a hyphen
 // and an underscore all read as the same character. A folder on disk cannot
-// hold a space, so a page asking for "The Vineyard" finds "the-vineyard".
+// hold a space, so a page asking for "Sample Pictures" finds "sample-pictures".
 function flatten(folder: string): string {
   return folder.trim().toLowerCase().replace(/[ _-]+/g, '-');
 }

@@ -41,8 +41,8 @@ function preprocessObsidianSyntax(md: string): string {
     return `<blockquote class="callout center"><div class="callout-content">\n\n${text}\n\n</div></blockquote>`;
   });
 
-  // A gallery: `> [!gallery] the-vineyard` on a line of its own, or
-  // `> [!gallery] the-vineyard|400` to draw every photo in it 400 tall. It
+  // A gallery: `> [!gallery] sample-pictures` on a line of its own, or
+  // `> [!gallery] sample-pictures|400` to draw every photo in it 400 tall. It
   // leaves an empty box carrying the folder's name and that height; the
   // renderer builds the photo component inside each one.
   //

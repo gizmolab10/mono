@@ -24,7 +24,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **settle** — consolidation's line-by-line step: each log line moved into its one home, dismissed with a stated reason, or carried forward unsettled. Not: summarizing.
 - **toolkit** — the set of skills that act on the memory system: start, pac, define, propose, settle, check, where, summary. Not: the shorthand file (the trigger surface), not any one skill.
 - **adoption** — a core file taken in by a host: one line in the host's Core.ts, the host's own copy deleted. Never "borrowing."
-- **bridge** — the host's one file that imports what it needs from a library, `Core.ts` for core: every other host file imports from the bridge, never from the library. A stylesheet has no exports, so `main.ts` is the one other bridge, for `main.css` alone. Not: `Configuration.ts`, which pushes core's numbers onto the page.
+- **bridge** — the host's one file per library that imports what it needs from that library, `Core.ts` for core and `Gallery.ts` for gallery: every other host file imports from the bridge, never from the library. A stylesheet has no exports, so `main.ts` is the one other bridge, for a library's stylesheets alone. Not: `Configuration.ts`, which pushes core's numbers onto the page.
 - **drive** — the current undertaking: the one proposal being decided and implemented, held in `zone/drive.md` until it dissolves into truth.
 - **zone** — the folder holding a project's live thinking: active plans, research, considerations, bright ideas, visual references. Named for the state of mind that fills it and the zoning-in that empties it. Not: truth, not a waiting room for belief.
 

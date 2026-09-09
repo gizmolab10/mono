@@ -16,7 +16,7 @@
 //   GITHUB_REPO     owner/name, e.g. gizmolab10/mono   (optional)
 //   GITHUB_BRANCH   which branch to commit on          (optional, main)
 
-import { ORDER_FILE, orderText } from '../../src/lib/ts/utilities/order';
+import { ORDER_FILE, orderText } from '../../../gallery/src/lib/ts/utilities/Order';
 
 const REPO = process.env.GITHUB_REPO ?? 'gizmolab10/mono';
 const BRANCH = process.env.GITHUB_BRANCH ?? 'main';

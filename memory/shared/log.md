@@ -11,6 +11,9 @@ date: 2026-09-01
 
 ## 9 September 2026
 
+- I: collision recorded in zone/collisions.md. The lexicon's never bar fired inside address bar, a standard technical term rule 2 now allows
+- D: Always rule 2 is Everyday or standard technical English. A standard technical term any programmer knows, drag and drop or library, is never spelled out in other words
+- I: proposal in zone/proposals.md, lv and mj import gallery. gallery sheds lv's content, names each file library or app, and two hosts take it by alias and bridge, deleting their own. Open: gallery's two questions, mj's layout, the pictures' home. Undecided
 - D: the outer div's class is app in ov, panel, mu and mj, not frame. The naming proposal is decided, and the three pacs on renaming or removing the div are closed by it. Four checks clean
 - I: pac in truth/decisions.md, eliminate the outer div. Its styles onto #app, no name to choose. Against: a component styling its mount point, and the 300-pixel minimum with no element. Middle path: panel first, ov last. Undecided
 - I: proposal in zone/proposals.md, a name for the outer div in every App.svelte in place of frame. Four that fit, app first. Seven ruled out with reasons. Undecided

@@ -99,18 +99,18 @@ describe('callouts', () => {
 
 describe('image embeds', () => {
   it('turns a double-bracket image into a real image tag', () => {
-    const html = render('![[lcv.label.png]]');
+    const html = render('![[one.png]]');
     expect(html).toContain('<img');
     expect(html).toContain('src=');
   });
 
   it('uses the alias as the alt text when one is given', () => {
-    const html = render('![[lcv.label.png|the label]]');
-    expect(html).toContain('alt="the label"');
+    const html = render('![[one.png|the first]]');
+    expect(html).toContain('alt="the first"');
   });
 
   it('reads a single number after the bar as a width', () => {
-    const html = render('![[lcv.label.png|200]]');
+    const html = render('![[one.png|200]]');
     expect(html).toContain('<img');
     expect(html).toContain('width="200"');
     expect(html).not.toContain('height=');
@@ -118,7 +118,7 @@ describe('image embeds', () => {
   });
 
   it('reads number-by-number after the bar as width and height', () => {
-    const html = render('![[lcv.label.png|200x120]]');
+    const html = render('![[one.png|200x120]]');
     expect(html).toContain('width="200"');
     expect(html).toContain('height="120"');
   });
@@ -126,14 +126,14 @@ describe('image embeds', () => {
 
 describe('wiki-links', () => {
   it('turns a double-bracket name into a link to that page', () => {
-    const html = render('[[Little Cloud Vineyard]]');
-    expect(html).toContain('href="/Little%20Cloud%20Vineyard"');
-    expect(html).toContain('>Little Cloud Vineyard</a>');
+    const html = render('[[Sample Page]]');
+    expect(html).toContain('href="/Sample%20Page"');
+    expect(html).toContain('>Sample Page</a>');
   });
 
   it('shows the alias text but still points at the target', () => {
-    const html = render('[[Little Cloud Vineyard|Home]]');
-    expect(html).toContain('href="/Little%20Cloud%20Vineyard"');
+    const html = render('[[Sample Page|Home]]');
+    expect(html).toContain('href="/Sample%20Page"');
     expect(html).toContain('>Home</a>');
   });
 });

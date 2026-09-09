@@ -75,6 +75,16 @@
     at = step(at, here.length, by);
   }
 
+  // The next picture and the one before are fetched as soon as this one shows, so a step
+  // swaps at once instead of waiting on the file.
+  $effect(() => {
+    if (here.length < 2 || technical.editing) { return; }
+    for (const by of [1, -1]) {
+      const one = here[step(at, here.length, by)];
+      if (one && !isMovie(one.name)) { new Image().src = one.url; }
+    }
+  });
+
   // While a picture is showing, left and right step it. While the table is up,
   // up and down move the highlight, and holding option moves the file itself.
   function on_key(event: KeyboardEvent) {
@@ -295,18 +305,20 @@
     </table>
   {/if}
 {:else if showing}
-  <!-- Keyed on the address, so stepping away builds a fresh element: the movie
-       that was playing goes with the old one and stops. -->
-  {#key showing.url}
-    {#if plays}
+  {#if plays}
+    <!-- Keyed on the address, so stepping away builds a fresh element: the movie
+         that was playing goes with the old one and stops. -->
+    {#key showing.url}
       <video class='gallery-photo' src={showing.url} controls autoplay playsinline
         style:height={height ? `${height}px` : null}><track kind='captions' /></video>
-    {:else}
-      <button class='gallery-photo' aria-label='next photo' onclick={() => walk(1)}>
-        <img src={showing.url} alt={caption} style:height={height ? `${height}px` : null} />
-      </button>
-    {/if}
-  {/key}
+    {/key}
+  {:else}
+    <!-- One element for every still, its address swapped: the picture up stays up until
+         the next has arrived, so nothing of the page behind it shows between the two. -->
+    <button class='gallery-photo' aria-label='next photo' onclick={() => walk(1)}>
+      <img src={showing.url} alt={caption} style:height={height ? `${height}px` : null} />
+    </button>
+  {/if}
   <p class='gallery-caption'>{caption}</p>
 {:else}
   <p class='gallery-caption'>no photos in "{folder}"</p>

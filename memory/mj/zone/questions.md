@@ -7,4 +7,4 @@ date: 2026-09-01
 ---
 # questions
 
-- [ ] what is mj for, and what do its two letters stand for?
+no current questions

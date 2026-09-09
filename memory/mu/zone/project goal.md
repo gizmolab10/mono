@@ -12,7 +12,7 @@ read and answer line 35
 goal is to scan a local filesystem and extract **music** and meta data and navigation through it on a variety of hierarchies as we now do with folders. tag sets and kinds can show up as hierarchies
 
 - [ ] open zip, rar, z7 files
-- [ ] xommand p -> open a file
+- [ ] command p -> open a file
 - [ ] filter by metadata
     - [ ] store all metadata in a db in local storage
         - [ ] incorporated as hierarchies

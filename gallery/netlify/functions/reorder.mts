@@ -11,12 +11,12 @@
 // is live a minute or two later.
 //
 // What Netlify must hold, and the page never does:
-//   LV_PASSPHRASE   the word typed once into the browser
+//   GALLERY_PASSPHRASE   the word typed once into the browser
 //   GITHUB_TOKEN    a token that may write to the repository
 //   GITHUB_REPO     owner/name, e.g. gizmolab10/mono   (optional)
 //   GITHUB_BRANCH   which branch to commit on          (optional, main)
 
-import { ORDER_FILE, orderText } from '../../src/lib/ts/utilities/order';
+import { ORDER_FILE, orderText } from '../../src/lib/ts/utilities/Order';
 
 const REPO = process.env.GITHUB_REPO ?? 'gizmolab10/mono';
 const BRANCH = process.env.GITHUB_BRANCH ?? 'main';
@@ -24,7 +24,7 @@ const ASSETS = 'gallery/src/assets';
 const API = 'https://api.github.com';
 
 // A folder name, flattened for matching — the same rule the app uses, so a page
-// asking for "the-vineyard" finds the folder called "the vineyard".
+// asking for "sample-pictures" finds the folder called "sample pictures".
 function flatten(folder: string): string {
   return folder.trim().toLowerCase().replace(/[ _-]+/g, '-');
 }
@@ -88,7 +88,7 @@ async function commit(path: string, text: string, message: string): Promise<stri
 export default async (request: Request): Promise<Response> => {
   if (request.method !== 'POST') { return new Response('post only', { status: 405 }); }
 
-  const pass = process.env.LV_PASSPHRASE;
+  const pass = process.env.GALLERY_PASSPHRASE;
   if (!pass) { return new Response('this site has no passphrase set, so nothing can be written', { status: 503 }); }
   if (said(request, 'x-pass') !== pass) { return new Response('that passphrase is wrong', { status: 401 }); }
 

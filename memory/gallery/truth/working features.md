@@ -15,7 +15,7 @@ The order belongs to the folder, in one list — `order.md` beside the pictures,
 
 - **While editing, the table shows the order** — the first column is where each file sits, and one row is highlighted.
 - **A click picks a row**, and up and down move the highlight. Both wrap: past the last is the first.
-- **Option with them moves the file**, swapping it with the one beside it — and past the last it swaps with the first.
+- **Option with them moves the file**, swapping it with the one beside it — and past either end it comes out and goes in at the other end, the rest shifting one place.
 - **A move writes the list alone** — a few bytes, whatever the pictures weigh, and one commit on the published site.
 - **A folder with no list** is shown in file-name order, and the first move writes the list whole.
 - **A file the list does not name** goes at the end; a name the folder no longer holds is left out.

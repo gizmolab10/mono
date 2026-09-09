@@ -3,55 +3,55 @@
 // round. Also drives the bottom status line: when the reader navigates to an
 // md file that does not exist on disk, a broken-link error appears; the next
 // successful navigation clears it.
+//
+// The home page's name is the host's, read from its switches when a page is asked
+// for — never while this file loads, since the host sets them after its files load.
 
+import { customizations } from '../common/Customizations';
 import { pageExists } from './Resolver';
 
-const HOME = 'Little Cloud Vineyard';
-
+// What the address says, with the leading slash taken off. Nothing at the root.
 function nameFromPath(): string {
-  if (typeof window === 'undefined') return HOME;
+  if (typeof window === 'undefined') return '';
   const path = decodeURIComponent(window.location.pathname);
-  const name = path.startsWith('/') ? path.slice(1) : path;
-  return name || HOME;
+  return path.startsWith('/') ? path.slice(1) : path;
 }
 
 class RouterState {
+  // What the address says. Nothing here means the home page.
   name = $state<string>(nameFromPath());
-  status = $state<string>('');
+
+  // The page showing: the name, or the home page where the address names none.
+  get page(): string {
+    return this.name || customizations.home;
+  }
+
+  // Blank while the page exists. The home page counts as existing whether or not a
+  // file carries its name, so a site with no pages at all says nothing is wrong.
+  get status(): string {
+    const page = this.page;
+    return page === customizations.home || pageExists(page) ? '' : `Page not found: ${page}`;
+  }
 }
 
 export const router = new RouterState();
 
-function updateStatus(name: string): void {
-  const target = name || HOME;
-  if (target === HOME || pageExists(target)) {
-    router.status = '';
-  } else {
-    router.status = `Page not found: ${target}`;
-  }
-}
-
-// Set the initial status based on the address the page loaded at.
-updateStatus(nameFromPath());
-
 // Change the current md file. Updates the address bar via pushState and
 // updates the reactive state so subscribers re-render.
 export function navigate(name: string): void {
-  const target = name || HOME;
-  const path = target === HOME ? '/' : '/' + encodeURIComponent(target);
+  const home = customizations.home;
+  const page = name || home;
+  const path = page === home ? '/' : '/' + encodeURIComponent(page);
   if (typeof window !== 'undefined' && window.location.pathname !== path) {
     history.pushState(null, '', path);
   }
-  router.name = target;
-  updateStatus(target);
+  router.name = page === home ? '' : page;
 }
 
 // Wire up the browser back/forward buttons and the link interceptor.
 if (typeof window !== 'undefined') {
   window.addEventListener('popstate', () => {
-    const name = nameFromPath();
-    router.name = name;
-    updateStatus(name);
+    router.name = nameFromPath();
   });
 
   window.addEventListener('click', (event) => {
@@ -73,7 +73,6 @@ if (typeof window !== 'undefined') {
     event.preventDefault();
 
     const path = decodeURIComponent(href);
-    const name = path.startsWith('/') ? path.slice(1) : path;
-    navigate(name || HOME);
+    navigate(path.startsWith('/') ? path.slice(1) : path);
   });
 }

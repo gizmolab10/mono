@@ -70,6 +70,6 @@
   }
 </script>
 
-<nav class="shell-sidebar" use:makeCollapsible use:highlightActive={router.name}>
+<nav class="shell-sidebar" use:makeCollapsible use:highlightActive={router.page}>
   {@html html}
 </nav>

@@ -11,6 +11,7 @@ date: 2026-09-01
 
 ## 9 September 2026
 
+- D: managers/Preferences.ts keeps the enum of ov's keys and makes one instance of core's Preferences with the ov_ prefix. The class is core's now, taken through Core.ts
 - D: the outer div's class is app, not frame, in App.svelte. Check clean
 - S: settled 25 dated lines of 6 to 8 September. The multi-select build is in working features rows 79 to 82, row 82 new (checkboxes as hit targets on the controls layer, hover on the checkbox alone) and row 80 now saying shut folders included. progeny is in the lexicon. The ancestry is in truth/controls.md. Launch reading is in row 78. The drive's dissolution is in index.md, consolidate.md and shared's decisions. The bridge rename is in the map and the lexicon. The notes-rooting line is superseded by the reorg, its Saving.ts gap carried into zone/ideas.md. Two done records and one settle record dismissed. The original work log below the rule carries forward untouched: untagged, finished work, whose one home would be zone/work/work journal.md
 

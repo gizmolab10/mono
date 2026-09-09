@@ -33,14 +33,14 @@ describe('folder open state', () => {
   beforeEach(() => localStorage.clear());
 
   it('uses the fallback when nothing is saved', () => {
-    expect(loadFolderOpen('The Vineyard', true)).toBe(true);
-    expect(loadFolderOpen('The Vineyard', false)).toBe(false);
+    expect(loadFolderOpen('Sample Pictures', true)).toBe(true);
+    expect(loadFolderOpen('Sample Pictures', false)).toBe(false);
   });
 
   it('remembers each folder by its own name', () => {
-    saveFolderOpen('The Vineyard', false);
+    saveFolderOpen('Sample Pictures', false);
     saveFolderOpen('Photos', true);
-    expect(loadFolderOpen('The Vineyard', true)).toBe(false);
+    expect(loadFolderOpen('Sample Pictures', true)).toBe(false);
     expect(loadFolderOpen('Photos', false)).toBe(true);
   });
 });

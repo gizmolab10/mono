@@ -1,6 +1,7 @@
-/* ===== Single styling file for the site =====
-   Imported once at the app's entry point (src/lib/ts/main.ts).
-   Holds every look-and-feel rule that applies to every page.
+/* ===== The page shell's styling =====
+   Imported at the app's entry point (src/lib/ts/Main.ts), beside Gallery.css,
+   which holds the gallery's own rules. Holds every look-and-feel rule for the
+   page around the gallery: the shell, the sidebar, the status line.
 */
 
 /* ----- Typography (was inline in App.svelte) ----- */
@@ -245,157 +246,12 @@ textarea:focus {
   text-align: center;
 }
 
-/* ----- Gallery ----- */
-/* One folder of photos, one showing. The photo is the button, so a click
-   anywhere on it steps to the next; the button itself draws nothing. */
-.gallery {
-  margin: 1.5rem 0;
-  text-align: center;
-}
-
-.gallery-photo {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  display: inline-block;
-  max-width: 100%;
-}
-
-video.gallery-photo {
-  max-width: 100%;
-  display: block;
-  margin: 0 auto;
-}
-
-.gallery-photo img {
-  max-width: 100%;
-  height: auto;
-  width: auto;
-  object-fit: contain;
-  display: block;
-}
-
-.gallery-caption {
-  margin: 0.5rem 0 0;
-  font-size: 0.9rem;
-  opacity: 0.75;
-}
-
 /* ----- Editing ----- */
-/* The edit button, top right, shown only in a technical browser. */
+/* Where the edit button sits: fixed at the top right of every page. How it
+   looks is in Gallery.css, with the rest of the gallery's own rules. */
 .shell-edit {
   position: fixed;
   top: 0.75rem;
   right: 0.75rem;
   z-index: 20;
-  padding: 0.25rem 0.75rem;
-  border: var(--thick) solid rgba(0, 0, 0, 0.25);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.9);
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.shell-edit:hover {
-  background: #fff;
-}
-
-/* Where a gallery stands while editing is on: a box to drop a file into. */
-.gallery-drop {
-  border: var(--thick-big) dashed rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  padding: 2rem 1rem;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.gallery-drop.over {
-  border-color: rgba(0, 0, 0, 0.6);
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.gallery-note {
-  margin: 0.5rem 0 0;
-  font-size: 0.85rem;
-}
-
-/* The files in a gallery's folder while editing: what each is called, and the
-   caption, which can be typed into. */
-.gallery-captions {
-  border-collapse: collapse;
-  margin: 1rem auto 0;
-  font-size: 0.85rem;
-  width: 100%;
-  max-width: 40rem;
-  text-align: left;
-}
-
-.gallery-captions th,
-.gallery-captions td {
-  border-bottom: var(--thick-faint) solid lightgrey;
-  padding: 0.35rem 0.5rem;
-  vertical-align: top;
-}
-
-.gallery-captions th {
-  color: #666;
-  font-weight: normal;
-}
-
-.gallery-captions td[contenteditable] {
-  background: rgba(0, 0, 0, 0.03);
-  cursor: text;
-}
-
-.gallery-captions td[contenteditable]:focus {
-  background: #fff;
-  outline: var(--thick) solid rgba(0, 0, 0, 0.4);
-}
-
-/* The row being worked on: up and down move the highlight, and option with
-   them moves that file up or down the folder's own order. Drawn as a pill, the
-   same shape the sidebar gives the page you are on — a row is many cells, so
-   the first takes the left end and the last takes the right. */
-.gallery-captions tr.picked td {
-  background: rgba(255, 214, 102, 0.35);
-  border-bottom-color: transparent;
-}
-
-.gallery-captions tr.picked td:first-child {
-  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
-}
-
-.gallery-captions tr.picked td:last-child {
-  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
-}
-
-/* Where a file sits in the folder's order — the first column of the table. */
-.gallery-row {
-  width: 1%;
-  color: #666;
-  text-align: right;
-}
-
-/* The throw-away button in the last column of the editing table. */
-.gallery-throw {
-  width: 1%;
-  white-space: nowrap;
-}
-
-.gallery-throw button {
-  border: var(--thick) solid rgba(0, 0, 0, 0.25);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.9);
-  padding: 0.1rem 0.6rem;
-  font: inherit;
-  font-size: 0.8rem;
-  color: #a33;
-  cursor: pointer;
-}
-
-.gallery-throw button:hover {
-  background: #fff;
-  border-color: #a33;
 }

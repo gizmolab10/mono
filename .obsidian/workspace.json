@@ -8,82 +8,26 @@
         "type": "tabs",
         "children": [
           {
-            "id": "c726350c99815c7a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/shared/zone/questions.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "questions"
-            }
-          },
-          {
-            "id": "94cc7eed23e63c1f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/shared/truth/shorthand.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "shorthand"
-            }
-          },
-          {
-            "id": "f4587981fc0ddbe5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/core/truth/design/ov - goals.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "ov - goals"
-            }
-          },
-          {
             "id": "85284a086b3d75b6",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/panel/zone/questions.md",
+                "file": "memory/shared/zone/big picture.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "questions"
+              "title": "big picture"
             }
           },
           {
-            "id": "c667e91a97f584b4",
+            "id": "287f4cb5e8fc82de",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/create a project.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "create a project"
-            }
-          },
-          {
-            "id": "377c973d2b759719",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/mu/zone/ideas.md",
+                "file": "memory/mj/zone/ideas.md",
                 "mode": "source",
                 "source": false
               },
@@ -92,7 +36,7 @@
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -229,7 +173,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/panel/zone/questions.md",
+                "file": "memory/mj/zone/ideas.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -267,10 +211,39 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "85284a086b3d75b6",
+  "active": "287f4cb5e8fc82de",
   "lastOpenFiles": [
-    "memory/panel/truth/decisions.md",
+    "mj/dist/assets/index-Di52d0Xf.js",
+    "mj/dist/assets/index-BUchgtan.css",
+    "mj/dist/assets/IMG_0381-Did8qbRE.jpeg",
+    "mj/dist/assets/BC4C552A-EAB9-4B03-9EA7-B9349A74CF26_1_105_c-Br1WJSKL.jpeg",
+    "mj/dist/assets/701A4CF6-9549-42B8-B1EB-E6DA3AFF34AB_1_105_c-Df3fAeWo.jpeg",
+    "mj/dist/assets/66C45835-8328-4442-ABC4-A010AE780338_1_105_c-09fCK3jB.jpeg",
+    "mj/dist/assets/593201D4-EAC3-4EE6-B91E-4E2EEBA175B7_1_105_c-BgkluTv9.jpeg",
+    "mj/dist/assets/58DC3D96-B8FC-4A3C-9071-E9774FB3F33A_1_105_c-Bj09Me1G.jpeg",
+    "mj/dist/assets/57129408-E1F5-48A8-AEF4-87A8F24A84C0_1_105_c-CGM7A7SK.jpeg",
+    "mj/dist/assets/37B01753-195B-49CA-BB33-BF19ABAF5A7B_1_105_c-CQbnFvKW.jpeg",
+    "mj/dist/assets/22D36673-6323-4014-904D-3231AE39EB11_1_105_c-B_bqAnmF.jpeg",
+    "mj/dist/assets/07C9B168-5597-4FD0-BF7B-65CB9FBA42AB_1_105_c-BHq3elXm.jpeg",
+    "mj/dist/assets",
+    "mj/dist/index.html",
+    "mj/dist",
+    "mj/dist/assets/index-CwDkaeET.js",
+    "mj/dist/assets/index-Bx4Gsf5R.css",
+    "mj/dist/assets/index-u20Zt0rm.js",
+    "mj/src/lib/ts/managers/Preferences.ts",
+    "mj/src/lib/ts/managers",
+    "mj/dist/assets/index-DSeYYFFK.js",
+    "mj/src/assets/mj/order.md",
     "memory/shared/zone/big picture.md",
+    "memory/mu/zone/ideas.md",
+    "memory/shared/zone/proposals.md",
+    "gallery/src/md/Home.md",
+    "gallery/src/assets/sample pictures/order.md",
+    "memory/shared/zone/library projects.md",
+    "memory/gallery/zone/proposals.md",
+    "memory/panel/zone/questions.md",
+    "memory/panel/truth/decisions.md",
     "memory/di/zone/learn.md",
     "memory/shared/zone/learn.md",
     "memory/shared/truth/create a project.md",
@@ -279,42 +252,13 @@
     "memory/core/truth/design/ov - goals.md",
     "memory/shared/zone/questions.md",
     "memory/shared/zone/rewrite the guides.md",
-    "memory/shared/zone/proposals.md",
-    "tools/test_big_picture.py",
-    "tools/big-picture.py",
     "memory/shared/truth/shorthand.md",
-    "memory/shared/zone/library projects.md",
     "memory/shared/zone/ideas.md",
     "memory/shared/zone/incorporating a project.md",
     "memory/gallery/zone/questions.md",
     "memory/mu/zone/project goal.md",
     "memory/shared/zone/inception into the new design.md",
     "memory/ov/zone/ideas.md",
-    "memory/mj/zone/ideas.md",
-    "mj/dist/assets/index-DSZrAkcz.js",
-    "mj/dist/assets/index-DKFuhotT.css",
-    "mj/dist/index.html",
-    "mj/dist/assets",
-    "mj/dist",
-    "mu/dist/assets/index-C8RRb-KP.css",
-    "mu/dist/assets/index-_qVxtOG9.js",
-    "mu/dist/index.html",
-    "memory/shared/zone/collisions.md",
-    "ws/node_modules/uuid/CONTRIBUTING.md",
-    "ws/node_modules/uuid/README.md",
-    "ws/node_modules/uuid/LICENSE.md",
-    "ws/node_modules/uuid/CHANGELOG.md",
-    "panel/node_modules/readdirp/README.md",
-    "gallery/src/assets/the vineyard/lcv.label.png",
-    "gallery/src/assets/the vineyard/Vyd_2014_0321_Haley.jpg",
-    "gallery/src/assets/the vineyard/Versaison_20190803.jpg",
-    "gallery/src/assets/the vineyard/TrellisOutrigger.jpg",
-    "gallery/src/assets/the vineyard/TomP_2011_Vin3.JPG",
-    "gallery/src/assets/the vineyard/TomP_2011_Vin1.JPG",
-    "gallery/src/assets/the vineyard/LittleCloudSoil_CrossSectionProfile.jpg",
-    "gallery/src/assets/the vineyard/LittleCloudLabel_v1.jpg",
-    "gallery/src/assets/the vineyard/LCV_Label_v3B.jpg",
-    "gallery/src/assets/the vineyard/LCV sketch 1.jpg",
     "Untitled.canvas",
     "ws/notes/work/Untitled.canvas"
   ]

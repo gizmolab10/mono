@@ -47,7 +47,7 @@ async function folderInRepo(folder: string): Promise<string> {
 export default async (request: Request): Promise<Response> => {
   if (request.method !== 'POST') { return new Response('post only', { status: 405 }); }
 
-  const pass = process.env.LV_PASSPHRASE;
+  const pass = process.env.GALLERY_PASSPHRASE;
   if (!pass) { return new Response('this site has no passphrase set, so nothing can be thrown away', { status: 503 }); }
   if (said(request, 'x-pass') !== pass) { return new Response('that passphrase is wrong', { status: 401 }); }
 

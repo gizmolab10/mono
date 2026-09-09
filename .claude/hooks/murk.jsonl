@@ -1665,3 +1665,37 @@
 {"timestamp":"2026-09-09T19:01:17Z","action":"complaint","word":"t","murky":"to `#app`, a pushed variable core does not push today, or nowhere, and a narrow window is then measured, not reasoned. And four screens checked by eye.\n\n**Middle path.** panel first, the one nobody runs, then mu and mj, ov last. Or keep the div as `.app`, eight lines and nothing moved.\n\n**Deciding question.** Does a component own the styling of its mount point, and where does the minimum width go?","plain":"dex.html holds `<div id=\"app\">`, and App.svelte draws inside it. If the div goes, App.svelte must style that `#app` div, which sits in a file App.svelte did not write. Is that allowed?\n\nSecond. Today the div's width is the wider of the window and 300 pixels. Without the div, nothing holds that number. It goes in an effect that writes onto `#app`, or in a css variable core pushes, or it is dropped.","rule":"any-line","words":"172","plain_words":"75"}
 {"timestamp":"2026-09-09T19:01:39Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"96","plain_words":""}
 {"timestamp":"2026-09-09T19:03:48Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"52","plain_words":""}
+{"timestamp":"2026-09-09T19:10:24Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"16","plain_words":""}
+{"timestamp":"2026-09-09T19:12:36Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"17","plain_words":""}
+{"timestamp":"2026-09-09T19:12:59Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"7","plain_words":""}
+{"timestamp":"2026-09-09T19:14:50Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"168","plain_words":""}
+{"timestamp":"2026-09-09T19:16:45Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"108","plain_words":""}
+{"timestamp":"2026-09-09T19:16:46Z","action":"complaint","word":"t","murky":"side Core.ts, then one file at a time: import gallery's, delete its own. lv ends with only App, Main, its assets and its words. mj gains a gallery of its own pictures.\n\n**Open.** gallery's two questions come first. mj has two layouts on offer, panel's three regions and gallery's sidebar beside a renderer. Where mj's pictures live. Whether Router, Parser and Persistence are gallery's or the host's.","plain":"nel: a top row, a left column, a content box. gallery draws something else: lv's sidebar with a picture area beside it. mj cannot draw both. One goes.\n3. mj will show pictures. lv keeps its pictures in the repo. Where mj keeps its pictures is not decided.\n4. gallery has three files, Router, Parser and Persistence, that could belong to the library or to each app that uses it. Nobody has said which.","rule":"any-line","words":"168","plain_words":"108"}
+{"timestamp":"2026-09-09T19:17:29Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"58","plain_words":""}
+{"timestamp":"2026-09-09T19:20:35Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"159","plain_words":""}
+{"timestamp":"2026-09-09T19:21:11Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"36","plain_words":""}
+{"timestamp":"2026-09-09T19:22:33Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"88","plain_words":""}
+{"timestamp":"2026-09-09T19:23:20Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"22","plain_words":""}
+{"timestamp":"2026-09-09T19:25:54Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"140","plain_words":""}
+{"timestamp":"2026-09-09T19:27:26Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"163","plain_words":""}
+{"timestamp":"2026-09-09T19:38:50Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"296","plain_words":""}
+{"timestamp":"2026-09-09T20:05:16Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"425","plain_words":""}
+{"timestamp":"2026-09-09T20:07:16Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"110","plain_words":""}
+{"timestamp":"2026-09-09T20:11:10Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"122","plain_words":""}
+{"timestamp":"2026-09-09T20:12:54Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"150","plain_words":""}
+{"timestamp":"2026-09-09T20:15:55Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"121","plain_words":""}
+{"timestamp":"2026-09-09T20:18:16Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"184","plain_words":""}
+{"timestamp":"2026-09-09T20:56:51Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"215","plain_words":""}
+{"timestamp":"2026-09-09T21:06:03Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"110","plain_words":""}
+{"timestamp":"2026-09-09T21:07:11Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"3","plain_words":""}
+{"timestamp":"2026-09-09T21:14:09Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"68","plain_words":""}
+{"timestamp":"2026-09-09T21:16:52Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"120","plain_words":""}
+{"timestamp":"2026-09-09T21:21:50Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"94","plain_words":""}
+{"timestamp":"2026-09-09T21:26:07Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"82","plain_words":""}
+{"timestamp":"2026-09-09T21:28:38Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"56","plain_words":""}
+{"timestamp":"2026-09-09T21:30:06Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"201","plain_words":""}
+{"timestamp":"2026-09-09T21:34:35Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"222","plain_words":""}
+{"timestamp":"2026-09-09T21:46:13Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"245","plain_words":""}
+{"timestamp":"2026-09-09T21:49:33Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"45","plain_words":""}
+{"timestamp":"2026-09-09T21:51:49Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"113","plain_words":""}
+{"timestamp":"2026-09-09T21:57:12Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"72","plain_words":""}
