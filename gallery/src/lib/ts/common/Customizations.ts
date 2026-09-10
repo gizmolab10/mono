@@ -8,7 +8,8 @@
 // never while its files load, so the host's values are the ones every file sees.
 
 export const customizations = {
-	enable_sidebar : false,			// the sidebar's hamburger is drawn
+	name           : 'gallery',		// what the controls row calls the project, centered in it
+	enable_sidebar : true,			// the details column may show the sidebar, the list of pages
 	home           : 'Home',		// the page shown at the root address
 	prefix         : 'gallery.',	// what every remembered value is saved under
 };

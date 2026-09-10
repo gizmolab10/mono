@@ -1,8 +1,10 @@
 <script lang='ts'>
 	import { hits } from '../../ts/common/Core';
+	import type { Snippet } from 'svelte';
 
-	// The details column. The frame computes its width. Empty: nothing sits in it yet.
-	let { width }: { width: number } = $props();
+	// The details column. The page computes its width. It holds whatever the host hands over,
+	// given that width, and nothing where the host hands nothing.
+	let { width, children }: { width: number; children?: Snippet<[number]> } = $props();
 
 	// The column is given its width from outside, and it changes without the window changing —
 	// showing the column, hiding it, or the window growing past where both fit. Everything in it
@@ -13,7 +15,9 @@
 	});
 </script>
 
-<div class='region details' style:width='{width}px'></div>
+<div class='region details' style:width='{width}px'>
+	{@render children?.(width)}
+</div>
 
 <style>
 	.region {
@@ -22,8 +26,8 @@
 		overflow      : hidden;
 	}
 
-	/* ov's column sits on the accent and only its stack takes the page color. With nothing in
-	   it yet, the whole column takes the page color, so it can be seen at all. */
+	/* ov's column sits on the accent and only its stack takes the page color. Here the whole
+	   column takes the page color, so it can be seen at all. */
 	.details {
 		background     : var(--bg);
 		padding        : var(--gap);

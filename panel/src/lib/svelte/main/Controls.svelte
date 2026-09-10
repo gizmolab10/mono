@@ -1,26 +1,36 @@
 <script lang='ts'>
-	import { customizations } from '../../ts/common/Customizations';
 	import { Hamburger } from '../../ts/common/Core';
+	import type { Snippet } from 'svelte';
 
 	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
-	// left shows or hides details; the project's name keeps the middle of the whole row. Nothing
-	// else in it yet.
-	let { onclick, detailsShown }: { onclick: () => void; detailsShown: boolean } = $props();
+	// left shows or hides details; the project's name keeps the middle of the whole row; whatever
+	// the host hands over sits at its right end.
+	let { onclick, detailsShown, hamburger = true, name, right, height = $bindable(0) }: {
+		onclick      : () => void;   // the hamburger was pressed
+		detailsShown : boolean;      // whether the details column is drawn, for the hamburger's hint
+		hamburger?   : boolean;      // whether the hamburger is drawn at all
+		name         : string;       // what the row calls the project
+		right?       : Snippet;      // what sits at the right end of the row
+		height?      : number;       // how tall the row is, handed back so the page can size what is below it
+	} = $props();
 </script>
 
-<div class='controls-row layer-controls'>
-	<Hamburger id='controls.hamburger' label='show or hide details' onpress={onclick}
-		tip={detailsShown ? 'hide details' : 'show details'} />
+<div class='controls-row layer-controls' bind:clientHeight={height}>
+	{#if hamburger}
+		<Hamburger id='controls.hamburger' label='show or hide details' onpress={onclick}
+			tip={detailsShown ? 'hide details' : 'show details'} />
+	{/if}
 	<!-- Placed at the middle of the whole row rather than centered in what the hamburger leaves
 	     over, so it never drifts as the row's other contents come and go. -->
-	<span class='name'>{customizations.name}</span>
+	<span class='name'>{name}</span>
 	<span class='spacer'></span>
+	{@render right?.()}
 </div>
 
 <style>
 	.controls-row {
 		/* A normal top row: items centered, full width, no vertical gap — the row
-		   is just as tall as its controls. The frame stacks the two boxes below it. */
+		   is just as tall as its controls. The page stacks the two boxes below it. */
 		background  : var(--accent);
 		gap         : var(--gap);
 		box-sizing  : border-box;

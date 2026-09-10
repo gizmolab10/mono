@@ -1,10 +1,12 @@
-/* ===== The page shell's styling =====
+/* ===== The page's styling =====
    Imported at the app's entry point (src/lib/ts/Main.ts), beside Gallery.css,
-   which holds the gallery's own rules. Holds every look-and-feel rule for the
-   page around the gallery: the shell, the sidebar, the status line.
+   which holds the gallery's own rules. The page itself is panel's — the
+   controls row, the details column, the operation view and the status line —
+   so what is here is what gallery puts inside them: the sidebar's list, the md
+   file, and the callouts.
 */
 
-/* ----- Typography (was inline in App.svelte) ----- */
+/* ----- Typography ----- */
 body {
   font-family: system-ui, sans-serif;
   user-select: none;
@@ -14,84 +16,6 @@ body {
 input:focus,
 textarea:focus {
   user-select: text;
-}
-
-/* ----- Page shell: four-piece layout =====
-   .shell wraps the entire page.
-   .shell holds three regions in a grid (sidebar | content) on top of (status across both),
-   plus the hamburger positioned over the top-left corner.
-*/
-.shell {
-  grid-template-columns: 250px 1fr;
-  grid-template-rows: auto 1fr auto;
-  grid-template-areas:
-    "top top"
-    "sidebar content"
-    "status status";
-  position: relative;
-  display: grid;
-  height: 100vh;
-}
-
-/* ----- Sidebar hidden / collapsed on wide screens ----- */
-.shell.sidebar-hidden {
-  grid-template-columns: 0 1fr;
-}
-
-.shell.sidebar-hidden .shell-sidebar {
-  display: none;
-}
-
-/* The top row reaches across both columns, whatever the sidebar is doing. */
-.shell-top {
-  grid-area: top;
-}
-
-/* ----- Narrow screens: one column at a time ----- */
-@media (max-width: 700px) {
-  .shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas:
-      "top"
-      "main"
-      "status";
-  }
-
-  /* Default mobile state: sidebar visible, content hidden. */
-  .shell .shell-sidebar {
-    grid-area: main;
-  }
-
-  .shell .shell-content {
-    display: none;
-  }
-
-  /* Toggled state: content visible, sidebar hidden. */
-  .shell.sidebar-hidden .shell-sidebar {
-    display: none;
-  }
-
-  .shell.sidebar-hidden .shell-content {
-    grid-area: main;
-    display: block;
-  }
-}
-
-.shell-sidebar {
-  border-right: var(--thick-faint) solid lightgrey;
-  /* Leave room at the top for the hamburger. */
-  padding: calc(3rem + 12px) 1rem 1rem 1rem;
-  grid-area: sidebar;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.shell-content {
-  grid-area: content;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 1.5rem;
 }
 
 /* No scrollbars anywhere, across or down. Everything still scrolls — by wheel, by
@@ -108,41 +32,23 @@ textarea:focus {
   display: none;
 }
 
-.shell-status {
-  border-top: var(--thick-faint) solid lightgrey;
-  padding: 0.25rem 0.75rem;
-  min-height: 1.5rem;
-  grid-area: status;
-  font-size: 0.9em;
-  color: #666;
+/* ----- The sidebar, in the details column ----- */
+/* It fills the column and scrolls inside it. */
+.shell-sidebar {
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  flex: 1;
 }
 
-.status-error {
-  color: #b80000;
-}
-
-.hamburger-button {
-  border: var(--thick) solid white;
-  justify-content: center;
-  border-radius: 0.25rem;
-  align-items: center;
-  background: white;
-  position: absolute;
-  cursor: pointer;
-  display: flex;
-  left: 0.5rem;
-  height: 3rem;
-  width: 3rem;
-  top: 0.5rem;
-  z-index: 10;
-}
-
-.hamburger-button:hover {
-  color: lightgrey;
-}
-
-.hamburger-button .hamburger-icon path {
-  fill: currentColor;
+/* ----- The md file, in the operation view ----- */
+/* It fills the view and scrolls inside it. */
+.shell-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.5rem;
+  min-height: 0;
+  flex: 1;
 }
 
 /* ----- Sidebar entries ----- */
@@ -244,14 +150,4 @@ textarea:focus {
 
 .callout.center .callout-content {
   text-align: center;
-}
-
-/* ----- Editing ----- */
-/* Where the edit button sits: fixed at the top right of every page. How it
-   looks is in Gallery.css, with the rest of the gallery's own rules. */
-.shell-edit {
-  position: fixed;
-  top: 0.75rem;
-  right: 0.75rem;
-  z-index: 20;
 }

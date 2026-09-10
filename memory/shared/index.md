@@ -35,7 +35,9 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [truth and zone.md](zone/truth%20and%20zone.md) — whether truth/ and zone/ divide further; reviewed, no new folders.
 - [ideas.md](zone/ideas.md) — live thinking about the collaboration itself.
 - [collisions.md](zone/collisions.md) — pairs of rules that cannot both be obeyed, each met in real work, with the rewrite that would end it.
-- [incorporating a project.md](zone/incorporating%20a%20project.md) — the steps a host follows to take panel in, as mu and mj did.
+- [incorporating a project.md](zone/architecture/incorporating%20a%20project.md) — the steps a host follows to take panel in, as mu and mj did.
+- [libraries.md](zone/architecture/libraries.md) — what a library is, and how a host takes one on: one alias and one bridge per library per host, nothing built on its own.
+- [library projects.md](zone/architecture/library%20projects.md) — the chain of libraries, each importing the one above it, and the proposal to make the code match it.
 - [big picture.md](zone/big%20picture.md) — one line per memory file holding unfinished work, across every project. Written by tools/big-picture.py, never by hand.
 - [learn.md](zone/learn.md) — past mistakes that apply across every project, distilled into rules. Each project keeps its own at the same place, made the day its first one is written.
 - [claude code.md](zone/claude%20code.md) — where the toolkit actually runs; installing Claude Code.

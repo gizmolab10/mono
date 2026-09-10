@@ -7,6 +7,27 @@ date: 2026-09-09
 ---
 # Proposals
 
+## a picture fills the box it is given (9 September 2026)
+
+Proposal — in mj, a picture grows or shrinks to fill the operation view, keeping its aspect ratio, with a margin of at least `--gap-huge`, core's largest gap, on every side. Today it is capped at 700px whatever the box is.
+
+**The parts.** Two, one per owner.
+
+1. **The host measures the box.** mj's Operation.svelte wraps the gallery in a div that keeps `--gap-huge` of space on every side, reads that div's inner width and height as they change, and hands them to the component as one optional value, the space the picture may fill.
+2. **The component fits the picture and its caption together.** Gallery.svelte, given that space, first takes the caption's own height, and the gap between the two, off the space's height. Then it reads the picture's own width and height once it has loaded, scales it to the larger size that fits what is left both ways, and sets that width and height on the image. The image's box is then exactly the picture, the caption sits right under it, both sit inside the margin, and the rounded corners are tight. A movie is sized the same way from its own width and height.
+
+**What does not change.** lv hands no space, so its pictures keep the 700px cap and the height a page asks for after the bar. The cap in Gallery.css stays for any host that hands nothing. Changed 10 September 2026: lv hands a space too, through gallery's own page. Renderer.svelte hands each gallery on the md file the space the rest of the page leaves it, the page's border kept, so lv's picture, caption and title fill the view together.
+
+**Success criteria.** In mj, a small picture grows and a large one shrinks until the picture and its caption together leave `--gap-huge` on the tighter pair of sides, the ratio unchanged, at every window size. lv draws exactly as today.
+
+**Cost.** Operation.svelte: the wrapper and two bound sizes, about eight lines. Gallery.svelte: one optional prop, the load handler that reads the picture's size, and the arithmetic, about fifteen lines. No stylesheet change.
+
+**Decided 9 September 2026.** The caption's height comes out of the space first, so picture and caption together keep the margin.
+
+**Built 9 September 2026.** Gallery.svelte takes the space as an optional value, reads the picture's or the movie's own size when it loads, takes the caption's height and the gap above it off the space, and sets the scaled width and height on the element, lifting the stylesheet's caps. mj's Operation.svelte measures the space inside the margin and hands it over. The table and the drop box, while editing, sit inside the same margin.
+
+**Changed 10 September 2026.** The margin is none: picture and caption fill the box out to its edges. And the space is no longer measured, which arrived a frame late while the window was dragged and jittered. App.svelte computes the box's height from the window's, less the margins and the controls row's height, which the row hands back, and Operation.svelte hands the box's size down. Whatever overflows for a frame is clipped.
+
 ## Router, Parser and Persistence: library or host (9 September 2026)
 
 Proposal — sort the three by core's rule. State lives in the host, behavior in the library, and the library keeps none of a host's vocabulary.

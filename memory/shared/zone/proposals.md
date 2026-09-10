@@ -7,6 +7,36 @@ date: 2026-08-31
 ---
 # Proposals
 
+## libraries resolve through the workspace, not through aliases (10 September 2026)
+
+Dead, 10 September 2026. The aliases and the bridges stay: one alias per library in each host's tsconfig and vite config, one bridge per library in each host, and a library that imports a library does the same. An exports map saves one line per library at the cost of an extension on 110 bridge lines and an unproved link on Netlify.
+
+Proposal — the answer to the open thread in [handoff](handoff.md). What exists, read today: mono is one yarn workspace. The root package.json lists core, panel, gallery and the hosts, and yarn has linked core, gallery and panel into the root node_modules. Nothing is published outside mono: no package has an `exports` field, and the two live sites, lv and mj, are built by vite from the whole checkout on Netlify. So the handoff's first situation is the one that applies: no build step per library, no svelte-package, no Turborepo or Nx.
+
+**What mono does today.** Each host reaches a library through an alias written in three places, tsconfig's paths, vite's resolve, and a standalone vitest config where a host has one. Each library's own files reach core the same way, through whatever host is building them. Seven tsconfigs carry the core alias, two the gallery alias.
+
+**The one change the handoff's advice points to.** Each library's package.json gains an `exports` map that points at its source, so `core/ts/common/Constants` and `gallery/lib/svelte/Gallery.svelte` resolve through the workspace link from anywhere, host or library, with no alias in any host. TypeScript's bundler resolution, vite and vitest all read `exports`. The bridges stay: only Core.ts and Gallery.ts import from a library, and Aliases.test.ts still proves it. For core:
+
+```json
+"exports": {
+  "./main.css": "./src/lib/main.css",
+  "./*.svelte": "./src/lib/*.svelte",
+  "./*": "./src/lib/*.ts"
+}
+```
+
+gallery's is the same over `./src`, with a line for `./css/*.css`.
+
+**Project references**, TypeScript's own tsconfig settings for checking a chain of packages one package at a time, speed `tsc` across a chain. Each host's check already covers the library files it imports, 470 files in a few seconds, so they wait until check times hurt.
+
+**Success criteria.** Every tsconfig and vite config loses its paths and alias lines. Every check, test and build passes as now, and the alias tests pass unchanged. One deploy on Netlify proves the link resolves there too.
+
+**Cost.** Three exports maps, about five lines each. The alias lines out of seven tsconfigs, seven vite configs and ov's vitest config.
+
+panel gets its map now too. In the code today nothing imports panel, but in [library projects](library%20projects.md) gallery and the filter tree both do, and a map is what lets them.
+
+**Open.** Whether each host's package.json should list core, panel and gallery as dependencies, so the link is declared rather than relied on.
+
 ## lv and mj import gallery (9 September 2026)
 
 Proposal — gallery becomes a library two hosts import: lv, whose code it is, and mj, which mj's ideas say will be a gallery.
@@ -137,7 +167,7 @@ Reading (3) is dead, 7 September 2026: panel imports core, not the other way. No
 
 ## panel into mu and mj (7 September 2026)
 
-Decided and built 7 September 2026: way (1), both hosts. mu and mj each hold their own version of the four files, mj on its own paths; both check clean at 411 files and build. The first open question is answered — mj took it too; the second, whether panel remains, is now panel's own question.
+Decided and built 7 September 2026: way (1), both hosts. mu and mj each hold their own version of the four files, mj on its own paths; both check clean at 411 files and build. The first open question is answered — mj took it too; the second, whether panel remains, is now panel's own question. Superseded 10 September 2026: mu and mj import panel through their own `Panel.ts` and hold no version of its files.
 
 Proposal — mu and mj each take panel's four components as their own starting shape, and grow their own flesh inside it.
 

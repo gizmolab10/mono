@@ -18,7 +18,7 @@
 
 .gallery {
   text-align: center;
-  margin: 1.5rem 0;
+  margin: 0 0 1.5rem;
 }
 
 /* The cap is the button's, not the image's: a cap written on the image as a share of the
@@ -35,14 +35,17 @@
   padding: 0;
 }
 
+/* The corners are rounded the same as a region's, core's one radius. */
 video.gallery-photo {
   max-height: var(--gallery-photo-max);
+  border-radius: var(--radius);
   display: block;
   margin: 0 auto;
 }
 
 .gallery-photo img {
   max-height: var(--gallery-photo-max);
+  border-radius: var(--radius);
   object-fit: contain;
   max-width: 100%;
   display: block;
@@ -51,7 +54,7 @@ video.gallery-photo {
 }
 
 .gallery-caption {
-  margin: 0.5rem 0 0;
+  margin: 0.5rem 0;
   text-align: center;
   font-size: 0.9rem;
   opacity: 0.75;

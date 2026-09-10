@@ -46,7 +46,52 @@
     return said.trim();
   }
 
-  let { photos, folder, height = null }: { photos: Photo[]; folder: string; height?: number | null } = $props();
+  let { photos, folder, height = null, fit = null }: {
+    photos  : Photo[];
+    folder  : string;
+    height? : number | null;                            // every picture drawn this tall, as a page asks with a number after the folder's name
+    fit?    : { width: number; height: number } | null; // the space a picture and its caption may fill, handed over by a host that measures its box
+  } = $props();
+
+  // The picture's own size, read once it has loaded, so it can be scaled to the space a
+  // host hands over. Nothing until then, and the stylesheet's caps apply instead.
+  let natural = $state<{ width: number; height: number } | null>(null);
+  let caption_element = $state<HTMLElement | null>(null);
+
+  function loaded(event: Event) {
+    const one = event.currentTarget as HTMLImageElement | HTMLVideoElement;
+    natural = one instanceof HTMLVideoElement
+      ? { width: one.videoWidth, height: one.videoHeight }
+      : { width: one.naturalWidth, height: one.naturalHeight };
+  }
+
+  // What the caption takes off the space: its own height, and the gaps above and below it.
+  // Read from the element the moment it exists, so the first drawing already knows it, and
+  // read again whenever the words or the space change.
+  const caption_room = $derived.by(() => {
+    caption;
+    fit;
+    if (!caption_element) { return 0; }
+    const style = getComputedStyle(caption_element);
+    return caption_element.offsetHeight + parseFloat(style.marginTop || '0') + parseFloat(style.marginBottom || '0');
+  });
+
+  // While the space is known and the picture's own size is not — its file has not arrived —
+  // the picture's box holds the whole space, so whatever sits below it is already where it
+  // will end up when the picture appears.
+  const holding = $derived(fit && !natural ? Math.max(0, fit.height - caption_room) : null);
+
+  // The picture scaled to fill the space, ratio kept: the larger size that fits both ways,
+  // with the caption's room taken off the height first. Nothing where no space was handed
+  // over, or the picture has not said its size yet — then the stylesheet's caps apply.
+  const sized = $derived.by(() => {
+    if (!fit || !natural || natural.width === 0 || natural.height === 0) { return null; }
+    const wide = fit.width;
+    const tall = fit.height - caption_room;
+    if (wide <= 0 || tall <= 0) { return null; }
+    const scale = Math.min(wide / natural.width, tall / natural.height);
+    return { width: natural.width * scale, height: natural.height * scale };
+  });
 
   let at = $state(0);
   let edit_index = $state(0);
@@ -310,16 +355,28 @@
          that was playing goes with the old one and stops. -->
     {#key showing.url}
       <video class='gallery-photo' src={showing.url} controls autoplay playsinline
-        style:height={height ? `${height}px` : null}><track kind='captions' /></video>
+        onloadedmetadata={loaded}
+        style:width={sized ? `${sized.width}px` : null}
+        style:height={sized ? `${sized.height}px` : holding ? `${holding}px` : height ? `${height}px` : null}
+        style:max-width={sized ? 'none' : null}
+        style:max-height={sized ? 'none' : null}><track kind='captions' /></video>
     {/key}
   {:else}
     <!-- One element for every still, its address swapped: the picture up stays up until
          the next has arrived, so nothing of the page behind it shows between the two. -->
-    <button class='gallery-photo' aria-label='next photo' onclick={() => walk(1)}>
-      <img src={showing.url} alt={caption} style:height={height ? `${height}px` : null} />
+    <!-- Sized to the space where a host handed one over; the stylesheet's caps are lifted
+         then, since the size here already fits. -->
+    <button class='gallery-photo' aria-label='next photo' onclick={() => walk(1)}
+      style:max-width={sized ? 'none' : null}
+      style:height={holding ? `${holding}px` : null}>
+      <img src={showing.url} alt={caption} onload={loaded}
+        style:width={sized ? `${sized.width}px` : null}
+        style:height={sized ? `${sized.height}px` : height ? `${height}px` : null}
+        style:max-width={sized ? 'none' : null}
+        style:max-height={sized ? 'none' : null} />
     </button>
   {/if}
-  <p class='gallery-caption'>{caption}</p>
+  <p class='gallery-caption' bind:this={caption_element}>{caption}</p>
 {:else}
   <p class='gallery-caption'>no photos in "{folder}"</p>
 {/if}

@@ -6,3 +6,12 @@ $ vite
 
   ➜  Local:   http://localhost:5186/
   ➜  Network: use --host to expose
+12:47:16 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte, /src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+12:47:21 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte, /src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+12:47:24 PM [vite] (client) hmr update /src/lib/svelte/main/Operation.svelte
+12:47:31 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte, /src/lib/svelte/main/App.svelte?svelte&type=style&lang.css
+12:57:26 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte
+12:57:28 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+12:57:29 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+12:57:32 PM [vite] (client) hmr update /src/lib/svelte/main/Operation.svelte
+1:08:33 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte

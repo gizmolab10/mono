@@ -1,9 +1,14 @@
 <script lang='ts'>
-	// The content box. The frame computes its width. Empty: nothing happens in it yet.
-	let { width }: { width: number } = $props();
+	import type { Snippet } from 'svelte';
+
+	// The operation view. The page computes its width and its height. It holds whatever the host
+	// hands over, given both, and nothing where the host hands nothing.
+	let { width, height, children }: { width: number; height: number; children?: Snippet<[number, number]> } = $props();
 </script>
 
-<div class='region content' style:width='{width}px'></div>
+<div class='region content' style:width='{width}px'>
+	{@render children?.(width, height)}
+</div>
 
 <style>
 	.content {

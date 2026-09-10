@@ -4,7 +4,7 @@ title: Create a project
 description: The steps to bring up a new project in the memory system, and in mono when it needs code.
 tags: [howto, projects, setup, incorporated]
 use_when: [creating a project, bringing up a new project, adding to memory]
-updated: 7 September 2026
+updated: 10 September 2026
 ---
 # Create a project
 
@@ -14,7 +14,7 @@ Two halves. The memory half is always done; the code half only when the project 
 
 `memory/<name>/` holds:
 
-```
+```text
 memory/<name>/
   index.md         what it is, how it stands, the truths listed
   log.md           the diary, empty but for the day it was brought up
@@ -43,6 +43,8 @@ Copy ov's structure, and no more of it than the project uses:
 - `src/lib/ts/main.ts` — mounts one component, nothing else.
 - `src/lib/svelte/main/App.svelte` — the whole app on day one.
 - `CLAUDE.md` — a few lines: what it is, and a pointer at `memory/<name>/`.
+
+Every app takes core, so the new project takes a library on day one: the alias, the bridge and the test, per [libraries](../zone/architecture/libraries.md).
 
 Then three registrations, all easy to forget:
 

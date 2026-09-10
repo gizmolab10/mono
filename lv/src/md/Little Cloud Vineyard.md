@@ -5,5 +5,5 @@ title: Home
 home: true
 
 ---
-> [!gallery] the vineyard|400
+> [!gallery] the vineyard
 > [!center] # Little Cloud Vineyard

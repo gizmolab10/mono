@@ -1,0 +1,118 @@
+chat log — 2026-09-10
+topic: curved-line graphics with AI, then a structural diagram of app/core/panel/gallery
+
+
+jonathan:
+what curved line drawing graphic stuff works great with ai?
+
+claude:
+SVG path strings. That's the format AI writes most reliably, and you already use it in SVG_Paths.ts.
+
+Within SVG paths, ranked by how often AI gets them right:
+
+- C (cubic Bezier — curve defined by two endpoints and two pull points) and Q (quadratic — one
+  pull point). Best. The syntax is short and the numbers are plain coordinates.
+- S and T (shorthand versions that reuse the previous pull point). Good, but AI sometimes forgets
+  the reuse rule and the curve kinks.
+- A (elliptical arc). Worst. Seven numbers including two 0/1 flags with no separator required
+  between them. This is where the errant-comma class of bug comes from.
+
+The bigger rule: ask AI for the code that computes the curve, not the coordinates. AI is bad at
+picking control-point numbers that make a specific shape, and good at writing a function that
+generates them. So for a curve that must pass through known points, have it write a
+Catmull-Rom to Bezier converter (Catmull-Rom = a curve defined by points it actually touches)
+and feed your points in.
+
+What AI is bad at: NURBS, B-spline knot vectors, anything where the control points are not the
+visible shape.
+
+Are you asking about AI writing curve code, or about image generators drawing curved-line art?
+I answered the first.
+
+
+jonathan:
+art
+
+claude:
+For curved-line art, the split that matters is whether the tool makes actual paths or makes pixels.
+
+Makes paths (you get curves you can edit):
+- Recraft. Supports raster and vector generation, vectorization, and SVG or PDF export, with a
+  vector model you pick when paths matter.
+- Illustrator's Text to Vector Graphic, plus Kittl and Illustro. These are the commonly listed
+  text-to-SVG tools in 2026.
+
+Makes pixels (you then have to trace):
+- Midjourney, DALL-E, Stable Diffusion, Nano Banana. Midjourney and Stable Diffusion document
+  raster formats only.
+
+Avoid tracing if you can. A tracer follows pixel edges instead of design intent, so a soft edge
+reads as a slightly wobbly line and it adds a point for every wobble — a curve you would draw
+with four control points comes back with two hundred.
+
+Styles these tools do well: continuous single line, minimalist contour, fine botanical line,
+flat 2D illustration. Those are all a small number of long smooth strokes, which is the easy case.
+
+Where it fails: thin strokes vanish when the art is scaled down, doubled lines become obvious,
+and curves come back broken. Check at final size, not in the preview.
+
+If you want the curves for di or ws rather than for a finished picture, generating SVG directly
+beats generating an image and tracing it.
+
+sources searched: openart.ai vector generators roundup, design-rise 2026 vector creators,
+clearly.sh ai art generator comparison, loova.ai line art roundup.
+
+
+jonathan:
+starting simple, a data logic diagram with rounded rectangles next to and inside each other,
+labeled. so i can visualize the architecture of core and panel and gallery and ...
+
+claude:
+[rendered a diagram inline: outer rounded rect labeled "app", containing "core" on the left and
+"panel" above "gallery" on the right. Same geometry later saved to app.svg.]
+
+That nesting is a guess. Tell me the real one and I'll redo it.
+
+What I need, in any rough form:
+
+- the full list of parts
+- what contains what
+- which parts sit side by side at the same level
+
+Something like app > core > (panel, gallery) works fine, or just a bulleted indent list.
+
+Two limits worth knowing before you write the list: three levels of nesting is the readable
+maximum at this width, and four boxes across is the maximum in one row. Past that I split it into
+an overview plus a second diagram per part.
+
+Once the shape is right I can write it to an .svg file in mono instead of leaving it in the chat.
+
+
+jonathan:
+can you write that svg to a file 'app.svg'?
+
+claude:
+Written to /Users/sand/GitHub/mono/app.svg and read back to confirm. Move it if the root isn't
+where you want it.
+
+Two changes from the chat version, both required for a standalone file:
+
+- Colors are now literal hex on every rect and text. The chat version used class names that only
+  exist inside the chat renderer; opened as a plain file it would have rendered as black boxes.
+- Font is a system sans stack instead of Anthropic Sans.
+
+One consequence: the hex colors are fixed light-mode values, so this file does not follow dark
+mode. If you need that, say so and I'll add a prefers-color-scheme block.
+
+
+jonathan:
+write this chat into mono/app.chat
+
+claude:
+[wrote this file]
+
+
+open items
+- the real containment structure for core / panel / gallery and the rest is still unknown;
+  the diagram in app.svg is a placeholder guess
+- app.svg is light-mode only; a prefers-color-scheme block was offered, not added

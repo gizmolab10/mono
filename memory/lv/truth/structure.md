@@ -21,7 +21,7 @@ What `Customizations.ts` holds: one gathered value, `customizations`, so a calle
 
 ## Two files say where the aliases point
 
-`tsconfig.json` and `vite.config.ts`, and they must always agree, for `core` and for `gallery` both. lv keeps no vitest config of its own, so the test runner reads the vite one — three files where a project with its own vitest config would need three. `Aliases.test.ts` proves that only the bridges reach through an alias.
+`tsconfig.json` and `vite.config.ts`, and they must always agree, for `core`, `panel` and `gallery`. lv's code names only core and gallery; the panel alias is there because lv's build compiles gallery's page, which is panel's. lv keeps no vitest config of its own, so the test runner reads the vite one — three files where a project with its own vitest config would need three. `Aliases.test.ts` proves that only the bridges reach through an alias.
 
 ## What lv owes at startup
 
@@ -45,4 +45,4 @@ No scrollbar is drawn anywhere, across or down. The rule sits on every element r
 
 Off by default, and its switch is `customizations.enable_sidebar`. Switched off, what was remembered counts for nothing — gallery's `S_Sidebar` keeps the remembered value private and its `visible` answers to the switch as well, so the content stops holding a column's width for a sidebar that is never drawn. Toggling does nothing while it is off.
 
-The shell is four regions in a grid: a top row across the whole width, the sidebar and the rendered file beside each other, and the status line across the foot. The top row is core's `Section`, bounded above by the view so it draws no line there.
+The page is panel's: a controls row across the top holding the hamburger, the site's name and the edit button, the details column and the operation view beside each other, and a status line below them while a link leads nowhere. The sidebar is what the details column holds, and the md file is what the operation view holds.

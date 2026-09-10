@@ -6,3 +6,10 @@ $ vite
 
   ➜  Local:   http://localhost:5184/
   ➜  Network: use --host to expose
+12:58:07 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte, /src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+12:58:07 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte, /src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+12:58:07 PM [vite] (client) hmr update /src/lib/svelte/main/Operation.svelte, /src/lib/svelte/main/Operation.svelte?svelte&type=style&lang.css
+12:58:19 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/mu/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+12:58:22 PM [vite] vite.config.ts changed, restarting server...
+12:58:22 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+12:58:22 PM [vite] server restarted.

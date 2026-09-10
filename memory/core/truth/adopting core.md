@@ -11,6 +11,8 @@ date: 2026-09-01
 
 Written out of ov's adoption, finished 31 August 2026, for whichever host comes next — lv, di. mj took it 1 September 2026 and mu 7 September, each as three files: Core.ts of three lines, an empty Customizations.ts, and a main.ts that configures core before mounting. What ov actually did is at the bottom, file by file; the wiring, the lessons and the steps above it are the part that carries over.
 
+core is one of mono's libraries. The rule for every library, and for a host taking one on, is [libraries](../../shared/zone/architecture/libraries.md). This file is core's case of it.
+
 ## what is core?
 
 A library with no entry point: four ts folders (common, events, types, utilities), each behind an index.ts barrel, and eight support components. It holds no state — no remembered values, only the way to read and write one under a host's prefix — no managers, no app. A host keeps the state, wires it in, and draws the app around it. core principle: state lives in the host, behavior in core; anything in core reaching for a manager is a bug.

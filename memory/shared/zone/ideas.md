@@ -7,11 +7,11 @@ date: 22 August 2026
 ---
 # Ideas
 
+- [ ] read handoff
 - [ ] read [[collisions]] — each entry is two rules that cannot both be obeyed, met in real work, with the smallest rewrite that would end it. Rewrite each pair as one rule, then strike the entry
 - [ ] [[library projects]]
 - [ ] unmurk the entirety of our documentation 
     - [ ] Co did very well at the start. Lately I can't understand about half of co's replies. Try to discover the cause of this recent incomprehensibility.
-- [ ] create mj (gallery of girls) -> mj.jonathansand.me
 
 ---
 

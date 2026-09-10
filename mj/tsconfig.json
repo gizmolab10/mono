@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "core/*": ["../core/src/lib/*"],
+      "panel/*": ["../panel/src/lib/*"],
       "gallery/*": ["../gallery/src/*"]
     },
     "useDefineForClassFields": true,

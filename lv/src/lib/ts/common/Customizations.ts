@@ -8,7 +8,9 @@
 // anything mounts.
 
 export const customizations = {
-	enable_sidebar : false,						// the sidebar's hamburger is drawn
+	color          : '#7a8fa8',					// the accent and the page color, one and the same, taken from a picture
+	name           : '',						// what the controls row calls the site: nothing, the page itself carries the name
+	enable_sidebar : false,						// the details column may show the sidebar, the list of pages
 	home           : 'Little Cloud Vineyard',	// the page shown at the root address
 	prefix         : 'lv.',						// what every remembered value is saved under
 };

@@ -10,11 +10,14 @@ export default defineConfig({
   // and the dev server's routes for editing.
   plugins: [svelte(), photoTitles(), captionDrop()],
   resolve: {
-    // "core" and "gallery" are aliases for the two libraries one folder over; tsconfig
-    // teaches the checker the same aliases, and the two must always agree. lv keeps no
-    // vitest config of its own, so the test runner reads this one too.
+    // "core", "panel" and "gallery" are aliases for the three libraries one folder over;
+    // tsconfig teaches the checker the same aliases, and the two must always agree. lv's code
+    // names only core and gallery, but its build compiles gallery's page, which is panel's, so
+    // panel's alias is here too. lv keeps no vitest config of its own, so the test runner
+    // reads this one too.
     alias: {
       core: resolve(__dirname, '../core/src/lib'),
+      panel: resolve(__dirname, '../panel/src/lib'),
       gallery: resolve(__dirname, '../gallery/src'),
     },
   },

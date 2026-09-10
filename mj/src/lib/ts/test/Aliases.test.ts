@@ -3,11 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { dirname, join, relative } from 'path';
 import { fileURLToPath } from 'url';
 
-// Two libraries reach mj through an alias, core and gallery, and each has its bridges:
-// common/Core.ts for core, common/Gallery.ts for gallery, and Main.ts for the two
-// stylesheets alone, core's and gallery's. A stylesheet has no exports to re-export, and where it loads decides
-// which rule wins between two that match equally — through a bridge it would arrive with
-// whichever file was pulled in first. Every other file of mj's imports from a bridge.
+// Three libraries reach mj through an alias, core, panel and gallery, and each has its bridges:
+// common/Core.ts for core, common/Panel.ts for panel, common/Gallery.ts for gallery, and
+// Main.ts for the two stylesheets alone, core's and gallery's. A stylesheet has no exports to
+// re-export, and where it loads decides which rule wins between two that match equally —
+// through a bridge it would arrive with whichever file was pulled in first. Every other file
+// of mj's imports from a bridge.
 //
 // A rule with an exception already in it invites a second one, so the search that finds
 // every reach is written down here, where a new bridge fails it.
@@ -16,12 +17,13 @@ const SRC = join(dirname(fileURLToPath(import.meta.url)), '../../..');
 
 const BRIDGES: Record<string, string[]> = {
 	core    : ['lib/ts/common/Core.ts', 'lib/ts/Main.ts'],
+	panel   : ['lib/ts/common/Panel.ts'],
 	gallery : ['lib/ts/common/Gallery.ts', 'lib/ts/Main.ts'],
 };
 
 /** Every module a file reaches for through an alias. A path inside ordinary words is not one. */
 function alias_reaches_in(text: string): string[] {
-	return [...text.matchAll(/(?:from|import)\s+'((?:core|gallery)\/[^']+)'/g)].map((one) => one[1]);
+	return [...text.matchAll(/(?:from|import)\s+'((?:core|panel|gallery)\/[^']+)'/g)].map((one) => one[1]);
 }
 
 function source_files(folder: string): string[] {

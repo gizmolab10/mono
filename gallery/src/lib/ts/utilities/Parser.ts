@@ -22,6 +22,15 @@ import { unified } from 'unified';
 
 import { resolveHref } from './Resolver';
 
+// The line that asks for a gallery: the folder's name, and a height after the bar where one is
+// asked for. Said once, for the render and for the list of a page's folders.
+const GALLERY = /^> *\[!gallery\] *([^|\n]+?) *(?:\| *(\d+) *)?$/gim;
+
+// The folders a page asks a gallery of, in the order it asks.
+export function galleriesIn(md: string): string[] {
+  return [...md.matchAll(GALLERY)].map((one) => one[1].trim());
+}
+
 // Convert `![[name.png]]` and `[[Other Note]]` (and the `[[Target|Display]]`
 // alias form) into standard markdown image and link syntax. Also relax
 // standard `[Label](URL with spaces)` so the writer can use file names with
@@ -51,7 +60,7 @@ function preprocessObsidianSyntax(md: string): string {
   // it reads well, but Obsidian takes it for an embed of a note by that name,
   // finds none, and offers to make one. A callout is a shape Obsidian draws
   // without complaint.
-  md = md.replace(/^> *\[!gallery\] *([^|\n]+?) *(?:\| *(\d+) *)?$/gim, (_m, folder: string, tall?: string) => {
+  md = md.replace(GALLERY, (_m, folder: string, tall?: string) => {
     const height = tall ? ` data-height="${tall}"` : '';
     return `<div class="gallery" data-folder="${folder.trim()}"${height}></div>`;
   });

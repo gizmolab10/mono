@@ -7,10 +7,13 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [svelte(), photoTitles(), captionDrop()],
   resolve: {
-    // "core" is an alias for the shared library one folder over; tsconfig teaches
-    // the checker the same alias, and the two must always agree. gallery keeps no
-    // vitest config of its own, so the test runner reads this one too.
-    alias: { core: resolve(__dirname, '../core/src/lib') },
+    // "core" and "panel" are aliases for the two libraries one folder over; tsconfig
+    // teaches the checker the same aliases, and the two must always agree. gallery keeps
+    // no vitest config of its own, so the test runner reads this one too.
+    alias: {
+      core: resolve(__dirname, '../core/src/lib'),
+      panel: resolve(__dirname, '../panel/src/lib'),
+    },
   },
   build: {
     rollupOptions: {

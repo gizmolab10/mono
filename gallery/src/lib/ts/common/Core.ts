@@ -8,6 +8,7 @@
 
 import 'core/ts/common/Extensions';
 export { c } from 'core/ts/common/Configuration';
+export { debug } from 'core/ts/common/Debug';
 export { default, k } from 'core/ts/common/Constants';	// VITAL for Colors
 export { Colors, colors } from 'core/ts/utilities/Colors';
 export { Preferences } from 'core/ts/utilities/Preferences';
