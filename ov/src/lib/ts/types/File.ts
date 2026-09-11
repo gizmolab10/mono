@@ -3,13 +3,15 @@
 // its top.
 
 // The kinds a guide can be. Four say how a guide reads; analyze says what it is about — a taking
-// apart of something to find out how it works. A file is one of the five, said in its own labels
-// rather than worked out from the folder it sits in.
+// apart of something to find out how it works — and so does music, a file of mu's, the music
+// collection. A file is one of the six, said in the db rather than worked out from the folder
+// it sits in.
 export enum T_Kind {
 	analyze    = 'analyze',
 	arch       = 'arch',
 	explain    = 'explain',
 	howto      = 'howto',
+	music      = 'music',
 	specify    = 'specify',
 }
 

@@ -196,9 +196,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "1c8db68f687bfaed",
+  "active": "afa217138ba97b9e",
   "lastOpenFiles": [
     "tools/hub/ov.db-journal",
+    "ov/src/lib/svelte/content/D_Rules.svelte",
     "memory/ov/zone/ideas.md",
     "memory/ov/zone/knowledge bases.md",
     "memory/ov/zone/ov as knowledge bases.md",

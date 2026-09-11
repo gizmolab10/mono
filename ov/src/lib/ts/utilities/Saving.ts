@@ -213,6 +213,34 @@ export async function labels_on_disk(): Promise<In_Db> {
 	}
 }
 
+/**
+ * One rule the dispatcher runs on every file added or changed: what it reads — the file's name,
+ * its location or its content — the regex it matches, and the label it gives, a kind or a tag.
+ * A rule never changes or removes a label a person put on.
+ */
+export type Rule = { id: number; reads: 'name' | 'location' | 'content'; pattern: string; name: 'kind' | 'tag'; value: string };
+
+/** Every rule in the db, oldest first. None when the dispatcher is not running. */
+export async function rules_in_db(): Promise<Rule[]> {
+	try {
+		const answer = await fetch('http://localhost:5171/rules');
+		const said = await answer.json().catch(() => ({}));
+		return answer.ok && said.success && Array.isArray(said.rules) ? said.rules as Rule[] : [];
+	} catch {
+		return [];
+	}
+}
+
+/** One more rule. The dispatcher then runs every rule on every file. Says whether it was added, and if not, why. */
+export async function add_rule(rule: Omit<Rule, 'id'>): Promise<Saved> {
+	return tell('/add-rule', rule);
+}
+
+/** One rule gone. The dispatcher then runs every rule left on every file. Says whether it went, and if not, why. */
+export async function remove_rule(id: number): Promise<Saved> {
+	return tell('/remove-rule', { id });
+}
+
 /** Make a file's sources exactly these, in the db. Says whether they went, and if not, why. */
 export async function set_sources(where: string, authors: string[], came_from: string, date: string): Promise<Saved> {
 	return tell(`/set-sources?where=${encodeURIComponent(where)}`, { authors, came_from, date });

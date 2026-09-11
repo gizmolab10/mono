@@ -10,12 +10,14 @@
 	import { T_Details } from '../../ts/common/Core';
 	import D_Preferences from '../content/D_Preferences.svelte';
 	import D_Repair from '../content/D_Repair.svelte';
+	import D_Rules from '../content/D_Rules.svelte';
 	import { debug } from '../../ts/common/Core';
 	import { Stack } from '../../ts/common/Core';
 
-	// The collapsible details column. The frame computes its width. Which sections are
-	// open is remembered as one saved list of their names — all shut saves an empty
-	// list, while nothing saved at all means all open, the first-time state.
+	// The collapsible details column, holding three things that fold: preferences, repair and
+	// the rules. The frame computes its width. Which sections are open is remembered as one
+	// saved list of their names — all shut saves an empty list, while nothing saved at all
+	// means all open, the first-time state.
 	let { width }: { width: number } = $props();
 
 	const w_details_open = preferences.persistent<string[]>(T_Preference.details_open, Object.values(T_Details));
@@ -39,14 +41,17 @@
 
 	const w_preferences_open = open_store(T_Details.preferences);
 	const w_repair_open      = open_store(T_Details.repair);
+	const w_rules_open       = open_store(T_Details.rules);
 
 	// The words that fold each section away, built here rather than by the separators they stand
 	// on. The browser makes a button one drawing after we ask, so each holds nothing on the first
 	// drawing and the made button on the next — which is itself a change, so the stack is told.
 	let preferences_word = $state<HTMLElement | null>(null);
 	let repair_word      = $state<HTMLElement | null>(null);
+	let rules_word       = $state<HTMLElement | null>(null);
 	const preferences_action = $derived(Object.assign(new Action(), { element: preferences_word, position: T_Position.left }));
 	const repair_action      = $derived(Object.assign(new Action(), { element: repair_word,      position: T_Position.left }));
+	const rules_action       = $derived(Object.assign(new Action(), { element: rules_word,       position: T_Position.left }));
 
 	// The column's own lines, and nothing from the column beside it. Read once the browser has
 	// drawn, since a fold moves every line below it.
@@ -68,8 +73,8 @@
 	});
 </script>
 
-<!-- The two words, written out of sight: the moment the browser has made one, the stack takes it
-     and puts it on a separator instead. -->
+<!-- The three words, written out of sight: the moment the browser has made one, the stack takes
+     it and puts it on a separator instead. -->
 <div class='out_of_sight'>
 	<button type='button' class='clickable' bind:this={preferences_word}
 		use:hit_target={{ id: `details.fold.${T_Details.preferences}`,
@@ -77,10 +82,14 @@
 	<button type='button' class='clickable' bind:this={repair_word}
 		use:hit_target={{ id: `details.fold.${T_Details.repair}`,
 			onpress: () => w_repair_open.set(!$w_repair_open) }}>{T_Details.repair}</button>
+	<button type='button' class='clickable' bind:this={rules_word}
+		use:hit_target={{ id: `details.fold.${T_Details.rules}`,
+			onpress: () => w_rules_open.set(!$w_rules_open) }}>{T_Details.rules}</button>
 </div>
 
 {#snippet shows_preferences()}<D_Preferences />{/snippet}
 {#snippet shows_repair()}<D_Repair />{/snippet}
+{#snippet shows_rules()}<D_Rules />{/snippet}
 
 <div class='region details' bind:this={column} style:width='{width}px'>
 	<!-- Everything from the first separator down to the last stands on the page color; the column's
@@ -95,6 +104,7 @@
 		<Stack gap={k.gap.big} foot='below' leads={[preferences_action]} sections={[
 			{ subsection: shows_preferences, folded: !$w_preferences_open },
 			{ subsection: shows_repair, rides: [repair_action], folded: !$w_repair_open },
+			{ subsection: shows_rules, rides: [rules_action], folded: !$w_rules_open },
 		]} />
 		<!-- What closes the last section off from the foot of the column, drawn here whether that
 			section is open or folded — so a fold down there always has a line to end against. -->

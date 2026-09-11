@@ -517,6 +517,76 @@ def rescan():
     root, paths = listed_files()
     return database.reconcile(root, paths)
 
+# What the rules last ran against, path by path: the file's size and time. A file whose two are
+# unchanged since is left alone, so its content is read again only when it changed.
+RULED = {}
+
+def labels_by_rules(rules, where, full):
+    """The kinds and the tags the rules give one file: each rule's regex tried against what it
+    reads — the file's name, its location (its path from the top of the repo) or its content,
+    read once and only when a rule asks for it. A regex that will not compile hits nothing.
+    Each value once."""
+    kinds, tags = [], []
+    text = None
+    for rule in rules:
+        if rule['reads'] == 'name':
+            subject = os.path.basename(where)
+        elif rule['reads'] == 'location':
+            subject = where
+        else:
+            if text is None:
+                try:
+                    with open(full, 'r') as f:
+                        text = f.read()
+                except Exception:
+                    text = ''
+            subject = text
+        try:
+            hit = re.search(rule['pattern'], subject) is not None
+        except re.error:
+            hit = False
+        if hit:
+            (kinds if rule['name'] == 'kind' else tags).append(rule['value'])
+    return list(dict.fromkeys(kinds)), list(dict.fromkeys(tags))
+
+def run_rules(everything=False):
+    """Run every rule on the listed files: those changed or new since the rules last ran, or all
+    of them when asked, which is what adding or taking away a rule asks. Each file's rule labels
+    are made exactly what the rules give, hand labels untouched, and a file no rule hits gets no
+    row. With no rules at all, every label a rule gave goes. Answers how many files were done."""
+    root, paths = listed_files()
+    rules = database.rules()
+    if not rules:
+        gone = database.clear_rule_labels()
+        RULED.clear()
+        return gone
+    done = 0
+    on_disk = set()
+    for where in paths:
+        full = os.path.join(root, where)
+        try:
+            stat = (os.path.getsize(full), os.path.getmtime(full))
+        except OSError:
+            continue
+        on_disk.add(where)
+        if not everything and RULED.get(where) == stat:
+            continue
+        RULED[where] = stat
+        kinds, tags = labels_by_rules(rules, where, full)
+        database.set_rule_labels(where, full, kinds, tags)
+        done += 1
+    for where in [one for one in RULED if one not in on_disk]:
+        del RULED[where]
+    return done
+
+def look():
+    """One look at the disk: the db brought into line with it, then the rules run on whatever
+    changed or is new. What the watcher does every few seconds, /all-labels does before
+    answering, and /rescan does on request."""
+    said = rescan()
+    said['ruled'] = run_rules()
+    return said
+
 # How many seconds pass between one look at the disk and the next.
 WATCH_EVERY = 3
 
@@ -530,7 +600,7 @@ def watch_the_disk():
     print(f'watch: looking at the disk every {WATCH_EVERY} seconds', flush=True)
     while True:
         try:
-            said = rescan()
+            said = look()
             if any(said.values()):
                 print(f'watch: {said}', flush=True)
         except Exception as e:
@@ -786,8 +856,16 @@ class APIHandler(BaseHTTPRequestHandler):
             # fields is a file the db holds a row for, labels or not. The disk is looked at
             # first, so a file moved a moment ago answers under its new path.
             try:
-                rescan()
+                look()
                 self._send_response(200, {'success': True, 'labels': database.all_labels(), 'fields': database.all_fields(), 'sources': database.all_sources()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/rules':
+            # Every rule, for the overview app: what each reads, the regex it matches, and the
+            # label it gives.
+            try:
+                self._send_response(200, {'success': True, 'rules': database.rules()})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1260,10 +1338,50 @@ class APIHandler(BaseHTTPRequestHandler):
 
         elif self.path == '/rescan':
             # Bring the db into line with the disk now, rather than at the watcher's next look:
-            # /rescan. Answers how many rows changed, moved, went missing or were found again.
+            # /rescan. Answers how many rows changed, moved, went missing or were found again,
+            # and how many files the rules were run on.
             try:
                 self._drain_body()
-                self._send_response(200, {'success': True, **rescan()})
+                self._send_response(200, {'success': True, **look()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/add-rule':
+            # One more rule, for the overview app: /add-rule. The body is JSON: {"reads": name,
+            # location or content, "pattern": <a regex>, "name": kind or tag, "value": <the label>}.
+            # Every rule is then run on every file. Answers the rule's id and how many files.
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                reads, pattern, name, value = sent.get('reads'), sent.get('pattern'), sent.get('name'), sent.get('value')
+                if reads not in database.READS or name not in database.GIVES:
+                    self._send_response(400, {'success': False, 'error': f'a rule reads one of {list(database.READS)} and gives one of {list(database.GIVES)}'})
+                    return
+                if not isinstance(pattern, str) or not pattern or not isinstance(value, str) or not value:
+                    self._send_response(400, {'success': False, 'error': 'pattern and value must both be sent'})
+                    return
+                try:
+                    re.compile(pattern)
+                except re.error as bad:
+                    self._send_response(400, {'success': False, 'error': f'not a regex: {bad}'})
+                    return
+                made = database.add_rule(reads, pattern, name, value)
+                self._send_response(200, {'success': True, 'id': made, 'ruled': run_rules(everything=True)})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/remove-rule':
+            # One rule gone, for the overview app: /remove-rule, the body {"id": <its id>}. Every
+            # rule left is then run on every file, so what the gone one gave goes.
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                rule_id = sent.get('id')
+                if not isinstance(rule_id, int):
+                    self._send_response(400, {'success': False, 'error': 'id must be a number'})
+                    return
+                removed = database.remove_rule(rule_id)
+                self._send_response(200, {'success': True, 'removed': removed, 'ruled': run_rules(everything=True)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

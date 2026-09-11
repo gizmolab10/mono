@@ -8,8 +8,13 @@ Every company ends up with knowledge nobody can find. i asked how they organize 
 
 Each phase ending with something to look at:
 
-- [ ] 7. AI suggestions. Ends with: with the checkbox on, the editor shows suggestions, and accepting one adds it.
-- [ ] 6. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.
+- [ ] 8. AI suggestions. Ends with: with the checkbox on, the editor shows suggestions, and accepting one adds it.
+    - [ ] stub this out, it will be fleshed out by ji
+- [ ] 7. read the music files
+    - [ ] add a kind 'music'
+    - [ ] assign kind 'music' to each
+- [x] 6. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.
+    - Built 10 September 2026. The rules table holds what a rule reads, the file's name, its location or its content, the regex it matches, and the label it gives, a kind or a tag. The dispatcher runs every rule on every file changed or new at each look, and on every file when a rule is added or taken away: a file's rule labels are made exactly what the rules give, hand labels never touched, and a file no rule hits gets no row. A hand kind wins over a rule kind in ov, and the tags are both together. The details column gained a rules section to list, add and take away rules, and the list is relabeled from the db after each. No rule is written yet: the truth folders hold kinds of every sort (arch 55, howto 36, explain 33, specify 33), so which kind a truth file gets is Jonathan's rule to write there. 114 checks in `test_database.py`, the truth rule among them on a repo made for the run.
 - [x] 5. The authors and provenance rows. Ends with: the editor shows both.
     - Built 10 September 2026. The sources table holds one row per author, each saying where the file came from and a date, or one row with no author where only that is said. `/set-sources` makes a file's rows exactly what is sent, `/sources` reads them, and `/all-labels` hands every file's back with its labels. The editor's information rows gained two: authors, names separated by commas, and from, a url or a person. Both live in the db alone and are written when the field is left. 99 checks in `test_database.py`.
 - [x] 4. File watching. Ends with: a file moved in Finder keeps its tags.
@@ -29,7 +34,7 @@ Each phase ending with something to look at:
 - [x] 2. The db holds each ov file's path, never its bytes.
 - [x] 3. A file moved or edited in Finder keeps its tags in ov.
 - [x] 4. Every file in ov shows its authors and where it came from.
-- [ ] 5. A file new to ov gets kinds and tags from its name, location and content, with nothing typed by hand.
+- [x] 5. A file new to ov gets kinds and tags from its name, location and content, with nothing typed by hand.
 - [ ] 6. With AI suggestions turned on, a file shows suggested kinds and tags, and none is applied until i accept it.
 
 #### new features
@@ -78,7 +83,7 @@ Each phase ending with something to look at:
     - path gone, same fingerprint at a new path → moved; update the path, keep the labels.
     - path gone, no match → missing; the files list shows it.
 6. **Authors and provenance.** Markdown files carry neither, so both are typed into two new information rows in the editor.
-7. **Labels from rules.** When a file is added or changes, the dispatcher runs every rule on it. Rule labels are recomputed each time. A rule never changes or removes a hand label.
+7. **Labels from rules.** When a file is added or changes, the dispatcher runs every rule on it. Rule labels are recomputed each time. A rule never changes or removes a hand label. Built 10 September 2026: a rule's pattern is a regex tried against what it reads, the file's name, its location (its path from the top of the repo) or its content, read once and only when a rule asks. The rules run at every look at the disk on the files changed or new since they last ran, and on every file when a rule is added or taken away. A file no rule hits gets no row. In ov a hand kind wins over a rule kind, the tags are both together, and the rules are listed, added and taken away in the details column's rules section.
 8. **AI suggestions, optional.** A checkbox in the preferences section of details turns them on. When a file is added or changes, the dispatcher sends its content to AnythingLLM, the AI store ji uses, and saves the kinds and tags it suggests, made by AI. The editor shows them as suggestions; accepting one makes it a hand label. AI never changes or removes a hand label.
 
 ## the seven approaches

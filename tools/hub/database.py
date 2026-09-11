@@ -240,6 +240,70 @@ def all_sources():
     return by_path
 
 
+# What a rule can read: the file's name, its location (its path from the top of the repo), or its
+# content. And what it can give: a kind or a tag.
+READS = ('name', 'location', 'content')
+GIVES = ('kind', 'tag')
+
+
+def add_rule(reads, pattern, name, value):
+    """One more rule: what it reads, the regex it matches, and the label it gives. Answers the
+    rule's id."""
+    if reads not in READS:
+        raise ValueError(f'a rule reads one of {READS}, not {reads!r}')
+    if name not in GIVES:
+        raise ValueError(f'a rule gives one of {GIVES}, not {name!r}')
+    db = open_db()
+    with db:
+        made = db.execute('INSERT INTO rules (reads, pattern, name, value) VALUES (?, ?, ?, ?)',
+                          (reads, pattern, name, value)).lastrowid
+    db.close()
+    return made
+
+
+def remove_rule(rule_id):
+    """One rule gone. Answers how many went."""
+    db = open_db()
+    with db:
+        gone = db.execute('DELETE FROM rules WHERE id = ?', (rule_id,)).rowcount
+    db.close()
+    return gone
+
+
+def rules():
+    """Every rule, oldest first: its id, what it reads, the regex it matches, and the label it
+    gives, name and value."""
+    db = open_db()
+    rows = db.execute('SELECT id, reads, pattern, name, value FROM rules ORDER BY id').fetchall()
+    db.close()
+    return [{'id': row['id'], 'reads': row['reads'], 'pattern': row['pattern'], 'name': row['name'], 'value': row['value']} for row in rows]
+
+
+def set_rule_labels(where, full, kinds, tags):
+    """The labels the rules give one file, made exactly these, by rule: every rule row on it goes
+    and one row per value comes. Hand rows are never touched. A file with no row gets one only
+    when the rules give it something. Answers whether the file has a row."""
+    db = open_db()
+    with db:
+        has_row = db.execute('SELECT id FROM files WHERE path = ?', (where,)).fetchone() is not None
+        if has_row or kinds or tags:
+            file = file_row(db, where, full)
+            _replace(db, file, 'kind', kinds, 'rule')
+            _replace(db, file, 'tag', tags, 'rule')
+            has_row = True
+    db.close()
+    return has_row
+
+
+def clear_rule_labels():
+    """Every label a rule gave, on every file, gone. Answers how many rows went."""
+    db = open_db()
+    with db:
+        gone = db.execute("DELETE FROM labels WHERE made_by = 'rule'").rowcount
+    db.close()
+    return gone
+
+
 def move_path(where_from, where_to):
     """A file now sits somewhere else, so its row is keyed by the new path and its collection is
     read off it again. Its labels and fields go with it. Answers how many rows moved."""

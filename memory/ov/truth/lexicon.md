@@ -21,6 +21,7 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **separator** — the drawn divider between things. Never *line* in prose, never *divider*. Drawn with flares at each end.
 - **clickable** — the pill button standing on a separator that folds the section below it away, and says what it hides while folded. Not: any other button; not a word in the file's contents.
 - **information rows** — the rows of the editor's label form holding title, date, brief, use when, authors and from. Not: the kinds row, the tag rows.
+- **rule** — a row in the db the dispatcher runs on every file added or changed: what it reads, the file's name, its location or its content, the regex it matches, and the label it gives, a kind or a tag. A rule never changes or removes a label a person put on.
 - **sources** — a file's authors and where it came from, a url or a person, with a date: rows in the db, one per author. Never *provenance* in prose.
 - **pill** — a control shaped as a rounded lozenge.
 - **tagset** — one area of tags standing as a single pill. Never *area pill*.

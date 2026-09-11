@@ -69,6 +69,8 @@ New tags are not forbidden forever, but adding one means adding it here first. T
 
 ## Kinds
 
+Since 10 September 2026 the kinds are six: analyze, arch, explain, howto, music and specify. music is a file of mu's, the music collection. What follows is the list as it was settled.
+
 Seven. The test each one has to pass: knowing the kind changes what I do with the file before I have read a word of it.
 
 The first five say how a guide reads. The last two say what it is about, and were folded in when the separate purpose filter went — asking the same question twice, once by the folder a file sits in and once by the file's own words, meant two places to look and two ways to be wrong.

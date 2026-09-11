@@ -39,3 +39,5 @@ More info: https://sass-lang.com/d/legacy-js-api
   ➜  Network: http://10.0.0.235:5173/
   ➜  Network: http://10.0.0.181:5173/
   ➜  Network: http://169.254.107.9:5173/
+7:16:37 PM [vite] ../tools/hub/ports.json changed, restarting server...
+7:16:38 PM [vite] server restarted.

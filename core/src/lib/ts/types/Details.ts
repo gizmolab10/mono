@@ -3,4 +3,5 @@
 export enum T_Details {
 	preferences = 'preferences',
 	repair      = 'repair',
+	rules       = 'rules',
 }

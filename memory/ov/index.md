@@ -12,7 +12,7 @@ The adoption is finished and measured: no file in ov is a copy of anything in co
 - [proposals.md](zone/proposals.md) — the proposals being weighed; one leaves when it becomes the drive, dissolves into truth, or dies.
 - [consolidate.md](zone/consolidate.md) — the folder-by-folder detail behind the guides sorting: of the 142 now in truth/, 91 stay, 17 fold, 22 archive, 6 to zone, 9 to ws's manual, 6 die; the mechanical move is built, the sorting is a pending pac in shared's decisions.md, the drive dissolved.
 - [simplify gaps.md](zone/simplify%20gaps.md) — how the two filter stacks size their rows: the slot owns the reach, rows hold plain padding in rungs, the tags run holds its own headroom, a starved section sizes as a fold.
-- [ov as knowledge bases.md](zone/ov%20as%20knowledge%20bases.md) — how companies organize and browse their knowledge, and which of those approaches fit ov, mu and ji. Its roadmap's phases 1 to 5 are built: the db beside the dispatcher holds all five labels of every file and its authors and where it came from, the files list and the editor read it, no memory file carries a block, and the dispatcher watches the disk so a file moved in the Finder keeps its labels.
+- [ov as knowledge bases.md](zone/ov%20as%20knowledge%20bases.md) — how companies organize and browse their knowledge, and which of those approaches fit ov, mu and ji. Its roadmap's phases 1 to 6 are built, rules among them: the db beside the dispatcher holds all five labels of every file and its authors and where it came from, the files list and the editor read it, no memory file carries a block, and the dispatcher watches the disk so a file moved in the Finder keeps its labels.
 
 ## Truths
 

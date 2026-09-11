@@ -8,3 +8,6 @@ $ vite
 3:17:33 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:41:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
 5:52:43 PM [vite] ../tools/hub/ports.json changed, restarting server...
 5:52:44 PM [vite] server restarted.
+7:16:37 PM [vite] ../tools/hub/ports.json changed, restarting server...
+7:16:37 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
+7:16:37 PM [vite] server restarted.

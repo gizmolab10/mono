@@ -70,6 +70,24 @@ class Files {
 	// editor reads them, for the file it shows, and it writes them back here as it writes the db.
 	sources_in_db = new Map<string, Source[]>();
 
+	/**
+	 * Ask the db for everything again and put it on every record: what the rules gave, after a
+	 * rule was added or taken away. Nothing is read from the disk, and nothing new is hung.
+	 */
+	async relabel_all(): Promise<void> {
+		const in_db = await labels_on_disk();
+		this.labels_in_db = in_db.labels;
+		this.fields_in_db = in_db.fields;
+		this.sources_in_db = in_db.sources;
+		for (const guide of this.files) {
+			const { labels, tags } = this.labels_in_db_for(guide);
+			this.hierarchy.relabel(guide, labels, tags, false);
+		}
+		this.hierarchy.reindex();
+		this.renarrow();
+		debug.log(`Relabeled every file from the db: rows for ${in_db.fields.size} file(s), labels on ${in_db.labels.size}.`);
+	}
+
 	/** A file's sources: its authors, where it came from, and the dates. None for a file with no row. */
 	sources_of(guide: File): Source[] {
 		return this.sources_in_db.get(file_path_of(guide.bundle, guide.path)) ?? [];
@@ -897,8 +915,12 @@ class Files {
 	private kind_and_tags_in_db(guide: File): { kind: string; tags: string[] } {
 		const where = file_path_of(guide.bundle, guide.path);
 		const known = this.labels_in_db.get(where) ?? [];
-		const kind = known.find((one) => one.name === 'kind')?.value ?? '';
-		const named = known.filter((one) => one.name === 'tag').map((one) => one.value);
+		// A label a person put on wins over one a rule gave: the kind is the hand's where there is
+		// one and the rule's otherwise, and the tags are both together. What the AI suggests is no
+		// label until it is accepted, so its rows are passed over here.
+		const kinds = known.filter((one) => one.name === 'kind' && one.made_by !== 'ai');
+		const kind = (kinds.find((one) => one.made_by === 'hand') ?? kinds[0])?.value ?? '';
+		const named = [...new Set(known.filter((one) => one.name === 'tag' && one.made_by !== 'ai').map((one) => one.value))];
 		const tags = named.filter((tag) => ALL_TAGS.includes(tag));
 		if (tags.length < named.length) {
 			debug.log(`Guide "${where}": the db holds ${named.length - tags.length} tag(s) not on the closed list of ${ALL_TAGS.length}: ${named.filter((tag) => !ALL_TAGS.includes(tag)).join(', ')}. They are ignored.`);

@@ -323,7 +323,7 @@ with open(os.path.join(TEMP_REPO, WATCH), 'w') as f:
     f.write('# Watch\n\nwords\n')
 code, said = tell('/add-label', {'name': 'tag', 'value': 'now'}, where=WATCH)
 code, said = tell('/rescan', {})
-check('a look with nothing changed says so', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0})
+check('a look with nothing changed says so', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'ruled': 0})
 
 os.rename(os.path.join(TEMP_REPO, WATCH), os.path.join(TEMP_REPO, WATCHED))
 code, said = tell('/rescan', {})
@@ -362,7 +362,59 @@ with open(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), 'w') as f:
     f.write('# Loose\n')
 os.rename(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), os.path.join(TEMP_REPO, 'memory/ov/truth/loosed.md'))
 code, said = tell('/rescan', {})
-check('a file with no row moves with nothing to keep and nothing said', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0})
+check('a file with no row moves with nothing to keep and nothing said', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'ruled': 0})
+
+# --- the rules: labels a file gets from its name, its location or its content --
+
+code, said = ask('/rules')
+check('with no rules, none are listed', said.get('rules'), [])
+RULED_FILE = 'memory/ov/truth/ruled.md'
+with open(os.path.join(TEMP_REPO, RULED_FILE), 'w') as f:
+    f.write('# Ruled\n\nA law of the land.\n')
+code, said = ask('/labels', where=RULED_FILE)
+check('a file no rule hits, with no row, has none', said.get('labels'), [])
+
+code, said = tell('/add-rule', {'reads': 'location', 'pattern': '/truth/', 'name': 'kind', 'value': 'specify'})
+check('a rule on the location is added', code, 200)
+check('and every rule is run on every file', said.get('ruled', 0) > 0, True)
+code, said = ask('/labels', where=RULED_FILE)
+check('a file added to a truth folder gets its kind from the rule', said.get('labels'),
+      [{'name': 'kind', 'value': 'specify', 'made_by': 'rule'}])
+code, said = tell('/add-rule', {'reads': 'content', 'pattern': 'law of the land', 'name': 'tag', 'value': 'always'})
+code, said = tell('/add-rule', {'reads': 'name', 'pattern': r'^ruled\.md$', 'name': 'tag', 'value': 'keep'})
+code, said = ask('/labels', where=RULED_FILE)
+check('rules on the content and the name give tags too', [one['value'] for one in said.get('labels', []) if one['name'] == 'tag'], ['always', 'keep'])
+code, said = ask('/rules')
+check('three rules are listed, oldest first', [one['pattern'] for one in said.get('rules', [])], ['/truth/', 'law of the land', r'^ruled\.md$'])
+first_rule = said['rules'][0]['id']
+
+code, said = tell('/add-label', {'name': 'kind', 'value': 'explain'}, where=RULED_FILE)
+code, said = tell('/rescan', {})
+code, said = ask('/labels', where=RULED_FILE)
+check('a hand kind sits beside the rule kind, neither touching the other',
+      sorted((one['value'], one['made_by']) for one in said.get('labels', []) if one['name'] == 'kind'),
+      [('explain', 'hand'), ('specify', 'rule')])
+
+with open(os.path.join(TEMP_REPO, RULED_FILE), 'w') as f:
+    f.write('# Ruled\n\nNo law here.\n')
+code, said = tell('/rescan', {})
+check('a file changed has its rule labels computed again', said.get('ruled'), 1)
+code, said = ask('/labels', where=RULED_FILE)
+check('the tag the content gave is gone, the others stay', [one['value'] for one in said.get('labels', []) if one['name'] == 'tag'], ['keep'])
+
+code, said = tell('/add-rule', {'reads': 'location', 'pattern': '(', 'name': 'kind', 'value': 'x'})
+check('a pattern that is not a regex is refused', code, 400)
+code, said = tell('/add-rule', {'reads': 'size', 'pattern': 'x', 'name': 'kind', 'value': 'x'})
+check('a rule reading something else is refused', code, 400)
+
+code, said = tell('/remove-rule', {'id': first_rule})
+check('a rule is taken away', said.get('removed'), 1)
+code, said = ask('/labels', where=RULED_FILE)
+check('what it gave goes, the hand kind stays', [(one['value'], one['made_by']) for one in said.get('labels', []) if one['name'] == 'kind'], [('explain', 'hand')])
+for rule in ask('/rules')[1]['rules']:
+    tell('/remove-rule', {'id': rule['id']})
+code, said = ask('/labels', where=RULED_FILE)
+check('with every rule gone, every label a rule gave is gone', [one['made_by'] for one in said.get('labels', [])], ['hand'])
 
 # --- say how it went ---------------------------------------------------------
 

@@ -90,3 +90,15 @@ $ vite
 7:03:48 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
 7:03:51 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
 7:03:56 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+7:16:34 PM [vite] (client) page reload src/lib/ts/utilities/Saving.ts
+7:16:37 PM [vite] ../tools/hub/ports.json changed, restarting server...
+7:16:37 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
+7:16:38 PM [vite] server restarted.
+7:17:34 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Details.ts
+7:17:34 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+7:17:35 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+7:17:37 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+7:17:41 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+7:17:48 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+7:17:50 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
+7:41:27 PM [vite] (client) page reload src/lib/ts/types/File.ts

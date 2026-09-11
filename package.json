@@ -7,7 +7,6 @@
     "packages": [
       "core",
       "di",
-      "filter tree",
       "gallery",
       "ji",
       "lv",

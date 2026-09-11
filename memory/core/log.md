@@ -10,3 +10,4 @@
 - I: proposal, the preference keys every host shares. Dropped by Jonathan the same day, before anything was built
 - I: pac in truth/decisions.md, move mj's four preference keys into core. Three of the four already exist in ov under the same names. For, one enum instead of two and soon three. Against, a key names state, which is the host's, and preferences_open is host vocabulary. Middle paths, the enum in panel, or the two colors alone in core. Undecided
 - I: pac, the libraries define the keys and the hosts store the values. Removed from truth/decisions.md by Jonathan the same day
+- D: T_Details gained rules, a third section of the details column, for ov's rules section. check clean

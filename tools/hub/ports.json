@@ -79,10 +79,6 @@
     "port": 5186,
     "repo": "https://github.com/gizmolab10/mono/tree/main/panel"
   },
-  "filter tree": {
-    "port": 5187,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/filter%20tree"
-  },
   "me": {
     "public": "https://jonathansand.me",
     "repo": "https://github.com/gizmolab10/jonathansand-me"
