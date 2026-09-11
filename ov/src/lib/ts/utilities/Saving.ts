@@ -184,22 +184,38 @@ export type Fields = { title: string; description: string; use_when: string[]; d
  * for, labels or not. One ask at launch, in place of a label block read off every file. Empty
  * maps mean the dispatcher is not running.
  */
-export type In_Db = { labels: Map<string, Label[]>; fields: Map<string, Fields> };
+export type In_Db = { labels: Map<string, Label[]>; fields: Map<string, Fields>; sources: Map<string, Source[]> };
+
+/**
+ * One source of a file, a row in the db: an author, where the file came from — a url or a
+ * person — and a date. A file has one row per author, each saying where it came from, or one
+ * row with no author where only that is said. Markdown files carry neither, so both are typed
+ * into the editor.
+ */
+export type Source = { author: string; came_from: string; date: string };
 
 export async function labels_on_disk(): Promise<In_Db> {
+	const nothing: In_Db = { labels: new Map(), fields: new Map(), sources: new Map() };
 	try {
 		const answer = await fetch('http://localhost:5171/all-labels');
 		const said = await answer.json().catch(() => ({}));
-		if (answer.ok && said.success && said.labels && typeof said.labels === 'object' && said.fields && typeof said.fields === 'object') {
+		const holds = (name: string) => said[name] && typeof said[name] === 'object';
+		if (answer.ok && said.success && holds('labels') && holds('fields') && holds('sources')) {
 			return {
-				labels : new Map(Object.entries(said.labels as Record<string, Label[]>)),
-				fields : new Map(Object.entries(said.fields as Record<string, Fields>)),
+				labels  : new Map(Object.entries(said.labels as Record<string, Label[]>)),
+				fields  : new Map(Object.entries(said.fields as Record<string, Fields>)),
+				sources : new Map(Object.entries(said.sources as Record<string, Source[]>)),
 			};
 		}
-		return { labels: new Map(), fields: new Map() };
+		return nothing;
 	} catch {
-		return { labels: new Map(), fields: new Map() };
+		return nothing;
 	}
+}
+
+/** Make a file's sources exactly these, in the db. Says whether they went, and if not, why. */
+export async function set_sources(where: string, authors: string[], came_from: string, date: string): Promise<Saved> {
+	return tell(`/set-sources?where=${encodeURIComponent(where)}`, { authors, came_from, date });
 }
 
 /** Write a file's four fields on its row in the db, never in the file. Says whether they went, and if not, why. */

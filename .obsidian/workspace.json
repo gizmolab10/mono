@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/knowledge bases.md",
+                "file": "memory/ov/zone/ov as knowledge bases.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "knowledge bases"
+              "title": "ov as knowledge bases"
             }
           }
         ]
@@ -158,7 +158,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/ov/zone/knowledge bases.md",
+                "file": "memory/ov/zone/ov as knowledge bases.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -196,20 +196,21 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "afa217138ba97b9e",
+  "active": "1c8db68f687bfaed",
   "lastOpenFiles": [
     "tools/hub/ov.db-journal",
+    "memory/ov/zone/ideas.md",
+    "memory/ov/zone/knowledge bases.md",
+    "memory/ov/zone/ov as knowledge bases.md",
     "ov/src/lib/ts/managers/Files.ts.tmp.43901.7001549189c0",
     "ov/src/lib/ts/managers/Files.ts.tmp.43901.0f784740ea5a",
     "ov/src/lib/ts/utilities/Labels.ts.tmp.43901.3b55e556f48f",
-    "memory/ov/zone/ideas.md",
     "filter tree/node_modules/svelte-check/node_modules",
     "filter tree/node_modules/svelte/node_modules",
     "filter tree/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
     "filter tree/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/element.js",
     "filter tree/node_modules/svelte/src/compiler/phases/3-transform/server/visitors/shared/component.js",
     "filter tree/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/utils.js",
-    "filter tree/node_modules/svelte/src/compiler/phases/3-transform/client/visitors/shared/special_element.js",
     "filter tree/node_modules/svelte-check/README.md",
     "filter tree/node_modules/svelte/README.md",
     "filter tree/node_modules/svelte/LICENSE.md",
@@ -232,8 +233,6 @@
     "memory/filter tree/truth/design/claude-files.md",
     "memory/filter tree/truth/design/action type.md",
     "memory/filter tree/zone/work/soon/tag drift.md",
-    "memory/filter tree/zone/work/soon/stale guides.md",
-    "memory/filter tree/zone/work/soon/rewrite guides.md",
     "lv/dist/assets/lcv.label-CyYn_a6Q.png",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "lv/dist/assets/Vyd_2014_0321_Haley-29NNKbHz.jpg",

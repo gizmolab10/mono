@@ -283,6 +283,36 @@ check('a file is thrown away', code, 200)
 code, said = ask('/all-labels')
 check('its row goes with it', MOVED in said.get('fields', {}), False)
 
+# --- a file's sources: its authors and where it came from ---------------------
+
+SOURCED = 'memory/ov/truth/sourced.md'
+with open(os.path.join(TEMP_REPO, SOURCED), 'w') as f:
+    f.write('# Sourced\n')
+check('a file with no row has no sources', database.sources_of(SOURCED), [])
+database.set_sources(SOURCED, os.path.join(TEMP_REPO, SOURCED), ['Jonathan', 'co'], 'a chat', '2026-09-10')
+check('one row per author, each saying where the file came from', database.sources_of(SOURCED),
+      [{'author': 'Jonathan', 'came_from': 'a chat', 'date': '2026-09-10'},
+       {'author': 'co', 'came_from': 'a chat', 'date': '2026-09-10'}])
+database.set_sources(SOURCED, os.path.join(TEMP_REPO, SOURCED), [], 'https://example.org', '2026-09-10')
+check('nowhere but a place makes one row with no author', database.sources_of(SOURCED),
+      [{'author': '', 'came_from': 'https://example.org', 'date': '2026-09-10'}])
+database.set_sources(SOURCED, os.path.join(TEMP_REPO, SOURCED), [], '', '2026-09-10')
+check('no author and nowhere leaves none', database.sources_of(SOURCED), [])
+
+code, said = tell('/set-sources', {'authors': ['Jonathan'], 'came_from': 'a chat', 'date': '2026-09-10'}, where=SOURCED)
+check('sources are written through the dispatcher and read back', said.get('sources'),
+      [{'author': 'Jonathan', 'came_from': 'a chat', 'date': '2026-09-10'}])
+code, said = ask('/sources', where=SOURCED)
+check('a file\'s sources are asked for on their own', said.get('sources'),
+      [{'author': 'Jonathan', 'came_from': 'a chat', 'date': '2026-09-10'}])
+code, said = ask('/all-labels')
+check('every file\'s sources come with every label', said.get('sources', {}).get(SOURCED),
+      [{'author': 'Jonathan', 'came_from': 'a chat', 'date': '2026-09-10'}])
+code, said = tell('/set-sources', {'authors': 'Jonathan'}, where=SOURCED)
+check('authors not a list are refused', code, 400)
+code, said = tell('/delete-guide', {}, where=SOURCED)
+check('a file thrown away takes its sources with it', database.sources_of(SOURCED), [])
+
 # --- the disk watched: a file moved, changed or gone in the Finder -------------
 #
 # The watcher's look at the disk is asked for by hand here, through /rescan.

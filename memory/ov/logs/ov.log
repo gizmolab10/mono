@@ -80,3 +80,13 @@ $ vite
   Plugin: vite:esbuild
   File: /Users/sand/GitHub/mono/ov/src/lib/ts/managers/Files.ts
 6:55:21 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+7:02:47 PM [vite] (client) page reload src/lib/ts/utilities/Saving.ts
+7:02:50 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+7:02:58 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+7:03:00 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+7:03:37 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+7:03:40 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+7:03:45 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+7:03:48 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+7:03:51 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+7:03:56 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte

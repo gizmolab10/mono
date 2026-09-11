@@ -787,7 +787,20 @@ class APIHandler(BaseHTTPRequestHandler):
             # first, so a file moved a moment ago answers under its new path.
             try:
                 rescan()
-                self._send_response(200, {'success': True, 'labels': database.all_labels(), 'fields': database.all_fields()})
+                self._send_response(200, {'success': True, 'labels': database.all_labels(), 'fields': database.all_fields(), 'sources': database.all_sources()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/sources':
+            # A file's sources, for the overview app: /sources?where=<path>. Each is an author,
+            # where the file came from (a url or a person), and a date.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                placed = self._note_place(params.get('where', [''])[0], must_exist=False)
+                if not placed:
+                    return
+                where, _ = placed
+                self._send_response(200, {'success': True, 'sources': database.sources_of(where)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1216,6 +1229,32 @@ class APIHandler(BaseHTTPRequestHandler):
             try:
                 self._drain_body()
                 self._send_response(200, {'success': True, **scan_labels()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/set-sources':
+            # Make a file's sources exactly what is sent, for the overview app:
+            # /set-sources?where=<path from the top of the repo>. The body is JSON:
+            # {"authors": [names], "came_from": <a url or a person>, "date": <year-month-day>}.
+            # One row per author, each saying where the file came from, or one row with no
+            # author where only that is said. The file has to be there.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                placed = self._note_place(params.get('where', [''])[0], must_exist=True)
+                if not placed:
+                    return
+                where, full = placed
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                authors, came_from, date = sent.get('authors', []), sent.get('came_from', ''), sent.get('date', '')
+                if not isinstance(authors, list) or not all(isinstance(one, str) for one in authors):
+                    self._send_response(400, {'success': False, 'error': 'authors must be a list of names'})
+                    return
+                if not isinstance(came_from, str) or not isinstance(date, str):
+                    self._send_response(400, {'success': False, 'error': 'came_from and date must be words'})
+                    return
+                database.set_sources(where, full, [one.strip() for one in authors], came_from.strip(), date)
+                self._send_response(200, {'success': True, 'path': where, 'sources': database.sources_of(where)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

@@ -1,4 +1,4 @@
-import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, labels_on_disk, move_file, moved_into, path_of_address, reaches_under_work, remove_label, set_fields, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved } from '../utilities/Saving';
+import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, labels_on_disk, move_file, moved_into, path_of_address, reaches_under_work, remove_label, set_fields, set_sources, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved, type Source } from '../utilities/Saving';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { blank_file, free_name, label_changes, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
@@ -65,6 +65,35 @@ class Files {
 	// filters from and the editor reads. A path among the fields is a file the db holds a row for.
 	labels_in_db = new Map<string, Label[]>();
 	fields_in_db = new Map<string, Fields>();
+
+	// Every file's sources, its authors and where it came from, keyed the same way. Only the
+	// editor reads them, for the file it shows, and it writes them back here as it writes the db.
+	sources_in_db = new Map<string, Source[]>();
+
+	/** A file's sources: its authors, where it came from, and the dates. None for a file with no row. */
+	sources_of(guide: File): Source[] {
+		return this.sources_in_db.get(file_path_of(guide.bundle, guide.path)) ?? [];
+	}
+
+	/**
+	 * Make one guide's sources in the db exactly these: one row per author, each saying where
+	 * the file came from, or one row with no author where only that is said. Nothing is written
+	 * to the file. The map here follows the db, so the editor reads back what it wrote. Says
+	 * whether the write went, and if not, why.
+	 */
+	async write_sources(guide: File, authors: string[], came_from: string): Promise<Saved> {
+		const where = file_path_of(guide.bundle, guide.path);
+		const date = today();
+		const answer = await set_sources(where, authors, came_from, date);
+		if (answer.ok) {
+			const rows = authors.length > 0
+				? authors.map((author) => ({ author, came_from, date }))
+				: came_from !== '' ? [{ author: '', came_from, date }] : [];
+			if (rows.length > 0) { this.sources_in_db.set(where, rows); } else { this.sources_in_db.delete(where); }
+		}
+		debug.log(`Sources in the db for "${where}": ${authors.length} author(s) [${authors.join(', ')}], from "${came_from}"${answer.ok ? '' : `. REFUSED — ${answer.why}`}.`);
+		return answer;
+	}
 
 	// Said whenever a guide moves from one path to another, with where it sat and where it now
 	// sits. Whatever keeps track of which guide is being read hands in its own answer here, so
@@ -689,6 +718,7 @@ class Files {
 		const [on_disk, in_db] = await Promise.all([files_on_disk(), labels_on_disk()]);
 		this.labels_in_db = in_db.labels;
 		this.fields_in_db = in_db.fields;
+		this.sources_in_db = in_db.sources;
 		if (on_disk.paths.length === 0) {
 			this.w_no_server.set(true);
 			debug.log('Guides: the dispatcher did not answer, so there are no files to show — it is the only thing that knows what is on disk.');

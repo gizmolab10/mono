@@ -60,6 +60,8 @@
 	let form_title       = $state('');
 	let form_kind        = $state('');
 	let form_date        = $state('');
+	let form_authors     = $state('');   // who wrote it, names separated by commas
+	let form_from        = $state('');   // where it came from, a url or a person
 	let form_tags        = $state<string[]>([]);
 	let tags_lit         = $state(false);   // the cursor is among the tag areas, so their own word lights
 	const KINDS = Object.values(T_Kind);
@@ -203,6 +205,10 @@
 		form_kind        = guide.kind;
 		form_date        = guide.date;
 		form_tags        = [...tags];
+		// Its sources are the db's alone: one row per author, each saying where it came from.
+		const sources    = files.sources_of(guide);
+		form_authors     = sources.map((one) => one.author).filter((one) => one !== '').join(', ');
+		form_from        = sources[0]?.came_from ?? '';
 	});
 
 
@@ -218,7 +224,12 @@
 		const same_tags = worn.length === form_tags.length && worn.every((tag) => form_tags.includes(tag));
 		const same_fields = guide.title === form_title && guide.description === form_description
 			&& (guide.use_when ?? []).join('\n') === use_when.join('\n') && guide.date === form_date;
-		if (guide.labeled && guide.kind === form_kind && same_tags && same_fields) { return; }
+		const authors = form_authors.split(',').map((one) => one.trim()).filter((one) => one.length > 0);
+		const came_from = form_from.trim();
+		const sources = files.sources_of(guide);
+		const same_sources = authors.join('\n') === sources.map((one) => one.author).filter((one) => one !== '').join('\n')
+			&& came_from === (sources[0]?.came_from ?? '');
+		if (guide.labeled && guide.kind === form_kind && same_tags && same_fields && same_sources) { return; }
 		const where = file_path_of(guide.bundle, guide.path);
 		debug.log(`Editing "${name}": the filters changed — writing them to the db for ${where}.`);
 		const in_db = await files.write_labels(guide, form_kind, form_tags);
@@ -232,6 +243,14 @@
 			onshow(`not saved — ${fields.why}`);
 			debug.log(`Editing "${name}": the title, description, use_when and date were NOT written to the db — ${fields.why}.`);
 			return;
+		}
+		if (!same_sources) {
+			const wrote = await files.write_sources(guide, authors, came_from);
+			if (!wrote.ok) {
+				onshow(`not saved — ${wrote.why}`);
+				debug.log(`Editing "${name}": the authors and where it came from were NOT written to the db — ${wrote.why}.`);
+				return;
+			}
 		}
 		// The list shows the title and the tags, so it is told at once rather than waiting for
 		// every file to be read again. A fault here would leave the db written and the app still
@@ -385,10 +404,11 @@
 	</span>
 </div>
 
-<!-- What a guide says about itself in words: its title, its date, and one line saying what it is
-     for. They sit closer together than sections do, since they are rows of one thing rather than
-     things of their own. Each field is a control the manager knows about; the bare space among
-     them answers nothing. -->
+<!-- What a guide says about itself in words: its title, its date, one line saying what it is
+     for, the occasions to read it on, who wrote it and where it came from. They sit closer
+     together than sections do, since they are rows of one thing rather than things of their
+     own. Each field is a control the manager knows about; the bare space among them answers
+     nothing. -->
 {#snippet information_rows()}
 	<div class='label-rows information'>
 		<div class='information-rows'>
@@ -411,6 +431,17 @@
 				<span class='filter-word'>use when</span>
 				<textarea class='filter-field tall' rows='1' bind:this={use_when_field} bind:value={form_use_when} onblur={save_filters}
 					use:hit_target={{ id: 'editor.field.use-when', tip: 'the occasions to read this guide on, one to a line' }}></textarea>
+			</div>
+			<!-- Who wrote it and where it came from. A markdown file carries neither, so both are
+			     typed here, and both live in the db alone: one row per author, each saying where
+			     the file came from. -->
+			<div class='filter-row'>
+				<span class='filter-word'>authors</span>
+				<input class='filter-field' bind:value={form_authors} onblur={save_filters}
+					use:hit_target={{ id: 'editor.field.authors', tip: 'who wrote it, names separated by commas' }} />
+				<span class='filter-word'>from</span>
+				<input class='filter-field' bind:value={form_from} onblur={save_filters}
+					use:hit_target={{ id: 'editor.field.from', tip: 'where it came from, a url or a person' }} />
 			</div>
 		</div>
 	</div>

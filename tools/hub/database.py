@@ -200,6 +200,46 @@ def remove_label(where, name, value):
     return gone
 
 
+def set_sources(where, full, authors, came_from, date):
+    """Make a file's sources exactly these: one row per author, each saying where the file came
+    from, or one row with no author where only that is said. Every row the file had goes. No
+    author and nowhere leaves it with none."""
+    db = open_db()
+    with db:
+        file = file_row(db, where, full)
+        db.execute('DELETE FROM sources WHERE file = ?', (file,))
+        rows = [(file, author, came_from, date) for author in authors if author] or ([(file, '', came_from, date)] if came_from else [])
+        db.executemany('INSERT INTO sources (file, author, came_from, date) VALUES (?, ?, ?, ?)', rows)
+    db.close()
+
+
+def sources_of(where):
+    """A file's sources, oldest first: author, where it came from, and date. Nothing for a file
+    the db has no row for."""
+    db = open_db()
+    rows = db.execute(
+        'SELECT sources.author, sources.came_from, sources.date FROM sources '
+        'JOIN files ON files.id = sources.file WHERE files.path = ? ORDER BY sources.id',
+        (where,)).fetchall()
+    db.close()
+    return [{'author': row['author'], 'came_from': row['came_from'], 'date': row['date']} for row in rows]
+
+
+def all_sources():
+    """Every source on every file, keyed by the file's path from the top of the repo. A file with
+    none is left out."""
+    db = open_db()
+    rows = db.execute(
+        'SELECT files.path, sources.author, sources.came_from, sources.date FROM sources '
+        'JOIN files ON files.id = sources.file ORDER BY files.path, sources.id').fetchall()
+    db.close()
+    by_path = {}
+    for row in rows:
+        by_path.setdefault(row['path'], []).append(
+            {'author': row['author'], 'came_from': row['came_from'], 'date': row['date']})
+    return by_path
+
+
 def move_path(where_from, where_to):
     """A file now sits somewhere else, so its row is keyed by the new path and its collection is
     read off it again. Its labels and fields go with it. Answers how many rows moved."""

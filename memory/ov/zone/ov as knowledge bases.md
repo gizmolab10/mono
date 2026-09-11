@@ -4,12 +4,31 @@ Every company ends up with knowledge nobody can find. i asked how they organize 
 
 ## roadmap: implement them all, on ov
 
+### Build order
+
+Each phase ending with something to look at:
+
+- [ ] 7. AI suggestions. Ends with: with the checkbox on, the editor shows suggestions, and accepting one adds it.
+- [ ] 6. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.
+- [x] 5. The authors and provenance rows. Ends with: the editor shows both.
+    - Built 10 September 2026. The sources table holds one row per author, each saying where the file came from and a date, or one row with no author where only that is said. `/set-sources` makes a file's rows exactly what is sent, `/sources` reads them, and `/all-labels` hands every file's back with its labels. The editor's information rows gained two: authors, names separated by commas, and from, a url or a person. Both live in the db alone and are written when the field is left. 99 checks in `test_database.py`.
+- [x] 4. File watching. Ends with: a file moved in Finder keeps its tags.
+    - Built 10 September 2026. Nothing on this machine reports changes as they happen without a package the dispatcher does not carry (neither fswatch nor watchdog is installed), so the dispatcher looks at the disk instead: a thread started at launch takes the listing and a stat per file every 3 seconds, and `/all-labels` takes the same look before answering, so ov's launch is never behind. `database.reconcile` does the work the Design's item 5 lays out: same path with a new size or time, the fingerprint is computed again (changed); a path gone whose bytes turn up at a path with no row, the row moves there with its labels and fields (moved); a path gone with no match, the row is marked missing and kept; a missing row whose path is back is found. `/rescan` asks for a look by hand. ov hangs a missing file where it sat, its name struck through, its hint and its click saying it is not on disk. Proved on a repo made for the run: 90 checks in `test_database.py`.
+- [x] 3. The other four labels, title, description, use_when and date, read into the db, and the whole block removed from each file. Ends with: no file carries a block, and the editor shows all five from the db.
+    - The four are fields on the files table, one each, as the Design section's (see below) item 2 (files table) lists them.
+    - Built 10 September 2026. The files table gained the four columns, a db made before them is given them on open. `/scan` records them from every block (1099 fields across 369 files, and 21 older `type` lines read as the kind, `updated` as the date), `/all-labels` hands them back beside the labels, and `/set-fields` writes them. ov reads all five from the db, its editor writes every change there and never to the file, a new file is its heading alone, and a file the db has no row for gets its labels composed from its words when first opened. `/move-guide` and `/delete-guide` carry the db's row with the file. `/strip-block`, asked with a confirm word, took the whole block off 368 files and kept one, `memory/index.md`, whose block carries okf lines the db has no place for. `big-picture.py` writes no block and records its five in the db.
+- [x] 2. The markdown collection read into the db, and its labels removed from each file. Ends with: the files list filtering from the db.
+    - Built 10 September 2026. The dispatcher's `/scan` reads every listed file's kind and tags into the db as hand labels (485 files, 320 kinds, 779 tags, 153 whose block says neither), and `/all-labels` hands them all back in one answer. ov's files list filters from the db: `Files.ts` asks for every label beside the listing and takes each file's kind and tags from there, never from its block. Changing a kind or tags in the editor, composing labels for a bare file, and making a new file all write the db, and `Labels.ts` writes neither line into a block any more.
+    - The removal ran the same day: `/strip-labels`, asked with a confirm word, took the kind and tags lines out of 332 files, and left title, description, use_when and date. The three readers of the lines now read the db through `tools/hub/database.py`: `inject-always.sh` and `test-always-tag.sh` for the `always` tag, and `big-picture.py` records its kind and tag there instead of writing them.
+- [x] 1. The db, and the dispatcher reading and writing it. Ends with: a tag written and read back.
+    - Built 10 September 2026. `tools/hub/database.py` makes `tools/hub/ov.db` (git-ignored) with the four tables and writes and reads labels; the dispatcher answers `/labels`, `/add-label` and `/remove-label`; `tools/hub/test_database.py` writes a tag and reads it back against a db of its own, 23 checks.
+
 ### Success
 
 - [x] 1. Tagging a file in ov changes the db, never the file.
 - [x] 2. The db holds each ov file's path, never its bytes.
 - [x] 3. A file moved or edited in Finder keeps its tags in ov.
-- [ ] 4. Every file in ov shows its authors and where it came from.
+- [x] 4. Every file in ov shows its authors and where it came from.
 - [ ] 5. A file new to ov gets kinds and tags from its name, location and content, with nothing typed by hand.
 - [ ] 6. With AI suggestions turned on, a file shows suggested kinds and tags, and none is applied until i accept it.
 
@@ -23,24 +42,6 @@ Every company ends up with knowledge nobody can find. i asked how they organize 
     - name
     - location
     - content
-
-### Build order
-
-Each phase ending with something to look at:
-
-- [ ] 7. AI suggestions. Ends with: with the checkbox on, the editor shows suggestions, and accepting one adds it.
-- [ ] 6. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.
-- [ ] 5. The authors and provenance rows. Ends with: the editor shows both.
-- [x] 4. File watching. Ends with: a file moved in Finder keeps its tags.
-    - Built 10 September 2026. Nothing on this machine reports changes as they happen without a package the dispatcher does not carry (neither fswatch nor watchdog is installed), so the dispatcher looks at the disk instead: a thread started at launch takes the listing and a stat per file every 3 seconds, and `/all-labels` takes the same look before answering, so ov's launch is never behind. `database.reconcile` does the work the Design's item 5 lays out: same path with a new size or time, the fingerprint is computed again (changed); a path gone whose bytes turn up at a path with no row, the row moves there with its labels and fields (moved); a path gone with no match, the row is marked missing and kept; a missing row whose path is back is found. `/rescan` asks for a look by hand. ov hangs a missing file where it sat, its name struck through, its hint and its click saying it is not on disk. Proved on a repo made for the run: 90 checks in `test_database.py`.
-- [x] 3. The other four labels, title, description, use_when and date, read into the db, and the whole block removed from each file. Ends with: no file carries a block, and the editor shows all five from the db.
-    - The four are fields on the files table, one each, as the Design section's (see below) item 2 (files table) lists them.
-    - Built 10 September 2026. The files table gained the four columns, a db made before them is given them on open. `/scan` records them from every block (1099 fields across 369 files, and 21 older `type` lines read as the kind, `updated` as the date), `/all-labels` hands them back beside the labels, and `/set-fields` writes them. ov reads all five from the db, its editor writes every change there and never to the file, a new file is its heading alone, and a file the db has no row for gets its labels composed from its words when first opened. `/move-guide` and `/delete-guide` carry the db's row with the file. `/strip-block`, asked with a confirm word, took the whole block off 368 files and kept one, `memory/index.md`, whose block carries okf lines the db has no place for. `big-picture.py` writes no block and records its five in the db.
-- [x] 2. The markdown collection read into the db, and its labels removed from each file. Ends with: the files list filtering from the db.
-    - Built 10 September 2026. The dispatcher's `/scan` reads every listed file's kind and tags into the db as hand labels (485 files, 320 kinds, 779 tags, 153 whose block says neither), and `/all-labels` hands them all back in one answer. ov's files list filters from the db: `Files.ts` asks for every label beside the listing and takes each file's kind and tags from there, never from its block. Changing a kind or tags in the editor, composing labels for a bare file, and making a new file all write the db, and `Labels.ts` writes neither line into a block any more.
-    - The removal ran the same day: `/strip-labels`, asked with a confirm word, took the kind and tags lines out of 332 files, and left title, description, use_when and date. The three readers of the lines now read the db through `tools/hub/database.py`: `inject-always.sh` and `test-always-tag.sh` for the `always` tag, and `big-picture.py` records its kind and tag there instead of writing them.
-- [x] 1. The db, and the dispatcher reading and writing it. Ends with: a tag written and read back.
-    - Built 10 September 2026. `tools/hub/database.py` makes `tools/hub/ov.db` (git-ignored) with the four tables and writes and reads labels; the dispatcher answers `/labels`, `/add-label` and `/remove-label`; `tools/hub/test_database.py` writes a tag and reads it back against a db of its own, 23 checks.
 
 ### Design
 
@@ -72,7 +73,7 @@ Each phase ending with something to look at:
         - label it gives (name and value)
 3. **Files stay where they are.** ov already reads them in place through the dispatcher; the db keeps only the path.
 4. **Labels leave the files.** The labels at the top of each markdown file move into the db, and OKF changes to match.
-5. **Noticing changes.** The dispatcher asks the operating system to report changes in each collection's folders (called file watching). At launch it rescans, for changes made while it was off.
+5. **Noticing changes.** The dispatcher looks at the disk every 3 seconds, and once more before every launch of ov: the listing, and a stat per file (called polling). Nothing on this machine reports changes as they happen without a package the dispatcher does not carry, neither fswatch nor watchdog, so the disk is asked, not told. At launch it rescans, for changes made while it was off. Built 10 September 2026, as the three rules below say.
     - same path, new fingerprint → content changed; update the row.
     - path gone, same fingerprint at a new path → moved; update the path, keep the labels.
     - path gone, no match → missing; the files list shows it.
