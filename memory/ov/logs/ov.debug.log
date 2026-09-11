@@ -10,20 +10,20 @@ Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 f
 Startup: pushed the layer numbers, the sizes and the fixed inks onto the page. Reading three back — the gap between regions is "7.777777777777778px", the region corner radius is "17.5px", the ink black is "#1a1a1a". Empty values would mean the push from the numbers to the stylesheets is broken.
 Layout: the window is 797 wide and 618 is needed for both (details column 245 + content 350 + three gaps of 8) — details are hidden, so content has the whole 781.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
-Listed: 437 files hung under their folders 1036 ms after the listing was asked for, 72 index files left out — the list can draw. The db holds rows for 369 file(s), labels on 337. Their words are read next for the links they hold, 12 at a time.
+Listed: 437 files hung under their folders 215 ms after the listing was asked for, 72 index files left out — the list can draw. The db holds rows for 369 file(s), labels on 337. Their words are read next for the links they hold, 12 at a time.
 Startup: the files are listed and the app is showing itself; their labels are still coming in.
 Hits: asked all 22 target(s) again — 11 measured no size at all, so a press there reaches nothing: 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.picking.invert.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Hits: asked all 23 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Viewer: read 11192 character(s) for "knowledge bases" and turned them into a 24054-character page, every piece carrying the lines it came from.
+Viewer: read 12163 character(s) for "knowledge bases" and turned them into a 25165-character page, every piece carrying the lines it came from.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Reading "knowledge bases": back at line 38, 1265 down the page.
+Reading "knowledge bases": back at line 19, 430 down the page.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guides: the db holds no row for "me/CLAUDE.md". It is unlabeled until it is opened for editing.
 Guide "memory/core/truth/claude-files.md": the db holds 3 tag(s) not on the closed list of 39: claude-files, dispatcher, placement. They are ignored.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
@@ -51,29 +51,29 @@ Guides: the db holds no row for "memory/di/truth/working features.md". It is unl
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
+Guides: the db holds no row for "memory/di/zone/learn.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/article.first.draft.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/chat.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/learn.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/done/layout-algorithm.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/done/pipeline.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/done/propagating value changes.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/cruft.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/invisible.root.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/done/layout-algorithm.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/done/propagating value changes.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/done/quaternions.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/render.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/done/pipeline.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/done/quaternions.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/rotation.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Guides: the db holds no row for "memory/di/zone/work/done/skills.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/done/topology.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/scene.model.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/separators.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/done/skills.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/svelte.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/milestones/28.cut.lists.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/done/what.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/done/topology.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/update.guides.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/done/version.9.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/done/what.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/milestones/28.cut.lists.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/milestones/31.marketing.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/next/collaboration priorities.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
@@ -83,8 +83,8 @@ Guides: the db holds no row for "memory/di/zone/work/next/colors.md". It is unla
 Guides: the db holds no row for "memory/di/zone/work/next/data schema for wendy.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/next/musi capp.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/next/pacing.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/di/zone/work/next/snap.pin.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/next/roots.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/di/zone/work/next/snap.pin.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/now/open items.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/di/zone/work/now/our process.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
@@ -154,41 +154,41 @@ Hits: asked all 24 target(s) again — 12 measured no size at all, so a press th
 Guide "memory/shared/truth/develop/constants & subtypes.md": the db holds 1 tag(s) not on the closed list of 39: settled. They are ignored.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guide "memory/shared/truth/lexicon.md": the db holds 2 tag(s) not on the closed list of 39: lexicon, terminology. They are ignored.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guide "memory/shared/truth/taste.md": the db holds 2 tag(s) not on the closed list of 39: taste, design. They are ignored.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Guide "memory/shared/zone/architecture/incorporating a project.md": the db holds 1 tag(s) not on the closed list of 39: howto. They are ignored.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guides: the db holds no row for "memory/shared/zone/architecture/handoff—libraries.md". It is unlabeled until it is opened for editing.
+Guide "memory/shared/zone/architecture/incorporating a project.md": the db holds 1 tag(s) not on the closed list of 39: howto. They are ignored.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Guides: the db holds no row for "memory/shared/zone/work/done/class-lists.md". It is unlabeled until it is opened for editing.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guides: the db holds no row for "memory/shared/zone/work/done/code.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/shared/zone/work/done/gating.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/shared/zone/work/done/guides-clutter.md". It is unlabeled until it is opened for editing.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Guides: the db holds no row for "memory/shared/zone/work/done/january.2026.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/shared/zone/work/done/monorepo.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/shared/zone/work/done/jonathan-old.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/shared/zone/work/done/repo-old.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/shared/zone/work/done/migrations.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/shared/zone/work/done/tools-sites.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/shared/zone/work/done/single-line-progress.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/shared/zone/work/done/sites-hub.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/class-lists.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
+Guides: the db holds no row for "memory/shared/zone/work/done/january.2026.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/jonathan-old.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/migrations.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/single-line-progress.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/monorepo.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/repo-old.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/sites-hub.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/shared/zone/work/done/tools-sites.md". It is unlabeled until it is opened for editing.
+Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
+Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guides: the db holds no row for "memory/shared/zone/work/next/commoditize.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/shared/zone/work/next/curiosity.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/shared/zone/work/next/pacing.md". It is unlabeled until it is opened for editing.
@@ -198,37 +198,38 @@ Guides: the db holds no row for "memory/ws/archive/bubble/2/bubble tears.md". It
 Guides: the db holds no row for "memory/ws/archive/experiments/simulate bubble/README-test.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Guides: the db holds no row for "memory/ws/truth/manuals/plugin/bubble.plugin.md". It is unlabeled until it is opened for editing.
+Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
+Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guide "memory/ws/truth/filesystem database.md": the db holds 2 tag(s) not on the closed list of 39: database, filesystem. They are ignored.
+Guides: the db holds no row for "memory/ws/truth/manuals/plugin/bubble.plugin.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/truth/manuals/user/3.the.graph.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/truth/manuals/user/4.working.with.items.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/truth/manuals/user/5.details.panel.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guides: the db holds no row for "memory/ws/truth/manuals/user/6.search.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/truth/manuals/user/7.import.export.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/truth/manuals/user/8.preferences.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/ws/zone/work/next/Resize_Optimization_AI.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/ws/zone/work/next/holons.api.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/zone/work/done/february.1.2026.md". It is unlabeled until it is opened for editing.
-Guides: the db holds no row for "memory/ws/zone/work/next/amnesia.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/ws/zone/work/next/Resize_Optimization_AI.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/zone/work/next/search.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/ws/zone/work/next/amnesia.md". It is unlabeled until it is opened for editing.
+Guides: the db holds no row for "memory/ws/zone/work/next/holons.api.md". It is unlabeled until it is opened for editing.
 Guides: the db holds no row for "memory/ws/zone/work/next/search-links.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
+Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Guides: the db holds no row for "memory/ws/zone/work/next/user.manual.md". It is unlabeled until it is opened for editing.
 Narrowed: project(s) "ov", kind "all", any of the tags [any], words "none", 92 folder(s) shut (hiding what they hold), folders shown — 38 of 541 rows match; showing 12, of which 4 are folders. 6 folder(s) hold at least one match.
 Shape: 1 top folder(s) — mo. One means the four project folders hang under the shared one, so going up from a guide can reach another project.
-Guides read: 437 files (mo 1, memory 426, shared 0, core 1, ws 1, me 1, di 1, ji 1, lv 1, ov 1, mu 1, mj 1, gallery 1), 72 index files left out, 0 could not be read, hung under 104 folders. 82 carry no labels at all. Kinds found: analyze, arch, design, explain, howto, reference, specify. Tags found: 18 of the 39 on the closed list, across 750 tag placements. 3261924 characters of text passed through and none of it was kept.
+Guides read: 437 files (mo 1, memory 426, shared 0, core 1, ws 1, me 1, di 1, ji 1, lv 1, ov 1, mu 1, mj 1, gallery 1), 72 index files left out, 0 could not be read, hung under 104 folders. 82 carry no labels at all. Kinds found: analyze, arch, design, explain, howto, reference, specify. Tags found: 18 of the 39 on the closed list, across 750 tag placements. 3264990 characters of text passed through and none of it was kept.
+Link from "drive" to "knowledge bases": found "knowledge bases" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "ideas" to "memory/ov/zone/drive": found "drive" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "ideas" to "memory/ov/zone/drive": found "drive" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "ideas" to "memory/ov/zone/work/soon/tag drift": found "tag drift" in memory after climbing 1 folder(s) of the 3 above it.
@@ -236,11 +237,11 @@ Link from "ideas" to "adopting new memory design — journal — ov": no file na
 Link from "ideas" to "inception into the new design": found "inception into the new design" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "ideas" to "memory/ov/zone/work/soon/ov installer": found "ov installer" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "ideas" to "my story": found "my story" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "drive" to "knowledge bases": found "knowledge bases" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "simplify gaps" to "constants & subtypes": found "constants & subtypes" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "CLAUDE" to "../memory/ov/truth/design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "CLAUDE" to "../memory/core/truth/design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "CLAUDE" to "../memory/gallery/": nothing named "gallery" stands where the link says. The nearest of that name sits at memory/lv/truth/gallery.md — nothing opens.
+Link from "CLAUDE" to "../memory/lv/truth/lexicon": found "lexicon" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "action type" to "../../../src/lib/svelte/support/Section.svelte": no file named "Section.svelte" under any of the 3 folders above it. It points at src/lib/svelte/support/Section.svelte. Nothing opens.
 Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 3 folders above it. It points at src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
 Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 3 folders above it. It points at src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
@@ -255,12 +256,12 @@ Link from "action type" to "../../../src/lib/svelte/content/Edit_Markdown.svelte
 Link from "action type" to "../../../src/lib/svelte/content/Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 3 folders above it. It points at src/lib/svelte/content/Edit_Markdown.svelte. Nothing opens.
 Link from "action type" to "../../../src/lib/svelte/content/List_Files.svelte": no file named "List_Files.svelte" under any of the 3 folders above it. It points at src/lib/svelte/content/List_Files.svelte. Nothing opens.
 Link from "adopting core" to "../../shared/zone/architecture/libraries": found "libraries" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "CLAUDE" to "../memory/lv/truth/lexicon": found "lexicon" in memory after climbing 1 folder(s) of the 2 above it.
 Link from "compose an email" to "../../../../../ji/src/lib/svelte/main/Controls.svelte": no file named "Controls.svelte" under any of the 4 folders above it. It points at ji/src/lib/svelte/main/Controls.svelte. Nothing opens.
 Link from "lexicon" to "../../shared/truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "lexicon" to "../../ov/truth/banned words": found "banned words" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "scope" to "../../ov/truth/design/ov - goals": found "ov - goals" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "ideas" to "adopting core": found "adopting core" in memory after climbing 2 folder(s) of the 3 above it.
+Link from "AI on my mac" to "./proposals/replace claude": found "replace claude" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "pre-flight/always": nothing named "always" stands where the link says. The nearest of that name sits at memory/di/truth/always.md — nothing opens.
 Link from "assessment of our guides" to "pre-flight/response": no file named "response" under any of the 4 folders above it. It points at memory/core/zone/work/pre-flight/response.md, which sits below the top of a work folder — this app lists none of those. Nothing opens.
 Link from "assessment of our guides" to "pre-flight/agency": nothing named "agency" stands where the link says. The nearest of that name sits at memory/shared/truth/agency.md — nothing opens.
@@ -380,16 +381,7 @@ Link from "assessment of our guides" to "tools/git": found "git" in memory after
 Link from "assessment of our guides" to "tools/hub-app": found "hub-app" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "tools/single line of progress": found "single line of progress" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "tools/code both sides": found "code both sides" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "AI on my mac" to "./proposals/replace claude": found "replace claude" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "md improvements" to "md audit": found "md audit" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "organize" to "Voice": no file named "Voice" under any of the 5 folders above it. It points at memory/core/zone/work/soon/Voice.md. Nothing opens.
-Link from "organize" to "replying": no file named "replying" under any of the 5 folders above it. It points at memory/core/zone/work/soon/replying.md. Nothing opens.
-Link from "organize" to "chat": found "chat" in memory after climbing 5 folder(s) of the 5 above it.
-Link from "organize" to "shorthand": found "shorthand" in memory after climbing 5 folder(s) of the 5 above it.
-Link from "organize" to "sparse replies": found "sparse replies" in memory after climbing 5 folder(s) of the 5 above it.
-Link from "organize" to "CLAUDE": found "CLAUDE" in core after climbing 4 folder(s) of the 5 above it.
-Link from "organize" to "guides.layout": no file named "guides.layout" under any of the 5 folders above it. It points at memory/core/zone/work/soon/guides.layout.md. Nothing opens.
-Link from "organize" to "memory/ov/notes/guides/pre-flight/lexicon": nothing named "lexicon" stands where the link says. The nearest of that name sits at memory/core/truth/lexicon.md — nothing opens.
 Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
 Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hit_Target.ts. Nothing opens.
 Link from "hits manager" to "../../../../../core/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at core/src/lib/ts/events/Hits.ts. Nothing opens.
@@ -415,6 +407,14 @@ Link from "murk journal" to "../../../../shared/truth/develop/refactor": found "
 Link from "murk journal" to "../../../../../.claude/hooks/murk-count.sh": no file named "murk-count.sh" under any of the 5 folders above it. It points at .claude/hooks/murk-count.sh. Nothing opens.
 Link from "murk journal" to "../../../../../.claude/hooks/murk-count.test.sh": no file named "murk-count.test.sh" under any of the 5 folders above it. It points at .claude/hooks/murk-count.test.sh. Nothing opens.
 Link from "murk journal" to "../../../../../.claude/hooks/murk.jsonl": no file named "murk.jsonl" under any of the 5 folders above it. It points at .claude/hooks/murk.jsonl. Nothing opens.
+Link from "organize" to "Voice": no file named "Voice" under any of the 5 folders above it. It points at memory/core/zone/work/soon/Voice.md. Nothing opens.
+Link from "organize" to "replying": no file named "replying" under any of the 5 folders above it. It points at memory/core/zone/work/soon/replying.md. Nothing opens.
+Link from "organize" to "chat": found "chat" in memory after climbing 5 folder(s) of the 5 above it.
+Link from "organize" to "shorthand": found "shorthand" in memory after climbing 5 folder(s) of the 5 above it.
+Link from "organize" to "sparse replies": found "sparse replies" in memory after climbing 5 folder(s) of the 5 above it.
+Link from "organize" to "CLAUDE": found "CLAUDE" in core after climbing 4 folder(s) of the 5 above it.
+Link from "organize" to "guides.layout": no file named "guides.layout" under any of the 5 folders above it. It points at memory/core/zone/work/soon/guides.layout.md. Nothing opens.
+Link from "organize" to "memory/ov/notes/guides/pre-flight/lexicon": nothing named "lexicon" stands where the link says. The nearest of that name sits at memory/core/truth/lexicon.md — nothing opens.
 Link from "work journal" to "soon/ov installer": found "ov installer" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "work journal" to "../../../shared/truth/develop/sections": found "sections" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "work journal" to "../../../shared/truth/develop/sections spec": found "sections spec" in memory after climbing 4 folder(s) of the 4 above it.
@@ -576,10 +576,8 @@ Link from "stipulations" to "../../../../../../di/src/App.svelte": no file named
 Link from "stipulations" to "../../../../../../di/e2e/tests/print-notifications.spec.ts": no file named "print-notifications.spec.ts" under any of the 5 folders above it. It points at di/e2e/tests/print-notifications.spec.ts. Nothing opens.
 Link from "stipulations" to "../../../../../../di/src/lib/ts/render/Render.ts": no file named "Render.ts" under any of the 5 folders above it. It points at di/src/lib/ts/render/Render.ts. Nothing opens.
 Link from "lexicon" to "banned words": found "banned words" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "project" to "algebra": found "algebra" in memory after climbing 3 folder(s) of the 5 above it.
-Link from "project" to "three.dimensions": found "three.dimensions" in memory after climbing 3 folder(s) of the 5 above it.
-Link from "project" to "Hits_3D": found "Hits_3D" in memory after climbing 3 folder(s) of the 5 above it.
-Link from "project" to "di/notes/guides/architecture/core/managers": nothing named "managers" stands where the link says. The nearest of that name sits at memory/di/truth/architecture/core/managers.md — nothing opens.
+Link from "update guides" to "map of di guides": found "map of di guides" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "update guides" to "map of di guides": found "map of di guides" in memory after climbing 3 folder(s) of the 5 above it.
 Link from "map of di notes" to "map of di files": found "map of di files" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "map of di notes" to "map of di guides": found "map of di guides" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "map of di notes" to "map of di guides": found "map of di guides" in memory after climbing 1 folder(s) of the 3 above it.
@@ -591,15 +589,17 @@ Link from "map of di notes" to "../../work/now/working features": nothing named 
 Link from "map of di notes" to "../../work/now/revisit.di": no file named "revisit.di" under any of the 3 folders above it. It points at memory/work/now/revisit.di.md. Nothing opens.
 Link from "map of di notes" to "../../tools/sync-next.mjs": no file named "sync-next.mjs" under any of the 3 folders above it. It points at memory/tools/sync-next.mjs. Nothing opens.
 Link from "map of di notes" to "../../work/now/code debt": found "code debt" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "update guides" to "map of di guides": found "map of di guides" in memory after climbing 3 folder(s) of the 5 above it.
-Link from "update guides" to "map of di guides": found "map of di guides" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "project" to "algebra": found "algebra" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "project" to "three.dimensions": found "three.dimensions" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "project" to "Hits_3D": found "Hits_3D" in memory after climbing 3 folder(s) of the 5 above it.
+Link from "project" to "di/notes/guides/architecture/core/managers": nothing named "managers" stands where the link says. The nearest of that name sits at memory/di/truth/architecture/core/managers.md — nothing opens.
+Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
+Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
+Link from "working features" to "uniface proposal": no file named "uniface proposal" under any of the 3 folders above it. It points at memory/di/truth/uniface proposal.md. Nothing opens.
+Link from "working features" to "uniface rules": no file named "uniface rules" under any of the 3 folders above it. It points at memory/di/truth/uniface rules.md. Nothing opens.
 Link from "dimensionals research" to "dimensionals": found "dimensionals" in memory after climbing 3 folder(s) of the 5 above it.
 Link from "dimensionals research" to "../../../src/lib/ts/common/Seeded_Random.ts": no file named "Seeded_Random.ts" under any of the 5 folders above it. It points at memory/di/src/lib/ts/common/Seeded_Random.ts. Nothing opens.
 Link from "dimensionals research" to "../../../src/lib/ts/common/Seeded_Random.ts": no file named "Seeded_Random.ts" under any of the 5 folders above it. It points at memory/di/src/lib/ts/common/Seeded_Random.ts. Nothing opens.
-Link from "working features" to "uniface proposal": no file named "uniface proposal" under any of the 3 folders above it. It points at memory/di/truth/uniface proposal.md. Nothing opens.
-Link from "working features" to "uniface rules": no file named "uniface rules" under any of the 3 folders above it. It points at memory/di/truth/uniface rules.md. Nothing opens.
-Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
-Link from "occlusion performance" to "3D.primer": found "3D.primer" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "learn" to "12-reread-on-read-edit-changed": no file named "12-reread-on-read-edit-changed" under any of the 3 folders above it. It points at memory/di/zone/12-reread-on-read-edit-changed.md. Nothing opens.
 Link from "rotation" to "axes": found "axes" in memory after climbing 4 folder(s) of the 5 above it.
 Link from "roots" to "versions": found "versions" in memory after climbing 4 folder(s) of the 5 above it.
@@ -630,6 +630,19 @@ Link from "open items" to "di/notes/work/milestones/33.drag/handoff": nothing na
 Link from "open items" to "bottlenecks": no file named "bottlenecks" under any of the 5 folders above it. It points at memory/di/zone/work/now/bottlenecks.md. Nothing opens.
 Link from "open items" to "repeaters.mothball": no file named "repeaters.mothball" under any of the 5 folders above it. It points at memory/di/zone/work/now/repeaters.mothball.md. Nothing opens.
 Link from "open items" to "uniface proposal": no file named "uniface proposal" under any of the 5 folders above it. It points at memory/di/zone/work/now/uniface proposal.md. Nothing opens.
+Link from "action type" to "core/src/lib/svelte/support/Section.svelte": no file named "Section.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/core/src/lib/svelte/support/Section.svelte. Nothing opens.
+Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 5 folders above it. It points at memory/src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
+Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 5 folders above it. It points at memory/src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
+Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 5 folders above it. It points at memory/src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
+Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
+Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
+Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
+Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
+Link from "action type" to "ov/src/lib/svelte/filter/Search.svelte": no file named "Search.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/ov/src/lib/svelte/filter/Search.svelte. Nothing opens.
+Link from "action type" to "Browse.svelte": no file named "Browse.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse.svelte. Nothing opens.
+Link from "action type" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Edit_Markdown.svelte. Nothing opens.
+Link from "action type" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Edit_Markdown.svelte. Nothing opens.
+Link from "action type" to "List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/List_Files.svelte. Nothing opens.
 Link from "work journal" to "di/src/lib/ts/render/Dimension_Placement.ts": no file named "Dimension_Placement.ts" under any of the 5 folders above it. It points at memory/di/zone/work/now/di/src/lib/ts/render/Dimension_Placement.ts, which sits below the top of a work folder — this app lists none of those. Nothing opens.
 Link from "work journal" to "di/src/lib/ts/render/Dimension_Renderer.ts": no file named "Dimension_Renderer.ts" under any of the 5 folders above it. It points at memory/di/zone/work/now/di/src/lib/ts/render/Dimension_Renderer.ts, which sits below the top of a work folder — this app lists none of those. Nothing opens.
 Link from "work journal" to "di/src/lib/ts/render/Render.ts": no file named "Render.ts" under any of the 5 folders above it. It points at memory/di/zone/work/now/di/src/lib/ts/render/Render.ts, which sits below the top of a work folder — this app lists none of those. Nothing opens.
@@ -731,8 +744,8 @@ Link from "work journal" to "../../../../../di/src/lib/svelte/details/D_Parts.sv
 Link from "work journal" to "../../../../../di/src/lib/svelte/details/D_Selection.svelte": no file named "D_Selection.svelte" under any of the 5 folders above it. It points at di/src/lib/svelte/details/D_Selection.svelte. Nothing opens.
 Link from "work journal" to "../../../../../di/src/lib/svelte/details/Details.svelte": no file named "Details.svelte" under any of the 5 folders above it. It points at di/src/lib/svelte/details/Details.svelte. Nothing opens.
 Link from "work journal" to "../../../../../di/src/lib/ts/render/R_Axes.ts": no file named "R_Axes.ts" under any of the 5 folders above it. It points at di/src/lib/ts/render/R_Axes.ts. Nothing opens.
-Link from "work journal" to "code debt paid": no file named "code debt paid" under any of the 5 folders above it. It points at memory/di/zone/work/now/code debt paid.md. Nothing opens.
 Link from "work journal" to "../../../../../di/src/lib/svelte/details/Hideable.svelte": no file named "Hideable.svelte" under any of the 5 folders above it. It points at di/src/lib/svelte/details/Hideable.svelte. Nothing opens.
+Link from "work journal" to "code debt paid": no file named "code debt paid" under any of the 5 folders above it. It points at memory/di/zone/work/now/code debt paid.md. Nothing opens.
 Link from "work journal" to "../../../../../di/src/lib/svelte/main/UserGuide.svelte": no file named "UserGuide.svelte" under any of the 5 folders above it. It points at di/src/lib/svelte/main/UserGuide.svelte. Nothing opens.
 Link from "work journal" to "../../../../../di/src/lib/svelte/mouse/Slider.svelte": no file named "Slider.svelte" under any of the 5 folders above it. It points at di/src/lib/svelte/mouse/Slider.svelte. Nothing opens.
 Link from "work journal" to "../../../../../di/src/lib/svelte/main/Graph.svelte": no file named "Graph.svelte" under any of the 5 folders above it. It points at di/src/lib/svelte/main/Graph.svelte. Nothing opens.
@@ -975,19 +988,6 @@ Link from "work journal" to "bottlenecks": no file named "bottlenecks" under any
 Link from "work journal" to "di/notes/work/now/code debt": nothing named "code debt" stands where the link says. The nearest of that name sits at memory/di/zone/work/now/code debt.md — nothing opens.
 Link from "log" to "memory/ov/zone/work/soon/mouse ux": found "mouse ux" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "log" to "tags hierarchy": found "tags hierarchy" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "action type" to "core/src/lib/svelte/support/Section.svelte": no file named "Section.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/core/src/lib/svelte/support/Section.svelte. Nothing opens.
-Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 5 folders above it. It points at memory/src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
-Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 5 folders above it. It points at memory/src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
-Link from "action type" to "../../../src/lib/svelte/filter/Editor_Filters.svelte": no file named "Editor_Filters.svelte" under any of the 5 folders above it. It points at memory/src/lib/svelte/filter/Editor_Filters.svelte. Nothing opens.
-Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
-Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
-Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
-Link from "action type" to "Browse_Filters.svelte": no file named "Browse_Filters.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse_Filters.svelte. Nothing opens.
-Link from "action type" to "ov/src/lib/svelte/filter/Search.svelte": no file named "Search.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/ov/src/lib/svelte/filter/Search.svelte. Nothing opens.
-Link from "action type" to "Browse.svelte": no file named "Browse.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Browse.svelte. Nothing opens.
-Link from "action type" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Edit_Markdown.svelte. Nothing opens.
-Link from "action type" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/Edit_Markdown.svelte. Nothing opens.
-Link from "action type" to "List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at memory/filter tree/truth/design/List_Files.svelte. Nothing opens.
 Link from "compose an email" to "../../../../../ji/src/lib/svelte/main/Controls.svelte": no file named "Controls.svelte" under any of the 5 folders above it. It points at ji/src/lib/svelte/main/Controls.svelte. Nothing opens.
 Link from "okf" to "../../../../notes/guides/assessment of our guides": nothing named "assessment of our guides" stands where the link says. The nearest of that name sits at memory/core/zone/work/assessment of our guides.md — nothing opens.
 Link from "okf" to "../../../../notes/guides/assessment of our guides": nothing named "assessment of our guides" stands where the link says. The nearest of that name sits at memory/core/zone/work/assessment of our guides.md — nothing opens.
@@ -1185,6 +1185,8 @@ Link from "hierarchy spec" to "../../ji/src/lib/ts/database/Indexes.ts": no file
 Link from "hierarchy spec" to "../../ji/src/lib/svelte/main/Documents.svelte": no file named "Documents.svelte" under any of the 4 folders above it. It points at memory/ji/ji/src/lib/svelte/main/Documents.svelte. Nothing opens.
 Link from "hierarchy spec" to "../../ji/src/lib/ts/types/DB_Records.ts": no file named "DB_Records.ts" under any of the 4 folders above it. It points at memory/ji/ji/src/lib/ts/types/DB_Records.ts. Nothing opens.
 Link from "hierarchy spec" to "../../ji/src/lib/ts/types/DB_Records.ts": no file named "DB_Records.ts" under any of the 4 folders above it. It points at memory/ji/ji/src/lib/ts/types/DB_Records.ts. Nothing opens.
+Link from "ideas" to "proposals/sample files": found "sample files" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "ideas" to "sideband storage proposal": found "sideband storage proposal" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "db handoff" to "db proposal": no file named "db proposal" under any of the 5 folders above it. It points at memory/ji/zone/work/done/db proposal.md. Nothing opens.
 Link from "db handoff" to "db spec": found "db spec" in memory after climbing 4 folder(s) of the 5 above it.
 Link from "handoff" to "work journal": found "work journal" in memory after climbing 1 folder(s) of the 4 above it.
@@ -1202,15 +1204,13 @@ Link from "handoff" to "sparse replies": found "sparse replies" in memory after 
 Link from "handoff" to "db spec": found "db spec" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "handoff" to "db implementation proposal": found "db implementation proposal" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "handoff" to "db handoff": found "db handoff" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "ideas" to "proposals/sample files": found "sample files" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "ideas" to "sideband storage proposal": found "sideband storage proposal" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "cancel" to "../../../../../ji/src/lib/ts/managers/Drop.ts": no file named "Drop.ts" under any of the 5 folders above it. It points at ji/src/lib/ts/managers/Drop.ts. Nothing opens.
 Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "build LLM proposal" to "../../ji/src/lib/ts/managers/Hierarchy.ts": no file named "Hierarchy.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/managers/Hierarchy.ts. Nothing opens.
 Link from "build LLM proposal" to "../../ji/src/lib/ts/database/DB_Local.ts": no file named "DB_Local.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/database/DB_Local.ts. Nothing opens.
 Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
 Link from "build LLM proposal" to "../../ji/src/lib/ts/types/Document.ts": no file named "Document.ts" under any of the 5 folders above it. It points at memory/ji/zone/ji/src/lib/ts/types/Document.ts. Nothing opens.
 Link from "build LLM proposal" to "thin proxy proposal": found "thin proxy proposal" in memory after climbing 1 folder(s) of the 5 above it.
+Link from "cancel" to "../../../../../ji/src/lib/ts/managers/Drop.ts": no file named "Drop.ts" under any of the 5 folders above it. It points at ji/src/lib/ts/managers/Drop.ts. Nothing opens.
 Link from "db implementation proposal" to "db spec": found "db spec" in memory after climbing 4 folder(s) of the 5 above it.
 Link from "full family support" to "../../../../../ji/src/lib/ts/types/Document.ts": no file named "Document.ts" under any of the 5 folders above it. It points at ji/src/lib/ts/types/Document.ts. Nothing opens.
 Link from "persistables proposal" to "ws/src/lib/ts/runtime/Identifiable.ts": no file named "Identifiable.ts" under any of the 5 folders above it. It points at memory/ji/zone/work/proposals/ws/src/lib/ts/runtime/Identifiable.ts, which sits below the top of a work folder — this app lists none of those. Nothing opens.
@@ -1278,7 +1278,6 @@ Link from "compose an email" to "../../../../../ji/src/lib/svelte/main/Controls.
 Link from "okf" to "../../../../notes/guides/assessment of our guides": nothing named "assessment of our guides" stands where the link says. The nearest of that name sits at memory/ov/zone/work/assessment of our guides.md — nothing opens.
 Link from "okf" to "../../../../notes/guides/assessment of our guides": nothing named "assessment of our guides" stands where the link says. The nearest of that name sits at memory/ov/zone/work/assessment of our guides.md — nothing opens.
 Link from "okf" to "ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "AI on my mac" to "./proposals/replace claude": found "replace claude" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "lexicon" to "../../shared/truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "lexicon" to "banned words": found "banned words" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "map of ov files" to "../../../ov/vite.config.ts": no file named "vite.config.ts" under any of the 3 folders above it. It points at ov/vite.config.ts. Nothing opens.
@@ -1357,6 +1356,7 @@ Link from "map of ov files" to "../zone/work/soon/murk journal": found "murk jou
 Link from "map of ov files" to "../zone/work/assessment of our guides": found "assessment of our guides" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "map of ov files" to "../zone/work/soon/stale guides": found "stale guides" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "map of ov files" to "design/ov - goals": found "ov - goals" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "AI on my mac" to "./proposals/replace claude": found "replace claude" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "pre-flight/always": nothing named "always" stands where the link says. The nearest of that name sits at memory/di/truth/always.md — nothing opens.
 Link from "assessment of our guides" to "pre-flight/response": no file named "response" under any of the 4 folders above it. It points at memory/ov/zone/work/pre-flight/response.md, which sits below the top of a work folder — this app lists none of those. Nothing opens.
 Link from "assessment of our guides" to "pre-flight/agency": nothing named "agency" stands where the link says. The nearest of that name sits at memory/shared/truth/agency.md — nothing opens.
@@ -1476,19 +1476,19 @@ Link from "assessment of our guides" to "tools/git": found "git" in memory after
 Link from "assessment of our guides" to "tools/hub-app": found "hub-app" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "tools/single line of progress": found "single line of progress" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "assessment of our guides" to "tools/code both sides": found "code both sides" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hit_Target.ts. Nothing opens.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/List_Files.svelte. Nothing opens.
-Link from "hits manager" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/Edit_Markdown.svelte. Nothing opens.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hit_Target.ts. Nothing opens.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
-Link from "hits manager" to "List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/List_Files.svelte. Nothing opens.
-Link from "hits manager" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/Edit_Markdown.svelte. Nothing opens.
 Link from "md improvements" to "md audit": found "md audit" in memory after climbing 1 folder(s) of the 4 above it.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hit_Target.ts. Nothing opens.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/List_Files.svelte. Nothing opens.
+Link from "hits manager" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/Edit_Markdown.svelte. Nothing opens.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hit_Target.ts": no file named "Hit_Target.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hit_Target.ts. Nothing opens.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
+Link from "hits manager" to "List_Files.svelte": no file named "List_Files.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/List_Files.svelte. Nothing opens.
+Link from "hits manager" to "Edit_Markdown.svelte": no file named "Edit_Markdown.svelte" under any of the 5 folders above it. It points at memory/ov/zone/work/soon/Edit_Markdown.svelte. Nothing opens.
 Link from "mouse ux" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
 Link from "mouse ux" to "../../../../../ov/src/lib/ts/events/S_Mouse.ts": no file named "S_Mouse.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/S_Mouse.ts. Nothing opens.
 Link from "mouse ux" to "../../../../../ov/src/lib/ts/events/Hits.ts": no file named "Hits.ts" under any of the 5 folders above it. It points at ov/src/lib/ts/events/Hits.ts. Nothing opens.
@@ -1514,12 +1514,12 @@ Link from "work journal" to "soon/ov installer": found "ov installer" in memory 
 Link from "work journal" to "sections": found "sections" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "work journal" to "sections spec": found "sections spec" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "agency" to "pitfalls": found "pitfalls" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "breakdown" to "../../zone/learn": found "learn" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "avoid murk" to "../../../ov/zone/work/soon/murk journal": found "murk journal" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "avoid murk" to "voice": found "voice" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "avoid murk" to "../../../truth/lexicon": found "lexicon" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "avoid murk" to "../../../truth/conventions": found "conventions" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "avoid murk" to "hooks": found "hooks" in memory after climbing 1 folder(s) of the 4 above it.
-Link from "breakdown" to "../../zone/learn": found "learn" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "chat" to "shorthand": found "shorthand" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "chat" to "workflow": found "workflow" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "chat" to "../test/debugging": found "debugging" in memory after climbing 2 folder(s) of the 4 above it.
@@ -1534,10 +1534,10 @@ Link from "workflow" to "memory/ji/zone/work/handoff": found "handoff" in memory
 Link from "workflow" to "response": no file named "response" under any of the 4 folders above it. It points at memory/shared/truth/collaborate/response.md. Nothing opens.
 Link from "workflow" to "agency": found "agency" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "workflow" to "create a design": found "create a design" in memory after climbing 2 folder(s) of the 4 above it.
+Link from "create a project" to "../zone/architecture/libraries": found "libraries" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "conventions" to "agency": found "agency" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "conventions" to "../../ov/zone/ideas": found "ideas" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "conventions" to "../../di/truth/banned words": found "banned words" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "create a project" to "../zone/architecture/libraries": found "libraries" in memory after climbing 2 folder(s) of the 3 above it.
 Link from "decisions" to "../../ov/zone/consolidate": found "consolidate" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "conceptual composition" to "composition": found "composition" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "keep shop" to "workflow": found "workflow" in memory after climbing 2 folder(s) of the 4 above it.
@@ -1577,37 +1577,10 @@ Link from "adopting the ai memory design" to "../../ov/truth/design/claude-files
 Link from "adopting the ai memory design" to "memory/ov/truth/lexicon": found "lexicon" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "adopting the ai memory design" to "truth/scope": found "scope" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "fable" to "memory/shared/zone/drive": found "drive" in memory after climbing 2 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "always": found "always" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/agency": found "agency" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/lexicon": found "lexicon" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/keywords": found "keywords" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/shorthand": found "shorthand" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/kinds of tasks": found "kinds of tasks" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../../di/truth/always": found "always" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../../di/truth/lexicon": found "lexicon" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../../di/truth/banned words": found "banned words" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../../di/notes/guides/pre-flight/banned": no file named "banned" under any of the 4 folders above it. It points at memory/shared/di/notes/guides/pre-flight/banned.md. Nothing opens.
-Link from "rewrite the guides" to "../../ji/truth/lexicon": found "lexicon" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../../ov/truth/banned words": found "banned words" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../../core/truth/banned words": found "banned words" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../../../CLAUDE": found "CLAUDE" in mo after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/handbook": found "handbook" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "memory/di/zone/learn": found "learn" in memory after climbing 4 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/gates": found "gates" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/collaborate/": no file named "collaborate" under any of the 4 folders above it. It points at memory/shared/zone/truth/collaborate. Nothing opens.
-Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "keywords": found "keywords" in memory after climbing 3 folder(s) of the 4 above it.
-Link from "rewrite the guides" to "../truth/pitfalls": found "pitfalls" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "handoff—libraries" to "proposals": found "proposals" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "incorporating a project" to "../../../core/truth/adopting core": found "adopting core" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "incorporating a project" to "proposals": found "proposals" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "incorporating a project" to "../proposals": found "proposals" in memory after climbing 2 folder(s) of the 4 above it.
-Link from "handoff—libraries" to "proposals": found "proposals" in memory after climbing 2 folder(s) of the 4 above it.
 Link from "libraries" to "../../../core/truth/adopting core": found "adopting core" in memory after climbing 4 folder(s) of the 4 above it.
 Link from "library projects" to "incorporating a project": found "incorporating a project" in memory after climbing 1 folder(s) of the 4 above it.
 Link from "library projects" to "libraries": found "libraries" in memory after climbing 1 folder(s) of the 4 above it.
@@ -1653,37 +1626,40 @@ Link from "big picture" to "../../shared/zone/proposals": found "proposals" in m
 Link from "big picture" to "../../shared/zone/questions": found "questions" in memory after climbing 1 folder(s) of the 3 above it.
 Link from "big picture" to "../../ws/zone/ideas": found "ideas" in memory after climbing 3 folder(s) of the 3 above it.
 Link from "big picture" to "../../ws/zone/questions": found "questions" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "learn" to "../../../di/notes/work/now/learn": nothing named "learn" stands where the link says. The nearest of that name sits at memory/shared/zone/learn.md — nothing opens.
-Link from "ideas" to "collisions": found "collisions" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "ideas" to "library projects": found "library projects" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "ideas" to "handbook": found "handbook" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "proposals" to "handoff": found "handoff" in memory after climbing 1 folder(s) of the 3 above it.
+Link from "rewrite the guides" to "always": found "always" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "agency": found "agency" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/agency": found "agency" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/lexicon": found "lexicon" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/conventions": found "conventions" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/keywords": found "keywords" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/shorthand": found "shorthand" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/kinds of tasks": found "kinds of tasks" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../../di/truth/always": found "always" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../../di/truth/lexicon": found "lexicon" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../../di/truth/banned words": found "banned words" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../../di/notes/guides/pre-flight/banned": no file named "banned" under any of the 4 folders above it. It points at memory/shared/di/notes/guides/pre-flight/banned.md. Nothing opens.
+Link from "rewrite the guides" to "../../ji/truth/lexicon": found "lexicon" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../../ov/truth/banned words": found "banned words" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../../core/truth/banned words": found "banned words" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../../../CLAUDE": found "CLAUDE" in mo after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/handbook": found "handbook" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "memory/di/zone/learn": found "learn" in memory after climbing 4 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/gates": found "gates" in memory after climbing 3 folder(s) of the 4 above it.
+Link from "rewrite the guides" to "../truth/collaborate/": no file named "collaborate" under any of the 4 folders above it. It points at memory/shared/zone/truth/collaborate. Nothing opens.
+Link from "rewrite the guides" to "keywords": found "keywords" in memory after climbing 3 folder(s) of the 4 above it.
 Link from "proposals" to "library projects": found "library projects" in memory after climbing 1 folder(s) of the 3 above it.
-Link from "proposals" to "../../gallery/zone/proposals": found "proposals" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "proposals" to "../../ov/zone/ideas": found "ideas" in memory after climbing 3 folder(s) of the 3 above it.
-Link from "proposals" to "../truth/shorthand": found "shorthand" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "proposals" to "../log": found "log" in memory after climbing 2 folder(s) of the 3 above it.
-Link from "claude agent skills" to "Agentic AI": no file named "Agentic AI" under any of the 4 folders above it. It points at memory/shared/zone/work/Agentic AI.md. Nothing opens.
-Link from "claude agent skills" to "Prompt Engineering": no file named "Prompt Engineering" under any of the 4 folders above it. It points at memory/shared/zone/work/Prompt Engineering.md. Nothing opens.
-Link from "claude agent skills" to "Tool Use": no file named "Tool Use" under any of the 4 folders above it. It points at memory/shared/zone/work/Tool Use.md. Nothing opens.
+Reading "knowledge bases": what sits under the thing to be done on line 33 is now put away.
+Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
 Lines in the editor: 2 of them, middle to middle — 34.90.
 Spacing in the editor: 1 section(s) to measure below their own lines.
 Spacing: the section holding "section-body s-0UwC_24K2_V5 folded" begins 3.89px below the middle of the 7.78-thick line above it, and it holds no words of its own.
-Reading "knowledge bases": the section under piece 6 is now folded away.
+Reading "knowledge bases": what sits under the thing to be done on line 33 is now showing.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
 Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Reading "knowledge bases": what sits under the thing to be done on line 30 is now put away.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Reading "knowledge bases": what sits under the thing to be done on line 32 is now put away.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.
-Reading "knowledge bases": what sits under the thing to be done on line 35 is now put away.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Reading "knowledge bases": 0 link(s) registered, each answering for its own place and its own words.
-Hits: asked all 24 target(s) again — 12 measured no size at all, so a press there reaches nothing: 0-editor.fold.info, 0-editor.picking.clear, 0-editor.fold.kinds, 0-editor.fold.tags, 0-editor.title.from-name, 0-editor.title.to-h1, 0-editor.fold.search, 0-editor.fold.backlinks, 0-editor.title.from-h1, 0-editor.title.to-name, 0-editor.picking.invert, 0-editor.clear.kinds.

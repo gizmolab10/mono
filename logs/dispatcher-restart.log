@@ -1,0 +1,5 @@
+Killed existing process 84004 on port 5171
+Killed existing process 86444 on port 5171
+Dispatcher running on http://localhost:5171
+watch: looking at the disk every 3 seconds
+watch: {'changed': 1, 'moved': 0, 'missing': 0, 'found': 0}

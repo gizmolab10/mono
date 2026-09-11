@@ -119,6 +119,7 @@ export type File = Labels & {
 	is_folder : boolean;
 	is_design : boolean;
 	size      : number;      // how many characters its text held when it was read at launch; 0 for a folder     // a design says how a thing was built, a guide says how to work
+	missing?  : boolean;     // the db holds it, labels and all, but no file sits at its path on disk
 };
 
 // A guide paired with the tags on it — what a listing hands back. A folder appears

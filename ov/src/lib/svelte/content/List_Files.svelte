@@ -121,6 +121,12 @@
 			debug.log(`Row clicked with the command key: handing "${where}" to Obsidian, in the "${VAULT}" vault. This app stays where it is.`);
 			return;
 		}
+		// A missing file has no words to open: the db holds it, the disk does not.
+		if (row.file.missing) {
+			show_status(`"${row.file.name}" is not on disk — the db holds its labels and nothing else`);
+			debug.log(`Row clicked: "${row.file.name}" is missing from the disk, so nothing opens.`);
+			return;
+		}
 		debug.log(`Row clicked: opening the file "${row.file.name}".`);
 		open_view(row.key);
 	}
@@ -181,6 +187,7 @@
 				const where = folder_of(row.file.path);
 				return `open "${where === '' ? row.file.bundle : where.split('/').pop()}" in the finder`;
 			}
+			if (row.file.missing) { return `"${row.file.name}" is not on disk`; }
 			return `${holding_command ? 'edit in obsidian' : 'edit'} "${row.file.name}"`;
 		}
 		if (holding_command) { return `open "${row.file.name}" in the finder`; }
@@ -502,7 +509,7 @@
 						</svg>
 					</button>
 				{/if}
-			</span><span class='name-text'>{row.file.name}</span>
+			</span><span class='name-text' class:missing={row.file.missing === true}>{row.file.name}</span>
 		</span>
 	</td>
 	<td class='tags-cell'><span class='tag-names'>{ordered_tags(row.tag_names, $w_tags).join(', ')}</span></td>
@@ -985,6 +992,12 @@
 
 	/* The name is capped by its column. Clipping lives on this inner block, not the cell
 	   — clipping a table cell is unreliable. */
+	/* A file the db holds and the disk does not: struck through, so the list shows it as missing. */
+	.name-text.missing {
+		text-decoration: line-through;
+		opacity: 0.6;
+	}
+
 	.name-text {
 		flex          : 1;
 		min-width     : 0;

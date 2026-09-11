@@ -511,6 +511,32 @@ def scan_labels():
         fields += sum(1 for key in ('title', 'description', 'use_when', 'date') if said[key] is not None)
     return {'files': files, 'kinds': kinds, 'tags': tags, 'fields': fields, 'said_nothing': said_nothing, 'unreadable': unreadable}
 
+def rescan():
+    """Bring the db into line with the disk: the listing is taken, and every row checked against
+    it. A file changed, moved or thrown away in the Finder is noticed here."""
+    root, paths = listed_files()
+    return database.reconcile(root, paths)
+
+# How many seconds pass between one look at the disk and the next.
+WATCH_EVERY = 3
+
+def watch_the_disk():
+    """For as long as the dispatcher runs, the disk is looked at every few seconds and the db
+    brought into line, so a file moved or changed in the Finder keeps its labels. Nothing on
+    this machine reports changes as they happen without a package the dispatcher does not carry,
+    so the disk is asked instead: one listing and one stat per file each time, and a fingerprint
+    only for a file that changed or has no row while another's is gone. The first look is at
+    launch, for changes made while the dispatcher was off."""
+    print(f'watch: looking at the disk every {WATCH_EVERY} seconds', flush=True)
+    while True:
+        try:
+            said = rescan()
+            if any(said.values()):
+                print(f'watch: {said}', flush=True)
+        except Exception as e:
+            print(f'watch: {e}', flush=True)
+        time.sleep(WATCH_EVERY)
+
 def strip_blocks():
     """Take the whole label block off the top of every listed file the db holds a row for. A file
     the db has no row for is passed over, and so is a file whose block carries a line the db has
@@ -757,8 +783,10 @@ class APIHandler(BaseHTTPRequestHandler):
             # Every label and every field on every file, for the overview app, in one answer:
             # each file's path from the top of the repo, its labels, and its title, description,
             # use_when and date. One ask at launch in place of one per file. A path among the
-            # fields is a file the db holds a row for, labels or not.
+            # fields is a file the db holds a row for, labels or not. The disk is looked at
+            # first, so a file moved a moment ago answers under its new path.
             try:
+                rescan()
                 self._send_response(200, {'success': True, 'labels': database.all_labels(), 'fields': database.all_fields()})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -1191,6 +1219,15 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif self.path == '/rescan':
+            # Bring the db into line with the disk now, rather than at the watcher's next look:
+            # /rescan. Answers how many rows changed, moved, went missing or were found again.
+            try:
+                self._drain_body()
+                self._send_response(200, {'success': True, **rescan()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/strip-block':
             # Take the whole label block off the top of every listed file the db holds a row for:
             # /strip-block, with the JSON body {"confirm": "strip"}. A file whose block carries a
@@ -1293,6 +1330,8 @@ if __name__ == '__main__':
 
     server = ReusableHTTPServer(('localhost', PORT), APIHandler)
     print(f"Dispatcher running on http://localhost:{PORT}")
+    # The disk is watched for as long as the server runs, its first look at launch.
+    threading.Thread(target=watch_the_disk, daemon=True).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:

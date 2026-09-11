@@ -43,7 +43,8 @@ CREATE TABLE IF NOT EXISTS files (
     title       TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     use_when    TEXT NOT NULL DEFAULT '',
-    date        TEXT NOT NULL DEFAULT ''
+    date        TEXT NOT NULL DEFAULT '',
+    missing     INTEGER NOT NULL DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS labels (
     id      INTEGER PRIMARY KEY,
@@ -72,9 +73,11 @@ CREATE TABLE IF NOT EXISTS rules (
 
 def open_db():
     """Open the db, making the file and its tables the first time. A files table made before the
-    four fields were columns is given them. A row pointing at a file goes when the file's row
-    goes, which sqlite only honors when asked on every open."""
-    db = sqlite3.connect(PLACE)
+    four fields and the missing mark were columns is given them. A row pointing at a file goes
+    when the file's row goes, which sqlite only honors when asked on every open. Two threads
+    open it, the dispatcher's and the watcher's, so an open waits its turn for a few seconds
+    rather than refusing."""
+    db = sqlite3.connect(PLACE, timeout=5)
     db.row_factory = sqlite3.Row
     db.execute('PRAGMA foreign_keys = ON')
     db.executescript(TABLES)
@@ -82,6 +85,8 @@ def open_db():
     for name in FIELDS:
         if name not in have:
             db.execute(f"ALTER TABLE files ADD COLUMN {name} TEXT NOT NULL DEFAULT ''")
+    if 'missing' not in have:
+        db.execute('ALTER TABLE files ADD COLUMN missing INTEGER NOT NULL DEFAULT 0')
     db.commit()
     return db
 
@@ -245,14 +250,73 @@ def all_labels():
 
 def all_fields():
     """Every file's four fields, keyed by its path from the top of the repo: title, description,
-    use_when as a list again, and date. Every row, whether or not anything is written on it, so
-    a path here is a file the db holds."""
+    use_when as a list again, and date, with whether the file is missing from the disk. Every
+    row, whether or not anything is written on it, so a path here is a file the db holds."""
     db = open_db()
-    rows = db.execute('SELECT path, title, description, use_when, date FROM files ORDER BY path').fetchall()
+    rows = db.execute('SELECT path, title, description, use_when, date, missing FROM files ORDER BY path').fetchall()
     db.close()
     return {row['path']: {
         'title': row['title'],
         'description': row['description'],
         'use_when': [one.strip() for one in row['use_when'].split(',') if one.strip()],
         'date': row['date'],
+        'missing': bool(row['missing']),
     } for row in rows}
+
+
+def reconcile(root, paths):
+    """Bring every row into line with the disk. paths is every listed file on disk right now,
+    counting from the top of the repo, and root where the repo sits on this machine.
+      same path, new size or time      -> the fingerprint is computed again and the row brought
+                                          up to date: changed
+      path gone, a file at a path with no row whose bytes give the same fingerprint
+                                       -> the row moves to that path, labels and fields with
+                                          it: moved
+      path gone, no such file          -> the row is marked missing, and kept: missing
+      a missing row whose path is back -> the mark comes off: found
+    A file at a path with no row and no gone row to match is left alone: it gets a row when
+    something is first written on it. Answers the counts."""
+    on_disk = set(paths)
+    changed = moved = missing = found = 0
+    db = open_db()
+    with db:
+        rows = db.execute('SELECT id, path, size, modified, fingerprint, missing FROM files').fetchall()
+        with_rows = {row['path'] for row in rows}
+        gone = []
+        for row in rows:
+            if row['path'] not in on_disk:
+                gone.append(row)
+                continue
+            full = os.path.join(root, row['path'])
+            size, modified = os.path.getsize(full), os.path.getmtime(full)
+            if size != row['size'] or modified != row['modified']:
+                db.execute('UPDATE files SET size = ?, modified = ?, fingerprint = ? WHERE id = ?',
+                           (size, modified, fingerprint_of(full), row['id']))
+                changed += 1
+            if row['missing']:
+                db.execute('UPDATE files SET missing = 0 WHERE id = ?', (row['id'],))
+                found += 1
+        if gone:
+            waiting = {}
+            for row in gone:
+                waiting.setdefault(row['fingerprint'], []).append(row['id'])
+            matched = set()
+            for where in paths:
+                if where in with_rows:
+                    continue
+                full = os.path.join(root, where)
+                same = waiting.get(fingerprint_of(full))
+                if not same:
+                    continue
+                file = same.pop(0)
+                db.execute('UPDATE files SET path = ?, collection = ?, size = ?, modified = ?, missing = 0 WHERE id = ?',
+                           (where, collection_of(where), os.path.getsize(full), os.path.getmtime(full), file))
+                matched.add(file)
+                moved += 1
+            for row in gone:
+                if row['id'] in matched or row['missing']:
+                    continue
+                db.execute('UPDATE files SET missing = 1 WHERE id = ?', (row['id'],))
+                missing += 1
+    db.close()
+    return {'changed': changed, 'moved': moved, 'missing': missing, 'found': found}

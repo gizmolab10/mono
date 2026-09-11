@@ -172,9 +172,11 @@ export type Label = { name: string; value: string; made_by: string };
 
 /**
  * The four fields on a file's row in the db: the labels its block used to carry besides the
- * kind and the tags. use_when travels as a list, kept as one csv field there.
+ * kind and the tags. use_when travels as a list, kept as one csv field there. With them,
+ * whether the file is missing from the disk: its row is kept, labels and all, until it is
+ * found again by its bytes at some other path.
  */
-export type Fields = { title: string; description: string; use_when: string[]; date: string };
+export type Fields = { title: string; description: string; use_when: string[]; date: string; missing?: boolean };
 
 /**
  * Everything the db holds on every file, keyed by the file's path counting from the top of the
@@ -202,7 +204,8 @@ export async function labels_on_disk(): Promise<In_Db> {
 
 /** Write a file's four fields on its row in the db, never in the file. Says whether they went, and if not, why. */
 export async function set_fields(where: string, fields: Fields): Promise<Saved> {
-	return tell(`/set-fields?where=${encodeURIComponent(where)}`, fields);
+	const { title, description, use_when, date } = fields;
+	return tell(`/set-fields?where=${encodeURIComponent(where)}`, { title, description, use_when, date });
 }
 
 /** Put one label on a file, in the db and never in the file. Says whether it went on, and if not, why. */

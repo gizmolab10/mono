@@ -37,3 +37,46 @@ $ vite
 6:21:29 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
 6:21:31 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
 6:21:32 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+6:52:46 PM [vite] (client) page reload src/lib/ts/utilities/Saving.ts
+6:52:50 PM [vite] (client) page reload src/lib/ts/utilities/Saving.ts
+6:52:53 PM [vite] (client) page reload src/lib/ts/types/File.ts
+6:53:57 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+6:54:00 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+6:54:04 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+6:54:09 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+6:54:10 PM [vite] (client) warning: Duplicate member "labels_in_db" in class body
+851|  	 * the db holds nothing for is unlabeled, its name its title, whatever its own top says.
+852|  	 */
+853|  	private labels_in_db(guide: File): { labels: Labels; tags: string[] } {
+   |           ^
+854|  		const known = this.fields_in_db.get(file_path_of(guide.bundle, guide.path));
+855|  		const { kind, tags } = this.kind_and_tags_in_db(guide);
+
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ov/src/lib/ts/managers/Files.ts
+6:54:13 PM [vite] (client) hmr update /src/lib/svelte/content/List_Files.svelte, /src/lib/svelte/main/Browse.svelte
+6:54:14 PM [vite] (client) hmr update /src/lib/svelte/content/List_Files.svelte, /src/lib/svelte/main/Browse.svelte
+6:54:16 PM [vite] (client) hmr update /src/lib/svelte/content/List_Files.svelte, /src/lib/svelte/main/Browse.svelte
+6:54:18 PM [vite] (client) hmr update /src/lib/svelte/content/List_Files.svelte?svelte&type=style&lang.css
+6:55:19 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+6:55:20 PM [vite] (client) warning: Duplicate member "labels_in_db" in class body
+851|  	 * the db holds nothing for is unlabeled, its name its title, whatever its own top says.
+852|  	 */
+853|  	private labels_in_db(guide: File): { labels: Labels; tags: string[] } {
+   |           ^
+854|  		const known = this.fields_in_db.get(file_path_of(guide.bundle, guide.path));
+855|  		const { kind, tags } = this.kind_and_tags_in_db(guide);
+
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ov/src/lib/ts/managers/Files.ts
+6:55:20 PM [vite] (client) warning: Duplicate member "labels_in_db" in class body
+851|  	 * the db holds nothing for is unlabeled, its name its title, whatever its own top says.
+852|  	 */
+853|  	private labels_in_db(guide: File): { labels: Labels; tags: string[] } {
+   |           ^
+854|  		const known = this.fields_in_db.get(file_path_of(guide.bundle, guide.path));
+855|  		const { kind, tags } = this.kind_and_tags_in_db(guide);
+
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ov/src/lib/ts/managers/Files.ts
+6:55:21 PM [vite] (client) page reload src/lib/ts/managers/Files.ts

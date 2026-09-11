@@ -107,10 +107,10 @@ check('a file with a row and no labels is left out', database.all_labels(), {})
 
 database.set_fields(NOTE, FULL, title='T', use_when=['a', 'b'])
 check('the fields handed in go on the row, use_when as a list again', database.all_fields()[NOTE],
-      {'title': 'T', 'description': '', 'use_when': ['a', 'b'], 'date': ''})
+      {'title': 'T', 'description': '', 'use_when': ['a', 'b'], 'date': '', 'missing': False})
 database.record_file(NOTE, FULL, None, None, description='D', date='1')
 check('a field not handed in is left as it is', database.all_fields()[NOTE],
-      {'title': 'T', 'description': 'D', 'use_when': ['a', 'b'], 'date': '1'})
+      {'title': 'T', 'description': 'D', 'use_when': ['a', 'b'], 'date': '1', 'missing': False})
 database.set_fields(NOTE, FULL, title='', description='', use_when=[], date='')
 
 # --- what a file's own block says ---------------------------------------------
@@ -240,7 +240,7 @@ check('the scanned file wears what its block says', said.get('labels'),
        {'name': 'tag', 'value': 'always', 'made_by': 'hand'}])
 code, said = ask('/all-labels')
 check('the scanned file\'s fields come with every label', said.get('fields', {}).get(SAYS),
-      {'title': 'Says', 'description': '', 'use_when': [], 'date': '1'})
+      {'title': 'Says', 'description': '', 'use_when': [], 'date': '1', 'missing': False})
 
 code, said = tell('/strip-block', {})
 check('the strip does nothing without the word', code, 400)
@@ -265,7 +265,7 @@ code, said = tell('/set-fields', {'title': 'Renamed', 'use_when': ['x', 'y']}, w
 check('fields are written through the dispatcher', said.get('fields'), ['title', 'use_when'])
 code, said = ask('/all-labels')
 check('the fields written are read back, the rest as they were', said.get('fields', {}).get(SAYS),
-      {'title': 'Renamed', 'description': '', 'use_when': ['x', 'y'], 'date': '1'})
+      {'title': 'Renamed', 'description': '', 'use_when': ['x', 'y'], 'date': '1', 'missing': False})
 code, said = tell('/set-fields', {'use_when': 'not a list'}, where=SAYS)
 check('a field of the wrong shape is refused', code, 400)
 code, said = tell('/set-fields', {}, where=SAYS)
@@ -282,6 +282,57 @@ code, said = tell('/delete-guide', {}, where=MOVED)
 check('a file is thrown away', code, 200)
 code, said = ask('/all-labels')
 check('its row goes with it', MOVED in said.get('fields', {}), False)
+
+# --- the disk watched: a file moved, changed or gone in the Finder -------------
+#
+# The watcher's look at the disk is asked for by hand here, through /rescan.
+
+WATCH = 'memory/ov/truth/watch.md'
+WATCHED = 'memory/ov/truth/watched.md'
+with open(os.path.join(TEMP_REPO, WATCH), 'w') as f:
+    f.write('# Watch\n\nwords\n')
+code, said = tell('/add-label', {'name': 'tag', 'value': 'now'}, where=WATCH)
+code, said = tell('/rescan', {})
+check('a look with nothing changed says so', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0})
+
+os.rename(os.path.join(TEMP_REPO, WATCH), os.path.join(TEMP_REPO, WATCHED))
+code, said = tell('/rescan', {})
+check('a file moved in the Finder is noticed by its bytes', said.get('moved'), 1)
+code, said = ask('/labels', where=WATCHED)
+check('and keeps its labels under its new path', said.get('labels'), [{'name': 'tag', 'value': 'now', 'made_by': 'hand'}])
+code, said = ask('/labels', where=WATCH)
+check('with nothing left under the old one', said.get('labels'), [])
+
+with open(os.path.join(TEMP_REPO, WATCHED), 'a') as f:
+    f.write('more words\n')
+code, said = tell('/rescan', {})
+check('a file changed in the Finder is noticed', said.get('changed'), 1)
+db = database.open_db()
+row = db.execute('SELECT fingerprint, size FROM files WHERE path = ?', (WATCHED,)).fetchone()
+db.close()
+check('and its row carries the new fingerprint and size', (row['fingerprint'], row['size']),
+      (database.fingerprint_of(os.path.join(TEMP_REPO, WATCHED)), os.path.getsize(os.path.join(TEMP_REPO, WATCHED))))
+
+os.remove(os.path.join(TEMP_REPO, WATCHED))
+code, said = tell('/rescan', {})
+check('a file gone from the disk is marked missing', said.get('missing'), 1)
+code, said = ask('/all-labels')
+check('and its row says so, labels kept', (said['fields'][WATCHED]['missing'], len(said['labels'].get(WATCHED, []))), (True, 1))
+code, said = tell('/rescan', {})
+check('a second look marks nothing twice', said.get('missing'), 0)
+
+with open(os.path.join(TEMP_REPO, WATCHED), 'w') as f:
+    f.write('# Watch\n\nwords\nmore words\n')
+code, said = tell('/rescan', {})
+check('a missing file back at its path is found', said.get('found'), 1)
+code, said = ask('/all-labels')
+check('and the mark comes off', said['fields'][WATCHED]['missing'], False)
+
+with open(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), 'w') as f:
+    f.write('# Loose\n')
+os.rename(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), os.path.join(TEMP_REPO, 'memory/ov/truth/loosed.md'))
+code, said = tell('/rescan', {})
+check('a file with no row moves with nothing to keep and nothing said', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0})
 
 # --- say how it went ---------------------------------------------------------
 

@@ -721,6 +721,24 @@ class Files {
 			if (project !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
 			hung.push(this.hang_one_file(site.bundle, site.path, name, address_of_file(`${on_disk.root}${where}`), site.is_design, top, project !== site.bundle));
 		}
+		// A file the db holds and the disk no longer does hangs where it sat, marked missing, so
+		// the list shows it. Its row is kept, labels and all, until its bytes turn up at another
+		// path. It has no address, since there are no words to read.
+		let missing = 0;
+		for (const [where, fields] of in_db.fields) {
+			if (!fields.missing || this.paths_on_disk.has(where)) { continue; }
+			const site = site_of_file(where);
+			if (!site) { continue; }
+			const name = where.split('/').pop()?.replace(/\.md$/i, '') ?? '';
+			const project = project_at(site.bundle, site.path);
+			const top = this.hierarchy.folder_at(project, '', project);
+			if (project !== T_Bundle.mono) { this.hierarchy.add_relationship(shared_top.id, top.id); }
+			const guide = this.hang_one_file(site.bundle, site.path, name, '', site.is_design, top, project !== site.bundle);
+			guide.missing = true;
+			hung.push(guide);
+			missing += 1;
+		}
+		if (missing > 0) { debug.log(`Listed: ${missing} file(s) the db holds are missing from the disk. Each hangs where it sat, struck through, and cannot be opened.`); }
 		this.hierarchy.reindex();
 		this.renarrow();
 		this.w_listed.set(true);
@@ -795,6 +813,12 @@ class Files {
 	 */
 	private async read_one(guide: File): Promise<{ read: number; failed: number; unlabeled: number; bytes: number }> {
 		const where = key_of(guide);
+		// A missing file has no words to read: its labels are the db's, and it points nowhere.
+		if (guide.missing) {
+			const { labels, tags } = this.labels_in_db_for(guide);
+			this.hierarchy.relabel(guide, labels, tags, false);
+			return { read: 0, failed: 0, unlabeled: 0, bytes: 0 };
+		}
 		let text = '';
 		try {
 			const answer = await fetch(guide.address);
@@ -809,14 +833,10 @@ class Files {
 		// over, since the db is what the list filters from and the editor reads. A file the db has
 		// no row for is unlabeled, its name its title, and gets its labels composed the first time
 		// someone opens it to edit — nothing is written for a file nobody asked about.
-		const known = this.fields_in_db.get(file_path_of(guide.bundle, guide.path));
-		if (!known) {
+		const { labels, tags } = this.labels_in_db_for(guide);
+		if (!labels.labeled) {
 			debug.log(`Guides: the db holds no row for "${where}". It is unlabeled until it is opened for editing.`);
 		}
-		const { kind, tags } = this.kind_and_tags_in_db(guide);
-		const labels: Labels = known
-			? { kind, title: known.title || guide.name, description: known.description, use_when: known.use_when, date: known.date, labeled: true }
-			: { kind, title: guide.name, description: '', use_when: [], date: '', labeled: false };
 		this.hierarchy.relabel(guide, labels, tags, false);
 		guide.size = text.length;
 		// The one moment this file's whole text is in hand. What it points at is taken out of it
@@ -826,9 +846,23 @@ class Files {
 	}
 
 	/**
-	 * What the db says one file is: its kind, and the tags on it that are on the closed list. A
-	 * file the db holds nothing for has no kind and no tags, whatever its own block says. A tag
-	 * not on the closed list is passed over and said so, the same as it was when read off a file.
+	 * What the db says one file is: its five labels. The kind and the tags come from the labels
+	 * on its row, the title, description, use_when and date from the row's four fields. A file
+	 * the db holds nothing for is unlabeled, its name its title, whatever its own top says.
+	 */
+	private labels_in_db_for(guide: File): { labels: Labels; tags: string[] } {
+		const known = this.fields_in_db.get(file_path_of(guide.bundle, guide.path));
+		const { kind, tags } = this.kind_and_tags_in_db(guide);
+		const labels: Labels = known
+			? { kind, title: known.title || guide.name, description: known.description, use_when: known.use_when, date: known.date, labeled: true }
+			: { kind, title: guide.name, description: '', use_when: [], date: '', labeled: false };
+		return { labels, tags };
+	}
+
+	/**
+	 * The kind, and the tags on it that are on the closed list. A file the db holds nothing for
+	 * has no kind and no tags, whatever its own top says. A tag not on the closed list is passed
+	 * over and said so, the same as it was when read off a file.
 	 */
 	private kind_and_tags_in_db(guide: File): { kind: string; tags: string[] } {
 		const where = file_path_of(guide.bundle, guide.path);
