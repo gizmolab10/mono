@@ -1,8 +1,3 @@
----
-title: "Claude agent skills"
-description: "AI generated in dialogue with humans"
-date: 2026-08-10
----
 # Claude agent skills
 
 _AI generated in dialogue with humans. Not fully reviewed._

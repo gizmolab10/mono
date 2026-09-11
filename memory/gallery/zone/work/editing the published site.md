@@ -1,8 +1,3 @@
----
-title: "Editing the published site"
-description: "How the published site changes a gallery: the caption inside each file, the order in one list per folder, and a function that commits."
-date: 2026-08-23
----
 # Editing the published site
 
 Today a caption can only be written while `yarn dev` runs: the writing is done by the dev server, and the published site has no server behind it. This is how the published site does it too.

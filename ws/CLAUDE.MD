@@ -1,8 +1,3 @@
----
-title: "CLAUDE.md"
-description: "COMMON: Read ../../CLAUDE.md"
-date: 2026-08-24
----
 # CLAUDE.md
 
 COMMON: Read `../../CLAUDE.md`

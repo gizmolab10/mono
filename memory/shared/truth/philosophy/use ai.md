@@ -1,8 +1,3 @@
----
-title: "Motive"
-description: "Why the work is structured this way: let it emerge, keep work files raw, distill guides out of them."
-date: 2026-05-10
----
 # How we use AI
 
 ## How It Started

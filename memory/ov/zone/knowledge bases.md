@@ -1,8 +1,3 @@
----
-title: "knowledge bases"
-description: "How companies organize and browse their knowledge, and which of those approaches fit ov, mu and ji."
-date: 10 September 2026
----
 # knowledge bases
 
 Every company ends up with knowledge nobody can find. i asked how they organize and browse it, then which of those approaches fit ov, mu and ji. Finally, a roadmap to flesh out ov to be better than the best available.
@@ -38,8 +33,9 @@ Each phase ending with something to look at:
 - [x] 2. The markdown collection read into the db, and its labels removed from each file. Ends with: the files list filtering from the db.
     - Built 10 September 2026. The dispatcher's `/scan` reads every listed file's kind and tags into the db as hand labels (485 files, 320 kinds, 779 tags, 153 whose block says neither), and `/all-labels` hands them all back in one answer. ov's files list filters from the db: `Files.ts` asks for every label beside the listing and takes each file's kind and tags from there, never from its block. Changing a kind or tags in the editor, composing labels for a bare file, and making a new file all write the db, and `Labels.ts` writes neither line into a block any more.
     - The removal ran the same day: `/strip-labels`, asked with a confirm word, took the kind and tags lines out of 332 files, and left title, description, use_when and date. The three readers of the lines now read the db through `tools/hub/database.py`: `inject-always.sh` and `test-always-tag.sh` for the `always` tag, and `big-picture.py` records its kind and tag there instead of writing them.
-- [ ] 3. The other four labels, title, description, use_when and date, read into the db, and the whole block removed from each file. Ends with: no file carries a block, and the editor shows all five from the db.
-    - The four are fields on the files table, one each, as the Design's files table lists them.
+- [x] 3. The other four labels, title, description, use_when and date, read into the db, and the whole block removed from each file. Ends with: no file carries a block, and the editor shows all five from the db.
+    - The four are fields on the files table, one each, as the Design section's (see below) item 2 (files table) lists them.
+    - Built 10 September 2026. The files table gained the four columns, a db made before them is given them on open. `/scan` records them from every block (1099 fields across 369 files, and 21 older `type` lines read as the kind, `updated` as the date), `/all-labels` hands them back beside the labels, and `/set-fields` writes them. ov reads all five from the db, its editor writes every change there and never to the file, a new file is its heading alone, and a file the db has no row for gets its labels composed from its words when first opened. `/move-guide` and `/delete-guide` carry the db's row with the file. `/strip-block`, asked with a confirm word, took the whole block off 368 files and kept one, `memory/index.md`, whose block carries okf lines the db has no place for. `big-picture.py` writes no block and records its five in the db.
 - [ ] 4. File watching. Ends with: a file moved in Finder keeps its tags.
 - [ ] 5. The authors and provenance rows. Ends with: the editor shows both.
 - [ ] 6. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.

@@ -1,8 +1,3 @@
----
-title: "Proposals"
-description: "shared proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies."
-date: 2026-08-31
----
 # Proposals
 
 ## libraries resolve through the workspace, not through aliases (10 September 2026)

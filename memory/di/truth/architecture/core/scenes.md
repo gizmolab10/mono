@@ -1,8 +1,3 @@
----
-title: "Scenes (di)"
-description: "What happens between app launch and a populated 3D canvas."
-date: 2026-05-10
----
 # Scenes
 
 Design Intuition is a 3D editor. App launch creates the drawing-area component, which sets up a 3D canvas and populates it with Smart Objects (SO).

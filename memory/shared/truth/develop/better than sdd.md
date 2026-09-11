@@ -1,8 +1,3 @@
----
-title: "Better than SDD"
-description: "Five things together are what make something an intent:"
-date: 2026-08-19
----
 # Better than SDD
 
 Five things together are what make something an **intent**: 

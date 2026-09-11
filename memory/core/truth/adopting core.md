@@ -1,10 +1,3 @@
----
-type: reference
-title: "Adopting core"
-description: "How a host takes core: the wiring, the one file that holds every adoption, what the host owes, and the lessons each paid for."
-use_when: [a project is adopting core, deciding what belongs in core and what in the host]
-date: 2026-09-01
----
 # Adopting core
 
 Written out of ov's adoption, finished 31 August 2026, for whichever host comes next — lv, di. mj took it 1 September 2026 and mu 7 September, each as three files: Core.ts of three lines, an empty Customizations.ts, and a main.ts that configures core before mounting. What ov actually did is at the bottom, file by file; the wiring, the lessons and the steps above it are the part that carries over.

@@ -1,6 +1,3 @@
----
-description: "di — the diagram app."
----
 # di
 
 The di app.

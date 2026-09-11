@@ -1,8 +1,3 @@
----
-title: "Deliverables"
-description: "urls for review and feedback"
-date: 2026-08-10
----
 # Deliverables
 
 **Started:** 2026-01-13

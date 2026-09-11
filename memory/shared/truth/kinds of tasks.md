@@ -1,8 +1,3 @@
----
-title: "Kinds of Tasks"
-description: "Task types, the guides each one needs, and the conflicts between those guides."
-date: 2026-06-19
----
 # Kinds of Tasks
 
 Task types and which guides to read before starting. Co will declare one or more of these, assess and state conflicts and update the column below.

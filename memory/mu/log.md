@@ -1,8 +1,3 @@
----
-title: "mu log"
-description: "What mu decided, thought and reached, newest first; settled entries leave at each consolidation."
-date: 2026-08-30
----
 # mu log
 
 <!-- consolidated: 9 September 2026 -->

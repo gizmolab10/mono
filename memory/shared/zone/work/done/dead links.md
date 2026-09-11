@@ -1,8 +1,3 @@
----
-title: "Dead links"
-description: "The monorepo consolidation left scattered stale references"
-date: 2026-08-24
----
 # Dead links
 
 **Started:** 2026-01-14 **Status:** Complete ✅

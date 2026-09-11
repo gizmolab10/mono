@@ -1,8 +1,3 @@
----
-title: "Main (di)"
-description: "The root layout: where the controls strip, side area, drawing area, and build-notes overlay sit."
-date: 2026-05-10
----
 # Main
 
 The root layout component. Decides where the toolbar, the side panel, the drawing area, and the build-notes modal sit on the screen.

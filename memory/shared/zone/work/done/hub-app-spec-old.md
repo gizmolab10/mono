@@ -1,8 +1,3 @@
----
-title: "Hub App Specification"
-description: "Reference for the hub app"
-date: 2026-09-06
----
 # Hub App Specification
 
 * [Ports](#ports)

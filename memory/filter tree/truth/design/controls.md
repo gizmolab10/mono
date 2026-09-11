@@ -1,10 +1,3 @@
----
-type: design
-title: Controls
-description: How the list's filters and the editor's controls behave.
-use_when: [filter work, segmented controls, tag picking, editor title row]
-updated: 29 August 2026
----
 # Controls in the UX
 
 The collections are T_Bundle's — mu since 29 August, mj and gallery since 1 September — and the dispatcher lists each one's files and its top CLAUDE file. The memory system is a collection in the projects filter, but a file's project is its own idea (`project_of`): a memory file whose first folder names a collection answers to that project — memory/mu to mu — and only shared/ and folders naming no collection stay memory's. Matching, sorting and the project column all go by it. Memory files carry their own bundle; the memory/ prefix is stripped from their paths. In the folder view a memory file hangs under the top of the project it answers to, its folders beside the guides — memory/ov/truth shows as ov → truth — and no folder is made for the project's own name; each folder keeps its full path, so its place on disk and index repair are unchanged.

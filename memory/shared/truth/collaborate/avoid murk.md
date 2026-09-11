@@ -1,8 +1,3 @@
----
-title: "Murk"
-description: "Writing that cannot be read: why its author cannot see it, and nine strategies for keeping it out."
-date: 2026-08-17
----
 # Avoiding murk
 
 Co did very well at the start, 9 months ago. Lately I can't understand about half of co's replies. Let's try to discover the cause of this recent incomprehensibility.

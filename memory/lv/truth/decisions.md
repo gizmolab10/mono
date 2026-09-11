@@ -1,10 +1,3 @@
----
-type: decision
-title: "lv decisions"
-description: "Live rationales, and the pac responses weighing coming choices."
-use_when: [naming something in lv, revisiting a choice already weighed]
-date: 2026-09-01
----
 # Decisions
 
 ## Evaluations (pac) made during 2026

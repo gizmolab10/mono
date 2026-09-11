@@ -1,6 +1,3 @@
----
-description: me — jonathansand.me, Jonathan's own site.
----
 # me
 
 Jonathan's own site, jonathansand.me. Its code lives outside mono (the jonathansand-me repo).

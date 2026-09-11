@@ -1,8 +1,3 @@
----
-title: "Always (di)"
-description: "The established rules that apply only to di, read alongside the shared always file."
-date: 2026-07-15
----
 # Always (di)
 
 Rules specific to the di project. Read alongside the global always file at `~/GitHub/mono/memory/shared/truth/conventions.md` and the project file at `~/GitHub/mono/di/CLAUDE.md`.

@@ -1,8 +1,3 @@
----
-title: "Algebra Aliases"
-description: "Nine plain names for a part's position and length, so nobody has to type the raw bound names."
-date: 2026-05-10
----
 # Algebra — Attribute Aliases
 
 Customers shouldn't have to type `x_min` or `x_max`. They think in position + length.

@@ -114,7 +114,7 @@ ordinary = 'memory/shared/truth/collaborate/chat.md'
 code, said = ask('/read-guide', where=ordinary)
 check('reading an ordinary guide answers', code, 200)
 check('reading an ordinary guide succeeds', said.get('success'), True)
-check('reading an ordinary guide hands back its words', said.get('text', '').startswith('---'), True)
+check('reading an ordinary guide hands back its words', said.get('text', '').startswith('# '), True)
 
 # The whole reason this route exists: a name holding a question mark. The dev server refuses
 # one however it is written, and hands back the app's own page instead of the file.

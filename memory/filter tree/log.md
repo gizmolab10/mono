@@ -1,8 +1,3 @@
----
-title: "ov log"
-description: "What ov decided, thought and reached, newest first; settled entries leave at each consolidation."
-date: 2026-09-01
----
 # ov log
 
 <!-- consolidated: 9 September 2026 -->

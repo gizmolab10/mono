@@ -1,8 +1,3 @@
----
-title: "Storage Spec (ji)"
-description: "What ji stores, where it can be stored, and what the first working version has to do."
-date: 2026-07-24
----
 # Database — spec
 
 Intersection stores documents. They are hierarchal and tagged. Support for firestore and local storage and file system. hierarchy is to be injected in phase 2.

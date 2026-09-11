@@ -1,8 +1,3 @@
----
-title: "Simplify gaps"
-description: "How the two filter stacks size their rows: the slot owns the reach, rows hold plain padding in rungs, the tags run holds its own headroom."
-date: 2026-09-05
----
 # Simplify gaps
 
 How the spacing around every filter row is made, in both browse and edit. Three layers, each with one job. The numbers are today's rungs — [[constants & subtypes]].

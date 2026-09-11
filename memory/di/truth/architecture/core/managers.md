@@ -1,8 +1,3 @@
----
-title: "Managers (di)"
-description: "One manager per concern, each a single shared instance."
-date: 2026-05-10
----
 # Managers
 
 Each manager owns one concern. Singleton pattern throughout. They live in `src/lib/ts/managers/`.

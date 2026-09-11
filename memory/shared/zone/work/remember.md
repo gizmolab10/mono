@@ -1,8 +1,3 @@
----
-title: "Faster Session Starts"
-description: "an improved workflow and hooks design"
-date: 2026-08-11
----
 # Faster Session Starts
 
 **Started:** 2026-02-01 **Status:** Research

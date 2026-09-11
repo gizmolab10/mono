@@ -1,8 +1,3 @@
----
-title: "Rewritten guides"
-description: "Every guide carrying the stale tag, with what I'd do to it"
-date: 2026-08-08
----
 # Rewritten guides
 
 Every guide carrying the **stale** tag, with what I'd do to it. Read all 21 on 2026-08-03. One line each on what the guide is for, then the rewrite I'd offer. Nothing here is written into the guides themselves — say the word on any of them and I'll do it.

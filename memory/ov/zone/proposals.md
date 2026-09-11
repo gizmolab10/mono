@@ -1,8 +1,3 @@
----
-title: "Proposals"
-description: "ov proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies."
-date: 2026-08-31
----
 # Proposals
 
 ## proposal: the work journal moves into memory (7 September 2026)

@@ -1,8 +1,3 @@
----
-title: "Sections"
-description: "A stack owns the gaps between its sections, and a separator stands centred in each one."
-date: 2026-08-15
----
 # Sections
 
 Everything about sections: what they are, how a stack spaces them, what a caller writes, and what is left to convert.

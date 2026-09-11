@@ -1,8 +1,3 @@
----
-title: "How many md files? 531"
-description: "What is actually in the repo, in markdown"
-date: 2026-08-08
----
 # How many md files? 531
 
 What is actually in the repo, in markdown. Counted 2026-08-01, skipping installed packages, built output, and the worktree copies.

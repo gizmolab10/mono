@@ -1,8 +1,3 @@
----
-title: "Ideas"
-description: "ws ideas. Append freely; triaged at every settle."
-date: 2026-09-04
----
 # Ideas
 
 - [ ] work within it — abandon mac os version

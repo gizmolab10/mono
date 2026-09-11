@@ -1,8 +1,3 @@
----
-title: "panel decisions"
-description: "Live rationales, and the pac responses that weigh coming choices."
-date: 2026-09-09
----
 # Decisions
 
 ## Evaluations (pac) made during 2026

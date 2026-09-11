@@ -1,8 +1,3 @@
----
-title: "Persistables proposal"
-description: "Make every stored record a real object with an identity and a dirty flag, the way ws does: a base Identifiable (its id), a base Persistable that extends it (..."
-date: 2026-08-19
----
 # Persistables proposal
 
 Make every stored record a real object with an identity and a dirty flag, the way ws does: a base **Identifiable** (its id), a base **Persistable** that extends it (its dirty flag), and the five record kinds extending Persistable. Nothing is built yet — this is the plan and the one decision it reverses.

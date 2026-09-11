@@ -1,8 +1,3 @@
----
-title: "Core design"
-description: "How core is used by ov (and any later host): what core offers, what a host owes it."
-date: 2026-08-30
----
 # how ov uses core
 
 30 August 2026, DRAFT — for Jonathan to edit.

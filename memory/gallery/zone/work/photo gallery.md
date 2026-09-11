@@ -1,8 +1,3 @@
----
-title: "Photo gallery"
-description: "A folder of photos on a page: one showing, click it for the next."
-date: 2026-08-19
----
 # photo gallery
 
 add a feature that takes a folder of photos. displays one, click on it to go to the next.

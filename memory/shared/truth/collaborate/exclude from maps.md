@@ -1,8 +1,3 @@
----
-title: "Excluded Folders"
-description: "The folders to skip when building a map file; ordinary searching is unaffected."
-date: 2026-05-10
----
 # Exclude from maps
 
 Folders to skip when building project map files. Does NOT affect normal searching/scanning during work.

@@ -1,8 +1,3 @@
----
-title: "Handoff"
-description: "Resume point for next chat"
-date: 2026-08-31
----
 # Handoff
 
 Resume point for next chat.

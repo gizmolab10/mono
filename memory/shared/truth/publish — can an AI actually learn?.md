@@ -1,12 +1,3 @@
----
-title: Can an AI actually learn?
-description: The whole memory design, explained plainly and in enough detail that a newcomer and their AI could build it.
-use_when:
-  - explaining the system to someone new
-  - writing about the system
-  - publishing the recipe
-date:
----
 # Can an AI actually learn?
 
 Prompted by [Your ChatGPT can be much better than the one you're using](https://medium.com/@office.dosanko/your-chatgpt-can-be-much-better-than-the-one-youre-using-05cb5b16d1e9) (office.dosanko, Medium). What I present here offers what that article leaves out: enough detail to build the thing. Paste it to your AI and build it together.

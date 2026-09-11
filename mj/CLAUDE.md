@@ -1,8 +1,3 @@
----
-title: "mj"
-description: "Brought up 1 September 2026 with boilerplate only: the app, its entry point, and its own switches"
-date: 2026-09-01
----
 # mj
 
 > Brought up 1 September 2026. What it is for is not written yet.

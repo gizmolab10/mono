@@ -1,8 +1,3 @@
----
-title: "Voice and Tone"
-description: "How prose written into files should read: first person, warm, punchy."
-date: 2026-07-08
----
 # Voice and Tone Guide
 
 The memory files MUST satisfy and nurture, not just inform. Co can help to boost that output, while maintaining crisp, lighthearted, joyful prose.

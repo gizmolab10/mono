@@ -1,8 +1,3 @@
----
-title: "Pitch — Aaron Good"
-description: "An invitation to a founding scholar, and what the research assistant is for."
-date: 2026-08-06
----
 # Pitch
 
 Hi Jon  

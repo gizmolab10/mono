@@ -1,8 +1,3 @@
----
-title: "Managers (ws)"
-description: "Sixteen shared instances, each owning one area of the app."
-date: 2026-01-28
----
 # Manager Pattern Architecture
 
 Webseriously uses 16 singleton managers to coordinate different aspects of the application. Each manager has a specific responsibility and provides a centralized API for its domain.

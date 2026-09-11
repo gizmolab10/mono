@@ -1,6 +1,3 @@
----
-description: panel — the page a host draws: a controls row, a details column, an operation view and a status line, drawn on core, with what the host hands over inside them.
----
 # panel
 
 Brought up 7 September 2026 as an empty version of ov's three regions, on core. Since 10 September 2026 a library: the page as a component a host draws.

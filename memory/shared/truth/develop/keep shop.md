@@ -1,8 +1,3 @@
----
-title: Keep Shop
-description: Structure the note files so they still guide the next chat session.
-date: 2026-07-07
----
 # Keep shop
 
 The project's notes are infrastructure. They guide every session that comes after the one that wrote them. When a session ends and the notes have the wrong structure — content in the wrong file, old gaps marked as gaps that have already been closed, completed work cluttering the active-work area — the next session starts at a disadvantage. Keep shop is the work of fixing that structure so the notes keep guiding well.

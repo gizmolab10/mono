@@ -1,8 +1,3 @@
----
-title: "Ideas"
-description: "gallery ideas. Append freely; triaged at every settle."
-date: 2026-09-01
----
 # Ideas
 
 This is going to be an extended core, providing a gallery of files (mostly images) and an ability to edit and add to them.

@@ -1,8 +1,3 @@
----
-title: "Proposal — build DBLLM"
-description: "DB API that talks to AnythingLLM"
-date: 2026-08-19
----
 # Proposal — build DB_LLM
 
 DB API that talks to AnythingLLM

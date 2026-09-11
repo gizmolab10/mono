@@ -1,8 +1,3 @@
----
-title: "Road Map"
-description: "The dimensions-label algorithm is being replaced with a four-degrees-of-freedom search per label (edge, direction, witness length, slidable position)"
-date: 2026-08-19
----
 # Road Map
 
 **Started:** 2026-01-05 | **Status:** 26 of 31 planned milestones complete; milestones 32 (facets) and 33 (drag) mothballed; current focus is the dimensionals-placement redesign and ongoing code-debt items.

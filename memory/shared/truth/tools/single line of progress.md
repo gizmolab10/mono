@@ -1,8 +1,3 @@
----
-title: "Single line of progress"
-description: "A build script that reports progress on one line that updates in place."
-date: 2026-05-10
----
 # Single line of progress
 
 i wanted my build script to stop spewing noise. One calm line, updating in place, showing what's happening without scrolling my terminal into oblivion.

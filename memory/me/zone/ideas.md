@@ -1,8 +1,3 @@
----
-title: "me ideas"
-description: "me's live thinking — plans, research, considerations, ideas."
-date: 2026-08-29
----
 # my ideas
 
 - [ ] [[my story]]

@@ -1,10 +1,3 @@
----
-type: design
-title: CLAUDE files
-description: How CLAUDE.md files are listed, placed, read, and written — and the three places that must agree.
-use_when: [dispatcher work, file listing, adding a kind of file the app shows, case or naming questions]
-updated: 24 August 2026
----
 # CLAUDE files
 
 A CLAUDE.md at the repo's top or at a collection's top is a first-class file in ov: the dispatcher lists it, the app places it at its collection's top level, and it can be read and edited like any guide. One below a collection's top is nothing.

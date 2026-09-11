@@ -1,10 +1,3 @@
----
-type: design
-title: "Filesystem database"
-description: "How ws's filesystem database reads a folder, names what it finds, and why it saves nothing."
-use_when: [filesystem database work, a blank graph after a folder load, saving in ws]
-date: 2026-09-04
----
 # Filesystem database
 
 A live, read-only view of one folder on disk, picked with the browser's folder picker. `DB_Filesystem.ts` holds it.

@@ -1,8 +1,3 @@
----
-title: "Color Management"
-description: "One place that works out every color from the current state."
-date: 2026-01-12
----
 # Color Management
 
 I admit it, my early code was a nightmare to tweak because i designed it as i went along. With AI, i crafted a centralized system. One place to confine the mess. Styles computes all colors from state snapshots. Remarkably simple code.

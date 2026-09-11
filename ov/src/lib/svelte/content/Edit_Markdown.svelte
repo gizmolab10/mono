@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { body_of, flipped_task, lines_between, markup_prefix, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
-	import { has_labels, labels_for, today, with_labels_added } from '../../ts/utilities/Labels';
+	import { labels_for, today } from '../../ts/utilities/Labels';
 	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/common/Core';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { file_path_of, path_of_address, read_file, save_file } from '../../ts/utilities/Saving';
@@ -931,26 +931,24 @@
 	// --- reading the file -----------------------------------------------------
 
 	/**
-	 * Give a file its labels, if it has none, and write them. The whole file again either way —
-	 * one that already carries labels comes back untouched. A refused write is said in the log
-	 * and the file is shown as it is, since nothing is lost by that.
+	 * Give a file its labels, if the db holds none for it, and write them there — composed from
+	 * the file's own words, with nothing written to the file itself. The whole file comes back
+	 * as it was either way. A refused write is said in the log and the file is shown as it is,
+	 * since nothing is lost by that.
 	 */
 	async function label_it_if_bare(whole: string): Promise<string> {
-		if (has_labels(whole)) { return whole; }
+		if (guide.labeled) { return whole; }
 		const where = file_path_of(guide.bundle, guide.path);
-		const with_block = with_labels_added(whole, `${name}.md`, today(), guide.path);
-		const answer = await save_file(where, with_block, whole);
-		if (!answer.ok) {
-			debug.log(`Editing "${name}": it carries no labels and could not be given any — ${answer.why}. It is shown as it is.`);
+		const made = labels_for(whole, `${name}.md`, today(), guide.path);
+		const in_db = await files.write_labels(guide, made.labels.kind, made.tags);
+		const fields = in_db.ok ? await files.write_fields(guide, made.labels) : in_db;
+		if (!fields.ok) {
+			debug.log(`Editing "${name}": the db holds no labels for it and could not be given any — ${fields.why}. It is shown as it is.`);
 			return whole;
 		}
-		debug.log(`Editing "${name}": opened for the first time with no labels, so a block was composed from its own words and written to ${where}. Its kind came from the folder it sits in, and it is marked stale for a person to look at.`);
-		const made = labels_for(whole, `${name}.md`, today(), guide.path);
-		// The kind and the tags go into the db as well, since that is what the list filters from.
-		const in_db = await files.write_labels(guide, made.labels.kind, made.tags);
-		if (!in_db.ok) { debug.log(`Editing "${name}": its composed kind and tags were NOT written to the db — ${in_db.why}.`); }
+		debug.log(`Editing "${name}": opened for the first time with no labels, so they were composed from its own words and written to the db for ${where}. Its kind is the one every folder falls back to, and it is marked stale for a person to look at.`);
 		files.relabel(guide, made.labels, made.tags);
-		return with_block;
+		return whole;
 	}
 
 	/**

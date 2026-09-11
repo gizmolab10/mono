@@ -1,8 +1,3 @@
----
-title: "Skills"
-description: "The words typed with a leading slash, what each one does, and where they live."
-date: 2026-08-10
----
 # Skills
 
 A skill is a word typed with a leading slash. Each is one small file under `.claude/commands/`, holding plain instructions rather than code — typing the word hands those instructions over as if Jonathan had written them out.

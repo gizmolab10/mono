@@ -1,8 +1,3 @@
----
-title: "Big picture"
-description: "One line per memory file holding unfinished work, across every project. Written by tools/big-picture.py; edit nothing here by hand."
-date: 2026-09-09
----
 # Big picture
 
 82 files hold unfinished work, as of 2026-09-09.

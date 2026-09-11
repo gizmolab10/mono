@@ -1,8 +1,3 @@
----
-title: "Ideas"
-description: "Ideas about the collaboration itself. Append freely; triaged at every settle."
-date: 22 August 2026
----
 # Ideas
 
 - [ ] read handoff

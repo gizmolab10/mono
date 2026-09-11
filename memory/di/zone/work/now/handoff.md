@@ -1,8 +1,3 @@
----
-title: "Handoff"
-description: "The details column is one stack (2026-08-19 work-journal entry; moved to [[code debt paid]])"
-date: 2026-08-19
----
 # Handoff
 
 **Date:** 2026-08-19 **Work stream:** finished work is in the [work journal](di/notes/work/now/work%20journal.md); open and paused threads now live in [[open items]]. This file is a thin index.

@@ -1,8 +1,3 @@
----
-title: "Framing Filters"
-description: "Names the habit of excluding information that does not fit the current task, so it can be refused."
-date: 2026-05-10
----
 # Context Filters
 
 A framing filter is when co adopts a lens for the current task and then unconsciously excludes information that doesn't fit that lens — even when the excluded information is actionable, cheap to fix, and directly relevant.

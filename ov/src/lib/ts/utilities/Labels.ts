@@ -66,17 +66,13 @@ export const NAME_UNTIL_TOLD = 'unnamed';
 export const TAG_WHEN_NEW = 'now';
 
 /**
- * The whole of a brand new guide: a block of labels and a heading holding its name. It is
- * labeled from the moment it exists, so it never shows as unlabeled and nobody has to go back
- * and label it. Its brief is left empty, for whoever writes the first sentence.
- *
- * The kind and the tags come from outside, since what a new guide should wear is decided by
- * what the list is filtered by — a guide labeled otherwise would be made and then hidden. They
- * are not written into the file: the caller puts them in the db.
+ * The whole of a brand new guide: a heading holding its name, and nothing else. Its labels are
+ * not written into the file — the caller puts them in the db, which is what the list filters
+ * from and the editor reads — so it is labeled from the moment it exists, and nobody has to go
+ * back and label it.
  */
-export function blank_file(name: string, date: string, kind: string, tags: string[]): string {
-	const labels: Labels = { kind, title: name, description: '', use_when: [], date, labeled: true };
-	return `${label_block(labels, tags)}\n# ${name}\n`;
+export function blank_file(name: string): string {
+	return `# ${name}\n`;
 }
 
 /**

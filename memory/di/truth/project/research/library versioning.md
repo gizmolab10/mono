@@ -1,8 +1,3 @@
----
-title: "Library Versioning"
-description: "What happens to already-placed instances when the saved original changes."
-date: 2026-05-10
----
 # Versions
 
 A library object is a snapshot. But the original keeps evolving. What happens to the instances already placed in other graphs?

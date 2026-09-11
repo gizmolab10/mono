@@ -1,8 +1,3 @@
----
-title: "Features (di)"
-description: "The checklist of what di is meant to do, from a drawing to a lumber list."
-date: 2026-05-11
----
 # Early di spec
 
 - [ ] assemble a realistic looking drawing of a wood working project

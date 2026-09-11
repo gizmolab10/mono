@@ -1,8 +1,3 @@
----
-title: "lv — Tommy’s Vineyard Space"
-description: "Represent the vineyard with descriptions and photos"
-date: 2026-08-24
----
 # lv — Tommy’s Vineyard Space
 
 > A place to share the work and fun of owning a vineyard.

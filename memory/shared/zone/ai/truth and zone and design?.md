@@ -1,8 +1,3 @@
----
-title: Truth and zone and design?
-description: Whether truth/ and zone/ should divide further — the three ideas weighed, and where each landed.
-date: 2026-08-29
----
 # truth and zone and design?
 
 29 August 2026. Three ideas weighed in one sitting. The full pros and cons are in shared decisions, under Evaluations; this is the review copy.

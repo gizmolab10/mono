@@ -1,8 +1,3 @@
----
-title: "DB implementation proposal"
-description: "How to build the store [[db spec]] describes: the ws plugin architecture ported whole, ji's own five-record data model on top, document bytes kept outside th..."
-date: 2026-08-19
----
 # DB implementation proposal
 
 How to build the store [[db spec]] describes: the ws plugin architecture ported whole, ji's own five-record data model on top, document bytes kept outside the db. Nothing here departs from the spec — this is the build order and the file layout.

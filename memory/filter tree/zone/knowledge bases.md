@@ -1,8 +1,3 @@
----
-title: "knowledge bases"
-description: "How companies organize and browse their knowledge, and which of those approaches fit ov, mu and ji."
-date: 10 September 2026
----
 # knowledge bases
 
 Every company ends up with knowledge nobody can find. i asked how they organize and browse it, then which of those approaches fit ov, mu and ji. Finally, a roadmap to flesh out ov to be better than the best available.

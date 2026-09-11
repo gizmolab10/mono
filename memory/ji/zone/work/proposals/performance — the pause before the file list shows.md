@@ -1,8 +1,3 @@
----
-title: "Performance — the pause before the file list shows"
-description: "You saw a pause when switching to the list"
-date: 2026-08-19
----
 # Performance — the pause before the file list shows
 
 You saw a pause when switching to the list. The table is not the cause. Waiting on AnythingLLM is.

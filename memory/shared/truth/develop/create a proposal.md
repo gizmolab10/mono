@@ -1,8 +1,3 @@
----
-title: "Create a Proposal"
-description: "A worked example of writing a proposal from scratch in short cycles."
-date: 2026-05-29
----
 # How we wrote the proposal from scratch
 
 ## Where we started

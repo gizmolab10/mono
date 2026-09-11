@@ -1,8 +1,3 @@
----
-title: "Map of ji files"
-description: "Every source file in ji, updated whenever files are added, moved, or removed."
-date: 2026-07-29
----
 # Map of ji files
 
 The intersection project's files. Update this when files are added, moved, or removed.

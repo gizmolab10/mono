@@ -1,6 +1,3 @@
----
-description: core — the library every mono app shares; state lives in the host, behavior in core.
----
 # core
 
 A library with no entry point, carved out of ov: what every mono app can share. Four ts folders — common, events, types, utilities — each behind an index.ts barrel, and nine support components. Core keeps no state of its own; a host hands its state in as props and remembers what needs remembering.

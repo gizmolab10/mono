@@ -1,8 +1,3 @@
----
-title: "Claude Code"
-description: "Where the toolkit actually runs, and how to install and start Claude Code."
-date: 27 August 2026
----
 # Claude Code
 
 ## Two places to work

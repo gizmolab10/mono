@@ -1,10 +1,3 @@
----
-type: howto
-title: Create a project
-description: The steps to bring up a new project in the memory system, and in mono when it needs code.
-use_when: [creating a project, bringing up a new project, adding to memory]
-updated: 10 September 2026
----
 # Create a project
 
 Two halves. The memory half is always done; the code half only when the project has an app.

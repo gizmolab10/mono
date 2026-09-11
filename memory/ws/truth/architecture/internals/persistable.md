@@ -1,8 +1,3 @@
----
-title: "Persistable"
-description: "The shared base every stored record extends, for saving, loading, and identity."
-date: 2026-01-28
----
 # Persistable Pattern Architecture
 
 All persistent data entities in Webseriously extend the `Persistable` base class, providing a unified interface for database operations, serialization, and identity management.

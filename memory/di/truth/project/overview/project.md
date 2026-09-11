@@ -1,8 +1,3 @@
----
-title: "How di Runs"
-description: "The big picture of what happens from the moment the app starts."
-date: 2026-06-22
----
 # Project Architecture
 
 How the app actually runs. Big picture.

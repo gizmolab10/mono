@@ -1,8 +1,3 @@
----
-title: "Editing a Guide"
-description: "How this app lets you change a guide from inside the app, one piece at a time, without rewriting the file."
-date: 2026-08-02
----
 # Editing
 
 Editing a guide from inside overview: you change what's on the page, and the file on disk changes with it.

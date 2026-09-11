@@ -418,57 +418,79 @@ def label_block(text):
             return lines[1:at], at
     return [], -1
 
-def labels_in_text(text):
-    """The kind and the tags a file's own label block says, each None where the block has no
-    such line. The tags come in either shape: `tags: [a, b]` on the one line, which the overview
-    app writes, or one name to a line under a bare `tags:`, which Obsidian writes."""
-    block, _ = label_block(text)
-    kind, tags = None, None
-    for at, line in enumerate(block):
-        if line.startswith('kind:'):
-            kind = line[len('kind:'):].strip().strip('"').strip("'")
-        elif line.startswith('tags:'):
-            inside = line[len('tags:'):].strip()
-            if inside.startswith('['):
-                tags = [one.strip() for one in inside.strip('[]').split(',') if one.strip()]
-            else:
-                tags = []
-                for below in block[at + 1:]:
-                    if not re.match(r'^\s+-\s', below):
-                        break
-                    name = re.sub(r'^\s+-\s*', '', below).strip()
-                    if name:
-                        tags.append(name)
-    return kind, tags
+# The lines a label block can carry and the db has a place for. type and updated are the older
+# spellings of kind and date, read as those where the newer line is not there.
+KNOWN_KEYS = ('kind', 'title', 'description', 'tags', 'use_when', 'date', 'type', 'updated')
 
-def without_kind_and_tags(text):
-    """The file's text with the kind line and the tags line taken out of its label block, the
-    names listed one to a line under a bare `tags:` going with them. Every other line stays
-    exactly as it is, and a file with no block comes back untouched."""
+def _names_below(block, at):
+    """The names written one to a line under a bare label, each beginning with a dash."""
+    named = []
+    for below in block[at + 1:]:
+        if not re.match(r'^\s+-\s', below):
+            break
+        name = re.sub(r'^\s+-\s*', '', below).strip()
+        if name:
+            named.append(name)
+    return named
+
+def _list_after(block, at, line, key):
+    """A list label's values, in either shape: `[a, b]` on the one line, which the overview app
+    wrote, or one name to a line under the bare label, which Obsidian writes."""
+    inside = line[len(key) + 1:].strip()
+    if inside.startswith('['):
+        return [one.strip() for one in inside.strip('[]').split(',') if one.strip()]
+    return _names_below(block, at)
+
+def _value_after(line, key):
+    """One label's value, the surrounding quote marks taken off."""
+    value = line[len(key) + 1:].strip()
+    if len(value) > 1 and value[0] == value[-1] and value[0] in '"\'':
+        value = value[1:-1]
+    return value
+
+def labels_in_text(text):
+    """What a file's own label block says: kind, tags, title, description, use_when and date,
+    each None where the block has no such line, and unknown, the keys the block carries that the
+    db has no place for. A `type` line is read as the kind and an `updated` line as the date
+    where the newer line is missing."""
+    block, _ = label_block(text)
+    said = {'kind': None, 'tags': None, 'title': None, 'description': None, 'use_when': None, 'date': None, 'unknown': []}
+    older = {'type': None, 'updated': None}
+    for at, line in enumerate(block):
+        key = line.split(':', 1)[0] if ':' in line and not line.startswith((' ', '\t')) else ''
+        if key in ('kind', 'title', 'description', 'date'):
+            said[key] = _value_after(line, key)
+        elif key in ('tags', 'use_when'):
+            said[key] = _list_after(block, at, line, key)
+        elif key in older:
+            older[key] = _value_after(line, key)
+        elif key and key not in KNOWN_KEYS:
+            said['unknown'].append(key)
+    if said['kind'] is None and older['type'] is not None:
+        said['kind'] = older['type']
+    if said['date'] is None and older['updated'] is not None:
+        said['date'] = older['updated']
+    return said
+
+def without_block(text):
+    """The file's text with its whole label block taken off the top, and the one blank line after
+    it, where there is one. Every other line stays exactly as it is, and a file with no block
+    comes back untouched."""
     block, ends_at = label_block(text)
     if ends_at < 0:
         return text
-    kept = []
-    below_tags = False
-    for line in block:
-        if line.startswith('kind:'):
-            below_tags = False
-            continue
-        if line.startswith('tags:'):
-            below_tags = not line[len('tags:'):].strip().startswith('[')
-            continue
-        if below_tags and re.match(r'^\s+-\s', line):
-            continue
-        below_tags = False
-        kept.append(line)
-    return '\n'.join(['---', *kept, *text.split('\n')[ends_at:]])
+    rest = text.split('\n')[ends_at + 1:]
+    if rest and rest[0].strip() == '':
+        rest = rest[1:]
+    return '\n'.join(rest)
 
 def scan_labels():
     """Read every listed file's own label block into the db: the kind and the tags it says become
-    its hand labels, on a row made from the disk. A file whose block says neither keeps what the
-    db holds. Nothing in any file changes. Answers the counts."""
+    its hand labels, the title, description, use_when and date its fields, on a row made from
+    the disk. A file whose block says none of the six keeps what the db holds. Nothing in any
+    file changes. Answers the counts."""
     root, paths = listed_files()
-    files, kinds, tags, said_nothing, unreadable = 0, 0, 0, 0, 0
+    files, kinds, tags, fields, said_nothing, unreadable = 0, 0, 0, 0, 0, 0
     for where in paths:
         full = os.path.join(root, where)
         try:
@@ -478,22 +500,26 @@ def scan_labels():
             unreadable += 1
             continue
         files += 1
-        kind, named = labels_in_text(text)
-        if kind is None and named is None:
+        said = labels_in_text(text)
+        if all(said[key] is None for key in ('kind', 'tags', 'title', 'description', 'use_when', 'date')):
             said_nothing += 1
             continue
-        database.record_file(where, full, kind, named)
-        kinds += 1 if kind is not None else 0
-        tags += len(named) if named is not None else 0
-    return {'files': files, 'kinds': kinds, 'tags': tags, 'said_nothing': said_nothing, 'unreadable': unreadable}
+        database.record_file(where, full, said['kind'], said['tags'], title=said['title'],
+                             description=said['description'], use_when=said['use_when'], date=said['date'])
+        kinds += 1 if said['kind'] is not None else 0
+        tags += len(said['tags']) if said['tags'] is not None else 0
+        fields += sum(1 for key in ('title', 'description', 'use_when', 'date') if said[key] is not None)
+    return {'files': files, 'kinds': kinds, 'tags': tags, 'fields': fields, 'said_nothing': said_nothing, 'unreadable': unreadable}
 
-def strip_labels():
-    """Take the kind line and the tags line out of every listed file's label block, once the db
-    holds that file: a file the db has no labels for is passed over, so nothing is lost. Title,
-    description, use_when and date stay in the file. Answers the counts."""
+def strip_blocks():
+    """Take the whole label block off the top of every listed file the db holds a row for. A file
+    the db has no row for is passed over, and so is a file whose block carries a line the db has
+    no place for, named in the answer so a person can look, so nothing is lost. Answers the
+    counts."""
     root, paths = listed_files()
-    known = database.all_labels()
+    known = database.all_fields()
     changed, untouched, unscanned, unreadable = 0, 0, 0, 0
+    kept = []
     for where in paths:
         if where not in known:
             unscanned += 1
@@ -505,14 +531,18 @@ def strip_labels():
         except Exception:
             unreadable += 1
             continue
-        stripped = without_kind_and_tags(text)
+        unknown = labels_in_text(text)['unknown']
+        if unknown:
+            kept.append(f'{where}: {", ".join(unknown)}')
+            continue
+        stripped = without_block(text)
         if stripped == text:
             untouched += 1
             continue
         with open(full, 'w') as f:
             f.write(stripped)
         changed += 1
-    return {'changed': changed, 'untouched': untouched, 'unscanned': unscanned, 'unreadable': unreadable}
+    return {'changed': changed, 'untouched': untouched, 'unscanned': unscanned, 'unreadable': unreadable, 'kept': kept}
 
 def is_skippable_deploy(deploy):
     """Check if a deploy should be skipped (canceled or failed build)."""
@@ -589,6 +619,12 @@ class APIHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
+
+    def _drain_body(self):
+        """Read and drop a request body a route has no use for. A body left unread when the
+        answer is sent and the connection closed makes the operating system reset the
+        connection, and the asker, still reading the answer, sees the reset instead."""
+        self.rfile.read(int(self.headers.get('Content-Length', 0)))
 
     def _note_place(self, where, must_exist):
         """Where a note named from the top of the repo sits, for the label routes: its path
@@ -718,10 +754,12 @@ class APIHandler(BaseHTTPRequestHandler):
                 self._send_response(500, {'success': False, 'error': str(e)})
 
         elif self.path == '/all-labels':
-            # Every label on every file, for the overview app, in one answer: each file's path
-            # from the top of the repo, and its labels. One ask at launch in place of one per file.
+            # Every label and every field on every file, for the overview app, in one answer:
+            # each file's path from the top of the repo, its labels, and its title, description,
+            # use_when and date. One ask at launch in place of one per file. A path among the
+            # fields is a file the db holds a row for, labels or not.
             try:
-                self._send_response(200, {'success': True, 'labels': database.all_labels()})
+                self._send_response(200, {'success': True, 'labels': database.all_labels(), 'fields': database.all_fields()})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1024,6 +1062,7 @@ class APIHandler(BaseHTTPRequestHandler):
             # On success it answers with the file's full place on this machine, so the app can
             # read it again without waiting for a restart.
             try:
+                self._drain_body()
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where_from = params.get('from', [''])[0]
                 where_to = params.get('to', [''])[0]
@@ -1056,6 +1095,8 @@ class APIHandler(BaseHTTPRequestHandler):
                     self._send_response(409, {'success': False, 'error': 'no such folder'})
                     return
                 os.rename(full_from, full_to)
+                # The db keys the file's labels and fields by its path, so its row follows it.
+                database.move_path(os.path.relpath(full_from, root), os.path.relpath(full_to, root))
                 self._send_response(200, {'success': True, 'path': full_to})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -1070,6 +1111,7 @@ class APIHandler(BaseHTTPRequestHandler):
             #   - the path resolves outside the repo (no climbing out with "..", no symlinks out)
             #   - the file isn't there
             try:
+                self._drain_body()
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
                 root = os.path.realpath(GITHUB_DIR)
@@ -1084,6 +1126,8 @@ class APIHandler(BaseHTTPRequestHandler):
                     self._send_response(409, {'success': False, 'error': 'no such file'})
                     return
                 os.remove(full)
+                # Its row in the db goes with it, and every label and source on it.
+                database.delete_path(os.path.relpath(full, root))
                 self._send_response(200, {'success': True, 'path': full})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -1138,25 +1182,58 @@ class APIHandler(BaseHTTPRequestHandler):
 
         elif self.path == '/scan':
             # Read every listed file's own label block into the db, for the overview app: /scan
-            # The kind and the tags a file says become its hand labels, its row made from the
-            # disk. A file saying neither keeps what the db holds. Nothing in any file changes.
+            # The kind and the tags a file says become its hand labels, and its title,
+            # description, use_when and date its fields, its row made from the disk. A file
+            # saying none of them keeps what the db holds. Nothing in any file changes.
             try:
+                self._drain_body()
                 self._send_response(200, {'success': True, **scan_labels()})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/strip-labels':
-            # Take the kind line and the tags line out of every listed file's label block, once the
-            # db holds that file: /strip-labels, with the JSON body {"confirm": "strip"}. Title,
-            # description, use_when and date stay in the file. Every file is rewritten on this
-            # machine, so the word is asked for: without it, nothing is touched.
+        elif self.path == '/strip-block':
+            # Take the whole label block off the top of every listed file the db holds a row for:
+            # /strip-block, with the JSON body {"confirm": "strip"}. A file whose block carries a
+            # line the db has no place for is passed over and named. Every file is rewritten on
+            # this machine, so the word is asked for: without it, nothing is touched.
             try:
                 content_length = int(self.headers.get('Content-Length', 0))
                 sent = json.loads(self.rfile.read(content_length).decode() or '{}')
                 if sent.get('confirm') != 'strip':
                     self._send_response(400, {'success': False, 'error': 'send {"confirm": "strip"} to rewrite every file'})
                     return
-                self._send_response(200, {'success': True, **strip_labels()})
+                self._send_response(200, {'success': True, **strip_blocks()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/set-fields':
+            # Write a file's title, description, use_when and date on its row in the db, for the
+            # overview app: /set-fields?where=<path from the top of the repo>. The body is JSON
+            # holding any of the four: {"title": ..., "description": ..., "use_when": [...],
+            # "date": ...}. One left out is left as it is. The file has to be there.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                placed = self._note_place(params.get('where', [''])[0], must_exist=True)
+                if not placed:
+                    return
+                where, full = placed
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                fields = {}
+                for name in database.FIELDS:
+                    if name not in sent:
+                        continue
+                    value = sent[name]
+                    wanted = list if name == 'use_when' else str
+                    if not isinstance(value, wanted) or (name == 'use_when' and not all(isinstance(one, str) for one in value)):
+                        self._send_response(400, {'success': False, 'error': f'{name} must be {"a list of words" if name == "use_when" else "words"}'})
+                        return
+                    fields[name] = value
+                if not fields:
+                    self._send_response(400, {'success': False, 'error': f'send at least one of {list(database.FIELDS)}'})
+                    return
+                database.set_fields(where, full, **fields)
+                self._send_response(200, {'success': True, 'path': where, 'fields': sorted(fields)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

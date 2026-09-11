@@ -5,8 +5,9 @@ files themselves do not say. Only the dispatcher reads and writes it, through th
 
 Four tables, as memory/ov/zone/knowledge bases.md lays them out:
   files   -- one row per file: its collection, its path from the top of the repo, its size,
-             when it was last changed, and its fingerprint, a short code computed from its
-             bytes (same bytes, same code)
+             when it was last changed, its fingerprint, a short code computed from its bytes
+             (same bytes, same code), and the four fields the file's label block used to
+             carry: title, description, use_when (several, kept as one csv field) and date
   labels  -- one row per kind or tag on a file: the file, the name (kind or tag), the value,
              and who made it: hand, rule or ai
   sources -- one row per author or origin of a file: the file, the author, where it came from
@@ -14,9 +15,9 @@ Four tables, as memory/ov/zone/knowledge bases.md lays them out:
   rules   -- one row per rule that gives a label: what it reads (name, location or content),
              the pattern it matches, and the label it gives (name and value)
 
-Labels are written and read here. The other two tables wait for their phases. A file's row is
-made the first time a label is written on it, from what is on disk then, and brought up to date
-with the disk on every write after.
+Labels and fields are written and read here. The other two tables wait for their phases. A
+file's row is made the first time anything is written on it, from what is on disk then, and
+brought up to date with the disk on every write after.
 """
 
 import hashlib
@@ -28,6 +29,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PLACE = os.path.join(SCRIPT_DIR, 'ov.db')
 
 MADE_BY = ('hand', 'rule', 'ai')
+# The four fields on a file's row, the ones its label block used to carry.
+FIELDS = ('title', 'description', 'use_when', 'date')
 
 TABLES = """
 CREATE TABLE IF NOT EXISTS files (
@@ -36,7 +39,11 @@ CREATE TABLE IF NOT EXISTS files (
     path        TEXT NOT NULL UNIQUE,
     size        INTEGER NOT NULL,
     modified    REAL NOT NULL,
-    fingerprint TEXT NOT NULL
+    fingerprint TEXT NOT NULL,
+    title       TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
+    use_when    TEXT NOT NULL DEFAULT '',
+    date        TEXT NOT NULL DEFAULT ''
 );
 CREATE TABLE IF NOT EXISTS labels (
     id      INTEGER PRIMARY KEY,
@@ -64,12 +71,18 @@ CREATE TABLE IF NOT EXISTS rules (
 
 
 def open_db():
-    """Open the db, making the file and its tables the first time. A row pointing at a file
-    goes when the file's row goes, which sqlite only honors when asked on every open."""
+    """Open the db, making the file and its tables the first time. A files table made before the
+    four fields were columns is given them. A row pointing at a file goes when the file's row
+    goes, which sqlite only honors when asked on every open."""
     db = sqlite3.connect(PLACE)
     db.row_factory = sqlite3.Row
     db.execute('PRAGMA foreign_keys = ON')
     db.executescript(TABLES)
+    have = {row['name'] for row in db.execute('PRAGMA table_info(files)')}
+    for name in FIELDS:
+        if name not in have:
+            db.execute(f"ALTER TABLE files ADD COLUMN {name} TEXT NOT NULL DEFAULT ''")
+    db.commit()
     return db
 
 
@@ -92,13 +105,33 @@ def collection_of(where):
 
 def file_row(db, where, full):
     """The id of a file's row, made from what is on disk when there is none, and brought up to
-    date with the disk when there is."""
+    date with the disk when there is. The four fields are left as they are."""
     db.execute(
         'INSERT INTO files (collection, path, size, modified, fingerprint) VALUES (?, ?, ?, ?, ?) '
         'ON CONFLICT(path) DO UPDATE SET size = excluded.size, modified = excluded.modified, '
         'fingerprint = excluded.fingerprint',
         (collection_of(where), where, os.path.getsize(full), os.path.getmtime(full), fingerprint_of(full)))
     return db.execute('SELECT id FROM files WHERE path = ?', (where,)).fetchone()['id']
+
+
+def _replace(db, file, name, values, made_by):
+    """Every row of one name and one maker on a file goes, and one row per value comes."""
+    db.execute('DELETE FROM labels WHERE file = ? AND name = ? AND made_by = ?', (file, name, made_by))
+    db.executemany('INSERT OR IGNORE INTO labels (file, name, value, made_by) VALUES (?, ?, ?, ?)',
+                   [(file, name, value, made_by) for value in values])
+
+
+def _set_fields(db, file, fields):
+    """The fields handed in go on the row. use_when arrives as a list and is kept as one csv
+    field. A field handed in as None is left as it is."""
+    for name, value in fields.items():
+        if name not in FIELDS:
+            raise ValueError(f'a field must be one of {FIELDS}, not {name!r}')
+        if value is None:
+            continue
+        if name == 'use_when':
+            value = ', '.join(value)
+        db.execute(f'UPDATE files SET {name} = ? WHERE id = ?', (value, file))
 
 
 def add_label(where, full, name, value, made_by='hand'):
@@ -114,13 +147,6 @@ def add_label(where, full, name, value, made_by='hand'):
     db.close()
 
 
-def _replace(db, file, name, values, made_by):
-    """Every row of one name and one maker on a file goes, and one row per value comes."""
-    db.execute('DELETE FROM labels WHERE file = ? AND name = ? AND made_by = ?', (file, name, made_by))
-    db.executemany('INSERT OR IGNORE INTO labels (file, name, value, made_by) VALUES (?, ?, ?, ?)',
-                   [(file, name, value, made_by) for value in values])
-
-
 def replace_labels(where, full, name, values, made_by='hand'):
     """Make one name's labels on a file, by one maker, exactly these values. The kind is one
     value, the tags are many, and none at all takes them all off. Other makers' rows stay."""
@@ -132,10 +158,11 @@ def replace_labels(where, full, name, values, made_by='hand'):
     db.close()
 
 
-def record_file(where, full, kind, tags):
+def record_file(where, full, kind, tags, **fields):
     """What a file's own label block says, written on one open of the db: its hand kind made the
-    one named, its hand tags made those named. None for either leaves that name's rows as they
-    are, so a file that says nothing keeps what the db holds."""
+    one named, its hand tags made those named, and each field handed in made what it says. None
+    for any of them leaves that one as it is, so a file that says nothing keeps what the db
+    holds."""
     db = open_db()
     with db:
         file = file_row(db, where, full)
@@ -143,6 +170,16 @@ def record_file(where, full, kind, tags):
             _replace(db, file, 'kind', [kind] if kind else [], 'hand')
         if tags is not None:
             _replace(db, file, 'tag', tags, 'hand')
+        _set_fields(db, file, fields)
+    db.close()
+
+
+def set_fields(where, full, **fields):
+    """The four fields on a file's row: title, description, use_when and date. Only the ones
+    handed in change."""
+    db = open_db()
+    with db:
+        _set_fields(db, file_row(db, where, full), fields)
     db.close()
 
 
@@ -154,6 +191,27 @@ def remove_label(where, name, value):
             'DELETE FROM labels WHERE name = ? AND value = ? '
             'AND file IN (SELECT id FROM files WHERE path = ?)',
             (name, value, where)).rowcount
+    db.close()
+    return gone
+
+
+def move_path(where_from, where_to):
+    """A file now sits somewhere else, so its row is keyed by the new path and its collection is
+    read off it again. Its labels and fields go with it. Answers how many rows moved."""
+    db = open_db()
+    with db:
+        moved = db.execute('UPDATE files SET path = ?, collection = ? WHERE path = ?',
+                           (where_to, collection_of(where_to), where_from)).rowcount
+    db.close()
+    return moved
+
+
+def delete_path(where):
+    """A file is gone from disk, so its row goes, and every label and source on it with it.
+    Answers how many rows went."""
+    db = open_db()
+    with db:
+        gone = db.execute('DELETE FROM files WHERE path = ?', (where,)).rowcount
     db.close()
     return gone
 
@@ -183,3 +241,18 @@ def all_labels():
         by_path.setdefault(row['path'], []).append(
             {'name': row['name'], 'value': row['value'], 'made_by': row['made_by']})
     return by_path
+
+
+def all_fields():
+    """Every file's four fields, keyed by its path from the top of the repo: title, description,
+    use_when as a list again, and date. Every row, whether or not anything is written on it, so
+    a path here is a file the db holds."""
+    db = open_db()
+    rows = db.execute('SELECT path, title, description, use_when, date FROM files ORDER BY path').fetchall()
+    db.close()
+    return {row['path']: {
+        'title': row['title'],
+        'description': row['description'],
+        'use_when': [one.strip() for one in row['use_when'].split(',') if one.strip()],
+        'date': row['date'],
+    } for row in rows}

@@ -1,8 +1,3 @@
----
-title: "Mouse UX"
-description: "What a press means when the thing under the cursor changes between pressing and letting go."
-date: 2026-08-14
----
 # Mouse UX
 
 The manager asks what is under the cursor twice — once on the way down, once on the way up — and keeps neither answer. Everything below follows from that.

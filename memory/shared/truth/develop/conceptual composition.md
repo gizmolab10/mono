@@ -1,8 +1,3 @@
----
-title: "UX terms and concepts"
-description: ""
-date: 2026-08-07
----
 # UX terms and concepts
 
 the code for the app easily becomes byzantine. perhaps it lacks unifying principles, and i hope such can be injected. we have separators, but they are being deployed several different ways, which is a burden to layout, with huge amounts of hand tweaking, which is fragile and cryptic.

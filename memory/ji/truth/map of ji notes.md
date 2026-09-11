@@ -1,8 +1,3 @@
----
-title: "Map of ji notes"
-description: "Every file under the ji notes folder, updated whenever notes are added, moved, or removed."
-date: 2026-07-30
----
 # Map of ji notes
 
 Every file under `notes/`. Update when notes files are added, moved, or removed.

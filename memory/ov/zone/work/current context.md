@@ -1,8 +1,3 @@
----
-title: "Current context"
-description: "What a session cannot read off the code: which way the app is headed, and what was decided rather than written down."
-date: 2026-08-10
----
 # Current context
 
 **The app as it stands.** A controls row (hamburger, build number), then two boxes: the details column on the left with the accent color picker, and the content box beside it. The content box does one of two things — looking through the guides, or reading one. Looking through means five filters (which purposes show, one project, one kind, any number of tags, and words looked for in titles and descriptions), a count, and the list: every folder and file, folders leading their contents, each folder opening and shutting and remembering which it was. With the folders hidden the list flattens to every file, sortable by any run of columns.
@@ -11,9 +6,9 @@ date: 2026-08-10
 
 **The words are short on purpose.** Five kinds — specify, step, wire, explain, refer — and twenty-four tags, none of them a gerund. Renaming one means changing the app's list, the six areas, every guide that wears it, and the three notes that spell the list out: `add a guide`, `okf`, and `tags hierarchy`. A remembered tag or kind no longer on either list is let go at launch, since otherwise it narrows the list to nothing with nothing left on screen to undo it.
 
-**Kinds and tags live in the db.** Since 10 September 2026 a file's kind and tags come from the SQLite db beside the dispatcher, asked for in one answer at launch, and a change to them is written there first. The two lines left every file's block the same day, 332 files, and the hooks that read the `always` tag, and big-picture.py, read the db through the dispatcher's own module.
+**The five labels live in the db.** Since 10 September 2026 a file's kind, tags, title, description, use_when and date come from the SQLite db beside the dispatcher, asked for in one answer at launch, and a change to any of them is written there, never to the file. Every label block left the files the same day, 368 of them, one kept for lines the db has no place for. The hooks that read the `always` tag, and big-picture.py, read and write the db through the dispatcher's own module. A file the db has no row for is unlabeled until it is opened for editing, when its labels are composed from its words.
 
-**Where the guides come from.** Overview reaches outside its own folder on purpose. The build learns only the addresses of every markdown file under each collection's guides folder; at launch each is read once, its five labels kept, and its text let go. Nothing about a guide's contents is held or saved. Index files are left out entirely — the folders do that job now. Designs are swept the same way, from a designs folder beside each guides folder. Last count: 142 files across mono, di, ws, ji and ov, all fully labeled.
+**Where the guides come from.** Overview reaches outside its own folder on purpose. The build learns only the addresses of every markdown file under each collection's guides folder; at launch each is read once, for the links it holds, and its text let go — its labels are the db's. Nothing about a guide's contents is held or saved. Index files are left out entirely — the folders do that job now. Designs are swept the same way, from a designs folder beside each guides folder. Last count: 142 files across mono, di, ws, ji and ov, all fully labeled.
 
 **One top folder on disk, five on screen.** The four project folders hang under the shared one the way they sit on disk, so climbing the folders above a guide can leave one project and reach another — which is what following a link between collections needs. The list, though, starts at all five, so shutting the shared folder never takes the projects with it.
 

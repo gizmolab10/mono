@@ -1,8 +1,3 @@
----
-title: "Map of di notes"
-description: "Every folder under di's notes, and what each one holds. Update when notes are added, moved, or removed."
-date: 2026-08-20
----
 # Map of di notes
 
 Every folder under `memory/di/notes/`. Update when notes files are added, moved, or removed. The map of the source code is [map of di files](map%20of%20di%20files.md); the map of the guides themselves is [map of di guides](map%20of%20di%20guides.md).

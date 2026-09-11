@@ -1,8 +1,3 @@
----
-title: "ov installer"
-description: "What a new machine needs before overview runs on it. A stub — nothing written yet."
-date: 2026-08-17
----
 # ov installer
 
 ## goal

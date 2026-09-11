@@ -1,8 +1,3 @@
----
-title: "Expectations"
-description: "How to get co's best work and avoid its worst."
-date: 2026-05-10
----
 # Expectations
 
 How to engage the co's best and avoid its worst.

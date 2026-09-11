@@ -1,8 +1,3 @@
----
-title: "panel log"
-description: "What panel decided, thought and reached, newest first; settled entries leave at each consolidation."
-date: 2026-09-07
----
 # panel log
 
 <!-- consolidated: 9 September 2026 -->

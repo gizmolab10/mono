@@ -1,8 +1,3 @@
----
-title: "Pitfalls"
-description: "Edge cases that have caused mistakes, mostly failures to read before acting."
-date: 2026-05-10
----
 # Pitfalls
 
 Edge cases and nuances that cause mistakes.

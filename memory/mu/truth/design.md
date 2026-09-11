@@ -1,9 +1,3 @@
----
-type: design
-title: "mu design"
-description: "What mu is and how it is put together, as it is today."
-date: 2026-09-09
----
 # mu design
 
 mu is a music browser. It scans a disk, reads each file's own labels — artist, album, title — and offers several hierarchies over one collection: by folder, by artist, by album, by name, by letter. It is ov's structure with tags and kinds swapped for that metadata.

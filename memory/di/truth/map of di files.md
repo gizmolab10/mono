@@ -1,8 +1,3 @@
----
-title: "File Layout (di)"
-description: "Where everything lives in the di source."
-date: 2026-06-25
----
 # Map of di source files
 
 Where everything lives.

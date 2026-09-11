@@ -1,8 +1,3 @@
----
-title: "Agency"
-description: "How the work itself is done: what to touch, what to prove, and what never to change unasked."
-date: 2026-08-14
----
 # Agency
 
 Each rule ends with Jonathan's preferred wording, which MUST not be improved any further.

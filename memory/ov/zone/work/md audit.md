@@ -1,8 +1,3 @@
----
-title: "md audit"
-description: "Every md file in ov read end to end on 2026-08-22, and the improvements each wants — the drift first, then the labels, then the shape of the notes."
-date: 2026-08-22
----
 # md audit
 
 Every markdown file in `ov/` was read whole — the entry point, the four guide folders, the work notes, and the eleven in soon. Thirty-three files. The goals file was read against all of them, since it describes what this was meant to be.

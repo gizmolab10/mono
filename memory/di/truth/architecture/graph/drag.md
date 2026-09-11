@@ -1,8 +1,3 @@
----
-title: "Drag Fixes"
-description: "Three stacked bugs in stretching an edge or corner, and what each fix was."
-date: 2026-05-10
----
 # Edge/corner stretch — done
 
 Stretching an edge or corner had three stacked bugs.

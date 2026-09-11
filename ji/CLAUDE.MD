@@ -1,8 +1,3 @@
----
-title: "ji — Jeffrey's Space"
-description: "Read memory/ji/truth/lexicon.md at session start"
-date: 2026-08-24
----
 # ji — Jeffrey's Space
 
 > implementation of Jeff's intersection project

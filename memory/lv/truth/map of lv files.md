@@ -1,8 +1,3 @@
----
-title: "Map of lv files"
-description: "Every file in the lv project and what it does. Read this instead of hunting; update it when files are added, moved or removed."
-date: 2026-09-09
----
 # Map of lv files
 
 Read this instead of hunting. Update it when files are added, moved or removed. Every name here is a link — a press opens that file in the editor.

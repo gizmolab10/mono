@@ -1,8 +1,3 @@
----
-title: "Working features (ov)"
-description: "Everything overview can do, newest first."
-date: 2026-08-19
----
 # working features
 
 | #   | Feature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |

@@ -1,8 +1,3 @@
----
-title: "Updating the Guides (di)"
-description: "Keeping the guide pages in step with the code as the project changes."
-date: 2026-06-19
----
 # Updating the guides
 
 Instructions for keeping the guide tree in sync with the code as the project changes. Distilled from several long sessions; the principles here have been tested by use.

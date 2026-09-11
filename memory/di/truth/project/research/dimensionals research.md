@@ -1,8 +1,3 @@
----
-title: "Dimensionals Research"
-description: "Whether any existing constraint library beats the custom search, inside the time budget."
-date: 2026-06-12
----
 # Dimensionals — library research (2026-05-20)
 
 Research done on whether any browser-compatible constraint-satisfaction library beats the custom four-DOF search approach described in [dimensionals.md](dimensionals.md) rule 23 within the 25-millisecond cold-run budget. Conclusion was: **stick with the custom approach**. This file keeps the findings so the decision is revisitable when browser tooling changes.

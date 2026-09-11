@@ -1,6 +1,3 @@
----
-description: mj — draws panel, and gallery's pictures inside it; what it is for is not written yet.
----
 # mj
 
 Brought up 1 September 2026. What mj is for is not written yet.

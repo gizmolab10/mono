@@ -1,8 +1,3 @@
----
-title: "CSS Lessons"
-description: "Styling patterns and gotchas learned from real work; static markup, dynamic appearance."
-date: 2026-05-10
----
 # CSS Lessons
 
 Patterns and gotchas learned from actual work.

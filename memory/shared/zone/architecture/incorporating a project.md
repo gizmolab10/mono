@@ -1,8 +1,3 @@
----
-title: "Incorporating a project"
-description: "The steps a host follows to take panel in, as mu and mj did on 7 September 2026: what it takes, what it changes, how it proves the result."
-date: 2026-09-07
----
 # Incorporating a project
 
 panel is the three regions together — the controls row, the details column, the operation view — drawn on core with nothing in them. A host incorporates panel by taking panel's files as its own and growing its own contents inside them. panel imports core; nothing of panel moves into core, and a host does not import panel. These are the steps, in order, each proved on mu and mj.

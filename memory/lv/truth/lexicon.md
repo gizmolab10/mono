@@ -1,10 +1,3 @@
----
-type: reference
-title: lv lexicon
-description: lv's terms, defined once. Loaded at every lv session start.
-use_when: [every lv session]
-updated: 24 August 2026
----
 # lv lexicon
 
 - **repo** — the GitHub repository, `gizmolab10/mono`, which holds this project's code and its pictures.

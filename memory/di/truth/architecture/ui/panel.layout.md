@@ -1,8 +1,3 @@
----
-title: "Layout Regions (di)"
-description: "The full-window container and the four regions inside it."
-date: 2026-06-19
----
 # Panel layout
 
 The root layout shape: a fixed-position, full-viewport container that holds four regions (toolbar, side panel, drawing area, build-notes overlay).

@@ -1,8 +1,3 @@
----
-title: "Fable"
-description: "What changed when co switched from Opus to Fable, and the strategy for using both."
-date: 1 September 2026
----
 # Fable
 
 ## What happened

@@ -1,8 +1,3 @@
----
-title: "Map of ov files"
-description: "Every source file in overview, updated whenever files are added, moved, or removed."
-date: 2026-08-22
----
 # Map of ov files
 
 Overview's files. Update this when files are added, moved, or removed.

@@ -1,8 +1,3 @@
----
-title: core log
-description: "What core decided, thought and reached, newest first; settled entries leave at each consolidation."
-date: 2026-09-01
----
 # core log
 
 <!-- consolidated: 9 September 2026 -->

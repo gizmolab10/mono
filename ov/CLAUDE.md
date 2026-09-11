@@ -1,8 +1,3 @@
----
-title: "CLAUDE"
-description: "Ported from ji"
-date: 2026-08-24
----
 # CLAUDE
 
 > a browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place.

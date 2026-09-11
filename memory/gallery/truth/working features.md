@@ -1,8 +1,3 @@
----
-title: "Working features"
-description: "What the site does today, and what each thing cannot do. Newest first."
-date: 2026-08-23
----
 # Working features
 
 What works today. Each entry says its own limit, where it has one.

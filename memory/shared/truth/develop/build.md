@@ -1,8 +1,3 @@
----
-title: "Build and Deploy"
-description: "Netlify, VitePress, and related tooling, with the gotchas that bite."
-date: 2026-05-10
----
 # Build & Deploy
 
 Reference for Netlify, VitePress, and related tooling.

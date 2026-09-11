@@ -1,10 +1,3 @@
----
-type: design
-title: "How lv is put together"
-description: "What lv takes from core and from gallery, what is lv's alone, and how its files are named."
-use_when: [adding a file to lv, changing what lv takes from core or gallery, naming something in lv]
-date: 2026-09-09
----
 # How lv is put together
 
 ## Three files in `common/`

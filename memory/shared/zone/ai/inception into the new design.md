@@ -1,9 +1,3 @@
----
-title: "Inception into the new design"
-description: "The death list — what still lives only in the old notes. Empty means the old notes can be deleted."
-use_when: [reaching into notes/guides or notes/work, settling, deciding where an old file's content belongs]
-date: 
----
 # Inception into the new design
 
 Some files remain in the old notes. They are listed here, one line each. Remove a line when its content moves into `memory/` or is declared dead. Empty file = inception complete: delete this file, shrink CLAUDE.md's "Reading on load" to `start` alone.

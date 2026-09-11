@@ -1,8 +1,3 @@
----
-title: "Markdown Structure"
-description: "How to structure markdown so every concept has a heading that can be linked to."
-date: 2026-05-10
----
 # Markdown Guide
 
 How to structure markdown files for this project.

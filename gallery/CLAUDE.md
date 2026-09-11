@@ -1,8 +1,3 @@
----
-title: "gallery"
-description: "A library lv and mj import: pages from md files, and one folder of pictures shown one at a time, with editing"
-date: 2026-09-09
----
 # gallery
 
 > Copied whole from lv on 1 September 2026. Since 9 September 2026 a library, with nothing of lv's left in it.

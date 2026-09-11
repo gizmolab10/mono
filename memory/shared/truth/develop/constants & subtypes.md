@@ -1,8 +1,3 @@
----
-title: "constants & subtypes"
-description: ""
-date: 
----
 # Constants & subtypes
 
 ## constants

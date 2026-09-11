@@ -1,8 +1,3 @@
----
-title: "Layout Code"
-description: "A map of the tangled code that decides where each part of the graph gets drawn."
-date: 2026-01-12
----
 # Layout Code Analysis
 
 ## Problem

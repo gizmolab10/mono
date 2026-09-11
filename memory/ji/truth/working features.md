@@ -1,8 +1,3 @@
----
-title: "working features"
-description: ""
-date: 2026-08-11
----
 # working features
 
 | # | Feature |

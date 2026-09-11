@@ -1,8 +1,3 @@
----
-title: "Journal"
-description: ""
-date: 2026-08-11
----
 # Journal
 
 **Summary** Started webseriously as graph visualization tool. Built di as quaternion rotation demo, rebuilding a 20-year-old CAD program. Developed collaboration workflow with Claude through trial and error — CLAUDE.MD files, structured guides, work tracking.

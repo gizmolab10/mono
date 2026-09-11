@@ -1,10 +1,3 @@
----
-type: reference
-title: ov lexicon
-description: The exact words ov uses in prose, comments, log lines, and test names — the one home.
-use_when: [every ov session]
-updated: 29 August 2026
----
 # ov lexicon
 
 The words used in this project. When writing prose, comments, log lines, or test names, use these words exactly, even when near synonyms exist. If it's here, that's its name. Reaching for a word that is not here, say so and stop — do not invent one.

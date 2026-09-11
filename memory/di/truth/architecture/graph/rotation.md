@@ -1,8 +1,3 @@
----
-title: "Rotation (di)"
-description: "Rotating a child part is visual only; the stored bounds do not change."
-date: 2026-05-10
----
 # Rotation
 
 Rotating a child SO is purely visual — `axis.angle.value = radians` sets an orientation quaternion that the renderer applies. No stored bounds change. The camera view needs to encompass the rotated extent, but the world coordinates stay untouched.

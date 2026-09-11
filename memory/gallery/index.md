@@ -1,6 +1,3 @@
----
-description: gallery — a library lv and mj import: pages from md files, and one folder of pictures shown one at a time, with editing.
----
 # gallery
 
 A library two hosts import through the `gallery` alias: lv, whose code this was, and mj. Drag and drop, decided 9 September 2026: image files are dragged and dropped, and all of lv's code that supports this remains in gallery.

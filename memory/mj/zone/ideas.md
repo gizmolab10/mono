@@ -1,8 +1,3 @@
----
-title: "Ideas"
-description: "mj ideas. Append freely; triaged at every settle."
-date: 2026-09-01
----
 # Ideas
 
 mj stands for cannabis. will be a gallery. subdomain of jonathansand.me

@@ -1,8 +1,3 @@
----
-title: "Debugging"
-description: "Two principles: check the source first, and work systematically."
-date: 2026-05-10
----
 # Debugging Guide
 
 ## Table of Contents

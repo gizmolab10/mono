@@ -1,8 +1,3 @@
----
-title: "Intersection Rules"
-description: "The rules the intersection app follows, starting with one source of truth for every color."
-date: 2026-07-24
----
 # Rules
 
 ## colors

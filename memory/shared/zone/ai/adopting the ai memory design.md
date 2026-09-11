@@ -1,8 +1,3 @@
----
-title: "Adopting the AI memory design"
-description: "Where ov's move into the memory system stands — done, goal, remaining."
-date: 
----
 # Adopting the AI memory design
 
 ## Done so far

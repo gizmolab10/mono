@@ -1,8 +1,3 @@
----
-title: "Work journal"
-description: "Reverse chronological log of finished work on ji (the Jeff intersection project)"
-date: 2026-08-11
----
 # Work journal
 
 Reverse chronological log of finished work on ji (the Jeff intersection project).

@@ -1,6 +1,3 @@
----
-description: ov (Overview) — a browser and editor for every markdown file in the repo.
----
 # ov
 
 A browser and editor for every markdown file in this repo: a list on the left, one file's words on the right, and every size and color coming from one place. Ported from ji. Built with Svelte.

@@ -1,8 +1,3 @@
----
-title: "mu"
-description: "A new project; what it is for has not been said yet."
-date: 2026-08-27
----
 # mu
 
 > a new project, one component deep.

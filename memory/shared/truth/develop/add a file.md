@@ -1,32 +1,16 @@
----
-title: "Adding a Guide"
-description: "Put a new guide where overview will find it, label it, and prove it arrived."
-date: 2026-08-02
----
 # How to add a file
 
-A new file must be where overview can find it and carry the five labels. Several steps. The first two prepare it for OKF, the rest puts it in the right spot.
+A new file must be where overview can find it and have its five labels in the db. Several steps. The first two prepare it for OKF, the rest puts it in the right spot.
 
-## 1. Give it the label block
+## 1. Give it its labels
 
-Three labels in the file, this order, fenced by three dashes above and below, at the very top:
-
-```
----
-title: "Adding a File"
-description: "One sentence saying what this file tells you to do."
-date: 2026-08-02
----
-```
-
-- **title** — the human name, unique across every guide.
-- **description** — one sentence that reads whole on its own in a search result.
-- **date** — the last real change, as year-month-day. A change of meaning, not a typo.
-
-The other two, the kind and the tags, are not written into the file. Since 10 September 2026 they live in the db beside the dispatcher, `tools/hub/ov.db`, and are put on in overview's editor, its kinds row and its tag areas. A file whose block still carries a `kind:` or `tags:` line loses the line the next time overview writes the block.
+Nothing goes into the file for this. Since 10 September 2026 all five labels live in the db beside the dispatcher, `tools/hub/ov.db`, and no file carries a label block. Open the file in overview: a file the db holds nothing for is given labels composed from its own words the moment it is opened for editing, and the editor's information rows, kinds row and tag areas change them.
 
 - **kind** — one of: specify, howto, refer, arch, explain, design. One of the six says what the file is about rather than how it reads: a record of how something was built is a design. For the other five, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → howto; how a part of an app works → arch; why rather than what → explain; otherwise refer.
+- **title** — the human name, unique across every guide.
+- **description** — one sentence that reads whole on its own in a search result.
 - **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.
+- **date** — the last real change, as year-month-day. A change of meaning, not a typo.
 
 ## 2. Use only these tags
 
@@ -44,7 +28,7 @@ Do not name it `index` — those are left out on purpose, since the folders do t
 
 The list of which files exist is settled when the app's code is prepared; reloading the page re-reads the files it already knows but never asks whether new ones appeared.
 
-```
+```sh
 ~/GitHub/mono/tools/hub/servers.sh ov
 ```
 

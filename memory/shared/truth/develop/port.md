@@ -1,8 +1,3 @@
----
-title: "Porting Code"
-description: "How to move a capability from one project to another: read the source, describe it, write a spec at the destination."
-date: 2026-05-10
----
 # Porting Code
 
 How to port code from one project A to another B.

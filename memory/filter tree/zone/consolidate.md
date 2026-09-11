@@ -1,8 +1,3 @@
----
-title: "Consolidate the guides"
-description: "What becomes of the 142 old guides in eight notes/guides folders: which enter truth, which fold into a truth that exists, which go to archive, which die."
-date: 7 September 2026
----
 # Consolidate the guides
 
 ## Success criteria

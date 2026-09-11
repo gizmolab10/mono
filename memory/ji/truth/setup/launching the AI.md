@@ -1,8 +1,3 @@
----
-title: "Launching the AI"
-description: "Everything between a cold mac and ji answering a question: Docker, AnythingLLM, the model, the key-holding server, the tunnel, and the password."
-date: 2026-08-07
----
 # Launching the AI
 
 Five things have to be up before ji can answer a question, and each one leans on the one before it. This walks them in order, says what each is for, and gives the one command that proves it is really running.

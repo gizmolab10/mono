@@ -1,8 +1,3 @@
----
-title: "Work journal"
-description: "What has been finished, newest first."
-date: 2026-08-19
----
 # Work Journal
 
 What's been finished, newest first.

@@ -1,8 +1,3 @@
----
-title: Rewrite the guides
-description: remove murk from documentation
-date: 2026-09-03
----
 # Rewrite the guides
 
 Jonathan and co worked on [[always]] for a long time. we achieved a very significant improvement. that's the good news. the bad news is Jonathan worked closely with co throughout. The goal — give co enough rules to do it solo.

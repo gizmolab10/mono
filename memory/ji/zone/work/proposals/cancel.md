@@ -1,8 +1,3 @@
----
-title: "Cancel — stopping what is already under way"
-description: "Cancel today waits"
-date: 2026-08-19
----
 # Cancel — stopping what is already under way
 
 Cancel today waits. It should not.

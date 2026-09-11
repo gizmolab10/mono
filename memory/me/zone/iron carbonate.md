@@ -1,8 +1,3 @@
----
-title: "Iron Carbonate — Oxidizing Siderite Off Calcite"
-description: "Practical sequence for using hydrogen peroxide to break down siderite (FeCO₃) while sparing calcite (CaCO₃)"
-date: 2026-08-28
----
 # Iron Carbonate — Oxidizing Siderite Off Calcite
 
 Practical sequence for using hydrogen peroxide to break down siderite (FeCO₃) while sparing calcite (CaCO₃).

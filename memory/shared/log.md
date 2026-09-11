@@ -1,8 +1,3 @@
----
-title: "shared log"
-description: "What shared decided, thought and reached, newest first; settled entries leave at each consolidation."
-date: 2026-09-01
----
 # shared log
 
 <!-- consolidated: 9 September 2026 -->
@@ -34,3 +29,4 @@ date: 2026-09-01
 - D: mj and mu import panel through Panel.ts, and their own versions of panel's three region files are deleted. The Importing proposal's panel half is whole: gallery, mj and mu draw Panel.svelte. zone/architecture/incorporating a project.md says so
 - D: done. The one ticked item in zone/ideas.md, create mj -> mj.jonathansand.me, moved into zone/work/journal.md as a dated entry. drive.md and proposals.md hold no ticked items, and shared has no handoff, working features or map
 - D: the always tag lives in the db beside the dispatcher, tools/hub/ov.db, not in the files. inject-always.sh reads it there through tools/hub/database.py and says in one line when the db is not there, test-always-tag.sh breaks and mends each half in the db, and big-picture.py records its kind and tag there. The kind and tags lines left 332 memory files on 10 September 2026 through the dispatcher's /strip-labels. collaborate/hooks.md says so
+- D: no memory file carries a label block. All five labels live in the db beside the dispatcher, tools/hub/ov.db, the title, description, use_when and date as fields on the file's row. The dispatcher's /strip-block took the block off 368 files on 10 September 2026 and kept memory/index.md for its okf lines. develop/add a file.md says a new file gets its labels in overview's editor, and ov's design/okf.md says where the five live now

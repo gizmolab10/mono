@@ -1,8 +1,3 @@
----
-title: "Shared Context"
-description: "PROJECTS:"
-date: 2026-08-24
----
 # Shared Context
 
 PROJECTS: 

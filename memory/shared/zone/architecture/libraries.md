@@ -1,10 +1,3 @@
----
-type: design
-title: "Libraries"
-description: "What a library is in mono, and how a host takes one on: nothing built on its own, one alias and one bridge per library per host, and a library that imports a library does the same."
-use_when: [making a library, a project taking a library on, deciding what belongs in a library and what in the host]
-date: 10 September 2026
----
 # Libraries
 
 A library is a project other projects import: core, panel and gallery today, the filter tree to come. Nothing is published outside mono, so no library is built on its own. vite builds each app from all the source, on this machine and on Netlify, and that is the whole build.

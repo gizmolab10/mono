@@ -1,8 +1,3 @@
----
-title: "Proposals"
-description: "gallery proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies."
-date: 2026-09-09
----
 # Proposals
 
 ## a picture fills the box it is given (9 September 2026)

@@ -1,8 +1,3 @@
----
-title: "Tags hierarchy"
-description: "In the filters, the linear list is currently quite lengthy (22), challenging to scan by eye"
-date: 2026-08-08
----
 # Tags hierarchy
 
 In the filters, the linear list is currently quite lengthy (22), challenging to scan by eye. would be easier if some can be encapsulated, and thus hidden. These are the six areas and their tags.

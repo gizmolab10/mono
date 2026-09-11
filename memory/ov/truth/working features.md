@@ -1,12 +1,8 @@
----
-title: "Working features (ov)"
-description: "Everything overview can do, newest first."
-date: 2026-08-19
----
 # working features
 
 | #   | Feature                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 84  | All five labels come from the db beside the dispatcher: the kind and the tags as labels, the title, description, use_when and date as the four fields on the file's row, asked for in one answer at launch. The editor writes every change there and never to the file, a new file is its heading alone with its labels in the db, a file the db has no row for gets its labels composed from its words when first opened, and no memory file carries a label block since 10 September 2026 |
 | 83  | A file's kind and tags come from the db beside the dispatcher, asked for in one answer at launch beside the listing, never from the file's own block. Changing them in the editor, composing labels for a bare file, and making a new file all write the db first, one write per label put on or taken off. The block carries neither line: the two left every file on 10 September 2026 |
 | 78  | Launch draws the list the moment the dispatcher's listing answers, names and folders only, and reads the labels after — the file being edited first, alone, then the rows in view from the remembered top row, then the rest, twelve at a time — each row filling in as its text answers and the list narrowing on every batch; a file that cannot be read is taken down |
 | 79  | Browse's count row carries a select toggle at its own left edge — a plain pencil once selecting is on, a slash through it while browsing — that turns select mode on and off; while on, the file list gains a checkbox column at the far left for picking files, folders left out |

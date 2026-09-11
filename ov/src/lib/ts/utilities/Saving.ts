@@ -171,21 +171,38 @@ export async function files_on_disk(): Promise<On_Disk> {
 export type Label = { name: string; value: string; made_by: string };
 
 /**
- * Every label the db holds, on every file, keyed by the file's path counting from the top of
- * the repo. One ask at launch, in place of a label block read off every file. An empty answer
- * means the dispatcher is not running.
+ * The four fields on a file's row in the db: the labels its block used to carry besides the
+ * kind and the tags. use_when travels as a list, kept as one csv field there.
  */
-export async function labels_on_disk(): Promise<Map<string, Label[]>> {
+export type Fields = { title: string; description: string; use_when: string[]; date: string };
+
+/**
+ * Everything the db holds on every file, keyed by the file's path counting from the top of the
+ * repo: its labels, and its four fields. A path among the fields is a file the db holds a row
+ * for, labels or not. One ask at launch, in place of a label block read off every file. Empty
+ * maps mean the dispatcher is not running.
+ */
+export type In_Db = { labels: Map<string, Label[]>; fields: Map<string, Fields> };
+
+export async function labels_on_disk(): Promise<In_Db> {
 	try {
 		const answer = await fetch('http://localhost:5171/all-labels');
 		const said = await answer.json().catch(() => ({}));
-		if (answer.ok && said.success && said.labels && typeof said.labels === 'object') {
-			return new Map(Object.entries(said.labels as Record<string, Label[]>));
+		if (answer.ok && said.success && said.labels && typeof said.labels === 'object' && said.fields && typeof said.fields === 'object') {
+			return {
+				labels : new Map(Object.entries(said.labels as Record<string, Label[]>)),
+				fields : new Map(Object.entries(said.fields as Record<string, Fields>)),
+			};
 		}
-		return new Map();
+		return { labels: new Map(), fields: new Map() };
 	} catch {
-		return new Map();
+		return { labels: new Map(), fields: new Map() };
 	}
+}
+
+/** Write a file's four fields on its row in the db, never in the file. Says whether they went, and if not, why. */
+export async function set_fields(where: string, fields: Fields): Promise<Saved> {
+	return tell(`/set-fields?where=${encodeURIComponent(where)}`, fields);
 }
 
 /** Put one label on a file, in the db and never in the file. Says whether it went on, and if not, why. */

@@ -1,8 +1,3 @@
----
-title: "Hooks"
-description: "What hooks are, how they differ from memory, and which ones are live."
-date: 2026-07-08
----
 # Hooks
 
 Hooks are shell commands that fire automatically when co does something — edits a file, runs a command, receives a message. They live in settings.json and run without asking.

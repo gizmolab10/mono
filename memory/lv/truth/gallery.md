@@ -1,10 +1,3 @@
----
-type: design
-title: Gallery
-description: How pictures and captions currently work in lv.
-use_when: [adding pictures, changing how galleries display, caption work, storage decisions]
-updated: 22 August 2026
----
 # Gallery
 
 A gallery is one folder of pictures under `src/assets/`, shown one at a time. A caption is what a picture is called: written inside the file itself, with the file's name as the answer when there is none.

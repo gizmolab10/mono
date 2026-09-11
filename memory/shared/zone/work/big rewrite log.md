@@ -1,8 +1,3 @@
----
-title: Big rewrite log
-description: running report for the mechanical sweep (branch sweep/unmurk) — banned words and lexicon swaps across every project
-date: 2026-09-03
----
 # Big rewrite log
 
 Running report for the unsupervised mechanical sweep on branch `sweep/unmurk`. See [[rewrite the guides]] for the plan this executes.

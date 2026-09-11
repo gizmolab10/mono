@@ -1,8 +1,3 @@
----
-title: "Tag drift"
-description: "Guides whose tags stopped describing them when the tags were renamed."
-date: 2026-08-09
----
 # Tag drift
 
 - [ ] too many tags for the same thing (progress, lifecycle, active, fate)

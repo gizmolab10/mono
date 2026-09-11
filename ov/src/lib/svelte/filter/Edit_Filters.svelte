@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { foot_is_all_folds, inverted, toggle_all_areas, toggle_area, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
-	import { with_labels_replaced, title_from_name } from '../../ts/utilities/Labels';
+	import { title_from_name } from '../../ts/utilities/Labels';
 	import { ALL_TAGS, T_Kind, in_order, key_of, type File } from '../../ts/types/File';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
@@ -207,47 +207,43 @@
 
 
 	/**
-	 * Write the filters back, if any of them changed. The kind and the tags go to the db, since
-	 * that is what the list filters from, and a refusal there stops before the file is touched.
-	 * The title, description, use_when and date go into the file's block, which carries no kind
-	 * or tags line — a block that still does loses them here.
+	 * Write the filters to the db, if any of them changed: the kind and the tags as labels, the
+	 * title, description, use_when and date as the four fields on the file's row. Nothing is
+	 * written to the file. A refusal leaves the record as it was, and is said along the bottom.
 	 */
 	async function save_filters() {
-		if (text === '') { return; }
 		const use_when = form_use_when.split('\n').map((one) => one.trim()).filter((one) => one.length > 0);
 		const filters = { kind: form_kind, title: form_title, description: form_description, use_when, date: form_date, labeled: true };
-		const whole  = with_labels_replaced(text, filters, form_tags);
-		if (whole === text) { return; }
-		const was   = text;
+		const worn = files.hierarchy.tag_names_of(guide.id);
+		const same_tags = worn.length === form_tags.length && worn.every((tag) => form_tags.includes(tag));
+		const same_fields = guide.title === form_title && guide.description === form_description
+			&& (guide.use_when ?? []).join('\n') === use_when.join('\n') && guide.date === form_date;
+		if (guide.labeled && guide.kind === form_kind && same_tags && same_fields) { return; }
 		const where = file_path_of(guide.bundle, guide.path);
+		debug.log(`Editing "${name}": the filters changed — writing them to the db for ${where}.`);
 		const in_db = await files.write_labels(guide, form_kind, form_tags);
 		if (!in_db.ok) {
 			onshow(`not saved — ${in_db.why}`);
-			debug.log(`Editing "${name}": the kind and tags were NOT written to the db — ${in_db.why}. The file is left alone.`);
+			debug.log(`Editing "${name}": the kind and tags were NOT written to the db — ${in_db.why}.`);
 			return;
 		}
-		debug.log(`Editing "${name}": the filters changed — writing them to ${where}.`);
-		text = whole;                         // the words below are untouched, so no redraw
-		save_file(where, whole, was).then((answer) => {
-			debug.log(`Editing "${name}": the answer came back — ${answer.ok ? 'written' : `refused, ${answer.why}`}.`);
-			if (!answer.ok) {
-				text = was;
-				onshow(`not saved — ${answer.why}`);
-				debug.log(`Editing "${name}": the filters were NOT written to ${where} — ${answer.why}.`);
-				return;
-			}
-			// The list shows the title and the tags, so it is told at once rather than
-			// waiting for every file to be read again. A fault here would leave the file
-			// written and the app still holding the old labels, so it is said out loud.
-			try {
-				files.relabel(guide, filters, form_tags);
-			} catch (trouble) {
-				onshow('written, but the list was not told');
-				debug.log(`Editing "${name}": ${where} was written, but telling the list failed — ${String(trouble)}. The app still holds the old labels.`);
-				return;
-			}
-			debug.log(`Editing "${name}": filters written — kind "${filters.kind}", ${form_tags.length} tag(s).`);
-		});
+		const fields = await files.write_fields(guide, filters);
+		if (!fields.ok) {
+			onshow(`not saved — ${fields.why}`);
+			debug.log(`Editing "${name}": the title, description, use_when and date were NOT written to the db — ${fields.why}.`);
+			return;
+		}
+		// The list shows the title and the tags, so it is told at once rather than waiting for
+		// every file to be read again. A fault here would leave the db written and the app still
+		// holding the old labels, so it is said out loud.
+		try {
+			files.relabel(guide, filters, form_tags);
+		} catch (trouble) {
+			onshow('written, but the list was not told');
+			debug.log(`Editing "${name}": the db was written, but telling the list failed — ${String(trouble)}. The app still holds the old labels.`);
+			return;
+		}
+		debug.log(`Editing "${name}": filters written — kind "${filters.kind}", ${form_tags.length} tag(s), title "${filters.title}".`);
 	}
 
 	/** Copy between the title and the file's top heading, exactly — onto it (making one if

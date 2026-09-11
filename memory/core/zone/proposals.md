@@ -1,8 +1,3 @@
----
-title: "Proposals"
-description: "core proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies."
-date: 2026-09-09
----
 # Proposals
 
 ## proposal: code debt belongs in the zone, like ideas (28 August 2026)

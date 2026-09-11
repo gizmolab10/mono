@@ -1,8 +1,3 @@
----
-title: "new Action type"
-description: "pass Separator more than one title"
-date: 2026-08-12
----
 # Action type
 
 i want to pass **Separator** more than one title. each title needs its own handler and a position enum {left, center, right}. combine those three things into one prop -> a type containing an **HTML element** (eg a segmented control) and an enum value.

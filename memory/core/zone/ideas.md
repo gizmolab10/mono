@@ -1,8 +1,3 @@
----
-title: "Ideas"
-description: "core ideas. Append freely; triaged at every settle."
-date: 2026-08-31
----
 # Ideas
 
 - [ ] as in [[adopting core]], for each file that remains:

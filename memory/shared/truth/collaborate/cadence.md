@@ -1,8 +1,3 @@
----
-title: "Cadence"
-description: "How Jonathan and co actually work together"
-date: 2026-08-09
----
 # Cadence
 
 How Jonathan and co actually work together. Living notes, refined as we go.

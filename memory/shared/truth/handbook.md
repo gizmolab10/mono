@@ -1,8 +1,3 @@
----
-title: "Handbook"
-description: "The operating rules of the memory system. Every session loads this at start; every skill points here."
-date: 
----
 # Handbook
 
 The authority for how the memory system runs. The design rationale lives in `memory/core/zone/work/AI memory redesign.md`; this file is the law. Tune the system by editing this file — nowhere else.

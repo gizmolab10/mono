@@ -1,6 +1,3 @@
----
-description: ws (webseriously) — graph visualization.
----
 # ws
 
 Webseriously, a graph visualization. Brought into the memory system 4 September 2026.

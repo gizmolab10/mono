@@ -1,8 +1,3 @@
----
-title: "Declaring a Breakdown"
-description: "What to do when the work has gone wrong and neither of us knows how to get back."
-date: 2026-08-11
----
 # Declaring a breakdown
 
 Some sessions go wrong in a way no single rule catches. The same fix gets tried twice. An explanation gets built on a guess. Hours go by. Every rule in the guides addresses one failure after it is found; this one is for the state where the failures are compounding and the next correction will not help.

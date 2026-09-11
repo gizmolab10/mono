@@ -1,8 +1,3 @@
----
-title: "Decisions"
-description: "Live rationales, and the pac responses that weigh coming choices."
-date: 
----
 # Decisions
 
 ## Decisions made during 2026

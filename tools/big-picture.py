@@ -99,9 +99,7 @@ def walk(memory):
 def main():
     rows = walk(os.path.abspath(MEMORY))
     today = datetime.date.today().isoformat()
-    lines = ['---', 'title: "Big picture"',
-             'description: "One line per memory file holding unfinished work, across every project. Written by tools/big-picture.py; edit nothing here by hand."',
-             f'date: {today}', '---', '# Big picture', '',
+    lines = ['# Big picture', '',
              f'{len(rows)} files hold unfinished work, as of {today}.']
     # One table per project. The file is a link, relative to where big picture.md sits:
     # memory/shared/zone/. A root file's z/t cell is empty.
@@ -114,22 +112,25 @@ def main():
         lines.append(f'| {letter or ""} | [{shown}]({href}) | ' + ' and '.join(clauses) + ' |')
     with open(OUT, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines) + '\n')
-    record_labels(OUT)
+    record_labels(OUT, today)
     print(len(rows))
 
 
-def record_labels(out):
-    """The file's kind and tag, analyze and now, go into the db beside the dispatcher, through
-    the dispatcher's own module, rather than into the file: since 10 September 2026 a file's
-    kind and tags live there. Only for the real file inside the repo. A test writing somewhere
-    else records nothing."""
+def record_labels(out, today):
+    """The file's labels go into the db beside the dispatcher, through the dispatcher's own
+    module, rather than into the file: since 10 September 2026 a file's kind, tags, title,
+    description and date live there and the file carries no block. Only for the real file
+    inside the repo. A test writing somewhere else records nothing."""
     repo = os.path.realpath(os.path.join(HERE, '..'))
     full = os.path.realpath(out)
     if not full.startswith(repo + os.sep):
         return
     sys.path.insert(0, os.path.join(HERE, 'hub'))
     import database
-    database.record_file(os.path.relpath(full, repo), full, 'analyze', ['now'])
+    database.record_file(os.path.relpath(full, repo), full, 'analyze', ['now'], title='Big picture',
+                         description='One line per memory file holding unfinished work, across every project. '
+                                     'Written by tools/big-picture.py, edit nothing here by hand.',
+                         date=today)
 
 
 if __name__ == '__main__':

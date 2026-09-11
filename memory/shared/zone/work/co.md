@@ -1,8 +1,3 @@
----
-title: "Co — wisdom layer for AI assistants"
-description: "A collaboration layer that sits on any AI assistant and gives it memory, gates, voice and roles."
-date: 2026-08-10
----
 # Co — wisdom layer for AI assistants
 
 **Started:** 2026-02-23 **Status:** Ideas

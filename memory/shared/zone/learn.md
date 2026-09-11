@@ -1,8 +1,3 @@
----
-title: "Learn"
-description: "Co errors → distilled into guide updates"
-date: 2026-08-11
----
 # Learn
 
 Co errors → distilled into guide updates. It's a step in our roadmap for improvement

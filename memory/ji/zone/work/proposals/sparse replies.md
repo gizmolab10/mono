@@ -1,8 +1,3 @@
----
-title: "Sparsity"
-description: "How I write to you: short, plain, unmistakable"
-date: 2026-08-19
----
 # Sparsity
 
 How I write to you: short, plain, unmistakable. Started after a session where my replies went murky.

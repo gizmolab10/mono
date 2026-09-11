@@ -1,8 +1,3 @@
----
-title: "core decisions"
-description: "Live rationales, and the pac responses weighing coming choices."
-date: 2026-08-30
----
 # Decisions
 
 ## Decisions made during 2026

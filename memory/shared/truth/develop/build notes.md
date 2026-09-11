@@ -1,8 +1,3 @@
----
-title: "Build Notes"
-description: "How to hand-distill the build-notes table from the change history."
-date: 2026-05-10
----
 # Build Notes
 
 The build-notes table is hand-distilled from the git log. Each entry is one short line that names a single completed capability or completed milestone.

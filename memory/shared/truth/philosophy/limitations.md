@@ -1,8 +1,3 @@
----
-title: "Co Limitations"
-description: "The failure modes co falls into, named so they can be spotted early."
-date: 2026-06-03
----
 # Co Limitations
 
 Known failure modes. Not excuses — just patterns to watch for.

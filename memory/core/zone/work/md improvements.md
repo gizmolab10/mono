@@ -1,8 +1,3 @@
----
-title: "md improvements"
-description: "What to do about the audit: three passes of mechanical fixes, four decisions only Jonathan can make, and the structural work that keeps it true."
-date: 2026-08-22
----
 # md improvements
 
 What to do about [md audit](md%20audit.md). Each pass stands alone and can be stopped after.

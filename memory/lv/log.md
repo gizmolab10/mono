@@ -1,8 +1,3 @@
----
-title: "lv log"
-description: "What lv decided, thought and reached, newest first; settled entries leave at each consolidation."
-date: 2026-09-01
----
 # lv log
 
 <!-- consolidated: 9 September 2026 -->

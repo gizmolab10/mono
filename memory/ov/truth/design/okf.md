@@ -1,8 +1,3 @@
----
-title: "OKF — turning the guides into a knowledge bundle"
-description: "OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at t..."
-date: 2026-08-08
----
 # OKF — turning the guides into a knowledge bundle
 
 OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at the top. Source: [OKF + RAG](https://medium.com/@ravishkhullar/okf-rag-the-ultimate-ai-agent-architecture-26b9ceed44f1).
@@ -22,7 +17,7 @@ The guides are already most of the way there — markdown, in folders, under ver
 
 Five labels, every file, same order, no extras. Anything a label can't hold belongs in the body.
 
-Since 10 September 2026 two of the five, the kind and the tags, live in the db beside the dispatcher, `tools/hub/ov.db`, and are put on in overview's editor. The file's own block carries the other three. What follows is the format as it was settled.
+Since 10 September 2026 all five live in the db beside the dispatcher, `tools/hub/ov.db`, put on in overview's editor, and no file carries a block. What follows is the format as it was settled.
 
 | Label | What it holds |
 | --- | --- |

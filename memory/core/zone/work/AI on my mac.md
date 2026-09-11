@@ -1,8 +1,3 @@
----
-title: "AI on My Mac"
-description: "What a coding agent running on the new M3 Ultra Studio actually takes, in the order the work has to happen"
-date: 2026-08-21
----
 # AI on my mac
 
 Two days ago the honest answer was "not on that 2018 mini." Now there's an M3 Ultra Mac Studio coming, so the question changes from *can it* to *what should run on it, and in what order*. This supersedes the hardware section of [Replace Claude](./proposals/replace%20claude.md); the rest of that note still stands.

@@ -1,8 +1,3 @@
----
-title: "Ideas"
-description: "ji ideas. Append freely; triaged at every settle."
-date: 2026-08-30
----
 # Ideas
 
 write a proposal for the first unchecked item to the top of handoff.

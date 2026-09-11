@@ -1,8 +1,3 @@
----
-title: "ws questions"
-description: "What is unanswered, one line each. A question leaves when a D: records its answer."
-date: 2026-09-04
----
 # questions
 
 - [ ] which way should the filesystem database save: beside the folder in the browser, merged back on load, or as one .seriously file written into the folder on disk?

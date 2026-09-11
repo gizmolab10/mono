@@ -1,10 +1,3 @@
----
-type: design
-title: core structure
-description: What core is and the rules that keep it core.
-use_when: [working in core, moving code between a host and core]
-updated: 1 September 2026
----
 # core structure
 
 A library with no entry point. Four ts folders — common, events, types, utilities — each behind an index.ts barrel that re-exports everything the folder offers, defaults by name. Nine support components under svelte/support.

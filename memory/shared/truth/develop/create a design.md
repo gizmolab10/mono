@@ -1,8 +1,3 @@
----
-title: "Create a Design"
-description: "How the two of us write a design document together: core idea from Jonathan, structure and critique from co, then simplify."
-date: 2026-06-03
----
 # Create a Design
 
 ## Process

@@ -105,27 +105,38 @@ check('every label on every file comes keyed by path', database.all_labels(),
 database.replace_labels(NOTE, FULL, 'tag', [])
 check('a file with a row and no labels is left out', database.all_labels(), {})
 
+database.set_fields(NOTE, FULL, title='T', use_when=['a', 'b'])
+check('the fields handed in go on the row, use_when as a list again', database.all_fields()[NOTE],
+      {'title': 'T', 'description': '', 'use_when': ['a', 'b'], 'date': ''})
+database.record_file(NOTE, FULL, None, None, description='D', date='1')
+check('a field not handed in is left as it is', database.all_fields()[NOTE],
+      {'title': 'T', 'description': 'D', 'use_when': ['a', 'b'], 'date': '1'})
+database.set_fields(NOTE, FULL, title='', description='', use_when=[], date='')
+
 # --- what a file's own block says ---------------------------------------------
 
-check('a block on one line says its kind and tags',
-      dispatcher.labels_in_text('---\nkind: explain\ntitle: "x"\ntags: [now, soon]\ndate: 1\n---\n# x\n'),
-      ('explain', ['now', 'soon']))
-check('tags one to a line, as Obsidian writes them, are read',
-      dispatcher.labels_in_text('---\nkind: explain\ntags:\n  - now\n  - soon\ndate: 1\n---\n'),
-      ('explain', ['now', 'soon']))
-check('a block with no tags line says no tags', dispatcher.labels_in_text('---\nkind: explain\n---\n'), ('explain', None))
-check('a block with no kind line says no kind', dispatcher.labels_in_text('---\ntags: []\n---\n'), (None, []))
-check('a file with no block says neither', dispatcher.labels_in_text('# x\nwords\n'), (None, None))
+SIX = ('kind', 'tags', 'title', 'description', 'use_when', 'date')
+said = dispatcher.labels_in_text('---\nkind: explain\ntitle: "x"\ndescription: "d"\ntags: [now, soon]\ndate: 1\n---\n# x\n')
+check('a block on one line says its kind and tags', (said['kind'], said['tags']), ('explain', ['now', 'soon']))
+check('a block says its title, description and date, the quote marks taken off',
+      (said['title'], said['description'], said['date']), ('x', 'd', '1'))
+check('a block with no use_when line says none', said['use_when'], None)
+said = dispatcher.labels_in_text('---\nkind: explain\ntags:\n  - now\n  - soon\nuse_when:\n  - every session\n  - settling\ndate: 1\n---\n')
+check('tags one to a line, as Obsidian writes them, are read', said['tags'], ['now', 'soon'])
+check('use_when one to a line is read', said['use_when'], ['every session', 'settling'])
+check('a block with no tags line says no tags', dispatcher.labels_in_text('---\nkind: explain\n---\n')['tags'], None)
+check('a block with no kind line says no kind', dispatcher.labels_in_text('---\ntags: []\n---\n')['kind'], None)
+said = dispatcher.labels_in_text('# x\nwords\n')
+check('a file with no block says nothing', [said[key] for key in SIX], [None] * 6)
+said = dispatcher.labels_in_text('---\ntype: reference\nupdated: 29 August 2026\nokf_version: 1\n---\n')
+check('type and updated are read as the kind and the date', (said['kind'], said['date']), ('reference', '29 August 2026'))
+check('a line the db has no place for is named', said['unknown'], ['okf_version'])
+check('a block with nothing unknown names nothing', dispatcher.labels_in_text('---\ntitle: "x"\n---\n')['unknown'], [])
 
-check('the kind and tags lines come out, the rest stays',
-      dispatcher.without_kind_and_tags('---\nkind: explain\ntitle: "x"\ntags: [now, soon]\ndate: 1\n---\n# x\n'),
-      '---\ntitle: "x"\ndate: 1\n---\n# x\n')
-check('tags one to a line come out with their names',
-      dispatcher.without_kind_and_tags('---\nkind: explain\ntags:\n  - now\n  - soon\ndate: 1\n---\n# x\n'),
-      '---\ndate: 1\n---\n# x\n')
-check('a file with no block is untouched', dispatcher.without_kind_and_tags('# x\nwords\n'), '# x\nwords\n')
-check('a block already without them is untouched',
-      dispatcher.without_kind_and_tags('---\ntitle: "x"\n---\n'), '---\ntitle: "x"\n---\n')
+check('the whole block comes off, and the blank line after it',
+      dispatcher.without_block('---\nkind: explain\ntitle: "x"\ntags: [now, soon]\ndate: 1\n---\n\n# x\n'), '# x\n')
+check('a heading right under the block keeps its place', dispatcher.without_block('---\ntitle: "x"\n---\n# x\n'), '# x\n')
+check('a file with no block is untouched', dispatcher.without_block('# x\nwords\n'), '# x\nwords\n')
 
 # --- the dispatcher's routes --------------------------------------------------
 
@@ -199,47 +210,78 @@ check('writing a label made by nobody known is refused', code, 400)
 # --- the scan and the strip, on a repo made for the run -----------------------
 #
 # The dispatcher walks whatever GITHUB_DIR names, so a small repo is made here: one memory file
-# whose block says a kind and tags, one whose block says neither. No real file is read or written.
+# whose block says a kind, tags, a title and a date, one with no block, and one whose block
+# carries a line the db has no place for. No real file is read or written.
 
 TEMP_REPO = os.path.join(FOLDER, 'repo')
 os.makedirs(os.path.join(TEMP_REPO, 'memory', 'ov', 'truth'))
 SAYS = 'memory/ov/truth/says.md'
 QUIET = 'memory/ov/truth/quiet.md'
+ODD = 'memory/ov/truth/odd.md'
 with open(os.path.join(TEMP_REPO, SAYS), 'w') as f:
-    f.write('---\nkind: explain\ntitle: "Says"\ntags: [now, always]\ndate: 1\n---\n# Says\n')
+    f.write('---\nkind: explain\ntitle: "Says"\ntags: [now, always]\ndate: 1\n---\n\n# Says\n')
 with open(os.path.join(TEMP_REPO, QUIET), 'w') as f:
-    f.write('---\ntitle: "Quiet"\ndate: 1\n---\n# Quiet\n')
+    f.write('# Quiet\n')
+with open(os.path.join(TEMP_REPO, ODD), 'w') as f:
+    f.write('---\ntitle: "Odd"\nokf_version: 1\n---\n# Odd\n')
 dispatcher.GITHUB_DIR = TEMP_REPO
 
 code, said = tell('/scan', {})
 check('the scan answers', code, 200)
-check('the scan reads every listed file', said.get('files'), 2)
+check('the scan reads every listed file', said.get('files'), 3)
 check('the scan finds the one kind', said.get('kinds'), 1)
 check('the scan finds the two tags', said.get('tags'), 2)
-check('the scan counts the file whose block says nothing', said.get('said_nothing'), 1)
+check('the scan finds the three fields', said.get('fields'), 3)
+check('the scan counts the file with no block', said.get('said_nothing'), 1)
 code, said = ask('/labels', where=SAYS)
 check('the scanned file wears what its block says', said.get('labels'),
       [{'name': 'kind', 'value': 'explain', 'made_by': 'hand'},
        {'name': 'tag', 'value': 'now', 'made_by': 'hand'},
        {'name': 'tag', 'value': 'always', 'made_by': 'hand'}])
+code, said = ask('/all-labels')
+check('the scanned file\'s fields come with every label', said.get('fields', {}).get(SAYS),
+      {'title': 'Says', 'description': '', 'use_when': [], 'date': '1'})
 
-code, said = tell('/strip-labels', {})
+code, said = tell('/strip-block', {})
 check('the strip does nothing without the word', code, 400)
-check('the file still carries its lines', 'kind: explain' in open(os.path.join(TEMP_REPO, SAYS)).read(), True)
+check('the file still carries its block', open(os.path.join(TEMP_REPO, SAYS)).read().startswith('---'), True)
 
-code, said = tell('/strip-labels', {'confirm': 'strip'})
+code, said = tell('/strip-block', {'confirm': 'strip'})
 check('the strip answers', code, 200)
-check('the strip rewrites the file that carried the lines', said.get('changed'), 1)
+check('the strip rewrites the file that carried a block', said.get('changed'), 1)
 check('the strip passes over the file the db holds nothing for', said.get('unscanned'), 1)
-check('the two lines are out and the rest stays', open(os.path.join(TEMP_REPO, SAYS)).read(),
-      '---\ntitle: "Says"\ndate: 1\n---\n# Says\n')
+check('the strip keeps the file with a line the db has no place for, and names it', said.get('kept'), [f'{ODD}: okf_version'])
+check('the block is off and the words stay', open(os.path.join(TEMP_REPO, SAYS)).read(), '# Says\n')
+check('the kept file is untouched', open(os.path.join(TEMP_REPO, ODD)).read(), '---\ntitle: "Odd"\nokf_version: 1\n---\n# Odd\n')
 code, said = ask('/labels', where=SAYS)
 check('the db still holds what the file said', len(said.get('labels', [])), 3)
 
 code, said = tell('/scan', {})
-check('a scan after the strip finds every block saying nothing', said.get('said_nothing'), 2)
+check('a scan after the strip finds the stripped file saying nothing', said.get('said_nothing'), 2)
 code, said = ask('/labels', where=SAYS)
 check('and takes nothing off', len(said.get('labels', [])), 3)
+
+code, said = tell('/set-fields', {'title': 'Renamed', 'use_when': ['x', 'y']}, where=SAYS)
+check('fields are written through the dispatcher', said.get('fields'), ['title', 'use_when'])
+code, said = ask('/all-labels')
+check('the fields written are read back, the rest as they were', said.get('fields', {}).get(SAYS),
+      {'title': 'Renamed', 'description': '', 'use_when': ['x', 'y'], 'date': '1'})
+code, said = tell('/set-fields', {'use_when': 'not a list'}, where=SAYS)
+check('a field of the wrong shape is refused', code, 400)
+code, said = tell('/set-fields', {}, where=SAYS)
+check('no field at all is refused', code, 400)
+
+MOVED = 'memory/ov/truth/moved.md'
+code, said = tell('/move-guide', {}, **{'from': SAYS, 'to': MOVED})
+check('a file moves', code, 200)
+code, said = ask('/labels', where=MOVED)
+check('its labels follow it in the db', len(said.get('labels', [])), 3)
+code, said = ask('/labels', where=SAYS)
+check('and nothing is left under the old path', said.get('labels'), [])
+code, said = tell('/delete-guide', {}, where=MOVED)
+check('a file is thrown away', code, 200)
+code, said = ask('/all-labels')
+check('its row goes with it', MOVED in said.get('fields', {}), False)
 
 # --- say how it went ---------------------------------------------------------
 

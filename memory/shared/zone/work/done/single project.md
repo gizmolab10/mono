@@ -1,8 +1,3 @@
----
-title: "Single Project"
-description: "Four separate repos with:"
-date: 2026-08-19
----
 # Single Project
 
 **Started:** 2026-01-11 | **Status:** Analysis complete

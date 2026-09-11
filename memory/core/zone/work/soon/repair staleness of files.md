@@ -1,8 +1,3 @@
----
-title: "Repair staleness"
-description: "Mending the files that have gone stale: what makes one stale, and what a machine could do about it without a person sweeping."
-date: 2026-08-08
----
 # Repair staleness
 
 - [x] read guides tagged with 'stale'

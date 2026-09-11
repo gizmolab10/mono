@@ -1,8 +1,3 @@
----
-title: "Collisions"
-description: "Pairs of rules that cannot both be obeyed, each met in real work. One entry per pair; an entry leaves when the two are rewritten as one clear rule."
-date: 2026-09-07
----
 # Collisions
 
 Always rule 9: when two rules collide, one must go, and co reports each collision so the pair can be rewritten as one rule. This is where the reports go. Each entry names the two rules, what happened, and the smallest rewrite that would end it.

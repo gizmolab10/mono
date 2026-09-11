@@ -1,8 +1,3 @@
----
-title: "Code Style"
-description: "Naming, formatting, and organization patterns to follow strictly across projects."
-date: 2026-07-13
----
 # Style Guide: Codebase Conventions
 
 This document defines naming, formatting, and organization patterns. Follow these strictly for consistency across projects.

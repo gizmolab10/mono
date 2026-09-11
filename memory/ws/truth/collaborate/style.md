@@ -1,8 +1,3 @@
----
-title: "Style (ws)"
-description: "The ws conventions that differ from the shared ones."
-date: 2026-02-02
----
 # Style (ws-specific)
 
 ws-specific conventions that differ from shared mono guides.

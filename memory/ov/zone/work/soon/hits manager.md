@@ -1,8 +1,3 @@
----
-title: "hits manager"
-description: "The hits manager after two faults were mended: what went wrong, why it went unseen, and the one danger left."
-date: 2026-08-12
----
 # hits manager
 
 ## elements to alter

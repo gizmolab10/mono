@@ -1,8 +1,3 @@
----
-title: "Component Composition (ws)"
-description: "Props down, events up, slots for flexible content, compound components for the complicated parts."
-date: 2026-01-12
----
 # Component Composition in Svelte
 
 Props-down, events-up. Slots for flexible content. Compound components for complex UIs. Jonathan wanted the pattern documented, and to see where it could be used better.

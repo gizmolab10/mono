@@ -1,9 +1,3 @@
----
-okf_version: "0.1"
-okf_bundle_name: memory
-okf_bundle_title: Memory System
-description: Root map of the memory system. Read first, always.
----
 # Memory System
 
 Before any work: read [shared/truth/handbook.md](shared/truth/handbook.md) — the operating rules. A session is not oriented until it has.

@@ -1,8 +1,3 @@
----
-title: "Guide Layout (di)"
-description: "A bird's-eye list of every page under the di guides, one line each."
-date: 2026-08-09
----
 # Map of di guides
 
 A bird's-eye view of every page under `memory/di/truth/architecture/`, `development/` and `project/` — moved there whole from `notes/guides/` on 7 September 2026 — with a super-brief description.

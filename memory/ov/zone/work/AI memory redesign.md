@@ -1,8 +1,3 @@
----
-title: "Memory System Design"
-description: "A fresh design for a persistent, tweakable memory that carries context across chats, survives consolidation, and supports several concurrent long-term projec..."
-date: 2026-08-21
----
 # Memory System Design
 
 A fresh design for a persistent, tweakable memory that carries context across chats, survives consolidation, and supports several concurrent long-term projects through heavy design change. Structure layer: OKF (Open Knowledge Format).
