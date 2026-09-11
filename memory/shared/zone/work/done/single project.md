@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Single Project"
 description: "Four separate repos with:"
-tags: [maybe, now]
 date: 2026-08-19
 ---
 # Single Project

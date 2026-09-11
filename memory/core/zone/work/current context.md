@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Current context"
 description: "What a session cannot read off the code: which way the app is headed, and what was decided rather than written down."
-tags: [journal]
 date: 2026-08-10
 ---
 # Current context

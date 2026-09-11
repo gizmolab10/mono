@@ -1,10 +1,6 @@
 ---
-kind: analyze
 title: Truth and zone and design?
 description: Whether truth/ and zone/ should divide further — the three ideas weighed, and where each landed.
-tags:
-  - now
-  - weighed
 date: 2026-08-29
 ---
 # truth and zone and design?

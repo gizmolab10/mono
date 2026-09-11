@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Shared Context"
 description: "PROJECTS:"
-tags: [always, keep, now, session]
 date: 2026-08-24
 ---
 # Shared Context

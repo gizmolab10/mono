@@ -179,22 +179,6 @@ check('every label comes in one answer, keyed by path', said.get('labels'),
       {NOTE: [{'name': 'tag', 'value': 'soon', 'made_by': 'hand'}]})
 database.replace_labels(NOTE, FULL, 'tag', [])
 
-# The scan reads the real files and writes only this run's own db, so it is run for real here.
-code, said = tell('/scan', {})
-check('the scan answers', code, 200)
-check('the scan reads every listed file', said.get('files', 0) > 100, True)
-check('the scan finds a kind on most of them', said.get('kinds', 0) > said.get('files', 0) // 2, True)
-code, kept = ask('/labels', where=NOTE)
-check('the scanned file wears the kind its block says',
-      [one['value'] for one in kept.get('labels', []) if one['name'] == 'kind'],
-      [dispatcher.labels_in_text(open(FULL).read())[0]])
-check('the scanned file wears the tags its block says',
-      [one['value'] for one in kept.get('labels', []) if one['name'] == 'tag'],
-      dispatcher.labels_in_text(open(FULL).read())[1])
-
-code, said = tell('/strip-labels', {})
-check('the strip does nothing without the word', code, 400)
-
 # --- what the routes refuse ---------------------------------------------------
 
 code, said = ask('/labels')
@@ -211,6 +195,51 @@ check('writing a label with no value is refused', code, 400)
 
 code, said = tell('/add-label', {'name': 'tag', 'value': 'now', 'made_by': 'guess'}, where=NOTE)
 check('writing a label made by nobody known is refused', code, 400)
+
+# --- the scan and the strip, on a repo made for the run -----------------------
+#
+# The dispatcher walks whatever GITHUB_DIR names, so a small repo is made here: one memory file
+# whose block says a kind and tags, one whose block says neither. No real file is read or written.
+
+TEMP_REPO = os.path.join(FOLDER, 'repo')
+os.makedirs(os.path.join(TEMP_REPO, 'memory', 'ov', 'truth'))
+SAYS = 'memory/ov/truth/says.md'
+QUIET = 'memory/ov/truth/quiet.md'
+with open(os.path.join(TEMP_REPO, SAYS), 'w') as f:
+    f.write('---\nkind: explain\ntitle: "Says"\ntags: [now, always]\ndate: 1\n---\n# Says\n')
+with open(os.path.join(TEMP_REPO, QUIET), 'w') as f:
+    f.write('---\ntitle: "Quiet"\ndate: 1\n---\n# Quiet\n')
+dispatcher.GITHUB_DIR = TEMP_REPO
+
+code, said = tell('/scan', {})
+check('the scan answers', code, 200)
+check('the scan reads every listed file', said.get('files'), 2)
+check('the scan finds the one kind', said.get('kinds'), 1)
+check('the scan finds the two tags', said.get('tags'), 2)
+check('the scan counts the file whose block says nothing', said.get('said_nothing'), 1)
+code, said = ask('/labels', where=SAYS)
+check('the scanned file wears what its block says', said.get('labels'),
+      [{'name': 'kind', 'value': 'explain', 'made_by': 'hand'},
+       {'name': 'tag', 'value': 'now', 'made_by': 'hand'},
+       {'name': 'tag', 'value': 'always', 'made_by': 'hand'}])
+
+code, said = tell('/strip-labels', {})
+check('the strip does nothing without the word', code, 400)
+check('the file still carries its lines', 'kind: explain' in open(os.path.join(TEMP_REPO, SAYS)).read(), True)
+
+code, said = tell('/strip-labels', {'confirm': 'strip'})
+check('the strip answers', code, 200)
+check('the strip rewrites the file that carried the lines', said.get('changed'), 1)
+check('the strip passes over the file the db holds nothing for', said.get('unscanned'), 1)
+check('the two lines are out and the rest stays', open(os.path.join(TEMP_REPO, SAYS)).read(),
+      '---\ntitle: "Says"\ndate: 1\n---\n# Says\n')
+code, said = ask('/labels', where=SAYS)
+check('the db still holds what the file said', len(said.get('labels', [])), 3)
+
+code, said = tell('/scan', {})
+check('a scan after the strip finds every block saying nothing', said.get('said_nothing'), 2)
+code, said = ask('/labels', where=SAYS)
+check('and takes nothing off', len(said.get('labels', [])), 3)
 
 # --- say how it went ---------------------------------------------------------
 

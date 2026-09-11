@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "knowledge bases"
 description: "How companies organize and browse their knowledge, and which of those approaches fit ov, mu and ji."
-tags: [born]
 date: 10 September 2026
 ---
 # knowledge bases
@@ -13,8 +11,8 @@ Every company ends up with knowledge nobody can find. i asked how they organize 
 
 ### Success
 
-- [ ] 1. Tagging a file in ov changes the db, never the file.
-- [ ] 2. The db holds each ov file's path, never its bytes.
+- [x] 1. Tagging a file in ov changes the db, never the file.
+- [x] 2. The db holds each ov file's path, never its bytes.
 - [ ] 3. A file moved or edited in Finder keeps its tags in ov.
 - [ ] 4. Every file in ov shows its authors and where it came from.
 - [ ] 5. A file new to ov gets kinds and tags from its name, location and content, with nothing typed by hand.
@@ -37,13 +35,15 @@ Each phase ending with something to look at:
 
 - [x] 1. The db, and the dispatcher reading and writing it. Ends with: a tag written and read back.
     - Built 10 September 2026. `tools/hub/database.py` makes `tools/hub/ov.db` (git-ignored) with the four tables and writes and reads labels; the dispatcher answers `/labels`, `/add-label` and `/remove-label`; `tools/hub/test_database.py` writes a tag and reads it back against a db of its own, 23 checks.
-- [ ] 2. The markdown collection read into the db, and its labels removed from each file. Ends with: the files list filtering from the db.
-    - Built 10 September 2026, short of the removal. The dispatcher's `/scan` reads every listed file's kind and tags into the db as hand labels (run once: 485 files, 321 kinds, 780 tags, 152 with no block), and `/all-labels` hands them all back in one answer. ov's files list filters from the db: `Files.ts` asks for every label beside the listing and takes each file's kind and tags from there, never from its block. Changing a kind or tags in the editor, composing labels for a bare file, and making a new file all write the db first. The file's block is still written whole, kind and tags included, until the removal runs.
-    - The removal is built as `/strip-labels` (kind and tags lines only, title, description, use_when and date stay) and NOT run. Two hooks read the `always` tag off the files, `inject-always.sh` and `test-always-tag.sh`, and `big-picture.py` writes a block. Those have to read the db first. Jonathan decides when.
-- [ ] 3. File watching. Ends with: a file moved in Finder keeps its tags.
-- [ ] 4. The authors and provenance rows. Ends with: the editor shows both.
-- [ ] 5. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.
-- [ ] 6. AI suggestions. Ends with: with the checkbox on, the editor shows suggestions, and accepting one adds it.
+- [x] 2. The markdown collection read into the db, and its labels removed from each file. Ends with: the files list filtering from the db.
+    - Built 10 September 2026. The dispatcher's `/scan` reads every listed file's kind and tags into the db as hand labels (485 files, 320 kinds, 779 tags, 153 whose block says neither), and `/all-labels` hands them all back in one answer. ov's files list filters from the db: `Files.ts` asks for every label beside the listing and takes each file's kind and tags from there, never from its block. Changing a kind or tags in the editor, composing labels for a bare file, and making a new file all write the db, and `Labels.ts` writes neither line into a block any more.
+    - The removal ran the same day: `/strip-labels`, asked with a confirm word, took the kind and tags lines out of 332 files, and left title, description, use_when and date. The three readers of the lines now read the db through `tools/hub/database.py`: `inject-always.sh` and `test-always-tag.sh` for the `always` tag, and `big-picture.py` records its kind and tag there instead of writing them.
+- [ ] 3. The other four labels, title, description, use_when and date, read into the db, and the whole block removed from each file. Ends with: no file carries a block, and the editor shows all five from the db.
+    - The four are fields on the files table, one each, as the Design's files table lists them.
+- [ ] 4. File watching. Ends with: a file moved in Finder keeps its tags.
+- [ ] 5. The authors and provenance rows. Ends with: the editor shows both.
+- [ ] 6. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.
+- [ ] 7. AI suggestions. Ends with: with the checkbox on, the editor shows suggestions, and accepting one adds it.
 
 ### Design
 
@@ -54,12 +54,16 @@ Each phase ending with something to look at:
         - path
         - size
         - modified date
+        - all the remaining labels each in their own field:
+            - title
+            - description
+            - use_when (the occasions the file is read on, several, kept as one csv field)
+            - date (the last real change, the one the block carried, apart from the modified date above, which the disk says)
         - fingerprint (a short code computed from a file's bytes; same bytes, same code).
-    - labels — One row per kind or tag:
+    - labels — One row per kind or tag (made by: hand, rule or AI):
         - file
         - name
         - value
-        - made by: hand, rule or AI
     - sources:
         - file
         - author

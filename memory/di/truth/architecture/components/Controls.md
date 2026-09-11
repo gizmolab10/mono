@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Controls (di)"
 description: "The strip of commands at the top and bottom of the screen, reachable without opening anything."
-tags: [program, UX]
 date: 2026-05-20
 ---
 # Controls

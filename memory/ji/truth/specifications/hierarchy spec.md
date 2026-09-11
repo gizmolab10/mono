@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Hierarchy Spec (ji)"
 description: "What ji's arrangement of documents and tags should become, read against what ws already does."
-tags: [data, program]
 date: 2026-07-24
 ---
 # Hierarchy spec

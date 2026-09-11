@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "AI on My Mac"
 description: "What a coding agent running on the new M3 Ultra Studio actually takes, in the order the work has to happen"
-tags: [keep, now, proposal]
 date: 2026-08-21
 ---
 # AI on my mac

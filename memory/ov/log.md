@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "ov log"
 description: "What ov decided, thought and reached, newest first; settled entries leave at each consolidation."
-tags: [journal, now]
 date: 2026-09-01
 ---
 # ov log
@@ -12,6 +10,9 @@ date: 2026-09-01
 ## 10 September 2026
 
 - D: knowledge bases phase 2 built, short of the removal. dispatcher.py answers /scan (every listed file's kind and tags into the db as hand labels, run once on the real db: 485 files, 321 kinds, 780 tags, 152 with no block), /all-labels (every label in one answer) and /strip-labels (built, guarded by a confirm word, not run). database.py gained replace_labels, record_file and all_labels. Files.ts asks for every label beside the listing and takes kind and tags from the db, never the block, and writes the db first on any change, through Labels.ts's label_changes, which is tested. Edit_Filters.svelte and Edit_Markdown.svelte write the db before the file. The block is still written whole until the removal runs. 49 checks in test_database.py, 35 in test_dispatcher.py, ov 339 tests, check clean at 532 files
+- D: the removal ran. /strip-labels, asked with a confirm word, took the kind and tags lines out of 332 files, left 1 untouched and passed over 152 the db holds nothing for. Labels.ts's label_block writes neither line any more, so a block still carrying them loses them when next written. test_database.py proves the scan and the strip on a repo made for the run, 58 checks. ov 341 tests, check clean
+- D: knowledge bases build order gained a phase 3, the other four labels into the db and the whole block out of every file, with where they live left open, label rows or file columns. File watching, authors, rules and AI suggestions moved up one to 4 through 7
+- D: the three readers of the two lines read the db. inject-always.sh asks database.py which files wear the always tag and which are the explain kind, and says in one line when the db is not there. test-always-tag.sh takes the tag off and puts it on in the db, never in the file, all four hold. big-picture.py writes its block without kind and tags and records analyze and now in the db for the real file alone, 15 checks. collaborate/hooks.md says so
 - D: the removal waits on Jonathan. inject-always.sh and test-always-tag.sh read the always tag off the files with grep, and big-picture.py writes a block with kind and tags. Each has to read the db before the lines can leave the files
 - D: knowledge bases phase 1 built. tools/hub/database.py makes the db, tools/hub/ov.db, with the four tables, and writes and reads labels; a file's row is made from the disk when its first label is written. dispatcher.py answers /labels, /add-label and /remove-label with the same refusals as read-guide. test_database.py writes a tag and reads it back against a db of its own, 23 checks; test_dispatcher.py asks the running dispatcher for labels, 35 checks. The db file is git-ignored. The dispatcher was restarted to serve the routes
 

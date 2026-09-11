@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Managers (ws)"
 description: "Sixteen shared instances, each owning one area of the app."
-tags: [program]
 date: 2026-01-28
 ---
 # Manager Pattern Architecture

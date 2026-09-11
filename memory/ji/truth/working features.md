@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "working features"
 description: ""
-tags: [journal, keep, now]
 date: 2026-08-11
 ---
 # working features

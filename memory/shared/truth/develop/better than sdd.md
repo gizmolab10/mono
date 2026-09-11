@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Better than SDD"
 description: "Five things together are what make something an intent:"
-tags: [maybe, now]
 date: 2026-08-19
 ---
 # Better than SDD

@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Skills"
 description: "The words typed with a leading slash, what each one does, and where they live."
-tags: [session, team, tools]
 date: 2026-08-10
 ---
 # Skills

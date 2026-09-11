@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "mj"
 description: "Brought up 1 September 2026 with boilerplate only: the app, its entry point, and its own switches"
-tags: [always, keep, now, session]
 date: 2026-09-01
 ---
 # mj

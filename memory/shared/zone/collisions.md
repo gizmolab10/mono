@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Collisions"
 description: "Pairs of rules that cannot both be obeyed, each met in real work. One entry per pair; an entry leaves when the two are rewritten as one clear rule."
-tags: [now, waiting]
 date: 2026-09-07
 ---
 # Collisions

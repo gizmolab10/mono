@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Always (di)"
 description: "The established rules that apply only to di, read alongside the shared always file."
-tags: [prose, session, team]
 date: 2026-07-15
 ---
 # Always (di)

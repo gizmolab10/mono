@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Spatial Acceleration"
 description: "Ways to speed up working out what hides what."
-tags: [geometry, research]
 date: 2026-05-10
 ---
 # Occlusion — Spatial Acceleration

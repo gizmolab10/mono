@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Claude agent skills"
 description: "AI generated in dialogue with humans"
-tags: [always, maybe, now, proposal, session, team]
 date: 2026-08-10
 ---
 # Claude agent skills

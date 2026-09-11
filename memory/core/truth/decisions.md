@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "core decisions"
 description: "Live rationales, and the pac responses weighing coming choices."
-tags: [now, incorporated]
 date: 2026-08-30
 ---
 # Decisions

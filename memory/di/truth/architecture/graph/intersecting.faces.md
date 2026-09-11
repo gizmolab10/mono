@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Intersection Lines"
 description: "Drawing the line where two parts' faces cross each other."
-tags: [program, geometry]
 date: 2026-05-10
 ---
 # Intersection Lines

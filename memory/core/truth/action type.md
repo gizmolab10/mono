@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "new Action type"
 description: "pass Separator more than one title"
-tags: [keep, incorporated]
 date: 2026-08-12
 ---
 # Action type

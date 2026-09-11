@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Map of ji notes"
 description: "Every file under the ji notes folder, updated whenever notes are added, moved, or removed."
-tags: [incorporated, journal, notes]
 date: 2026-07-30
 ---
 # Map of ji notes

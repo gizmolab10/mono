@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Scenes (di)"
 description: "What happens between app launch and a populated 3D canvas."
-tags: [program, geometry]
 date: 2026-05-10
 ---
 # Scenes

@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Developer Onboarding"
 description: "Setting up a new machine to work on the monorepo."
-tags: [setup]
 date: 2026-05-10
 ---
 # Developer Onboarding

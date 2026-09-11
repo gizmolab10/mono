@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Incorporating a project"
 description: "The steps a host follows to take panel in, as mu and mj did on 7 September 2026: what it takes, what it changes, how it proves the result."
-tags: [now, howto]
 date: 2026-09-07
 ---
 # Incorporating a project

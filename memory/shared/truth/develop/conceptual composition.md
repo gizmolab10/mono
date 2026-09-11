@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "UX terms and concepts"
 description: ""
-tags: [proposal]
 date: 2026-08-07
 ---
 # UX terms and concepts

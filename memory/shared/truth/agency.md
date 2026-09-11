@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Agency"
 description: "How the work itself is done: what to touch, what to prove, and what never to change unasked."
-tags: [always, session, team, style]
 date: 2026-08-14
 ---
 # Agency

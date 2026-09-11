@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "lv — Tommy’s Vineyard Space"
 description: "Represent the vineyard with descriptions and photos"
-tags: [always, keep, now, session]
 date: 2026-08-24
 ---
 # lv — Tommy’s Vineyard Space

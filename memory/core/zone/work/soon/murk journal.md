@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Murk record"
 description: "The use case behind the murk guide: twelve causes found in one rule set, six now closed, and the daily rate they were measured against."
-tags: [journal, keep, notes, prose, team]
 date: 2026-08-17
 ---
 # Murk journal

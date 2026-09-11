@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Hub App Specification"
 description: "Reference for the hub app"
-tags: [now, stale]
 date: 2026-09-06
 ---
 # Hub App Specification

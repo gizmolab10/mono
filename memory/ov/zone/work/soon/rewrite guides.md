@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Rewritten guides"
 description: "Every guide carrying the stale tag, with what I'd do to it"
-tags: [proposal, soon]
 date: 2026-08-08
 ---
 # Rewritten guides

@@ -1,8 +1,6 @@
 ---
-kind: 
 title: "Decisions"
 description: "Live rationales, and the pac responses that weigh coming choices."
-tags: [incorporated]
 date: 
 ---
 # Decisions

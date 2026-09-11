@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Banned Words (di)"
 description: "The words that cause friction in di, each with the word to use instead."
-tags: [always, prose, session, team]
 date: 2026-07-15
 ---
 # Substitutions for banned words — di

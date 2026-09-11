@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Storage Spec (ji)"
 description: "What ji stores, where it can be stored, and what the first working version has to do."
-tags: [data, program]
 date: 2026-07-24
 ---
 # Database — spec

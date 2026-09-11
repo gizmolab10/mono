@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Journals"
 description: "The formatting rules for the running journal file."
-tags: [journal, notes, prose]
 date: 2026-05-10
 ---
 # Journals

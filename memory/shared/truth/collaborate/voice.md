@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Voice and Tone"
 description: "How prose written into files should read: first person, warm, punchy."
-tags: [prose]
 date: 2026-07-08
 ---
 # Voice and Tone Guide

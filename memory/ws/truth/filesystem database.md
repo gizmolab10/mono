@@ -1,9 +1,7 @@
 ---
-kind: specify
 type: design
 title: "Filesystem database"
 description: "How ws's filesystem database reads a folder, names what it finds, and why it saves nothing."
-tags: [database, filesystem, incorporated]
 use_when: [filesystem database work, a blank graph after a folder load, saving in ws]
 date: 2026-09-04
 ---

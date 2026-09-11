@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Framing Filters"
 description: "Names the habit of excluding information that does not fit the current task, so it can be refused."
-tags: [team]
 date: 2026-05-10
 ---
 # Context Filters

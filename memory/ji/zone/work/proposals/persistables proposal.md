@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Persistables proposal"
 description: "Make every stored record a real object with an identity and a dirty flag, the way ws does: a base Identifiable (its id), a base Persistable that extends it (..."
-tags: [maybe, now]
 date: 2026-08-19
 ---
 # Persistables proposal

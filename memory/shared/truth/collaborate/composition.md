@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Component Composition (ws)"
 description: "Props down, events up, slots for flexible content, compound components for the complicated parts."
-tags: [platform, proposal]
 date: 2026-01-12
 ---
 # Component Composition in Svelte

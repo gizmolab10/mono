@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Handbook"
 description: "The operating rules of the memory system. Every session loads this at start; every skill points here."
-tags: [session, incorporated, now, team]
 date: 
 ---
 # Handbook

@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "ov — Overview"
 description: "Ported from ji"
-tags: [always, now, session]
 date: 2026-08-24
 ---
 # ov — Overview

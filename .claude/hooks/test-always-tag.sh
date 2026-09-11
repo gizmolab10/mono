@@ -6,15 +6,31 @@
 # have one, and puts one on a file that should not, then asks the hook whether it
 # noticed. A hook that says nothing either time is a hook that is not looking.
 #
+# The tag lives in the db beside the dispatcher, not in the file, so it is taken off and
+# put on there, through the dispatcher's own module. The file itself is never touched.
+#
 # Run it with: bash .claude/hooks/test-always-tag.sh
 REPO="/Users/sand/GitHub/mono"
 HOOK="$REPO/.claude/hooks/inject-always.sh"
-ARRIVES="$REPO/memory/shared/truth/agency.md"        # arrives with every message
-STAYS_HOME="$REPO/memory/shared/truth/gates.md"      # never does
+ARRIVES="memory/shared/truth/agency.md"        # arrives with every message
+STAYS_HOME="memory/shared/truth/gates.md"      # never does
 FAILED=0
 
 say_pass() { echo "  pass — $1"; }
 say_fail() { echo "  FAIL — $1"; FAILED=1; }
+
+# Put the "always" tag on a file in the db, or take it off: tag on|off <path from the top of the repo>
+tag() { python3 - "$1" "$2" <<'PY'
+import sys
+sys.path.insert(0, '/Users/sand/GitHub/mono/tools/hub')
+import database
+what, where = sys.argv[1], sys.argv[2]
+if what == 'off':
+    database.remove_label(where, 'tag', 'always')
+else:
+    database.add_label(where, f'/Users/sand/GitHub/mono/{where}', 'tag', 'always')
+PY
+}
 
 # Does the hook complain right now, before anything is touched?
 echo "1. With nothing touched, the hook should say nothing about labels."
@@ -26,25 +42,23 @@ fi
 
 # Half one: a file that arrives, without the tag.
 echo "2. Take the tag off a file that arrives. The hook should name it."
-cp "$ARRIVES" "$ARRIVES.held"
-perl -i -pe 's/^tags: \[always, /tags: [/' "$ARRIVES"
+tag off "$ARRIVES"
 if bash "$HOOK" | grep -q "$(basename "$ARRIVES")"; then
 	say_pass "named it"
 else
 	say_fail "said nothing — a file could arrive unlabeled and nobody would know"
 fi
-mv "$ARRIVES.held" "$ARRIVES"
+tag on "$ARRIVES"
 
 # Half two: a file with the tag, that never arrives.
 echo "3. Put the tag on a file that never arrives. The hook should name it too."
-cp "$STAYS_HOME" "$STAYS_HOME.held"
-perl -i -pe 's/^tags: \[/tags: [always, / if /^tags: \[/ && !/always/' "$STAYS_HOME"
+tag on "$STAYS_HOME"
 if bash "$HOOK" | grep -q "$(basename "$STAYS_HOME")"; then
 	say_pass "named it"
 else
 	say_fail "said nothing — a file could claim to arrive and never do so"
 fi
-mv "$STAYS_HOME.held" "$STAYS_HOME"
+tag off "$STAYS_HOME"
 
 # Everything back the way it was?
 echo "4. With both put back, the hook should be quiet again."

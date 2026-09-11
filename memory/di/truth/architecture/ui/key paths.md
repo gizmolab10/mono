@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Key Paths (di)"
 description: "Every key and modifier, what it does, grouped by the context it is read in."
-tags: [UX]
 date: 2026-05-10
 ---
 # Key Paths

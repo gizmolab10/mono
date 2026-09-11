@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Banned Words (ov)"
 description: "The words that cause friction in overview, each with the word to use instead."
-tags: [always, prose, session, team]
 date: 2026-07-31
 ---
 # Substitutions for banned words

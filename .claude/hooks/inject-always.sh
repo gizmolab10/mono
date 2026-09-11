@@ -39,39 +39,66 @@ IN_TURN=("$CONVENTIONS" "$AGENCY")
 [ -f "$LEXICON" ] && IN_TURN+=("$LEXICON")
 [ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && IN_TURN+=("$BANNED_PROJECT")
 
-# Every file named here arrives with every message or in its turn, so every one of
-# them wears the "always" tag. A file that does not is a file whose labels lie, and
-# nothing else would ever notice — so it is said first, before the rules themselves.
-# First matters: what follows is cut off, and a complaint at the end is never read.
-MISSING=()
-for FILE in "${IN_TURN[@]}"; do
-  [ -f "$FILE" ] || continue
-  grep -q '^tags:.*\balways\b' "$FILE" || MISSING+=("${FILE#$REPO/}")
-done
+# Which files wear the "always" tag, read from the db beside the dispatcher through the
+# dispatcher's own module — since 10 September 2026 a file's kind and tags live there, not
+# in the file. One line per file wearing the tag: its path from the top of the repo, a tab,
+# then "explain" for a file of that kind and nothing otherwise. A db that is not there
+# leaves the tag unreadable, which is said rather than mistaken for every label lying.
+WEARING=$(python3 - <<'PY' 2>/dev/null
+import os, sys
+sys.path.insert(0, '/Users/sand/GitHub/mono/tools/hub')
+import database
+if not os.path.isfile(database.PLACE):
+    sys.exit(3)
+for path, rows in sorted(database.all_labels().items()):
+    tags = [one['value'] for one in rows if one['name'] == 'tag']
+    kinds = [one['value'] for one in rows if one['name'] == 'kind']
+    if 'always' in tags:
+        print(f"{path}\t{'explain' if 'explain' in kinds else ''}")
+PY
+)
+DB_READ=$?
 
-if [ ${#MISSING[@]} -gt 0 ]; then
-  echo "--- LABELS ARE WRONG ---"
-  echo "These arrive with every message, or in their turn, but do not wear the \"always\" tag. Tell Jonathan, and offer to add it:"
-  for ONE in "${MISSING[@]}"; do echo "  $ONE"; done
+if [ $DB_READ -ne 0 ]; then
+  echo "--- THE DB IS NOT THERE: which files wear the \"always\" tag could not be read ---"
   echo ""
-fi
+else
+  # Every file named here arrives with every message or in its turn, so every one of
+  # them wears the "always" tag. A file that does not is a file whose labels lie, and
+  # nothing else would ever notice — so it is said first, before the rules themselves.
+  # First matters: what follows is cut off, and a complaint at the end is never read.
+  MISSING=()
+  for FILE in "${IN_TURN[@]}"; do
+    [ -f "$FILE" ] || continue
+    printf '%s\n' "$WEARING" | cut -f1 | grep -qxF "${FILE#$REPO/}" || MISSING+=("${FILE#$REPO/}")
+  done
 
-# The other half of the same promise: a file wearing the tag but never arriving is a
-# file whose labels lie the other way round. Two sorts are let off:
-#   - every project's own list of banned words, since only one arrives on any given day;
-#   - a guide of the "explain" kind, which is about this machinery and is never sent.
-SENT=$(printf '%s\n' "${IN_TURN[@]}" "$REPO"/memory/*/truth/"banned words.md")
-STRAY=()
-while IFS= read -r FILE; do
-  grep -q '^kind: *explain *$' "$FILE" && continue
-  printf '%s\n' "$SENT" | grep -qxF "$FILE" || STRAY+=("${FILE#$REPO/}")
-done < <(grep -rl '^tags:.*\balways\b' "$REPO"/memory/*/truth 2>/dev/null)
+  if [ ${#MISSING[@]} -gt 0 ]; then
+    echo "--- LABELS ARE WRONG ---"
+    echo "These arrive with every message, or in their turn, but do not wear the \"always\" tag. Tell Jonathan, and offer to add it:"
+    for ONE in "${MISSING[@]}"; do echo "  $ONE"; done
+    echo ""
+  fi
 
-if [ ${#STRAY[@]} -gt 0 ]; then
-  echo "--- LABELS ARE WRONG ---"
-  echo "These wear the \"always\" tag but never arrive. Tell Jonathan, and offer to take it off:"
-  for ONE in "${STRAY[@]}"; do echo "  $ONE"; done
-  echo ""
+  # The other half of the same promise: a file under a truth folder wearing the tag but
+  # never arriving is a file whose labels lie the other way round. Two sorts are let off:
+  #   - every project's own list of banned words, since only one arrives on any given day;
+  #   - a guide of the "explain" kind, which is about this machinery and is never sent.
+  SENT=$(printf '%s\n' "${IN_TURN[@]}" "$REPO"/memory/*/truth/"banned words.md")
+  STRAY=()
+  while IFS=$'\t' read -r IN_REPO KIND; do
+    [ -z "$IN_REPO" ] && continue
+    case "$IN_REPO" in memory/*/truth/*) ;; *) continue ;; esac
+    [ "$KIND" = "explain" ] && continue
+    printf '%s\n' "$SENT" | grep -qxF "$REPO/$IN_REPO" || STRAY+=("$IN_REPO")
+  done <<< "$WEARING"
+
+  if [ ${#STRAY[@]} -gt 0 ]; then
+    echo "--- LABELS ARE WRONG ---"
+    echo "These wear the \"always\" tag but never arrive. Tell Jonathan, and offer to take it off:"
+    for ONE in "${STRAY[@]}"; do echo "  $ONE"; done
+    echo ""
+  fi
 fi
 
 # Part A, whole, every turn.

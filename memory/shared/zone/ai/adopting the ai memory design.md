@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Adopting the AI memory design"
 description: "Where ov's move into the memory system stands — done, goal, remaining."
-tags: [born, journal, now, proposal]
 date: 
 ---
 # Adopting the AI memory design

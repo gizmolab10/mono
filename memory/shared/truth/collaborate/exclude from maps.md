@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Excluded Folders"
 description: "The folders to skip when building a map file; ordinary searching is unaffected."
-tags: [notes, tools]
 date: 2026-05-10
 ---
 # Exclude from maps

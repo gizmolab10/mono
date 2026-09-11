@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Shorthand"
 description: "The short commands and abbreviations Jonathan types, and what each one does."
-tags: [session, team]
 date: 2026-07-29
 ---
 # Shorthand

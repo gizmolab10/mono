@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "lv log"
 description: "What lv decided, thought and reached, newest first; settled entries leave at each consolidation."
-tags: [journal, now]
 date: 2026-09-01
 ---
 # lv log

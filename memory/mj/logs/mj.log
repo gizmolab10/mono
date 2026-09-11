@@ -111,3 +111,5 @@ https://svelte.dev/e/bind_invalid_value
 1:28:30 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/css/Gallery.css
 1:31:41 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
 1:31:43 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
+5:52:43 PM [vite] ../tools/hub/ports.json changed, restarting server...
+5:52:44 PM [vite] server restarted.

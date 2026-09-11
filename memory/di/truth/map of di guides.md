@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Guide Layout (di)"
 description: "A bird's-eye list of every page under the di guides, one line each."
-tags: [journal, notes, incorporated]
 date: 2026-08-09
 ---
 # Map of di guides

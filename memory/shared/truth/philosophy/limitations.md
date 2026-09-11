@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Co Limitations"
 description: "The failure modes co falls into, named so they can be spotted early."
-tags: [debug, team, vision]
 date: 2026-06-03
 ---
 # Co Limitations

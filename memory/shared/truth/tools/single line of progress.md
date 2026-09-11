@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Single line of progress"
 description: "A build script that reports progress on one line that updates in place."
-tags: [maybe, tools]
 date: 2026-05-10
 ---
 # Single line of progress

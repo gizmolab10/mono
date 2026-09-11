@@ -1,9 +1,7 @@
 ---
-kind: howto
 type: reference
 title: "Adopting core"
 description: "How a host takes core: the wiring, the one file that holds every adoption, what the host owes, and the lessons each paid for."
-tags: [incorporated]
 use_when: [a project is adopting core, deciding what belongs in core and what in the host]
 date: 2026-09-01
 ---

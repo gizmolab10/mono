@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Conventions"
 description: "How Jonathan wants Claude to work and speak, across all projects: the nine rules that must never be out of sight, how a reply is written, the conduct rules, and the words never to use."
-tags: [always, now, proposal, prose, team, incorporated]
 date: 7 September 2026
 ---
 # Conventions

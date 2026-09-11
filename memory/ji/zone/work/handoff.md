@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Handoff"
 description: "My resume point for ji: the one thing to do next, and the context you can't read off the code"
-tags: [journal, maybe, now, session]
 date: 2026-08-11
 ---
 # Handoff

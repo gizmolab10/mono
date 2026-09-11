@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Working features (ov)"
 description: "Everything overview can do, newest first."
-tags: [journal, notes, UX]
 date: 2026-08-19
 ---
 # working features

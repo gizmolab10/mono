@@ -18,3 +18,8 @@ $ vite
 5:37:37 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
 5:37:48 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
 5:37:53 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+5:47:18 PM [vite] (client) page reload src/lib/ts/utilities/Labels.ts
+5:47:22 PM [vite] (client) page reload src/lib/ts/utilities/Labels.ts
+5:47:49 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+5:52:43 PM [vite] ../tools/hub/ports.json changed, restarting server...
+5:52:44 PM [vite] server restarted.

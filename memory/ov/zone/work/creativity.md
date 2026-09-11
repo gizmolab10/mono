@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Creativity"
 description: "One thought, kept: a tool for holding scattered ideas before they set."
-tags: [maybe, now]
 date: 2026-08-17
 ---
 # creativity

@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Full family support"
 description: "Keep each ask exchange — the question, its answer, and the relevant documents it drew from — so the chat operation can show the running conversation"
-tags: [maybe]
 date: 2026-08-19
 ---
 # Full family support

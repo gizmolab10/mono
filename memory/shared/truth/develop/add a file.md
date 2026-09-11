@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Adding a Guide"
 description: "Put a new guide where overview will find it, label it, and prove it arrived."
-tags: [notes, setup, tools]
 date: 2026-08-02
 ---
 # How to add a file
@@ -11,23 +9,24 @@ A new file must be where overview can find it and carry the five labels. Several
 
 ## 1. Give it the label block
 
-Five labels, this order, fenced by three dashes above and below, at the very top:
+Three labels in the file, this order, fenced by three dashes above and below, at the very top:
 
 ```
 ---
-kind: howto
 title: "Adding a File"
 description: "One sentence saying what this file tells you to do."
-tags: [notes, setup]
 date: 2026-08-02
 ---
 ```
 
-- **kind** — one of: specify, howto, refer, arch, explain, design. One of the six says what the file is about rather than how it reads: a record of how something was built is a design. For the other five, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → howto; how a part of an app works → arch; why rather than what → explain; otherwise refer.
 - **title** — the human name, unique across every guide.
-- **description** — one sentence that stands alone in a search result.
-- **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.
+- **description** — one sentence that reads whole on its own in a search result.
 - **date** — the last real change, as year-month-day. A change of meaning, not a typo.
+
+The other two, the kind and the tags, are not written into the file. Since 10 September 2026 they live in the db beside the dispatcher, `tools/hub/ov.db`, and are put on in overview's editor, its kinds row and its tag areas. A file whose block still carries a `kind:` or `tags:` line loses the line the next time overview writes the block.
+
+- **kind** — one of: specify, howto, refer, arch, explain, design. One of the six says what the file is about rather than how it reads: a record of how something was built is a design. For the other five, pick by the first question that answers yes: does it tell me what to do at all times → specify; how to carry out one task → howto; how a part of an app works → arch; why rather than what → explain; otherwise refer.
+- **tags** — one or more from the closed list below. Anything not on it is dropped and said so in the log.
 
 ## 2. Use only these tags
 

@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Testing (di)"
 description: "Which tests cover which rules, and how each test names the rule it pins."
-tags: [test]
 date: 2026-06-22
 ---
 # Testing

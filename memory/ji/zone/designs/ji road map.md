@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Intersection Project Roadmap"
 description: "Jeff's overview of the project's scope and where it is headed."
-tags: [plans, proposal, vision]
 date: 2026-07-24
 ---
 # Intersection Project Roadmap

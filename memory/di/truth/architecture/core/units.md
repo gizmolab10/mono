@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Units (di)"
 description: "Every length held in millimetres, then translated into whatever the user wants to read."
-tags: [program, data]
 date: 2026-05-10
 ---
 # Units

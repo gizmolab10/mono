@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Aesthetics"
 description: "Visual constants and patterns, arrived at by small perturbations rather than formulas."
-tags: [program, proposal, style, visual]
 date: 2026-05-10
 ---
 # Aesthetics

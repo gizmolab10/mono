@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "panel log"
 description: "What panel decided, thought and reached, newest first; settled entries leave at each consolidation."
-tags: [journal, now]
 date: 2026-09-07
 ---
 # panel log

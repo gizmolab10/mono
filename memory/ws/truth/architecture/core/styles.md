@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Color Management"
 description: "One place that works out every color from the current state."
-tags: [visual, UX, program]
 date: 2026-01-12
 ---
 # Color Management

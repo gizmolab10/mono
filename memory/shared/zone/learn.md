@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Learn"
 description: "Co errors → distilled into guide updates"
-tags: [journal]
 date: 2026-08-11
 ---
 # Learn

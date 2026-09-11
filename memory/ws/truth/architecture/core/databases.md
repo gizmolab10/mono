@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Databases (ws)"
 description: "Four storage backends behind one shared interface, each with its own hierarchy."
-tags: [program, data]
 date: 2026-01-28
 ---
 # Database Abstraction Architecture

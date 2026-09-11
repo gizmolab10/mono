@@ -1,9 +1,7 @@
 ---
-kind: specify
 type: design
 title: "Libraries"
 description: "What a library is in mono, and how a host takes one on: nothing built on its own, one alias and one bridge per library per host, and a library that imports a library does the same."
-tags: [now]
 use_when: [making a library, a project taking a library on, deciding what belongs in a library and what in the host]
 date: 10 September 2026
 ---

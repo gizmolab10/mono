@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "shared log"
 description: "What shared decided, thought and reached, newest first; settled entries leave at each consolidation."
-tags: [journal, now]
 date: 2026-09-01
 ---
 # shared log
@@ -35,3 +33,4 @@ date: 2026-09-01
 - D: panel's half of the Importing proposal is built, Panel.svelte as the page a host draws, and gallery imports it for its page. Recorded in zone/incorporating a project.md and zone/architecture/library projects.md. The lexicon's bridge entry names Panel.ts
 - D: mj and mu import panel through Panel.ts, and their own versions of panel's three region files are deleted. The Importing proposal's panel half is whole: gallery, mj and mu draw Panel.svelte. zone/architecture/incorporating a project.md says so
 - D: done. The one ticked item in zone/ideas.md, create mj -> mj.jonathansand.me, moved into zone/work/journal.md as a dated entry. drive.md and proposals.md hold no ticked items, and shared has no handoff, working features or map
+- D: the always tag lives in the db beside the dispatcher, tools/hub/ov.db, not in the files. inject-always.sh reads it there through tools/hub/database.py and says in one line when the db is not there, test-always-tag.sh breaks and mends each half in the db, and big-picture.py records its kind and tag there. The kind and tags lines left 332 memory files on 10 September 2026 through the dispatcher's /strip-labels. collaborate/hooks.md says so

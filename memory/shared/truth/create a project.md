@@ -2,7 +2,6 @@
 type: howto
 title: Create a project
 description: The steps to bring up a new project in the memory system, and in mono when it needs code.
-tags: [howto, projects, setup, incorporated]
 use_when: [creating a project, bringing up a new project, adding to memory]
 updated: 10 September 2026
 ---

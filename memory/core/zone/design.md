@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Core design"
 description: "How core is used by ov (and any later host): what core offers, what a host owes it."
-tags: [now, waiting, weighed]
 date: 2026-08-30
 ---
 # how ov uses core

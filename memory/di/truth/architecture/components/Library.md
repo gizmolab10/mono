@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Library (di)"
 description: "Where a saved arrangement is kept, reopened, or dropped inside the current one."
-tags: [program, UX, data]
 date: 2026-05-10
 ---
 # Library

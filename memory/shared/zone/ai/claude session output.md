@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Claude session output"
 description: "Everything an unsupervised co session says, so none of it reaches Jonathan's chat."
-tags: [now]
 date: 2026-09-03
 ---
 # Co session output

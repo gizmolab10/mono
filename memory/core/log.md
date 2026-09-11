@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: core log
 description: "What core decided, thought and reached, newest first; settled entries leave at each consolidation."
-tags: [journal, now]
 date: 2026-09-01
 ---
 # core log

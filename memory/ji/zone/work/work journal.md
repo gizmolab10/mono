@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Work journal"
 description: "Reverse chronological log of finished work on ji (the Jeff intersection project)"
-tags: [journal]
 date: 2026-08-11
 ---
 # Work journal

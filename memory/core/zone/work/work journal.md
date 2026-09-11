@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Work journal"
 description: "What has been finished, newest first."
-tags: [journal]
 date: 2026-08-19
 ---
 # Work Journal

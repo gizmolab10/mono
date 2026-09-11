@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Working with Co"
 description: "Who does what between Jonathan and co, and what co must do to stay reliable."
-tags: [team, session]
 date: 2026-05-10
 ---
 # Working with Co

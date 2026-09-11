@@ -2,7 +2,6 @@
 type: design
 title: Gallery
 description: How pictures and captions currently work in lv.
-tags: [gallery, pictures, captions, assets, incorporated]
 use_when: [adding pictures, changing how galleries display, caption work, storage decisions]
 updated: 22 August 2026
 ---

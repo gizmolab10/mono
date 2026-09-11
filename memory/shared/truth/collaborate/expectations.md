@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Expectations"
 description: "How to get co's best work and avoid its worst."
-tags: [team]
 date: 2026-05-10
 ---
 # Expectations

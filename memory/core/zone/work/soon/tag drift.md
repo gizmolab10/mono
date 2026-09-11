@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Tag drift"
 description: "Guides whose tags stopped describing them when the tags were renamed."
-tags: [soon, notes]
 date: 2026-08-09
 ---
 # Tag drift

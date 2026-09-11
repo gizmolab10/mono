@@ -1,9 +1,6 @@
 ---
-kind: howto
 title: Keep Shop
 description: Structure the note files so they still guide the next chat session.
-tags:
-  - notes
 date: 2026-07-07
 ---
 # Keep shop

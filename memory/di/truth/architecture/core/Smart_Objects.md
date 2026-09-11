@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Smart Objects"
 description: "The data shape of one part: its name, three directions, formulas, repeater settings, and visibility."
-tags: [program, data]
 date: 2026-05-10
 ---
 # Smart Objects

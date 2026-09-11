@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "panel decisions"
 description: "Live rationales, and the pac responses that weigh coming choices."
-tags: [now, incorporated]
 date: 2026-09-09
 ---
 # Decisions

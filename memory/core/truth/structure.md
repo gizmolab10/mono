@@ -2,7 +2,6 @@
 type: design
 title: core structure
 description: What core is and the rules that keep it core.
-tags: [structure, library, incorporated]
 use_when: [working in core, moving code between a host and core]
 updated: 1 September 2026
 ---

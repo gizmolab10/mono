@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Persistable"
 description: "The shared base every stored record extends, for saving, loading, and identity."
-tags: [program, data]
 date: 2026-01-28
 ---
 # Persistable Pattern Architecture

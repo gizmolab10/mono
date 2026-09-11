@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Rendering Types"
 description: "The two shapes a vertex takes once the projection pipeline is done with it."
-tags: [program, geometry]
 date: 2026-05-10
 ---
 # Types

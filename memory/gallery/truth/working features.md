@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Working features"
 description: "What the site does today, and what each thing cannot do. Newest first."
-tags: [journal, keep, now]
 date: 2026-08-23
 ---
 # Working features

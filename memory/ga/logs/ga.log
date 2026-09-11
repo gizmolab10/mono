@@ -6,3 +6,5 @@ $ vite
 
   ➜  Local:   http://localhost:5180/
   ➜  Network: use --host to expose
+5:52:44 PM [vite] ../tools/hub/ports.json changed, restarting server...
+5:52:44 PM [vite] server restarted.

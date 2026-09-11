@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "How Jonathan Guides"
 description: "The phrases Jonathan uses to steer a debugging session and what each one is asking for."
-tags: [team]
 date: 2026-05-10
 ---
 # How Jonathan Guides

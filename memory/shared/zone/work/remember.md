@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Faster Session Starts"
 description: "an improved workflow and hooks design"
-tags: [always, session, faster, team]
 date: 2026-08-11
 ---
 # Faster Session Starts

@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Proposals"
 description: "gallery proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies."
-tags: [now, proposal, weighed]
 date: 2026-09-09
 ---
 # Proposals

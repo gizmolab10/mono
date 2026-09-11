@@ -468,7 +468,7 @@ def scan_labels():
     its hand labels, on a row made from the disk. A file whose block says neither keeps what the
     db holds. Nothing in any file changes. Answers the counts."""
     root, paths = listed_files()
-    files, kinds, tags, no_block, unreadable = 0, 0, 0, 0, 0
+    files, kinds, tags, said_nothing, unreadable = 0, 0, 0, 0, 0
     for where in paths:
         full = os.path.join(root, where)
         try:
@@ -480,12 +480,12 @@ def scan_labels():
         files += 1
         kind, named = labels_in_text(text)
         if kind is None and named is None:
-            no_block += 1
+            said_nothing += 1
             continue
         database.record_file(where, full, kind, named)
         kinds += 1 if kind is not None else 0
         tags += len(named) if named is not None else 0
-    return {'files': files, 'kinds': kinds, 'tags': tags, 'no_block': no_block, 'unreadable': unreadable}
+    return {'files': files, 'kinds': kinds, 'tags': tags, 'said_nothing': said_nothing, 'unreadable': unreadable}
 
 def strip_labels():
     """Take the kind line and the tags line out of every listed file's label block, once the db

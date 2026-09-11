@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Refactoring"
 description: "The guardrails for letting co refactor a temperamental codebase."
-tags: [refactor]
 date: 2026-05-10
 ---
 # Refactoring Guide

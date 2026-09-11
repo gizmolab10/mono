@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Workflow"
 description: "The turn-taking cadence and the propose-before-acting discipline."
-tags: [keep, now, session, team]
 date: 2026-07-07
 ---
 # Workflow

@@ -1,9 +1,6 @@
 ---
-kind: analyze
 title: Rewrite the guides
 description: remove murk from documentation
-tags:
-  - now
 date: 2026-09-03
 ---
 # Rewrite the guides

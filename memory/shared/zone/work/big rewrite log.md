@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: Big rewrite log
 description: running report for the mechanical sweep (branch sweep/unmurk) — banned words and lexicon swaps across every project
-tags: [now]
 date: 2026-09-03
 ---
 # Big rewrite log

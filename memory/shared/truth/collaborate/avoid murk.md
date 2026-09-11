@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Murk"
 description: "Writing that cannot be read: why its author cannot see it, and nine strategies for keeping it out."
-tags: [keep, now, prose, session, team]
 date: 2026-08-17
 ---
 # Avoiding murk

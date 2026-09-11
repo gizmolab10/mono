@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "cases"
 description: "Compressed stories of decided pacs — the deciding question, the d, what now holds."
-tags: [team, incorporated]
 date: 2026-08-31
 ---
 # Cases

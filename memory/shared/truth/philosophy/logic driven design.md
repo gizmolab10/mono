@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Logic Driven Design"
 description: "Rules, tests, and code kept in lock-step, so any drift is caught by the build."
-tags: [plans, proposal, research, test, vision]
 date: 2026-06-19
 ---
 # Logic Driven Design

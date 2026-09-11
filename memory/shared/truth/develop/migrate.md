@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Migration Documents"
 description: "How to write a migration document that breaks a big component change into safe phases."
-tags: [migrate, refactor]
 date: 2026-05-10
 ---
 # Migration Guide

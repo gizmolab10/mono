@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "gallery"
 description: "A library lv and mj import: pages from md files, and one folder of pictures shown one at a time, with editing"
-tags: [always, keep, now, session]
 date: 2026-09-09
 ---
 # gallery

@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "How many md files? 531"
 description: "What is actually in the repo, in markdown"
-tags: [proposal, soon]
 date: 2026-08-08
 ---
 # How many md files? 531

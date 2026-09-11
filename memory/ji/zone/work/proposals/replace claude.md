@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Replace Claude"
 description: "Could a stack of small models running on your own machine do what Claude Code does for us? You sent me an article that says yes"
-tags: [keep, now]
 date: 2026-08-19
 ---
 # Replace Claude

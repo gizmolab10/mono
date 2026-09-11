@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "md improvements"
 description: "What to do about the audit: three passes of mechanical fixes, four decisions only Jonathan can make, and the structural work that keeps it true."
-tags: [keep, now, proposal]
 date: 2026-08-22
 ---
 # md improvements

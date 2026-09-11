@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Radial Paging"
 description: "Showing one page at a time when the widgets around the ring do not all fit."
-tags: [program, UX, geometry]
 date: 2026-01-12
 ---
 # Radial Paging System Architecture

@@ -1,9 +1,7 @@
 ---
-kind: specify
 type: design
 title: "mu design"
 description: "What mu is and how it is put together, as it is today."
-tags: [incorporated]
 date: 2026-09-09
 ---
 # mu design

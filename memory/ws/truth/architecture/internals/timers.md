@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Timers (ws)"
 description: "Mouse timing held by the hits manager, so it survives a redraw."
-tags: [program, UX]
 date: 2026-01-12
 ---
 # Timers

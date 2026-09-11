@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Bubble Plugin How-To"
 description: "Debugging, adding a state, and publishing a new version of the Bubble plugin."
-tags: [platform, deploy]
 date: 2026-01-22
 ---
 # Bubble Plugin Guide

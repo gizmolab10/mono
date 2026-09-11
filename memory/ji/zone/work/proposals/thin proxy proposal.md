@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Proposal — a thin proxy"
 description: "Allow a deployed ji reach into the mac's AnythingLLM safely"
-tags: [keep, proposal]
 date: 2026-08-19
 ---
 # Proposal — a thin proxy

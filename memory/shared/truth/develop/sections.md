@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Sections"
 description: "A stack owns the gaps between its sections, and a separator stands centred in each one."
-tags: [keep, program, proposal, UX]
 date: 2026-08-15
 ---
 # Sections

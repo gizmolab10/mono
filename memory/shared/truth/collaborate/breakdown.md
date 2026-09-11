@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Declaring a Breakdown"
 description: "What to do when the work has gone wrong and neither of us knows how to get back."
-tags: [debug, session, team]
 date: 2026-08-11
 ---
 # Declaring a breakdown

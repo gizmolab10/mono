@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Journal"
 description: ""
-tags: [journal]
 date: 2026-08-11
 ---
 # Journal

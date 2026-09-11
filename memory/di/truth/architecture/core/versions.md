@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "File Format Migration (di)"
 description: "How an old saved file is brought up to the current scene format."
-tags: [program, data, migrate]
 date: 2026-05-10
 ---
 # File Format Migration

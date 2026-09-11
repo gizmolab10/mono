@@ -2,7 +2,6 @@
 type: reference
 title: Shared lexicon
 description: Cross-project terms, defined once — the memory system's and every project's — and the word to use where another has been banned. Loaded at every session start.
-tags: [always, lexicon, terminology, prose, incorporated]
 use_when: [every session]
 updated: 7 September 2026
 ---

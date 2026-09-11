@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Hooks"
 description: "What hooks are, how they differ from memory, and which ones are live."
-tags: [always, session, team, tools]
 date: 2026-07-08
 ---
 # Hooks
@@ -13,11 +11,9 @@ Hooks are shell commands that fire automatically when co does something — edit
 
 What a hook incorporates is cut off at about 2000 characters.
 
-
-
 **Part A** — (first 2000) the Always section of `memory/shared/truth/conventions.md`, whole, every single turn. It holds the nine rules that govern every single reply. It is kept short deliberately, so it always survives the cut.
 
-**Part B** — (everything else): the rest of conventions.md (how a reply is written, the conduct rules, the banned words), agency.md, the shared lexicon, and the project's own banned words. Four pieces, one incorporated per turn, in rotation. The rotation pointer is kept in a tiny file. 
+**Part B** — (everything else): the rest of conventions.md (how a reply is written, the conduct rules, the banned words), agency.md, the shared lexicon, and the project's own banned words. Four pieces, one incorporated per turn, in rotation. The rotation pointer is kept in a tiny file.
 
 The cost is minimal: a rule in part B is out of sight for two or three turns at a time.
 
@@ -28,7 +24,7 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 ### UserPromptSubmit — fires when Jonathan sends a message
 
 | Hook | What it does |
-|----|----|
+| ---- | ---- |
 | debug-reminder *(inline)* | On words like bug/fix/log/why, injects "read the log data first" |
 | log-present *(inline)* | When Jonathan pastes log markers, injects "read the log yourself, don't ask me to" |
 | geometric-mode *(inline)* | Toggles a flag on "geometric"; while on, injects geometry-caution and log-naming rules |
@@ -38,21 +34,21 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 ### PreToolUse — fires before a tool runs
 
 | Hook | What it does |
-|----|----|
+| ---- | ---- |
 | snapshot-before-edit.sh | Copies the file to a snapshot folder before an Edit/Write, for undo |
 | bash-command-check.sh | Denies batched commands, npx, and git worktree; auto-approves read-only exploration |
 
 ### PostToolUse — fires after an Edit/Write
 
 | Hook | What it does |
-|----|----|
+| ---- | ---- |
 | plain-english-check.sh | Says when a banned word, a lexicon-settled word, or a name that names nothing goes into a file. The name check looks each backticked span up in every project's src, the tools, every lexicon and on disk, and reports one found nowhere. Tested by plain-english-check.test.sh. Checks the whole edit of an .md, the comment and log lines of a .ts or .svelte. Reads the banned-words tables' mechanical rows and the lexicon's never-words; di's twenty identifiers kept (lives in `.claude/hooks/`) |
 | mark-ts-check-pending.sh | If a .ts/.svelte changed, drops a marker so the end-of-turn type check runs |
 
 ### Stop — fires when co finishes (all warn-only now)
 
 | Hook | What it does |
-|----|----|
+| ---- | ---- |
 | banned-words-check.sh | Logs banned words; hard ones get rewritten on screen by display-fix.sh |
 | conciseness-check.sh | Logs filler and over-length |
 | phrase-check.sh | Logs permission-asking and hollow reassurances |
@@ -75,12 +71,12 @@ Two things it has to know.
 ### MessageDisplay — fires as text is shown
 
 | Hook | What it does |
-|----|----|
+| ---- | ---- |
 | display-fix.sh | Rewrites hard banned words on screen as the reply streams |
 
 ### Proving the two halves agree
 
-Every file that arrives, in either part, wears the `always` tag. Two things can go wrong, and the hook complains about both, before anything else it prints:
+Every file that arrives, in either part, wears the `always` tag. Since 10 September 2026 the tag lives in the db beside the dispatcher, `tools/hub/ov.db`, not in the file, and the hook reads it there through the dispatcher's own module. Two things can go wrong, and the hook complains about both, before anything else it prints:
 
 1. A file arrives without the tag — its labels lie.
 2. A file wears the tag and never arrives — they lie the other way.
@@ -96,7 +92,7 @@ The debugging reminder is a hook because it needs to fire *before* co starts rea
 ## Where they live
 
 | File | Scope |
-|----|----|
+| ---- | ---- |
 | `~/.claude/settings.json` | All projects |
 | `.claude/settings.json` | This project, committed |
 | `.claude/settings.local.json` | This project, personal |
@@ -128,7 +124,7 @@ Settings load in order: user then project then local. Later overrides earlier.
 ## Events
 
 | Event | When | Matcher |
-|----|----|----|
+| ---- | ---- | ---- |
 | `UserPromptSubmit` | User sends a message | -- |
 | `PreToolUse` | Before a tool runs | Tool name |
 | `PostToolUse` | After a tool succeeds | Tool name |

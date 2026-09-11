@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Map of di notes"
 description: "Every folder under di's notes, and what each one holds. Update when notes are added, moved, or removed."
-tags: [incorporated, journal, notes]
 date: 2026-08-20
 ---
 # Map of di notes

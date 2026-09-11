@@ -32,3 +32,10 @@ DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be
 More info: https://sass-lang.com/d/legacy-js-api
 
 3:17:28 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/text/Curved_Text.svelte:7:11 Curved_Text has unused export property 'center_ofArc'. If it is for external reference only, please consider using `export const center_ofArc`
+5:52:43 PM [vite] ../tools/hub/ports.json changed, restarting server...
+5:52:44 PM [vite] server restarted.
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://10.0.0.235:5173/
+  ➜  Network: http://10.0.0.181:5173/
+  ➜  Network: http://169.254.107.9:5173/

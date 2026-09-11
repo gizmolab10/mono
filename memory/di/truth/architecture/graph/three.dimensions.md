@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Three Dimensions on a Flat Screen"
 description: "How depth gets squashed onto a flat canvas, and how the app works out what is in front."
-tags: [program, geometry]
 date: 2026-05-10
 ---
 # Three Dimensions on a Flat Screen

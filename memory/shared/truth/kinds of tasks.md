@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Kinds of Tasks"
 description: "Task types, the guides each one needs, and the conflicts between those guides."
-tags: [session]
 date: 2026-06-19
 ---
 # Kinds of Tasks

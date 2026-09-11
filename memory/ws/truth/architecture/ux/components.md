@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Component Salvage (ws)"
 description: "Which of the forty-odd components are worth keeping and which need rebuilding."
-tags: [program, refactor]
 date: 2026-02-03
 ---
 # Components

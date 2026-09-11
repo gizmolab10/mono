@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Implementation"
 description: "Render the home page (and every page) from md files in the md folder"
-tags: [keep, now]
 date: 2026-08-21
 ---
 # Implementation

@@ -1,8 +1,6 @@
 ---
-kind: arch
 title: "Axes — Rotate and Swap"
 description: "Two ways to reorient a part: rotate it visually, or exchange its axis data."
-tags: [program, geometry]
 date: 2026-05-10
 ---
 # Axes — rotation & swap

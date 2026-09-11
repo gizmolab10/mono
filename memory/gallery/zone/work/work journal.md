@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Journal — design decisions and stack"
 description: "Not in scope for the first pass"
-tags: [keep, now]
 date: 2026-08-23
 ---
 # Journal — design decisions and stack

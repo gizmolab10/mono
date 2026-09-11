@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "constants & subtypes"
 description: ""
-tags: [settled]
 date: 
 ---
 # Constants & subtypes

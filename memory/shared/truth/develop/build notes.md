@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Build Notes"
 description: "How to hand-distill the build-notes table from the change history."
-tags: [build, notes]
 date: 2026-05-10
 ---
 # Build Notes

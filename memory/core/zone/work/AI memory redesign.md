@@ -1,8 +1,6 @@
 ---
-kind: analyze
 title: "Memory System Design"
 description: "A fresh design for a persistent, tweakable memory that carries context across chats, survives consolidation, and supports several concurrent long-term projec..."
-tags: [keep, now, proposal]
 date: 2026-08-21
 ---
 # Memory System Design
@@ -71,11 +69,12 @@ Every truth file is an OKF concept document:
 type: design               # required — pick from a tiny vocabulary you keep in root index.md
 title: Data model
 description: Current entity/relationship design and why it holds.
-tags: [persistence, schema]
 use_when: [changing storage, adding entity types, migration work]
 updated: 2026-08-22
 ---
 ```
+
+The tags are not in the block: since 10 September 2026 the kind and the tags live in the db beside the dispatcher, `tools/hub/ov.db`, put on in overview's editor.
 
 Body: plain markdown stating the current truth. Links to related truths are ordinary markdown links — the bundle becomes a navigable graph.
 

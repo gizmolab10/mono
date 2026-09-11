@@ -64,6 +64,7 @@ PORT_MA=$(get_port "['ma']['port']")
 PORT_MJ=$(get_port "['mj']['port']")
 PORT_MU=$(get_port "['mu']['port']")
 PORT_PANEL=$(get_port "['panel']['port']")
+PORT_FILTER_TREE=$(get_port "['filter tree']['port']")
 PORT_MA_DOCS=$(get_port "['ma']['docs']")
 
 # Site definitions: name|port|dir|command
@@ -81,6 +82,7 @@ SITES=(
   "mj|$PORT_MJ|mj|yarn dev"
   "mu|$PORT_MU|mu|yarn dev"
   "panel|$PORT_PANEL|panel|yarn dev"
+  "filter tree|$PORT_FILTER_TREE|filter tree|yarn dev"
   "ma|$PORT_MA|ma|yarn dev"
   "ma-docs|$PORT_MA_DOCS|ma|VITE_PORT=$PORT_MA_DOCS yarn docs:dev"
 )

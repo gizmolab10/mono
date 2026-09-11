@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Lexicon (di)"
 description: "The exact words di uses; no synonyms, no near-synonyms."
-tags: [prose, session]
 date: 2026-06-30
 ---
 # Lexicon

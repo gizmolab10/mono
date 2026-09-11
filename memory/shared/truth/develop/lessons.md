@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Lessons"
 description: "Patterns distilled from finished milestones that would mislead a successor on any feature."
-tags: [debug, session]
 date: 2026-06-22
 ---
 # Lessons

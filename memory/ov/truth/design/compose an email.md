@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Compose an email"
 description: "Handing a file on by mail: what the app opens, and why it does nothing on Windows."
-tags: [setup]
 date: 2026-08-17
 ---
 # compose an email

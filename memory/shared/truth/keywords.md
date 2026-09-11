@@ -1,8 +1,6 @@
 ---
-kind: specify
 title: "Keywords"
 description: "The words in a request that require reading a guide before acting."
-tags: [session]
 date: 2026-05-10
 ---
 # Keywords

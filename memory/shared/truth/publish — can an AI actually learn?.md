@@ -1,12 +1,10 @@
 ---
-kind:
 title: Can an AI actually learn?
 description: The whole memory design, explained plainly and in enough detail that a newcomer and their AI could build it.
 use_when:
   - explaining the system to someone new
   - writing about the system
   - publishing the recipe
-tags: [incorporated]
 date:
 ---
 # Can an AI actually learn?

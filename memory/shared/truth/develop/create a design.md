@@ -1,8 +1,6 @@
 ---
-kind: howto
 title: "Create a Design"
 description: "How the two of us write a design document together: core idea from Jonathan, structure and critique from co, then simplify."
-tags: [team, prose]
 date: 2026-06-03
 ---
 # Create a Design

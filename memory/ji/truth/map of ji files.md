@@ -1,8 +1,6 @@
 ---
-kind: explain
 title: "Map of ji files"
 description: "Every source file in ji, updated whenever files are added, moved, or removed."
-tags: [incorporated, journal, notes, program]
 date: 2026-07-29
 ---
 # Map of ji files
