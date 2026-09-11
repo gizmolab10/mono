@@ -112,6 +112,24 @@ export function moment_written_out(when: Date): string {
 	return `${when.getDate()} ${MONTHS[when.getMonth()]}, ${when.getFullYear()} at ${shown}:${minutes} ${hour < 12 ? 'AM' : 'PM'}`;
 }
 
+/**
+ * The writes that take a file's kind and tags in the db from what they were to what they are
+ * now: each label to put on, and each to take off. A kind that changed comes off and the new one
+ * goes on; a kind that stayed is not touched, and neither is a tag worn before and after. Written
+ * over plain words so it can be proved without a db.
+ */
+export function label_changes(was_kind: string, was_tags: string[], kind: string, tags: string[]): { on: [string, string][]; off: [string, string][] } {
+	const on: [string, string][] = [];
+	const off: [string, string][] = [];
+	if (kind !== was_kind) {
+		if (was_kind !== '') { off.push(['kind', was_kind]); }
+		if (kind !== '') { on.push(['kind', kind]); }
+	}
+	for (const tag of was_tags) { if (!tags.includes(tag)) { off.push(['tag', tag]); } }
+	for (const tag of tags) { if (!was_tags.includes(tag)) { on.push(['tag', tag]); } }
+	return { on, off };
+}
+
 /** Does this file carry a label block at all? */
 export function has_labels(text: string): boolean {
 	const lines = text.split('\n');

@@ -165,6 +165,56 @@ export async function files_on_disk(): Promise<On_Disk> {
 }
 
 /**
+ * One label the db holds on a file: a name, kind or tag, a value, and who made it — hand, rule or
+ * ai. The db keeps them; the file's own block is on its way out.
+ */
+export type Label = { name: string; value: string; made_by: string };
+
+/**
+ * Every label the db holds, on every file, keyed by the file's path counting from the top of
+ * the repo. One ask at launch, in place of a label block read off every file. An empty answer
+ * means the dispatcher is not running.
+ */
+export async function labels_on_disk(): Promise<Map<string, Label[]>> {
+	try {
+		const answer = await fetch('http://localhost:5171/all-labels');
+		const said = await answer.json().catch(() => ({}));
+		if (answer.ok && said.success && said.labels && typeof said.labels === 'object') {
+			return new Map(Object.entries(said.labels as Record<string, Label[]>));
+		}
+		return new Map();
+	} catch {
+		return new Map();
+	}
+}
+
+/** Put one label on a file, in the db and never in the file. Says whether it went on, and if not, why. */
+export async function add_label(where: string, name: string, value: string): Promise<Saved> {
+	return tell(`/add-label?where=${encodeURIComponent(where)}`, { name, value });
+}
+
+/** Take one label off a file, in the db. Says whether it came off, and if not, why. */
+export async function remove_label(where: string, name: string, value: string): Promise<Saved> {
+	return tell(`/remove-label?where=${encodeURIComponent(where)}`, { name, value });
+}
+
+// Tell the dispatcher to do one thing, with a JSON body, and read whether it did.
+async function tell(route: string, body: object): Promise<Saved> {
+	try {
+		const answer = await fetch(`http://localhost:5171${route}`, {
+			method  : 'POST',
+			headers : { 'Content-Type': 'application/json' },
+			body    : JSON.stringify(body),
+		});
+		const said = await answer.json().catch(() => ({}));
+		if (answer.ok && said.success) { return { ok: true, why: '' }; }
+		return { ok: false, why: said.error ?? `the server answered ${answer.status}` };
+	} catch (e) {
+		return { ok: false, why: e instanceof Error ? e.message : String(e) };
+	}
+}
+
+/**
  * Ask the dispatcher to start itself over, so code changed on disk is the code answering.
  *
  * It never answers this one: it spawns a fresh copy of itself and exits, so the asking always

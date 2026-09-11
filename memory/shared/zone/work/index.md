@@ -8,7 +8,7 @@
 - [Agent Skills](claude%20agent%20skills.md)
 - [Co](co.md)
 - [Journal](journal.md)
-- [Learn](learn.md)
+- [Learn](memory/di/zone/learn.md)
 - [Faster](remember.md)
 - [Worktrees](worktrees.md)
 

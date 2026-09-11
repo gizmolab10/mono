@@ -9,6 +9,12 @@ date: 2026-09-01
 
 <!-- consolidated: 9 September 2026 -->
 
+## 10 September 2026
+
+- D: knowledge bases phase 2 built, short of the removal. dispatcher.py answers /scan (every listed file's kind and tags into the db as hand labels, run once on the real db: 485 files, 321 kinds, 780 tags, 152 with no block), /all-labels (every label in one answer) and /strip-labels (built, guarded by a confirm word, not run). database.py gained replace_labels, record_file and all_labels. Files.ts asks for every label beside the listing and takes kind and tags from the db, never the block, and writes the db first on any change, through Labels.ts's label_changes, which is tested. Edit_Filters.svelte and Edit_Markdown.svelte write the db before the file. The block is still written whole until the removal runs. 49 checks in test_database.py, 35 in test_dispatcher.py, ov 339 tests, check clean at 532 files
+- D: the removal waits on Jonathan. inject-always.sh and test-always-tag.sh read the always tag off the files with grep, and big-picture.py writes a block with kind and tags. Each has to read the db before the lines can leave the files
+- D: knowledge bases phase 1 built. tools/hub/database.py makes the db, tools/hub/ov.db, with the four tables, and writes and reads labels; a file's row is made from the disk when its first label is written. dispatcher.py answers /labels, /add-label and /remove-label with the same refusals as read-guide. test_database.py writes a tag and reads it back against a db of its own, 23 checks; test_dispatcher.py asks the running dispatcher for labels, 35 checks. The db file is git-ignored. The dispatcher was restarted to serve the routes
+
 ## 9 September 2026
 
 - D: managers/Preferences.ts keeps the enum of ov's keys and makes one instance of core's Preferences with the ov_ prefix. The class is core's now, taken through Core.ts

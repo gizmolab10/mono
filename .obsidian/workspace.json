@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/architecture/library projects.md",
+                "file": "memory/ov/zone/knowledge bases.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "library projects"
+              "title": "knowledge bases"
             }
           }
         ]
@@ -158,7 +158,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/zone/architecture/library projects.md",
+                "file": "memory/ov/zone/knowledge bases.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -196,8 +196,20 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "287f4cb5e8fc82de",
+  "active": "26b78cd156d15e82",
   "lastOpenFiles": [
+    "tools/hub/ov.db-journal",
+    "tools/hub/dispatcher.py.tmp.43901.fc103b7b00c6",
+    "memory/ov/zone/ideas.md",
+    "tools/hub/ov.db",
+    "tools/hub/__pycache__/test_database.cpython-310.pyc",
+    "tools/hub/__pycache__/database.cpython-310.pyc",
+    "tools/hub/test_database.py",
+    "tools/hub/database.py",
+    "memory/ov/zone/learn.md",
+    "memory/ov/zone/drive.md",
+    "memory/ov/zone/knowledge bases.md",
+    "memory/shared/zone/architecture/library projects.md",
     "memory/lv/logs/lv.debug.log",
     "gallery/src/lib/svelte/Gallery.svelte.tmp.40697.67b49421f603",
     "lv/dist/assets/lcv.label-CyYn_a6Q.png",
@@ -212,13 +224,6 @@
     "lv/dist/assets/LCV_Label_v3B-CMKhxvFI.jpg",
     "lv/dist/assets/LCV sketch 0-DSRnJIx4.jpg",
     "lv/dist/assets/LCV sketch 1-C-xW9c4I.jpg",
-    "lv/dist/index.html",
-    "lv/dist/assets",
-    "lv/dist",
-    "mu/dist/assets/index-CX-Bdej8.css",
-    "mu/dist/assets/index-BcS8drq3.js",
-    "mu/dist/index.html",
-    "mu/dist/assets",
     "memory/shared/zone/ideas.md",
     "memory/shared/zone/ai/truth and zone and design?.md",
     "memory/shared/zone/truth and zone and design?.md",
@@ -234,16 +239,11 @@
     "memory/shared/zone/architecture/libraries.md",
     "memory/shared/zone/architecture/inception into the new design.md",
     "memory/shared/zone/architecture/incorporating a project.md",
-    "memory/shared/zone/architecture/library projects.md",
     "memory/shared/zone/ai/rewrite the guides.md",
     "memory/shared/zone/ai/fable.md",
     "memory/shared/zone/ai/claude session output.md",
     "memory/shared/zone/ai/claude code.md",
     "memory/shared/zone/New Folder With Items/rewrite the guides.md",
-    "memory/shared/zone/New Folder With Items/fable.md",
-    "memory/shared/zone/New Folder With Items/claude session output.md",
-    "memory/shared/zone/New Folder With Items/claude code.md",
-    "memory/shared/zone/libraries.md",
     "Untitled.canvas",
     "ws/notes/work/Untitled.canvas"
   ]

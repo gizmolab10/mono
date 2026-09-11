@@ -946,6 +946,9 @@
 		}
 		debug.log(`Editing "${name}": opened for the first time with no labels, so a block was composed from its own words and written to ${where}. Its kind came from the folder it sits in, and it is marked stale for a person to look at.`);
 		const made = labels_for(whole, `${name}.md`, today(), guide.path);
+		// The kind and the tags go into the db as well, since that is what the list filters from.
+		const in_db = await files.write_labels(guide, made.labels.kind, made.tags);
+		if (!in_db.ok) { debug.log(`Editing "${name}": its composed kind and tags were NOT written to the db — ${in_db.why}.`); }
 		files.relabel(guide, made.labels, made.tags);
 		return with_block;
 	}

@@ -1,7 +1,7 @@
-import { address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, move_file, moved_into, path_of_address, reaches_under_work, site_of_file, read_file, renamed_path, save_file } from '../utilities/Saving';
+import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, labels_on_disk, move_file, moved_into, path_of_address, reaches_under_work, remove_label, site_of_file, read_file, renamed_path, save_file, type Label, type Saved } from '../utilities/Saving';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { blank_file, free_name, has_labels, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
+import { blank_file, free_name, has_labels, label_changes, labels_from, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
 import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, project_of, project_at, type File, type Labels, type Filtered_File } from '../types/File';
 import { links_in, plain_links } from '../utilities/Markdown_Blocks';
 import { resolved_from } from '../utilities/Following_Links';
@@ -58,6 +58,11 @@ class Files {
 	// ones the app never lists. Only the dead-link check reads it, and only to tell a link naming
 	// a real file it cannot open from a link naming nothing at all.
 	paths_on_disk = new Set<string>();
+
+	// Every label the db holds, keyed by the file's path counting from the top of the repo, asked
+	// for once at launch beside the listing. The kind and the tags on every file come from here,
+	// never from the file's own block: the db is what the list filters from.
+	labels_in_db = new Map<string, Label[]>();
 
 	// Said whenever a guide moves from one path to another, with where it sat and where it now
 	// sits. Whatever keeps track of which guide is being read hands in its own answer here, so
@@ -170,6 +175,24 @@ class Files {
 		this.hierarchy.relabel(guide, labels, tag_names);
 		this.renarrow();
 		debug.log(`Guide "${key_of(guide)}" relabeled: kind "${labels.kind}", title "${labels.title}", ${tag_names.length} tag(s) — the list was worked out again.`);
+	}
+
+	/**
+	 * Put one guide's kind and tags in the db: what changed against the record goes on or comes
+	 * off, one write each, and what stayed is not touched. Nothing is written to the file. The
+	 * record itself is not changed here — `relabel` does that, once the caller knows every write
+	 * went. Says whether they all did, and if not, the first refusal.
+	 */
+	async write_labels(guide: File, kind: string, tags: string[]): Promise<Saved> {
+		const where = file_path_of(guide.bundle, guide.path);
+		const { on, off } = label_changes(guide.kind, this.hierarchy.tag_names_of(guide.id), kind, tags);
+		const answers = await Promise.all([
+			...off.map(([name, value]) => remove_label(where, name, value)),
+			...on.map(([name, value]) => add_label(where, name, value)),
+		]);
+		const refused = answers.find((one) => !one.ok);
+		debug.log(`Labels in the db for "${where}": ${on.length} put on, ${off.length} taken off — kind "${guide.kind}" to "${kind}", tags [${this.hierarchy.tag_names_of(guide.id).join(', ')}] to [${tags.join(', ')}]${refused ? `. REFUSED — ${refused.why}` : ''}.`);
+		return refused ?? { ok: true, why: '' };
 	}
 
 	/**
@@ -451,6 +474,12 @@ class Files {
 			return null;
 		}
 
+		// Its kind and its tags go into the db as well, since that is what the list filters from.
+		const in_db = await Promise.all([add_label(where, 'kind', kind), ...tags.map((tag) => add_label(where, 'tag', tag))]);
+		const refused = in_db.find((one) => !one.ok);
+		if (refused) { show_status(`"${name}" was made, but its labels are not in the db — ${refused.why}`); }
+		debug.log(`Making "${name}": ${in_db.length} label(s) written to the db${refused ? ` — one was REFUSED: ${refused.why}` : ''}.`);
+
 		const address = address_of_file(renamed_path(path_of_address(guide.address), name));
 		const made = this.hierarchy.add_file(guide.bundle, path, name, address, {
 			kind, title: name, description: '', use_when: [], date: today(), labeled: true,
@@ -636,7 +665,10 @@ class Files {
 		// what a link between two collections needs in order to be followed.
 		const shared_top = this.hierarchy.folder_at(T_Bundle.mono, '', T_Bundle.mono);
 
-		const on_disk = await files_on_disk();
+		// The listing and every label, asked for together: the list needs the first, the filters
+		// the second, and neither waits on the other.
+		const [on_disk, in_db] = await Promise.all([files_on_disk(), labels_on_disk()]);
+		this.labels_in_db = in_db;
 		if (on_disk.paths.length === 0) {
 			this.w_no_server.set(true);
 			debug.log('Guides: the dispatcher did not answer, so there are no files to show — it is the only thing that knows what is on disk.');
@@ -672,7 +704,7 @@ class Files {
 		this.hierarchy.reindex();
 		this.renarrow();
 		this.w_listed.set(true);
-		debug.log(`Listed: ${hung.length} files hung under their folders ${Math.round(performance.now() - began)} ms after the listing was asked for, ${skipped} index files left out — the list can draw. Their labels are read next, ${IN_FLIGHT} at a time.`);
+		debug.log(`Listed: ${hung.length} files hung under their folders ${Math.round(performance.now() - began)} ms after the listing was asked for, ${skipped} index files left out — the list can draw. The db holds labels on ${in_db.size} file(s). Their titles are read next, ${IN_FLIGHT} at a time.`);
 		void this.read_all(hung, read_first(), skipped, began);
 	}
 
@@ -759,13 +791,33 @@ class Files {
 		if (!has_labels(text)) {
 			debug.log(`Guides: "${where}" carries no labels. It is left as it is and will be given some the first time it is opened for editing.`);
 		}
-		const { labels, tags } = labels_from(text, where);
-		this.hierarchy.relabel(guide, { ...labels, title: labels.title || guide.name }, tags, false);
+		const { labels } = labels_from(text, where);
+		// The kind and the tags are the db's, never the file's: whatever the block still says of
+		// them is passed over, since the db is what the list filters from.
+		const { kind, tags } = this.kind_and_tags_in_db(guide);
+		this.hierarchy.relabel(guide, { ...labels, kind, title: labels.title || guide.name }, tags, false);
 		guide.size = text.length;
 		// The one moment this file's whole text is in hand. What it points at is taken out of it
 		// here; where those links lead is worked out once every guide has been read.
 		this.links_from.set(where, addresses_in(text));
 		return { read: 1, failed: 0, unlabeled: labels.labeled ? 0 : 1, bytes: text.length };
+	}
+
+	/**
+	 * What the db says one file is: its kind, and the tags on it that are on the closed list. A
+	 * file the db holds nothing for has no kind and no tags, whatever its own block says. A tag
+	 * not on the closed list is passed over and said so, the same as it was when read off a file.
+	 */
+	private kind_and_tags_in_db(guide: File): { kind: string; tags: string[] } {
+		const where = file_path_of(guide.bundle, guide.path);
+		const known = this.labels_in_db.get(where) ?? [];
+		const kind = known.find((one) => one.name === 'kind')?.value ?? '';
+		const named = known.filter((one) => one.name === 'tag').map((one) => one.value);
+		const tags = named.filter((tag) => ALL_TAGS.includes(tag));
+		if (tags.length < named.length) {
+			debug.log(`Guide "${where}": the db holds ${named.length - tags.length} tag(s) not on the closed list of ${ALL_TAGS.length}: ${named.filter((tag) => !ALL_TAGS.includes(tag)).join(', ')}. They are ignored.`);
+		}
+		return { kind, tags };
 	}
 
 	/**

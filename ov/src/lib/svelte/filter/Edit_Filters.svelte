@@ -206,8 +206,13 @@
 	});
 
 
-	/** Write the filters back, if any of them changed. */
-	function save_filters() {
+	/**
+	 * Write the filters back, if any of them changed. The kind and the tags go to the db first,
+	 * since that is what the list filters from; a refusal there stops before the file is touched.
+	 * The whole block still goes into the file as well, kind and tags included, until every file's
+	 * block has been stripped of those two lines — then the two lines stop being written.
+	 */
+	async function save_filters() {
 		if (text === '') { return; }
 		const use_when = form_use_when.split('\n').map((one) => one.trim()).filter((one) => one.length > 0);
 		const filters = { kind: form_kind, title: form_title, description: form_description, use_when, date: form_date, labeled: true };
@@ -215,6 +220,12 @@
 		if (whole === text) { return; }
 		const was   = text;
 		const where = file_path_of(guide.bundle, guide.path);
+		const in_db = await files.write_labels(guide, form_kind, form_tags);
+		if (!in_db.ok) {
+			onshow(`not saved — ${in_db.why}`);
+			debug.log(`Editing "${name}": the kind and tags were NOT written to the db — ${in_db.why}. The file is left alone.`);
+			return;
+		}
 		debug.log(`Editing "${name}": the filters changed — writing them to ${where}.`);
 		text = whole;                         // the words below are untouched, so no redraw
 		save_file(where, whole, was).then((answer) => {

@@ -39,5 +39,5 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [libraries.md](zone/architecture/libraries.md) — what a library is, and how a host takes one on: one alias and one bridge per library per host, nothing built on its own.
 - [library projects.md](zone/architecture/library%20projects.md) — the chain of libraries, each importing the one above it, and the proposal to make the code match it.
 - [big picture.md](zone/big%20picture.md) — one line per memory file holding unfinished work, across every project. Written by tools/big-picture.py, never by hand.
-- [learn.md](zone/learn.md) — past mistakes that apply across every project, distilled into rules. Each project keeps its own at the same place, made the day its first one is written.
+- [learn.md](memory/shared/zone/learn.md) — past mistakes that apply across every project, distilled into rules. Each project keeps its own at the same place, made the day its first one is written.
 - [claude code.md](zone/claude%20code.md) — where the toolkit actually runs; installing Claude Code.

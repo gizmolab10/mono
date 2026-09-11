@@ -25,7 +25,7 @@ Fable costs more than Jonathan can carry for all the hours he works each day. So
 
 **A second window is a second session** and remembers nothing. Work crosses only in files: the proposal, the log, the truths. Two rules make that crossing safe:
 
-- A proposal handed to Opus reads like the sweep proposal in [[drive]]: success criteria at the top, exact old-to-new pairs wherever possible, a list of what must not be touched.
+- A proposal handed to Opus reads like the sweep proposal in [[memory/shared/zone/drive]]: success criteria at the top, exact old-to-new pairs wherever possible, a list of what must not be touched.
 - When Opus fails twice at the same fault, it writes what it tried into the log and stops. Fable reads this before continuing.
 
 **Rejections go in the log.** Unfinished work is good evidence from which to improve collaboration and consistency across multiple sessions.

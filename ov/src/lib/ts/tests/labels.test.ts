@@ -1,7 +1,27 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_file, free_name, has_labels, kind_from_where, label_block, labels_for, labels_from, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_file, free_name, has_labels, kind_from_where, label_block, label_changes, labels_for, labels_from, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
 import { T_Kind } from '../types/File';
 import { describe, expect, it } from 'vitest';
 import type { Labels } from '../types/File';
+
+describe('the writes that take a file\'s kind and tags in the db from what they were to what they are', () => {
+	it('puts on what is new and takes off what is gone', () => {
+		expect(label_changes('explain', ['now', 'stale'], 'explain', ['now', 'soon']))
+			.toEqual({ on: [['tag', 'soon']], off: [['tag', 'stale']] });
+	});
+
+	it('swaps a kind that changed, and leaves one that stayed alone', () => {
+		expect(label_changes('explain', [], 'specify', []))
+			.toEqual({ on: [['kind', 'specify']], off: [['kind', 'explain']] });
+		expect(label_changes('explain', ['now'], 'explain', ['now'])).toEqual({ on: [], off: [] });
+	});
+
+	it('gives a file with no kind one without taking anything off, and takes one away to none', () => {
+		expect(label_changes('', [], 'analyze', ['now']))
+			.toEqual({ on: [['kind', 'analyze'], ['tag', 'now']], off: [] });
+		expect(label_changes('analyze', ['now'], '', []))
+			.toEqual({ on: [], off: [['kind', 'analyze'], ['tag', 'now']] });
+	});
+});
 
 // A file added since the app last looked carries no labels at all. One is
 // composed from its own words and marked for a person to look at.

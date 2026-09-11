@@ -16,6 +16,8 @@ import urllib.request
 import urllib.error
 import urllib.parse
 
+import database   # the db beside this file: the labels on ov's files, and what else they do not say
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 GITHUB_DIR = os.path.expanduser('~/GitHub/mono')
@@ -357,6 +359,161 @@ def is_listed_note(where):
         return True
     return len(tail) == 2 and tail[0].lower() in WORK_FOLDERS
 
+def listed_files():
+    """Every file the overview app lists, on disk right now: the repo's own place on this machine,
+    and each file's path counting from the top of the repo, sorted. Index files are left in, since
+    the app decides what to skip."""
+    root = os.path.realpath(GITHUB_DIR)
+    found = []
+    for collection in COLLECTIONS:
+        # The work folder gives up what sits at its very top — the handoff, the debt,
+        # the journal, the working features — and what sits one folder down inside the
+        # five named here. Those are the ones a guide links to. Anything deeper, and
+        # any other folder, stays out.
+        #
+        # Overview draws the same line for itself, in `site_of_file`. The two have to
+        # agree: a file sent from here that it will not place is read and thrown away.
+        work = os.path.join(root, 'memory', collection or 'shared', 'zone', 'work')
+        if os.path.isdir(work):
+            for one in sorted(os.listdir(work)):
+                whole = os.path.join(work, one)
+                if one.endswith('.md') and os.path.isfile(whole):
+                    found.append(os.path.relpath(whole, root))
+                elif os.path.isdir(whole) and one.lower() in WORK_FOLDERS:
+                    for deeper in sorted(os.listdir(whole)):
+                        inside_one = os.path.join(whole, deeper)
+                        if deeper.endswith('.md') and os.path.isfile(inside_one):
+                            found.append(os.path.relpath(inside_one, root))
+        # The collection's CLAUDE file — its entry point — sits at its very top,
+        # spelled CLAUDE.MD or CLAUDE.md depending on the project. Listed here so
+        # the overview app can show it.
+        top_dir = os.path.join(root, collection) if collection else root
+        if os.path.isdir(top_dir):
+            for one in sorted(os.listdir(top_dir)):
+                if one.lower() == 'claude.md' and os.path.isfile(os.path.join(top_dir, one)):
+                    found.append(os.path.relpath(os.path.join(top_dir, one), root))
+    # The memory system sits at the top of the repo and belongs to no collection.
+    # Every file inside it is listed, however deep it sits — except a project's own
+    # zone/work, which the walk above has already listed, depth-limited, as work notes.
+    memory = os.path.join(root, 'memory')
+    if os.path.isdir(memory):
+        for here, folders, files in os.walk(memory):
+            folders[:] = [f for f in folders if not f.startswith('.')]
+            if os.path.basename(here) == 'zone' and os.path.dirname(os.path.dirname(here)) == memory:
+                folders[:] = [f for f in folders if f != 'work']
+            for one in files:
+                if one.endswith('.md'):
+                    found.append(os.path.relpath(os.path.join(here, one), root))
+    found.sort()
+    return root, found
+
+def label_block(text):
+    """The lines between the first row of three dashes and the next, and which line the closing
+    dashes stand on. Nothing, and -1, for a file with no block."""
+    lines = text.split('\n')
+    if not lines or lines[0].strip() != '---':
+        return [], -1
+    for at in range(1, len(lines)):
+        if lines[at].strip() == '---':
+            return lines[1:at], at
+    return [], -1
+
+def labels_in_text(text):
+    """The kind and the tags a file's own label block says, each None where the block has no
+    such line. The tags come in either shape: `tags: [a, b]` on the one line, which the overview
+    app writes, or one name to a line under a bare `tags:`, which Obsidian writes."""
+    block, _ = label_block(text)
+    kind, tags = None, None
+    for at, line in enumerate(block):
+        if line.startswith('kind:'):
+            kind = line[len('kind:'):].strip().strip('"').strip("'")
+        elif line.startswith('tags:'):
+            inside = line[len('tags:'):].strip()
+            if inside.startswith('['):
+                tags = [one.strip() for one in inside.strip('[]').split(',') if one.strip()]
+            else:
+                tags = []
+                for below in block[at + 1:]:
+                    if not re.match(r'^\s+-\s', below):
+                        break
+                    name = re.sub(r'^\s+-\s*', '', below).strip()
+                    if name:
+                        tags.append(name)
+    return kind, tags
+
+def without_kind_and_tags(text):
+    """The file's text with the kind line and the tags line taken out of its label block, the
+    names listed one to a line under a bare `tags:` going with them. Every other line stays
+    exactly as it is, and a file with no block comes back untouched."""
+    block, ends_at = label_block(text)
+    if ends_at < 0:
+        return text
+    kept = []
+    below_tags = False
+    for line in block:
+        if line.startswith('kind:'):
+            below_tags = False
+            continue
+        if line.startswith('tags:'):
+            below_tags = not line[len('tags:'):].strip().startswith('[')
+            continue
+        if below_tags and re.match(r'^\s+-\s', line):
+            continue
+        below_tags = False
+        kept.append(line)
+    return '\n'.join(['---', *kept, *text.split('\n')[ends_at:]])
+
+def scan_labels():
+    """Read every listed file's own label block into the db: the kind and the tags it says become
+    its hand labels, on a row made from the disk. A file whose block says neither keeps what the
+    db holds. Nothing in any file changes. Answers the counts."""
+    root, paths = listed_files()
+    files, kinds, tags, no_block, unreadable = 0, 0, 0, 0, 0
+    for where in paths:
+        full = os.path.join(root, where)
+        try:
+            with open(full, 'r') as f:
+                text = f.read()
+        except Exception:
+            unreadable += 1
+            continue
+        files += 1
+        kind, named = labels_in_text(text)
+        if kind is None and named is None:
+            no_block += 1
+            continue
+        database.record_file(where, full, kind, named)
+        kinds += 1 if kind is not None else 0
+        tags += len(named) if named is not None else 0
+    return {'files': files, 'kinds': kinds, 'tags': tags, 'no_block': no_block, 'unreadable': unreadable}
+
+def strip_labels():
+    """Take the kind line and the tags line out of every listed file's label block, once the db
+    holds that file: a file the db has no labels for is passed over, so nothing is lost. Title,
+    description, use_when and date stay in the file. Answers the counts."""
+    root, paths = listed_files()
+    known = database.all_labels()
+    changed, untouched, unscanned, unreadable = 0, 0, 0, 0
+    for where in paths:
+        if where not in known:
+            unscanned += 1
+            continue
+        full = os.path.join(root, where)
+        try:
+            with open(full, 'r') as f:
+                text = f.read()
+        except Exception:
+            unreadable += 1
+            continue
+        stripped = without_kind_and_tags(text)
+        if stripped == text:
+            untouched += 1
+            continue
+        with open(full, 'w') as f:
+            f.write(stripped)
+        changed += 1
+    return {'changed': changed, 'untouched': untouched, 'unscanned': unscanned, 'unreadable': unreadable}
+
 def is_skippable_deploy(deploy):
     """Check if a deploy should be skipped (canceled or failed build)."""
     state = deploy.get('state', '').lower()
@@ -432,6 +589,28 @@ class APIHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
+
+    def _note_place(self, where, must_exist):
+        """Where a note named from the top of the repo sits, for the label routes: its path
+        counting from the top of the repo, which is what the db keys on, and its full place on
+        this machine. The same refusals as reading one -- it has to be one of the files the app
+        lists, and it has to sit inside the repo -- and, where asked, it has to be there. Every
+        refusal is sent from here, and None comes back."""
+        if not where:
+            self._send_response(400, {'success': False, 'error': 'no file named'})
+            return None
+        if not is_listed_note(where):
+            self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
+            return None
+        full = os.path.realpath(where if os.path.isabs(where) else os.path.join(GITHUB_DIR, where))
+        root = os.path.realpath(GITHUB_DIR)
+        if not full.startswith(root + os.sep):
+            self._send_response(409, {'success': False, 'error': 'outside the repo'})
+            return None
+        if must_exist and not os.path.isfile(full):
+            self._send_response(404, {'success': False, 'error': f'no such file: {where!r}'})
+            return None
+        return os.path.relpath(full, root), full
 
     def do_GET(self):
         if self.path == '/rebuild-status':
@@ -517,51 +696,32 @@ class APIHandler(BaseHTTPRequestHandler):
             # without the dev server being restarted. Each answer is a path counting from the
             # top of the repo; index files are left in, since the app decides what to skip.
             try:
-                root = os.path.realpath(GITHUB_DIR)
-                found = []
-                for collection in COLLECTIONS:
-                    # The work folder gives up what sits at its very top — the handoff, the debt,
-                    # the journal, the working features — and what sits one folder down inside the
-                    # five named here. Those are the ones a guide links to. Anything deeper, and
-                    # any other folder, stays out.
-                    #
-                    # Overview draws the same line for itself, in `site_of_file`. The two have to
-                    # agree: a file sent from here that it will not place is read and thrown away.
-                    work = os.path.join(root, 'memory', collection or 'shared', 'zone', 'work')
-                    if os.path.isdir(work):
-                        for one in sorted(os.listdir(work)):
-                            whole = os.path.join(work, one)
-                            if one.endswith('.md') and os.path.isfile(whole):
-                                found.append(os.path.relpath(whole, root))
-                            elif os.path.isdir(whole) and one.lower() in WORK_FOLDERS:
-                                for deeper in sorted(os.listdir(whole)):
-                                    inside_one = os.path.join(whole, deeper)
-                                    if deeper.endswith('.md') and os.path.isfile(inside_one):
-                                        found.append(os.path.relpath(inside_one, root))
-                    # The collection's CLAUDE file — its entry point — sits at its very top,
-                    # spelled CLAUDE.MD or CLAUDE.md depending on the project. Listed here so
-                    # the overview app can show it.
-                    top_dir = os.path.join(root, collection) if collection else root
-                    if os.path.isdir(top_dir):
-                        for one in sorted(os.listdir(top_dir)):
-                            if one.lower() == 'claude.md' and os.path.isfile(os.path.join(top_dir, one)):
-                                found.append(os.path.relpath(os.path.join(top_dir, one), root))
-                # The memory system sits at the top of the repo and belongs to no collection.
-                # Every file inside it is listed, however deep it sits — except a project's own
-                # zone/work, which the walk above has already listed, depth-limited, as work notes.
-                memory = os.path.join(root, 'memory')
-                if os.path.isdir(memory):
-                    for here, folders, files in os.walk(memory):
-                        folders[:] = [f for f in folders if not f.startswith('.')]
-                        if os.path.basename(here) == 'zone' and os.path.dirname(os.path.dirname(here)) == memory:
-                            folders[:] = [f for f in folders if f != 'work']
-                        for one in files:
-                            if one.endswith('.md'):
-                                found.append(os.path.relpath(os.path.join(here, one), root))
-                found.sort()
+                root, found = listed_files()
                 # The repo's own place on this machine goes back too, since the app reads each
                 # file by its full place and has nothing else to work it out from.
                 self._send_response(200, {'success': True, 'root': root, 'paths': found})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/labels':
+            # Every label the db holds on one file, for the overview app: /labels?where=<path>
+            # Each is a name (kind or tag), a value, and who made it: hand, rule or ai. A file
+            # the db has no row for answers an empty list, not a refusal.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                placed = self._note_place(params.get('where', [''])[0], must_exist=False)
+                if not placed:
+                    return
+                where, _ = placed
+                self._send_response(200, {'success': True, 'labels': database.labels_of(where)})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/all-labels':
+            # Every label on every file, for the overview app, in one answer: each file's path
+            # from the top of the repo, and its labels. One ask at launch in place of one per file.
+            try:
+                self._send_response(200, {'success': True, 'labels': database.all_labels()})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -925,6 +1085,78 @@ class APIHandler(BaseHTTPRequestHandler):
                     return
                 os.remove(full)
                 self._send_response(200, {'success': True, 'path': full})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/add-label':
+            # Write one label on a file, in the db and never in the file, for the overview app.
+            # /add-label?where=<path from the top of the repo>. The body is JSON:
+            # {"name": "kind" or "tag", "value": <the kind or the tag>, "made_by": hand, rule or ai}
+            # made_by is hand when left out. The file has to be there: its row in the db is made
+            # from what is on disk. The same label written twice leaves one row.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                placed = self._note_place(params.get('where', [''])[0], must_exist=True)
+                if not placed:
+                    return
+                where, full = placed
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode())
+                name, value, made_by = sent.get('name'), sent.get('value'), sent.get('made_by', 'hand')
+                if not isinstance(name, str) or not name or not isinstance(value, str) or not value:
+                    self._send_response(400, {'success': False, 'error': 'name and value must both be sent'})
+                    return
+                if made_by not in database.MADE_BY:
+                    self._send_response(400, {'success': False, 'error': f'made_by must be one of {list(database.MADE_BY)}, not {made_by!r}'})
+                    return
+                database.add_label(where, full, name, value, made_by)
+                self._send_response(200, {'success': True, 'path': where})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/remove-label':
+            # Take one label off a file, whoever made it, for the overview app.
+            # /remove-label?where=<path from the top of the repo>. The body is JSON:
+            # {"name": "kind" or "tag", "value": <the kind or the tag>}
+            # Answers how many rows went: none, for a label that was not there.
+            try:
+                params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                placed = self._note_place(params.get('where', [''])[0], must_exist=False)
+                if not placed:
+                    return
+                where, _ = placed
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode())
+                name, value = sent.get('name'), sent.get('value')
+                if not isinstance(name, str) or not name or not isinstance(value, str) or not value:
+                    self._send_response(400, {'success': False, 'error': 'name and value must both be sent'})
+                    return
+                removed = database.remove_label(where, name, value)
+                self._send_response(200, {'success': True, 'path': where, 'removed': removed})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/scan':
+            # Read every listed file's own label block into the db, for the overview app: /scan
+            # The kind and the tags a file says become its hand labels, its row made from the
+            # disk. A file saying neither keeps what the db holds. Nothing in any file changes.
+            try:
+                self._send_response(200, {'success': True, **scan_labels()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/strip-labels':
+            # Take the kind line and the tags line out of every listed file's label block, once the
+            # db holds that file: /strip-labels, with the JSON body {"confirm": "strip"}. Title,
+            # description, use_when and date stay in the file. Every file is rewritten on this
+            # machine, so the word is asked for: without it, nothing is touched.
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                if sent.get('confirm') != 'strip':
+                    self._send_response(400, {'success': False, 'error': 'send {"confirm": "strip"} to rewrite every file'})
+                    return
+                self._send_response(200, {'success': True, **strip_labels()})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

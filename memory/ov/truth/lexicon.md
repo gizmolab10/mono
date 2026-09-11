@@ -46,4 +46,5 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 ## Everything else
 
 - **dispatcher** — the small server that reads and writes files on this machine. Never *local server*, never *backend*.
+- **db** — the SQLite file beside the dispatcher, `tools/hub/ov.db`, holding what the files do not say about themselves: files, labels, sources, rules. Only the dispatcher reads and writes it. A label there is one kind or one tag on one file, with who made it: hand, rule or ai. Never *database* in prose, never *store*.
 - **ladder** — the nine increments every set of constants can define, smallest first: micro, faint, tiny, small, normal, big, fat, huge, pill. Sets can define only some of the increments.

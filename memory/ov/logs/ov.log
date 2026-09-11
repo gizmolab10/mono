@@ -6,3 +6,15 @@ $ vite
 
   ➜  Local:   http://localhost:5183/
   ➜  Network: use --host to expose
+5:36:47 PM [vite] (client) page reload src/lib/ts/utilities/Saving.ts
+5:36:51 PM [vite] (client) page reload src/lib/ts/utilities/Labels.ts
+5:37:06 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:10 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:19 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:23 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:26 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:29 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:32 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:37 PM [vite] (client) page reload src/lib/ts/managers/Files.ts
+5:37:48 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+5:37:53 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte

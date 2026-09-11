@@ -7,7 +7,8 @@ date: 25 August 2026
 ---
 # Ideas
 
-write a proposal for JUST the first unchecked item (ignore all the others) to the top of drive. success criteria at the top.
+- [ ] read and execute [[memory/ov/zone/drive]]
+- [ ] write a proposal for JUST the first unchecked item (ignore all the others) to the top of [[memory/ov/zone/drive]]. success criteria at the top.
 
 ## why ov?
 

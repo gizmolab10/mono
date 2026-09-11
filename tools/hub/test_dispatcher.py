@@ -174,6 +174,19 @@ check('a work note passes the throwing-away guard', said.get('error'), 'no such 
 code, said = tell('/delete-guide', {}, where='memory/di/zone/work/milestones/33.drag/handoff.md')
 check('a work note sitting deeper is refused a throwing-away', code, 409)
 
+# --- the labels in the db -----------------------------------------------------
+#
+# Nothing is written here: the real db is the running dispatcher's. The write and the read
+# back are proved against a db of their own in test_database.py. This only proves the
+# running dispatcher answers for labels at all.
+
+code, said = ask('/labels', where='memory/ov/zone/work/current context.md')
+check('the labels on a work note are read', code, 200)
+check('the labels come as a list', isinstance(said.get('labels'), list), True)
+
+code, said = ask('/labels', where='ov/src/lib/main.css')
+check('labels on anything that is not a note are refused', code, 409)
+
 # --- say how it went ---------------------------------------------------------
 
 for one in passed:
