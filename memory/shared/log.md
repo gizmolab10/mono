@@ -2,6 +2,11 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 12 September 2026
+
+- D: zone/learn.md gained twelve raw entries, 9 to 20, the reasons for Jonathan's edits of ov's plan on 11 and 12 September: the issue first, a risk as what a step avoids, error not slip, one idea per bullet, label stays, configuration against choice or option, question substeps in bold, one numbered list, gather then remove redundancy, headings that say their subject, a file named for what the reader does, and an answer where its question is. Three reasons are marked as guesses
+- D: lexicon's label entry rewritten: a name and a value on a file with who wrote it, a row in the db beside the dispatcher, never a line in the file since 10 September, never the screen's text beside a control. kind says six with music, tag says any number from a closed list, brief says a field on the file's row. Decided in ov over nine other words, the pacs in memory/ov/truth/decisions.md
+
 ## 9 September 2026
 
 - I: collision recorded in zone/collisions.md. The lexicon's never bar fired inside address bar, a standard technical term rule 2 now allows

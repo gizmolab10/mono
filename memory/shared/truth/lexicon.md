@@ -32,10 +32,10 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **guide** — a file in a project's `notes/guides/`, under `memory/`. Living reference; it holds decisions, not work.
 - **work note** — a file in a project's `notes/work/`, under `memory/`. What is being done now.
 - **collection** — one project's whole set of files: mono, di, ji, ov, ga, me.
-- **labels** — the five lines at the top of a file: kind, title, description, tags, date.
-- **kind** — the first label, saying what sort of file it is. Five exist: howto, specify, explain, arch, analyze.
-- **tag** — a word in the labels saying what the file is about.
-- **brief** — the description label. One sentence.
+- **label** — a name and a value on a file, with who wrote it, hand, rule or ai: a row in the db beside the dispatcher, never a line in the file since 10 September 2026. For a markdown file, its kind and each of its tags. For a song, its artist, album and title. Never the screen's text beside a control, which this word does not name here. Decided 12 September 2026, over key, trait, field, aspect, attribute, fact, property, tuple and kvp.
+- **kind** — the label saying what sort of file it is, one per file. Six exist: analyze, arch, explain, howto, music, specify.
+- **tag** — a label saying what the file is about, any number per file, from a closed list.
+- **brief** — the description, one sentence, a field on the file's row in the db.
 - **map** — a project's file map. Read it instead of discovering files using regex and wildcards; update it when files move.
 - **index** — the list of what a folder holds. Update it when files come or go.
 - **handoff** — current status and the one **Next** action. Read first each session.
