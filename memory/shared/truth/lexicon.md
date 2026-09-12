@@ -96,7 +96,7 @@ The [banned words](conventions.md#banned-words) turned the right way round — t
 - **more work** — the next step is heavier than this one. Never *a heavy lift* as an estimate. "Does the heavy lifting" — does most of the work — keeps its words.
 - **easy to misuse** — the shape invites the mistake. Never *footgun*.
 - **plugin architecture** — the shared storage interface. Never *seam*.
-- **global** — belonging to every project. Never *cross-project*, never *main* — main is only the git branch.
+- **global** — belonging to every project. Never *cross-project*.
 - **drifted** — moved off true over time. Never *slid*.
 - **who does what** — the division of labor. Never *split*.
 - **useless cruft** — what is there and does nothing. Never *padded*.

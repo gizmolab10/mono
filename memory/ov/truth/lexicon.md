@@ -22,6 +22,9 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **clickable** — the pill button standing on a separator that folds the section below it away, and says what it hides while folded. Not: any other button; not a word in the file's contents.
 - **information rows** — the rows of the editor's label form holding title, date, brief, use when, authors and from. Not: the kinds row, the tag rows.
 - **rule** — a row in the db the dispatcher runs on every file added or changed: what it reads, the file's name, its location or its content, the regex it matches, and the label it gives, a kind or a tag. A rule never changes or removes a label a person put on.
+- **kb** — the library extracted from ov, which mu and ai import: the files list, the filter sections, the operation view, the details column, the drop box, the db and the dispatcher's watcher. ov stays as it is, the reference kb is tested against.
+- **plugin** — a specialty's code in the dispatcher, `plugin.py` in the host's folder, imported from the folder the collection's row names. It reads and writes: its listing rule says which files under the root are listed, it fills a file's labels when the file is added or changed, and it carries the specialty's own routes. Never *reader*.
+- **specialty** — the schema, and the code, an app that imports kb brings: its collections, its keys, its plugin, its hierarchies and its operation view. mu brings music, ai brings the memory system's markdown files. kb never adds one of its own. Never *schema* on its own for this.
 - **sources** — a file's authors and where it came from, a url or a person, with a date: rows in the db, one per author. Never *provenance* in prose.
 - **pill** — a control shaped as a rounded lozenge.
 - **tagset** — one area of tags standing as a single pill. Never *area pill*.
@@ -40,5 +43,6 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 ## Everything else
 
 - **dispatcher** — the small server that reads and writes files on this machine. Never *local server*, never *backend*.
-- **db** — the SQLite file beside the dispatcher, `tools/hub/ov.db`, holding what the files do not say about themselves: files, labels, sources, rules. Only the dispatcher reads and writes it. A label there is one kind or one tag on one file, with who made it: hand, rule or ai. Never *database* in prose, never *store*.
+- **threaded server** — python's ThreadingHTTPServer in http.server, which answers each request in a thread of its own, where HTTPServer, the dispatcher's base today, answers one at a time. Its request threads are daemon, so an exit is not held by one.
+- **db** — the SQLite file beside the dispatcher, `tools/hub/ov.db`, holding what the files do not say about themselves: files, labels, sources, rules. Only the dispatcher reads and writes it. A label there is one kind or one tag on one file, each row saying who wrote this: hand, rule or ai, the column the code calls made_by. Never *database* in prose, never *store*.
 - **ladder** — the nine increments every set of constants can define, smallest first: micro, faint, tiny, small, normal, big, fat, huge, pill. Sets can define only some of the increments.

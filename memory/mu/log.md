@@ -2,6 +2,10 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 11 September 2026
+
+- D: the library is the volume /Volumes/muice myoozk, NTFS over USB, 18,219 files, mostly flac, mp4 and vob, in truth/design.md. The plan for reading it is ov's, in memory/ov/zone/music and ai.md, music first
+
 ## 9 September 2026
 
 - D: the outer div's class is app, not frame, in App.svelte. Check clean

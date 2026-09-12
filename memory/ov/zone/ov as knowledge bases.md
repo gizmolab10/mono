@@ -8,11 +8,7 @@ Every company ends up with knowledge nobody can find. i asked how they organize 
 
 Each phase ending with something to look at:
 
-- [ ] 8. AI suggestions. Ends with: with the checkbox on, the editor shows suggestions, and accepting one adds it.
-    - [ ] stub this out, it will be fleshed out by ji
-- [ ] 7. read the music files
-    - [ ] add a kind 'music'
-    - [ ] assign kind 'music' to each
+- 7. read the music files: moved to [music and ai](music%20and%20ai.md), 10 September 2026, with the three decisions it needs first.
 - [x] 6. Rules. Ends with: a file added to a truth folder shows its project and kind without typing either.
     - Built 10 September 2026. The rules table holds what a rule reads, the file's name, its location or its content, the regex it matches, and the label it gives, a kind or a tag. The dispatcher runs every rule on every file changed or new at each look, and on every file when a rule is added or taken away: a file's rule labels are made exactly what the rules give, hand labels never touched, and a file no rule hits gets no row. A hand kind wins over a rule kind in ov, and the tags are both together. The details column gained a rules section to list, add and take away rules, and the list is relabeled from the db after each. No rule is written yet: the truth folders hold kinds of every sort (arch 55, howto 36, explain 33, specify 33), so which kind a truth file gets is Jonathan's rule to write there. 114 checks in `test_database.py`, the truth rule among them on a repo made for the run.
 - [x] 5. The authors and provenance rows. Ends with: the editor shows both.
@@ -35,7 +31,6 @@ Each phase ending with something to look at:
 - [x] 3. A file moved or edited in Finder keeps its tags in ov.
 - [x] 4. Every file in ov shows its authors and where it came from.
 - [x] 5. A file new to ov gets kinds and tags from its name, location and content, with nothing typed by hand.
-- [ ] 6. With AI suggestions turned on, a file shows suggested kinds and tags, and none is applied until i accept it.
 
 #### new features
 
@@ -50,20 +45,21 @@ Each phase ending with something to look at:
 
 ### Design
 
-1. **One db, on disk.** A SQLite file next to the dispatcher (a whole database in one file, read by a standard library). Only the dispatcher reads and writes it. Not the browser's local storage, which is tied to one browser, capped at a few megabytes, and erased with the browser's data.
-2. **Four tables.**
+1. **One db, on disk.** A SQLite file next to the dispatcher (a whole database in one file, read by a standard library). Only the dispatcher's own module, `database.py`, reads and writes it: the dispatcher through its routes, and the three tools that import that module, `inject-always.sh`, `test-always-tag.sh` and `big-picture.py`, since 10 September 2026. Not the browser's local storage, which is tied to one browser, capped at a few megabytes, and erased with the browser's data. The file is git-ignored and has no backup yet: a saved file before every change to it and a plain-text dump in git are planned in [music and ai](music%20and%20ai.md), step 3a.
+2. **Four tables**, and a fifth, collections, planned in [music and ai](music%20and%20ai.md): a name, the specialty's name, the host's folder, and a root folder on the disk, every path relative to that root.
     - files:
         - collection
         - path
         - size
         - modified date
+        - missing mark (the file is gone from the disk and the row kept, since 10 September 2026)
         - all the remaining labels each in their own field:
             - title
             - description
             - use_when (the occasions the file is read on, several, kept as one csv field)
             - date (the last real change, the one the block carried, apart from the modified date above, which the disk says)
         - fingerprint (a short code computed from a file's bytes; same bytes, same code).
-    - labels — One row per kind or tag (made by: hand, rule or AI):
+    - labels — One row per kind or tag, each saying who wrote this: hand, rule or ai, the column the code calls made_by:
         - file
         - name
         - value
@@ -78,13 +74,14 @@ Each phase ending with something to look at:
         - label it gives (name and value)
 3. **Files stay where they are.** ov already reads them in place through the dispatcher; the db keeps only the path.
 4. **Labels leave the files.** The labels at the top of each markdown file move into the db, and OKF changes to match.
-5. **Noticing changes.** The dispatcher looks at the disk every 3 seconds, and once more before every launch of ov: the listing, and a stat per file (called polling). Nothing on this machine reports changes as they happen without a package the dispatcher does not carry, neither fswatch nor watchdog, so the disk is asked, not told. At launch it rescans, for changes made while it was off. Built 10 September 2026, as the three rules below say.
+5. **Noticing changes.** The dispatcher looks at the disk every 3 seconds, and once more before every launch of ov: the listing, and a stat per file (called polling). Nothing on this machine reports changes as they happen without a package the dispatcher does not carry, neither fswatch nor watchdog, so the disk is asked, not told. At launch it rescans, for changes made while it was off. Built 10 September 2026, as the four outcomes below say.
     - same path, new fingerprint → content changed; update the row.
     - path gone, same fingerprint at a new path → moved; update the path, keep the labels.
-    - path gone, no match → missing; the files list shows it.
-6. **Authors and provenance.** Markdown files carry neither, so both are typed into two new information rows in the editor.
+    - path gone, no match → missing; the row is kept and the files list shows it, its name struck through.
+    - a missing row whose path is back → found; the mark comes off.
+6. **Authors and provenance.** Markdown files carry neither, so both are typed into two new information rows in the editor. Built 10 September 2026: authors, names separated by commas, and from, a url or a person, one row in the sources table per author, written when the field is left.
 7. **Labels from rules.** When a file is added or changes, the dispatcher runs every rule on it. Rule labels are recomputed each time. A rule never changes or removes a hand label. Built 10 September 2026: a rule's pattern is a regex tried against what it reads, the file's name, its location (its path from the top of the repo) or its content, read once and only when a rule asks. The rules run at every look at the disk on the files changed or new since they last ran, and on every file when a rule is added or taken away. A file no rule hits gets no row. In ov a hand kind wins over a rule kind, the tags are both together, and the rules are listed, added and taken away in the details column's rules section.
-8. **AI suggestions, optional.** A checkbox in the preferences section of details turns them on. When a file is added or changes, the dispatcher sends its content to AnythingLLM, the AI store ji uses, and saves the kinds and tags it suggests, made by AI. The editor shows them as suggestions; accepting one makes it a hand label. AI never changes or removes a hand label.
+8. **AI suggestions** went to the top of ji's ideas, 10 September 2026, words and all.
 
 ## the seven approaches
 

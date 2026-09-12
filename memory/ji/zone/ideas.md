@@ -4,6 +4,10 @@ write a proposal for the first unchecked item to the top of handoff.
 
 ## work
 
+- [ ] AI suggestions for ov's files, from ov's roadmap, 10 September 2026. Ends with: just a checkbox?
+    - With AI suggestions turned on, a file shows suggested kinds and tags, and none is applied until i accept it.
+    - A checkbox in the preferences section of details turns them on. When a file is added or changes, the dispatcher sends its content to AnythingLLM, the AI store ji uses, and saves the kinds and tags it suggests, made by AI. The editor shows them as suggestions; accepting one makes it a hand label. AI never changes or removes a hand label.
+    - The db beside the dispatcher, `tools/hub/ov.db`, already keeps a label's maker as hand, rule or ai, and ov already passes over ai rows until they are accepted.
 - [ ] Anything LLM -> sidebar db
     - [ ] per workspace and thread
     - [ ] small
