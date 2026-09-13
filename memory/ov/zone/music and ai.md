@@ -182,7 +182,7 @@ Both sides need these, so they lead whatever order the rest runs in.
                 - `all_labels` — every label on every file
                 - To keep both hooks working, those three must keep their names and answer as they do today
         - A breakdown will show at once using `test-always-tag.sh` — run after every save of database.py, before the next message.
-- [ ] 3. **One db per host, and the collections table.**
+- [x] 3. **One db per host, and the collections table.** Built 12 September 2026: `ov.db.before-step-3` saved, ports.json names `ov.db` under ov and `mu.db` under mu, `HOSTS` and `place_of` in database.py with every call taking a host and `open_db` given its file, the collections table with `collections`, `ensure_collections` and `add_collection`, the dispatcher's `host` parameter on every db route, `/collections` and `/add-collection`, and the look making a row per project, 14 on the day. A files row naming a collection the listing no longer has, memory/filter tree, 23 missing files, got no row. Proof: 157 checks in test_database.py with two dbs and 45 in test_dispatcher.py, the always test and big-picture clean, and ov's dump after against its dump before differs by the 14 collections rows alone, 1116 labels in each.
     - The four guards added during step 2 dropped the **risk** to low.
     - To begin, `ov.db` is duplicated as `tools/hub/ov.db.before-step-3`.
         - `PLACE`, `open_db` and `all_labels` keep their function names and answers

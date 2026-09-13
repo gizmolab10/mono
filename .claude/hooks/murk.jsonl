@@ -2001,3 +2001,7 @@
 {"timestamp":"2026-09-13T02:26:08Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"65","plain_words":""}
 {"timestamp":"2026-09-13T02:27:26Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"195","plain_words":""}
 {"timestamp":"2026-09-13T02:29:30Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"92","plain_words":""}
+{"timestamp":"2026-09-13T04:51:28Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"341","plain_words":""}
+{"timestamp":"2026-09-13T05:56:54Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"39","plain_words":""}
+{"timestamp":"2026-09-13T05:56:56Z","action":"complaint","word":"t","murky":"ng no longer has, memory/filter tree, 23 files all marked missing. It got no row. Say so if you want one.\n- The live suite made `mu.db` beside `ov.db` by asking for mu's collections. It is git-ignored like every db file there. `ov.sql` was rewritten by the dump and is yours to commit with the rest.\n\nStill not done and awaiting your go: ignoring `**/__pycache__/` and untracking the four .pyc files.","plain":"Adding one line to .gitignore so git skips every `__pycache__` folder, and telling git to stop tracking the four .pyc files it already holds. The files stay on disk. It needs your go because it changes what git tracks.","rule":"any-line","words":"341","plain_words":"39"}
+{"timestamp":"2026-09-13T05:57:26Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"38","plain_words":""}

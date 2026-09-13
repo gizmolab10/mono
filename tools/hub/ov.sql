@@ -1,4 +1,24 @@
 BEGIN TRANSACTION;
+CREATE TABLE collections (
+    id        INTEGER PRIMARY KEY,
+    name      TEXT NOT NULL UNIQUE,
+    specialty TEXT NOT NULL,
+    root      TEXT NOT NULL
+);
+INSERT INTO "collections" VALUES(1,'core','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(2,'di','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(3,'ga','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(4,'gallery','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(5,'ji','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(6,'lv','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(7,'ma','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(8,'me','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(9,'mj','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(10,'mu','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(11,'ov','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(12,'panel','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(13,'shared','ai','/Users/sand/GitHub/mono');
+INSERT INTO "collections" VALUES(14,'ws','ai','/Users/sand/GitHub/mono');
 CREATE TABLE files (
     id          INTEGER PRIMARY KEY,
     collection  TEXT NOT NULL,
@@ -162,9 +182,9 @@ INSERT INTO "files" VALUES(152,'mu','memory/mu/truth/design.md',1210,1.789189118
 INSERT INTO "files" VALUES(153,'mu','memory/mu/zone/ideas.md',451,1.78908988405608630183e+09,'262915e8febb1db4','mu ideas','mu''s live thinking — plans, research, considerations, ideas.','','2026-08-27',0);
 INSERT INTO "files" VALUES(154,'mu','memory/mu/zone/project goal.md',2615,1.78908988405677652358e+09,'85a08ea7bfc45b34','mu ideas','mu''s live thinking — plans, research, considerations, ideas.','','2026-08-27',0);
 INSERT INTO "files" VALUES(155,'mu','memory/mu/zone/questions.md',13,1.78908988405718421934e+09,'aaa0af4ee3f85ea3','mu questions','What is unanswered, one line each. A question leaves when a D: records its answer.','','2026-08-29',0);
-INSERT INTO "files" VALUES(156,'ov','memory/ov/log.md',59583,1789207407.09464,'f1518142a1799a7c','ov log','What ov decided, thought and reached, newest first; settled entries leave at each consolidation.','','2026-09-01',0);
+INSERT INTO "files" VALUES(156,'ov','memory/ov/log.md',64928,1.78926655544733023642e+09,'b1d37261f616cbbd','ov log','What ov decided, thought and reached, newest first; settled entries leave at each consolidation.','','2026-09-01',0);
 INSERT INTO "files" VALUES(157,'ov','memory/ov/truth/banned words.md',809,1.78908988405933046337e+09,'949abb936e8bd4cb','Banned Words (ov)','The words that cause friction in overview, each with the word to use instead.','','2026-07-31',0);
-INSERT INTO "files" VALUES(158,'ov','memory/ov/truth/decisions.md',40851,1.7892074021678915024e+09,'4b882d7500633305','Decisions','Live rationales, and the pac responses that weigh coming choices.','','',0);
+INSERT INTO "files" VALUES(158,'ov','memory/ov/truth/decisions.md',41151,1.78926635322352671625e+09,'614ca60718cae8c2','Decisions','Live rationales, and the pac responses that weigh coming choices.','','',0);
 INSERT INTO "files" VALUES(159,'ov','memory/ov/truth/design/action type.md',2791,1.78908988406714916227e+09,'8a7ad00f41d12798','new Action type','pass Separator more than one title','','2026-08-12',0);
 INSERT INTO "files" VALUES(160,'ov','memory/ov/truth/design/claude-files.md',1175,1.789089884068202734e+09,'d967ef0ef61a6726','CLAUDE files','How CLAUDE.md files are listed, placed, read, and written — and the three places that must agree.','dispatcher work, file listing, adding a kind of file the app shows, case or naming questions','24 August 2026',0);
 INSERT INTO "files" VALUES(161,'ov','memory/ov/truth/design/compose an email.md',2421,1.7890898840689091683e+09,'25f3895026641b1d','Compose an email','Handing a file on by mail: what the app opens, and why it does nothing on Windows.','','2026-08-17',0);
@@ -173,7 +193,7 @@ INSERT INTO "files" VALUES(163,'ov','memory/ov/truth/design/editing.md',5104,1.7
 INSERT INTO "files" VALUES(164,'ov','memory/ov/truth/design/okf — is it worth it?.md',406,1.78908988407051444051e+09,'12159d497fa5ccbf','OKF — is it worth it?','OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at t...','','2026-08-08',0);
 INSERT INTO "files" VALUES(165,'ov','memory/ov/truth/design/okf.md',14672,1.78909450902491331102e+09,'48c1e1b01500a4be','OKF — turning the guides into a knowledge bundle','OKF is an open format for curated knowledge: a folder of markdown files kept in version control, one concept per file, each with a small block of labels at t...','','2026-08-08',0);
 INSERT INTO "files" VALUES(166,'ov','memory/ov/truth/design/ov - goals.md',16613,1.78908988407205939291e+09,'d686eb4034a4d91f','ov — overview','A new project, ov — short for overview — that starts life as an empty room with good bones','','2026-08-08',0);
-INSERT INTO "files" VALUES(167,'ov','memory/ov/truth/lexicon.md',5565,1.78919317428564763066e+09,'7c3a10e86abb325b','ov lexicon','The exact words ov uses in prose, comments, log lines, and test names — the one home.','every ov session','29 August 2026',0);
+INSERT INTO "files" VALUES(167,'ov','memory/ov/truth/lexicon.md',5658,1.78927497537305903434e+09,'adaa4a0b592f0b84','ov lexicon','The exact words ov uses in prose, comments, log lines, and test names — the one home.','every ov session','29 August 2026',0);
 INSERT INTO "files" VALUES(168,'ov','memory/ov/truth/map of ov files.md',32516,1.78909312668040513995e+09,'2805f4e7481dbb50','Map of ov files','Every source file in overview, updated whenever files are added, moved, or removed.','','2026-08-22',0);
 INSERT INTO "files" VALUES(169,'ov','memory/ov/truth/working features.md',42291,1.78909312102176070217e+09,'84c9e34b31501822','Working features (ov)','Everything overview can do, newest first.','','2026-08-19',0);
 INSERT INTO "files" VALUES(170,'ov','memory/ov/zone/consolidate.md',7477,1.78908988407411956786e+09,'88409b04b65a2467','Consolidate the guides','What becomes of the 142 old guides in eight notes/guides folders: which enter truth, which fold into a truth that exists, which go to archive, which die.','','7 September 2026',0);
@@ -204,7 +224,7 @@ INSERT INTO "files" VALUES(194,'panel','memory/panel/log.md',1678,1.789089884088
 INSERT INTO "files" VALUES(195,'panel','memory/panel/truth/decisions.md',2751,1789089884.08905,'041273359384287e','panel decisions','Live rationales, and the pac responses that weigh coming choices.','','2026-09-09',0);
 INSERT INTO "files" VALUES(196,'panel','memory/panel/zone/ideas.md',8,1.78908988408951520922e+09,'25930e05a7c60415','Ideas','panel ideas. Append freely; triaged at every settle.','','2026-09-07',0);
 INSERT INTO "files" VALUES(197,'panel','memory/panel/zone/questions.md',126,1.789089884089897871e+09,'9fe9ec4b2fe16a6b','panel questions','What is unanswered, one line each. A question leaves when a D: records its answer.','','2026-09-07',0);
-INSERT INTO "files" VALUES(198,'shared','memory/shared/log.md',8049,1.78920525069480371473e+09,'dabf819ca24afe0a','shared log','What shared decided, thought and reached, newest first; settled entries leave at each consolidation.','','2026-09-01',0);
+INSERT INTO "files" VALUES(198,'shared','memory/shared/log.md',9419,1.78925476479658937456e+09,'964a6c241b4ef9f6','shared log','What shared decided, thought and reached, newest first; settled entries leave at each consolidation.','','2026-09-01',0);
 INSERT INTO "files" VALUES(199,'shared','memory/shared/truth/agency.md',4470,1.78908988409234070773e+09,'8cf3f3de65da5bcc','Agency','How the work itself is done: what to touch, what to prove, and what never to change unasked.','','2026-08-14',0);
 INSERT INTO "files" VALUES(200,'shared','memory/shared/truth/cases.md',575,1.78908988409352207177e+09,'e04c49a266a808e5','cases','Compressed stories of decided pacs — the deciding question, the d, what now holds.','','2026-08-31',0);
 INSERT INTO "files" VALUES(201,'shared','memory/shared/truth/collaborate/avoid murk.md',3649,1.78908988409452986718e+09,'1f491b6151cc7201','Murk','Writing that cannot be read: why its author cannot see it, and nine strategies for keeping it out.','','2026-08-17',0);
@@ -223,7 +243,7 @@ INSERT INTO "files" VALUES(213,'shared','memory/shared/truth/collaborate/workflo
 INSERT INTO "files" VALUES(214,'shared','memory/shared/truth/collaborate/write a journal.md',1543,1.78908988410519146925e+09,'dc89fc3698ff6ff5','Journals','The formatting rules for the running journal file.','','2026-05-10',0);
 INSERT INTO "files" VALUES(215,'shared','memory/shared/truth/conventions.md',19090,1.78908988410606670377e+09,'b9952a0fe9dfaec3','Conventions','How Jonathan wants Claude to work and speak, across all projects: the nine rules that must never be out of sight, how a reply is written, the conduct rules, and the words never to use.','','7 September 2026',0);
 INSERT INTO "files" VALUES(216,'shared','memory/shared/truth/create a project.md',5023,1.78908988410649585727e+09,'44d607228c59709f','Create a project','The steps to bring up a new project in the memory system, and in mono when it needs code.','creating a project, bringing up a new project, adding to memory','10 September 2026',0);
-INSERT INTO "files" VALUES(217,'shared','memory/shared/truth/decisions.md',88031,1.78908988410749912262e+09,'c158c4b2a9175ec6','Decisions','Live rationales, and the pac responses that weigh coming choices.','','',0);
+INSERT INTO "files" VALUES(217,'shared','memory/shared/truth/decisions.md',89979,1.78920783717134857177e+09,'55a9ebe1825236ed','Decisions','Live rationales, and the pac responses that weigh coming choices.','','',0);
 INSERT INTO "files" VALUES(218,'shared','memory/shared/truth/develop/add a file.md',2643,1.78909449102349495889e+09,'26bfbbdc5bb78334','Adding a Guide','Put a new guide where overview will find it, label it, and prove it arrived.','','2026-08-02',0);
 INSERT INTO "files" VALUES(219,'shared','memory/shared/truth/develop/aesthetics.md',5973,1.78908988410828733448e+09,'00e8d5970616f439','Aesthetics','Visual constants and patterns, arrived at by small perturbations rather than formulas.','','2026-05-10',0);
 INSERT INTO "files" VALUES(220,'shared','memory/shared/truth/develop/best practices.md',4248,1.78908988410873937609e+09,'344c45db9f8a1e1f','Best Practices (di)','The Svelte patterns di uses, and the rule about which reactive tool to reach for.','','2026-05-10',0);
@@ -252,7 +272,7 @@ INSERT INTO "files" VALUES(242,'shared','memory/shared/truth/gates.md',1139,1.78
 INSERT INTO "files" VALUES(243,'shared','memory/shared/truth/handbook.md',13324,1.7890898841209878921e+09,'359ef4e9697902d0','Handbook','The operating rules of the memory system. Every session loads this at start; every skill points here.','','',0);
 INSERT INTO "files" VALUES(244,'shared','memory/shared/truth/keywords.md',4336,1.78908988412226963036e+09,'7293931da8758717','Keywords','The words in a request that require reading a guide before acting.','','2026-05-10',0);
 INSERT INTO "files" VALUES(245,'shared','memory/shared/truth/kinds of tasks.md',1196,1.7890898841231503486e+09,'8aac7efc522e678a','Kinds of Tasks','Task types, the guides each one needs, and the conflicts between those guides.','','2026-06-19',0);
-INSERT INTO "files" VALUES(246,'shared','memory/shared/truth/lexicon.md',9782,1.78919838347052621843e+09,'1cce58efc9b2a157','Shared lexicon','Cross-project terms, defined once — the memory system''s and every project''s — and the word to use where another has been banned. Loaded at every session start.','every session','7 September 2026',0);
+INSERT INTO "files" VALUES(246,'shared','memory/shared/truth/lexicon.md',10008,1.78925476479584932322e+09,'58c046d49110d42d','Shared lexicon','Cross-project terms, defined once — the memory system''s and every project''s — and the word to use where another has been banned. Loaded at every session start.','every session','7 September 2026',0);
 INSERT INTO "files" VALUES(247,'shared','memory/shared/truth/philosophy/limitations.md',1716,1.78908988412445020673e+09,'77dc8bcefbcff22d','Co Limitations','The failure modes co falls into, named so they can be spotted early.','','2026-06-03',0);
 INSERT INTO "files" VALUES(248,'shared','memory/shared/truth/philosophy/logic driven design.md',12850,1.78908988412541174886e+09,'314d9375d03044de','Logic Driven Design','Rules, tests, and code kept in lock-step, so any drift is caught by the build.','','2026-06-19',0);
 INSERT INTO "files" VALUES(249,'shared','memory/shared/truth/philosophy/use ai.md',2912,1.78908988412622547148e+09,'64698374fac51bee','Motive','Why the work is structured this way: let it emerge, keep work files raw, distill guides out of them.','','2026-05-10',0);
@@ -285,7 +305,7 @@ INSERT INTO "files" VALUES(275,'shared','memory/shared/zone/big picture.md',5943
 INSERT INTO "files" VALUES(276,'shared','memory/shared/zone/collisions.md',3523,1.78908988415740418439e+09,'22761cff3c619ee9','Collisions','Pairs of rules that cannot both be obeyed, each met in real work. One entry per pair; an entry leaves when the two are rewritten as one clear rule.','','2026-09-07',0);
 INSERT INTO "files" VALUES(277,'shared','memory/shared/zone/drive.md',8,1.78908988415859389309e+09,'935778d6f0651b1c','Drive','The current drive: make the handbook fully implemented — where the law and the files disagree.','','2026-08-31',0);
 INSERT INTO "files" VALUES(278,'shared','memory/shared/zone/ideas.md',2097,1.78918525481266045573e+09,'07e194ee4fb91c55','Ideas','Ideas about the collaboration itself. Append freely; triaged at every settle.','','22 August 2026',0);
-INSERT INTO "files" VALUES(279,'shared','memory/shared/zone/learn.md',15033,1.78920525069367074961e+09,'188ba63b32341fed','Learn','Co errors → distilled into guide updates','','2026-08-11',0);
+INSERT INTO "files" VALUES(279,'shared','memory/shared/zone/learn.md',16893,1.78925253933524799343e+09,'7baaf81e646a24d9','Learn','Co errors → distilled into guide updates','','2026-08-11',0);
 INSERT INTO "files" VALUES(280,'shared','memory/shared/zone/proposals.md',33185,1.78908988416580414775e+09,'df62872463639b7d','Proposals','shared proposals — each being weighed or driven; one leaves when it becomes the drive, dissolves into truth, or dies.','','2026-08-31',0);
 INSERT INTO "files" VALUES(281,'shared','memory/shared/zone/questions.md',3729,1.78908988416771459577e+09,'c5ac9600a241cbb4','shared questions','What is unanswered, one line each. A question leaves when a D: records its answer.','','2026-08-29',0);
 INSERT INTO "files" VALUES(282,'shared','memory/shared/zone/work/big rewrite log.md',55249,1.78908988417235946654e+09,'d5b4c7e6c0f7a3eb','Big rewrite log','running report for the mechanical sweep (branch sweep/unmurk) — banned words and lexicon swaps across every project','','2026-09-03',0);

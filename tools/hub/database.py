@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-The db: one SQLite file beside the dispatcher, holding what ov knows about its files that the
-files themselves do not say. Only the dispatcher reads and writes it, through the calls here.
+The db: one SQLite file per host beside the dispatcher, ov.db and mu.db, each holding what a
+host knows about its files that the files themselves do not say. Only the dispatcher reads and
+writes them, through the calls here. Every call takes a host, and a call told none opens PLACE,
+ov's db. ports.json names each host's db beside its port.
 
-Four tables, as memory/ov/zone/knowledge bases.md lays them out:
+Five tables, as memory/ov/zone/music and ai.md lays them out:
   files   -- one row per file: its collection, its path from the top of the repo, its size,
              when it was last changed, its fingerprint, a short code computed from its bytes
              (same bytes, same code), and the four fields the file's label block used to
@@ -14,6 +16,9 @@ Four tables, as memory/ov/zone/knowledge bases.md lays them out:
              (a url or a person), and the date
   rules   -- one row per rule that gives a label: what it reads (name, location or content),
              the pattern it matches, and the label it gives (name and value)
+  collections -- one row per collection: its name, its specialty and its root folder. For ai
+             one per project, the mono repo the root of every one, made by the look. For mu
+             one per folder dropped.
 
 Labels and fields are written and read here. The other two tables wait for their phases. A
 file's row is made the first time anything is written on it, from what is on disk then, and
@@ -21,12 +26,39 @@ brought up to date with the disk on every write after.
 """
 
 import hashlib
+import json
 import os
 import sqlite3
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Where the db sits. A test points this at a file of its own before asking anything.
 PLACE = os.path.join(SCRIPT_DIR, 'ov.db')
+
+
+def _hosts():
+    """Each host that has a db, from ports.json beside the dispatcher: the host's name to its
+    db's file name, ov to ov.db, mu to mu.db. A host with no db entry has no db."""
+    try:
+        with open(os.path.join(SCRIPT_DIR, 'ports.json')) as f:
+            ports = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    return {name: entry['db'] for name, entry in ports.items() if isinstance(entry, dict) and 'db' in entry}
+
+
+# The host list. A test sets this to hosts of its own.
+HOSTS = _hosts()
+
+
+def place_of(host=None):
+    """Which db file a call opens: PLACE, ov's, when no host is named, else the named host's,
+    which sits beside PLACE under the name ports.json gives it. A host with no db is refused."""
+    if host is None:
+        return PLACE
+    if host not in HOSTS:
+        raise ValueError(f'no db for host {host!r}: one of {sorted(HOSTS)}')
+    return os.path.join(os.path.dirname(PLACE), HOSTS[host])
+
 
 MADE_BY = ('hand', 'rule', 'ai')
 # The four fields on a file's row, the ones its label block used to carry.
@@ -68,16 +100,22 @@ CREATE TABLE IF NOT EXISTS rules (
     name    TEXT NOT NULL,
     value   TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS collections (
+    id        INTEGER PRIMARY KEY,
+    name      TEXT NOT NULL UNIQUE,
+    specialty TEXT NOT NULL,
+    root      TEXT NOT NULL
+);
 """
 
 
-def open_db():
+def open_db(place=None):
     """Open the db, making the file and its tables the first time. A files table made before the
     four fields and the missing mark were columns is given them. A row pointing at a file goes
     when the file's row goes, which sqlite only honors when asked on every open. Two threads
     open it, the dispatcher's and the watcher's, so an open waits its turn for a few seconds
     rather than refusing."""
-    db = sqlite3.connect(PLACE, timeout=5)
+    db = sqlite3.connect(place or PLACE, timeout=5)
     db.row_factory = sqlite3.Row
     db.execute('PRAGMA foreign_keys = ON')
     db.executescript(TABLES)
@@ -139,12 +177,12 @@ def _set_fields(db, file, fields):
         db.execute(f'UPDATE files SET {name} = ? WHERE id = ?', (value, file))
 
 
-def add_label(where, full, name, value, made_by='hand'):
+def add_label(where, full, name, value, made_by='hand', host=None):
     """Write one label on a file: where is its path from the top of the repo, full its place on
     this machine. Writing the same label twice leaves one row."""
     if made_by not in MADE_BY:
         raise ValueError(f'made_by must be one of {MADE_BY}, not {made_by!r}')
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         file = file_row(db, where, full)
         db.execute('INSERT OR IGNORE INTO labels (file, name, value, made_by) VALUES (?, ?, ?, ?)',
@@ -152,23 +190,23 @@ def add_label(where, full, name, value, made_by='hand'):
     db.close()
 
 
-def replace_labels(where, full, name, values, made_by='hand'):
+def replace_labels(where, full, name, values, made_by='hand', host=None):
     """Make one name's labels on a file, by one maker, exactly these values. The kind is one
     value, the tags are many, and none at all takes them all off. Other makers' rows stay."""
     if made_by not in MADE_BY:
         raise ValueError(f'made_by must be one of {MADE_BY}, not {made_by!r}')
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         _replace(db, file_row(db, where, full), name, values, made_by)
     db.close()
 
 
-def record_file(where, full, kind, tags, **fields):
+def record_file(where, full, kind, tags, host=None, **fields):
     """What a file's own label block says, written on one open of the db: its hand kind made the
     one named, its hand tags made those named, and each field handed in made what it says. None
     for any of them leaves that one as it is, so a file that says nothing keeps what the db
     holds."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         file = file_row(db, where, full)
         if kind is not None:
@@ -179,18 +217,18 @@ def record_file(where, full, kind, tags, **fields):
     db.close()
 
 
-def set_fields(where, full, **fields):
+def set_fields(where, full, host=None, **fields):
     """The four fields on a file's row: title, description, use_when and date. Only the ones
     handed in change."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         _set_fields(db, file_row(db, where, full), fields)
     db.close()
 
 
-def remove_label(where, name, value):
+def remove_label(where, name, value, host=None):
     """Take one label off a file, whoever made it. Answers how many rows went."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         gone = db.execute(
             'DELETE FROM labels WHERE name = ? AND value = ? '
@@ -200,11 +238,11 @@ def remove_label(where, name, value):
     return gone
 
 
-def set_sources(where, full, authors, came_from, date):
+def set_sources(where, full, authors, came_from, date, host=None):
     """Make a file's sources exactly these: one row per author, each saying where the file came
     from, or one row with no author where only that is said. Every row the file had goes. No
     author and nowhere leaves it with none."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         file = file_row(db, where, full)
         db.execute('DELETE FROM sources WHERE file = ?', (file,))
@@ -213,10 +251,10 @@ def set_sources(where, full, authors, came_from, date):
     db.close()
 
 
-def sources_of(where):
+def sources_of(where, host=None):
     """A file's sources, oldest first: author, where it came from, and date. Nothing for a file
     the db has no row for."""
-    db = open_db()
+    db = open_db(place_of(host))
     rows = db.execute(
         'SELECT sources.author, sources.came_from, sources.date FROM sources '
         'JOIN files ON files.id = sources.file WHERE files.path = ? ORDER BY sources.id',
@@ -225,10 +263,10 @@ def sources_of(where):
     return [{'author': row['author'], 'came_from': row['came_from'], 'date': row['date']} for row in rows]
 
 
-def all_sources():
+def all_sources(host=None):
     """Every source on every file, keyed by the file's path from the top of the repo. A file with
     none is left out."""
-    db = open_db()
+    db = open_db(place_of(host))
     rows = db.execute(
         'SELECT files.path, sources.author, sources.came_from, sources.date FROM sources '
         'JOIN files ON files.id = sources.file ORDER BY files.path, sources.id').fetchall()
@@ -246,14 +284,14 @@ READS = ('name', 'location', 'content')
 GIVES = ('kind', 'tag')
 
 
-def add_rule(reads, pattern, name, value):
+def add_rule(reads, pattern, name, value, host=None):
     """One more rule: what it reads, the regex it matches, and the label it gives. Answers the
     rule's id."""
     if reads not in READS:
         raise ValueError(f'a rule reads one of {READS}, not {reads!r}')
     if name not in GIVES:
         raise ValueError(f'a rule gives one of {GIVES}, not {name!r}')
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         made = db.execute('INSERT INTO rules (reads, pattern, name, value) VALUES (?, ?, ?, ?)',
                           (reads, pattern, name, value)).lastrowid
@@ -261,29 +299,29 @@ def add_rule(reads, pattern, name, value):
     return made
 
 
-def remove_rule(rule_id):
+def remove_rule(rule_id, host=None):
     """One rule gone. Answers how many went."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         gone = db.execute('DELETE FROM rules WHERE id = ?', (rule_id,)).rowcount
     db.close()
     return gone
 
 
-def rules():
+def rules(host=None):
     """Every rule, oldest first: its id, what it reads, the regex it matches, and the label it
     gives, name and value."""
-    db = open_db()
+    db = open_db(place_of(host))
     rows = db.execute('SELECT id, reads, pattern, name, value FROM rules ORDER BY id').fetchall()
     db.close()
     return [{'id': row['id'], 'reads': row['reads'], 'pattern': row['pattern'], 'name': row['name'], 'value': row['value']} for row in rows]
 
 
-def set_rule_labels(where, full, kinds, tags):
+def set_rule_labels(where, full, kinds, tags, host=None):
     """The labels the rules give one file, made exactly these, by rule: every rule row on it goes
     and one row per value comes. Hand rows are never touched. A file with no row gets one only
     when the rules give it something. Answers whether the file has a row."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         has_row = db.execute('SELECT id FROM files WHERE path = ?', (where,)).fetchone() is not None
         if has_row or kinds or tags:
@@ -295,19 +333,19 @@ def set_rule_labels(where, full, kinds, tags):
     return has_row
 
 
-def clear_rule_labels():
+def clear_rule_labels(host=None):
     """Every label a rule gave, on every file, gone. Answers how many rows went."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         gone = db.execute("DELETE FROM labels WHERE made_by = 'rule'").rowcount
     db.close()
     return gone
 
 
-def move_path(where_from, where_to):
+def move_path(where_from, where_to, host=None):
     """A file now sits somewhere else, so its row is keyed by the new path and its collection is
     read off it again. Its labels and fields go with it. Answers how many rows moved."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         moved = db.execute('UPDATE files SET path = ?, collection = ? WHERE path = ?',
                            (where_to, collection_of(where_to), where_from)).rowcount
@@ -315,20 +353,20 @@ def move_path(where_from, where_to):
     return moved
 
 
-def delete_path(where):
+def delete_path(where, host=None):
     """A file is gone from disk, so its row goes, and every label and source on it with it.
     Answers how many rows went."""
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         gone = db.execute('DELETE FROM files WHERE path = ?', (where,)).rowcount
     db.close()
     return gone
 
 
-def labels_of(where):
+def labels_of(where, host=None):
     """Every label on a file, oldest first: name, value and who made it. Nothing for a file the
     db has no row for."""
-    db = open_db()
+    db = open_db(place_of(host))
     rows = db.execute(
         'SELECT labels.name, labels.value, labels.made_by FROM labels '
         'JOIN files ON files.id = labels.file WHERE files.path = ? ORDER BY labels.id',
@@ -337,10 +375,10 @@ def labels_of(where):
     return [{'name': row['name'], 'value': row['value'], 'made_by': row['made_by']} for row in rows]
 
 
-def all_labels():
+def all_labels(host=None):
     """Every label on every file, in one answer: each file's path from the top of the repo, and
     its labels oldest first. A file with a row and no labels is left out."""
-    db = open_db()
+    db = open_db(place_of(host))
     rows = db.execute(
         'SELECT files.path, labels.name, labels.value, labels.made_by FROM labels '
         'JOIN files ON files.id = labels.file ORDER BY files.path, labels.id').fetchall()
@@ -352,11 +390,11 @@ def all_labels():
     return by_path
 
 
-def all_fields():
+def all_fields(host=None):
     """Every file's four fields, keyed by its path from the top of the repo: title, description,
     use_when as a list again, and date, with whether the file is missing from the disk. Every
     row, whether or not anything is written on it, so a path here is a file the db holds."""
-    db = open_db()
+    db = open_db(place_of(host))
     rows = db.execute('SELECT path, title, description, use_when, date, missing FROM files ORDER BY path').fetchall()
     db.close()
     return {row['path']: {
@@ -368,7 +406,7 @@ def all_fields():
     } for row in rows}
 
 
-def reconcile(root, paths):
+def reconcile(root, paths, host=None):
     """Bring every row into line with the disk. paths is every listed file on disk right now,
     counting from the top of the repo, and root where the repo sits on this machine.
       same path, new size or time      -> the fingerprint is computed again and the row brought
@@ -382,7 +420,7 @@ def reconcile(root, paths):
     something is first written on it. Answers the counts."""
     on_disk = set(paths)
     changed = moved = missing = found = 0
-    db = open_db()
+    db = open_db(place_of(host))
     with db:
         rows = db.execute('SELECT id, path, size, modified, fingerprint, missing FROM files').fetchall()
         with_rows = {row['path'] for row in rows}
@@ -426,38 +464,39 @@ def reconcile(root, paths):
     return {'changed': changed, 'moved': moved, 'missing': missing, 'found': found}
 
 
-def dump_place():
+def dump_place(host=None):
     """Where the dump sits: beside the db, with the db's name and .sql on the end. The dump
     enters git, the db never does, so the labels live in git through it."""
-    return os.path.splitext(PLACE)[0] + '.sql'
+    return os.path.splitext(place_of(host))[0] + '.sql'
 
 
-def write_dump():
+def write_dump(host=None):
     """Write every table as plain text to the dump's place: the statements that make each
     table and insert each row, sqlite's own words. Answers where it went and how many labels
     it holds."""
-    db = open_db()
+    db = open_db(place_of(host))
     lines = list(db.iterdump())
     labels = db.execute('SELECT count(*) FROM labels').fetchone()[0]
     db.close()
-    with open(dump_place(), 'w') as f:
+    with open(dump_place(host), 'w') as f:
         f.write('\n'.join(lines) + '\n')
-    return {'dump': dump_place(), 'statements': len(lines), 'labels': labels}
+    return {'dump': dump_place(host), 'statements': len(lines), 'labels': labels}
 
 
-def restore(into):
+def restore(into, host=None):
     """A new db made from the dump: the file named is made beside the db and nowhere else, a
     name carrying a folder is refused, and so is the live db's own name, whatever the ask says.
     The dump's statements are run on the empty file, so it holds every table and row the live
     db held when the dump was written. Answers where it went and how many labels it holds."""
     if not into.endswith('.db') or os.path.basename(into) != into:
         raise ValueError('name a .db file with no folder in the name')
-    target = os.path.join(os.path.dirname(PLACE), into)
-    if os.path.abspath(target) == os.path.abspath(PLACE):
-        raise ValueError('the live db is never written over')
-    if not os.path.isfile(dump_place()):
+    live = place_of(host)
+    target = os.path.join(os.path.dirname(live), into)
+    if os.path.abspath(target) in {os.path.abspath(place_of(one)) for one in [None, *HOSTS]}:
+        raise ValueError('a live db is never written over')
+    if not os.path.isfile(dump_place(host)):
         raise ValueError('no dump to read: ask /dump first')
-    with open(dump_place()) as f:
+    with open(dump_place(host)) as f:
         text = f.read()
     if os.path.exists(target):
         os.remove(target)
@@ -467,3 +506,38 @@ def restore(into):
     labels = new.execute('SELECT count(*) FROM labels').fetchone()[0]
     new.close()
     return {'restored': target, 'labels': labels}
+
+
+def collections(host=None):
+    """Every collection in a host's db: its id, its name, its specialty and its root folder.
+    For ai one per project, the mono repo the root of every one. For mu one per folder dropped."""
+    db = open_db(place_of(host))
+    rows = db.execute('SELECT id, name, specialty, root FROM collections ORDER BY name').fetchall()
+    db.close()
+    return [dict(row) for row in rows]
+
+
+def ensure_collections(names, specialty, root, host=None):
+    """A row for each name that has none yet, all of one specialty under one root. What the
+    look does for ai after every reconcile, so a project that turns up gets its row. Answers how
+    many rows were made."""
+    db = open_db(place_of(host))
+    with db:
+        made = 0
+        for name in sorted(set(names)):
+            made += db.execute('INSERT OR IGNORE INTO collections (name, specialty, root) VALUES (?, ?, ?)',
+                               (name, specialty, root)).rowcount
+    db.close()
+    return made
+
+
+def add_collection(name, specialty, root, host=None):
+    """One more collection, for the drop box and for curl until it exists: a dropped folder's
+    row, named for the folder. A name already there is left as it is. Answers the row's id."""
+    db = open_db(place_of(host))
+    with db:
+        db.execute('INSERT OR IGNORE INTO collections (name, specialty, root) VALUES (?, ?, ?)',
+                   (name, specialty, root))
+        made = db.execute('SELECT id FROM collections WHERE name = ?', (name,)).fetchone()['id']
+    db.close()
+    return made

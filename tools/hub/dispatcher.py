@@ -513,9 +513,13 @@ def scan_labels():
 
 def rescan():
     """Bring the db into line with the disk: the listing is taken, and every row checked against
-    it. A file changed, moved or thrown away in the Finder is noticed here."""
+    it. A file changed, moved or thrown away in the Finder is noticed here. Then a collection the
+    listing names for the first time gets its row in the collections table, one per project, ai
+    its specialty and the repo its root. Answers how many rows were made among the counts."""
     root, paths = listed_files()
-    return database.reconcile(root, paths)
+    said = database.reconcile(root, paths)
+    said['collections'] = database.ensure_collections({database.collection_of(one) for one in paths}, 'ai', root)
+    return said
 
 # What the rules last ran against, path by path: the file's size and time. A file whose two are
 # unchanged since is left alone, so its content is read again only when it changed.
@@ -727,22 +731,40 @@ class APIHandler(BaseHTTPRequestHandler):
         counting from the top of the repo, which is what the db keys on, and its full place on
         this machine. The same refusals as reading one -- it has to be one of the files the app
         lists, and it has to sit inside the repo -- and, where asked, it has to be there. Every
-        refusal is sent from here, and None comes back."""
+        refusal is sent from here, and None comes back. A route asks this before it reads its
+        body, so a refusal drops the body first: left unread, it resets the connection under
+        the asker, who then sees the reset in place of the refusal."""
+        def refuse(status, error):
+            self._drain_body()
+            self._send_response(status, {'success': False, 'error': error})
+
         if not where:
-            self._send_response(400, {'success': False, 'error': 'no file named'})
+            refuse(400, 'no file named')
             return None
         if not is_listed_note(where):
-            self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
+            refuse(409, f'not a guide: {where!r}')
             return None
         full = os.path.realpath(where if os.path.isabs(where) else os.path.join(GITHUB_DIR, where))
         root = os.path.realpath(GITHUB_DIR)
         if not full.startswith(root + os.sep):
-            self._send_response(409, {'success': False, 'error': 'outside the repo'})
+            refuse(409, 'outside the repo')
             return None
         if must_exist and not os.path.isfile(full):
-            self._send_response(404, {'success': False, 'error': f'no such file: {where!r}'})
+            refuse(404, f'no such file: {where!r}')
             return None
         return os.path.relpath(full, root), full
+
+    def _host(self):
+        """Whose db a route opens: the host query value, which ports.json pairs with a db, and ov
+        when none is sent, so every ask made before step 3 of the plan still answers ov's db. A
+        host ports.json gives no db is refused with a 400 sent from here, and False comes back so
+        the route returns. None is ov, never a refusal."""
+        params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+        host = params.get('host', [None])[0]
+        if host is not None and host not in database.HOSTS:
+            self._send_response(400, {'success': False, 'error': f'no db for host {host!r}: one of {sorted(database.HOSTS)}'})
+            return False
+        return host
 
     def do_GET(self):
         if self.path == '/rebuild-status':
@@ -838,34 +860,47 @@ class APIHandler(BaseHTTPRequestHandler):
         elif urllib.parse.urlparse(self.path).path == '/labels':
             # Every label the db holds on one file, for the overview app: /labels?where=<path>
             # Each is a name (kind or tag), a value, and who made it: hand, rule or ai. A file
-            # the db has no row for answers an empty list, not a refusal.
+            # the db has no row for answers an empty list, not a refusal. Here and in every
+            # route below that reads or writes the db, &host=<a host ports.json gives a db>
+            # picks whose db, ov's when left out.
             try:
+                host = self._host()
+                if host is False:
+                    return
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 placed = self._note_place(params.get('where', [''])[0], must_exist=False)
                 if not placed:
                     return
                 where, _ = placed
-                self._send_response(200, {'success': True, 'labels': database.labels_of(where)})
+                self._send_response(200, {'success': True, 'labels': database.labels_of(where, host=host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/all-labels':
+        elif urllib.parse.urlparse(self.path).path == '/all-labels':
             # Every label and every field on every file, for the overview app, in one answer:
             # each file's path from the top of the repo, its labels, and its title, description,
             # use_when and date. One ask at launch in place of one per file. A path among the
             # fields is a file the db holds a row for, labels or not. The disk is looked at
-            # first, so a file moved a moment ago answers under its new path.
+            # first, so a file moved a moment ago answers under its new path. The look is ov's:
+            # another host's db answers as it is, its own look coming with its plugin.
             try:
-                look()
-                self._send_response(200, {'success': True, 'labels': database.all_labels(), 'fields': database.all_fields(), 'sources': database.all_sources()})
+                host = self._host()
+                if host is False:
+                    return
+                if host is None:
+                    look()
+                self._send_response(200, {'success': True, 'labels': database.all_labels(host=host), 'fields': database.all_fields(host=host), 'sources': database.all_sources(host=host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/rules':
+        elif urllib.parse.urlparse(self.path).path == '/rules':
             # Every rule, for the overview app: what each reads, the regex it matches, and the
             # label it gives.
             try:
-                self._send_response(200, {'success': True, 'rules': database.rules()})
+                host = self._host()
+                if host is False:
+                    return
+                self._send_response(200, {'success': True, 'rules': database.rules(host=host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -873,12 +908,28 @@ class APIHandler(BaseHTTPRequestHandler):
             # A file's sources, for the overview app: /sources?where=<path>. Each is an author,
             # where the file came from (a url or a person), and a date.
             try:
+                host = self._host()
+                if host is False:
+                    return
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 placed = self._note_place(params.get('where', [''])[0], must_exist=False)
                 if not placed:
                     return
                 where, _ = placed
-                self._send_response(200, {'success': True, 'sources': database.sources_of(where)})
+                self._send_response(200, {'success': True, 'sources': database.sources_of(where, host=host)})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/collections':
+            # Every collection in a host's db, for the overview app: /collections for ov's,
+            # /collections?host=mu for mu's. Each is an id, a name, a specialty and a root folder:
+            # for ai one per project, made by the look, the repo the root of every one; for mu one
+            # per folder dropped.
+            try:
+                host = self._host()
+                if host is False:
+                    return
+                self._send_response(200, {'success': True, 'collections': database.collections(host=host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1182,6 +1233,9 @@ class APIHandler(BaseHTTPRequestHandler):
             # read it again without waiting for a restart.
             try:
                 self._drain_body()
+                host = self._host()
+                if host is False:
+                    return
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where_from = params.get('from', [''])[0]
                 where_to = params.get('to', [''])[0]
@@ -1215,7 +1269,7 @@ class APIHandler(BaseHTTPRequestHandler):
                     return
                 os.rename(full_from, full_to)
                 # The db keys the file's labels and fields by its path, so its row follows it.
-                database.move_path(os.path.relpath(full_from, root), os.path.relpath(full_to, root))
+                database.move_path(os.path.relpath(full_from, root), os.path.relpath(full_to, root), host=host)
                 self._send_response(200, {'success': True, 'path': full_to})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -1231,6 +1285,9 @@ class APIHandler(BaseHTTPRequestHandler):
             #   - the file isn't there
             try:
                 self._drain_body()
+                host = self._host()
+                if host is False:
+                    return
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
                 root = os.path.realpath(GITHUB_DIR)
@@ -1246,7 +1303,7 @@ class APIHandler(BaseHTTPRequestHandler):
                     return
                 os.remove(full)
                 # Its row in the db goes with it, and every label and source on it.
-                database.delete_path(os.path.relpath(full, root))
+                database.delete_path(os.path.relpath(full, root), host=host)
                 self._send_response(200, {'success': True, 'path': full})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -1272,7 +1329,10 @@ class APIHandler(BaseHTTPRequestHandler):
                 if made_by not in database.MADE_BY:
                     self._send_response(400, {'success': False, 'error': f'made_by must be one of {list(database.MADE_BY)}, not {made_by!r}'})
                     return
-                database.add_label(where, full, name, value, made_by)
+                host = self._host()
+                if host is False:
+                    return
+                database.add_label(where, full, name, value, made_by, host=host)
                 self._send_response(200, {'success': True, 'path': where})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -1294,7 +1354,10 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not isinstance(name, str) or not name or not isinstance(value, str) or not value:
                     self._send_response(400, {'success': False, 'error': 'name and value must both be sent'})
                     return
-                removed = database.remove_label(where, name, value)
+                host = self._host()
+                if host is False:
+                    return
+                removed = database.remove_label(where, name, value, host=host)
                 self._send_response(200, {'success': True, 'path': where, 'removed': removed})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -1331,8 +1394,11 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not isinstance(came_from, str) or not isinstance(date, str):
                     self._send_response(400, {'success': False, 'error': 'came_from and date must be words'})
                     return
-                database.set_sources(where, full, [one.strip() for one in authors], came_from.strip(), date)
-                self._send_response(200, {'success': True, 'path': where, 'sources': database.sources_of(where)})
+                host = self._host()
+                if host is False:
+                    return
+                database.set_sources(where, full, [one.strip() for one in authors], came_from.strip(), date, host=host)
+                self._send_response(200, {'success': True, 'path': where, 'sources': database.sources_of(where, host=host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1346,10 +1412,11 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/add-rule':
+        elif urllib.parse.urlparse(self.path).path == '/add-rule':
             # One more rule, for the overview app: /add-rule. The body is JSON: {"reads": name,
             # location or content, "pattern": <a regex>, "name": kind or tag, "value": <the label>}.
-            # Every rule is then run on every file. Answers the rule's id and how many files.
+            # Every rule is then run on every file. Answers the rule's id and how many files. The
+            # run is ov's: another host's rules wait for its look, which comes with its plugin.
             try:
                 content_length = int(self.headers.get('Content-Length', 0))
                 sent = json.loads(self.rfile.read(content_length).decode() or '{}')
@@ -1365,12 +1432,15 @@ class APIHandler(BaseHTTPRequestHandler):
                 except re.error as bad:
                     self._send_response(400, {'success': False, 'error': f'not a regex: {bad}'})
                     return
-                made = database.add_rule(reads, pattern, name, value)
-                self._send_response(200, {'success': True, 'id': made, 'ruled': run_rules(everything=True)})
+                host = self._host()
+                if host is False:
+                    return
+                made = database.add_rule(reads, pattern, name, value, host=host)
+                self._send_response(200, {'success': True, 'id': made, 'ruled': run_rules(everything=True) if host is None else 0})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/remove-rule':
+        elif urllib.parse.urlparse(self.path).path == '/remove-rule':
             # One rule gone, for the overview app: /remove-rule, the body {"id": <its id>}. Every
             # rule left is then run on every file, so what the gone one gave goes.
             try:
@@ -1380,24 +1450,30 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not isinstance(rule_id, int):
                     self._send_response(400, {'success': False, 'error': 'id must be a number'})
                     return
-                removed = database.remove_rule(rule_id)
-                self._send_response(200, {'success': True, 'removed': removed, 'ruled': run_rules(everything=True)})
+                host = self._host()
+                if host is False:
+                    return
+                removed = database.remove_rule(rule_id, host=host)
+                self._send_response(200, {'success': True, 'removed': removed, 'ruled': run_rules(everything=True) if host is None else 0})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/dump':
-            # Write every table of the db as plain text beside it, ov.sql: /dump. The db never
-            # enters git and the dump does, so the labels live in git through it. Answers where
-            # it went, how many statements it holds and how many labels.
+        elif urllib.parse.urlparse(self.path).path == '/dump':
+            # Write every table of a host's db as plain text beside it, ov.sql or mu.sql: /dump.
+            # The db never enters git and the dump does, so the labels live in git through it.
+            # Answers where it went, how many statements it holds and how many labels.
             try:
                 self._drain_body()
-                self._send_response(200, {'success': True, **database.write_dump()})
+                host = self._host()
+                if host is False:
+                    return
+                self._send_response(200, {'success': True, **database.write_dump(host=host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/restore':
-            # Make a new db from the dump: /restore, with the JSON body {"into": <a .db name>}.
-            # The file is made beside the db and nowhere else, and the live db is never written
+        elif urllib.parse.urlparse(self.path).path == '/restore':
+            # Make a new db from a host's dump: /restore, with the JSON body {"into": <a .db name>}.
+            # The file is made beside the db and nowhere else, and no live db is ever written
             # over, whatever the ask says. Answers where it went and how many labels it holds.
             try:
                 content_length = int(self.headers.get('Content-Length', 0))
@@ -1406,12 +1482,39 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not isinstance(into, str) or not into:
                     self._send_response(400, {'success': False, 'error': 'send {"into": "<a .db name>"}'})
                     return
+                host = self._host()
+                if host is False:
+                    return
                 try:
-                    said = database.restore(into)
+                    said = database.restore(into, host=host)
                 except ValueError as e:
                     self._send_response(400, {'success': False, 'error': str(e)})
                     return
                 self._send_response(200, {'success': True, **said})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif urllib.parse.urlparse(self.path).path == '/add-collection':
+            # One more collection in a host's db: /add-collection?host=mu, the body JSON
+            # {"name": <its name>, "specialty": ai or music, "root": <a folder on this machine>}.
+            # For the drop box, and for curl until the drop box exists: a dropped folder's row,
+            # named for the folder. The root has to be a folder that is there. A name already
+            # there is left as it is. Answers the row's id.
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                host = self._host()
+                if host is False:
+                    return
+                name, specialty, root = sent.get('name'), sent.get('specialty'), sent.get('root')
+                if not all(isinstance(one, str) and one for one in (name, specialty, root)):
+                    self._send_response(400, {'success': False, 'error': 'name, specialty and root must all be sent'})
+                    return
+                if not os.path.isdir(root):
+                    self._send_response(400, {'success': False, 'error': f'no such folder: {root!r}'})
+                    return
+                made = database.add_collection(name, specialty, root, host=host)
+                self._send_response(200, {'success': True, 'id': made})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1456,7 +1559,10 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not fields:
                     self._send_response(400, {'success': False, 'error': f'send at least one of {list(database.FIELDS)}'})
                     return
-                database.set_fields(where, full, **fields)
+                host = self._host()
+                if host is False:
+                    return
+                database.set_fields(where, full, host=host, **fields)
                 self._send_response(200, {'success': True, 'path': where, 'fields': sorted(fields)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})

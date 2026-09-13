@@ -27,6 +27,8 @@ import dispatcher # noqa: E402
 REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 FOLDER = tempfile.mkdtemp(prefix='ov-db-')
 database.PLACE = os.path.join(FOLDER, 'ov.db')
+# The hosts ports.json would name, set by hand: ov, whose db is PLACE, and mu, whose db sits beside it.
+database.HOSTS = {'ov': 'ov.db', 'mu': 'mu.db'}
 
 NOTE = 'memory/ov/zone/work/current context.md'
 FULL = os.path.join(REPO, NOTE)
@@ -191,6 +193,14 @@ check('every label comes in one answer, keyed by path', said.get('labels'),
       {NOTE: [{'name': 'tag', 'value': 'soon', 'made_by': 'hand'}]})
 database.replace_labels(NOTE, FULL, 'tag', [])
 
+# That ask looked at the disk first, the real repo's listing, so the collections table now holds
+# one row per project the listing names.
+code, said = ask('/collections')
+check('the look made a row per collection the listing names, ai its specialty, the repo its root',
+      [(one['name'], one['specialty'], one['root']) for one in said.get('collections', [])],
+      [(name, 'ai', REPO) for name in sorted({database.collection_of(one) for one in dispatcher.listed_files()[1]})])
+check('each row has an id', all(isinstance(one.get('id'), int) for one in said.get('collections', [])), True)
+
 # --- what the routes refuse ---------------------------------------------------
 
 code, said = ask('/labels')
@@ -324,7 +334,7 @@ with open(os.path.join(TEMP_REPO, WATCH), 'w') as f:
     f.write('# Watch\n\nwords\n')
 code, said = tell('/add-label', {'name': 'tag', 'value': 'now'}, where=WATCH)
 code, said = tell('/rescan', {})
-check('a look with nothing changed says so', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'ruled': 0})
+check('a look with nothing changed says so', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 0})
 
 os.rename(os.path.join(TEMP_REPO, WATCH), os.path.join(TEMP_REPO, WATCHED))
 code, said = tell('/rescan', {})
@@ -363,7 +373,7 @@ with open(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), 'w') as f:
     f.write('# Loose\n')
 os.rename(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), os.path.join(TEMP_REPO, 'memory/ov/truth/loosed.md'))
 code, said = tell('/rescan', {})
-check('a file with no row moves with nothing to keep and nothing said', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'ruled': 0})
+check('a file with no row moves with nothing to keep and nothing said', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 0})
 
 # --- the rules: labels a file gets from its name, its location or its content --
 
@@ -417,6 +427,66 @@ for rule in ask('/rules')[1]['rules']:
 code, said = ask('/labels', where=RULED_FILE)
 check('with every rule gone, every label a rule gave is gone', [one['made_by'] for one in said.get('labels', [])], ['hand'])
 
+# --- one db per host, and the collections -------------------------------------
+#
+# Every call opens the db of the host it is told, ov's when told none, and a request names its
+# host with a host parameter. The collections table holds one row per collection: for ai one
+# per project, made by the look, the repo its root.
+
+check('a call told no host opens PLACE', database.place_of(), database.PLACE)
+check('a call told mu opens mu\'s db beside it', database.place_of('mu'), os.path.join(FOLDER, 'mu.db'))
+try:
+    database.place_of('nope')
+    check('a host with no db is refused', 'opened', 'refused')
+except ValueError:
+    check('a host with no db is refused', 'refused', 'refused')
+
+database.add_label(NOTE, FULL, 'tag', 'mine', host='mu')
+check('a label written under mu is read back under mu', database.labels_of(NOTE, host='mu'),
+      [{'name': 'tag', 'value': 'mine', 'made_by': 'hand'}])
+check('and ov\'s db never sees it', [one for one in database.labels_of(NOTE) if one['value'] == 'mine'], [])
+check('every label under mu is that one', database.all_labels(host='mu'), {NOTE: [{'name': 'tag', 'value': 'mine', 'made_by': 'hand'}]})
+check('mu\'s db sits beside ov\'s', os.path.isfile(os.path.join(FOLDER, 'mu.db')), True)
+database.remove_label(NOTE, 'tag', 'mine', host='mu')
+
+os.makedirs(os.path.join(TEMP_REPO, 'memory', 'nowhere', 'truth'))
+with open(os.path.join(TEMP_REPO, 'memory/nowhere/truth/new.md'), 'w') as f:
+    f.write('# New\n')
+code, said = tell('/rescan', {})
+check('a collection the listing names for the first time gets its row at the look', said.get('collections'), 1)
+code, said = ask('/collections')
+check('the row is named for it, ai its specialty, the repo looked at its root',
+      [(one['name'], one['specialty'], one['root']) for one in said.get('collections', []) if one['name'] == 'nowhere'],
+      [('nowhere', 'ai', os.path.realpath(TEMP_REPO))])
+check('a collection seen again keeps its row', [one['root'] for one in said.get('collections', []) if one['name'] == 'ov'], [REPO])
+code, said = tell('/rescan', {})
+check('a second look makes no row', said.get('collections'), 0)
+code, said = ask('/collections', host='mu')
+check('mu has no collection yet', said.get('collections'), [])
+code, said = tell('/add-collection', {'name': 'live', 'specialty': 'music', 'root': FOLDER}, host='mu')
+check('a collection added under mu answers its id', said.get('id'), 1)
+code, said = ask('/collections', host='mu')
+check('and is listed under mu', [(one['name'], one['specialty'], one['root']) for one in said.get('collections', [])], [('live', 'music', FOLDER)])
+code, said = ask('/collections')
+check('and not under ov', 'live' in [one['name'] for one in said.get('collections', [])], False)
+code, said = tell('/add-collection', {'name': 'live', 'specialty': 'music', 'root': FOLDER}, host='mu')
+check('the same name added twice leaves one row, and answers its id', said.get('id'), 1)
+code, said = tell('/add-collection', {'name': 'lost', 'specialty': 'music', 'root': os.path.join(FOLDER, 'nowhere')}, host='mu')
+check('a root that is not a folder is refused', code, 400)
+code, said = tell('/add-collection', {'name': 'live'}, host='mu')
+check('a collection missing its specialty or root is refused', code, 400)
+code, said = ask('/labels', where=NOTE, host='nope')
+check('a host with no db is refused by the dispatcher', code, 400)
+check('and the refusal names the hosts', "['mu', 'ov']" in said.get('error', ''), True)
+code, said = ask('/rules', host='mu')
+check('mu\'s rules are its own, none yet', said.get('rules'), [])
+code, said = tell('/add-rule', {'reads': 'name', 'pattern': r'\.flac$', 'name': 'kind', 'value': 'music'}, host='mu')
+check('a rule added under mu is run on nothing, mu having no look yet', (code, said.get('ruled')), (200, 0))
+code, said = ask('/rules', host='mu')
+check('and is listed under mu', [one['pattern'] for one in said.get('rules', [])], [r'\.flac$'])
+code, said = ask('/rules')
+check('and not under ov', said.get('rules'), [])
+
 # --- the backup and the dump --------------------------------------------------
 #
 # The dump is written beside the db, and a new db made from it answers every label the same.
@@ -441,6 +511,8 @@ check('the dump makes each table and inserts each row',
 
 code, said = tell('/restore', {'into': 'ov.db'})
 check('the live db is never written over', code, 400)
+code, said = tell('/restore', {'into': 'mu.db'})
+check('nor is another host\'s live db', code, 400)
 code, said = tell('/restore', {'into': '../elsewhere.db'})
 check('a name carrying a folder is refused', code, 400)
 code, said = tell('/restore', {'into': 'notes.txt'})
@@ -456,6 +528,15 @@ check('the new db answers every label the same as the db', labels_in(restored), 
 check('the new db holds the same tables',
       sorted(row[0] for row in sqlite3.connect(restored).execute("SELECT name FROM sqlite_master WHERE type = 'table'")),
       sorted(row[0] for row in sqlite3.connect(database.PLACE).execute("SELECT name FROM sqlite_master WHERE type = 'table'")))
+check('the collections table is among them', 'collections' in dumped, True)
+
+code, said = tell('/dump', {}, host='mu')
+check('mu\'s dump is written beside its db, mu.sql', said.get('dump'), os.path.join(FOLDER, 'mu.sql'))
+with open(os.path.join(FOLDER, 'mu.sql')) as f:
+    check('and holds mu\'s collection', "INSERT INTO \"collections\"" in f.read(), True)
+code, said = tell('/restore', {'into': 'mu.restored.db'}, host='mu')
+check('mu\'s dump read back answers mu\'s rows', code, 200)
+check('the new db holds mu\'s collection', [row[0] for row in sqlite3.connect(os.path.join(FOLDER, 'mu.restored.db')).execute('SELECT name FROM collections')], ['live'])
 
 # --- say how it went ---------------------------------------------------------
 

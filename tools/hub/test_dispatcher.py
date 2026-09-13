@@ -201,6 +201,18 @@ check('the live db is never written over', code, 400)
 code, said = tell('/restore', {'into': 'ov.restored.db'})
 check('a dump read back into ov.restored.db holds every label', said.get('labels'), sum(len(rows) for rows in ask('/all-labels')[1]['labels'].values()))
 
+# --- one db per host, and the collections ---------------------------------------
+
+code, said = ask('/collections')
+check('ov\'s collections are listed', code, 200)
+check('one per project the listing names, ov, shared and the rest', {'ov', 'shared'} <= {one['name'] for one in said.get('collections', [])}, True)
+check('every one of ai\'s specialty, the repo its root', {(one['specialty'], one['root']) for one in said.get('collections', [])}, {('ai', REPO)})
+code, said = ask('/collections', host='mu')
+check('mu\'s collections are its own', (code, said.get('success')), (200, True))
+code, said = ask('/rules', host='nope')
+check('a host with no db is refused', code, 400)
+check('and the refusal names the hosts', "['mu', 'ov']" in said.get('error', ''), True)
+
 # --- say how it went ---------------------------------------------------------
 
 for one in passed:

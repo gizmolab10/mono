@@ -10,3 +10,4 @@
 **/aside/
 **/dist/
 tools/hub/*.db*
+**/__pycache__/

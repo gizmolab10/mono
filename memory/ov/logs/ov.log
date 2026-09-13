@@ -102,3 +102,6 @@ $ vite
 7:17:48 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
 7:17:50 PM [vite] (client) hmr update /src/lib/svelte/main/Details.svelte
 7:41:27 PM [vite] (client) page reload src/lib/ts/types/File.ts
+9:38:24 PM [vite] ../tools/hub/ports.json changed, restarting server...
+9:38:24 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
+9:38:24 PM [vite] server restarted.
