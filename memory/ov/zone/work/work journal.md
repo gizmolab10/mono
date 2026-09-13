@@ -2,6 +2,20 @@
 
 What's been finished, newest first.
 
+## 2026-09-13 — kb and ai stand, and kb's page is panel's
+
+Two projects made at step 4 of the plan in [music and ai](../music%20and%20ai.md): mono/kb, a library holding all of ov's code, its page under the name Main.svelte and no entry file, and mono/ai, a host that draws that page and does what ov's main.ts did, through two bridges, Core.ts and Kb.ts. ai is registered at port 5187 with a db entry naming `ov.db`, in mono's workspaces, in servers.sh and on the hub page under H. memory/kb and memory/ai each hold an index, a log, a lexicon and a map, and adopt kb.md moved to memory/kb/zone. ov is untouched.
+
+Step 5 built the hand-over, two ways. The facts: kb's Customizations.ts, eight fields whose defaults name no host, which ai's main.ts fills before anything mounts, the name, the prefix, the host, the hierarchies and the build notes table. The kinds, tags and tag areas wait for step 7 and the prefix for step 9. The drawing: kb's Main.svelte draws panel, through Panel.ts, kb's second bridge, and hands panel kb's own four, the controls row's right end without the hamburger, the details column and the operation view inside panel's regions, and the status line's words and offer. It takes four snippets from a host and hands each down to its place: a filter after tag, the edit filter section between the kinds and the tags, a details section below the rules, and the operation view below the label form. ai hands none yet, and kb draws every piece as before until the step that moves it. Every ask kb makes names the configured host.
+
+Panel changed three ways for it. It draws core's status line, so the offer passes through. Its details column sits on the accent, with no gap above and a nudge up of a big gap and a tiny one, set by eye. Its controls row hands the host a box filling everything past the hamburger, in place of a spacer that shared the width, which had put kb's way back halfway across.
+
+### Verification
+
+- kb: check clean at 541 files, 343 tests, two bridges proved and every configuration default naming no host. ai: 532 files clean, 5 tests, and it builds.
+- panel 414, gallery 480, mu 417, lv 406, mj 480, all clean. The dispatcher's suites 45 and 157, the always test, big picture 15.
+- Looked at in the browser by Jonathan: the details column and the controls row put right by eye. The cause of the column's offset is not found.
+
 ## 2026-09-12 — every label lives in git, and each host gets a db
 
 The db beside the dispatcher was the only home of every label. Step 2 of the plan in [music and ai](../music%20and%20ai.md) gave it two ways back: `ov.db.before-step-2`, the file saved beside itself, and `ov.sql`, every table as plain text, written by `/dump` and read back by `/restore` into a new db beside the live one, which is never written over. The ignore line widened to every db file beside the dispatcher, so the dump enters git and no db does.

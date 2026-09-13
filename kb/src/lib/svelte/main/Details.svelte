@@ -13,12 +13,13 @@
 	import D_Rules from '../content/D_Rules.svelte';
 	import { debug } from '../../ts/common/Core';
 	import { Stack } from '../../ts/common/Core';
+	import type { Snippet } from 'svelte';
 
-	// The collapsible details column, holding three things that fold: preferences, repair and
-	// the rules. The frame computes its width. Which sections are open is remembered as one
-	// saved list of their names — all shut saves an empty list, while nothing saved at all
-	// means all open, the first-time state.
-	let { width }: { width: number } = $props();
+	// The details column's contents, inside panel's region, which is given its width: three things
+	// that fold, preferences, repair and the rules, and below them the host's own section, where
+	// the host hands one. Which sections are open is remembered as one saved list of their names —
+	// all shut saves an empty list, while nothing saved at all means all open, the first-time state.
+	let { width, section }: { width: number; section?: Snippet } = $props();
 
 	const w_details_open = preferences.persistent<string[]>(T_Preference.details_open, Object.values(T_Details));
 
@@ -90,13 +91,12 @@
 {#snippet shows_preferences()}<D_Preferences />{/snippet}
 {#snippet shows_repair()}<D_Repair />{/snippet}
 {#snippet shows_rules()}<D_Rules />{/snippet}
+{#snippet shows_host()}{@render section?.()}{/snippet}
 
-<div class='region details' bind:this={column} style:width='{width}px'>
-	<!-- Everything from the first separator down to the last stands on the page color; the column's
-	     own gap above it and whatever is left below it stand on the accent. It reaches out to the
-	     column's edges and holds that width back as its own step-in, so the page color runs the
-	     full width while what it holds stands where it did. -->
-	<div class='holds-stack'>
+<!-- Everything from the first separator down to the last stands on the page color, panel's region's
+     own. It reaches out to the region's edges and holds that width back as its own step-in, so the
+     page color runs the full width while what it holds stands where it did. -->
+<div class='holds-stack' bind:this={column}>
 		<!-- The column is one stack. Nothing above it draws a boundary, so it draws its own separator
 			over the first section, carrying that section's word. -->
 		<!-- Twice the small gap, since a stack's gap is the whole space between two sections and the
@@ -105,13 +105,14 @@
 			{ subsection: shows_preferences, folded: !$w_preferences_open },
 			{ subsection: shows_repair, rides: [repair_action], folded: !$w_repair_open },
 			{ subsection: shows_rules, rides: [rules_action], folded: !$w_rules_open },
+			// The host's own section, below the rules, only where the host hands one.
+			...(section ? [{ subsection: shows_host }] : []),
 		]} />
 		<!-- What closes the last section off from the foot of the column, drawn here whether that
 			section is open or folded — so a fold down there always has a line to end against. -->
 		<div class='foot'>
 			<Separator thickness={k.thickness.huge} />
 		</div>
-	</div>
 </div>
 
 <style>
@@ -141,12 +142,6 @@
 		background   : var(--hover);
 	}
 
-	.region {
-		border-radius : var(--radius);
-		position      : relative;
-		overflow      : hidden;
-	}
-
 	/* The closing separator, pulled up half its own thickness. Every distance in a stack is measured
 	   middle to middle, and the stack leaves its bottom edge exactly where this line's middle
 	   belongs — but a line drawn below it starts there instead, which is half a thickness too low. */
@@ -155,10 +150,9 @@
 		flex       : 0 0 auto;
 	}
 
-	/* The separators and what they hold. It reaches out to the column's edges and holds that width
+	/* The separators and what they hold. It reaches out to the region's edges and holds that width
 	   back as its own step-in, so the page color runs the full width while what it holds stands
-	   where it did. It takes only the height it needs, so what is left below the last separator is
-	   the column's own accent. */
+	   where it did. It takes only the height it needs. */
 	.holds-stack {
 		margin         : 0 calc(var(--gap) * -1);
 		padding        : 0 var(--gap);
@@ -167,17 +161,5 @@
 		display        : flex;
 		flex           : 0 0 auto;
 		gap            : 0;
-	}
-
-	/* The whole column stands on the accent: the gap above its first separator, and whatever is
-	   left below its last one. The gap above is the stack's own, so nothing is held here. */
-	.details {
-		background     : var(--accent);
-		padding        : 0 var(--gap) var(--gap);
-		box-sizing     : border-box;
-		flex-direction : column;
-		display        : flex;
-		gap            : 0;
-		flex-shrink    : 0;
 	}
 </style>

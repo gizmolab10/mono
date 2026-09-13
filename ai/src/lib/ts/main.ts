@@ -1,9 +1,21 @@
 import App from '../svelte/main/App.svelte';
-import { files, preferences, T_Preference, w_app, S_App, w_operation, w_view_file, T_Operation } from './common/Kb';
+import { files, kb_customizations, preferences, T_Preference, w_app, S_App, w_operation, w_view_file, T_Operation } from './common/Kb';
+import { customizations } from './common/Customizations';
 import { c, colors, debug } from './common/Core';
+import buildsRaw from '../md/builds.md?raw';
 import { get } from 'svelte/store';
 import { mount } from 'svelte';
 import 'core/main.css';
+
+// kb draws ai, and reads ai's facts only when asked, so they are set here, before anything draws:
+// what the controls row calls the host, what every remembered value is saved under, the host whose
+// db the dispatcher answers from, the hierarchies the list offers, and the build notes table. The
+// kinds, the tags and the tag areas are still kb's own until step 7 of the plan.
+kb_customizations.name = customizations.name;
+kb_customizations.prefix = customizations.prefix;
+kb_customizations.host = customizations.host;
+kb_customizations.hierarchies = customizations.hierarchies;
+kb_customizations.builds = buildsRaw;
 
 // The entry file: ov's main.ts, doing here what a library cannot, since a library has no entry
 // file. The host pays what the libraries owe at startup, as libraries.md says. What is owed

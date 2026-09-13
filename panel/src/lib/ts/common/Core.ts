@@ -20,3 +20,4 @@ export { start_tips, w_tip } from 'core/ts/utilities/Tooltip';
 // Components come through here too, so the alias is still named in one file only.
 export { default as Hamburger } from 'core/svelte/support/Hamburger.svelte';
 export { default as ToolTip } from 'core/svelte/support/ToolTip.svelte';
+export { default as Status_Line } from 'core/svelte/support/Status_Line.svelte';

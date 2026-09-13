@@ -5,6 +5,10 @@
 	import { w_edit_multiple } from '../../ts/managers/Operations';
 	import Browse_Filters from '../filter/Browse_Filters.svelte';
 	import { files } from '../../ts/managers/Files';
+	import type { Snippet } from 'svelte';
+
+	// The host's own filter, if it hands one, rendered among the filters after tag.
+	let { browse_filter }: { browse_filter?: Snippet } = $props();
 
 	// How wide the drawn bar runs — the same size the folder triangles use.
 	const MARK = k.size.normal;
@@ -102,7 +106,7 @@
 <!-- The three parts stack flush against each other: each already holds its own gap above and
      below what it shows, so a gap here would be a second helping of the same thing. -->
 <div class='browse'>
-<Browse_Filters under={thickness_of(count_edge)} />
+<Browse_Filters under={thickness_of(count_edge)} {browse_filter} />
 <!-- How many the filters leave, as a section of its own. The heavy line above it is what closes
      the picking rows off from the list, and it is drawn whenever those rows are on screen at all —
      whatever is folded among them. The stack above is told so, and leaves its last fold this line

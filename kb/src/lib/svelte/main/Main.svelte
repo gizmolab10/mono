@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { w_tip, start_tips } from '../../ts/common/Core';
-	import { w_command_down, w_operation, w_option_down, T_Operation } from '../../ts/managers/Operations';
+	import { w_command_down, w_operation, w_option_down, w_viewed, T_Operation } from '../../ts/managers/Operations';
 	import { files } from '../../ts/managers/Files';
 	import { files_on_disk, restart_dispatcher } from '../../ts/utilities/Saving';
 	import { colors } from '../../ts/common/Core';
@@ -10,16 +9,32 @@
 	import { hits } from '../../ts/common/Core';
 	import { w_app, S_App } from '../../ts/types/App';
 	import { c } from '../../ts/common/Core';
-	import { ToolTip } from '../../ts/common/Core';
-	import buildsRaw from '../../md/builds.md?raw';
+	import { customizations } from '../../ts/common/Customizations';
 	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 	import { hide_status, show_status_as_report, take_the_offer, w_offer, w_show_status, w_status } from '../../ts/managers/Status';
-	import { Status_Line } from '../../ts/common/Core';
 	import { BuildNotes } from '../../ts/common/Core';
+	import { Panel } from '../../ts/common/Panel';
+	import { type File } from '../../ts/types/File';
+	import type { Snippet } from 'svelte';
 	import Operation from './Operation.svelte';
 	import Controls from './Controls.svelte';
 	import Details from './Details.svelte';
+
+	// kb's page, which a host's App.svelte draws. It draws panel and hands panel kb's own four: the
+	// controls row's right end, the details column, the operation view and the status line. What the
+	// host hands kb comes two ways: the facts in Customizations.ts, filled before this mounts, and
+	// these four snippets, each optional and each rendered in one place — a filter among browse's,
+	// after tag; the edit filter section, given the file, between the kinds row and the tag areas; a
+	// section in the details column, below the rules; and the operation view, given the file and the
+	// room the frame gives it, inside the editor frame. Where a host hands none, kb draws nothing
+	// there once the piece has moved out; until then kb draws the piece as it did in ov.
+	let { browse_filter, edit_filter, details_section, operation_view }: {
+		browse_filter?   : Snippet;
+		edit_filter?     : Snippet<[File]>;
+		details_section? : Snippet;
+		operation_view?  : Snippet<[File, number, number]>;
+	} = $props();
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
 	const w_no_server = files.w_no_server;
@@ -50,10 +65,6 @@
 		);
 	});
 
-	// The one hover-hint watcher for the whole app: an element carrying its own words
-	// (marked with the hint action) shows them, drawn by the hint at the bottom of this file.
-	$effect(() => start_tips());
-
 	// Whether the command key is held, watched in one place. Holding it changes what a click
 	// on a guide does, so anything that says what a click would do can read it.
 	$effect(() => {
@@ -70,25 +81,11 @@
 		};
 	});
 
-	// One number for the margin at the window's four edges and for the space between
-	// the two regions, so the drawing and the arithmetic can never disagree.
-	const gap = k.gap.normal;
-
-	let width  = $state(Math.max(k.width.normal, window.innerWidth));
-	let height = $state(window.innerHeight);
-
-	function handleResize() {
-		width  = Math.max(k.width.normal, window.innerWidth);
-		height = window.innerHeight;
-		// Everything on screen has moved, and every rectangle the hits manager holds was measured
-		// once. They are asked again after the browser has drawn at the new size.
-		hits.defer_recalibrate();
-	}
-
-	// The latest build number, read from the build-notes table.
-	const buildNumber = Math.max(...buildsRaw.split('\n')
+	// The latest build number, read from the build notes table the host hands over. No table, no number.
+	const builds = customizations.builds.split('\n')
 		.filter((line) => /^\|\s*\d+/.test(line))
-		.map((line) => parseInt(line.split('|')[1].trim())));
+		.map((line) => parseInt(line.split('|')[1].trim()));
+	const buildNumber = builds.length > 0 ? Math.max(...builds) : 0;
 
 	let showBuildNotes = $state(false);
 
@@ -104,18 +101,9 @@
 		debug.log(`Dispatcher: asked to start over — ${answer.ok ? 'it is answering again.' : `it did not come back: ${answer.why}.`}`);
 	}
 
-	// Whether details shows at all is the hamburger's doing, and it is remembered across visits.
+	// Whether details shows at all is the hamburger's doing, panel's hamburger now, and it is
+	// remembered across visits. Panel works out the two regions' widths from the window itself.
 	const w_show_details = preferences.persistent<boolean>(T_Preference.show_details, true);
-
-	// Is there room for both the details column (its fixed width) and the content region
-	// beside it (its own smallest useful width), with the two outer margins and the one
-	// between? Measured from the real window width, so it tracks resize and browser zoom.
-	let room_for_both = $derived(width - gap * 3 >= k.width.small + k.width.big);
-	// Too narrow for both: the content region is dropped and details fill the width.
-	let details_only = $derived($w_show_details && !room_for_both);
-	let details_width = $derived(details_only ? width - gap * 2 : k.width.small - gap * 2);
-	// With details hidden, content has the whole width to itself.
-	let content_width = $derived($w_show_details ? width - details_width - gap * 3 : width - gap * 2);
 
 	function toggle_details() {
 		const next = !$w_show_details;
@@ -123,27 +111,15 @@
 		debug.log(`Hamburger clicked: details are now ${next ? 'showing' : 'hidden'}.`);
 	}
 
-	// Say it only when the showing-both / details-only / details-hidden picture changes,
-	// with the numbers behind it.
-	let said_last = '';
-	$effect(() => {
-		const line = `showing details: ${$w_show_details}, both fit: ${room_for_both}`;
-		if (line === said_last) { return; }
-		said_last = line;
-		const needed = k.width.small + k.width.big + gap * 3;
-		debug.log(`Layout: the window is ${width} wide and ${Math.round(needed)} is needed for both (details column ${k.width.small} + content ${k.width.big} + three gaps of ${Math.round(gap)}) — ${!$w_show_details
-			? `details are hidden, so content has the whole ${Math.round(content_width)}.`
-			: details_only
-				? `too narrow, so the content region is hidden and details fill ${Math.round(details_width)}.`
-				: `showing both, details ${Math.round(details_width)} wide and content ${Math.round(content_width)} wide.`}`);
-	});
+	// While a file is open, the controls row holds the file's own section across it, so the host's
+	// name yields: panel is handed none.
+	const editing = $derived($w_operation === T_Operation.edit && $w_viewed !== null);
 </script>
 
 <!-- The cursor is fed to the manager here and nowhere else: it asks which targets hold that point
      and hands the press to the one of highest precedence. A control that has moved over to it
      watches nothing itself. -->
 <svelte:window
-	onresize={handleResize}
 	onmousemove={(event) => hits.handle_mouse_movement_at(new Point(event.clientX, event.clientY))}
 	onmousedown={(event) => hits.handle_s_mouse_at(new Point(event.clientX, event.clientY), S_Mouse.down(event, null))}
 	onmouseup={(event) => hits.handle_s_mouse_at(new Point(event.clientX, event.clientY), S_Mouse.up(event, null))} />
@@ -164,30 +140,28 @@
 		tabindex='-1'
 		onkeyup={() => {}}
 		onclick={() => showBuildNotes = false}>
-		<BuildNotes table={buildsRaw} onclose={() => showBuildNotes = false} />
+		<BuildNotes table={customizations.builds} onclose={() => showBuildNotes = false} />
 	</div>
 {/if}
 
-<div class='app' style:width='{width}px' style:height='{height}px'>
-	<Controls onclick={toggle_details} detailsShown={$w_show_details} {buildNumber} {restarting} onRestart={restart} onBuildOpen={() => { showBuildNotes = true; debug.log(`Build notes: opened, showing build ${buildNumber}.`); }} />
-	<div class='boxes'>
-		{#if $w_show_details}
-			<Details width={details_width} />
-		{/if}
-		{#if !details_only}
-			<Operation width={content_width} />
-		{/if}
-	</div>
-	<!-- Along the bottom, as wide as the window, and only while there is something to say
-	     that fits there — too much to say is read as a report in the content box instead. -->
-	{#if $w_show_status && $w_operation !== T_Operation.report}
-		<Status_Line status={$w_status} offer={$w_offer} ontake={take_the_offer}
-			onhide={hide_status} onreport={show_status_as_report} />
-	{/if}
-</div>
+<!-- kb's own four, handed to panel: the controls row's right end, less the hamburger panel draws;
+     the details column, given its width; the operation view, given its width and height; and the
+     status line's words and offer, along the bottom, only while there is something to say that
+     fits there — too much to say is read as a report in the content box instead. -->
+{#snippet controls()}
+	<Controls {buildNumber} {restarting} onRestart={restart} onBuildOpen={() => { showBuildNotes = true; debug.log(`Build notes: opened, showing build ${buildNumber}.`); }} />
+{/snippet}
+{#snippet details(width: number)}
+	<Details {width} section={details_section} />
+{/snippet}
+{#snippet operation(width: number, height: number)}
+	<Operation {width} {height} {browse_filter} {edit_filter} {operation_view} />
+{/snippet}
 
-<!-- The one hover hint for the whole app; each element opts in by carrying its own words. -->
-<ToolTip message={$w_tip.message} mouseX={$w_tip.x} mouseY={$w_tip.y} appearance={$w_tip.appearance} />
+<Panel name={editing ? '' : customizations.name} details_shown={$w_show_details} ontoggle={toggle_details}
+	{controls} {details} {operation}
+	status={$w_show_status && $w_operation !== T_Operation.report ? $w_status : ''}
+	offer={$w_offer} ontake={take_the_offer} onhide={hide_status} onreport={show_status_as_report} />
 
 {/if}
 
@@ -206,19 +180,6 @@
 		inset           : 0;
 	}
 
-	.app {
-		background     : var(--accent);
-		padding        : var(--gap);
-		gap            : var(--gap);
-		flex-direction : column;
-		box-sizing     : border-box;
-		position       : fixed;
-		display        : flex;
-		overflow       : hidden;
-		top            : 0;
-		left           : 0;
-	}
-
 	/* The build notes sit over everything, on the accent, and a click anywhere shuts them. */
 	.build-backdrop {
 		background      : var(--accent);
@@ -230,34 +191,8 @@
 		inset           : 0;
 	}
 
-	/* The two side-by-side boxes, below the controls row. */
-	.boxes {
-		gap        : var(--gap);
-		overflow   : visible;    /* the editor's top clickable pokes above the regions; the frame still clips at the window */
-		display    : flex;
-		min-height : 0;
-		flex       : 1;
-	}
-
-	:global(:root) {
-		/* The typeface. Not a step on any ladder, so it keeps a name of its own —
-		   --font is the middle size, and the two must not share a word. */
-		--family: system-ui, sans-serif;
-	}
-
-	:global(body) {
-		font-weight : var(--fw);
-		font-family : var(--family);
-		color       : var(--text);
-		user-select : none;
-		margin      : 0;
-	}
-
-	:global(button, input, select, textarea) {
-		font-weight : var(--fw);
-		font-family : var(--family);
-	}
-
+	/* The page's own rules, the typeface and the body, are panel's. This one is kb's: a field being
+	   typed in can be picked from, where the page as a whole cannot. */
 	:global(input:focus, textarea:focus) {
 		user-select : text;
 	}

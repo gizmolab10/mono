@@ -9,10 +9,13 @@ import { fileURLToPath } from 'url';
 export default defineConfig({
 	plugins: [svelte()],
 	resolve: {
-		// "core" is an alias for the shared library one folder over. tsconfig.json says the
-		// same thing, and the two must always agree. kb keeps no vite config, since a library
-		// never runs alone: a host's build compiles it through the host's own alias.
-		alias: { core: resolve(dirname(fileURLToPath(import.meta.url)), '../core/src/lib') },
+		// "core" and "panel" are aliases for the two libraries one folder over. tsconfig.json says
+		// the same thing, and the two must always agree. kb keeps no vite config, since a library
+		// never runs alone: a host's build compiles it through the host's own aliases.
+		alias: {
+			core  : resolve(dirname(fileURLToPath(import.meta.url)), '../core/src/lib'),
+			panel : resolve(dirname(fileURLToPath(import.meta.url)), '../panel/src/lib'),
+		},
 	},
 	test: {
 		globals : true,

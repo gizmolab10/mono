@@ -1,3 +1,4 @@
+import { customizations } from '../common/Customizations';
 import { T_Bundle } from '../types/File';
 import { k } from '../common/Core';
 
@@ -151,9 +152,20 @@ export function path_of_address(address: string): string {
 	return decodeURIComponent(address.replace(/^\/@fs/, '').split('?')[0]);
 }
 
+// Where the dispatcher answers, and the host every ask names, so the dispatcher answers from that
+// host's db: the configured host, or none, which is ov's db.
+const DISPATCHER = 'http://localhost:5171';
+
+function route(path: string, params: Record<string, string> = {}): string {
+	const query = new URLSearchParams(params);
+	if (customizations.host !== '') { query.set('host', customizations.host); }
+	const asked = query.toString();
+	return `${DISPATCHER}${path}${asked === '' ? '' : `?${asked}`}`;
+}
+
 export async function files_on_disk(): Promise<On_Disk> {
 	try {
-		const answer = await fetch('http://localhost:5171/list-files');
+		const answer = await fetch(route('/list-files'));
 		const said = await answer.json().catch(() => ({}));
 		if (answer.ok && said.success && Array.isArray(said.paths) && typeof said.root === 'string') {
 			return { root: said.root.endsWith('/') ? said.root : `${said.root}/`, paths: said.paths as string[] };
@@ -197,7 +209,7 @@ export type Source = { author: string; came_from: string; date: string };
 export async function labels_on_disk(): Promise<In_Db> {
 	const nothing: In_Db = { labels: new Map(), fields: new Map(), sources: new Map() };
 	try {
-		const answer = await fetch('http://localhost:5171/all-labels');
+		const answer = await fetch(route('/all-labels'));
 		const said = await answer.json().catch(() => ({}));
 		const holds = (name: string) => said[name] && typeof said[name] === 'object';
 		if (answer.ok && said.success && holds('labels') && holds('fields') && holds('sources')) {
@@ -223,7 +235,7 @@ export type Rule = { id: number; reads: 'name' | 'location' | 'content'; pattern
 /** Every rule in the db, oldest first. None when the dispatcher is not running. */
 export async function rules_in_db(): Promise<Rule[]> {
 	try {
-		const answer = await fetch('http://localhost:5171/rules');
+		const answer = await fetch(route('/rules'));
 		const said = await answer.json().catch(() => ({}));
 		return answer.ok && said.success && Array.isArray(said.rules) ? said.rules as Rule[] : [];
 	} catch {
@@ -233,39 +245,39 @@ export async function rules_in_db(): Promise<Rule[]> {
 
 /** One more rule. The dispatcher then runs every rule on every file. Says whether it was added, and if not, why. */
 export async function add_rule(rule: Omit<Rule, 'id'>): Promise<Saved> {
-	return tell('/add-rule', rule);
+	return tell(route('/add-rule'), rule);
 }
 
 /** One rule gone. The dispatcher then runs every rule left on every file. Says whether it went, and if not, why. */
 export async function remove_rule(id: number): Promise<Saved> {
-	return tell('/remove-rule', { id });
+	return tell(route('/remove-rule'), { id });
 }
 
 /** Make a file's sources exactly these, in the db. Says whether they went, and if not, why. */
 export async function set_sources(where: string, authors: string[], came_from: string, date: string): Promise<Saved> {
-	return tell(`/set-sources?where=${encodeURIComponent(where)}`, { authors, came_from, date });
+	return tell(route('/set-sources', { where }), { authors, came_from, date });
 }
 
 /** Write a file's four fields on its row in the db, never in the file. Says whether they went, and if not, why. */
 export async function set_fields(where: string, fields: Fields): Promise<Saved> {
 	const { title, description, use_when, date } = fields;
-	return tell(`/set-fields?where=${encodeURIComponent(where)}`, { title, description, use_when, date });
+	return tell(route('/set-fields', { where }), { title, description, use_when, date });
 }
 
 /** Put one label on a file, in the db and never in the file. Says whether it went on, and if not, why. */
 export async function add_label(where: string, name: string, value: string): Promise<Saved> {
-	return tell(`/add-label?where=${encodeURIComponent(where)}`, { name, value });
+	return tell(route('/add-label', { where }), { name, value });
 }
 
 /** Take one label off a file, in the db. Says whether it came off, and if not, why. */
 export async function remove_label(where: string, name: string, value: string): Promise<Saved> {
-	return tell(`/remove-label?where=${encodeURIComponent(where)}`, { name, value });
+	return tell(route('/remove-label', { where }), { name, value });
 }
 
 // Tell the dispatcher to do one thing, with a JSON body, and read whether it did.
-async function tell(route: string, body: object): Promise<Saved> {
+async function tell(url: string, body: object): Promise<Saved> {
 	try {
-		const answer = await fetch(`http://localhost:5171${route}`, {
+		const answer = await fetch(url, {
 			method  : 'POST',
 			headers : { 'Content-Type': 'application/json' },
 			body    : JSON.stringify(body),
@@ -287,7 +299,7 @@ async function tell(route: string, body: object): Promise<Saved> {
  */
 export async function restart_dispatcher(tries = 10): Promise<Saved> {
 	try {
-		await fetch('http://localhost:5171/restart-dispatcher', { method: 'POST' });
+		await fetch(route('/restart-dispatcher'), { method: 'POST' });
 	} catch {
 		// It exits part way through answering, so this always throws. Nothing is wrong.
 	}
@@ -302,7 +314,7 @@ export async function restart_dispatcher(tries = 10): Promise<Saved> {
 // Show one folder in the Finder. Only the dispatcher can do it, since a page served
 // over the web cannot open anything on this machine itself.
 export async function show_folder(where: string): Promise<Saved> {
-	const url = `http://localhost:5171/show-folder?where=${encodeURIComponent(where)}`;
+	const url = route('/show-folder', { where });
 	try {
 		const answer = await fetch(url, { method: 'POST' });
 		const said = await answer.json().catch(() => ({}));
@@ -331,7 +343,7 @@ export function moved_into(folder_path: string, file_name: string): string {
 // not, why in plain words. On success it also says where the file now is on this machine, so
 // the app can read it again without waiting for a restart.
 export async function move_file(from: string, to: string): Promise<Moved> {
-	const url = `http://localhost:5171/move-guide?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+	const url = route('/move-guide', { from, to });
 	try {
 		const answer = await fetch(url, { method: 'POST' });
 		const said = await answer.json().catch(() => ({}));
@@ -347,7 +359,7 @@ export type Moved = { ok: boolean; why: string; full_path: string };
 // Throw one guide's file away. Says whether it went, and if not, why in plain words. The same
 // two guards as everything else: it must be a guide, and it must sit inside the repo.
 export async function delete_file(where: string): Promise<Saved> {
-	const url = `http://localhost:5171/delete-guide?where=${encodeURIComponent(where)}`;
+	const url = route('/delete-guide', { where });
 	try {
 		const answer = await fetch(url, { method: 'POST' });
 		const said = await answer.json().catch(() => ({}));
@@ -369,7 +381,7 @@ export async function delete_file(where: string): Promise<Saved> {
  * Nothing at all comes back when the file cannot be read, and why is said in plain words.
  */
 export async function read_file(where: string): Promise<{ text: string | null; why: string }> {
-	const url = `http://localhost:5171/read-guide?where=${encodeURIComponent(where)}`;
+	const url = route('/read-guide', { where });
 	try {
 		const answer = await fetch(url);
 		const said = await answer.json().catch(() => ({}));
@@ -391,7 +403,7 @@ export function obsidian_link(vault: string, where: string): string {
 
 // Write a changed guide. Says whether it was written, and if not, why in plain words.
 export async function save_file(where: string, whole: string, as_opened: string): Promise<Saved> {
-	const url = `http://localhost:5171/save-guide?where=${encodeURIComponent(where)}`;
+	const url = route('/save-guide', { where });
 	try {
 		const answer = await fetch(url, {
 			method  : 'POST',

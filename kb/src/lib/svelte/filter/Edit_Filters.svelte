@@ -21,6 +21,7 @@
 	import { Stack } from '../../ts/common/Core';
 	import Back_Links from '../content/Back_Links.svelte';
 	import Search from './Search.svelte';
+	import type { Snippet } from 'svelte';
 
 	// What a guide is labeled: its title, its date, the line saying what it is for, its one kind,
 	// and its tags. The labels are never on the page — they are taken off before the words are
@@ -29,8 +30,9 @@
 
 	let {
 		name, guide, tags, text = $bindable(''), page = null,
-		find = $bindable(null), folded = $bindable(false), onclose, onshow,
+		find = $bindable(null), folded = $bindable(false), onclose, onshow, edit_filter,
 	}: {
+		edit_filter? : Snippet<[File]>;      // the host's own rows, given the file, between the kinds row and the tag areas
 		guide       : File;                 	// the record of the file being read
 		name        : string;                	// what the file is called
 		page        : HTMLElement | null;    	// the drawn words, handed through to the search row
@@ -464,6 +466,13 @@
 	</div>
 {/snippet}
 
+<!-- The host's own rows, given the file, rendered only where the host hands them. -->
+{#snippet host_rows()}
+	<div class='label-rows'>
+		{@render edit_filter?.(guide)}
+	</div>
+{/snippet}
+
 <!-- The kinds. No word beside them: the separator above already says what they are. -->
 {#snippet kinds_picker()}
 	<div class='label-rows kinds'>
@@ -536,6 +545,8 @@
 				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0 },
 				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
 				{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_form_kinds },
+				// The host's own rows, between the kinds and the tags, only where the host hands them.
+				...(edit_filter ? [{ subsection: host_rows }] : []),
 				// A press on the bare space among the tagsets shuts them all. The slot answers, not the row.
 				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags,
 					answers: { id: 'editor.tags', type: T_Hit_Target.section,

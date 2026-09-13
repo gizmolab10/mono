@@ -6,4 +6,5 @@
 
 ## 13 September 2026
 
+- D: step 5 built on ai's side: main.ts fills kb's customizations before anything mounts, name, prefix, host, hierarchies and the build notes table, builds.md moved here from kb, Customizations.ts holding the four facts and Kb.ts reaching kb's configuration. Check clean at 532 files, 5 tests, the build resolves
 - D: ai's button on the hub page, under H, since a opens AnythingLLM: the button, its two config entries and its key, beside ov's

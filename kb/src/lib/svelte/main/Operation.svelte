@@ -2,12 +2,21 @@
 	import { w_operation, w_viewed, T_Operation, step_view, close_view } from '../../ts/managers/Operations';
 	import Report from '../content/Report.svelte';
 	import { debug } from '../../ts/common/Core';
+	import { type File } from '../../ts/types/File';
+	import type { Snippet } from 'svelte';
 	import Browse from './Browse.svelte';
 	import Edit from './Edit.svelte';
 
-	// The content box. It holds whichever of the two things is happening: looking through
-	// the guides, or reading one.
-	let { width }: { width: number } = $props();
+	// The content box, panel's region, given its width and height. It holds whichever of the two
+	// things is happening: looking through the guides, or reading one. The host's three snippets
+	// for this region pass through to where each is rendered.
+	let { width, height, browse_filter, edit_filter, operation_view }: {
+		width           : number;
+		height          : number;
+		browse_filter?  : Snippet;
+		edit_filter?    : Snippet<[File]>;
+		operation_view? : Snippet<[File, number, number]>;
+	} = $props();
 
 	// A guide the list no longer shows (its file gone, or a filter now hiding it) closes
 	// itself rather than showing nothing at all.
@@ -19,35 +28,18 @@
 	});
 </script>
 
-<div class='region content' style:width='{width}px'>
-	{#if $w_operation === T_Operation.report}
-		<Report />
-	{:else if $w_operation === T_Operation.edit && $w_viewed}
-		<Edit
-			name={$w_viewed.file.name}
-			address={$w_viewed.file.address}
-			tags={$w_viewed.tag_names}
-			guide={$w_viewed.file}
-			onprev={(repeated) => step_view(-1, repeated)}
-			onnext={(repeated) => step_view(1, repeated)}
-			onclose={() => { debug.log(`Reading: closed "${$w_viewed?.file.name}" — back to the guides.`); close_view(); }} />
-	{:else}
-		<Browse />
-	{/if}
-</div>
-
-<style>
-	.content {
-		border-radius  : var(--radius);
-		padding        : var(--gap);
-		box-sizing     : border-box;
-		gap            : var(--gap);
-		background     : var(--bg);
-		position       : relative;
-		flex-direction : column;
-		overflow       : visible;     /* the editor's top clickable pokes above the border; the rows scroll inside their own boxes */
-		display        : flex;
-		flex-shrink    : 0;
-		min-height     : 0;
-	}
-</style>
+{#if $w_operation === T_Operation.report}
+	<Report />
+{:else if $w_operation === T_Operation.edit && $w_viewed}
+	<Edit
+		name={$w_viewed.file.name}
+		address={$w_viewed.file.address}
+		tags={$w_viewed.tag_names}
+		guide={$w_viewed.file}
+		{width} {height} {edit_filter} {operation_view}
+		onprev={(repeated) => step_view(-1, repeated)}
+		onnext={(repeated) => step_view(1, repeated)}
+		onclose={() => { debug.log(`Reading: closed "${$w_viewed?.file.name}" — back to the guides.`); close_view(); }} />
+{:else}
+	<Browse {browse_filter} />
+{/if}

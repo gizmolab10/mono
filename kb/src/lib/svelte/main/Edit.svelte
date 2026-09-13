@@ -11,6 +11,7 @@
 	import { hits } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 	import { get } from 'svelte/store';
+	import type { Snippet } from 'svelte';
 
 	// Show one file. This is the frame: the three things stacked in it — looking through the
 	// file, what it is labeled, and the file's own words. Each of those owns its own workings;
@@ -20,8 +21,13 @@
 	//
 	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the file and call back.
-	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {} }:
-		{ name: string; address: string; tags: string[]; guide: File; onclose: () => void; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void } = $props();
+	//
+	// The host's two snippets for the frame: its edit filter section, given the file, which the
+	// label form renders between the kinds row and the tag areas, and its operation view, given the
+	// file and the room the frame has, rendered below the label form.
+	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {}, width = 0, height = 0, edit_filter, operation_view }:
+		{ name: string; address: string; tags: string[]; guide: File; onclose: () => void; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void;
+		  width?: number; height?: number; edit_filter?: Snippet<[File]>; operation_view?: Snippet<[File, number, number]> } = $props();
 
 	// The whole file, held only while it is on screen. Two of the three below write to it: the
 	// labels at the top, and a piece of the words being changed. One place holds it, so neither
@@ -106,8 +112,9 @@
 </script>
 
 <div class='viewer'>
-	<Edit_Filters {name} {guide} {tags} {page} {onclose} onshow={say}
+	<Edit_Filters {name} {guide} {tags} {page} {onclose} onshow={say} {edit_filter}
 		bind:find bind:text={text_of_file} bind:folded={filters_folded} />
+	{@render operation_view?.(guide, width, height)}
 	<Edit_Markdown {name} {address} {guide} onshow={say}
 		bind:text={text_of_file} bind:page
 		ondrawn={drawn} onredrawn={() => find?.forget()} />

@@ -5,7 +5,6 @@
 	import { T_Bundle, key_of } from '../../ts/types/File';
 	import { files } from '../../ts/managers/Files';
 	import { hit_target } from '../../ts/common/Core';
-	import { Hamburger } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/common/Core';
 	import { Direction } from '../../ts/common/Core';
 	import { Steppers } from '../../ts/common/Core';
@@ -13,14 +12,13 @@
 	import { hits } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
-	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
-	// left shows or hides details. Browsing, the dispatcher at its right starts over, and the
+	// The controls row's right end, handed to panel, which draws the hamburger at the row's left
+	// and the host's name in its middle. Browsing, the dispatcher at the right starts over, and the
 	// build number beyond it opens the notes. Editing, the way back to the list follows the
 	// hamburger, and the rest of the row is a section of its own — the count, the steppers, the
-	// folders, the file's name, and the four buttons.
-	let { onclick, detailsShown, buildNumber, onBuildOpen, onRestart, restarting }:
-		{ onclick: () => void; detailsShown: boolean; buildNumber: number; onBuildOpen: () => void;
-		  onRestart: () => void; restarting: boolean } = $props();
+	// folders, the file's name, and the four buttons — and the name yields to it.
+	let { buildNumber, onBuildOpen, onRestart, restarting }:
+		{ buildNumber: number; onBuildOpen: () => void; onRestart: () => void; restarting: boolean } = $props();
 
 	// The way back to the list while a file is open, drawn as the fat triangle the steppers
 	// use, pointing left — the direction the list lies in. Two pixels smaller than the steppers',
@@ -141,8 +139,6 @@
 </script>
 
 <div class='controls-row layer-controls'>
-	<Hamburger id='controls.hamburger' label='show or hide details' onpress={onclick}
-		tip={`${detailsShown ? 'hide' : 'show'} details`} />
 	{#if editing && guide}
 		<button class='back-button' aria-label='resume browsing'
 			use:hit_target={{ id: 'controls.back', onpress: close_view, tip: 'resume browsing' }}>
@@ -237,15 +233,16 @@
 
 <style>
 	.controls-row {
-		/* A normal top row: items centered, full width, no vertical gap — the row
-		   is just as tall as its controls. The frame stacks the two boxes below it. */
+		/* The right end of panel's row, taking whatever the hamburger leaves: items centered, no
+		   vertical gap — the row is just as tall as its controls. */
 		background  : var(--accent);
 		gap         : var(--gap);
 		box-sizing  : border-box;
 		position    : relative;
 		align-items : center;
 		display     : flex;
-		width       : 100%;
+		min-width   : 0;
+		flex        : 1 1 auto;
 	}
 
 	/* One gap off the hamburger, drawn the way the list draws its pointers — an outline, not a
@@ -272,29 +269,6 @@
 	/* Under the cursor the triangle's own body takes the hover color — the stamp comes from the
 	   manager, like every other control's. */
 	.back-button:global([data-hit]) .back-icon path {
-		fill : var(--hover);
-	}
-
-	:global(.hamburger-button) {
-		color         : var(--text-on-accent);
-		border-radius : var(--radius-tiny);
-		background    : transparent;
-		position      : relative;
-		cursor        : pointer;
-		display       : flex;
-		border        : none;
-		left          : -4px;
-	}
-
-	:global(.hamburger-button .hamburger-icon path) {
-		stroke-width : var(--thick-faint);
-		stroke       : var(--black);
-		fill         : currentColor;
-	}
-
-	/* The cursor is on it — the stamp comes from the manager, which is the only thing that knows.
-	   It is put on the element from outside this file, so it is named as reaching outside. */
-	:global(.hamburger-button[data-hit] .hamburger-icon path) {
 		fill : var(--hover);
 	}
 

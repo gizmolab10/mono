@@ -2,6 +2,14 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 13 September 2026
+
+- D: the controls row's right end is a flex box that takes the whole row past the hamburger, its contents at the right end unless they grow, in place of a spacer sharing the width with the host's snippet: kb's row, which grows, started halfway across, its way back a gigantic gap from the hamburger. Now one gap off it, as ov's was
+- D: the details column sits a big gap and a tiny gap further up, 13.6px, a negative top margin Jonathan set by eye, the nudge Jonathan measured with kb's stack in it after the padding above went. The cause is not found by reading panel's and kb's files, so the nudge is marked as one, to be measured in the browser
+- D: the details column holds no gap above, padding 0 var(--gap) var(--gap) as ov's column, since kb's stack holds its own gap above its first separator and the column's top section sat a gap too low. gallery's sidebar rises by the same gap
+- D: the details column's background is the accent, as ov's is, in place of the page color, so kb's stack paints the page color where it wants it and the accent shows above and below. gallery's sidebar sits on the accent now too
+- D: the status line is core's Status_Line, drawn in place of panel's own line of words, so a host's offer passes through: four new props, offer, ontake, onhide and onreport, each with a default, so gallery, lv, mj and mu change nothing. kb is a host of panel now, at step 5 of ov's plan. Check clean at 414 files, gallery 480, mu 417, lv 406, mj 480
+
 ## 9 September 2026
 
 - D: the outer div's class is app, not frame, in App.svelte. Check clean

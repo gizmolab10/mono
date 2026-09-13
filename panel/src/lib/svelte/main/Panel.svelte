@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { hits, k, start_tips, ToolTip, w_tip } from '../../ts/common/Core';
+	import { hits, k, start_tips, Status_Line, ToolTip, w_tip } from '../../ts/common/Core';
 	import Operation from './Operation.svelte';
 	import Controls from './Controls.svelte';
 	import Details from './Details.svelte';
@@ -9,7 +9,8 @@
 	// column down the left, the operation view filling the rest, and a status line below them
 	// while it has words. The host says what goes in each region, holds whether the column is
 	// shown, and feeds the cursor to the hits manager itself, once, in its own App.svelte.
-	let { name, details_shown, ontoggle, hamburger = true, controls, details, operation, status = '' }: {
+	let { name, details_shown, ontoggle, hamburger = true, controls, details, operation, status = '',
+	      offer = null, ontake = () => {}, onhide = () => {}, onreport = () => {} }: {
 		name          : string;                     // what the controls row calls the project, centered in it
 		details_shown : boolean;                    // whether the details column is drawn — the host's state
 		ontoggle      : () => void;                 // the hamburger was pressed
@@ -18,6 +19,10 @@
 		details?      : Snippet<[number]>;          // what the details column holds, given the column's width
 		operation?    : Snippet<[number, number]>;  // what the operation view holds, given the view's width and height
 		status?       : string;                     // words for the line below the operation view; none draws no line
+		offer?        : { says: string } | null;    // a press the words offer, drawn after them; the host says what it does
+		ontake?       : () => void;                 // the offer was taken
+		onhide?       : () => void;                 // the line's cross was pressed; the host takes its words back
+		onreport?     : () => void;                 // the words outgrew the line; the host shows them some other way
 	} = $props();
 
 	// The one hover-hint watcher for the whole page: an element carrying its own words shows
@@ -86,9 +91,12 @@
 			<Operation width={content_width} height={boxes_height} children={operation} />
 		{/if}
 	</div>
-	<!-- The status line, drawn only while there are words for it. -->
+	<!-- The status line, core's, drawn only while there are words for it: the words, the offer the
+	     host makes with them, and the cross that dismisses the line. -->
 	{#if status}
-		<div class='status' bind:clientHeight={status_height}>{status}</div>
+		<div class='status-line' bind:clientHeight={status_height}>
+			<Status_Line {status} {offer} {ontake} {onhide} {onreport} />
+		</div>
 	{/if}
 </div>
 
@@ -118,14 +126,9 @@
 		flex       : 1;
 	}
 
-	/* The line below the boxes, a region of its own, as tall as its words. */
-	.status {
-		border-radius : var(--radius);
-		background    : var(--bg);
-		padding       : 0 var(--gap);
-		font-size     : var(--font);
-		color         : var(--text);
-		flex-shrink   : 0;
+	/* The line below the boxes holds its height: core's line draws itself. */
+	.status-line {
+		flex-shrink : 0;
 	}
 
 	:global(:root) {

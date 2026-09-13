@@ -3,6 +3,9 @@
     "paths": {
       "core/*": [
         "../core/src/lib/*"
+      ],
+      "panel/*": [
+        "../panel/src/lib/*"
       ]
     },
     "useDefineForClassFields": true,

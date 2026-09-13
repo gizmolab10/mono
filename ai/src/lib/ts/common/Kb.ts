@@ -3,6 +3,7 @@
 // reaches through it; every other ai file imports here.
 
 export { default as Main } from 'kb/svelte/main/Main.svelte';
+export { customizations as kb_customizations } from 'kb/ts/common/Customizations';
 export { files } from 'kb/ts/managers/Files';
 export { preferences, T_Preference } from 'kb/ts/managers/Preferences';
 export { w_operation, w_view_file, T_Operation } from 'kb/ts/managers/Operations';

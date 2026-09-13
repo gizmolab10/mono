@@ -17,10 +17,12 @@
 	import { tip } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
+	import type { Snippet } from 'svelte';
 
 	// How thick the count section's line below this stack is drawn, handed in by whoever draws it,
 	// so a shut tags row can give back the extra a heavy line takes below the stack's bottom edge.
-	let { under = 0 }: { under?: number } = $props();
+	// And the host's own filter, if it hands one: the last row, after tag.
+	let { under = 0, browse_filter }: { under?: number; browse_filter?: Snippet } = $props();
 
 	function toggle_filters() {
 		const next = !$w_show_filters;
@@ -372,6 +374,13 @@
 	{/if}
 {/snippet}
 
+<!-- The host's own filter, rendered as the last row when the host hands one. -->
+{#snippet host_row()}
+	<div class='paired-rows'>
+		{@render browse_filter?.()}
+	</div>
+{/snippet}
+
 {#snippet projects_row()}
 	{#if shown_projects.length > 0}
 	<div class='paired-rows'>
@@ -426,6 +435,8 @@
 				answers: { id: 'list.tags', type: T_Hit_Target.section,
 					onrelease: () => toggle_all_areas(showing_areas.map((one) => one.name)),
 					tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' } },
+			// The host's own filter, after tag, only where the host hands one.
+			...(browse_filter ? [{ subsection: host_row }] : []),
 		]} />
 		{/snippet}
 	</Section>

@@ -4,7 +4,8 @@
 
 	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
 	// left shows or hides details; the project's name keeps the middle of the whole row; whatever
-	// the host hands over sits at its right end.
+	// the host hands over takes the rest of the row, one gap off the hamburger, and sits at the
+	// row's right end when it is narrower than that.
 	let { onclick, detailsShown, hamburger = true, name, right, height = $bindable(0) }: {
 		onclick      : () => void;   // the hamburger was pressed
 		detailsShown : boolean;      // whether the details column is drawn, for the hamburger's hint
@@ -23,8 +24,9 @@
 	<!-- Placed at the middle of the whole row rather than centered in what the hamburger leaves
 	     over, so it never drifts as the row's other contents come and go. -->
 	<span class='name'>{name}</span>
-	<span class='spacer'></span>
-	{@render right?.()}
+	<!-- The rest of the row is the host's. A spacer here would share the width with what the host
+	     hands over, and a host whose row grows, as kb's does, would start halfway across. -->
+	<span class='right'>{@render right?.()}</span>
 </div>
 
 <style>
@@ -40,8 +42,14 @@
 		width       : 100%;
 	}
 
-	.spacer {
-		flex : 1;
+	/* What the host hands over: the whole of the row past the hamburger, its contents at the right
+	   end unless they grow to fill it. */
+	.right {
+		justify-content : flex-end;
+		align-items     : center;
+		display         : flex;
+		min-width       : 0;
+		flex            : 1 1 auto;
 	}
 
 	.name {

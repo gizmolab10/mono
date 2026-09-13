@@ -2,6 +2,11 @@
 
 ## Decisions made during 2026
 
+- 13 September 2026; **panel's details column sits on the accent**, as ov's does, in place of the page color panel chose, so kb's column looks as ov's did: its stack paints the page color, the accent shows above and below. In panel's Details.svelte.
+- 13 September 2026; a configured **hierarchy names its label and its order within a group**, which music's track order needs. 5b of the plan's step 5, and adopt kb's type.
+- 13 September 2026; **panel uses core's status line**, which carries the offer with ontake, onhide and onreport, in place of its own line of words, so kb's offer passes through panel. A change to panel, which gallery, lv, mj and mu draw. 5c of the plan's step 5, and adopt kb.
+- 13 September 2026; **browse has filters above its list of files**: search first, then collection, kind and tag, and a host's browse section, where a host hands one, is a filter among them, **after tag**, last above the list. In the plan's step 5, substep 5a, and adopt kb.
+- 13 September 2026; in panel's controls row, **the name yields** to the file's section while a file is open, since kb's row holds the count, the steppers, the folders, the name field and the four buttons across it, and panel keeps the name in the middle. In the plan's step 5 and adopt kb.
 - 12 September 2026; the ai host's entry file is **main.ts**, lowercase, as ov's and mu's are, not Main.ts as lv's and gallery's are. The plan's steps 4 and 5 and adopt kb say so.
 - 12 September 2026; **plugin stays**, for a host's code that the dispatcher imports and runs, `plugin.py` in the host's folder. Five words were weighed against it, specialist, envoy, theme with skin, specifics and custom, specialty with purpose for the whole, and savvy, and their pacs are removed.
 - 12 September 2026; **label stays**, and belongs in the shared lexicon, whose entry now says what it is: a name and a value on a file with who wrote it, a row in the db. Nine words were weighed against it, key, trait, field, aspect, attribute, fact, property, tuple and kvp, each with a pac below, and none replaced it.

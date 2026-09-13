@@ -6,3 +6,21 @@ $ vite
 
   ➜  Local:   http://localhost:5185/
   ➜  Network: use --host to expose
+12:50:58 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Panel.svelte, /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte
+12:50:58 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Panel.svelte, /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Panel.svelte?svelte&type=style&lang.css
+12:59:11 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:02:55 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:05:26 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:07:01 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:09:06 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:09:19 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:10:42 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:11:14 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:11:20 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:11:26 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:11:31 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:11:36 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:12:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:12:19 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:13:01 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+1:18:11 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css

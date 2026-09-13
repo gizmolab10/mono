@@ -1,6 +1,6 @@
 # adopt kb
 
-What a host hands kb, two ways, as step 5 in [music and ai](../../ov/zone/music%20and%20ai.md) says: the facts as configuration, set before anything mounts, and the drawing as snippets, rendered by kb. Proposed 11 September 2026, not decided. Moved here from memory/ov/zone at step 4, 12 September 2026.
+What a host hands kb, two ways, as step 5 in [music and ai](../../ov/zone/music%20and%20ai.md) says: the facts as configuration, set before anything mounts, and the drawing as snippets, rendered by kb. Proposed 11 September 2026, moved here from memory/ov/zone at step 4, 12 September 2026, and built at step 5, 13 September 2026: kb's Customizations.ts and Main.svelte are the two ways.
 
 ## the configuration
 
@@ -8,22 +8,24 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 
 | field | holds | today in ov | ai fills | mu fills |
 | --- | --- | --- | --- | --- |
-| name | what the controls row calls the host | Controls.svelte | ai | mu |
+| name | what the controls row calls the host | none: ov's row shows no host name, panel's centers one | ai | mu |
 | prefix | what every remembered value is saved under | Preferences.ts, `ov_` | ai and an underscore | mu and an underscore |
 | host | the host's name, which ports.json pairs with its db, so kb asks the dispatcher for that db's rows alone. ai's entry, made at step 4, names `ov.db`, ov's own, until ov is retired | none, the dispatcher answers ov's db | ai | mu |
 | kinds | the closed list of kinds, drawn in the kinds row | T_Kind in File.ts | the six | music, one |
 | tags | the closed list of tags | ALL_TAGS in File.ts | the 39 | none, a song takes no tags, decided 11 September 2026 |
 | tag_areas | the tags gathered into areas, each folding its tags away | TAG_AREAS in Tag_Areas.ts | the ten | none |
-| hierarchies | the labels a hierarchy can group by, folder first, which the list offers | the folders alone, Files.ts | folder | folder, artist, album, name |
-| builds | the build notes table's text, which the build button opens | builds.md, read raw in App.svelte | ai's file | mu's file |
+| hierarchies | the hierarchies the list offers, folder first, each naming the label it groups by and the order within a group, decided 13 September 2026, which music's track order needs | the folders alone, Files.ts | folder | folder, artist, album, name |
+| builds | the build notes table's text, which the build button opens | builds.md, read raw in App.svelte, Main.svelte in kb | ai's file | mu's file |
+
+At step 5 ai fills name, host, hierarchies and builds. kinds, tags and tag_areas are filled at step 7, when they leave File.ts and Tag_Areas.ts, and prefix is read at step 9.
 
 ## the snippets
 
-The host's App.svelte draws kb's page, Main.svelte, which draws panel and hands panel kb's own four, controls, details, operation and status. Main.svelte takes four snippets from the host and renders each in one place. Where a host hands none, kb draws nothing there.
+The host's App.svelte draws kb's page, Main.svelte, which draws panel and hands panel kb's own four: the right end of the controls row from Controls.svelte, less the hamburger panel draws, the name yielding to the file's section while a file is open, decided 13 September 2026, the details column from Details.svelte, the operation view from Operation.svelte, and the status line's words and offer from Status.ts, panel using core's status line, which carries the offer, in place of its own line of words, decided 13 September 2026. Main.svelte takes four snippets from the host and renders each in one place. Where a host hands none, kb draws nothing there, once the piece has moved. Until the step that moves a piece, kb draws it as today.
 
 | snippet | takes | rendered | ai hands | mu hands |
 | --- | --- | --- | --- | --- |
-| the browse filter section | nothing | among the browse filter sections, beside kb's collection, kind, tag and search rows | nothing: ai's projects are its collections, which kb's collection filter narrows | nothing |
+| the browse filter section | nothing | among browse's filters above its list of files, after kb's search, collection, kind and tag rows, last, decided 13 September 2026 | nothing: ai's projects are its collections, which kb's collection filter narrows | nothing |
 | the edit filter section | the clicked file | in the editor's label form, where the four fields' rows sit today, between kb's kinds row and tag areas | the four rows, title, date, brief and use when, with the title's two tools, Edit_Filters.svelte's today | nothing |
 | the details section | nothing | a section in the details column, below preferences and rules | repair, D_Repair.svelte | nothing |
 | the operation view | the clicked file, and the width and height kb's frame gives it | inside kb's editor frame, Edit.svelte, below the label form | the drawn markdown, Edit_Markdown.svelte, with search and back links | the player |
@@ -41,7 +43,8 @@ The authors and from rows stay kb's, since the sources table is kb's. The kinds 
 ## the type
 
 ```ts
-export type Tag_Area = { name: string; tags: string[] };
+import type { Tag_Area } from '../types/Tag_Areas';   // kb's own type, until step 7 moves the areas to ai
+export type Hierarchy = { label: string; order: string };
 export const customizations = {
     name        : 'kb',
     prefix      : 'kb_',
@@ -49,17 +52,17 @@ export const customizations = {
     kinds       : [] as string[],
     tags        : [] as string[],
     tag_areas   : [] as Tag_Area[],
-    hierarchies : ['folder'],
+    hierarchies : [{ label: 'folder', order: 'name' }] as Hierarchy[],
     builds      : '',
 };
 ```
 
-Main.svelte's four snippet props, named for the four places above: the two sections that take nothing, the edit filter section that takes the file, and the operation view that takes the file, the width and the height. Each is optional.
+Main.svelte's four snippet props, named for the four places above, browse_filter, edit_filter, details_section and operation_view: the two sections that take nothing, the edit filter section that takes the file, and the operation view that takes the file, the width and the height. Each is optional.
 
 ## proof
 
-kb's check clean with ai's values in. One test in kb that every default names no host. ai's own alias test, as libraries.md's fourth rule asks, that only its bridge names kb.
+kb's check clean with ai's values in. One test in kb that every default names no host, customizations.test.ts. ai's own alias test, as libraries.md's fourth rule asks, that only its bridge names kb. All three hold, 13 September 2026.
 
 ## open
 
-Two, as substeps 5a and 5b of the plan in [music and ai](../../ov/zone/music%20and%20ai.md): where the browse snippet sits among kb's rows, and whether a configured hierarchy names the label alone or the label and its order within a group.
+None. 5a, 5b and 5c of the plan in [music and ai](../../ov/zone/music%20and%20ai.md) are answered, 13 September 2026: the browse snippet sits after tag, last, a hierarchy names its label and its order within a group, and panel uses core's status line, so the offer passes through.

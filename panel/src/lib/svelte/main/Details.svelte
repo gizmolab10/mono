@@ -26,11 +26,13 @@
 		overflow      : hidden;
 	}
 
-	/* ov's column sits on the accent and only its stack takes the page color. Here the whole
-	   column takes the page color, so it can be seen at all. */
+	/* The column sits on the accent, as ov's does, and what the host hands over paints its own
+	   page color where it wants it, as kb's stack does. No gap above: what the host hands over
+	   holds its own, as kb's stack does above its first separator. Both decided 13 September 2026. */
 	.details {
-		background     : var(--bg);
-		padding        : var(--gap);
+		margin-top     : calc((var(--gap-big) + var(--gap-tiny)) * -1);
+		padding        : 0 var(--gap) var(--gap);
+		background     : var(--accent);
 		box-sizing     : border-box;
 		flex-direction : column;
 		display        : flex;

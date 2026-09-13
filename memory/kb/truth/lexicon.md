@@ -9,6 +9,8 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **host** — ai or mu, they import the kb library (later ji as well)
 - **collection** — a folder of files (mu -> the folder dropped, aka the root; ai -> each project inside mono)
 - **dump** — ov.sql or mu.sql, one per host, every table of the db as statements, from which a db is rebuilt
+- **configuration** — the facts a host hands kb before anything mounts: `customizations` in kb's common folder, one field per fact, which the host's main.ts fills. Never *switches*.
+- **snippet** — a piece of drawing a host hands kb, svelte's word, which kb renders in one place. Four: the browse filter, the edit filter section, the details section and the operation view.
 - **author** — the name of who wrote a file (a person or a tool: jonathan, Jeff, co, big-picture.py). In `ai`, it is often entered by hand in the editor's information rows, thereafter taken as SOT, never verified. In `mu`, it can be the artist's name: whether the artist is a source or a label is 22b's question.
 
 ## Three views (details, browser, editor)
