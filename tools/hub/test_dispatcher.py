@@ -211,7 +211,7 @@ code, said = ask('/collections', host='mu')
 check('mu\'s collections are its own', (code, said.get('success')), (200, True))
 code, said = ask('/rules', host='nope')
 check('a host with no db is refused', code, 400)
-check('and the refusal names the hosts', "['mu', 'ov']" in said.get('error', ''), True)
+check('and the refusal names the hosts', "['ai', 'mu', 'ov']" in said.get('error', ''), True)
 
 # --- say how it went ---------------------------------------------------------
 

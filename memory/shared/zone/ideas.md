@@ -1,5 +1,6 @@
 # Ideas
 
+- [ ] move all logs -> **logs** folder, sibling to truth and zone
 - [ ] ai-derived svg drawings
     - [ ] architecture
     - [ ] layout

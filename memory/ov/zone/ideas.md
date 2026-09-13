@@ -1,5 +1,6 @@
 # Ideas
 
+- [ ] move memory -> left side seg control, mo -> right side
 - [ ] read and execute [[memory/ov/zone/drive]]
 - [ ] write a proposal for JUST the first unchecked item (ignore all the others) to the top of [[memory/ov/zone/drive]]. success criteria at the top.
 

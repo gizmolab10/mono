@@ -1,7 +1,4 @@
-Killed existing process 20317 on port 5171
-Killed existing process 53746 on port 5171
+Killed existing process 20066 on port 5171
+Killed existing process 20069 on port 5171
 Dispatcher running on http://localhost:5171
 watch: looking at the disk every 3 seconds
-watch: {'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 14, 'ruled': 0}
-watch: {'changed': 1, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 0}
-watch: {'changed': 1, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 0}

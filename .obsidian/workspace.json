@@ -13,13 +13,13 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/music and ai.md",
+                "file": "memory/shared/zone/ideas.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": false
               },
               "icon": "lucide-file",
-              "title": "music and ai"
+              "title": "ideas"
             }
           },
           {
@@ -34,6 +34,20 @@
               },
               "icon": "lucide-file",
               "title": "ideas"
+            }
+          },
+          {
+            "id": "4b01382c2908e087",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/truth/shorthand.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "shorthand"
             }
           }
         ]
@@ -70,7 +84,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "projects",
+                "query": "file:shorth",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -91,12 +105,12 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 270.0877342224121,
-    "collapsed": true
+    "width": 270.0877342224121
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -174,7 +188,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/ov/zone/music and ai.md",
+                "file": "memory/shared/zone/ideas.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -214,42 +228,42 @@
   },
   "active": "afa217138ba97b9e",
   "lastOpenFiles": [
-    "tools/hub/mu.db",
-    "tools/hub/ov.restored.db-journal",
-    "ws/vite.config.js.timestamp-1789274304293-0b8bd872472b4.mjs",
-    "tools/hub/ov.db.before-step-3",
-    "tools/hub/ov.db-journal",
-    "memory/ji/zone/ideas.md",
-    "Untitled.md",
-    "memory/ov/zone/music and ai.md",
-    "tools/hub/ov.restored.db",
-    "tools/hub/ov.sql",
-    "tools/hub/ov.db.before-step-2",
-    "tools/scripts/clean.worktrees.sh",
-    "ov/notes/work",
-    "ov/notes",
-    "memory/ov/zone/ov as knowledge bases.md",
-    "memory/ov/zone/adopt kb.md",
-    "memory/ov/zone/music and ai copy 2.md",
-    "memory/ov/zone/music and ai copy.md",
-    "memory/ov/zone/ideas.md",
-    "memory/ov/zone/proposals.md",
-    "memory/ov/zone/knowledge bases.md",
-    "filter tree/node_modules/svelte-check/README.md",
-    "filter tree/node_modules/svelte/README.md",
-    "filter tree/node_modules/svelte/LICENSE.md",
-    "filter tree/node_modules/chokidar/README.md",
-    "filter tree/node_modules/is-reference/README.md",
-    "filter tree/node_modules/readdirp/README.md",
-    "filter tree/node_modules/aria-query/README.md",
-    "memory/filter tree/truth/decisions.md",
-    "memory/filter tree/truth/map of ov files.md",
-    "memory/filter tree/truth/banned words.md",
-    "memory/filter tree/truth/lexicon.md",
-    "memory/filter tree/truth/working features.md",
-    "memory/filter tree/truth/design/ov - goals.md",
-    "memory/filter tree/truth/design/okf.md",
-    "memory/filter tree/truth/design/okf — is it worth it?.md",
+    "ws/vite.config.js.timestamp-1789317553098-39aacdd715fad.mjs",
+    "memory/ai/logs/ai.log",
+    "memory/ai/logs",
+    "ws/vite.config.js.timestamp-1789317514173-04f7556f474b3.mjs",
+    "memory/ai/log.md",
+    "memory/kb/log.md",
+    "memory/ai/index.md",
+    "memory/kb/index.md",
+    "memory/ai/truth/map of ai files.md",
+    "memory/kb/truth/map of kb files.md",
+    "memory/ai/truth/lexicon.md",
+    "memory/kb/truth/lexicon.md",
+    "ai/dist/assets/index-Zg22ybg4.js",
+    "ai/dist/assets/index--QoQxbUj.css",
+    "ai/dist/index.html",
+    "ai/dist/assets",
+    "ai/dist",
+    "kb/node_modules/svelte-check/node_modules",
+    "kb/node_modules/svelte/node_modules",
+    "kb/node_modules/svelte-check/README.md",
+    "kb/node_modules/readdirp/README.md",
+    "kb/node_modules/is-reference/README.md",
+    "kb/node_modules/chokidar/README.md",
+    "kb/node_modules/svelte/LICENSE.md",
+    "kb/node_modules/svelte/README.md",
+    "kb/node_modules/aria-query/README.md",
+    "ai/node_modules/chokidar/README.md",
+    "ai/node_modules/svelte-check/README.md",
+    "ai/node_modules/svelte/README.md",
+    "ai/node_modules/svelte/LICENSE.md",
+    "ai/node_modules/is-reference/README.md",
+    "ai/node_modules/aria-query/README.md",
+    "ai/node_modules/readdirp/README.md",
+    "memory/kb/zone/adopt kb.md",
+    "ai/CLAUDE.md",
+    "kb/CLAUDE.md",
     "lv/dist/assets/lcv.label-CyYn_a6Q.png",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "lv/dist/assets/Vyd_2014_0321_Haley-29NNKbHz.jpg",

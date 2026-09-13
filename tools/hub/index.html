@@ -478,6 +478,7 @@
         <button class="project active" data-project="di">di<span class="badge">I</span></button>
         <button class="project" data-project="ji">ji<span class="badge">Z</span></button>
         <button class="project" data-project="ov">ov<span class="badge">O</span></button>
+        <button class="project" data-project="ai">ai<span class="badge">H</span></button>
         <button class="project" data-project="mu">mu<span class="badge">U</span></button>
         <button class="project" data-project="mj">mj<span class="badge">K</span></button>
         <button class="project" data-project="panel">panel<span class="badge">F</span></button>
@@ -587,6 +588,7 @@
           me: buildProjectConfig('me', 'app'),
           mo: buildProjectConfig('mo', 'app'),
           ov: buildProjectConfig('ov', 'app'),
+          ai: buildProjectConfig('ai', 'app'),
           mj: buildProjectConfig('mj', 'app'),
           mu: buildProjectConfig('mu', 'app'),
           panel: buildProjectConfig('panel', 'app'),
@@ -602,6 +604,7 @@
           me: buildProjectConfig('me', 'docs'),
           mo: buildProjectConfig('mo', 'docs'),
           ov: buildProjectConfig('ov', 'docs'),
+          ai: buildProjectConfig('ai', 'docs'),
           mj: buildProjectConfig('mj', 'docs'),
           mu: buildProjectConfig('mu', 'docs'),
           panel: buildProjectConfig('panel', 'docs'),
@@ -1514,6 +1517,7 @@
         case 'v': { const m = getDisplayMode(); if (config[m]?.['lv'] !== null) { previewProject = 'lv'; highlightProjectButton('lv'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'z': { const m = getDisplayMode(); if (config[m]?.['ji'] !== null) { previewProject = 'ji'; highlightProjectButton('ji'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'o': { const m = getDisplayMode(); if (config[m]?.['ov'] !== null) { previewProject = 'ov'; highlightProjectButton('ov'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
+        case 'h': { const m = getDisplayMode(); if (config[m]?.['ai'] !== null) { previewProject = 'ai'; highlightProjectButton('ai'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'u': { const m = getDisplayMode(); if (config[m]?.['mu'] !== null) { previewProject = 'mu'; highlightProjectButton('mu'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'k': { const m = getDisplayMode(); if (config[m]?.['mj'] !== null) { previewProject = 'mj'; highlightProjectButton('mj'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;
         case 'f': { const m = getDisplayMode(); if (config[m]?.['panel'] !== null) { previewProject = 'panel'; highlightProjectButton('panel'); prePublishActionButtonsPreview(); if (hoveredActionId) { hoveredAction = actionButtons[hoveredActionId](); } prePublishFeedbackRow(); } } break;

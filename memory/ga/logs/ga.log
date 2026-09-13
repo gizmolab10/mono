@@ -2,13 +2,7 @@ yarn run v1.22.19
 warning package.json: No license field
 $ vite
 
-  VITE v6.4.1  ready in 1510 ms
+  VITE v6.4.1  ready in 479 ms
 
   ➜  Local:   http://localhost:5180/
   ➜  Network: use --host to expose
-5:52:44 PM [vite] ../tools/hub/ports.json changed, restarting server...
-5:52:44 PM [vite] server restarted.
-7:16:37 PM [vite] ../tools/hub/ports.json changed, restarting server...
-7:16:37 PM [vite] server restarted.
-9:38:24 PM [vite] ../tools/hub/ports.json changed, restarting server...
-9:38:24 PM [vite] server restarted.

@@ -1,61 +1,7 @@
 yarn run v1.22.19
 $ vite
 
-  VITE v6.4.2  ready in 1765 ms
+  VITE v6.4.2  ready in 536 ms
 
   ➜  Local:   http://localhost:5179/
   ➜  Network: use --host to expose
-10:34:58 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/css/Gallery.css
-11:14:50 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-11:14:57 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-2:59:52 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/css/Gallery.css
-2:59:55 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-12:47:33 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/gallery/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
-12:47:41 PM [vite] (client) page reload /Users/sand/GitHub/mono/gallery/src/lib/ts/common/Customizations.ts
-12:47:46 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Main.svelte
-12:47:53 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-12:47:55 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-12:47:58 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Sidebar.svelte
-12:48:01 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Sidebar.svelte
-12:48:14 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/css/Main.css
-12:48:16 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/lv/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
-12:48:20 PM [vite] vite.config.ts changed, restarting server...
-12:48:20 PM [vite] (client) Re-optimizing dependencies because vite config has changed
-12:48:21 PM [vite] server restarted.
-1:08:25 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Panel.svelte
-1:08:27 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Panel.svelte
-1:08:33 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte
-1:08:39 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Main.svelte
-1:08:55 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-1:08:57 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Main.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Sidebar.svelte
-1:14:28 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
-1:14:29 PM [vite] (client) page reload src/lib/ts/Main.ts
-1:14:32 PM [vite] (client) page reload src/lib/ts/Main.ts
-1:17:15 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Sidebar.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Main.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Edit.svelte
-1:17:18 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-1:17:25 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-1:17:32 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-1:17:39 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-1:19:30 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-1:19:33 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-1:24:32 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-1:27:04 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
-1:28:30 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/css/Gallery.css
-1:31:41 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-1:31:43 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Gallery.svelte
-1:31:46 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-1:31:51 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte
-caption: the vineyard is now shown in the order of 11 names
-1:32:33 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Main.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Sidebar.svelte
-caption: the vineyard is now shown in the order of 11 names
-1:32:36 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Main.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Sidebar.svelte
-caption: the vineyard is now shown in the order of 11 names
-1:32:38 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Renderer.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Main.svelte, /@fs/Users/sand/GitHub/mono/gallery/src/lib/svelte/Sidebar.svelte
-5:52:43 PM [vite] ../tools/hub/ports.json changed, restarting server...
-5:52:44 PM [vite] server restarted.
-7:16:37 PM [vite] ../tools/hub/ports.json changed, restarting server...
-7:16:37 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
-7:16:37 PM [vite] server restarted.
-9:38:24 PM [vite] ../tools/hub/ports.json changed, restarting server...
-9:38:24 PM [vite] (client) Re-optimizing dependencies because lockfile has changed
-9:38:24 PM [vite] server restarted.

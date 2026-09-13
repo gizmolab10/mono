@@ -1,10 +1,10 @@
 # adopt kb
 
-What a host hands kb, two ways, as step 5 in [music and ai](music%20and%20ai.md) says: the facts as configuration, set before anything mounts, and the drawing as snippets, rendered by kb. Proposed 11 September 2026, not decided. Written here to move to memory/kb at step 4.
+What a host hands kb, two ways, as step 5 in [music and ai](../../ov/zone/music%20and%20ai.md) says: the facts as configuration, set before anything mounts, and the drawing as snippets, rendered by kb. Proposed 11 September 2026, not decided. Moved here from memory/ov/zone at step 4, 12 September 2026.
 
 ## the configuration
 
-One object kb declares in its common folder, `customizations`, the name gallery, panel and mu give the same thing, which the host's Main.ts fills before anything mounts, as lv's Main.ts fills gallery's. Every kb module reads it when asked, never at import. Its defaults name no host, libraries.md's rule. One field per fact:
+One object kb declares in its common folder, `customizations`, the name gallery, panel and mu give the same thing, which the host's main.ts fills before anything mounts, as lv's Main.ts fills gallery's. Every kb module reads it when asked, never at import. Its defaults name no host, libraries.md's rule. One field per fact:
 
 | field | holds | today in ov | ai fills | mu fills |
 | --- | --- | --- | --- | --- |
@@ -62,4 +62,4 @@ kb's check clean with ai's values in. One test in kb that every default names no
 
 ## open
 
-Two, as substeps 5a and 5b of the plan in [music and ai](music%20and%20ai.md): where the browse snippet sits among kb's rows, and whether a configured hierarchy names the label alone or the label and its order within a group.
+Two, as substeps 5a and 5b of the plan in [music and ai](../../ov/zone/music%20and%20ai.md): where the browse snippet sits among kb's rows, and whether a configured hierarchy names the label alone or the label and its order within a group.

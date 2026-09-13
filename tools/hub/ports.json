@@ -72,6 +72,11 @@
     "port": 5183,
     "repo": "https://github.com/gizmolab10/mono/tree/main/ov"
   },
+  "ai": {
+    "db": "ov.db",
+    "port": 5187,
+    "repo": "https://github.com/gizmolab10/mono/tree/main/ai"
+  },
   "mu": {
     "db": "mu.db",
     "port": 5184,

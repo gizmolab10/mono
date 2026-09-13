@@ -1,50 +1,34 @@
 yarn run v1.22.19
 $ vite
 
-  VITE v4.5.14  ready in 1525 ms
+  VITE v4.5.14  ready in 682 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: http://10.0.0.235:5173/
   ➜  Network: http://10.0.0.79:5173/
-  ➜  Network: http://169.254.128.142:5173/
-3:17:15 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/BuildNotes.svelte:54:1 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
-3:17:15 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/BuildNotes.svelte:54:1 A11y: <div> with click handler must have an ARIA role
-3:17:15 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/BuildNotes.svelte:50:0 A11y: <div> with keyup, keydown, click handlers must have an ARIA role
-3:17:17 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/search/Search_Results.svelte:41:4 A11y: Non-interactive element <li> should not be assigned mouse or keyboard event listeners.
-3:17:17 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/search/Search_Results.svelte:36:0 A11y: noninteractive element cannot have nonnegative tabIndex value
-3:17:18 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:62:2 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
-3:17:18 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:62:2 A11y: <div> with click handler must have an ARIA role
-3:17:18 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:56:1 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
-3:17:18 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:56:1 A11y: <div> with click handler must have an ARIA role
-3:17:18 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:52:0 A11y: <div> with keyup, keydown, click handlers must have an ARIA role
-3:17:24 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Clickable_Label.svelte:12:0 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
-3:17:24 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Clickable_Label.svelte:12:0 A11y: <a> with click handler must have an ARIA role
-3:17:24 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Clickable_Label.svelte:12:0 A11y: <a> element should have an href attribute
-3:17:25 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Glows_Banner.svelte:7:11 Glows_Banner has unused export property 'isSelected'. If it is for external reference only, please consider using `export const isSelected`
+  ➜  Network: http://169.254.35.221:5173/
+9:39:38 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/search/Search_Results.svelte:41:4 A11y: Non-interactive element <li> should not be assigned mouse or keyboard event listeners.
+9:39:38 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/search/Search_Results.svelte:36:0 A11y: noninteractive element cannot have nonnegative tabIndex value
+9:39:38 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/BuildNotes.svelte:54:1 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
+9:39:38 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/BuildNotes.svelte:54:1 A11y: <div> with click handler must have an ARIA role
+9:39:38 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/BuildNotes.svelte:50:0 A11y: <div> with keyup, keydown, click handlers must have an ARIA role
+9:39:39 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:62:2 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
+9:39:39 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:62:2 A11y: <div> with click handler must have an ARIA role
+9:39:39 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:56:1 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
+9:39:39 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:56:1 A11y: <div> with click handler must have an ARIA role
+9:39:39 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/main/Preview.svelte:52:0 A11y: <div> with keyup, keydown, click handlers must have an ARIA role
+9:39:42 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Clickable_Label.svelte:12:0 A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details.
+9:39:42 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Clickable_Label.svelte:12:0 A11y: <a> with click handler must have an ARIA role
+9:39:42 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Clickable_Label.svelte:12:0 A11y: <a> element should have an href attribute
+9:39:42 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Glows_Banner.svelte:7:11 Glows_Banner has unused export property 'isSelected'. If it is for external reference only, please consider using `export const isSelected`
 DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
 
 More info: https://sass-lang.com/d/legacy-js-api
 
-3:17:26 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/widget/Widget.svelte:181:1 A11y: <div> with keyup, keydown handlers must have an ARIA role
-3:17:27 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Glow_Button.svelte:11:11 Glow_Button has unused export property 'name'. If it is for external reference only, please consider using `export const name`
+9:39:43 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/widget/Widget.svelte:181:1 A11y: <div> with keyup, keydown handlers must have an ARIA role
+9:39:43 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/mouse/Glow_Button.svelte:11:11 Glow_Button has unused export property 'name'. If it is for external reference only, please consider using `export const name`
 DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
 
 More info: https://sass-lang.com/d/legacy-js-api
 
-3:17:28 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/text/Curved_Text.svelte:7:11 Curved_Text has unused export property 'center_ofArc'. If it is for external reference only, please consider using `export const center_ofArc`
-5:52:43 PM [vite] ../tools/hub/ports.json changed, restarting server...
-5:52:44 PM [vite] server restarted.
-
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: http://10.0.0.235:5173/
-  ➜  Network: http://10.0.0.181:5173/
-  ➜  Network: http://169.254.107.9:5173/
-7:16:37 PM [vite] ../tools/hub/ports.json changed, restarting server...
-7:16:38 PM [vite] server restarted.
-9:38:24 PM [vite] ../tools/hub/ports.json changed, restarting server...
-9:38:24 PM [vite] server restarted.
-
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: http://10.0.0.235:5173/
-  ➜  Network: http://10.0.0.79:5173/
-  ➜  Network: http://169.254.17.2:5173/
+9:39:44 AM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/text/Curved_Text.svelte:7:11 Curved_Text has unused export property 'center_ofArc'. If it is for external reference only, please consider using `export const center_ofArc`

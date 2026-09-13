@@ -2,6 +2,40 @@
 
 What's been finished, newest first.
 
+## 2026-09-12 — every label lives in git, and each host gets a db
+
+The db beside the dispatcher was the only home of every label. Step 2 of the plan in [music and ai](../music%20and%20ai.md) gave it two ways back: `ov.db.before-step-2`, the file saved beside itself, and `ov.sql`, every table as plain text, written by `/dump` and read back by `/restore` into a new db beside the live one, which is never written over. The ignore line widened to every db file beside the dispatcher, so the dump enters git and no db does.
+
+Step 3 gave each host a db of its own. ports.json names one beside each host's port, `ov.db` under ov and `mu.db` under mu, and database.py reads the pair at import: every call takes a host and opens that host's file, ov's when told none, so the hooks' three calls, `PLACE`, `open_db` and `all_labels`, answer as before. Every db route of the dispatcher reads a `host` parameter the same way and refuses a host with no db. A fifth table, collections, holds one row per collection, its name, its specialty and its root folder: for ai one per project, made by the look the first time the listing names one, the repo the root of every one, fourteen on the day. For mu one per dropped folder, added through `/add-collection`. `/collections` lists a host's.
+
+### Also
+
+- **A refusal sent before the request's body was read** reset the connection, and the asker saw the reset in place of the refusal. `_note_place` drops the body before refusing now.
+- **`__pycache__` folders are ignored**, and the five .pyc files git tracked are untracked, still on disk.
+
+### Verification
+
+- test_database.py: 157 checks against two dbs of its own. test_dispatcher.py: 45 against the running dispatcher.
+- The always test four of four, big picture 15.
+- ov's dump after step 3 against its dump before: the fourteen collections rows alone differ, 1116 labels in each.
+
+## 2026-09-10 — every label leaves the files for a db
+
+A db beside the dispatcher, `tools/hub/ov.db`, holds what a file does not say about itself. database.py makes it and is the only way to reach it, and only the dispatcher reads and writes it. Four tables. files: one row per file, made from the disk when its first label is written, holding its size, its time, its fingerprint and the four fields, title, description, use_when and date. labels: one row per kind or tag on a file, each saying who wrote it, hand, rule or ai. sources: one row per author, with where the file came from and a date. rules: one row per rule.
+
+The label block left every memory file. `/scan` read every listed file's block into the db, 485 files, and `/strip-block`, asked with a confirm word, took the whole block off 368 of them, keeping memory/index.md for a line the db has no place for. Files.ts reads the five labels from the db, asked for in one answer at launch beside the listing, and the editor writes every change there and never to the file. A new file is its heading alone, its labels in the db. A file the db has no row for gets its labels composed from its words when first opened.
+
+The dispatcher watches the disk: a look every 3 seconds, one before every launch of ov and one on `/rescan`. `reconcile` checks every row against the listing. A changed file gets its fingerprint computed again. A moved one is found by its bytes and keeps its labels under its new path. A gone one has its row say missing and is kept, and the list shows it where it sat, its name struck through. A missing one back at its path is found.
+
+Rules give a file its kind and tags with nothing typed. Each reads the file's name, its location or its content, matches a regex and gives one label. `run_rules` does every file changed or new since the rules last ran, and every file when a rule is added or taken away. A hand label is never touched, and a hand kind wins over a rule kind. The details column's rules section lists, adds and takes away rules.
+
+The editor's information rows show a file's authors, names separated by commas, and where it came from, a url or a person, written to the db when the field is left.
+
+### Verification
+
+- test_database.py, against a db and a repo made for the run: 23 checks at the first table, 99 by the sources. test_dispatcher.py, against the running dispatcher: 35.
+- test_big_picture.py 15, the always test four of four, ov 339 tests, check clean.
+
 ## 2026-09-07 — picking many files at once
 
 Browse's count row grew a pencil at its far left. Pressing it turns selecting on, and a slash lies across the pencil while it is off — the same mark and rule the folders button already uses for its own mode. The state is `w_edit_multiple`, a remembered boolean; `w_selected_files` holds the picked files by where they sit, also remembered.

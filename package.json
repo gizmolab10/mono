@@ -5,10 +5,12 @@
   "type": "module",
   "workspaces": {
     "packages": [
+      "ai",
       "core",
       "di",
       "gallery",
       "ji",
+      "kb",
       "lv",
       "mj",
       "mu",
