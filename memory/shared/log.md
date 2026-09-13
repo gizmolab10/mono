@@ -4,6 +4,11 @@
 
 ## 12 September 2026
 
+- D: lexicon's collection entry carries a note: when the six new lexicon entries in memory/ov/zone/music and ai.md are decided, it changes with them and ov's lexicon takes their definitions
+- D: zone/learn.md entries 22 to 25, from the edgy item that took three huh?s: on huh? cut and never add, say what is and never what would have been, name the parts by what they do and not by the code word, and a risk that is not yet needs its when
+- D: zone/learn.md entry 21: a sentence begins with the statement, then the how, Jonathan's own rule from his edits, applied to step 3 of ov's plan
+- D: tools/hub/index.md updated: ov.sql and the saved db named, servers.sh and start-hub.sh each on a line saying what it does and who runs it, and clean.worktrees.sh named where it sits today, tools/scripts, moving back to hub
+- D: pac for moving servers.sh and start-hub.sh from tools/hub to tools/scripts, in truth/decisions.md: for, one kind of thing per folder and the precedent of clean.worktrees.sh. Against, neither is standalone, both reach ports.json and dispatcher.py through their own folder, the dispatcher runs servers.sh from hub in four places, and a shell alias, three truths and an index name the path. Deciding question: sorted by what it is, or by what it serves. A finding: hub's index still links clean.worktrees.sh beside servers.sh, though it sits in scripts
 - D: zone/learn.md gained twelve raw entries, 9 to 20, the reasons for Jonathan's edits of ov's plan on 11 and 12 September: the issue first, a risk as what a step avoids, error not slip, one idea per bullet, label stays, configuration against choice or option, question substeps in bold, one numbered list, gather then remove redundancy, headings that say their subject, a file named for what the reader does, and an answer where its question is. Three reasons are marked as guesses
 - D: lexicon's label entry rewritten: a name and a value on a file with who wrote it, a row in the db beside the dispatcher, never a line in the file since 10 September, never the screen's text beside a control. kind says six with music, tag says any number from a closed list, brief says a field on the file's row. Decided in ov over nine other words, the pacs in memory/ov/truth/decisions.md
 

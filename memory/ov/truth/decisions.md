@@ -2,6 +2,7 @@
 
 ## Decisions made during 2026
 
+- 12 September 2026; **plugin stays**, for a host's code that the dispatcher imports and runs, `plugin.py` in the host's folder. Five words were weighed against it, specialist, envoy, theme with skin, specifics and custom, specialty with purpose for the whole, and savvy, and their pacs are removed.
 - 12 September 2026; **label stays**, and belongs in the shared lexicon, whose entry now says what it is: a name and a value on a file with who wrote it, a row in the db. Nine words were weighed against it, key, trait, field, aspect, attribute, fact, property, tuple and kvp, each with a pac below, and none replaced it.
 - 11 September 2026; **one db per host**, beside the dispatcher: `tools/hub/ov.db` is ai's, keeping its name until ov is retired, `tools/hub/mu.db` is mu's, one ignore line for all. open_db takes the file, PLACE stays ov's and the default, so the three tools change nothing. A path stays unique within its db, so step 3 rebuilds no table and re-keys no row. The dispatcher keeps a short list of hosts, each with its folder and its db, and picks the db by the collection a request names.
 - 12 September 2026; **ov is frozen forever**: every further change is made to ai, never ov. ov stays as it is, the static reference kb with the ai specialty is proved against, working features rows 1 to 87.

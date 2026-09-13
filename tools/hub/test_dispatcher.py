@@ -187,6 +187,20 @@ check('the labels come as a list', isinstance(said.get('labels'), list), True)
 code, said = ask('/labels', where='ov/src/lib/main.css')
 check('labels on anything that is not a note are refused', code, 409)
 
+# --- the backup and the dump --------------------------------------------------
+#
+# The real dump, written beside the real db, and a new db made from it beside them, which is
+# what step 2 of the plan asks for as its proof: every label the same.
+
+code, said = tell('/dump', {})
+check('the dump is written beside the db', said.get('dump'), os.path.join(REPO, 'tools', 'hub', 'ov.sql'))
+check('the dump holds every label', said.get('labels'), sum(len(rows) for rows in ask('/all-labels')[1]['labels'].values()))
+
+code, said = tell('/restore', {'into': 'ov.db'})
+check('the live db is never written over', code, 400)
+code, said = tell('/restore', {'into': 'ov.restored.db'})
+check('a dump read back into ov.restored.db holds every label', said.get('labels'), sum(len(rows) for rows in ask('/all-labels')[1]['labels'].values()))
+
 # --- say how it went ---------------------------------------------------------
 
 for one in passed:

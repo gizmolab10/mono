@@ -10,7 +10,7 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 | --- | --- | --- | --- | --- |
 | name | what the controls row calls the host | Controls.svelte | ai | mu |
 | prefix | what every remembered value is saved under | Preferences.ts, `ov_` | ai and an underscore | mu and an underscore |
-| collection | the specialty's name, which picks the host's db and its collections table, so kb asks the dispatcher for that db's rows alone | none, the dispatcher answers ov's db | ai | music |
+| host | the host's name, which ports.json pairs with its db, so kb asks the dispatcher for that db's rows alone. ai's entry, made at step 4, names `ov.db`, ov's own, until ov is retired | none, the dispatcher answers ov's db | ai | mu |
 | kinds | the closed list of kinds, drawn in the kinds row | T_Kind in File.ts | the six | music, one |
 | tags | the closed list of tags | ALL_TAGS in File.ts | the 39 | none, a song takes no tags, decided 11 September 2026 |
 | tag_areas | the tags gathered into areas, each folding its tags away | TAG_AREAS in Tag_Areas.ts | the ten | none |
@@ -23,7 +23,7 @@ The host's App.svelte draws kb's page, Main.svelte, which draws panel and hands 
 
 | snippet | takes | rendered | ai hands | mu hands |
 | --- | --- | --- | --- | --- |
-| the browse filter section | nothing | among the browse filter sections, beside kb's kind, tag and search rows | the project row, Browse_Filters.svelte's today, the project read off the path | nothing |
+| the browse filter section | nothing | among the browse filter sections, beside kb's collection, kind, tag and search rows | nothing: ai's projects are its collections, which kb's collection filter narrows | nothing |
 | the edit filter section | the clicked file | in the editor's label form, where the four fields' rows sit today, between kb's kinds row and tag areas | the four rows, title, date, brief and use when, with the title's two tools, Edit_Filters.svelte's today | nothing |
 | the details section | nothing | a section in the details column, below preferences and rules | repair, D_Repair.svelte | nothing |
 | the operation view | the clicked file, and the width and height kb's frame gives it | inside kb's editor frame, Edit.svelte, below the label form | the drawn markdown, Edit_Markdown.svelte, with search and back links | the player |
@@ -32,8 +32,8 @@ The authors and from rows stay kb's, since the sources table is kb's. The kinds 
 
 ## not handed
 
-1. **A collection's rows.** The dispatcher's collections table holds them. kb asks by the configured collection.
-2. **The project of an ai file.** Read off its path by ai's own code, in its browse snippet, never a option.
+1. **A collection's rows.** The dispatcher's collections table holds them. kb asks by the configured host.
+2. **The project of an ai file.** Held on the file's row as its collection, read off the path once when the row is made, and narrowed by kb's collection filter. Never part of the configuration.
 3. **is_design.** ai's, from the path, in its own code.
 4. **The listing rule, the tag reader and the streaming route.** The plugin's, on the dispatcher side, never the page's.
 5. **Rules, sources and preferences.** kb's own sections and tables.
@@ -45,7 +45,7 @@ export type Tag_Area = { name: string; tags: string[] };
 export const customizations = {
     name        : 'kb',
     prefix      : 'kb_',
-    collection  : '',
+    host        : '',
     kinds       : [] as string[],
     tags        : [] as string[],
     tag_areas   : [] as Tag_Area[],

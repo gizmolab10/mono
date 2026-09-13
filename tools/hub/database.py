@@ -424,3 +424,46 @@ def reconcile(root, paths):
                 missing += 1
     db.close()
     return {'changed': changed, 'moved': moved, 'missing': missing, 'found': found}
+
+
+def dump_place():
+    """Where the dump sits: beside the db, with the db's name and .sql on the end. The dump
+    enters git, the db never does, so the labels live in git through it."""
+    return os.path.splitext(PLACE)[0] + '.sql'
+
+
+def write_dump():
+    """Write every table as plain text to the dump's place: the statements that make each
+    table and insert each row, sqlite's own words. Answers where it went and how many labels
+    it holds."""
+    db = open_db()
+    lines = list(db.iterdump())
+    labels = db.execute('SELECT count(*) FROM labels').fetchone()[0]
+    db.close()
+    with open(dump_place(), 'w') as f:
+        f.write('\n'.join(lines) + '\n')
+    return {'dump': dump_place(), 'statements': len(lines), 'labels': labels}
+
+
+def restore(into):
+    """A new db made from the dump: the file named is made beside the db and nowhere else, a
+    name carrying a folder is refused, and so is the live db's own name, whatever the ask says.
+    The dump's statements are run on the empty file, so it holds every table and row the live
+    db held when the dump was written. Answers where it went and how many labels it holds."""
+    if not into.endswith('.db') or os.path.basename(into) != into:
+        raise ValueError('name a .db file with no folder in the name')
+    target = os.path.join(os.path.dirname(PLACE), into)
+    if os.path.abspath(target) == os.path.abspath(PLACE):
+        raise ValueError('the live db is never written over')
+    if not os.path.isfile(dump_place()):
+        raise ValueError('no dump to read: ask /dump first')
+    with open(dump_place()) as f:
+        text = f.read()
+    if os.path.exists(target):
+        os.remove(target)
+    new = sqlite3.connect(target)
+    new.executescript(text)
+    new.commit()
+    labels = new.execute('SELECT count(*) FROM labels').fetchone()[0]
+    new.close()
+    return {'restored': target, 'labels': labels}

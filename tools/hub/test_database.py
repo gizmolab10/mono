@@ -11,6 +11,7 @@ running dispatcher is left alone and need not be up.
 import json
 import os
 import shutil
+import sqlite3
 import sys
 import tempfile
 import threading
@@ -415,6 +416,46 @@ for rule in ask('/rules')[1]['rules']:
     tell('/remove-rule', {'id': rule['id']})
 code, said = ask('/labels', where=RULED_FILE)
 check('with every rule gone, every label a rule gave is gone', [one['made_by'] for one in said.get('labels', [])], ['hand'])
+
+# --- the backup and the dump --------------------------------------------------
+#
+# The dump is written beside the db, and a new db made from it answers every label the same.
+
+
+def labels_in(place):
+    """Every label in one db file, as rows a test can compare."""
+    db = sqlite3.connect(place)
+    rows = db.execute('SELECT files.path, labels.name, labels.value, labels.made_by FROM labels '
+                      'JOIN files ON files.id = labels.file ORDER BY files.path, labels.name, labels.value').fetchall()
+    db.close()
+    return rows
+
+
+code, said = tell('/dump', {})
+check('a dump is written beside the db', os.path.isfile(database.dump_place()), True)
+check('the dump says how many labels it holds', said.get('labels'), len(labels_in(database.PLACE)))
+with open(database.dump_place()) as f:
+    dumped = f.read()
+check('the dump makes each table and inserts each row',
+      'CREATE TABLE' in dumped and 'INSERT INTO "labels"' in dumped and 'INSERT INTO "files"' in dumped, True)
+
+code, said = tell('/restore', {'into': 'ov.db'})
+check('the live db is never written over', code, 400)
+code, said = tell('/restore', {'into': '../elsewhere.db'})
+check('a name carrying a folder is refused', code, 400)
+code, said = tell('/restore', {'into': 'notes.txt'})
+check('a name that is not a .db is refused', code, 400)
+code, said = tell('/restore', {})
+check('a restore with nothing named is refused', code, 400)
+
+code, said = tell('/restore', {'into': 'ov.restored.db'})
+check('a dump read back into a new db answers', code, 200)
+restored = os.path.join(FOLDER, 'ov.restored.db')
+check('the new db sits beside the db', said.get('restored'), restored)
+check('the new db answers every label the same as the db', labels_in(restored), labels_in(database.PLACE))
+check('the new db holds the same tables',
+      sorted(row[0] for row in sqlite3.connect(restored).execute("SELECT name FROM sqlite_master WHERE type = 'table'")),
+      sorted(row[0] for row in sqlite3.connect(database.PLACE).execute("SELECT name FROM sqlite_master WHERE type = 'table'")))
 
 # --- say how it went ---------------------------------------------------------
 

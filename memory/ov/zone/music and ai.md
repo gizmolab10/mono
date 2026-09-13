@@ -2,19 +2,32 @@
 
 kb is the library extracted from ov. mu and ai import kb to read music and ai files. ov is frozen forever, decided 12 September 2026 — every further change is made to ai, never ov. It stays as it is, a static reference of correctness: kb with the ai specialty must do everything ov does today, which is ov's working features, rows 1 to 87.
 
+## kb's lexicon
+
+- [ ] **host** — ai or mu, they import the kb library (later ji as well)
+- [ ] **collection** — a folder of files (mu -> the folder dropped, aka the root; ai -> each project inside mono)
+- [ ] **db** — a host's sqlite file beside the dispatcher, ov.db, mu.db
+- [ ] **dump** — ov.sql, every table of the db as statements, from which a db is rebuilt
+- [ ] **author** — the name of who wrote a file (a person or a tool: jonathan, Jeff, co, big-picture.py). In `ai`, it is often entered by hand in the editor's information rows, thereafter taken as SOT, never verified. In `mu`, it can be the artist's name: whether the artist is a source or a label is 22b's question.
+- [ ] **plugin** — `plugin.py` in a host's folder, the code the dispatcher imports and runs for that host: its listing rule, its labeler and its own routes. The snippets and the configuration are the host's page's to hand kb, not the plugin's. Together with them it makes the host's specialty.
+
+## ai's lexicon
+
+- [ ] **project** — essentially the same as a collection
+
 ## edgy
 
 Reasonable, with three edgy parts and nothing crazy, 11 September 2026. Every piece exists already: gallery and panel are libraries that take a configuration and snippets from a host, the db module opens one sqlite file per call, and the dispatcher already runs the hub's long work in threads. Nothing new is needed but mutagen and ffmpeg.
 
-1. **The db is the only home of every label, today.** No file carries a block, the db never enters git, and no saved file of it exists until step 2. The guard: step 2 first, before any other step touches a db, and every later step that touches one saves it beside itself first.
-2. **A plugin imported into one long-running server.** mu's plugin and ai's run inside the dispatcher that ov, ai and the hooks use, so a fault in mu's tag reader can stall or drop every host's requests, and one walk of the library holds the server 30 seconds until step 21 threads it. Two guards: in step 6, the plugin's calls wrapped, so a fault fails one file, not the server, and one db per host, so mu's writes and locks never touch ai's file, though the process is still one.
+1. **The db is the only home of every label.** In ai, these labels are hand curated, irreplaceable and must be immune to corruption. Steps 2 and 3 guarantee this.
+2. **A plugin imported into one long-running server.** mu's plugin and ai's run inside the dispatcher that ov, ai and the hooks use, so a fault in mu's tag reader can **stall or drop every host's requests**, and one walk of the library holds the server 30 seconds until step 21 threads it. The fixes, in step 6: (a) the plugin's calls are wrapped so that a fault fails just it and not the server, (b) one db per host, so mu's writes and locks never touch ai's db
 3. **Three copies of ov's code through sixteen steps.** kb, ai and the frozen ov live side by side from step 4 to step 19, and the full proof, the 87 rows ticked by hand, comes only at the end. The one-line rule holds it: a fix is made in kb or ai, never in ov.
-4. **One list for two hosts**, not edgy yet: a notes host of 346 files and a music host of 18,219, and each time the two differ, the easy fix will be one more configured value on kb, until kb is a pile of special cases. What holds it: libraries.md's rule that no host's word, no mu and no ai, may appear in kb's code, so a difference is handed in by the host, never written into kb.
+4. **One library (kb) for two hosts**, not edgy until steps 26 and 29. ai's files are 346 notes and mu's are 18,219 songs, and the two will want different things on the screen. The best way to give each what it wants -> have the host hand kb a snippet which will draw the thing wanted, and which kb places onto the page.
 
 ## kb
 
 - [ ] files list: the list, the count row, the hierarchy from paths and the hierarchies by a label, each grouping the rows by one label's value, the folds, the sorting, the selecting, the stepping
-- [ ] filter sections, browse and edit variants, generic: search, collection (music, ai), kind, tag. Extensible sections for a specialty's own, handed as two snippets, one for browse and one for edit: ai adds project to browse, and the four fields' rows to edit
+- [ ] filter sections, browse and edit variants, generic: search, collection (root folder or project), kind, tag. Extensible sections for a specialty's own, handed as two snippets, one for browse and one for edit: ai adds nothing to browse, since its projects are its collections, and the four fields' rows to edit
 - [ ] operation view: the files list, and the status line below it. A click on a row draws kb's editor frame, `Edit.svelte` and the label form's stack, with the specialty's own snippet inside it: ai's drawn words, music's player
 - [ ] details column: preferences, rules, and a section a specialty adds, ai's repair
 - [ ] drop box, panel's, pulled up from gallery
@@ -22,15 +35,15 @@ Reasonable, with three edgy parts and nothing crazy, 11 September 2026. Every pi
 
 ## specialty
 
-kb is a library, like panel and gallery. mu and ai import it. Each adds a schema, and some code, of its own: the specialty.
+kb is a library, like panel and gallery. mu and ai are hosts — they import it. Each host provides a specialty — a schema, and some code.
 
 ### what it is
 
-1. **collection information.** A row in the collections table of the host's own db: a name, the specialty's name, the host's folder, and a root folder on the disk. All paths are relative to that root, and the routes refuse nothing under it that the specialty's listing rule lists. Collections are children of the root of the hierarchy.
+1. **collection information.** A row in the collections table of the host's own db: a name, the specialty's name, and a root folder on the disk. All paths are relative to that root. In ai every collection's root is the mono repo and the name alone differs, so a path stays what it is today, off the repo's top. A route reads or writes a file under the root only if the specialty's listing rule lists it, and refuses any other, the way today's routes refuse a path that is not a note. Collections are children of the root of the hierarchy.
 2. **keys.** The labels a file of this specialty carries: for music, artist, album and title, each a row in the labels table written by the plugin inside the rules pass, so each row's who wrote this is rule, and the dispatcher's next look at the disk, which deletes every row on a changed file whose who wrote this is rule and makes new entries for what the rules give, makes new entries for these too instead of wiping them, and later letter. The kind is a file's: a hand or a rule gives it, or the plugin hard-wires one.
-3. **plugin.** `plugin.py` in the host's folder, ai's or mu's, which the dispatcher imports from the folder the collection's row names. It reads and writes. Three jobs. Its listing rule says which files under the root are listed. On a file added or changed, inside the rules pass, it fills the labels as rule: music's reads the file's own tags, ai's reads the text for links and runs the content rules. And it carries the specialty's own routes, music's streaming among them. Its routes write files, as ai's save route does.
-4. **hierarchies.** Which label a hierarchy groups by: music's are folder, artist, album and name, and later letter, ai's is the folders. The host names them, kb draws the list from any of them.
-5. **operation view.** What the operation view shows when a row is clicked: music's player, ai's editor. The host hands kb a snippet for it, the way a host hands panel its snippets, and kb renders it with the clicked file.
+3. **plugin.** `plugin.py` in the host's folder, ai's or mu's, mono/ai or mono/mu, which the dispatcher imports from there, the folder its ports.json entry names. It reads and writes. Three jobs. Its listing rule says which files under the root are listed. On a file added or changed, inside the rules pass, it fills the labels as rule: music's reads the file's own tags, ai's reads the text for links and runs the content rules. And it carries the specialty's own routes, music's streaming among them. Its routes write files, as ai's save route does.
+4. **hierarchies.** Which label a hierarchy groups by: music's are folder, artist, album and name, and later letter, ai's is the folders. Each host names them, kb draws the list from any of them.
+5. **operation view.** What the operation view shows when a row is clicked: music's player, ai's editor. The host hands kb a snippet for it (the same way a host hands panel its snippets), and kb renders it with the clicked file.
 
 Not kb's: the reading of a file's tags, the streaming of bytes, and vob. Those are the host's plugin's.
 
@@ -38,10 +51,10 @@ Not kb's: the reading of a file's tags, the streaming of bytes, and vob. Those a
 
 The ai specialty is what ov does today, taken out of ov and made a host's: the markdown files of the memory system, the ones co and i read and write. The five things, and the code that comes with them:
 
-1. **collection information.** One collection, ai, its root the mono repo, since the CLAUDE files sit there and in each project's folder. The memory system's project folders, shared, core, ov and the rest, hang under it at the top of the hierarchy.
+1. **collection information.** One collection per project, as collection_of names them today: each memory folder, shared, core, ov and the rest, a project's own folder for its CLAUDE file, and shared for what sits at the repo's top. The mono repo is the root of every one.
 2. **keys.** The five labels. kind and tag as rows in the labels table, written by hand, by a rule or by the ai. title, description, use_when and date as the four fields on the files row: those four are this specialty's and no other's. authors and from as rows in the sources table. The table below says what each holds.
 3. **plugin.** Its listing rule is ov's today: every markdown file under memory, the CLAUDE files at the repo's top and one folder down, and a work note at a work folder's top or one folder down inside the named work folders, nothing deeper. On a markdown file added or changed it reads the links the file holds, so the back links can be worked out, and the db holds them, so ai reads no file at launch, where ov reads every file's text twelve at a time. It runs the content rules over it. It composes nothing. Its routes read a file's words and write them back, the ones ov's dispatcher has today.
-4. **hierarchies.** One: the folders, the project folders on top under ai. The ai specialty's own filter section narrows it by project, beside kb's kind, tag and search, which looks in titles and descriptions, not content.
+4. **hierarchies.** One: the folders, the project folders on top under ai. The collection filter, kb's, narrows it by project, beside kind, tag and search, which looks in titles and descriptions, not content.
 5. **operation view.** The editor: the file's words drawn from markdown, each piece opening for a change. The information rows, the db's fields as edit fields, with the title copied to and from the top heading and the file name. The kinds row and the tag areas. The back links. The search row.
 6. **ai project code.** The steps under ov strip down: among them drawing markdown, composing labels for a bare file the first time it is opened, mending index files, following links and judging dead ones, opening a code file, and knowing the repo's note folders.
 
@@ -49,7 +62,7 @@ The ai specialty is what ov does today, taken out of ov and made a host's: the m
 
 The music specialty is mu's: the files of a music library under a root folder i pick, anywhere on the disk. mu's own thinking is in its memory, [design](../../mu/truth/design.md) and [project goal](../../mu/zone/project%20goal.md), and the answers below draw on them. The five things, what is known of each, 11 September 2026. Each of its open questions is a substep of the plan's step that needs it, and the two for later are steps 30 and 31.
 
-1. **collection information.** One row per root folder: the specialty's name, music, the host's folder, mu, and the root, the folder dropped or picked. Every dropped folder is a collection of its own, for now, named for the folder, decided 11 September 2026. The library is the volume `/Volumes/muice myoozk`, decided 11 September 2026: an NTFS disk over USB, four top folders, Any Audio, HD Audio, MVE and MuSC-V, 18,219 files, 6227 of them flac, 1954 mp4, 1421 vob, and 3085 jpg beside them.
+1. **collection information.** One row per root folder: the specialty's name, music, and the root, the folder dropped or picked. Every dropped folder is a collection of its own, for now, named for the folder, decided 11 September 2026. The library is the volume `/Volumes/muice myoozk`, decided 11 September 2026: an NTFS disk over USB, four top folders, Any Audio, HD Audio, MVE and MuSC-V, 18,219 files, 6227 of them flac, 1954 mp4, 1421 vob, and 3085 jpg beside them.
 2. **keys.** artist, album and title, each a row in the labels table written by the plugin as rule, as what it is says. Several artists on one file, a duet, are one row each. The kind is music for every file, hard-wired. A song takes no tags. Both decided 11 September 2026.
 3. **plugin.** `mu/plugin.py`. Its listing rule: under the root, files ending mp3, m4a, flac, wav, shn, mp4, mpg, avi, mkv and vob, the jpg cover art beside them, decided 11 September 2026, and archives, zip, rar and 7z, opened with unar, the one tool that opens all three, which the dispatcher runs and says how to install when it is missing, as project goal says. A pdf or txt beside a song is matched to the song by its name and attached to it. Its labels: the three, read from the file's own tags. Its routes: one that streams a file's bytes to the player, answering the range the browser asks for, and later one for vob, which runs ffmpeg on the dispatcher's side, since no browser plays MPEG-2.
 4. **hierarchies.** Four now, by folder, by artist, by album and by name. Folder is the paths, as ai's. The other three group the rows by one label's value.
@@ -60,35 +73,35 @@ The music specialty is mu's: the files of a music library under a root folder i 
 
 ### kb tables
 
-Every table in a host's db, what one row is, its columns, and who writes it. Each host has a db of its own beside the dispatcher, decided 11 September 2026: `tools/hub/ov.db` is ai's, keeping its name until ov is retired, and `tools/hub/mu.db` is mu's, one ignore line for both. The dispatcher keeps a short list of hosts, each with its folder, where its plugin is, and its db. Four tables are built. The fifth, collections, is step 3 of the plan.
+Every table in a host's db, what one row is, its columns, and who writes it. Each host has a db of its own beside the dispatcher, decided 11 September 2026: `tools/hub/ov.db` is ai's, keeping its name until ov is retired, and `tools/hub/mu.db` is mu's, one ignore line for both. ports.json names each host's db beside its port, and a host's folder is where its plugin is. Four tables are built. The fifth, collections, is step 3 of the plan.
 
-| table | one row per | columns | written by |
-| --- | --- | --- | --- |
-| files | file | collection, path relative to the collection's root and unique within the db, size, modified, fingerprint, missing, and the four fields title, description, use_when and date, which the ai specialty uses | the dispatcher's look, and the four fields by the editor and the plugin |
-| labels | kind or tag on a file, and for music each of artist, album and title | file, name, value, and who wrote this, the column the code calls made_by: hand, rule or ai | hand through the editor, the rules pass, the plugin as rule, and the ai |
-| sources | author of a file | file, author, came_from, a url or a person, and date | hand through the editor |
-| rules | rule that gives a label | reads, one of name, location or content, pattern, and the name and value of the label it gives | hand through details |
-| collections | root folder, in the host's own db | name, the specialty's name, and the root folder on the disk, which every path is relative to and under which the routes refuse nothing the specialty's listing rule lists | ai's row made with the table, music's rows by the drop box |
+| table       | one row per                                                          | columns                                                                                                                                                                                                   | written by                                                                               |
+| ----------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| files       | file                                                                 | collection, path relative to the collection's root and unique within the db, size, modified, fingerprint, missing, and the four fields title, description, use_when and date, which the ai specialty uses | the dispatcher's look, and the four fields by the editor and the plugin                  |
+| labels      | kind or tag on a file, and for music each of artist, album and title | file, name, value, and who wrote this, the column the code calls made_by: hand, rule or ai                                                                                                                | hand through the editor, the rules pass, the plugin as rule, and the ai                  |
+| sources     | author of a file                                                     | file, author, came_from, a url or a person, and date                                                                                                                                                      | hand through the editor                                                                  |
+| rules       | rule that gives a label                                              | reads, one of name, location or content, pattern, and the name and value of the label it gives                                                                                                            | hand through details                                                                     |
+| collections | a collection: a dropped root folder for mu, a project for ai, the mono repo the root of every ai one | name, the specialty's name, and the root folder on the disk, under which a route reads or writes only a file the specialty's listing rule lists                                                                     | ai's rows made at step 3 from the files rows, then by the look as a new one appears, music's rows by the drop box |
 
-### ai tables
+### ai schema
 
 Every key the ai specialty puts on a file, where it lives in the db, what it can hold, and who sets it.
 
-| key | lives in | values | set by |
-| --- | --- | --- | --- |
-| kind | labels row, name kind | one of six: analyze, arch, explain, howto, music, specify | hand, rule or ai; a hand kind wins |
-| tag | labels rows, name tag, one per tag | the closed list of 39: always, born, build, data, debug, deploy, faster, geometry, incorporated, journal, keep, later, maybe, migrate, next, notes, now, plans, platform, port, program, proposal, prose, refactor, research, session, setup, soon, stale, style, tabled, team, test, tools, UX, vision, visual, waiting, weighed | hand, rule or ai; a tag shows whoever wrote it |
-| title | files row, field title | one line, the human name, unique across every file | hand, or composed from the first heading |
-| description | files row, field description | one sentence | hand, or composed from the first sentence |
-| use_when | files row, field use_when, csv | phrases, as many as the file names, no closed list | hand |
-| date | files row, field date | the last real change, year-month-day, or a date written out | hand, or today when composed |
-| author | sources rows, one per author | names | hand |
-| came_from | sources rows, beside each author | a url or a person | hand |
-| who wrote this | on every labels row, the column the code calls made_by | hand, rule or ai | whoever writes the row |
-| collection | files row, in ai's db | ai, the one collection, its root the mono repo. The project is read off the path | the dispatcher |
-| path, size, modified, fingerprint, missing | files row | the disk's own facts about the file | the dispatcher's look |
+| key                                        | lives in                                               | values                                                                                                                                                                                                                                                                                                                            | set by                                         |
+| ------------------------------------------ | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| kind                                       | labels row, name kind                                  | one of six: analyze, arch, explain, howto, music, specify                                                                                                                                                                                                                                                                         | hand, rule or ai; a hand kind wins             |
+| tag                                        | labels rows, name tag, one per tag                     | the closed list of 39: always, born, build, data, debug, deploy, faster, geometry, incorporated, journal, keep, later, maybe, migrate, next, notes, now, plans, platform, port, program, proposal, prose, refactor, research, session, setup, soon, stale, style, tabled, team, test, tools, UX, vision, visual, waiting, weighed | hand, rule or ai; a tag shows whoever wrote it |
+| title                                      | files row, field title                                 | one line, the human name, unique across every file                                                                                                                                                                                                                                                                                | hand, or composed from the first heading       |
+| description                                | files row, field description                           | one sentence                                                                                                                                                                                                                                                                                                                      | hand, or composed from the first sentence      |
+| use_when                                   | files row, field use_when, csv                         | phrases, as many as the file names, no closed list                                                                                                                                                                                                                                                                                | hand                                           |
+| date                                       | files row, field date                                  | the last real change, year-month-day, or a date written out                                                                                                                                                                                                                                                                       | hand, or today when composed                   |
+| author                                     | sources rows, one per author                           | names                                                                                                                                                                                                                                                                                                                             | hand                                           |
+| came_from                                  | sources rows, beside each author                       | a url or a person                                                                                                                                                                                                                                                                                                                 | hand                                           |
+| who wrote this                             | on every labels row, the column the code calls made_by | hand, rule or ai                                                                                                                                                                                                                                                                                                                  | whoever writes the row                         |
+| project                                    | files row, in ai's db, as the file's collection        | the file's project (ov, ji and the rest), extracted from the path once when each file row is made or altered.                                                                                                                                                                                                                     | the dispatcher                                 |
+| path, size, modified, fingerprint, missing | files row                                              | the disk's own facts about the file                                                                                                                                                                                                                                                                                               | the dispatcher's look                          |
 
-### music tables
+### music schema
 
 Every key the music specialty puts on a file, where it lives in the db, what it can hold, and who sets it. A row with a question is not decided.
 
@@ -148,7 +161,7 @@ One list of steps, in the order they are done and now numbered, re-decided 12 Se
 Both sides need these, so they lead whatever order the rest runs in.
 
 - [x] 1. **Answer music's questions.** The four that steps 3 and 20 key on, answered 11 September 2026: every dropped folder is a collection of its own, for now, named for the folder, a song takes no tags, and several artists on one file are one row each. Every other open question is a substep of the step that needs it. Proof: no open checkbox here.
-- [ ] 2. **The backup and the dump.** The issue: the db is the SOT and the only home of every label. When the db goes, all the labels go. This is the fix. It creates two artifacts ( `ov.db.before-step-2` and `ov.sql`). Either one can restore the labels.
+- [x] 2. **The backup and the dump.** Built 12 September 2026: `ov.db.before-step-2` saved, the ignore line widened, `/dump` and `/restore` in the dispatcher with `write_dump` and `restore` in database.py, `ov.sql` written and read back into `ov.restored.db`, every label the same, 125 checks in test_database.py and 39 in test_dispatcher.py, the always test and big-picture clean. The issue: the db is the SOT and the only home of every label. When the db goes, all the labels go. This is the fix. It creates two artifacts ( `ov.db.before-step-2` and `ov.sql`). Either one can restore the labels.
     - The **saved file**: `tools/hub/ov.db` is saved beside itself as `tools/hub/ov.db.before-step-2`, and after an error it is put back in place of `ov.db`, kept until step 3's ending holds, and every later step that touches a db does the same with its own number.
         - No db enters git, and the ignore line widens to `tools/hub/*.db*`.
     - The **dump**: a `/dump` route writes every table as plain text to `tools/hub/ov.sql`, committed at each step's ending, so the labels live in git even though `ov.db` does not, and after an error that the saved file does not cover, a lost disk, the dump is read back into a new db.
@@ -169,7 +182,26 @@ Both sides need these, so they lead whatever order the rest runs in.
                 - `all_labels` — every label on every file
                 - To keep both hooks working, those three must keep their names and answer as they do today
         - A breakdown will show at once using `test-always-tag.sh` — run after every save of database.py, before the next message.
-- [ ] 3. **One db per host, and the collections table.** **Risk low** with step 2's four guards, high without: first `ov.db` is saved as `tools/hub/ov.db.before-step-3`, then through the step `PLACE`, `open_db` and `all_labels` keep their names and answers, and test-always-tag.sh is run after every save of database.py. database.py's `open_db` takes the db's file, and every call takes the host whose db it opens, `PLACE` staying ov's db and the default, so the three tools that read it, inject-always.sh, test-always-tag.sh and big-picture.py, change nothing. The dispatcher keeps a short list of hosts, each with its folder and its db, `tools/hub/ov.db` for ai and `tools/hub/mu.db` for mu, and picks the db by the collection a request names, ai when none is named. The collections table is made in each db: ai's with one row, its root the mono repo, and mu's with one row per root folder, made by a route that adds a collection's row, which curl calls until kb's drop box exists. A file stays keyed by its path, unique within its db, relative to its collection's root, so no table is rebuilt and no row re-keyed. The collection column, which today holds the project name that `collection_of` reads off the path, holds the collection's name, and the project is read off the path where it is asked for. `all_labels`, `all_fields`, `reconcile` and `/all-labels` answer for one db. Proof: test_database.py and test_dispatcher.py with two dbs, test-always-tag.sh, test_big_picture.py, and ov's dump before against its dump after.
+- [ ] 3. **One db per host, and the collections table.**
+    - The four guards added during step 2 dropped the **risk** to low.
+    - To begin, `ov.db` is duplicated as `tools/hub/ov.db.before-step-3`.
+        - `PLACE`, `open_db` and `all_labels` keep their function names and answers
+        - test-always-tag.sh is run after every save of database.py
+    - Change `open_db` to expect to be given a file to open
+    - Change every `database.py` call to expect to be given a host (ai or mu)
+        - this accesses that host's db (eg, add_label, all_labels, reconcile, ...)
+        - a call that doesn't mention a host — accesses  `PLACE`
+        - The host list is ports.json: each host that has a db gets a db entry beside its port, `ov.db` under ov and `mu.db` under mu. A request names its host with a host parameter, ov when none. At step 3 the hosts are ov and mu, since ai has no entry until step 4 makes the project. Step 4 gives ai an entry naming `ov.db` as well, so ov and ai read one db until ov is retired at step 19.
+    - The collections table — one row per collection
+        - On the day of step 3, one row per collection already named on the files rows, ov, ji, shared and the rest. After that, the look adds a row the first time `collection_of` names a new one.
+        - in the mu host, each is a dropped folder.
+        - in ai, each is a project, ov, kb, mu and the rest, and the mono repo is the root of every one
+    - Each file has a unique key — its path relative to its collection's root
+    - Step 3 changes none of the existing data in `ov.db`.
+        - It adds the collections table beside the four tables and teaches database.py which file to open.
+    - Every answer comes from a host's single db.
+        - `all_labels`, `all_fields`, `reconcile` and `/all-labels`
+    - Proof: test_database.py and test_dispatcher.py with two dbs, test-always-tag.sh, test_big_picture.py, and ov's dump before against its dump after.
 
 ### ov strip down, steps 4 to 19
 
@@ -209,7 +241,7 @@ The 11 September decision ran music first, so a real second host would say what 
     - [ ] 21f. **The server threading its requests**, and long work, a scan or a dump, in a thread that answers progress. With no mutex: sqlite's own write lock does the waiting, and a read waits on nothing, which answers the mutex pac in truth/decisions.md with neither side. Six lines. The server: The threaded server in place of `HTTPServer`, at the import and at the base class, in dispatcher.py. Its request threads are daemon, so the restart route's exit is not held. The one read-then-write: `reconcile` reads every row, then writes. Its block's first statement becomes `BEGIN IMMEDIATE`, so a second reconcile waits at the start, up to the connection's 5 seconds, then reads what the first left and finds nothing to do. Every other write in database.py begins with a write, an upsert or a delete, so sqlite already makes the second wait. Reads: `PRAGMA journal_mode = WAL` at open, one line after the foreign keys line, so a read never waits while a write commits. WAL keeps two files beside each db, covered by step 2's ignore line, and a saved file is made after a checkpoint, `PRAGMA wal_checkpoint`, or it is missing the last writes. RULED: The sweep of rows gone from the disk iterates over `list(RULED)`, a snapshot, in place of the dict. Its reads and one-key writes need nothing. The test: test_database.py starts the threaded server too, and one new check fires two rescans at once from two threads, both answering 200 and the db's rows the same after. Proof: test_database.py and test_dispatcher.py clean, test-always-tag.sh, and three looks timed as today, 0.04 seconds each.
     - [ ] 21g. **A rule change rerun for its own reads alone**, and content rules skipped for a specialty whose files are not text.
     - [ ] 21h. **The library's own row**, added here and not at step 20, since one walk of it with a stat per file takes 30 seconds, timed 11 September 2026.
-- [ ] 22. **The tag reader.** artist, album and title read from the file's own tags in mu's plugin inside the rules pass, written as rule, the kind music with them. Python's standard library reads no tags, and neither mutagen, a pip package reading mp3, m4a and flac tags, nor ffprobe is installed on this machine, 11 September 2026. mutagen unless step 1 says otherwise, and the plugin says how to install it when it is missing, as project goal says for unar. Proof: a test folder of files with known tags, each read into its rows, and a file with no tags given its name as title.
+- [ ] 22. **The tag reader.** artist, album and title read from the file's own tags in mu's plugin inside the rules pass, written as rule, the kind music with them. Python's standard library reads no tags, and neither mutagen, a pip package reading mp3, m4a and flac tags, nor ffprobe is installed on this machine, 11 September 2026. mutagen unless step 1 says otherwise, and the plugin says how to install it when it is missing, as the mu project goal says for unar. Proof: a test folder of files with known tags, each read into its rows, and a file with no tags given its name as title.
     - [ ] 22a. **question** the title's home: a label row, as decided, or the title field on the files row, which the list already shows for ai? One or the other, since kb's list draws the title from one place.
     - [ ] 22b. **question** the artist's home: a label row, or a source, the author of the file? The sources table holds an author and where it came from already, and a hierarchy groups by a label's value.
     - [ ] 22c. **question** the reader, since python's standard library reads no tags: mutagen, a package, or ffprobe run as a tool, the way unar would be. mutagen unless said otherwise.
@@ -221,7 +253,7 @@ The 11 September decision ran music first, so a real second host would say what 
 
 What kb needs that ov never had, from the kb list at the top, since music does not fit without them.
 
-- [ ] 25. **The collection filter.** A section among the browse filters, beside kind, tag and search, narrowing the list to one collection, music or ai, read from the collections table. Proof: filters test, and a visual report of the list narrowed to each.
+- [ ] 25. **The collection filter.** A section among the browse filters, beside kind, tag and search, narrowing the list to one collection, a project in ai, a root folder in mu, read from the collections table. Proof: filters test, and a visual report of the list narrowed to each.
 - [ ] 26. **Hierarchies by a label.** The list grouped by one label's value, artist, album or name, beside the hierarchy from paths, the host naming which labels in its configuration. Proof: a test of the grouping, and a visual report of mu's list by artist.
     - [ ] 26a. **question** the shape of album: nested under artist, artist then album then song, or a flat list of albums.
     - [ ] 26b. **question** the order within an album: track order, which needs a track number the keys do not yet hold, or by name.
@@ -239,7 +271,7 @@ What kb needs that ov never had, from the kb list at the top, since music does n
 
 ### mu adopts kb, step 29
 
-- [ ] 29. **mu adopts kb.** The sixth item of the music specialty: a bridge to kb, mu's App.svelte drawing kb's page with mu's snippets, the player as the operation view snippet in place of step 24's first list, its filter sections, artist and album, its configured collection and its own build notes table. Proof: mu's alias test, that only its bridges name a library, and a visual report of the library browsed by artist and album and a song played.
+- [ ] 29. **mu adopts kb.** The sixth item of the music specialty: a bridge to kb, mu's App.svelte drawing kb's page with mu's snippets, the player as the operation view snippet in place of step 24's first list, its filter sections, artist and album, its configured host and its own build notes table. Proof: mu's alias test, that only its bridges name a library, and a visual report of the library browsed by artist and album and a song played.
     - [ ] 29a. **question** what a click does: play at once, or select, with a play button?
     - [ ] 29b. **question** what the steppers do: walk to the next song and play it, so an album plays through, or step alone?
     - [ ] 29c. **question** cover art: shown, from the file's tags, read by the same reader, or not?
@@ -247,8 +279,8 @@ What kb needs that ov never had, from the kb list at the top, since music does n
 
 ### later, steps 30 to 32
 
-- [ ] 30. **vob, mpg and avi.** A route in mu's plugin that runs ffmpeg on the dispatcher's side, since no browser plays them, as project goal says. Proof: a vob played in the browser.
-    - [ ] 30a. **question** when ffmpeg runs: once, into a cache, or as it plays? project goal's own open question.
+- [ ] 30. **vob, mpg and avi.** A route in mu's plugin that runs ffmpeg on the dispatcher's side, since no browser plays them, as the mu project goal says. Proof: a vob played in the browser.
+    - [ ] 30a. **question** when ffmpeg runs: once, into a cache, or as it plays? mu project goal's own open question.
     - [ ] 30b. **Build the route** the way 30a chose.
 - [ ] 31. **The letter hierarchy.** A fifth music hierarchy, by first character, as what it is names. Proof: a visual report of the list by letter.
     - [ ] 31a. **question** of which label: artist, album or title?

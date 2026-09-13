@@ -1385,6 +1385,36 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif self.path == '/dump':
+            # Write every table of the db as plain text beside it, ov.sql: /dump. The db never
+            # enters git and the dump does, so the labels live in git through it. Answers where
+            # it went, how many statements it holds and how many labels.
+            try:
+                self._drain_body()
+                self._send_response(200, {'success': True, **database.write_dump()})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
+        elif self.path == '/restore':
+            # Make a new db from the dump: /restore, with the JSON body {"into": <a .db name>}.
+            # The file is made beside the db and nowhere else, and the live db is never written
+            # over, whatever the ask says. Answers where it went and how many labels it holds.
+            try:
+                content_length = int(self.headers.get('Content-Length', 0))
+                sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                into = sent.get('into')
+                if not isinstance(into, str) or not into:
+                    self._send_response(400, {'success': False, 'error': 'send {"into": "<a .db name>"}'})
+                    return
+                try:
+                    said = database.restore(into)
+                except ValueError as e:
+                    self._send_response(400, {'success': False, 'error': str(e)})
+                    return
+                self._send_response(200, {'success': True, **said})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/strip-block':
             # Take the whole label block off the top of every listed file the db holds a row for:
             # /strip-block, with the JSON body {"confirm": "strip"}. A file whose block carries a

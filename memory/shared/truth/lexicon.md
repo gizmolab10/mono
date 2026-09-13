@@ -31,7 +31,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 
 - **guide** — a file in a project's `notes/guides/`, under `memory/`. Living reference; it holds decisions, not work.
 - **work note** — a file in a project's `notes/work/`, under `memory/`. What is being done now.
-- **collection** — one project's whole set of files: mono, di, ji, ov, ga, me.
+- **collection** — one project's whole set of files: mono, di, ji, ov, ga, me. When the six entries under new lexicon in memory/ov/zone/music and ai.md are decided, this entry changes with them, a collection becoming a dropped folder for mu and a project for ai, and ov's lexicon takes their definitions.
 - **label** — a name and a value on a file, with who wrote it, hand, rule or ai: a row in the db beside the dispatcher, never a line in the file since 10 September 2026. For a markdown file, its kind and each of its tags. For a song, its artist, album and title. Never the screen's text beside a control, which this word does not name here. Decided 12 September 2026, over key, trait, field, aspect, attribute, fact, property, tuple and kvp.
 - **kind** — the label saying what sort of file it is, one per file. Six exist: analyze, arch, explain, howto, music, specify.
 - **tag** — a label saying what the file is about, any number per file, from a closed list.
