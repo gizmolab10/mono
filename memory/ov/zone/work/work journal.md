@@ -2,6 +2,29 @@
 
 What's been finished, newest first.
 
+## 2026-09-13 — the kinds, the tags and the tag areas are ai's
+
+Step 7 of the plan in [music and ai](../music%20and%20ai.md). ai's Customizations.ts holds the five kinds, music dropped as mu's alone, the 39 tags and the ten tag areas, and ai's main.ts hands them to kb before anything mounts. T_Kind, ALL_TAGS and TAG_AREAS left kb: a file's kind is a word off the host's list, the five files that read the lists read the configuration, the two area functions that read them take the lists as arguments, and the fallback kind is the word analyze, ai's, in kb until step 12 moves the composing. The tag areas test moved to ai, reading ai's lists through kb's functions, and kb's labels test declares the tag words it reads off blocks.
+
+Two more of mu's facts were decided the same day: its kinds are four, music, images, text and video, by the file's ending, and a song takes tags from a closed list of four, jazz, classical, rock and hifi, reversing no tags.
+
+### Verification
+
+- kb check clean at 540 files, 324 tests. ai check clean at 533 files, 15 tests, and it builds. Big picture 15.
+- Looked at by Jonathan: the kinds row and the tag areas in ai, confirmed.
+
+## 2026-09-13 — the listing rule is ai's plugin's
+
+Step 6 of the plan in [music and ai](../music%20and%20ai.md). `ai/plugin.py` is the first plugin: the specialty's name, ov's listing rule moved whole from the dispatcher with ai and kb added to its projects, whether one path is listed, and the labels the plugin gives a file, none until step 14. The dispatcher imports each host's plugin from the host's folder and lists files, refuses paths and takes labels through it. ov's asks name no host and run ai's plugin, since the two share a db. The import and every call are wrapped: a fault is said in the log and fails that file or that request, never the server. The look writes the plugin's specialty on the collections rows, and the rules pass runs with no rules too, so a plugin's labels always land. The fields answer carries each file's collection, for step 25.
+
+On the page the mirror of the listing rule went: WORK_FOLDERS, reaches_under_work and the listed line inside site_of_file, with their test cases, and Files.ts and Hierarchy.ts no longer judge a link into a work folder, since the dispatcher's listing is the whole truth. The bundle design, T_Bundle, project_at, file_path_of and site_of_file, waits for step 25, which replaces the projects row with the collection filter.
+
+### Verification
+
+- test_database.py 166, a stub plugin raising on one file failing that file alone. test_dispatcher.py 47, the two new CLAUDE files listed, the fields carrying collections.
+- The listing after step 6 against before: 497 files, ai/CLAUDE.md and kb/CLAUDE.md the only additions.
+- The always test, big picture 15, kb check clean at 541 files and 334 tests, ai 532 and building. Not looked at in a browser.
+
 ## 2026-09-13 — kb and ai stand, and kb's page is panel's
 
 Two projects made at step 4 of the plan in [music and ai](../music%20and%20ai.md): mono/kb, a library holding all of ov's code, its page under the name Main.svelte and no entry file, and mono/ai, a host that draws that page and does what ov's main.ts did, through two bridges, Core.ts and Kb.ts. ai is registered at port 5187 with a db entry naming `ov.db`, in mono's workspaces, in servers.sh and on the hub page under H. memory/kb and memory/ai each hold an index, a log, a lexicon and a map, and adopt kb.md moved to memory/kb/zone. ov is untouched.

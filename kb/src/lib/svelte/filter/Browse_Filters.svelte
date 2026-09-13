@@ -2,9 +2,10 @@
 	import { w_projects, toggle_project, w_kind, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_search_text } from '../../ts/managers/Filters';
 	import { inverted, T_Picking } from '../../ts/managers/Filters';
 	import { toggle_all_areas, toggle_area, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
-	import { T_Bundle, T_Kind } from '../../ts/types/File';
+	import { T_Bundle } from '../../ts/types/File';
 	import { Action, T_Position } from '../../ts/common/Core';
-	import { TAG_AREAS, area_reads, tags_shown } from '../../ts/types/Tag_Areas';
+	import { area_reads, tags_shown } from '../../ts/types/Tag_Areas';
+	import { customizations } from '../../ts/common/Customizations';
 	import { fade } from 'svelte/transition';
 	import { hit_target } from '../../ts/common/Core';
 	import { smooth_height } from '../../ts/common/Core';
@@ -70,8 +71,8 @@
 	// What each row actually draws: everything on the closed lists one way, only what is
 	// within reach the other. A word already picked always shows, so a choice never vanishes
 	// from under the cursor.
-	let shown_kinds = $derived(test === 'a' ? Object.values(T_Kind)
-		: Object.values(T_Kind).filter((kind) => kinds.includes(kind)));
+	let shown_kinds = $derived(test === 'a' ? customizations.kinds
+		: customizations.kinds.filter((kind) => kinds.includes(kind)));
 
 	// A picked kind that no longer matches anything would narrow the list from nowhere —
 	// its word gone from the row, nothing to press to undo it. It is let go instead.
@@ -153,7 +154,7 @@
 
 	// Only the areas with something left to show. Worked out here rather than inside each pill,
 	// because an area that draws nothing must not leave a wrapper behind holding a gap open.
-	let showing_areas = $derived(TAG_AREAS.filter((area) => tags_shown(area, tags_in_use, $w_tags).length !== 0));
+	let showing_areas = $derived(customizations.tag_areas.filter((area) => tags_shown(area, tags_in_use, $w_tags).length !== 0));
 
 	// Search text can leave a row nothing to offer. Such a row is told it is empty, so the stack
 	// sizes it as a fold and folding it moves nothing below. Its line carries a plain word in place

@@ -1,7 +1,8 @@
 <script lang='ts'>
 	import { foot_is_all_folds, inverted, toggle_all_areas, toggle_area, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
 	import { title_from_name } from '../../ts/utilities/Labels';
-	import { ALL_TAGS, T_Kind, in_order, key_of, type File } from '../../ts/types/File';
+	import { in_order, key_of, type File } from '../../ts/types/File';
+	import { customizations } from '../../ts/common/Customizations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
 	import { smooth_height } from '../../ts/common/Core';
@@ -10,7 +11,7 @@
 	import { hit_target } from '../../ts/common/Core';
 	import { T_Edge } from '../../ts/common/Core';
 	import { WAY_OUT } from '../../ts/common/Core';
-	import { TAG_AREAS, area_reads, tags_shown } from '../../ts/types/Tag_Areas';
+	import { area_reads, tags_shown } from '../../ts/types/Tag_Areas';
 	import { Separator } from '../../ts/common/Core';
 	import { Big_Pill } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
@@ -66,7 +67,7 @@
 	let form_from        = $state('');   // where it came from, a url or a person
 	let form_tags        = $state<string[]>([]);
 	let tags_lit         = $state(false);   // the cursor is among the tag areas, so their own word lights
-	const KINDS = Object.values(T_Kind);
+	const KINDS = customizations.kinds;
 
 	// Whether the form is on screen at all. Remembered across visits, since it is a way of
 	// working rather than something about one guide.
@@ -347,8 +348,8 @@
 	 * is on offer here, since this is where a file's own tags are set.
 	 */
 	function invert_tags() {
-		form_tags = inverted(ALL_TAGS, form_tags).sort(in_order);
-		debug.log(`Editing "${name}": the tags turned over — it now wears ${form_tags.length} of the ${ALL_TAGS.length}.`);
+		form_tags = inverted(customizations.tags, form_tags).sort(in_order);
+		debug.log(`Editing "${name}": the tags turned over — it now wears ${form_tags.length} of the ${customizations.tags.length}.`);
 		save_filters();
 	}
 </script>
@@ -501,9 +502,9 @@
 		onmouseleave={() => { tags_lit = false; }}
 		onkeyup={() => {}}>
 		<div class='filter-row wrapping tags-row' use:smooth_height>
-			{#each TAG_AREAS as area (area.name)}
+			{#each customizations.tag_areas as area (area.name)}
 				<span class='pill-slot'>
-					<Big_Pill row='editor' name={area.name} items={area.tags} shown={tags_shown(area, ALL_TAGS, form_tags)}
+					<Big_Pill row='editor' name={area.name} items={area.tags} shown={tags_shown(area, customizations.tags, form_tags)}
 						reads={area_reads(area, form_tags)} chosen={form_tags} ontoggle={toggle_tag}
 						ontoggle_area={toggle_area} opened={$w_areas_open} />
 				</span>
@@ -550,7 +551,7 @@
 				// A press on the bare space among the tagsets shuts them all. The slot answers, not the row.
 				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags,
 					answers: { id: 'editor.tags', type: T_Hit_Target.section,
-						onrelease: () => toggle_all_areas(TAG_AREAS.map((one) => one.name)),
+						onrelease: () => toggle_all_areas(customizations.tag_areas.map((one) => one.name)),
 						tip: $w_areas_open.length === 0 ? 'expand tagsets' : 'collapse tagsets' } },
 			]} />
 			<!-- What closes the form off from the file's contents below. Always drawn, whatever is

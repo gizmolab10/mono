@@ -1,5 +1,5 @@
 import { preferences, T_Preference } from './Preferences';
-import { ALL_TAGS, T_Kind } from '../types/File';
+import { customizations } from '../common/Customizations';
 import { get } from 'svelte/store';
 
 /**
@@ -95,9 +95,9 @@ export function kept_from(remembered: string[], choices: string[]): string[] {
 
 // Three remembered words are let go here, all by the one rule above.
 {
-	const tags = kept_from(get(w_tags), ALL_TAGS);
+	const tags = kept_from(get(w_tags), customizations.tags);
 	if (tags !== get(w_tags)) { w_tags.set(tags); }
-	const kinds = [UNLABELED, ...Object.values(T_Kind)] as string[];
+	const kinds = [UNLABELED, ...customizations.kinds];
 	if (kept_from([get(w_kind)], ['', ...kinds]).length === 0) { w_kind.set(''); }
 	if (kept_from([get(w_tag_picking)], Object.values(T_Picking)).length === 0) { w_tag_picking.set(T_Picking.any); }
 }

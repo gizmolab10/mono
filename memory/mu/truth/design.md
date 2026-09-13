@@ -13,3 +13,7 @@ panel, taken whole on 7 September 2026: a controls row holding core's hamburger 
 ## Where the rest goes
 
 The details column takes the filters: artist, album, alphabet. The operation view takes the list and the player. The goal, its challenges and its checklist are in [zone/project goal.md](../zone/project%20goal.md).
+
+The kind of a file is one of four, music, images, text and video, decided 13 September 2026, one per file by its ending: music for mp3, m4a, flac, wav and shn, video for mp4, mpg, avi, mkv and vob, images for jpg, text for pdf and txt, the plugin giving it as rule. Decided 13 September 2026, in ov's decisions file.
+
+A song takes tags from a closed list of four, jazz, classical, rock and hifi, written by hand or by the ai, never by the plugin. Decided 13 September 2026, in ov's decisions file, reversing no tags of 11 September.

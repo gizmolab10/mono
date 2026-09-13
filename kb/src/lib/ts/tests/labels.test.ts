@@ -1,5 +1,10 @@
 import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_file, free_name, has_labels, kind_from_where, label_block, label_changes, labels_for, labels_from, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
 import { describe, expect, it } from 'vitest';
+import { customizations } from '../common/Customizations';
+
+// The tag list is the host's since step 7 of the plan, so the words these cases read off blocks are
+// declared here, a list of the library's own.
+customizations.tags = ['journal', 'notes', 'now', 'proposal', 'prose', 'setup', 'soon', 'stale'];
 import type { Labels } from '../types/File';
 
 describe('the writes that take a file\'s kind and tags in the db from what they were to what they are', () => {

@@ -5,7 +5,7 @@ import { kind_matches, tags_match, words_match, project_matches } from './Filter
 import { Indexes } from '../database/Indexes';
 import { project_of, T_Bundle, in_order, key_of } from '../types/File';
 import { likeliest, link_agrees, parts_of_link, resolved_from } from '../utilities/Following_Links';
-import { file_path_of, reaches_under_work } from '../utilities/Saving';
+import { file_path_of } from '../utilities/Saving';
 
 /**
  * What a link says when it points at a real file below the top of a work folder — the one kind
@@ -373,7 +373,7 @@ export class Hierarchy {
 		// it is on the web never reaches here — a press opens one of those in a new tab — so every
 		// link that gets this far names a file, and the honest answer is that it was not found.
 		const points_at = resolved_from(file_path_of(from.bundle, from.path), before);
-		const says = `Link from "${from.name}" to "${wanted_path}": no file named "${name}" under any of the ${chain.length} folders above it. It points at ${points_at}${reaches_under_work(points_at) ? ', which sits below the top of a work folder — this app lists none of those' : ''}. Nothing opens.`;
+		const says = `Link from "${from.name}" to "${wanted_path}": no file named "${name}" under any of the ${chain.length} folders above it. It points at ${points_at}. Nothing opens.`;
 		debug.log(says);
 		return { file: null, heading, why: CANNOT_FIND, says };
 	}

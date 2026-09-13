@@ -30,7 +30,7 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 
 - [inception into the new design.md](zone/inception%20into%20the%20new%20design.md) — the death list, and the merges of duplicated files.
 - [truth and zone.md](zone/truth%20and%20zone.md) — whether truth/ and zone/ divide further; reviewed, no new folders.
-- [ideas.md](zone/ideas.md) — live thinking about the collaboration itself.
+- [ideas.md](memory/shared/zone/ideas.md) — live thinking about the collaboration itself.
 - [collisions.md](zone/collisions.md) — pairs of rules that cannot both be obeyed, each met in real work, with the rewrite that would end it.
 - [incorporating a project.md](zone/architecture/incorporating%20a%20project.md) — the steps a host follows to take panel in, as mu and mj did.
 - [libraries.md](zone/architecture/libraries.md) — what a library is, and how a host takes one on: one alias and one bridge per library per host, nothing built on its own.

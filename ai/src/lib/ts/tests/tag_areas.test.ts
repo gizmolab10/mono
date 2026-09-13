@@ -1,13 +1,16 @@
-import { TAG_AREAS, area_of, area_reads, tags_shown, tags_without_area } from '../types/Tag_Areas';
+import { area_of, area_reads, tags_shown, tags_without_area } from '../common/Kb';
+import { customizations } from '../common/Customizations';
 import { describe, expect, it } from 'vitest';
-import { ALL_TAGS } from '../types/File';
 
 // The areas are only a way of reading the closed tag list, so the two have to agree exactly:
-// every tag belongs to one area, and no area names a tag that isn't on the list.
+// every tag belongs to one area, and no area names a tag that isn't on the list. Both lists are
+// ai's, handed to kb, and kb's functions read them over plain lists.
+
+const { tags: ALL_TAGS, tag_areas: TAG_AREAS } = customizations;
 
 describe('the areas against the closed tag list', () => {
 	it('claims every tag on the list', () => {
-		expect(tags_without_area()).toEqual([]);
+		expect(tags_without_area(ALL_TAGS, TAG_AREAS)).toEqual([]);
 	});
 
 	it('names nothing that is not on the list', () => {
@@ -22,9 +25,9 @@ describe('the areas against the closed tag list', () => {
 	});
 
 	it('says which area a tag belongs to, and nothing for a word that is not a tag', () => {
-		expect(area_of('program')).toBe('code');
-		expect(area_of('UX')).toBe('ux');
-		expect(area_of('nonsense')).toBe('');
+		expect(area_of('program', TAG_AREAS)).toBe('code');
+		expect(area_of('UX', TAG_AREAS)).toBe('ux');
+		expect(area_of('nonsense', TAG_AREAS)).toBe('');
 	});
 });
 

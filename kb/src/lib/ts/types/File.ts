@@ -2,61 +2,10 @@
 // Overview never keeps a file's text — only where it is and the five labels off
 // its top.
 
-// The kinds a guide can be. Four say how a guide reads; analyze says what it is about — a taking
-// apart of something to find out how it works — and so does music, a file of mu's, the music
-// collection. A file is one of the six, said in the db rather than worked out from the folder
-// it sits in.
-export enum T_Kind {
-	analyze    = 'analyze',
-	arch       = 'arch',
-	explain    = 'explain',
-	howto      = 'howto',
-	music      = 'music',
-	specify    = 'specify',
-}
-
-// The closed tag list — thirty-five, alphabetized, nothing invented on the spot.
-export const ALL_TAGS: string[] = [
-	'always',
-	'born',
-	'build',
-	'data',
-	'debug',
-	'deploy',
-	'faster',
-	'geometry',
-	'incorporated',
-	'journal',
-	'keep',
-	'later',
-	'maybe',
-	'migrate',
-	'next',
-	'notes',
-	'now',
-	'plans',
-	'platform',
-	'port',
-	'program',
-	'proposal',
-	'prose',
-	'refactor',
-	'research',
-	'session',
-	'setup',
-	'soon',
-	'stale',
-	'style',
-	'tabled',
-	'team',
-	'test',
-	'tools',
-	'UX',
-	'vision',
-	'visual',
-	'waiting',
-	'weighed',
-];
+// The kinds a file can be, and the closed list of tags, are the host's: two lists of words the
+// host hands kb in customizations.kinds and customizations.tags before anything mounts, since
+// step 7 of the plan. A file's kind is one word off the first list, said in the db rather than
+// worked out from the folder it sits in, and nothing is invented on the spot.
 
 /**
  * Putting words in alphabetical order the way a reader expects: capital letters count the
@@ -73,6 +22,7 @@ export enum T_Bundle {
 	mono    = 'mo',
 	memory  = 'memory',
 	shared  = 'shared',
+	gallery = 'gallery',
 	core    = 'core',
 	ws      = 'ws',
 	me      = 'me',
@@ -82,7 +32,6 @@ export enum T_Bundle {
 	ov      = 'ov',
 	mu      = 'mu',
 	mj      = 'mj',
-	gallery = 'gallery',
 }
 
 /**
@@ -104,7 +53,7 @@ export function project_at(bundle: T_Bundle, path: string): T_Bundle {
 
 // The labels off a file's top. A folder carries none of them.
 export type Labels = {
-	kind        : string;     // one of the five — empty when the file carries no labels
+	kind        : string;     // one of the host's kinds — empty when the file carries no labels
 	title       : string;     // the human name; falls back to the file's own name
 	description : string;     // one sentence
 	use_when    : string[];   // the occasions this file should be read on; empty for a file that names none

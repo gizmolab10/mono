@@ -5,6 +5,7 @@
 ## 12 September 2026
 
 - D: lexicon's collection entry carries a note: when the six new lexicon entries in memory/ov/zone/music and ai.md are decided, it changes with them and ov's lexicon takes their definitions
+- D: zone/learn.md entry 26: where two pieces of code meet, say api and table the functions, from three replies explaining a plugin's routes as addresses, branches and functions before Jonathan named the two apis
 - D: zone/learn.md entries 22 to 25, from the edgy item that took three huh?s: on huh? cut and never add, say what is and never what would have been, name the parts by what they do and not by the code word, and a risk that is not yet needs its when
 - D: zone/learn.md entry 21: a sentence begins with the statement, then the how, Jonathan's own rule from his edits, applied to step 3 of ov's plan
 - D: tools/hub/index.md updated: ov.sql and the saved db named, servers.sh and start-hub.sh each on a line saying what it does and who runs it, and clean.worktrees.sh named where it sits today, tools/scripts, moving back to hub

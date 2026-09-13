@@ -9,13 +9,16 @@ import 'core/main.css';
 
 // kb draws ai, and reads ai's facts only when asked, so they are set here, before anything draws:
 // what the controls row calls the host, what every remembered value is saved under, the host whose
-// db the dispatcher answers from, the hierarchies the list offers, and the build notes table. The
-// kinds, the tags and the tag areas are still kb's own until step 7 of the plan.
+// db the dispatcher answers from, the hierarchies the list offers, the build notes table, and, since
+// step 7 of the plan, the kinds, the tags and the tag areas.
 kb_customizations.name = customizations.name;
 kb_customizations.prefix = customizations.prefix;
 kb_customizations.host = customizations.host;
 kb_customizations.hierarchies = customizations.hierarchies;
 kb_customizations.builds = buildsRaw;
+kb_customizations.kinds = customizations.kinds;
+kb_customizations.tags = customizations.tags;
+kb_customizations.tag_areas = customizations.tag_areas;
 
 // The entry file: ov's main.ts, doing here what a library cannot, since a library has no entry
 // file. The host pays what the libraries owe at startup, as libraries.md says. What is owed

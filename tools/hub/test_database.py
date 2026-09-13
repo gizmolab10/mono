@@ -27,8 +27,8 @@ import dispatcher # noqa: E402
 REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 FOLDER = tempfile.mkdtemp(prefix='ov-db-')
 database.PLACE = os.path.join(FOLDER, 'ov.db')
-# The hosts ports.json would name, set by hand: ov, whose db is PLACE, and mu, whose db sits beside it.
-database.HOSTS = {'ov': 'ov.db', 'mu': 'mu.db'}
+# The hosts ports.json would name, set by hand: ov and ai, sharing PLACE, and mu, whose db sits beside it.
+database.HOSTS = {'ov': 'ov.db', 'ai': 'ov.db', 'mu': 'mu.db'}
 
 NOTE = 'memory/ov/zone/work/current context.md'
 FULL = os.path.join(REPO, NOTE)
@@ -110,10 +110,10 @@ check('a file with a row and no labels is left out', database.all_labels(), {})
 
 database.set_fields(NOTE, FULL, title='T', use_when=['a', 'b'])
 check('the fields handed in go on the row, use_when as a list again', database.all_fields()[NOTE],
-      {'title': 'T', 'description': '', 'use_when': ['a', 'b'], 'date': '', 'missing': False})
+      {'collection': 'ov', 'title': 'T', 'description': '', 'use_when': ['a', 'b'], 'date': '', 'missing': False})
 database.record_file(NOTE, FULL, None, None, description='D', date='1')
 check('a field not handed in is left as it is', database.all_fields()[NOTE],
-      {'title': 'T', 'description': 'D', 'use_when': ['a', 'b'], 'date': '1', 'missing': False})
+      {'collection': 'ov', 'title': 'T', 'description': 'D', 'use_when': ['a', 'b'], 'date': '1', 'missing': False})
 database.set_fields(NOTE, FULL, title='', description='', use_when=[], date='')
 
 # --- what a file's own block says ---------------------------------------------
@@ -198,7 +198,7 @@ database.replace_labels(NOTE, FULL, 'tag', [])
 code, said = ask('/collections')
 check('the look made a row per collection the listing names, ai its specialty, the repo its root',
       [(one['name'], one['specialty'], one['root']) for one in said.get('collections', [])],
-      [(name, 'ai', REPO) for name in sorted({database.collection_of(one) for one in dispatcher.listed_files()[1]})])
+      [(name, 'ai', REPO) for name in sorted({database.collection_of(one) for one in dispatcher.files_listed_by()[1]})])
 check('each row has an id', all(isinstance(one.get('id'), int) for one in said.get('collections', [])), True)
 
 # --- what the routes refuse ---------------------------------------------------
@@ -251,7 +251,7 @@ check('the scanned file wears what its block says', said.get('labels'),
        {'name': 'tag', 'value': 'always', 'made_by': 'hand'}])
 code, said = ask('/all-labels')
 check('the scanned file\'s fields come with every label', said.get('fields', {}).get(SAYS),
-      {'title': 'Says', 'description': '', 'use_when': [], 'date': '1', 'missing': False})
+      {'collection': 'ov', 'title': 'Says', 'description': '', 'use_when': [], 'date': '1', 'missing': False})
 
 code, said = tell('/strip-block', {})
 check('the strip does nothing without the word', code, 400)
@@ -276,7 +276,7 @@ code, said = tell('/set-fields', {'title': 'Renamed', 'use_when': ['x', 'y']}, w
 check('fields are written through the dispatcher', said.get('fields'), ['title', 'use_when'])
 code, said = ask('/all-labels')
 check('the fields written are read back, the rest as they were', said.get('fields', {}).get(SAYS),
-      {'title': 'Renamed', 'description': '', 'use_when': ['x', 'y'], 'date': '1', 'missing': False})
+      {'collection': 'ov', 'title': 'Renamed', 'description': '', 'use_when': ['x', 'y'], 'date': '1', 'missing': False})
 code, said = tell('/set-fields', {'use_when': 'not a list'}, where=SAYS)
 check('a field of the wrong shape is refused', code, 400)
 code, said = tell('/set-fields', {}, where=SAYS)
@@ -334,7 +334,7 @@ with open(os.path.join(TEMP_REPO, WATCH), 'w') as f:
     f.write('# Watch\n\nwords\n')
 code, said = tell('/add-label', {'name': 'tag', 'value': 'now'}, where=WATCH)
 code, said = tell('/rescan', {})
-check('a look with nothing changed says so', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 0})
+check('a look after a file is labeled says the rules pass saw the new file and nothing else changed', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 1})
 
 os.rename(os.path.join(TEMP_REPO, WATCH), os.path.join(TEMP_REPO, WATCHED))
 code, said = tell('/rescan', {})
@@ -373,7 +373,7 @@ with open(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), 'w') as f:
     f.write('# Loose\n')
 os.rename(os.path.join(TEMP_REPO, 'memory/ov/truth/loose.md'), os.path.join(TEMP_REPO, 'memory/ov/truth/loosed.md'))
 code, said = tell('/rescan', {})
-check('a file with no row moves with nothing to keep and nothing said', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 0})
+check('a file with no row moves with nothing to keep, the rules pass seeing the new path and nothing else said', said, {'success': True, 'changed': 0, 'moved': 0, 'missing': 0, 'found': 0, 'collections': 0, 'ruled': 1})
 
 # --- the rules: labels a file gets from its name, its location or its content --
 
@@ -477,7 +477,7 @@ code, said = tell('/add-collection', {'name': 'live'}, host='mu')
 check('a collection missing its specialty or root is refused', code, 400)
 code, said = ask('/labels', where=NOTE, host='nope')
 check('a host with no db is refused by the dispatcher', code, 400)
-check('and the refusal names the hosts', "['mu', 'ov']" in said.get('error', ''), True)
+check('and the refusal names the hosts', "['ai', 'mu', 'ov']" in said.get('error', ''), True)
 code, said = ask('/rules', host='mu')
 check('mu\'s rules are its own, none yet', said.get('rules'), [])
 code, said = tell('/add-rule', {'reads': 'name', 'pattern': r'\.flac$', 'name': 'kind', 'value': 'music'}, host='mu')
@@ -486,6 +486,48 @@ code, said = ask('/rules', host='mu')
 check('and is listed under mu', [one['pattern'] for one in said.get('rules', [])], [r'\.flac$'])
 code, said = ask('/rules')
 check('and not under ov', said.get('rules'), [])
+
+# --- the plugin ---------------------------------------------------------------
+#
+# The dispatcher lists files, refuses paths and takes labels through the host's plugin, ai's for
+# ov's asks, since the two share a db. Every call is wrapped: a plugin that raises on one file
+# fails that file alone, and the server keeps answering.
+
+import types
+
+REAL_PLUGIN = dispatcher.PLUGINS['ai']
+check('ai\'s plugin is imported from its folder', REAL_PLUGIN.SPECIALTY, 'ai')
+check('ov\'s asks, naming no host, run ai\'s plugin', dispatcher.plugin_for(None), REAL_PLUGIN)
+check('a host with no plugin and no db shared lists nothing', dispatcher.files_listed_by('mu')[1], [])
+code, said = ask('/list-files', host='mu')
+check('and answers an empty listing, not a refusal', (code, said.get('paths')), (200, []))
+
+RAISES = SAYS
+
+
+def stub_labels(root, where):
+    if where == RAISES:
+        raise RuntimeError('the stub plugin fails on this file')
+    return [('tag', 'stub')]
+
+
+dispatcher.PLUGINS['ai'] = types.SimpleNamespace(SPECIALTY='ai', listed_files=REAL_PLUGIN.listed_files,
+                                                 is_listed=REAL_PLUGIN.is_listed, labels=stub_labels)
+dispatcher.RULED.clear()
+code, said = tell('/rescan', {})
+check('the look answers with a plugin that raises on one file', code, 200)
+code, said = ask('/labels', where=QUIET)
+check('the plugin\'s labels land on the other files as rule rows', [one for one in said.get('labels', []) if one['value'] == 'stub'],
+      [{'name': 'tag', 'value': 'stub', 'made_by': 'rule'}])
+code, said = ask('/labels', where=RAISES)
+check('and the file it raised on gets none', [one for one in said.get('labels', []) if one['value'] == 'stub'], [])
+dispatcher.PLUGINS['ai'] = REAL_PLUGIN
+dispatcher.RULED.clear()
+code, said = tell('/rescan', {})
+code, said = ask('/labels', where=QUIET)
+check('the real plugin gives none, so the stub rows go', [one for one in said.get('labels', []) if one['value'] == 'stub'], [])
+code, said = ask('/all-labels')
+check('the fields answer carries each file\'s collection', said.get('fields', {}).get(QUIET, {}).get('collection'), 'ov')
 
 # --- the backup and the dump --------------------------------------------------
 #

@@ -100,6 +100,9 @@ check('no CLAUDE file below a collection\'s top is readable', code, 409)
 
 check('the memory system is listed', 'memory/index.md' in listed, True)
 check('a memory file three folders down is listed', 'memory/shared/truth/handbook.md' in listed, True)
+check('the two new projects\' CLAUDE files are listed', 'ai/CLAUDE.md' in listed and 'kb/CLAUDE.md' in listed, True)
+code, said = ask('/all-labels')
+check('the fields answer carries each file\'s collection', said.get('fields', {}).get('memory/index.md', {}).get('collection'), 'shared')
 
 code, said = ask('/read-guide', where='memory/shared/truth/handbook.md')
 check('a memory file is read', code, 200)

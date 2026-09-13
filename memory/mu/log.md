@@ -2,6 +2,11 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 13 September 2026
+
+- D: the kind of a file is one of four, music, images, text and video, by its ending, in truth/design.md, in place of music for every file
+- D: a song takes tags from a closed list of four, jazz, classical, rock and hifi, by hand or by the ai, in truth/design.md, reversing no tags
+
 ## 11 September 2026
 
 - D: the library is the volume /Volumes/muice myoozk, NTFS over USB, 18,219 files, mostly flac, mp4 and vob, in truth/design.md. The plan for reading it is ov's, in memory/ov/zone/music and ai.md, music first

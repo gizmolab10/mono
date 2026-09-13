@@ -1,11 +1,41 @@
 // What is true of ai and of no other host: the facts main.ts hands kb before anything mounts, as
 // memory/kb/zone/adopt kb.md's table lays them out. core and kb know none of it, and nothing here
-// is remembered between visits. The kinds, the tags and the tag areas are still kb's own, until
-// step 7 of the plan moves them here.
+// is remembered between visits.
 
 export const customizations = {
 	name        : 'ai',                                   // what the controls row calls this project, while no file is open
 	prefix      : 'ai_',                                  // what every remembered value is saved under, from step 9 of the plan
 	host        : 'ai',                                   // the host whose db the dispatcher answers from: ov's, until ov is retired
 	hierarchies : [{ label: 'folder', order: 'name' }],   // the one hierarchy the list offers: the folders, the rows by name
+
+	// The kinds a file can be: four say how a file reads, and analyze says what it is about, a
+	// taking apart of something to find out how it works. One of the five, said in the db rather
+	// than worked out from the folder it sits in. music left the list 13 September 2026: mu's.
+	kinds : ['analyze', 'arch', 'explain', 'howto', 'specify'],
+
+	// The closed tag list, alphabetized, nothing invented on the spot.
+	tags : [
+		'always', 'born', 'build', 'data', 'debug', 'deploy', 'faster', 'geometry', 'incorporated',
+		'journal', 'keep', 'later', 'maybe', 'migrate', 'next', 'notes', 'now', 'plans', 'platform',
+		'port', 'program', 'proposal', 'prose', 'refactor', 'research', 'session', 'setup', 'soon',
+		'stale', 'style', 'tabled', 'team', 'test', 'tools', 'UX', 'vision', 'visual', 'waiting',
+		'weighed',
+	],
+
+	// The tags gathered into ten areas, each folding its tags away behind its own name. Six gather
+	// by what a file is about. progress gathers by where a file stands in its own life, put forward
+	// or written up. active gathers by how soon it is wanted: now, next, soon, later, or set aside.
+	// Every tag belongs to exactly one area, and the tag areas test proves the two lists agree.
+	tag_areas : [
+		{ name: 'ai',        tags: ['always', 'prose', 'session', 'style', 'team'] },
+		{ name: 'code',      tags: ['data', 'migrate', 'port', 'program', 'refactor'] },
+		{ name: 'fix',       tags: ['debug', 'faster', 'test'] },
+		{ name: 'fate',      tags: ['keep', 'maybe', 'stale'] },
+		{ name: 'bedrock',   tags: ['build', 'deploy', 'platform', 'setup', 'tools'] },
+		{ name: 'progress',  tags: ['proposal', 'journal'] },
+		{ name: 'active',    tags: ['now', 'next', 'soon', 'later', 'tabled'] },
+		{ name: 'lifecycle', tags: ['born', 'weighed', 'waiting', 'incorporated'] },
+		{ name: 'think',     tags: ['notes', 'plans', 'research', 'vision'] },
+		{ name: 'ux',        tags: ['geometry', 'UX', 'visual'] },
+	],
 };

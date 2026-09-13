@@ -15,6 +15,7 @@ import time
 import urllib.request
 import urllib.error
 import urllib.parse
+import importlib.util
 
 import database   # the db beside this file: the labels on ov's files, and what else they do not say
 
@@ -23,14 +24,77 @@ DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 GITHUB_DIR = os.path.expanduser('~/GitHub/mono')
 UPDATE_DOCS = os.path.join(GITHUB_DIR, 'tools/docs/update-project-docs.sh')
 
-# The folders inside a work folder whose notes go out with the guides, beside the notes standing at
-# that folder's own top. Overview draws the same line in `ov/src/lib/ts/utilities/Saving.ts`, and
-# the two lists have to agree — a file sent from here that it will not place is read and thrown away.
-WORK_FOLDERS = ('next', 'milestones', 'now', 'soon', 'done', 'proposals')
-# Every collection's notes folder sits inside the memory system, under the collection's own
-# folder there; the shared collection's sits under shared. The claimed set is the folders
-# under memory/ whose notes are listed by the notes rules, not as memory files.
-COLLECTIONS = ('', 'core', 'di', 'gallery', 'ji', 'lv', 'me', 'mj', 'mu', 'ov', 'ws')
+# --- the plugins ------------------------------------------------------------------------------------
+# One plugin.py per host, imported from the host's folder, mono/<host>, for each host the host list
+# names, database.HOSTS: the specialty's code, as memory/ov/zone/music and ai.md's plugin api table
+# lays it out. Its listing rule says which files under the root are listed, is listed says it of one
+# path, and labels gives a file its labels inside the rules pass. The import and every call are
+# wrapped: a fault is said in the log and fails that file or that request, never the server. A host
+# with no plugin of its own uses the plugin of a host sharing its db, so ov's asks go to ai's plugin
+# until ov is retired.
+PLUGINS = {}
+
+def load_plugins():
+    """Import each host's plugin.py, where the host's folder holds one. A plugin that fails to
+    import is said in the log and left out, so its host lists nothing and the server stays up."""
+    for host in database.HOSTS:
+        place = os.path.join(GITHUB_DIR, host, 'plugin.py')
+        if not os.path.isfile(place):
+            continue
+        try:
+            spec = importlib.util.spec_from_file_location(f'{host}_plugin', place)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            PLUGINS[host] = module
+            print(f'plugin: {host}\'s imported from {place}', flush=True)
+        except Exception as e:
+            print(f'plugin: {host}\'s failed to import from {place}: {e}', flush=True)
+
+def plugin_for(host):
+    """The plugin a request's host runs: its own, or the plugin of a host sharing its db. None
+    where no host with that db has one."""
+    host = host or 'ov'
+    if host in PLUGINS:
+        return PLUGINS[host]
+    db = database.HOSTS.get(host)
+    for other, module in PLUGINS.items():
+        if database.HOSTS.get(other) == db:
+            return module
+    return None
+
+def call_plugin(host, name, *args, otherwise):
+    """One call into the host's plugin, wrapped: a fault is said in the log and answers otherwise,
+    and so does a host with no plugin."""
+    plugin = plugin_for(host)
+    if plugin is None:
+        return otherwise
+    try:
+        return getattr(plugin, name)(*args)
+    except Exception as e:
+        print(f'plugin: {name} failed on {args[1:] if len(args) > 1 else args}: {e}', flush=True)
+        return otherwise
+
+def files_listed_by(host=None):
+    """The host's listing, from its plugin: the repo's own place on this machine, and each listed
+    file's path counting from the top of the repo, sorted. Index files are left in, since the app
+    decides what to skip. Nothing for a host with no plugin."""
+    root = os.path.realpath(GITHUB_DIR)
+    return root, call_plugin(host, 'listed_files', root, otherwise=[])
+
+def listed_by(host, where):
+    """Whether the host's plugin lists this file, so its words may be read and written back. A
+    place on this machine is turned into a path counting from the top of the repo first, so the
+    memory system is recognised however the app names it."""
+    root = os.path.realpath(GITHUB_DIR)
+    inside = where
+    if os.path.isabs(inside):
+        full = os.path.realpath(inside)
+        if not full.startswith(root + os.sep):
+            return False
+        inside = os.path.relpath(full, root)
+    return bool(call_plugin(host, 'is_listed', root, inside, otherwise=False))
+
+load_plugins()
 
 # Load ports.json — single source of truth
 with open(os.path.join(SCRIPT_DIR, 'ports.json'), 'r') as f:
@@ -323,90 +387,6 @@ def run_tests_async():
     finally:
         tests_running = False
 
-def is_listed_note(where):
-    """Whether the overview app may read this file's words and write them back.
-
-    Every guide and every design, at any depth. A work note where it sits at the very top of a
-    work folder, and inside any of WORK_FOLDERS — the same rule the listing uses, said here as
-    well because reading and writing pass through this one door. Every file in the memory
-    system, at any depth, the same as a guide."""
-    if not where.lower().endswith('.md'):
-        return False
-    # A place on this machine is turned into one counting from the top of the repo, so the
-    # memory system is recognised however the app names it.
-    inside = where
-    if os.path.isabs(inside):
-        root = os.path.realpath(GITHUB_DIR)
-        full = os.path.realpath(inside)
-        if not full.startswith(root + os.sep):
-            return False
-        inside = os.path.relpath(full, root)
-    # A collection's CLAUDE file — its entry point — spelled CLAUDE.MD or CLAUDE.md. The
-    # same line the listing draws: at the repo's own top, or at the top of a collection.
-    parts = inside.split('/')
-    if parts[-1].lower() == 'claude.md':
-        return len(parts) == 1 or (len(parts) == 2 and parts[0] in ('di', 'ws', 'ji', 'lv', 'mu', 'ov'))
-    if not inside.startswith('memory/'):
-        return False
-    # A work note follows its own rule -- at the very top of a zone/work folder, or one level
-    # down inside any of WORK_FOLDERS. Every other memory file -- truth, zone's other files,
-    # archive -- is readable at any depth, the same as a guide always was.
-    at = inside.find('/zone/work/')
-    if at < 0:
-        return True
-    tail = inside[at + len('/zone/work/'):].split('/')
-    if len(tail) == 1:
-        return True
-    return len(tail) == 2 and tail[0].lower() in WORK_FOLDERS
-
-def listed_files():
-    """Every file the overview app lists, on disk right now: the repo's own place on this machine,
-    and each file's path counting from the top of the repo, sorted. Index files are left in, since
-    the app decides what to skip."""
-    root = os.path.realpath(GITHUB_DIR)
-    found = []
-    for collection in COLLECTIONS:
-        # The work folder gives up what sits at its very top — the handoff, the debt,
-        # the journal, the working features — and what sits one folder down inside the
-        # five named here. Those are the ones a guide links to. Anything deeper, and
-        # any other folder, stays out.
-        #
-        # Overview draws the same line for itself, in `site_of_file`. The two have to
-        # agree: a file sent from here that it will not place is read and thrown away.
-        work = os.path.join(root, 'memory', collection or 'shared', 'zone', 'work')
-        if os.path.isdir(work):
-            for one in sorted(os.listdir(work)):
-                whole = os.path.join(work, one)
-                if one.endswith('.md') and os.path.isfile(whole):
-                    found.append(os.path.relpath(whole, root))
-                elif os.path.isdir(whole) and one.lower() in WORK_FOLDERS:
-                    for deeper in sorted(os.listdir(whole)):
-                        inside_one = os.path.join(whole, deeper)
-                        if deeper.endswith('.md') and os.path.isfile(inside_one):
-                            found.append(os.path.relpath(inside_one, root))
-        # The collection's CLAUDE file — its entry point — sits at its very top,
-        # spelled CLAUDE.MD or CLAUDE.md depending on the project. Listed here so
-        # the overview app can show it.
-        top_dir = os.path.join(root, collection) if collection else root
-        if os.path.isdir(top_dir):
-            for one in sorted(os.listdir(top_dir)):
-                if one.lower() == 'claude.md' and os.path.isfile(os.path.join(top_dir, one)):
-                    found.append(os.path.relpath(os.path.join(top_dir, one), root))
-    # The memory system sits at the top of the repo and belongs to no collection.
-    # Every file inside it is listed, however deep it sits — except a project's own
-    # zone/work, which the walk above has already listed, depth-limited, as work notes.
-    memory = os.path.join(root, 'memory')
-    if os.path.isdir(memory):
-        for here, folders, files in os.walk(memory):
-            folders[:] = [f for f in folders if not f.startswith('.')]
-            if os.path.basename(here) == 'zone' and os.path.dirname(os.path.dirname(here)) == memory:
-                folders[:] = [f for f in folders if f != 'work']
-            for one in files:
-                if one.endswith('.md'):
-                    found.append(os.path.relpath(os.path.join(here, one), root))
-    found.sort()
-    return root, found
-
 def label_block(text):
     """The lines between the first row of three dashes and the next, and which line the closing
     dashes stand on. Nothing, and -1, for a file with no block."""
@@ -489,7 +469,7 @@ def scan_labels():
     its hand labels, the title, description, use_when and date its fields, on a row made from
     the disk. A file whose block says none of the six keeps what the db holds. Nothing in any
     file changes. Answers the counts."""
-    root, paths = listed_files()
+    root, paths = files_listed_by()
     files, kinds, tags, fields, said_nothing, unreadable = 0, 0, 0, 0, 0, 0
     for where in paths:
         full = os.path.join(root, where)
@@ -512,13 +492,15 @@ def scan_labels():
     return {'files': files, 'kinds': kinds, 'tags': tags, 'fields': fields, 'said_nothing': said_nothing, 'unreadable': unreadable}
 
 def rescan():
-    """Bring the db into line with the disk: the listing is taken, and every row checked against
-    it. A file changed, moved or thrown away in the Finder is noticed here. Then a collection the
-    listing names for the first time gets its row in the collections table, one per project, ai
-    its specialty and the repo its root. Answers how many rows were made among the counts."""
-    root, paths = listed_files()
+    """Bring the db into line with the disk: the listing is taken from the plugin, and every row
+    checked against it. A file changed, moved or thrown away in the Finder is noticed here. Then
+    a collection the listing names for the first time gets its row in the collections table, one
+    per project, the plugin's specialty and the repo its root. Answers how many rows were made
+    among the counts."""
+    root, paths = files_listed_by()
     said = database.reconcile(root, paths)
-    said['collections'] = database.ensure_collections({database.collection_of(one) for one in paths}, 'ai', root)
+    specialty = getattr(plugin_for(None), 'SPECIALTY', '')
+    said['collections'] = database.ensure_collections({database.collection_of(one) for one in paths}, specialty, root)
     return said
 
 # What the rules last ran against, path by path: the file's size and time. A file whose two are
@@ -556,14 +538,11 @@ def labels_by_rules(rules, where, full):
 def run_rules(everything=False):
     """Run every rule on the listed files: those changed or new since the rules last ran, or all
     of them when asked, which is what adding or taking away a rule asks. Each file's rule labels
-    are made exactly what the rules give, hand labels untouched, and a file no rule hits gets no
-    row. With no rules at all, every label a rule gave goes. Answers how many files were done."""
-    root, paths = listed_files()
+    are made exactly what the rules give and what the plugin gives, hand labels untouched, and a
+    file neither hits gets no row. With no rules at all, every label a rule gave goes as each
+    file is done. Answers how many files were done."""
+    root, paths = files_listed_by()
     rules = database.rules()
-    if not rules:
-        gone = database.clear_rule_labels()
-        RULED.clear()
-        return gone
     done = 0
     on_disk = set()
     for where in paths:
@@ -577,6 +556,13 @@ def run_rules(everything=False):
             continue
         RULED[where] = stat
         kinds, tags = labels_by_rules(rules, where, full)
+        # The plugin's labels for the file, as rule rows beside the pattern rules': a kind or a
+        # tag. Any other name waits for the table that holds it, step 22 of the plan.
+        for name, value in call_plugin(None, 'labels', root, where, otherwise=[]):
+            if name == 'kind':
+                kinds.append(value)
+            elif name == 'tag':
+                tags.append(value)
         database.set_rule_labels(where, full, kinds, tags)
         done += 1
     for where in [one for one in RULED if one not in on_disk]:
@@ -616,7 +602,7 @@ def strip_blocks():
     the db has no row for is passed over, and so is a file whose block carries a line the db has
     no place for, named in the answer so a person can look, so nothing is lost. Answers the
     counts."""
-    root, paths = listed_files()
+    root, paths = files_listed_by()
     known = database.all_fields()
     changed, untouched, unscanned, unreadable = 0, 0, 0, 0
     kept = []
@@ -741,7 +727,7 @@ class APIHandler(BaseHTTPRequestHandler):
         if not where:
             refuse(400, 'no file named')
             return None
-        if not is_listed_note(where):
+        if not listed_by(self._host_named(), where):
             refuse(409, f'not a guide: {where!r}')
             return None
         full = os.path.realpath(where if os.path.isabs(where) else os.path.join(GITHUB_DIR, where))
@@ -753,6 +739,12 @@ class APIHandler(BaseHTTPRequestHandler):
             refuse(404, f'no such file: {where!r}')
             return None
         return os.path.relpath(full, root), full
+
+    def _host_named(self):
+        """The host a request names, unchecked, for picking its plugin before the body is read.
+        None when it names none. _host refuses an unknown one, where the route calls it."""
+        params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+        return params.get('host', [None])[0]
 
     def _host(self):
         """Whose db a route opens: the host query value, which ports.json pairs with a db, and ov
@@ -823,7 +815,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not where:
                     self._send_response(400, {'success': False, 'error': 'no file named'})
                     return
-                if not is_listed_note(where):
+                if not listed_by(self._host_named(), where):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 # Either a place counting from the top of the repo, or a full place on this
@@ -850,7 +842,10 @@ class APIHandler(BaseHTTPRequestHandler):
             # without the dev server being restarted. Each answer is a path counting from the
             # top of the repo; index files are left in, since the app decides what to skip.
             try:
-                root, found = listed_files()
+                host = self._host()
+                if host is False:
+                    return
+                root, found = files_listed_by(host)
                 # The repo's own place on this machine goes back too, since the app reads each
                 # file by its full place and has nothing else to work it out from.
                 self._send_response(200, {'success': True, 'root': root, 'paths': found})
@@ -1140,7 +1135,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not where:
                     self._send_response(400, {'success': False, 'error': 'no file named'})
                     return
-                if not is_listed_note(where):
+                if not listed_by(self._host_named(), where):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 full = os.path.realpath(os.path.join(GITHUB_DIR, where))
@@ -1242,7 +1237,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 root = os.path.realpath(GITHUB_DIR)
 
                 def guide_path(where):
-                    if not where or not is_listed_note(where):
+                    if not where or not listed_by(host, where):
                         return None
                     full = os.path.realpath(os.path.join(GITHUB_DIR, where))
                     return full if full.startswith(root + os.sep) else None
@@ -1291,7 +1286,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
                 root = os.path.realpath(GITHUB_DIR)
-                if not where or not is_listed_note(where):
+                if not where or not listed_by(host, where):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 full = os.path.realpath(os.path.join(GITHUB_DIR, where))

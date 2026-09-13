@@ -1,10 +1,10 @@
-import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, labels_on_disk, move_file, moved_into, path_of_address, reaches_under_work, remove_label, set_fields, set_sources, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved, type Source } from '../utilities/Saving';
+import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, labels_on_disk, move_file, moved_into, path_of_address, remove_label, set_fields, set_sources, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved, type Source } from '../utilities/Saving';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { blank_file, free_name, label_changes, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
-import { T_Bundle, T_Kind, ALL_TAGS, in_order, key_of, project_of, project_at, type File, type Labels, type Filtered_File } from '../types/File';
+import { T_Bundle, in_order, key_of, project_of, project_at, type File, type Labels, type Filtered_File } from '../types/File';
+import { customizations } from '../common/Customizations';
 import { links_in, plain_links } from '../utilities/Markdown_Blocks';
-import { resolved_from } from '../utilities/Following_Links';
 import { show_status, type Finding } from './Status';
 import { CANNOT_FIND, Hierarchy } from './Hierarchy';
 import { writable, get } from 'svelte/store';
@@ -519,7 +519,7 @@ class Files {
 		// says it is being worked on. Under any-but the picked tags are the ones to keep off it,
 		// so only that one tag goes on.
 		const wanted_kind = get(w_kind);
-		const kind = wanted_kind === '' || wanted_kind === UNLABELED ? KIND_UNTIL_TOLD : wanted_kind as T_Kind;
+		const kind = wanted_kind === '' || wanted_kind === UNLABELED ? KIND_UNTIL_TOLD : wanted_kind;
 		const picked = get(w_tag_picking) === T_Picking.but ? [] : get(w_tags);
 		const tags = picked.length === 0 ? [TAG_WHEN_NEW] : picked;
 
@@ -597,18 +597,9 @@ class Files {
 				// perfectly good — the app simply never lists those, so it cannot follow them.
 				const named = link.split('#')[0];
 				if (named.endsWith('/')) { continue; }
-				// A work note is one of the files now, so a link into one is judged like any other.
-				// The one kind left out is a link pointing at a real file this app cannot find: the
-				// files below the top of a work folder, which it lists none of. Judging those would
-				// call every one of them dead when the fault is only that the app cannot reach them.
-				//
-				// Two things have to be true, and each was a bug of its own. Where the link points
-				// is worked out from the file it sits in, since a link written inside a work folder
-				// names no work folder itself. And a file has to be there — a link written from a
-				// work note as though it sat among the guides, `collaborate/organize.md`, points at
-				// a spot under that work folder where nothing is, and that is dead like any other.
-				const points_at = resolved_from(where, named);
-				if (reaches_under_work(points_at) && this.paths_on_disk.has(points_at)) { deeper += 1; continue; }
+				// A work note is one of the files now, so a link into one is judged like any other:
+				// which files exist is the dispatcher's listing, the whole truth since step 6 of the
+				// plan, so a link past what it lists is dead like any other.
 				const ending = named.split('/').pop()?.split('.').slice(1).pop() ?? '';
 				if (ending !== '' && ending.toLowerCase() !== 'md') { continue; }
 				followed += 1;
@@ -921,9 +912,9 @@ class Files {
 		const kinds = known.filter((one) => one.name === 'kind' && one.made_by !== 'ai');
 		const kind = (kinds.find((one) => one.made_by === 'hand') ?? kinds[0])?.value ?? '';
 		const named = [...new Set(known.filter((one) => one.name === 'tag' && one.made_by !== 'ai').map((one) => one.value))];
-		const tags = named.filter((tag) => ALL_TAGS.includes(tag));
+		const tags = named.filter((tag) => customizations.tags.includes(tag));
 		if (tags.length < named.length) {
-			debug.log(`Guide "${where}": the db holds ${named.length - tags.length} tag(s) not on the closed list of ${ALL_TAGS.length}: ${named.filter((tag) => !ALL_TAGS.includes(tag)).join(', ')}. They are ignored.`);
+			debug.log(`Guide "${where}": the db holds ${named.length - tags.length} tag(s) not on the closed list of ${customizations.tags.length}: ${named.filter((tag) => !customizations.tags.includes(tag)).join(', ')}. They are ignored.`);
 		}
 		return { kind, tags };
 	}
@@ -980,7 +971,7 @@ class Files {
 		for (const guide of this.within_reach('tags')) {
 			for (const tag of this.hierarchy.tag_names_of(guide.id)) { worn.add(tag); }
 		}
-		return ALL_TAGS.filter((tag) => worn.has(tag)).sort(in_order);
+		return customizations.tags.filter((tag) => worn.has(tag)).sort(in_order);
 	}
 
 	/** Say what the reading turned up, with the counts behind every claim. */
@@ -992,7 +983,7 @@ class Files {
 		const roots = this.hierarchy.indexes.roots_among(this.hierarchy.files.map((g) => g.id));
 		const root_names = roots.map((id) => this.hierarchy.file_byID(id)?.name ?? id).join(', ');
 		debug.log(`Shape: ${roots.length} top folder(s) — ${root_names}. One means the four project folders hang under the shared one, so going up from a guide can reach another project.`);
-		debug.log(`Guides read: ${read} files (${per_bundle}), ${skipped} index files left out, ${failed} could not be read, hung under ${folders} folders. ${unlabeled} carry no labels at all. Kinds found: ${this.kinds_present().join(', ') || 'none'}. Tags found: ${this.tags_present().length} of the ${ALL_TAGS.length} on the closed list, across ${this.hierarchy.taggings.length} tag placements. ${bytes} characters of text passed through and none of it was kept.`);
+		debug.log(`Guides read: ${read} files (${per_bundle}), ${skipped} index files left out, ${failed} could not be read, hung under ${folders} folders. ${unlabeled} carry no labels at all. Kinds found: ${this.kinds_present().join(', ') || 'none'}. Tags found: ${this.tags_present().length} of the ${customizations.tags.length} on the closed list, across ${this.hierarchy.taggings.length} tag placements. ${bytes} characters of text passed through and none of it was kept.`);
 	}
 
 }

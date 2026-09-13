@@ -12,9 +12,9 @@ export const customizations = {
 	name        : 'kb',                  // what the controls row calls the host, while no file is open
 	prefix      : 'kb_',                 // what every remembered value is saved under; read at step 9 of the plan
 	host        : '',                    // the host's name, which ports.json pairs with its db; none asks for ov's db
-	kinds       : [] as string[],        // the closed list of kinds; filled at step 7
-	tags        : [] as string[],        // the closed list of tags; filled at step 7
-	tag_areas   : [] as Tag_Area[],      // the tags gathered into areas; filled at step 7
+	kinds       : [] as string[],        // the closed list of kinds, drawn in the kinds row
+	tags        : [] as string[],        // the closed list of tags
+	tag_areas   : [] as Tag_Area[],      // the tags gathered into areas, each folding its tags away
 	hierarchies : [{ label: 'folder', order: 'name' }] as Hierarchy[],   // the hierarchies the list offers, folder first
 	builds      : '',                    // the build notes table's text, which the build button opens
 };

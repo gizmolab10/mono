@@ -8,7 +8,7 @@ The adoption is finished and measured: no file in ov is a copy of anything in co
 
 ## Zone
 
-- [ideas.md](zone/ideas.md) — ov ideas, appended freely; every settle triages each one.
+- [ideas.md](memory/ov/zone/ideas.md) — ov ideas, appended freely; every settle triages each one.
 - [proposals.md](zone/proposals.md) — the proposals being weighed; one leaves when it becomes the drive, dissolves into truth, or dies.
 - [consolidate.md](zone/consolidate.md) — the folder-by-folder detail behind the guides sorting: of the 142 now in truth/, 91 stay, 17 fold, 22 archive, 6 to zone, 9 to ws's manual, 6 die; the mechanical move is built, the sorting is a pending pac in shared's decisions.md, the drive dissolved.
 - [simplify gaps.md](zone/simplify%20gaps.md) — how the two filter stacks size their rows: the slot owns the reach, rows hold plain padding in rungs, the tags run holds its own headroom, a starved section sizes as a fold.

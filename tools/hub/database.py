@@ -392,12 +392,14 @@ def all_labels(host=None):
 
 def all_fields(host=None):
     """Every file's four fields, keyed by its path from the top of the repo: title, description,
-    use_when as a list again, and date, with whether the file is missing from the disk. Every
-    row, whether or not anything is written on it, so a path here is a file the db holds."""
+    use_when as a list again, and date, with whether the file is missing from the disk and, since
+    step 6 of the plan, the file's collection, its project in ai's db. Every row, whether or not
+    anything is written on it, so a path here is a file the db holds."""
     db = open_db(place_of(host))
-    rows = db.execute('SELECT path, title, description, use_when, date, missing FROM files ORDER BY path').fetchall()
+    rows = db.execute('SELECT path, collection, title, description, use_when, date, missing FROM files ORDER BY path').fetchall()
     db.close()
     return {row['path']: {
+        'collection': row['collection'],
         'title': row['title'],
         'description': row['description'],
         'use_when': [one.strip() for one in row['use_when'].split(',') if one.strip()],

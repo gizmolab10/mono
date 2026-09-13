@@ -11,13 +11,13 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 | name | what the controls row calls the host | none: ov's row shows no host name, panel's centers one | ai | mu |
 | prefix | what every remembered value is saved under | Preferences.ts, `ov_` | ai and an underscore | mu and an underscore |
 | host | the host's name, which ports.json pairs with its db, so kb asks the dispatcher for that db's rows alone. ai's entry, made at step 4, names `ov.db`, ov's own, until ov is retired | none, the dispatcher answers ov's db | ai | mu |
-| kinds | the closed list of kinds, drawn in the kinds row | T_Kind in File.ts | the six | music, one |
-| tags | the closed list of tags | ALL_TAGS in File.ts | the 39 | none, a song takes no tags, decided 11 September 2026 |
-| tag_areas | the tags gathered into areas, each folding its tags away | TAG_AREAS in Tag_Areas.ts | the ten | none |
+| kinds | the closed list of kinds, drawn in the kinds row | T_Kind in File.ts | the five, music dropped 13 September 2026 | music, images, text and video, four, decided 13 September 2026 |
+| tags | the closed list of tags | ALL_TAGS in File.ts | the 39 | jazz, classical, rock and hifi, four, decided 13 September 2026 |
+| tag_areas | the tags gathered into areas, each folding its tags away | TAG_AREAS in Tag_Areas.ts | the ten | one or two, 29d's question |
 | hierarchies | the hierarchies the list offers, folder first, each naming the label it groups by and the order within a group, decided 13 September 2026, which music's track order needs | the folders alone, Files.ts | folder | folder, artist, album, name |
 | builds | the build notes table's text, which the build button opens | builds.md, read raw in App.svelte, Main.svelte in kb | ai's file | mu's file |
 
-At step 5 ai fills name, host, hierarchies and builds. kinds, tags and tag_areas are filled at step 7, when they leave File.ts and Tag_Areas.ts, and prefix is read at step 9.
+At step 5 ai fills name, host, hierarchies and builds, and since step 7, 13 September 2026, kinds, tags and tag_areas. prefix is read at step 9.
 
 ## the snippets
 

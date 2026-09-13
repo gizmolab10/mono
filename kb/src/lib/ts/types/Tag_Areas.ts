@@ -1,43 +1,27 @@
-import { ALL_TAGS, in_order } from './File';
+import { in_order } from './File';
 
 /**
- * The tags, gathered into ten areas.
+ * The tags, gathered into areas: the host's, handed to kb in customizations.tag_areas since step
+ * 7 of the plan, ai's ten among them.
  *
- * Thirty-four words in one row is more than an eye can scan, so each area folds its tags
- * away behind its own name and opens again when pressed. The areas are a way of reading the
- * list, not a second thing to filter by — what a guide actually wears is still one flat set
- * of tags, and every tag belongs to exactly one area.
- *
- * Six of them gather tags by what a guide is about. "progress" gathers by where a guide stands
- * in its own life — put forward, finished, written up. "active" gathers by how soon it is
- * wanted — now, next, soon, later, or set aside.
+ * Many words in one row is more than an eye can scan, so each area folds its tags away behind
+ * its own name and opens again when pressed. The areas are a way of reading the list, not a
+ * second thing to filter by — what a file actually wears is still one flat set of tags, and
+ * every tag belongs to exactly one area.
  */
 export type Tag_Area = {
 	name : string;
 	tags : string[];
 };
 
-export const TAG_AREAS: Tag_Area[] = [
-	{ name: 'ai',       tags: ['always', 'prose', 'session', 'style', 'team'] },
-	{ name: 'code',     tags: ['data', 'migrate', 'port', 'program', 'refactor'] },
-	{ name: 'fix',      tags: ['debug', 'faster', 'test'] },
-	{ name: 'fate',     tags: ['keep', 'maybe', 'stale'] },
-	{ name: 'bedrock',  tags: ['build', 'deploy', 'platform', 'setup', 'tools'] },
-	{ name: 'progress', tags: ['proposal', 'journal'] },
-	{ name: 'active',   tags: ['now', 'next', 'soon', 'later', 'tabled'] },
-	{ name: 'lifecycle', tags: ['born', 'weighed', 'waiting', 'incorporated'] },
-	{ name: 'think',    tags: ['notes', 'plans', 'research', 'vision'] },
-	{ name: 'ux',       tags: ['geometry', 'UX', 'visual'] },
-];
-
 /** Which area a tag belongs to, or nothing when it belongs to none. */
-export function area_of(tag: string): string {
-	return TAG_AREAS.find((area) => area.tags.includes(tag))?.name ?? '';
+export function area_of(tag: string, areas: Tag_Area[]): string {
+	return areas.find((area) => area.tags.includes(tag))?.name ?? '';
 }
 
 /** Every tag on the closed list that no area claims — nothing, while the two agree. */
-export function tags_without_area(): string[] {
-	return ALL_TAGS.filter((tag) => area_of(tag) === '').sort(in_order);
+export function tags_without_area(tags: string[], areas: Tag_Area[]): string[] {
+	return tags.filter((tag) => area_of(tag, areas) === '').sort(in_order);
 }
 
 /**

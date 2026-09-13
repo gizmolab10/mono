@@ -2,29 +2,12 @@
 
 kb is the library extracted from ov. mu and ai import kb to read music and ai files. ov is frozen forever, decided 12 September 2026 — every further change is made to ai, never ov. It stays as it is, a static reference of correctness: kb with the ai specialty must do everything ov does today, which is ov's working features, rows 1 to 89.
 
-## kb's lexicon
-
-Each entry is ticked when it is written into memory/kb's lexicon at step 4. All were, 12 September 2026.
-
-- [x] **host** — ai or mu, they import the kb library (later ji as well)
-- [x] **collection** — a folder of files (mu -> the folder dropped, aka the root; ai -> each project inside mono)
-- [x] **db** — a host's sqlite file beside the dispatcher, ov.db, mu.db
-- [x] **dump** — ov.sql or mu.sql, one per host, every table of the db as statements, from which a db is rebuilt
-- [x] **author** — the name of who wrote a file (a person or a tool: jonathan, Jeff, co, big-picture.py). In `ai`, it is often entered by hand in the editor's information rows, thereafter taken as SOT, never verified. In `mu`, it can be the artist's name: whether the artist is a source or a label is 22b's question.
-- [x] **plugin** — `plugin.py` in a host's folder, the code the dispatcher imports and runs for that host: its listing rule, its labeler and its own routes. The snippets and the configuration are the host's page's to hand kb, not the plugin's. Together with them it makes the host's specialty.
-
-## ai's lexicon
-
-Ticked when written into memory/ai's lexicon at step 4. It was, 12 September 2026.
-
-- [x] **project** — essentially the same as a collection
-
 ## edgy
 
 Reasonable, with three edgy parts and nothing crazy, 11 September 2026. Every piece exists already: gallery and panel are libraries that take a configuration and snippets from a host, the db module opens one sqlite file per call, and the dispatcher already runs the hub's long work in threads. Nothing new is needed but mutagen and ffmpeg.
 
-1. **The db is the only home of every label.** In ai, these labels are hand curated, irreplaceable and must be immune to corruption. Steps 2 and 3 guarantee this.
-2. **A plugin imported into one long-running server.** mu's plugin and ai's run inside the dispatcher that ov, ai and the hooks use, so a fault in mu's tag reader can **stall or drop every host's requests**, and one walk of the library holds the server 30 seconds until step 21 threads it. The fixes: (a) in step 6, the plugin's calls are wrapped so that a fault fails just it and not the server, (b) one db per host, step 3, built 12 September 2026, so mu's writes and locks never touch ai's db
+1. **The db is the only home of every label.** In ai, these labels are hand curated, irreplaceable and must be immune to corruption. Steps 2 and 3 are **done** -> they guarantee this.
+2. **A plugin imported into one long-running server.** mu's plugin and ai's run inside the dispatcher that ov, ai and the hooks use, so a fault in mu's tag reader can **stall or drop every host's requests**, and one walk of the library holds the server 30 seconds until step 21 threads it. The fixes: (a) in step 6, the plugin's calls are wrapped so that a fault fails just it and not the server, (b) one db per host, step 3, **built** 12 September 2026, so mu's writes and locks never touch ai's db
 3. **Three copies of ov's code through sixteen steps.** kb, ai and the frozen ov live side by side from step 4 to step 19, and the full proof, the 89 rows ticked by hand, comes only at the end. The one-line rule holds it: a fix is made in kb or ai, never in ov.
 4. **One library (kb) for two hosts**, not edgy until steps 26 and 29. ai's files are 346 notes and mu's are 18,219 songs, and the two will want different things on the screen. The best way to give each what it wants -> have the host hand kb a snippet which will draw the thing wanted, and which kb places onto the page.
 
@@ -36,6 +19,25 @@ Reasonable, with three edgy parts and nothing crazy, 11 September 2026. Every pi
 - [ ] details column: preferences, rules, and a section a specialty adds, ai's repair
 - [ ] drop box, panel's, pulled up from gallery
 - [ ] the db and kb's part of the dispatcher: one db per host, beside the dispatcher, ov's and mu's, mu's empty until step 20, each holding the tables under tables, their routes, and the watcher's four outcomes, changed, moved, missing, found. The dispatcher is three things: the hub's routes, kb's routes, and one plugin per specialty, loaded from the host's folder and carrying that specialty's own routes
+
+## new lexicon
+
+### kb's lexicon
+
+Each entry is ticked when it is written into memory/kb's lexicon at step 4. All were, 12 September 2026.
+
+- [x] **host** — ai or mu, they import the kb library (later ji as well)
+- [x] **collection** — a folder of files (mu -> the folder dropped, aka the root; ai -> each project inside mono)
+- [x] **db** — a host's sqlite file beside the dispatcher, ov.db, mu.db
+- [x] **dump** — ov.sql or mu.sql, one per host, every table of the db as statements, from which a db is rebuilt
+- [x] **author** — the name of who wrote a file (a person or a tool: jonathan, Jeff, co, big-picture.py). In `ai`, it is often entered by hand in the editor's information rows, thereafter taken as SOT, never verified. In `mu`, it can be the artist's name: whether the artist is a source or a label is 22b's question.
+- [x] **plugin** — `plugin.py` in a host's folder, the code the dispatcher imports and runs for that host: its listing rule, its labeler and its own routes. The snippets and the configuration are the host's page's to hand kb, not the plugin's. Together with them it makes the host's specialty.
+
+### ai's lexicon
+
+Ticked when written into memory/ai's lexicon at step 4. It was, 12 September 2026.
+
+- [x] **project** — essentially the same as a collection
 
 ## specialty
 
@@ -67,11 +69,29 @@ The ai specialty is what ov does today, taken out of ov and made a host's: the m
 The music specialty is mu's: the files of a music library under a root folder i pick, anywhere on the disk. mu's own thinking is in its memory, [design](../../mu/truth/design.md) and [project goal](../../mu/zone/project%20goal.md), and the answers below draw on them. The five things, what is known of each, 11 September 2026. Each of its open questions is a substep of the plan's step that needs it, and the two for later are steps 30 and 31.
 
 1. **collection information.** One row per root folder: the specialty's name, music, and the root, the folder dropped or picked. Every dropped folder is a collection of its own, for now, named for the folder, decided 11 September 2026. The library is the volume `/Volumes/muice myoozk`, decided 11 September 2026: an NTFS disk over USB, four top folders, Any Audio, HD Audio, MVE and MuSC-V, 18,219 files, 6227 of them flac, 1954 mp4, 1421 vob, and 3085 jpg beside them.
-2. **keys.** artist, album and title, each a row in the labels table written by the plugin as rule, as what it is says. Several artists on one file, a duet, are one row each. The kind is music for every file, hard-wired. A song takes no tags. Both decided 11 September 2026.
+2. **keys.** artist, album and title, each a row in the labels table written by the plugin as rule, as what it is says. Several artists on one file, a duet, are one row each. The kind is one of four, music, images, text and video, decided 13 September 2026, one per file by its ending: music for mp3, m4a, flac, wav and shn, video for mp4, mpg, avi, mkv and vob, images for jpg, text for pdf and txt, the plugin giving it as rule. A song takes tags from a closed list of four, jazz, classical, rock and hifi, decided 13 September 2026, reversing no tags of 11 September: rows in the labels table, written by hand through the editor or by the ai, never by the plugin, since a file's own tags name none of the four.
 3. **plugin.** `mu/plugin.py`. Its listing rule: under the root, files ending mp3, m4a, flac, wav, shn, mp4, mpg, avi, mkv and vob, the jpg cover art beside them, decided 11 September 2026, and archives, zip, rar and 7z, opened with unar, the one tool that opens all three, which the dispatcher runs and says how to install when it is missing, as project goal says. A pdf or txt beside a song is matched to the song by its name and attached to it. Its labels: the three, read from the file's own tags. Its routes: one that streams a file's bytes to the player, answering the range the browser asks for, and later one for vob, which runs ffmpeg on the dispatcher's side, since no browser plays MPEG-2.
 4. **hierarchies.** Four now, by folder, by artist, by album and by name. Folder is the paths, as ai's. The other three group the rows by one label's value.
 5. **operation view.** The player: the browser's own audio element for mp3, m4a and flac, its video element for mp4, inside kb's editor frame with the kinds row and the tag areas above it.
 6. **mu project code.** What mu has today: the three files that draw panel, configured with its name alone, and its two bridges, Core.ts and Panel.ts. To come: a bridge to kb, the player as the operation view snippet, its filter sections, artist and album, `mu/plugin.py` with the tag reader and the streaming route, and its own build notes table.
+
+## plugin api
+
+An API is a set of functions with what each takes and what each answers. 
+
+Two apis meet at the dispatcher, the dispatcher api that the app calls, and the plugin api that the dispatcher calls. The dispatcher's api is what the page asks: one address per ask, listed in tools/hub/index.md, with a function behind each. A request names its host, and the dispatcher picks the host's db and the host's plugin by it. ov's asks name no host and go to ai's plugin and `ov.db` until ov is retired at step 19, since the two share both. The plugin's api is what the dispatcher's functions call: one `plugin.py` per host, imported from the host's folder, mono/ai or mono/mu, every call wrapped so a fault fails that file or that request and never the server. Four functions every plugin has, then the specialty's own, which the dispatcher's api calls where the host's plugin has them and refuses where it does not. ai's are made at step 6 and step 8, music's at steps 20, 22 and 23.
+
+| function | takes | answers | called by |
+| --- | --- | --- | --- |
+| specialty | nothing: a value the plugin declares | the specialty's name, ai or music, written on the collections rows the look makes | the look, when a collection turns up |
+| listed files | the collection's root folder | every file's path under the root that the listing rule lists, counting from the root, sorted | the look every 3 seconds, `/rescan` and `/list-files` |
+| is listed | the root and one path | whether the listing rule lists that path | every function of the dispatcher's api that reads or writes a file under the root, which refuses any other |
+| labels | the root and one file's path | the labels the plugin gives that file, each a name and a value, written as rule rows: ai's the links the file holds, as the ai specialty says, from step 14, music's artist, album and title from the file's own tags, step 22 | the rules pass, on a file added or changed |
+| read | the root and one file's path | the file's words | `/read-guide`, ai's, step 8 |
+| save | the root, one file's path, the whole text, and the text as it was when the file was opened | whether it was written, refused when the file changed since it was opened | `/save-guide`, ai's, step 8 |
+| scan | the root and one file's path | what the file's own label block says: its kind, its tags and the four fields | `/scan`, ai's, step 8 |
+| strip | the root and one file's path | the file rewritten with its label block off, or passed over and named when the block carries a line the db has no place for | `/strip-block`, ai's, step 8 |
+| stream | the root, one file's path, and the range of bytes the browser asks for | those bytes and the content type, by the file's ending | music's streaming address, step 23 |
 
 ## tables
 
@@ -93,7 +113,7 @@ Every key the ai specialty puts on a file, where it lives in the db, what it can
 
 | key                                        | lives in                                               | values                                                                                                                                                                                                                                                                                                                            | set by                                         |
 | ------------------------------------------ | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| kind                                       | labels row, name kind                                  | one of six: analyze, arch, explain, howto, music, specify                                                                                                                                                                                                                                                                         | hand, rule or ai; a hand kind wins             |
+| kind                                       | labels row, name kind                                  | one of five: analyze, arch, explain, howto, specify. music left the list 13 September 2026, mu's alone                                                                                                                                                                                                                             | hand, rule or ai; a hand kind wins             |
 | tag                                        | labels rows, name tag, one per tag                     | the closed list of 39: always, born, build, data, debug, deploy, faster, geometry, incorporated, journal, keep, later, maybe, migrate, next, notes, now, plans, platform, port, program, proposal, prose, refactor, research, session, setup, soon, stale, style, tabled, team, test, tools, UX, vision, visual, waiting, weighed | hand, rule or ai; a tag shows whoever wrote it |
 | title                                      | files row, field title                                 | one line, the human name, unique across every file                                                                                                                                                                                                                                                                                | hand, or composed from the first heading       |
 | description                                | files row, field description                           | one sentence                                                                                                                                                                                                                                                                                                                      | hand, or composed from the first sentence      |
@@ -111,11 +131,11 @@ Every key the music specialty puts on a file, where it lives in the db, what it 
 
 | key | lives in | values | set by |
 | --- | --- | --- | --- |
-| kind | labels row, name kind | music, for every file | the plugin, as rule |
+| kind | labels row, name kind | one of four, music, images, text or video, by the file's ending, decided 13 September 2026 | the plugin, as rule |
 | artist | labels row, name artist | the artist tag in the file, one row per artist, a duet two rows | the plugin, as rule |
 | album | labels row, name album | the album tag in the file | the plugin, as rule |
 | title | labels row, name title, or the files row's title field? | the title tag in the file, or the file's name when the tag is empty | the plugin, as rule |
-| tag | none | a song takes no tags, decided 11 September 2026 | nobody |
+| tag | labels rows, name tag, one per tag | the closed list of four: jazz, classical, rock, hifi, decided 13 September 2026 | hand or ai; a tag shows whoever wrote it |
 | who wrote this | on every labels row, the column the code calls made_by | rule for what the plugin writes, hand for what a hand adds | whoever writes the row |
 | collection | files row, in mu's db | the root folder's row, one per root | the dispatcher |
 | path, size, modified, fingerprint, missing | files row | the disk's own facts, the fingerprint by size and time first for a big file | the dispatcher's look |
@@ -147,11 +167,11 @@ Purpose: a file nobody has labeled gets a kind and tags worth accepting, without
 
 ### music rules
 
-A song takes no tags, decided 11 September 2026, so the ai has nothing to give a music file and these rules do not apply. Kept for the day that changes.
+A song takes tags from a closed list of five, tag area genre -> {jazz, classical, rock}, tag area quality -> {low and high}, decided 13 September 2026, so the scan has tags to give a music file, and these rules apply. 
 
-1. **The instructions.** No kind, since music's is hard-wired. Tags alone, from whichever list keys settles on, with one line each.
+1. **The instructions.** No kind, since the plugin gives it by the file's ending. The five tags, with one line each on when it applies, and the answer, the tags as csv.
 2. **What is sent.** A music file has no words: its name, its path and the three tags the reader found.
-3. **What is not the ai's.** artist, album and title are the tag reader's rule rows. A file with empty tags is its name and folder, and a rules row gives one fixed value, so that is mu's plugin's parsing, not a suggestion.
+3. **What must be supplied by hand.** artist, album and title are the tag reader's rule rows. A file with empty tags is its name and folder, and a rules row gives one fixed value, so that is mu's plugin's parsing, not a suggestion.
 4. **Scale.** One call per changed file over tens of thousands, so no rerun button, and the first scan of a library makes no calls: files changed after the checkbox is turned on alone.
 
 Purpose: a song gets the tags a hand would give it. Goal: the same count, of the first fifty.
@@ -164,7 +184,7 @@ One list of steps, in the order they are done and now numbered, re-decided 12 Se
 
 Both sides need these, so they lead whatever order the rest runs in.
 
-- [x] 1. **Answer music's questions.** The four that steps 3 and 20 key on, answered 11 September 2026: every dropped folder is a collection of its own, for now, named for the folder, a song takes no tags, and several artists on one file are one row each. Every other open question is a substep of the step that needs it. Proof: no open checkbox here.
+- [x] 1. **Answer music's questions.** The four that steps 3 and 20 key on, answered 11 September 2026: every dropped folder is a collection of its own, for now, named for the folder, a song takes no tags, reversed 13 September 2026 to four, jazz, classical, rock and hifi, and several artists on one file are one row each. Every other open question is a substep of the step that needs it. Proof: no open checkbox here.
 - [x] 2. **The backup and the dump.** Built 12 September 2026: `ov.db.before-step-2` saved, the ignore line widened, `/dump` and `/restore` in the dispatcher with `write_dump` and `restore` in database.py, `ov.sql` written and read back into `ov.restored.db`, every label the same, 125 checks in test_database.py and 39 in test_dispatcher.py, the always test and big-picture clean. The issue: the db is the SOT and the only home of every label. When the db goes, all the labels go. This is the fix. It creates two artifacts ( `ov.db.before-step-2` and `ov.sql`). Either one can restore the labels.
     - The **saved file**: `tools/hub/ov.db` is saved beside itself as `tools/hub/ov.db.before-step-2`, and after an error it is put back in place of `ov.db`, kept until step 3's ending holds, and every later step that touches a db does the same with its own number.
         - No db enters git, and the ignore line widens to `tools/hub/*.db*`.
@@ -231,18 +251,24 @@ The steps that take ov down to kb, in order, each naming the ov file that does t
     - **What kb hands panel.** Panel.svelte takes four things: the right end of the controls row, the details column given its width, the operation view given its width and height, and words for the status line. 
         - kb's Main.svelte hands it Controls.svelte less the hamburger, which panel draws and whose press toggles kb's w_show_details, Details.svelte, Operation.svelte, and Status.ts's words, the offer as 5c decides. 
         - Panel's row keeps the host's name in its middle and renders the snippet at its right end, and kb's row while a file is open holds the file's own section across the row, so the name yields while a file is open, decided 13 September 2026.
-    - **What ai fills at step 5.** name, host, hierarchies, folder alone, and builds, its own builds.md moved from kb. kinds, tags and tag_areas are filled at step 7, when they leave File.ts and Tag_Areas.ts, and prefix is read at step 9. 
+    - **What ai fills at step 5.** name, host, hierarchies, folder alone, and builds, its own builds.md moved from kb. kinds, tags and tag_areas are filled since step 7, 13 September 2026, and prefix is read at step 9. 
         - Saving.ts sends the configured host with every ask from this step, so ai's asks name ai, whose ports.json entry names `ov.db`.
     - [x] 5a. **question** where the host's browse filter sits among kb's, answered 13 September 2026: browse has filters above its list of files, search first, then collection, kind and tag, and a host's browse section is a filter among them, after tag, last above the list.
     - [x] 5b. **question** what a configured hierarchy names, answered 13 September 2026: the label and its order within a group, which music's track order would need.
     - [x] 5c. **question** the status line's offer, answered 13 September 2026: panel uses core's status line, which carries the offer already, its props status, offer, ontake, onhide and onreport, in place of panel's own line of words, so kb's offer passes through panel. A change to panel, which gallery, lv, mj and mu draw.
     - [x] 5d. **Build the hand-over** as adopt kb.md says, with 5a, 5b and 5c in it. Built 13 September 2026, above.
-- [ ] 6. **The ai plugin, and which folders of the repo hold notes.** 
-    - **Risk low** with step 2's four guards, high without: first `ov.db` is saved as `tools/hub/ov.db.before-step-6`, then through the step `PLACE`, `open_db` and `all_labels` keep their names and answers, and test-always-tag.sh is run after every save of database.py. `site_of_file`, `file_path_of`, `WORK_FOLDERS` and `reaches_under_work` in `Saving.ts`, `T_Bundle` and `project_at` in `File.ts`, and in the dispatcher `listed_files`, `is_listed_note` and `COLLECTIONS`. 
-    - In their place, ai's collections table, step 3's, and `ai/plugin.py` made with the listing rule in it, which the dispatcher imports from the host's folder its host list names, the first plugin it imports, mu's coming at step 20. 
-    - Every call into a plugin, its listing, its labels and its routes, is wrapped, so a fault in one fails that file or that request, said in the log, and never the server. 
-    - Proof: test_dispatcher.py listing the same files as before, a plugin that raises on one file with the rest listed and the server still answering, test-always-tag.sh and test_big_picture.py.
-- [ ] 7. **The vocabulary.** The six kinds and the 39 tags in `File.ts`, the ten tag areas in `Tag_Areas.ts`, and the is_design flag on a file: the ai specialty's keys, handed to kb's kinds row and tag areas. Proof: tag_areas test, and a visual report of the kinds row and the tag areas in the ai host.
+- [x] 6. **The ai plugin, and which folders of the repo hold notes.** The dispatcher side and the page side, as plugin api says. Built 13 September 2026: `ov.db.before-step-6` saved. `ai/plugin.py` with SPECIALTY, listed_files, is_listed and labels, its list of note folders gaining ai and kb. In the dispatcher PLUGINS, load_plugins, plugin_for, call_plugin, files_listed_by and listed_by in place of listed_files, is_listed_note and COLLECTIONS, the import and every call wrapped, ov's asks going to ai's plugin, the look writing the plugin's specialty on the collections rows, and the rules pass taking the plugin's labels and running with no rules too. all_fields carries each file's collection. On the page WORK_FOLDERS, reaches_under_work and the listed line in site_of_file are gone, and Fields gains collection. Proof: test_database.py 166, a stub plugin raising on one file failing that file alone, test_dispatcher.py 47, the two new CLAUDE files listed and the fields carrying collections, the listing after against before differing by ai/CLAUDE.md and kb/CLAUDE.md alone, 497 files, the always test, big picture 15, kb check clean at 541 files and 334 tests, ai 532 and building. Not looked at in a browser.
+    - **Risk low** with step 2's four guards, high without: first `ov.db` is saved as `tools/hub/ov.db.before-step-6`, then through the step `PLACE`, `open_db` and `all_labels` keep their names and answers, and test-always-tag.sh is run after every save of database.py, which changes here: the fields answer gains each file's collection.
+    - **The dispatcher side.** `ai/plugin.py` is made, the first plugin, mu's coming at step 20, with the four functions every plugin has, the plugin api's first four rows: the specialty, ai, the listed files, ov's listing rule today with its list of note folders gaining ai and kb, so their two CLAUDE files are listed as step 4 promised, is listed, ov's refusal of a path that is not a note today, and labels, answering none until step 14. The dispatcher imports it from the host's folder its host list names, mono/ai, and wraps the import and every call, so a fault in one fails that file or that request, said in the log, and never the server: a plugin that fails to import leaves its host's listing empty and the server up. In the dispatcher `listed_files`, `is_listed_note` and `COLLECTIONS` go: the look, `/list-files` and every route that reads or writes a file ask the host's plugin, and the look writes the plugin's specialty on the collections rows it makes, in place of the word ai written into the dispatcher. A request that names no host, ov's, goes to ai's plugin, since ov and ai share `ov.db` until step 19. ai's own four, read, save, scan and strip, come at step 8.
+    - **The page side.** What mirrors the listing rule goes, since the dispatcher's listing is the whole truth from here: `WORK_FOLDERS` and `reaches_under_work` in `Saving.ts`, and the one line inside `site_of_file` that says a work note deeper than the named folders is not listed. `/all-labels` carries each file's collection beside the four fields from this step, and `/collections` each collection's root, for step 25 to read. The bundle design stays until then: `T_Bundle` and `project_at` in `File.ts`, the project list the projects row draws and the hierarchy hangs every file from, and `file_path_of` and `site_of_file` in `Saving.ts`, its two halves, a bundle and a path to a repo path and back, thirty-five call sites in eight files. The reaches_under_work cases in saving.test go here, not at step 19.
+    - Proof: test_dispatcher.py listing the same files as before and `/all-labels` carrying each file's collection, a plugin that raises on one file with the rest listed and the server still answering, test-always-tag.sh, test_big_picture.py, kb's check and suite clean, and a visual report of the list and the editor in ai unchanged.
+- [x] 7. **The vocabulary.** Built 13 September 2026: ai's Customizations.ts holds the five kinds, the 39 tags and the ten tag areas, and ai's main.ts hands them to kb's configuration before anything mounts. T_Kind, ALL_TAGS and TAG_AREAS left File.ts and Tag_Areas.ts, kb's kind is a word, its readers, Browse_Filters, Edit_Filters, Files.ts, Filters.ts and Labels.ts, read customizations.kinds, tags and tag_areas, area_of and tags_without_area take the lists, and KIND_UNTIL_TOLD is the word analyze until step 12. The tag areas test moved to ai, reading ai's lists through kb's functions, and kb's labels test declares the words it reads off blocks. Proof: kb check clean at 540 files and 324 tests, ai check clean at 533 files, 15 tests with the tag areas test among them, and ai builds. Looked at 13 September 2026, the kinds row and the tag areas in ai: confirmed. The five kinds ai keeps of `T_Kind`'s six, analyze, arch, explain, howto and specify, music dropped as 7a says, the 39 tags in `File.ts` and the ten tag areas in `Tag_Areas.ts`: the ai specialty's keys, handed to kb's kinds row and tag areas as the configuration's kinds, tags and tag_areas, which ai's Customizations.ts fills from this step and every kb file that reads the three reads in their place. 
+    - `T_Kind` is a type as well as a list, so kb's kind becomes a word: the kind on a file, the kind picked in browse and the kinds row hold a word off the configured list. 
+    - Labels.ts's fallback kind, `T_Kind.analyze`, ai's word, waits for step 12, which moves the composing. 
+    - The tag_areas test goes to ai here with the lists, since against kb's empty defaults it proves nothing. is_design is the bundle design's, computed by site_of_file, and goes at step 25. 
+    - Proof: tag_areas test in ai, kb's check and suite clean, and a visual report of the kinds row and the tag areas in the ai host.
+    - [x] 7a. **question** whether music stays among ai's six kinds, answered 13 September 2026: no. ai's kinds are five, and music is mu's alone, one of mu's four, which the plugin gives by the file's ending.
+    - [x] 7b. **Hand the keys over** as this step says, with 7a in it. Built 13 September 2026, above.
 - [ ] 8. **The dispatcher's markdown routes.** `/read-guide`, `/save-guide`, `/scan` of a label block and `/strip-block`: they are written into `ai/plugin.py` as well, made at step 6, and stay at the dispatcher until ov is retired: the dispatcher hands a route to a plugin only where a plugin claims it, so once ai's plugin claims a route, the plugin answers every caller, ov included, and the dispatcher's own code for that route is kept unreached until ov is retired, then taken out. One db, one dispatcher. The importing of a plugin is step 6's, not this step's. Proof: test_dispatcher.py run from ov's folder and from ai's, each with its own paths.
 - [ ] 9. **The preferences prefix.** `Preferences.ts`'s ov_ becomes the host's, read off the configuration, one prefix each, so kb's hosts remember apart. Proof: a visual report, a preference surviving a reload in each host and not crossing between them.
 - [ ] 10. **The four fields' rows in the label form.** `Edit_Filters.svelte`: title, date, brief and use when. The kinds row and the tag areas stay kb's, since every specialty has a kind and tags: they become two kb components of their own, taken out of `Edit_Filters.svelte`, and the frame draws them. The four rows go to ai as the edit filter snippet, and with the title row its two tools, the title copied to and from the top heading and the file name, doing nothing until step 16 gives them their moves. Proof: a visual report of the four rows in the ai host's editor, between kb's kinds row and tag areas.
@@ -254,7 +280,7 @@ The steps that take ov down to kb, in order, each naming the ov file that does t
 - [ ] 16. **Make, rename, move and throw away a markdown file, links and index files mended.** `create_beside`, `rename`, `move` and `delete_one` in `Files.ts`, the file's four buttons in `Controls.svelte`, and the moves behind the title tools that went at step 10. Moving and throwing away a file are kb's; mending what pointed at it is not. Proof: a visual report of the four buttons.
 - [ ] 17. **Mend index files.** `Index_Files.ts`, `repair_indexes` and `mend_indexes` in `Files.ts`, the index files button in `D_Repair.svelte`. Proof: index_files test, and a visual report of the repair button.
 - [ ] 18. **Hand a file to Obsidian, a code file to VSCode, and a file into a message.** `obsidian_link` in `Saving.ts`, `Opening_Code.ts`, the compose button in `Controls.svelte`. Proof: opening_code test, and a visual report of the three hand-offs.
-- [ ] 19. **The tests go with their pieces.** markdown_blocks, code_blocks, emphasis, searching, wiki_links, index_files, following_links, opening_code and tag_areas to the ai host, filters and core_alias stay kb's. labels is two things: its composing cases go, its label_changes cases stay. saving is two things: its site_of_file, file_path_of and reaches_under_work cases go, its address_of_file, renamed_path and moved_into cases stay. Every step ends with both suites and the db's checks clean. And every one of ov's 89 working feature rows is tried by hand on the ai host and ticked in memory/ai's working features file, ov's table with a first column added, done, holding a checkbox per row, the rows' words ov's, unchanged. ov is retired the day the last is ticked.
+- [ ] 19. **The tests go with their pieces.** markdown_blocks, code_blocks, emphasis, searching, wiki_links, index_files, following_links and opening_code to the ai host, tag_areas having gone at step 7 with its lists, filters and core_alias stay kb's. labels is two things: its composing cases go, its label_changes cases stay. saving's reaches_under_work cases went at step 6 and its site_of_file and file_path_of cases at step 25, each with their functions, and its address_of_file, renamed_path and moved_into cases stay. Every step ends with both suites and the db's checks clean. And every one of ov's 89 working feature rows is tried by hand on the ai host and ticked in memory/ai's working features file, ov's table with a first column added, done, holding a checkbox per row, the rows' words ov's, unchanged. ov is retired the day the last is ticked.
 
 ### music, steps 20 to 24 — after the strip, re-decided 12 September 2026
 
@@ -270,7 +296,7 @@ The 11 September decision ran music first, so a real second host would say what 
     - [ ] 21f. **The server threading its requests**, and long work, a scan or a dump, in a thread that answers progress. With no mutex: sqlite's own write lock does the waiting, and a read waits on nothing, which answers the mutex pac in truth/decisions.md with neither side. Six lines. The server: The threaded server in place of `HTTPServer`, at the import and at the base class, in dispatcher.py. Its request threads are daemon, so the restart route's exit is not held. The one read-then-write: `reconcile` reads every row, then writes. Its block's first statement becomes `BEGIN IMMEDIATE`, so a second reconcile waits at the start, up to the connection's 5 seconds, then reads what the first left and finds nothing to do. Every other write in database.py begins with a write, an upsert or a delete, so sqlite already makes the second wait. Reads: `PRAGMA journal_mode = WAL` at open, one line after the foreign keys line, so a read never waits while a write commits. WAL keeps two files beside each db, covered by step 2's ignore line, and a saved file is made after a checkpoint, `PRAGMA wal_checkpoint`, or it is missing the last writes. RULED: The sweep of rows gone from the disk iterates over `list(RULED)`, a snapshot, in place of the dict. Its reads and one-key writes need nothing. The test: test_database.py starts the threaded server too, and one new check fires two rescans at once from two threads, both answering 200 and the db's rows the same after. Proof: test_database.py and test_dispatcher.py clean, test-always-tag.sh, and three looks timed as today, 0.04 seconds each.
     - [ ] 21g. **A rule change rerun for its own reads alone**, and content rules skipped for a specialty whose files are not text.
     - [ ] 21h. **The library's own row**, added here and not at step 20, since one walk of it with a stat per file takes 30 seconds, timed 11 September 2026.
-- [ ] 22. **The tag reader.** artist, album and title read from the file's own tags in mu's plugin inside the rules pass, written as rule, the kind music with them. Python's standard library reads no tags, and neither mutagen, a pip package reading mp3, m4a and flac tags, nor ffprobe is installed on this machine, 11 September 2026. mutagen unless step 1 says otherwise, and the plugin says how to install it when it is missing, as the mu project goal says for unar. Proof: a test folder of files with known tags, each read into its rows, and a file with no tags given its name as title.
+- [ ] 22. **The tag reader.** artist, album and title read from the file's own tags in mu's plugin inside the rules pass, written as rule, the kind with them, one of mu's four by the file's ending. Python's standard library reads no tags, and neither mutagen, a pip package reading mp3, m4a and flac tags, nor ffprobe is installed on this machine, 11 September 2026. mutagen unless step 1 says otherwise, and the plugin says how to install it when it is missing, as the mu project goal says for unar. Proof: a test folder of files with known tags, each read into its rows, and a file with no tags given its name as title.
     - [ ] 22a. **question** the title's home: a label row, as decided, or the title field on the files row, which the list already shows for ai? One or the other, since kb's list draws the title from one place.
     - [ ] 22b. **question** the artist's home: a label row, or a source, the author of the file? The sources table holds an author and where it came from already, and a hierarchy groups by a label's value.
     - [ ] 22c. **question** the reader, since python's standard library reads no tags: mutagen, a package, or ffprobe run as a tool, the way unar would be. mutagen unless said otherwise.
@@ -282,7 +308,7 @@ The 11 September decision ran music first, so a real second host would say what 
 
 What kb needs that ov never had, from the kb list at the top, since music does not fit without them.
 
-- [ ] 25. **The collection filter.** A section among the browse filters, beside kind, tag and search, narrowing the list to one collection, a project in ai, a root folder in mu, read from the collections table. Proof: filters test, and a visual report of the list narrowed to each.
+- [ ] 25. **The collection filter.** A section among the browse filters, beside kind, tag and search, narrowing the list to one collection, a project in ai, a root folder in mu, read from the collections table. It takes over from the projects row, which draws `T_Bundle`, the closed list of thirteen project names in `File.ts`. The bundle design goes here: `T_Bundle` and `project_at`, and `file_path_of` and `site_of_file` in `Saving.ts`, a bundle and a path to a repo path and back, with their cases in saving.test, and is_design with them, which site_of_file computes off the path and Files.ts hangs designs under, always false today. In their place each file's row carries its collection and its path from the collection's root, which `/all-labels` and `/collections` carry from step 6, the hierarchy hanging each file from its row's collection and the files manager building each collection's top from the collections table. Smaller than its thirty-five call sites say: ideas.md records that Saving.ts roots every collection at a notes folder that no longer exists, so every file falls to the memory rule already, a repo path is memory and the file's path, and is_design is always false. Proof: filters test, and a visual report of the list narrowed to each, and unchanged in ai with none picked.
 - [ ] 26. **Hierarchies by a label.** The list grouped by one label's value, artist, album or name, beside the hierarchy from paths, the host naming which labels in its configuration. Proof: a test of the grouping, and a visual report of mu's list by artist.
     - [ ] 26a. **question** the shape of album: nested under artist, artist then album then song, or a flat list of albums.
     - [ ] 26b. **question** the order within an album: track order, which needs a track number the keys do not yet hold, or by name.
@@ -300,11 +326,12 @@ What kb needs that ov never had, from the kb list at the top, since music does n
 
 ### mu adopts kb, step 29
 
-- [ ] 29. **mu adopts kb.** The sixth item of the music specialty: a bridge to kb, mu's App.svelte drawing kb's page with mu's snippets, the player as the operation view snippet in place of step 24's first list, its filter sections, artist and album, its configured host and its own build notes table. Proof: mu's alias test, that only its bridges name a library, and a visual report of the library browsed by artist and album and a song played.
+- [ ] 29. **mu adopts kb.** The sixth item of the music specialty: a bridge to kb, mu's App.svelte drawing kb's page with mu's snippets, the player as the operation view snippet in place of step 24's first list, its filter sections, artist and album, its configured host, its four tags and their area, and its own build notes table. Proof: mu's alias test, that only its bridges name a library, and a visual report of the library browsed by artist and album and a song played.
     - [ ] 29a. **question** what a click does: play at once, or select, with a play button?
     - [ ] 29b. **question** what the steppers do: walk to the next song and play it, so an album plays through, or step alone?
     - [ ] 29c. **question** cover art: shown, from the file's tags, read by the same reader, or not?
-    - [ ] 29d. **Build the player** as the music specialty's operation view says, with 29a to 29c in it.
+    - [ ] 29d. **question** the tag area for mu's four tags, since kb draws tags by area: one area holding the four, or two, jazz, classical and rock as one and hifi as another?
+    - [ ] 29e. **Build the player** as the music specialty's operation view says, with 29a to 29d in it.
 
 ### later, steps 30 to 32
 
@@ -314,6 +341,6 @@ What kb needs that ov never had, from the kb list at the top, since music does n
 - [ ] 31. **The letter hierarchy.** A fifth music hierarchy, by first character, as what it is names. Proof: a visual report of the list by letter.
     - [ ] 31a. **question** of which label: artist, album or title?
     - [ ] 31b. **Build it** as step 26 built the others.
-- [ ] 32. **Rules for the ai.** The proposed rules section, common and ai's, since a song takes no tags. Proof: as proposed rules says.
+- [ ] 32. **Rules for the ai.** The proposed rules section, common, ai's and music's, since a song takes four tags since 13 September 2026. Proof: as proposed rules says.
     - [ ] 32a. **question** whether to build them at all, the pac in truth/decisions.md: 13 bare files of 346 today, each composed the first time it is opened.
     - [ ] 32b. **Build them** as proposed rules says.

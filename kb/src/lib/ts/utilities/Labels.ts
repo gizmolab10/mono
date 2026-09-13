@@ -1,4 +1,5 @@
-import { ALL_TAGS, T_Kind, type Labels } from '../types/File';
+import { type Labels } from '../types/File';
+import { customizations } from '../common/Customizations';
 import { debug } from '../common/Core';
 
 // The labels at the top of every guide — read off a file's text, and written back into it.
@@ -45,15 +46,16 @@ export function label_block(labels: Labels, _tags: string[]): string {
 /** The tag that says these labels were composed rather than written. */
 export const NEEDS_A_LOOK = 'stale';
 
-/** The kind a composed block starts at when its folder says nothing, which every folder does. */
-export const KIND_UNTIL_TOLD = T_Kind.analyze;
+/** The kind a composed block starts at when its folder says nothing, which every folder does: ai's
+ * word, inside kb until step 12 of the plan moves the composing to ai. */
+export const KIND_UNTIL_TOLD = 'analyze';
 
 /**
  * What the folders above a file say it is: nothing. A designs folder used to make its files
  * designs, and that kind is gone — every folder now says nothing about how a file reads, so the
  * fallback stands for all of them and the stale mark asks for a real answer.
  */
-export function kind_from_where(_path: string): T_Kind {
+export function kind_from_where(_path: string): string {
 	return KIND_UNTIL_TOLD;
 }
 
@@ -240,10 +242,10 @@ function tags_from(lines: string[], at: number, where: string): string[] {
 	const named = inside.length > 0
 		? inside.split(',').map((t) => t.trim()).filter((t) => t.length > 0)
 		: names_below(lines, at);
-	const kept = named.filter((t) => ALL_TAGS.includes(t));
-	const dropped = named.filter((t) => !ALL_TAGS.includes(t));
+	const kept = named.filter((t) => customizations.tags.includes(t));
+	const dropped = named.filter((t) => !customizations.tags.includes(t));
 	if (dropped.length > 0) {
-		debug.log(`Guide "${where}" names ${dropped.length} tag(s) that are not on the closed list of ${ALL_TAGS.length}: ${dropped.join(', ')}. They are ignored.`);
+		debug.log(`Guide "${where}" names ${dropped.length} tag(s) that are not on the closed list of ${customizations.tags.length}: ${dropped.join(', ')}. They are ignored.`);
 	}
 	return kept;
 }

@@ -2040,3 +2040,25 @@
 {"timestamp":"2026-09-13T20:14:39Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"157","plain_words":""}
 {"timestamp":"2026-09-13T20:19:26Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"71","plain_words":""}
 {"timestamp":"2026-09-13T20:23:04Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"102","plain_words":""}
+{"timestamp":"2026-09-13T20:27:49Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"240","plain_words":""}
+{"timestamp":"2026-09-13T20:29:12Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"70","plain_words":""}
+{"timestamp":"2026-09-13T20:29:15Z","action":"complaint","word":"t","murky":"ook asks each host's plugin for its listing and its specialty. Not said, and step 21's look for mu builds on it.\n- **The tests of the removed names.** Step 19 moves saving.test's site_of_file, file_path_of and reaches_under_work cases to ai. Step 6 removes those functions, so the cases fail at step 6, not at 19. Either the functions move to ai at step 6 with their cases, or the cases go at step 6.","plain":"A route is one address the dispatcher answers, such as `/read-guide` or `/all-labels`: the page asks at that address, and the dispatcher runs the code for it. Step 8 is about those. Step 6 is about the listing, which is not a route the page asks for by name but the rule the dispatcher uses to decide which files exist at all, and which the look and `/list-files` both run.","rule":"any-line","words":"240","plain_words":"70"}
+{"timestamp":"2026-09-13T20:29:58Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"68","plain_words":""}
+{"timestamp":"2026-09-13T20:30:47Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"76","plain_words":""}
+{"timestamp":"2026-09-13T20:32:40Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"99","plain_words":""}
+{"timestamp":"2026-09-13T20:37:28Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"128","plain_words":""}
+{"timestamp":"2026-09-13T20:41:52Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"138","plain_words":""}
+{"timestamp":"2026-09-13T20:44:03Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"70","plain_words":""}
+{"timestamp":"2026-09-13T20:45:48Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"172","plain_words":""}
+{"timestamp":"2026-09-13T20:48:11Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"63","plain_words":""}
+{"timestamp":"2026-09-13T20:49:46Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"198","plain_words":""}
+{"timestamp":"2026-09-13T20:50:47Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"67","plain_words":""}
+{"timestamp":"2026-09-13T20:52:12Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"170","plain_words":""}
+{"timestamp":"2026-09-13T20:53:50Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"66","plain_words":""}
+{"timestamp":"2026-09-13T21:06:35Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"311","plain_words":""}
+{"timestamp":"2026-09-13T21:18:59Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"293","plain_words":""}
+{"timestamp":"2026-09-13T21:22:38Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"80","plain_words":""}
+{"timestamp":"2026-09-13T21:23:58Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"85","plain_words":""}
+{"timestamp":"2026-09-13T21:27:23Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"105","plain_words":""}
+{"timestamp":"2026-09-13T21:38:01Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"205","plain_words":""}
+{"timestamp":"2026-09-13T21:40:58Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"216","plain_words":""}

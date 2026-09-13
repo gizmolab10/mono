@@ -6,5 +6,7 @@
 
 ## 13 September 2026
 
+- D: step 7 built: Customizations.ts holds the five kinds, music dropped, the 39 tags and the ten tag areas, main.ts hands them to kb, Kb.ts reaches kb's four area functions, and the tag areas test lives here, reading ai's lists. Check clean at 533 files, 15 tests, the build resolves
+- D: step 6 built: plugin.py, the dispatcher's plugin for ai and for ov, the specialty's name, ov's listing rule moved whole with ai and kb added to its projects, whether one path is listed, and labels answering none until step 14. The dispatcher imports it and lists, refuses and labels through it, 497 files listed, two more than before, the two new CLAUDE files
 - D: step 5 built on ai's side: main.ts fills kb's customizations before anything mounts, name, prefix, host, hierarchies and the build notes table, builds.md moved here from kb, Customizations.ts holding the four facts and Kb.ts reaching kb's configuration. Check clean at 532 files, 5 tests, the build resolves
 - D: ai's button on the hub page, under H, since a opens AnythingLLM: the button, its two config entries and its key, beside ov's
