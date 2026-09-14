@@ -1041,12 +1041,16 @@
 				halt_stepping(`"${name}" could not be read — ${failed}`);
 			});
 		// Let it all go the moment this one is off screen, box included. Where it was left is
-		// already written — the scrolling said so as it settled.
+		// already written — the scrolling said so as it settled. What was drawn goes with the
+		// words: with the words empty and the drawing still remembered, the two differed, and
+		// the next guide was drawn from nothing before its words arrived, its links thrown away
+		// as though it had been edited down to an empty file.
 		return () => {
 			if (saving_wait !== null) { clearTimeout(saving_wait); saving_wait = null; }
 			close_box(false);
 			words = null;
 			text = '';
+			drawn_body = '';
 		};
 	});
 </script>

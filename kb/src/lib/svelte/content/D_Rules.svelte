@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { add_rule, remove_rule, rules_in_db, type Rule } from '../../ts/utilities/Saving';
+	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { show_status } from '../../ts/managers/Status';
 	import { files } from '../../ts/managers/Files';
-	import { hit_target } from '../../ts/common/Core';
+	import { hit_target, Steppers } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
 	import { onMount } from 'svelte';
 
@@ -12,14 +13,42 @@
 	// one away runs every rule on every file, and every record here is relabeled from the db.
 
 	let rules   = $state<Rule[]>([]);
-	let reads   = $state<Rule['reads']>('location');
 	let pattern = $state('');
-	let name    = $state<Rule['name']>('kind');
 	let value   = $state('');
+
+	// What the next rule reads and what it gives, one choice each, remembered across launches:
+	// location and kind until changed.
+	const READS: Rule['reads'][] = ['name', 'location', 'content'];
+	const GIVES: Rule['name'][]  = ['kind', 'tag'];
+	const w_reads = preferences.persistent<Rule['reads']>(T_Preference.rule_reads, 'location');
+	const w_gives = preferences.persistent<Rule['name']>(T_Preference.rule_gives, 'kind');
+
+	// Which of the db's rules the form shows, remembered across launches, the first until stepped.
+	// The steppers move it, and the rule at it is put into the form: what it reads and gives
+	// picked, its regex and label filled in. With no rules at all the form is empty.
+	const w_rule_index = preferences.persistent<number>(T_Preference.rule_index, 0);
+
+	function show_rule() {
+		const index = Math.min(Math.max($w_rule_index, 0), Math.max(rules.length - 1, 0));
+		if (index !== $w_rule_index) { w_rule_index.set(index); }
+		const rule = rules[index];
+		if (!rule) { pattern = ''; value = ''; debug.log('Rules: the db holds none, so the form is empty.'); return; }
+		pattern = rule.pattern;
+		value   = rule.value;
+		w_reads.set(rule.reads);
+		w_gives.set(rule.name);
+		debug.log(`Rules: showing rule ${index + 1} of ${rules.length} — ${rule.reads} matching /${rule.pattern}/ giving ${rule.name} "${rule.value}".`);
+	}
+
+	function step_to(index: number) {
+		w_rule_index.set(index);
+		show_rule();
+	}
 
 	async function fetch_rules() {
 		rules = await rules_in_db();
 		debug.log(`Rules: the db holds ${rules.length}.`);
+		show_rule();
 	}
 
 	onMount(fetch_rules);
@@ -28,15 +57,14 @@
 		const regex = pattern.trim();
 		const label = value.trim();
 		if (regex === '' || label === '') { show_status('a rule needs a regex and a label'); return; }
-		const answer = await add_rule({ reads, pattern: regex, name, value: label });
+		const answer = await add_rule({ reads: $w_reads, pattern: regex, name: $w_gives, value: label });
 		if (!answer.ok) {
 			show_status(`rule not added — ${answer.why}`);
-			debug.log(`Rules: NOT added — ${reads} matching /${regex}/ giving ${name} "${label}" — ${answer.why}.`);
+			debug.log(`Rules: NOT added — ${$w_reads} matching /${regex}/ giving ${$w_gives} "${label}" — ${answer.why}.`);
 			return;
 		}
-		debug.log(`Rules: added — ${reads} matching /${regex}/ gives ${name} "${label}". Every rule was run on every file.`);
-		pattern = '';
-		value = '';
+		debug.log(`Rules: added — ${$w_reads} matching /${regex}/ gives ${$w_gives} "${label}". Every rule was run on every file.`);
+		w_rule_index.set(rules.length);            // the new rule is the last, oldest first, and the form shows it
 		await fetch_rules();
 		await files.relabel_all();
 		show_status(`rule added — ${rules.length} now`);
@@ -64,20 +92,34 @@
 				use:hit_target={{ id: `rules.remove.${rule.id}`, onpress: () => handle_remove(rule), tip: 'take this rule away' }}>×</button>
 		</div>
 	{/each}
-	<!-- One more rule: what it reads, the regex, and the label it gives. -->
-	<div class='rule add'>
-		<select class='field' bind:value={reads} use:hit_target={{ id: 'rules.reads', tip: 'what the rule reads' }}>
-			<option value='name'>name</option>
-			<option value='location'>location</option>
-			<option value='content'>content</option>
-		</select>
-		<input class='field grows' placeholder='regex' bind:value={pattern} use:hit_target={{ id: 'rules.pattern', tip: 'the regex it matches' }} />
-		<select class='field' bind:value={name} use:hit_target={{ id: 'rules.name', tip: 'what the rule gives' }}>
-			<option value='kind'>kind</option>
-			<option value='tag'>tag</option>
-		</select>
-		<input class='field' placeholder='label' bind:value={value} use:hit_target={{ id: 'rules.value', tip: 'the kind or the tag it gives' }} />
-		<button class='pill' use:hit_target={{ id: 'rules.add', onpress: handle_add, tip: 'add this rule, and run every rule on every file' }}>add</button>
+	<!-- One more rule, on four rows: the steppers, what it gives and add at the right, then what
+	     the rule reads centered on a row of its own, then the regex and the label each the whole width. -->
+	<div class='add'>
+		<div class='buttons'>
+			<Steppers id='rules.step' always_both can_back={$w_rule_index > 0} can_forward={$w_rule_index < rules.length - 1}
+				onprev={() => step_to($w_rule_index - 1)} onnext={() => step_to($w_rule_index + 1)}
+				back_says='the rule before' forward_says='the rule after' />
+			<div class='segments'>
+				{#each GIVES as choice (choice)}
+					<button class='segment' class:current={$w_gives === choice}
+						use:hit_target={{ id: `rules.gives.${choice}`, onpress: () => w_gives.set(choice), tip: `the rule gives a ${choice}` }}>{choice}</button>
+				{/each}
+			</div>
+			<span class='spacer'></span>
+			<button class='pill' use:hit_target={{ id: 'rules.add', onpress: handle_add, tip: 'add this rule, and run every rule on every file' }}>add</button>
+		</div>
+		<div class='buttons'>
+			<span class='spacer'></span>
+			<div class='segments'>
+				{#each READS as choice (choice)}
+					<button class='segment' class:current={$w_reads === choice}
+						use:hit_target={{ id: `rules.reads.${choice}`, onpress: () => w_reads.set(choice), tip: `the rule reads the file's ${choice}` }}>{choice}</button>
+				{/each}
+			</div>
+			<span class='spacer'></span>
+		</div>
+		<input class='field wide' placeholder='regex' bind:value={pattern} use:hit_target={{ id: 'rules.pattern', tip: 'the regex it matches' }} />
+		<input class='field wide' placeholder='label' bind:value={value} use:hit_target={{ id: 'rules.value', tip: 'the kind or the tag it gives' }} />
 	</div>
 </div>
 
@@ -90,47 +132,110 @@
 	}
 
 	.rule {
+		height      : var(--height);
 		align-items : center;
 		display     : flex;
 		gap         : var(--gap-tiny);
-		font-size   : var(--font-faint);
+		font-size   : var(--font-tiny);
 	}
 
 	.says {
-		flex        : 1 1 auto;
-		min-width   : 0;
-		overflow    : hidden;
-		white-space : nowrap;
 		text-overflow : ellipsis;
+		flex          : 1 1 auto;
+		overflow      : hidden;
+		white-space   : nowrap;
+		min-width     : 0;
 	}
 
 	.field {
+		height        : var(--height);
 		border        : var(--thick-small) solid var(--black);
+		font-size     : var(--font-tiny);
 		border-radius : var(--radius);
-		font-size     : var(--font-faint);
 		background    : var(--white);
 		color         : var(--text);
-		font-family   : inherit;
 		box-sizing    : border-box;
-		min-width     : 0;
+		font-family   : inherit;
 		width         : 5.5em;
+		min-width     : 0;
 	}
 
-	.grows {
-		flex : 1 1 auto;
+	/* The form's two rows, with a gap below them. */
+	.add {
+		gap            : var(--gap-tiny);
+		margin-bottom  : var(--gap-tiny);
+		flex-direction : column;
+		display        : flex;
+	}
+
+	.wide {
+		padding-left : var(--gap);
+		width        : 100%;
+	}
+
+	/* The first row: the steppers at the far left, the gives control, a spacer, and add at the
+	   right; the reads control's, centered by a spacer at each end. */
+	.buttons {
+		height      : var(--height);
+		align-items : center;
+		display     : flex;
+		gap         : var(--gap);
+	}
+
+	.spacer {
+		flex : 1 1 0;
+	}
+
+	/* The two segmented controls, drawn as the kinds row's: one box, the segments divided by
+	   lines, the picked one on the accent. */
+	.segments {
+		border        : var(--thick) solid var(--black);
+		border-radius : var(--radius-pill);
+		height        : var(--height);
+		background    : var(--white);
+		box-sizing    : border-box;
+		overflow      : hidden;
+		display       : flex;
+		flex-shrink   : 0;
+	}
+
+	.segment {
+		padding     : var(--pad-control);
+		font-size   : var(--font-tiny);
+		background  : transparent;
+		font-family : inherit;
+		white-space : nowrap;
+		color       : var(--text);
+		cursor      : pointer;
+		border      : none;
+	}
+
+	.segment:not(:last-child) {
+		border-right : var(--thick) solid var(--black);
+	}
+
+	.segment.current {
+		color      : var(--text-on-accent);
+		background : var(--accent);
+		cursor     : default;
+	}
+
+	.segment:not(.current):global([data-hit]) {
+		background : var(--hover);
 	}
 
 	.pill {
+		height        : var(--height);
 		border        : var(--thick) solid var(--black);
-		padding       : 0 var(--gap);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font-faint);
+		font-size     : var(--font-tiny);
 		background    : var(--white);
+		padding       : 0 var(--gap);
 		color         : var(--text);
 		box-sizing    : border-box;
 		cursor        : pointer;
-		white-space   : nowrap;
 		font-family   : inherit;
+		white-space   : nowrap;
 	}
 
 	.pill:global([data-hit]) {

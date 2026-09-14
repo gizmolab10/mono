@@ -452,11 +452,11 @@
           <div class="deploy-tooltip" id="deploy-tooltip">Loading...</div>
         </div>
         <div class="side-b">
-          <button class="action" id="btn-start" data-tooltip="restart all local dev servers">locals<span
+          <button class="action" id="btn-start" data-tooltip="restart all local dev servers, not the dispatcher">locals<span
               class="badge">esc</span></button>
           <button class="action" id="btn-docs" data-tooltip="build all documentation">docs<span
               class="badge">⌫</span></button>
-          <button class="action" id="btn-dispatcher" data-tooltip="restart local bash executor">dispatcher<span
+          <button class="action" id="btn-dispatcher" data-tooltip="restart the dispatcher, then reload this page">dispatcher<span
               class="badge">`</span></button>
           <button class="action" id="btn-tests" data-tooltip="run all tests">tests<span class="badge">;</span></button>
         </div>
@@ -767,8 +767,15 @@
       prePublishFeedbackRow();
     }
 
+    // Every action button says so when another operation is still running, in place of doing nothing.
+    function busy(key) {
+      if (!(pollInterval || restartPollInterval || testsPollInterval)) return false;
+      setConsoleOutput(key, 'busy: another operation is still running');
+      return true;
+    }
+
     function doStart() {
-      if (pollInterval || restartPollInterval || testsPollInterval) return; // Operation in progress
+      if (busy('restart')) return;
 
       setTitleButtonsWorking(btnStart);
       btnStart.innerHTML = 'restarting<span class="badge">esc</span>';
@@ -1042,7 +1049,7 @@
     });
 
     function doDocs() {
-      if (pollInterval || restartPollInterval || testsPollInterval) return; // Operation in progress
+      if (busy('rebuild')) return;
 
       setTitleButtonsWorking(btnDocs);
       btnDocs.innerHTML = 'building<span class="badge">⌫</span>';
@@ -1105,29 +1112,55 @@
     }
 
     function doDispatcher() {
-      if (pollInterval || restartPollInterval || testsPollInterval) return; // Operation in progress
+      if (busy('dispatcher')) return;
 
       setTitleButtonsWorking(btnDispatcher);
       btnDispatcher.innerHTML = 'restarting<span class="badge">`</span>';
       setConsoleOutput('dispatcher', 'Restarting dispatcher...');
       matchRowWidths();
 
-      fetch(`http://localhost:${ports.dispatcher.port}/restart-dispatcher`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      }).catch(() => { });
-
-      // dispatcher takes ~1 second to restart, then reload page
-      setTimeout(() => {
-        setConsoleOutput('dispatcher', '✓ dispatcher restarted');
-        setTimeout(() => location.reload(), 500);
-      }, 2500);
+      // The dispatcher answers when it began. The old process exits without answering the restart
+      // itself, and the new one answers a later time: that is what proves the restart. The old
+      // process still answering after ten seconds, or nothing answering at all, is reported.
+      const statusUrl = `http://localhost:${ports.dispatcher.port}/restart-status`;
+      const startedOf = () => fetch(statusUrl).then(res => res.json()).then(data => data.started ?? null);
+      const giveUp = (why) => {
+        btnDispatcher.innerHTML = 'dispatcher<span class="badge">`</span>';
+        clearTitleButtonsWorking();
+        setConsoleOutput('dispatcher', why);
+        matchRowWidths();
+      };
+      startedOf().catch(() => null).then((before) => {
+        fetch(`http://localhost:${ports.dispatcher.port}/restart-dispatcher`, { method: 'POST' }).catch(() => { });
+        const began = Date.now();
+        const look = () => {
+          startedOf()
+            .then((after) => {
+              if (after !== null && after !== before) {
+                setConsoleOutput('dispatcher', '✓ dispatcher restarted');
+                setTimeout(() => location.reload(), 500);
+              } else if (Date.now() - began > 10000) {
+                giveUp('✗ dispatcher did not restart: the old process still answers');
+              } else {
+                setTimeout(look, 500);
+              }
+            })
+            .catch(() => {
+              if (Date.now() - began > 10000) {
+                giveUp('✗ dispatcher did not come back: nothing answers on its port');
+              } else {
+                setTimeout(look, 500);
+              }
+            });
+        };
+        setTimeout(look, 1000);
+      });
     }
 
     let testsPollInterval = null;
 
     function doTests() {
-      if (testsPollInterval || pollInterval || restartPollInterval) return; // Operation in progress
+      if (busy('tests')) return;
 
       setTitleButtonsWorking(btnTests);
       btnTests.innerHTML = 'running<span class="badge">;</span>';

@@ -2,6 +2,10 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 13 September 2026
+
+- D: Debug.ts gathers log lines for 50 ms and sends them in one request per log file, the first request erasing as the first line did. Sending each line as it came made about 2,850 requests in a burst when kb's page related every link after a write, past the cap a browser puts on a page's requests, and the browser then failed the write itself with ERR_INSUFFICIENT_RESOURCES, read by the page as Failed to fetch. Reproduced in a headless browser at a burst of 2,000, not at 1,000. After: 54 log requests in a page's first 15 seconds against 1,661. Core check clean at 470 files, 98 tests, kb 540 and ai 533 clean
+
 ## 9 September 2026
 
 - D: utilities/Preferences.ts, a class with a prefix and an injectable storage, read and write as text or json, remove, clear, and a store that saves itself. Offered from the utilities barrel. Seven tests beside it. adopting core.md no longer says no preferences

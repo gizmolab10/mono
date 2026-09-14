@@ -30,8 +30,8 @@ UPDATE_DOCS = os.path.join(GITHUB_DIR, 'tools/docs/update-project-docs.sh')
 # lays it out. Its listing rule says which files under the root are listed, is listed says it of one
 # path, and labels gives a file its labels inside the rules pass. The import and every call are
 # wrapped: a fault is said in the log and fails that file or that request, never the server. A host
-# with no plugin of its own uses the plugin of a host sharing its db, so ov's asks go to ai's plugin
-# until ov is retired.
+# with no plugin of its own uses the plugin of a host sharing its db. A request naming no host is
+# ai's, so ov's frozen page, which names none, asks ai's db and ai's plugin.
 PLUGINS = {}
 
 def load_plugins():
@@ -53,7 +53,7 @@ def load_plugins():
 def plugin_for(host):
     """The plugin a request's host runs: its own, or the plugin of a host sharing its db. None
     where no host with that db has one."""
-    host = host or 'ov'
+    host = host or 'ai'
     if host in PLUGINS:
         return PLUGINS[host]
     db = database.HOSTS.get(host)
@@ -133,6 +133,9 @@ TESTS_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'tests-status.txt')
 rebuild_running = False
 restart_running = False
 tests_running = False
+# When this process began. The hub page reads it before and after asking for a restart: a later
+# time is the new process answering, the same time is the old one still here.
+STARTED = time.time()
 
 # Derive Netlify sites from ports.json URLs
 def _netlify_name(url):
@@ -387,105 +390,26 @@ def run_tests_async():
     finally:
         tests_running = False
 
-def label_block(text):
-    """The lines between the first row of three dashes and the next, and which line the closing
-    dashes stand on. Nothing, and -1, for a file with no block."""
-    lines = text.split('\n')
-    if not lines or lines[0].strip() != '---':
-        return [], -1
-    for at in range(1, len(lines)):
-        if lines[at].strip() == '---':
-            return lines[1:at], at
-    return [], -1
-
-# The lines a label block can carry and the db has a place for. type and updated are the older
-# spellings of kind and date, read as those where the newer line is not there.
-KNOWN_KEYS = ('kind', 'title', 'description', 'tags', 'use_when', 'date', 'type', 'updated')
-
-def _names_below(block, at):
-    """The names written one to a line under a bare label, each beginning with a dash."""
-    named = []
-    for below in block[at + 1:]:
-        if not re.match(r'^\s+-\s', below):
-            break
-        name = re.sub(r'^\s+-\s*', '', below).strip()
-        if name:
-            named.append(name)
-    return named
-
-def _list_after(block, at, line, key):
-    """A list label's values, in either shape: `[a, b]` on the one line, which the overview app
-    wrote, or one name to a line under the bare label, which Obsidian writes."""
-    inside = line[len(key) + 1:].strip()
-    if inside.startswith('['):
-        return [one.strip() for one in inside.strip('[]').split(',') if one.strip()]
-    return _names_below(block, at)
-
-def _value_after(line, key):
-    """One label's value, the surrounding quote marks taken off."""
-    value = line[len(key) + 1:].strip()
-    if len(value) > 1 and value[0] == value[-1] and value[0] in '"\'':
-        value = value[1:-1]
-    return value
-
-def labels_in_text(text):
-    """What a file's own label block says: kind, tags, title, description, use_when and date,
-    each None where the block has no such line, and unknown, the keys the block carries that the
-    db has no place for. A `type` line is read as the kind and an `updated` line as the date
-    where the newer line is missing."""
-    block, _ = label_block(text)
-    said = {'kind': None, 'tags': None, 'title': None, 'description': None, 'use_when': None, 'date': None, 'unknown': []}
-    older = {'type': None, 'updated': None}
-    for at, line in enumerate(block):
-        key = line.split(':', 1)[0] if ':' in line and not line.startswith((' ', '\t')) else ''
-        if key in ('kind', 'title', 'description', 'date'):
-            said[key] = _value_after(line, key)
-        elif key in ('tags', 'use_when'):
-            said[key] = _list_after(block, at, line, key)
-        elif key in older:
-            older[key] = _value_after(line, key)
-        elif key and key not in KNOWN_KEYS:
-            said['unknown'].append(key)
-    if said['kind'] is None and older['type'] is not None:
-        said['kind'] = older['type']
-    if said['date'] is None and older['updated'] is not None:
-        said['date'] = older['updated']
-    return said
-
-def without_block(text):
-    """The file's text with its whole label block taken off the top, and the one blank line after
-    it, where there is one. Every other line stays exactly as it is, and a file with no block
-    comes back untouched."""
-    block, ends_at = label_block(text)
-    if ends_at < 0:
-        return text
-    rest = text.split('\n')[ends_at + 1:]
-    if rest and rest[0].strip() == '':
-        rest = rest[1:]
-    return '\n'.join(rest)
-
-def scan_labels():
+def scan_labels(host=None):
     """Read every listed file's own label block into the db: the kind and the tags it says become
     its hand labels, the title, description, use_when and date its fields, on a row made from
-    the disk. A file whose block says none of the six keeps what the db holds. Nothing in any
-    file changes. Answers the counts."""
-    root, paths = files_listed_by()
+    the disk. The reading of one file's block is the host's plugin's, its scan; the walk and the
+    db are the dispatcher's. A file whose block says none of the six keeps what the db holds.
+    Nothing in any file changes. Answers the counts."""
+    root, paths = files_listed_by(host)
     files, kinds, tags, fields, said_nothing, unreadable = 0, 0, 0, 0, 0, 0
     for where in paths:
         full = os.path.join(root, where)
-        try:
-            with open(full, 'r') as f:
-                text = f.read()
-        except Exception:
+        said = call_plugin(host, 'scan', root, where, otherwise=None)
+        if said is None:
             unreadable += 1
             continue
         files += 1
-        said = labels_in_text(text)
         if all(said[key] is None for key in ('kind', 'tags', 'title', 'description', 'use_when', 'date')):
             said_nothing += 1
             continue
         database.record_file(where, full, said['kind'], said['tags'], title=said['title'],
-                             description=said['description'], use_when=said['use_when'], date=said['date'])
+                             description=said['description'], use_when=said['use_when'], date=said['date'], host=host)
         kinds += 1 if said['kind'] is not None else 0
         tags += len(said['tags']) if said['tags'] is not None else 0
         fields += sum(1 for key in ('title', 'description', 'use_when', 'date') if said[key] is not None)
@@ -597,37 +521,29 @@ def watch_the_disk():
             print(f'watch: {e}', flush=True)
         time.sleep(WATCH_EVERY)
 
-def strip_blocks():
-    """Take the whole label block off the top of every listed file the db holds a row for. A file
-    the db has no row for is passed over, and so is a file whose block carries a line the db has
-    no place for, named in the answer so a person can look, so nothing is lost. Answers the
-    counts."""
-    root, paths = files_listed_by()
-    known = database.all_fields()
+def strip_blocks(host=None):
+    """Take the whole label block off the top of every listed file the db holds a row for. The
+    taking off one file's block is the host's plugin's, its strip; the walk and the db are the
+    dispatcher's. A file the db has no row for is passed over, and so is a file whose block
+    carries a line the db has no place for, named in the answer so a person can look, so nothing
+    is lost. Answers the counts."""
+    root, paths = files_listed_by(host)
+    known = database.all_fields(host=host)
     changed, untouched, unscanned, unreadable = 0, 0, 0, 0
     kept = []
     for where in paths:
         if where not in known:
             unscanned += 1
             continue
-        full = os.path.join(root, where)
-        try:
-            with open(full, 'r') as f:
-                text = f.read()
-        except Exception:
+        did = call_plugin(host, 'strip', root, where, otherwise=None)
+        if did is None:
             unreadable += 1
-            continue
-        unknown = labels_in_text(text)['unknown']
-        if unknown:
-            kept.append(f'{where}: {", ".join(unknown)}')
-            continue
-        stripped = without_block(text)
-        if stripped == text:
+        elif did['did'] == 'kept':
+            kept.append(f'{where}: {", ".join(did["unknown"])}')
+        elif did['did'] == 'untouched':
             untouched += 1
-            continue
-        with open(full, 'w') as f:
-            f.write(stripped)
-        changed += 1
+        else:
+            changed += 1
     return {'changed': changed, 'untouched': untouched, 'unscanned': unscanned, 'unreadable': unreadable, 'kept': kept}
 
 def is_skippable_deploy(deploy):
@@ -747,10 +663,10 @@ class APIHandler(BaseHTTPRequestHandler):
         return params.get('host', [None])[0]
 
     def _host(self):
-        """Whose db a route opens: the host query value, which ports.json pairs with a db, and ov
-        when none is sent, so every ask made before step 3 of the plan still answers ov's db. A
+        """Whose db a route opens: the host query value, which ports.json pairs with a db, and ai
+        when none is sent, so ov's frozen page, which names none, answers ai's db. A
         host ports.json gives no db is refused with a 400 sent from here, and False comes back so
-        the route returns. None is ov, never a refusal."""
+        the route returns. None is ai, never a refusal."""
         params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
         host = params.get('host', [None])[0]
         if host is not None and host not in database.HOSTS:
@@ -792,7 +708,8 @@ class APIHandler(BaseHTTPRequestHandler):
                 self._send_response(200, {
                     'status': status,
                     'done': done,
-                    'running': restart_running
+                    'running': restart_running,
+                    'started': STARTED
                 })
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -808,14 +725,17 @@ class APIHandler(BaseHTTPRequestHandler):
             #
             # The same two refusals as saving: it has to be one of the files the app lists —
             # a guide, a design, or a work note at the top of a work folder — and it has to sit
-            # inside the repo.
+            # inside the repo. The reading itself is the host's plugin's, its read.
             try:
+                host = self._host()
+                if host is False:
+                    return
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
                 if not where:
                     self._send_response(400, {'success': False, 'error': 'no file named'})
                     return
-                if not listed_by(self._host_named(), where):
+                if not listed_by(host, where):
                     self._send_response(409, {'success': False, 'error': f'not a guide: {where!r}'})
                     return
                 # Either a place counting from the top of the repo, or a full place on this
@@ -828,8 +748,10 @@ class APIHandler(BaseHTTPRequestHandler):
                 if not os.path.isfile(full):
                     self._send_response(404, {'success': False, 'error': f'no such file: {where!r}'})
                     return
-                with open(full, 'r') as f:
-                    text = f.read()
+                text = call_plugin(host, 'read', root, os.path.relpath(full, root), otherwise=None)
+                if text is None:
+                    self._send_response(409, {'success': False, 'error': f'not read by the host\'s plugin: {where!r}'})
+                    return
                 self._send_response(200, {'success': True, 'path': full, 'text': text})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
@@ -857,7 +779,7 @@ class APIHandler(BaseHTTPRequestHandler):
             # Each is a name (kind or tag), a value, and who made it: hand, rule or ai. A file
             # the db has no row for answers an empty list, not a refusal. Here and in every
             # route below that reads or writes the db, &host=<a host ports.json gives a db>
-            # picks whose db, ov's when left out.
+            # picks whose db, ai's when left out.
             try:
                 host = self._host()
                 if host is False:
@@ -876,7 +798,7 @@ class APIHandler(BaseHTTPRequestHandler):
             # each file's path from the top of the repo, its labels, and its title, description,
             # use_when and date. One ask at launch in place of one per file. A path among the
             # fields is a file the db holds a row for, labels or not. The disk is looked at
-            # first, so a file moved a moment ago answers under its new path. The look is ov's:
+            # first, so a file moved a moment ago answers under its new path. The look is ai's:
             # another host's db answers as it is, its own look coming with its plugin.
             try:
                 host = self._host()
@@ -916,7 +838,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 self._send_response(500, {'success': False, 'error': str(e)})
 
         elif urllib.parse.urlparse(self.path).path == '/collections':
-            # Every collection in a host's db, for the overview app: /collections for ov's,
+            # Every collection in a host's db, for the overview app: /collections for ai's,
             # /collections?host=mu for mu's. Each is an id, a name, a specialty and a root folder:
             # for ai one per project, made by the look, the repo the root of every one; for mu one
             # per folder dropped.
@@ -1129,6 +1051,7 @@ class APIHandler(BaseHTTPRequestHandler):
             #     note at the top of a work folder — and must resolve inside the repo (no climbing
             #     out with "..", no symlinks out)
             #   - the file on disk must still read exactly as the app last saw it
+            # The writing itself, and the second refusal, are the host's plugin's, its save.
             try:
                 params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 where = params.get('where', [''])[0]
@@ -1145,29 +1068,22 @@ class APIHandler(BaseHTTPRequestHandler):
                     return
                 content_length = int(self.headers.get('Content-Length', 0))
                 sent = json.loads(self.rfile.read(content_length).decode())
+                host = self._host()
+                if host is False:
+                    return
                 text = sent.get('text')
                 as_opened = sent.get('as_opened')
                 if not isinstance(text, str) or not isinstance(as_opened, str):
                     self._send_response(400, {'success': False, 'error': 'text and as_opened must both be sent'})
                     return
-                # A file that isn't there yet can be made, but only when the app says it saw
-                # nothing there. Otherwise the file has to still read as the app last saw it.
-                if not os.path.isfile(full):
-                    if as_opened != '':
-                        self._send_response(409, {'success': False, 'error': 'no such file'})
-                        return
-                    if not os.path.isdir(os.path.dirname(full)):
-                        self._send_response(409, {'success': False, 'error': 'no such folder'})
-                        return
-                else:
-                    with open(full, 'r') as f:
-                        on_disk = f.read()
-                    if on_disk != as_opened:
-                        self._send_response(409, {'success': False, 'error': 'the file changed since it was opened'})
-                        return
-                with open(full, 'w') as f:
-                    f.write(text)
-                self._send_response(200, {'success': True, 'path': full, 'wrote': len(text)})
+                said = call_plugin(host, 'save', root, os.path.relpath(full, root), text, as_opened, otherwise=None)
+                if said is None:
+                    self._send_response(409, {'success': False, 'error': f'not written by the host\'s plugin: {where!r}'})
+                    return
+                if not said['ok']:
+                    self._send_response(409, {'success': False, 'error': said['why']})
+                    return
+                self._send_response(200, {'success': True, 'path': full, 'wrote': said['wrote']})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1357,14 +1273,18 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/scan':
+        elif urllib.parse.urlparse(self.path).path == '/scan':
             # Read every listed file's own label block into the db, for the overview app: /scan
             # The kind and the tags a file says become its hand labels, and its title,
             # description, use_when and date its fields, its row made from the disk. A file
-            # saying none of them keeps what the db holds. Nothing in any file changes.
+            # saying none of them keeps what the db holds. Nothing in any file changes. The
+            # reading of a block is the host's plugin's.
             try:
                 self._drain_body()
-                self._send_response(200, {'success': True, **scan_labels()})
+                host = self._host()
+                if host is False:
+                    return
+                self._send_response(200, {'success': True, **scan_labels(host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1411,7 +1331,7 @@ class APIHandler(BaseHTTPRequestHandler):
             # One more rule, for the overview app: /add-rule. The body is JSON: {"reads": name,
             # location or content, "pattern": <a regex>, "name": kind or tag, "value": <the label>}.
             # Every rule is then run on every file. Answers the rule's id and how many files. The
-            # run is ov's: another host's rules wait for its look, which comes with its plugin.
+            # run is ai's: another host's rules wait for its look, which comes with its plugin.
             try:
                 content_length = int(self.headers.get('Content-Length', 0))
                 sent = json.loads(self.rfile.read(content_length).decode() or '{}')
@@ -1431,7 +1351,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 if host is False:
                     return
                 made = database.add_rule(reads, pattern, name, value, host=host)
-                self._send_response(200, {'success': True, 'id': made, 'ruled': run_rules(everything=True) if host is None else 0})
+                self._send_response(200, {'success': True, 'id': made, 'ruled': run_rules(everything=True) if host is None or database.place_of(host) == database.PLACE else 0})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
@@ -1449,12 +1369,12 @@ class APIHandler(BaseHTTPRequestHandler):
                 if host is False:
                     return
                 removed = database.remove_rule(rule_id, host=host)
-                self._send_response(200, {'success': True, 'removed': removed, 'ruled': run_rules(everything=True) if host is None else 0})
+                self._send_response(200, {'success': True, 'removed': removed, 'ruled': run_rules(everything=True) if host is None or database.place_of(host) == database.PLACE else 0})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
         elif urllib.parse.urlparse(self.path).path == '/dump':
-            # Write every table of a host's db as plain text beside it, ov.sql or mu.sql: /dump.
+            # Write every table of a host's db as plain text beside it, ai.sql or mu.sql: /dump.
             # The db never enters git and the dump does, so the labels live in git through it.
             # Answers where it went, how many statements it holds and how many labels.
             try:
@@ -1513,18 +1433,22 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
-        elif self.path == '/strip-block':
+        elif urllib.parse.urlparse(self.path).path == '/strip-block':
             # Take the whole label block off the top of every listed file the db holds a row for:
             # /strip-block, with the JSON body {"confirm": "strip"}. A file whose block carries a
             # line the db has no place for is passed over and named. Every file is rewritten on
-            # this machine, so the word is asked for: without it, nothing is touched.
+            # this machine, so the word is asked for: without it, nothing is touched. The taking
+            # off of a block is the host's plugin's.
             try:
                 content_length = int(self.headers.get('Content-Length', 0))
                 sent = json.loads(self.rfile.read(content_length).decode() or '{}')
+                host = self._host()
+                if host is False:
+                    return
                 if sent.get('confirm') != 'strip':
                     self._send_response(400, {'success': False, 'error': 'send {"confirm": "strip"} to rewrite every file'})
                     return
-                self._send_response(200, {'success': True, **strip_blocks()})
+                self._send_response(200, {'success': True, **strip_blocks(host)})
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 

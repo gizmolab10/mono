@@ -178,12 +178,47 @@ class Files {
 	}
 
 	/**
-	 * One guide's own words have changed, so the links it holds are gathered again and everything
-	 * worked out afresh. Only this one file is read — the rest are already gathered.
+	 * One guide's own words have changed, so the links it holds are gathered again and followed
+	 * again, and the map of who points at whom is mended for this one guide alone. Nobody else's
+	 * links changed, so nobody else's are followed: following every link in the repo after each
+	 * write logged a line per link, thousands at a time, the reason a write could fail until 13
+	 * September 2026.
 	 */
 	links_changed(key: string, text: string): void {
 		this.links_from.set(key, addresses_in(text));
-		this.relate_the_links();
+		this.relate_one(key);
+	}
+
+	/**
+	 * Follow one guide's links again and mend the map for it: it comes off every guide its links
+	 * no longer name, and goes onto every guide they name now, keeping its place where it already
+	 * was, so the order the pills are drawn in does not change under the cursor.
+	 */
+	private relate_one(from: string): void {
+		const guide = this.hierarchy.all_files.get(from)?.file;
+		if (!guide) { return; }
+		let answered = 0, unanswered = 0;
+		const names = new Set<string>();
+		for (const link of this.links_from.get(from) ?? []) {
+			const found = this.hierarchy.explore(guide, link).file;
+			if (!found) { unanswered += 1; continue; }
+			answered += 1;
+			const at = key_of(found);
+			if (at !== from) { names.add(at); }                 // a guide pointing at itself says nothing
+		}
+		const pointing = new Map(get(this.w_pointing_at));
+		for (const [at, sources] of [...pointing]) {
+			if (sources.includes(from) && !names.has(at)) {
+				const rest = sources.filter((one) => one !== from);
+				if (rest.length === 0) { pointing.delete(at); } else { pointing.set(at, rest); }
+			}
+		}
+		for (const at of names) {
+			const already = pointing.get(at) ?? [];
+			if (!already.includes(from)) { pointing.set(at, [...already, from]); }
+		}
+		this.w_pointing_at.set(pointing);
+		debug.log(`Links: "${guide.name}" changed, so its ${answered + unanswered} link(s) were followed again, ${answered} naming a guide the app lists, and it now points at ${names.size}. Every other guide's links are as they were.`);
 	}
 
 	/** One guide now sits somewhere else, so its links are filed under where it now is. */

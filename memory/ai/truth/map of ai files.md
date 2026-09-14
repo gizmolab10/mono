@@ -13,7 +13,7 @@ ai's files. Update this when files are added, moved, or removed.
 
 ## plugin.py — the dispatcher's side
 
-- [plugin.py](../../../ai/plugin.py) — the code the dispatcher imports and runs for ai, and for ov until it is retired, since the two share a db: the specialty's name, the listing rule with its lists of projects and work folders, moved whole from the dispatcher at step 6 of the plan, whether one path is listed, and the labels the plugin gives a file, none until step 14. The plugin api table in memory/ov/zone/music and ai.md says what each takes and answers.
+- [plugin.py](../../../ai/plugin.py) — the code the dispatcher imports and runs for ai, and for ov until it is retired, since the two share a db: the specialty's name, the listing rule with its lists of projects and work folders, moved whole from the dispatcher at step 6 of the plan, whether one path is listed, and the labels the plugin gives a file, none until step 14. Since step 8, ai's own four: read, one file's words, save, the whole text written when the file still reads as the page last saw it, scan, what one file's label block says, and strip, the block taken off one file, with the reading of a block behind them, moved from the dispatcher. The plugin api table in memory/ov/zone/music and ai.md says what each takes and answers.
 
 ## src/lib/svelte/main/ — the frame
 

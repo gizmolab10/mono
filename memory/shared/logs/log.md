@@ -2,10 +2,19 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 13 September 2026
+
+- D: big picture renamed unfinished: the output file, the truth, the script and its test moved by git, the shorthand row, the index, the proposal's Built line and the two lexicons' author examples reworded. Decision in truth/decisions.md
+- D: truth/big picture.md, the proposal of 9 September summarized as a truth: the row, the eight patterns, the walk with logs folders in it, what the script writes and its test. In the index
+- D: zone/learn.md entry 30: a moved file is left alone for one look of the dispatcher before it is edited, from shared's log losing its row's pairing when moved and written in one script
+- D: every project's log.md moved into its logs folder, 14 of them, git recording each move. tools/big-picture.py no longer skips logs folders and its test puts the log there. truth/create a project.md, truth/handbook.md and zone/proposals.md name the new place. Decision in truth/decisions.md
+- D: Always rule 2 in truth/conventions.md puts standard technical English first and everyday English second, a decision in truth/decisions.md
+- D: lexicon's collection entry carries a note: when the six new lexicon entries in memory/ov/zone/music and ai.md are decided, it changes with them and ov's lexicon takes their definitions
+- D: zone/learn.md entry 29: co wrote landed three times and ignored the hook's warning each time. The banned-words table now lists worked as the word to use and landed as banned
+- D: zone/learn.md entries 27 and 28: stand is banned and co wrote it after being told, and a fault seen in a browser is found in a browser, from two lost edits that python and curl could not reproduce and a headless browser did
+- D: zone/learn.md entry 26: where two pieces of code meet, say api and table the functions, from three replies explaining a plugin's routes as addresses, branches and functions before Jonathan named the two apis
 ## 12 September 2026
 
-- D: lexicon's collection entry carries a note: when the six new lexicon entries in memory/ov/zone/music and ai.md are decided, it changes with them and ov's lexicon takes their definitions
-- D: zone/learn.md entry 26: where two pieces of code meet, say api and table the functions, from three replies explaining a plugin's routes as addresses, branches and functions before Jonathan named the two apis
 - D: zone/learn.md entries 22 to 25, from the edgy item that took three huh?s: on huh? cut and never add, say what is and never what would have been, name the parts by what they do and not by the code word, and a risk that is not yet needs its when
 - D: zone/learn.md entry 21: a sentence begins with the statement, then the how, Jonathan's own rule from his edits, applied to step 3 of ov's plan
 - D: tools/hub/index.md updated: ov.sql and the saved db named, servers.sh and start-hub.sh each on a line saying what it does and who runs it, and clean.worktrees.sh named where it sits today, tools/scripts, moving back to hub

@@ -110,6 +110,8 @@ check('a memory file hands back its words', said.get('text', '') != '', True)
 
 code, said = ask('/read-guide', where=os.path.join(REPO, 'memory/index.md'))
 check('a memory file is read by its full place too', code, 200)
+code, said = ask('/read-guide', where='memory/index.md', host='ai')
+check('a memory file is read with the ai host named, through ai\'s plugin', code, 200)
 
 # --- reading one guide's words -----------------------------------------------
 
@@ -196,10 +198,10 @@ check('labels on anything that is not a note are refused', code, 409)
 # what step 2 of the plan asks for as its proof: every label the same.
 
 code, said = tell('/dump', {})
-check('the dump is written beside the db', said.get('dump'), os.path.join(REPO, 'tools', 'hub', 'ov.sql'))
+check('the dump is written beside the db', said.get('dump'), os.path.join(REPO, 'tools', 'hub', 'ai.sql'))
 check('the dump holds every label', said.get('labels'), sum(len(rows) for rows in ask('/all-labels')[1]['labels'].values()))
 
-code, said = tell('/restore', {'into': 'ov.db'})
+code, said = tell('/restore', {'into': 'ai.db'})
 check('the live db is never written over', code, 400)
 code, said = tell('/restore', {'into': 'ov.restored.db'})
 check('a dump read back into ov.restored.db holds every label', said.get('labels'), sum(len(rows) for rows in ask('/all-labels')[1]['labels'].values()))
@@ -214,7 +216,7 @@ code, said = ask('/collections', host='mu')
 check('mu\'s collections are its own', (code, said.get('success')), (200, True))
 code, said = ask('/rules', host='nope')
 check('a host with no db is refused', code, 400)
-check('and the refusal names the hosts', "['ai', 'mu', 'ov']" in said.get('error', ''), True)
+check('and the refusal names the hosts', "['ai', 'mu']" in said.get('error', ''), True)
 
 # --- say how it went ---------------------------------------------------------
 

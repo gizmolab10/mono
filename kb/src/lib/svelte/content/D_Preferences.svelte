@@ -75,7 +75,7 @@
 	}
 
 	.label {
-		font-size : var(-font-control);
+		font-size : var(--font);
 		opacity   : var(--opacity-label);
 	}
 

@@ -10,10 +10,21 @@ const HERE = ['localhost', '127.0.0.1', '[::1]', '::1'];
 // https can't make a plain http request at all.) No browser at all counts as not here.
 const served_from_here = (typeof location !== 'undefined') && HERE.includes(location.hostname);
 
+// How long lines are gathered before they are sent, in one request per log file. Sending each
+// line as it came made thousands of requests in a burst, when a page judged every link it holds:
+// the browser refuses requests past its own cap, and fails whatever else the page asks for in the
+// meantime, a write among them. No rung of core's is this short.
+const GATHERING = 50;
+
 export class Debug {
 
 	// Per log file: true once we've sent its first (erasing) line this session.
 	logs_erased = new Map<string, boolean>();
+
+	// The lines waiting to be sent, per log file, and whether their request erases the file, with
+	// the one timer that sends them all.
+	private waiting = new Map<string, { lines: string[]; erase: boolean }>();
+	private sending: ReturnType<typeof setTimeout> | null = null;
 
 	// A line worth having only while something is being worked on: written the same way
 	// as any other, but says nothing for now. Change this one body to `this.log(...)`
@@ -25,27 +36,37 @@ export class Debug {
 	// first line for that file this session overwrite; pass false to always append,
 	// even on the first line. A non-erasing call never marks the file, so it can't
 	// eat a later erasing call's one-shot overwrite. Says nothing at all away from
-	// this machine — nothing built, nothing sent, nothing to fail.
+	// this machine — nothing built, nothing sent, nothing to fail. The line waits a
+	// few milliseconds for company and goes with every other line for its file in one
+	// request.
 	log(text: string, filename: string = 'ov.debug', erases: boolean = true): void {
 		if (!served_from_here) { return; }
-		const base = `http://localhost:5171/log?where=${filename}`;
 		const erasing = erases && !this.logs_erased.get(filename);
 		if (erases) { this.logs_erased.set(filename, true); }
-		const url = erasing ? `${base}&erase=1` : base;
-		try {
-			fetch(url, { method: 'POST', body: text }).catch(() => { /* silent */ });
-		} catch {
-			// silent
+		const queue = this.waiting.get(filename) ?? { lines: [], erase: false };
+		queue.lines.push(text);
+		queue.erase = queue.erase || erasing;
+		this.waiting.set(filename, queue);
+		if (this.sending === null) {
+			this.sending = setTimeout(() => this.send(), GATHERING);
+		}
+	}
+
+	// Every waiting line goes now, one request per log file, the lines in the order they came.
+	private send(): void {
+		this.sending = null;
+		const batches = [...this.waiting.entries()];
+		this.waiting.clear();
+		for (const [filename, { lines, erase }] of batches) {
+			const url = `http://localhost:5171/log?where=${filename}${erase ? '&erase=1' : ''}`;
+			try {
+				fetch(url, { method: 'POST', body: lines.join('\n') + '\n' }).catch(() => { /* silent */ });
+			} catch {
+				// silent
+			}
 		}
 	}
 
 }
 
 export const debug = new Debug();
-
-// Say once, at the top of the log, which way that decision went and what it was read
-// from — so a session with no log lines can be told from a session that decided to stay
-// quiet. Only sayable when logging is on; off this machine the silence is the answer.
-if (served_from_here) {
-	debug.log(`Diagnostic log: on — this page is served from "${location.hostname}", which is this machine. Anywhere else, every logged line gives up at once.`);
-}

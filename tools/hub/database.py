@@ -31,13 +31,13 @@ import os
 import sqlite3
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-# Where the db sits. A test points this at a file of its own before asking anything.
-PLACE = os.path.join(SCRIPT_DIR, 'ov.db')
+# Where the default db sits, ai's. A test points this at a file of its own before asking anything.
+PLACE = os.path.join(SCRIPT_DIR, 'ai.db')
 
 
 def _hosts():
     """Each host that has a db, from ports.json beside the dispatcher: the host's name to its
-    db's file name, ov to ov.db, mu to mu.db. A host with no db entry has no db."""
+    db's file name, ai to ai.db, mu to mu.db. A host with no db entry has no db."""
     try:
         with open(os.path.join(SCRIPT_DIR, 'ports.json')) as f:
             ports = json.load(f)
@@ -51,7 +51,7 @@ HOSTS = _hosts()
 
 
 def place_of(host=None):
-    """Which db file a call opens: PLACE, ov's, when no host is named, else the named host's,
+    """Which db file a call opens: PLACE, ai's, when no host is named, else the named host's,
     which sits beside PLACE under the name ports.json gives it. A host with no db is refused."""
     if host is None:
         return PLACE

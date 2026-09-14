@@ -116,7 +116,7 @@ Hooks only read, check, and remind — they never write truths, settle, coin, or
 
 - Session start → run `start`.
 - Commit touching `memory/` → structural `check`; violations block.
-- Commit touching `memory/` → warn if `truth/` changed but the project's `log.md` didn't.
+- Commit touching `memory/` → warn if `truth/` changed but the project's `logs/log.md` didn't.
 - Log past ~30 entries → announce "settle is due"; never settle.
 - Session end → draft `S:` lines and questions; they land only on approval.
 

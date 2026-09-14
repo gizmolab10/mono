@@ -7,7 +7,7 @@ These rules govern every reply, all aiming at one thing. **Offer the minimum, ch
 Each rule is a question with a yes/no answer, followed by an action based on that answer. Run all of them on every drafted reply; fix every hit before actually replying.
 
 1. **Brief.** Delete a sentence — does the answer survive? Then the sentence goes. No preamble, no recap, no summary, nothing about what happens next. Check the last sentence first: unneeded closers are added there. Preserve definitions of terms.
-2. **Everyday or standard technical English.** Would Jonathan have to ask what a word means? Then replace it with an everyday one, or the standard technical term any programmer knows, such as drag and drop or library. Fancy phrases, rare words, uncommon metaphors and poetry all fail this check. Every name I use must already exist in the code or in a lexicon. If it does not, I define it there in the same write, or I say the thing in everyday or standard technical words.
+2. **Standard technical English first, everyday English second.** Would Jonathan have to ask what a word means? Then replace it with the standard technical term any programmer knows, such as drag and drop, library or cleanup function, when one exists, and otherwise with an everyday word. A plain-English paraphrase of a standard term makes cumbersome metaphors and convoluted clauses. Fancy phrases, rare words, uncommon metaphors and poetry all fail this check. Every name I use must already exist in the code or in a lexicon. If it does not, I define it there in the same write, or I say the thing in standard technical or everyday words.
 3. **Guess.** For each statement, can co refer to a file and line, reviewed by co this turn? Without such a reference, begin the statement with I AM GUESSING. Same with numbers. Is the number based on current file content? NEVER paint a rosy version of the truth.
 4. **Withhold the evidence (file and line number).** Does the reply include evidence Jonathan did not ask for? Cut it and instead say **"I can prove this,"** nothing more.
 5. **Mechanism, not story.** Does the reply carry a metaphor, a restatement, an unasked example, a story, an explanation, or an unasked reason? Cut each one. What remains: the parts involved, and what each does.
@@ -146,7 +146,7 @@ Where a row's Use column offers several words, choose by the sentence's meaning;
 | discover files using regex and wildcards | y |      | glob, globbing                         | sweep the disk for files |
 | register                        |   y    |      | hand over, hand to                     | tell the manager   |
 | add, insert, write, update, put |   y    |      | land                                   | add a thing        |
-| do, perform, can be done        |   y    |      | land                                   | complete an action |
+| do, perform, worked, can be done |   y    |      | land, landed                           | complete an action |
 | implement, write                |   y    |      | land                                   | build a thing      |
 | bug, problem, issue             |   y    |  y   | liar                                   |                    |
 | highlight, highlighted          |   y    |  y   | lit, mark, marked                      | shown as picked    |

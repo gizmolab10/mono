@@ -2,6 +2,18 @@
 
 What's been finished, newest first.
 
+## 2026-09-13 — ai reads its own db
+
+ai.db, made from ov.db through sqlite's backup less the 23 rows under memory/filter tree, a folder a commit removed, which the list drew struck through. ports.json names ai.db under ai and no db under ov, PLACE is ai.db and the dispatcher's default host is ai, so ov's frozen page reads ai.db too. The dump is ai.sql and ov.sql is gone. The suites prove the hosts ai and mu, ov no longer. Decision in [decisions](../../truth/decisions.md).
+
+The hub page's dispatcher button had said ✓ without restarting anything. It now reads the dispatcher's start time before and after, says ✓ only when a later time answers, and says ✗ when the old process still answers or nothing does. Every action button says busy in place of doing nothing while another operation runs. A rule added or taken away under host ai runs on every file again, which it had not since ai began naming its host. [using rules](using%20rules.md) says how the rules section is used.
+
+### Verification
+
+- db suite 169, live suite 48 after the restart, always hook 4 of 4, big picture 15.
+- The restarted dispatcher names the hosts ai and mu, and ai.db holds 348 files, 1111 labels and no row missing.
+- Jonathan pressed the dispatcher button: a new process began at 7:41 PM, its start time answered, and the live suite passed 48 against it. The rules run under host ai is proved by the db suite alone.
+
 ## 2026-09-13 — the kinds, the tags and the tag areas are ai's
 
 Step 7 of the plan in [music and ai](../music%20and%20ai.md). ai's Customizations.ts holds the five kinds, music dropped as mu's alone, the 39 tags and the ten tag areas, and ai's main.ts hands them to kb before anything mounts. T_Kind, ALL_TAGS and TAG_AREAS left kb: a file's kind is a word off the host's list, the five files that read the lists read the configuration, the two area functions that read them take the lists as arguments, and the fallback kind is the word analyze, ai's, in kb until step 12 moves the composing. The tag areas test moved to ai, reading ai's lists through kb's functions, and kb's labels test declares the tag words it reads off blocks.

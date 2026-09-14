@@ -39,7 +39,7 @@
 		border          : var(--thick) solid var(--black);
 		padding         : var(--pad-control);
 		border-radius   : var(--radius-pill);
-		font-size       : var(-font-control);
+		font-size       : var(--font-tiny);
 		height          : var(--height);
 		background      : var(--white);
 		color           : var(--text);

@@ -21,6 +21,7 @@ export function in_order(one: string, two: string): number {
 export enum T_Bundle {
 	mono    = 'mo',
 	memory  = 'memory',
+	panel   = 'panel',
 	shared  = 'shared',
 	gallery = 'gallery',
 	core    = 'core',
@@ -32,6 +33,7 @@ export enum T_Bundle {
 	ov      = 'ov',
 	mu      = 'mu',
 	mj      = 'mj',
+	ai      = 'ai',
 }
 
 /**

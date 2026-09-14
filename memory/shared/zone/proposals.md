@@ -114,7 +114,7 @@ Proposal — a script writes `memory/shared/zone/big picture.md`: one line per m
 
 **Decided.** The file sits in shared's zone. A truth with unchecked boxes is a finding worth its own verb.
 
-**Built 9 September 2026.** `tools/big-picture.py` and `tools/test_big_picture.py`, thirteen checks passing. The truth verb is "N open truths". The shorthand row is in shorthand.md. Folders named archive, done and logs are skipped.
+**Built 9 September 2026.** `tools/big-picture.py` and `tools/test_big_picture.py`, thirteen checks passing. The truth verb is "N open truths". The shorthand row is in shorthand.md. Folders named archive, done and logs are skipped. Renamed unfinished 13 September 2026: the file, the shorthand, the script and its test.
 
 ## fewer words, same facts (8 September 2026)
 
@@ -230,7 +230,7 @@ Decided and built 7 September 2026: the row below is live in [shorthand.md](../t
 
 | `cleanup` | after files or folders move inside `memory/`: re-point every link the move broke, resolved against its old place, never one already dead; fix `CLAUDE.md`, the hooks, `shorthand.md`, `keywords.md`, `gates.md`, the project's map and index; drop what the move emptied; run vitest, svelte-check and the dispatcher's test, fixing what broke; log it with one `D:` line naming what moved and what still needs a hand |
 
-**Evidence this is the real pattern, not a guess.** Today's three `D:` lines under [7 September 2026](../log.md) in this project's log say it each time, in the same order: the notes move, the pre-flight fold, the guides-subfolder move.
+**Evidence this is the real pattern, not a guess.** Today's three `D:` lines under [7 September 2026](../logs/log.md) in this project's log say it each time, in the same order: the notes move, the pre-flight fold, the guides-subfolder move.
 
 **Open.** Whether it also throws away a folder's leftover `.DS_Store` and calls `rmdir`, which today's three moves all did by hand.
 

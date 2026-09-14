@@ -28,12 +28,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/ov/zone/music and ai.md",
+                "file": "memory/ai/zone/using rules.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "music and ai"
+              "title": "using rules"
             }
           },
           {
@@ -65,7 +65,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -202,7 +202,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/kb/zone/adopt kb.md",
+                "file": "memory/ai/zone/using rules.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -240,43 +240,44 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "307a7010a8bd2506",
+  "active": "82bd91678b51d5b7",
   "lastOpenFiles": [
+    "memory/shared/zone/unfinished.md",
+    "memory/shared/truth/unfinished.md",
+    "tools/test_unfinished.py",
+    "tools/unfinished.py",
+    "tools/hub/ai.db-journal",
+    "memory/shared/truth/big picture.md",
+    "memory/ws/logs/log.md",
+    "memory/shared/logs/log.md",
+    "memory/shared/logs",
+    "memory/panel/logs/log.md",
+    "memory/ov/logs/log.md",
+    "memory/mu/logs/log.md",
+    "memory/mj/logs/log.md",
+    "memory/me/logs/log.md",
+    "memory/me/logs",
+    "memory/lv/logs/log.md",
+    "memory/kb/logs/log.md",
+    "memory/kb/logs",
+    "memory/ji/logs/log.md",
+    "memory/gallery/logs/log.md",
+    "memory/gallery/logs",
+    "memory/di/logs/log.md",
+    "memory/core/logs/log.md",
+    "memory/ai/logs/log.md",
+    "memory/ai/zone/ov as knowledge bases.md",
+    "memory/ai/zone/using rules.md",
+    "memory/ai/zone/music and ai.md",
+    "memory/shared/truth/setup/bare bone website.md",
+    "tools/hub/ov.restored.db-journal",
+    "ws/vite.config.js.timestamp-1789349231264-05f92a5a9b2b3.mjs",
     "tools/hub/ov.db-journal",
     "memory/ov/zone/music and ai.md",
-    "ai/dist/index.html",
-    "ai/dist/assets/index-DCdjYZnq.js",
-    "ai/dist/assets/index-DlvYxB3i.css",
-    "ai/dist/assets",
-    "ai/src/lib/ts/tests/tag_areas.test.ts",
-    "memory/kb/zone/ideas.md",
+    "memory/lv/zone/ideas.md",
     "memory/kb/zone/adopt kb.md",
+    "memory/kb/zone/ideas.md",
     "memory/shared/zone/ideas.md",
-    "tools/hub/ov.restored.db-journal",
-    "ai/dist/assets/index-DTS23W4S.js",
-    "ai/__pycache__/plugin.cpython-310.pyc",
-    "ai/__pycache__",
-    "memory/shared/zone/ai/publish — can an AI actually learn?.md",
-    "ai/src/lib/md/builds.md",
-    "memory/ji/zone/ideas.md",
-    "memory/shared/truth/shorthand.md",
-    "memory/ai/log.md",
-    "memory/kb/log.md",
-    "memory/ai/index.md",
-    "memory/kb/index.md",
-    "memory/ai/truth/map of ai files.md",
-    "memory/kb/truth/map of kb files.md",
-    "memory/ai/truth/lexicon.md",
-    "memory/kb/truth/lexicon.md",
-    "kb/node_modules/svelte-check/README.md",
-    "kb/node_modules/readdirp/README.md",
-    "kb/node_modules/is-reference/README.md",
-    "kb/node_modules/chokidar/README.md",
-    "kb/node_modules/svelte/LICENSE.md",
-    "kb/node_modules/svelte/README.md",
-    "kb/node_modules/aria-query/README.md",
-    "ai/node_modules/chokidar/README.md",
-    "ai/node_modules/svelte-check/README.md",
     "lv/dist/assets/lcv.label-CyYn_a6Q.png",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "lv/dist/assets/Vyd_2014_0321_Haley-29NNKbHz.jpg",

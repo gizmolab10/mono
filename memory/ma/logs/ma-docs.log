@@ -4,11 +4,11 @@ failed to start server. error:
 ENOENT: no such file or directory, scandir '/Users/sand/GitHub/mono/ma/notes'
 Error: ENOENT: no such file or directory, scandir '/Users/sand/GitHub/mono/ma/notes'
     at readdirSync (node:fs:1507:26)
-    at walk (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789317575583-74a07b330f6b2.mjs:12:25)
-    at buildFileMap (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789317575583-74a07b330f6b2.mjs:25:3)
-    at Function.wikilinkPlugin (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789317575583-74a07b330f6b2.mjs:33:19)
+    at walk (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789349256635-a0aa1929ae0df.mjs:12:25)
+    at buildFileMap (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789349256635-a0aa1929ae0df.mjs:25:3)
+    at Function.wikilinkPlugin (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789349256635-a0aa1929ae0df.mjs:33:19)
     at MarkdownIt.use (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:31618:10)
-    at Object.config (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789317575583-74a07b330f6b2.mjs:103:10)
+    at Object.config (file:///Users/sand/GitHub/mono/ma/.vitepress/config.mts.timestamp-1789349256635-a0aa1929ae0df.mjs:103:10)
     at createMarkdownRenderer (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:35796:13)
     at async localSearchPlugin (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:40442:14)
     at async createVitePressPlugin (file:///Users/sand/GitHub/mono/ma/node_modules/vitepress/dist/node/chunk-D3CUZ4fa.js:45194:5)

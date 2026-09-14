@@ -10,7 +10,7 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 | --- | --- | --- | --- | --- |
 | name | what the controls row calls the host | none: ov's row shows no host name, panel's centers one | ai | mu |
 | prefix | what every remembered value is saved under | Preferences.ts, `ov_` | ai and an underscore | mu and an underscore |
-| host | the host's name, which ports.json pairs with its db, so kb asks the dispatcher for that db's rows alone. ai's entry, made at step 4, names `ov.db`, ov's own, until ov is retired | none, the dispatcher answers ov's db | ai | mu |
+| host | the host's name, which ports.json pairs with its db, so kb asks the dispatcher for that db's rows alone. ai's entry names `ai.db`, made from `ov.db` on 13 September 2026 | none, the dispatcher answers ai's db | ai | mu |
 | kinds | the closed list of kinds, drawn in the kinds row | T_Kind in File.ts | the five, music dropped 13 September 2026 | music, images, text and video, four, decided 13 September 2026 |
 | tags | the closed list of tags | ALL_TAGS in File.ts | the 39 | jazz, classical, rock and hifi, four, decided 13 September 2026 |
 | tag_areas | the tags gathered into areas, each folding its tags away | TAG_AREAS in Tag_Areas.ts | the ten | one or two, 29d's question |

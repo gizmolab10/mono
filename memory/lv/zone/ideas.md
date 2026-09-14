@@ -1,6 +1,6 @@
 # Ideas
 
-write a proposal for the first unchecked item to the top of handoff.
+write a proposal for the first unchecked item to the top of drive (create it if it does not exist).
 
 ## work
 

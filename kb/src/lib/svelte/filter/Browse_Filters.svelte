@@ -62,7 +62,7 @@
 	const projects = Object.values(T_Bundle);
 	// The projects control is two seg controls, a gap apart. These four lead, in this order;
 	// every other project follows in the second.
-	const LEADING = [T_Bundle.mono, T_Bundle.core, T_Bundle.gallery, T_Bundle.shared];
+	const LEADING = [T_Bundle.core, T_Bundle.panel, T_Bundle.gallery, T_Bundle.shared, T_Bundle.memory];
 	let counts = $derived.by(() => {
 		$w_kind; $w_tags; $w_search_text; $w_showing;
 		return $w_listed ? new Map(projects.map((p) => [p, files.files_in(p)])) : new Map();

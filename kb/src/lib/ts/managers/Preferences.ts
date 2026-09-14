@@ -56,6 +56,11 @@ export enum T_Preference {
 	// Putting things right
 	includes_work   = 'includes_work',
 
+	// The rules form
+	rule_reads      = 'rule_reads',
+	rule_gives      = 'rule_gives',
+	rule_index      = 'rule_index',
+
 	// The line along the bottom
 	show_status     = 'show_status',
 	status_words    = 'status_words',

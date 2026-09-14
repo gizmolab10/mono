@@ -68,12 +68,11 @@
     "repo": "https://github.com/gizmolab10/mono/tree/main/mj"
   },
   "ov": {
-    "db": "ov.db",
     "port": 5183,
     "repo": "https://github.com/gizmolab10/mono/tree/main/ov"
   },
   "ai": {
-    "db": "ov.db",
+    "db": "ai.db",
     "port": 5187,
     "repo": "https://github.com/gizmolab10/mono/tree/main/ai"
   },

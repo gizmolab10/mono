@@ -2,6 +2,9 @@
 
 ## Decisions made during 2026
 
+- 13 September 2026; **big picture is named unfinished**, the word saying what the file holds: `memory/shared/zone/unfinished.md`, the shorthand `unfinished`, `tools/unfinished.py` and its test, and the truth `truth/unfinished.md`
+- 13 September 2026; **every project's log.md lives in its logs folder**, `memory/<project>/logs/log.md`, beside the app's own logs, moved that day for all 14. The big picture walks logs folders for it, its test puts the log there, and create a project's skeleton says so
+- 13 September 2026; **standard technical English first, everyday English second**, Always rule 2 in conventions.md: the term any programmer knows, when one exists, over a plain-English paraphrase of it, since the paraphrase made cumbersome metaphors and convoluted clauses. Jonathan's suggestion, after two replies he could not follow
 - 7 September 2026; **`truth/` may hold sub-folders.** The rationale's "truth/ never grows subfolders" is removed; a folder inside truth names a design's parts, and a file's kind stays its `type` label.
 - 7 September 2026; **every working features file and every pre-flight file is in truth/** — always, response and the banned words folded into shared's conventions.md, the mono-wide lexicon into shared's lexicon.md; the rest moved whole. Fold chosen over side by side.
 - 27 August 2026; the set of skills is named the **toolkit** — replacing 'control surface' and the sizing table's stray 'verbs'; the members stay **skills**.

@@ -2,57 +2,34 @@ yarn run v1.22.19
 warning package.json: No license field
 $ vite
 
-  VITE v6.4.2  ready in 490 ms
+  VITE v6.4.2  ready in 975 ms
 
   ➜  Local:   http://localhost:5187/
   ➜  Network: use --host to expose
-12:50:58 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/kb/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
-12:50:58 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/utilities/Saving.ts
-12:50:58 PM [vite] (client) page reload src/lib/ts/common/Kb.ts
-12:50:58 PM [vite] (client) page reload src/lib/ts/main.ts
-12:50:58 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/md/builds.md
-12:50:58 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Main.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Main.svelte?svelte&type=style&lang.css
-12:50:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
-12:50:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Operation.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Operation.svelte?svelte&type=style&lang.css
-12:50:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Browse.svelte
-12:50:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
-12:50:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Edit.svelte
-12:50:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_Filters.svelte
-12:50:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Details.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-12:59:11 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:02:55 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:05:26 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:07:01 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:09:06 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:09:19 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:10:42 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:11:14 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:11:20 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:11:26 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:11:31 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:11:36 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:12:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:12:19 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:13:01 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
-1:18:11 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
-2:00:20 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/utilities/Saving.ts
-2:00:20 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
-2:02:35 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Hierarchy.ts
-2:02:35 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
-2:02:35 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/utilities/Saving.ts
-2:09:36 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/ai/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
-2:11:52 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
-2:12:55 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/ai/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
-2:14:24 PM [vite] changed tsconfig file detected: /Users/sand/GitHub/mono/ai/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
-2:34:09 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
-2:34:09 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_Filters.svelte
-2:34:09 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/common/Customizations.ts
-2:34:09 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
-2:34:09 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts
-2:34:09 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/utilities/Labels.ts
-2:34:09 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
-2:34:09 PM [vite] (client) page reload src/lib/ts/main.ts
-2:34:09 PM [vite] (client) page reload src/lib/ts/common/Kb.ts
-2:34:09 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
-2:34:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_Filters.svelte
-2:35:29 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
+6:37:53 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+6:38:17 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+6:38:47 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+6:39:18 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
+6:39:47 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+7:42:32 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
+7:48:38 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+7:54:47 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+7:54:54 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+7:56:18 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+7:59:15 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:01:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:05:16 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:07:53 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:08:40 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:10:21 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:27:59 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Preferences.ts
+8:27:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:31:15 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:31:15 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Repair.svelte?svelte&type=style&lang.css
+8:31:15 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Preferences.svelte?svelte&type=style&lang.css
+8:33:57 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+8:38:04 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte
+8:57:41 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+9:28:00 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte?svelte&type=style&lang.css
+9:31:22 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Preferences.ts
+9:31:22 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Rules.svelte

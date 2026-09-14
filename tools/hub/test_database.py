@@ -25,10 +25,10 @@ import database   # noqa: E402
 import dispatcher # noqa: E402
 
 REPO = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
-FOLDER = tempfile.mkdtemp(prefix='ov-db-')
-database.PLACE = os.path.join(FOLDER, 'ov.db')
-# The hosts ports.json would name, set by hand: ov and ai, sharing PLACE, and mu, whose db sits beside it.
-database.HOSTS = {'ov': 'ov.db', 'ai': 'ov.db', 'mu': 'mu.db'}
+FOLDER = tempfile.mkdtemp(prefix='ai-db-')
+database.PLACE = os.path.join(FOLDER, 'ai.db')
+# The hosts ports.json would name, set by hand: ai, whose db is PLACE, and mu, whose db sits beside it.
+database.HOSTS = {'ai': 'ai.db', 'mu': 'mu.db'}
 
 NOTE = 'memory/ov/zone/work/current context.md'
 FULL = os.path.join(REPO, NOTE)
@@ -117,29 +117,32 @@ check('a field not handed in is left as it is', database.all_fields()[NOTE],
 database.set_fields(NOTE, FULL, title='', description='', use_when=[], date='')
 
 # --- what a file's own block says ---------------------------------------------
+#
+# The reading of a block is ai's plugin's since step 8 of the plan, its scan, so the cases ask
+# the plugin.
 
 SIX = ('kind', 'tags', 'title', 'description', 'use_when', 'date')
-said = dispatcher.labels_in_text('---\nkind: explain\ntitle: "x"\ndescription: "d"\ntags: [now, soon]\ndate: 1\n---\n# x\n')
+said = dispatcher.PLUGINS['ai'].labels_in_text('---\nkind: explain\ntitle: "x"\ndescription: "d"\ntags: [now, soon]\ndate: 1\n---\n# x\n')
 check('a block on one line says its kind and tags', (said['kind'], said['tags']), ('explain', ['now', 'soon']))
 check('a block says its title, description and date, the quote marks taken off',
       (said['title'], said['description'], said['date']), ('x', 'd', '1'))
 check('a block with no use_when line says none', said['use_when'], None)
-said = dispatcher.labels_in_text('---\nkind: explain\ntags:\n  - now\n  - soon\nuse_when:\n  - every session\n  - settling\ndate: 1\n---\n')
+said = dispatcher.PLUGINS['ai'].labels_in_text('---\nkind: explain\ntags:\n  - now\n  - soon\nuse_when:\n  - every session\n  - settling\ndate: 1\n---\n')
 check('tags one to a line, as Obsidian writes them, are read', said['tags'], ['now', 'soon'])
 check('use_when one to a line is read', said['use_when'], ['every session', 'settling'])
-check('a block with no tags line says no tags', dispatcher.labels_in_text('---\nkind: explain\n---\n')['tags'], None)
-check('a block with no kind line says no kind', dispatcher.labels_in_text('---\ntags: []\n---\n')['kind'], None)
-said = dispatcher.labels_in_text('# x\nwords\n')
+check('a block with no tags line says no tags', dispatcher.PLUGINS['ai'].labels_in_text('---\nkind: explain\n---\n')['tags'], None)
+check('a block with no kind line says no kind', dispatcher.PLUGINS['ai'].labels_in_text('---\ntags: []\n---\n')['kind'], None)
+said = dispatcher.PLUGINS['ai'].labels_in_text('# x\nwords\n')
 check('a file with no block says nothing', [said[key] for key in SIX], [None] * 6)
-said = dispatcher.labels_in_text('---\ntype: reference\nupdated: 29 August 2026\nokf_version: 1\n---\n')
+said = dispatcher.PLUGINS['ai'].labels_in_text('---\ntype: reference\nupdated: 29 August 2026\nokf_version: 1\n---\n')
 check('type and updated are read as the kind and the date', (said['kind'], said['date']), ('reference', '29 August 2026'))
 check('a line the db has no place for is named', said['unknown'], ['okf_version'])
-check('a block with nothing unknown names nothing', dispatcher.labels_in_text('---\ntitle: "x"\n---\n')['unknown'], [])
+check('a block with nothing unknown names nothing', dispatcher.PLUGINS['ai'].labels_in_text('---\ntitle: "x"\n---\n')['unknown'], [])
 
 check('the whole block comes off, and the blank line after it',
-      dispatcher.without_block('---\nkind: explain\ntitle: "x"\ntags: [now, soon]\ndate: 1\n---\n\n# x\n'), '# x\n')
-check('a heading right under the block keeps its place', dispatcher.without_block('---\ntitle: "x"\n---\n# x\n'), '# x\n')
-check('a file with no block is untouched', dispatcher.without_block('# x\nwords\n'), '# x\nwords\n')
+      dispatcher.PLUGINS['ai'].without_block('---\nkind: explain\ntitle: "x"\ntags: [now, soon]\ndate: 1\n---\n\n# x\n'), '# x\n')
+check('a heading right under the block keeps its place', dispatcher.PLUGINS['ai'].without_block('---\ntitle: "x"\n---\n# x\n'), '# x\n')
+check('a file with no block is untouched', dispatcher.PLUGINS['ai'].without_block('# x\nwords\n'), '# x\nwords\n')
 
 # --- the dispatcher's routes --------------------------------------------------
 
@@ -392,7 +395,8 @@ code, said = ask('/labels', where=RULED_FILE)
 check('a file added to a truth folder gets its kind from the rule', said.get('labels'),
       [{'name': 'kind', 'value': 'specify', 'made_by': 'rule'}])
 code, said = tell('/add-rule', {'reads': 'content', 'pattern': 'law of the land', 'name': 'tag', 'value': 'always'})
-code, said = tell('/add-rule', {'reads': 'name', 'pattern': r'^ruled\.md$', 'name': 'tag', 'value': 'keep'})
+code, said = tell('/add-rule', {'reads': 'name', 'pattern': r'^ruled\.md$', 'name': 'tag', 'value': 'keep'}, host='ai')
+check('a rule added under host ai, whose db is PLACE, is run on every file', said.get('ruled', 0) > 0, True)
 code, said = ask('/labels', where=RULED_FILE)
 check('rules on the content and the name give tags too', [one['value'] for one in said.get('labels', []) if one['name'] == 'tag'], ['always', 'keep'])
 code, said = ask('/rules')
@@ -477,7 +481,7 @@ code, said = tell('/add-collection', {'name': 'live'}, host='mu')
 check('a collection missing its specialty or root is refused', code, 400)
 code, said = ask('/labels', where=NOTE, host='nope')
 check('a host with no db is refused by the dispatcher', code, 400)
-check('and the refusal names the hosts', "['ai', 'mu', 'ov']" in said.get('error', ''), True)
+check('and the refusal names the hosts', "['ai', 'mu']" in said.get('error', ''), True)
 code, said = ask('/rules', host='mu')
 check('mu\'s rules are its own, none yet', said.get('rules'), [])
 code, said = tell('/add-rule', {'reads': 'name', 'pattern': r'\.flac$', 'name': 'kind', 'value': 'music'}, host='mu')
@@ -521,7 +525,15 @@ check('the plugin\'s labels land on the other files as rule rows', [one for one 
       [{'name': 'tag', 'value': 'stub', 'made_by': 'rule'}])
 code, said = ask('/labels', where=RAISES)
 check('and the file it raised on gets none', [one for one in said.get('labels', []) if one['value'] == 'stub'], [])
+dispatcher.PLUGINS['ai'] = types.SimpleNamespace(SPECIALTY='ai', listed_files=REAL_PLUGIN.listed_files,
+                                                 is_listed=REAL_PLUGIN.is_listed, labels=REAL_PLUGIN.labels)
+code, said = ask('/read-guide', where=QUIET)
+check('a plugin lacking read has its host\'s reads refused', code, 409)
+code, said = tell('/save-guide', {'text': '# Quiet\n', 'as_opened': '# Quiet\n'}, where=QUIET)
+check('and its writes', code, 409)
 dispatcher.PLUGINS['ai'] = REAL_PLUGIN
+code, said = ask('/read-guide', where=QUIET)
+check('the real plugin reads the file', said.get('text'), '# Quiet\n')
 dispatcher.RULED.clear()
 code, said = tell('/rescan', {})
 code, said = ask('/labels', where=QUIET)
@@ -551,7 +563,7 @@ with open(database.dump_place()) as f:
 check('the dump makes each table and inserts each row',
       'CREATE TABLE' in dumped and 'INSERT INTO "labels"' in dumped and 'INSERT INTO "files"' in dumped, True)
 
-code, said = tell('/restore', {'into': 'ov.db'})
+code, said = tell('/restore', {'into': 'ai.db'})
 check('the live db is never written over', code, 400)
 code, said = tell('/restore', {'into': 'mu.db'})
 check('nor is another host\'s live db', code, 400)

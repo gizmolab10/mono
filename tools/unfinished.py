@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Writes memory/shared/zone/big picture.md: one line per memory file that holds unfinished
+"""Writes memory/shared/zone/unfinished.md: one line per memory file that holds unfinished
 work, across every project. Eight patterns, one verb each, no judgment anywhere.
 
-    python3 tools/big-picture.py [memory_root] [out_file]
+    python3 tools/unfinished.py [memory_root] [out_file]
 
-Both arguments default to this repo's memory folder and shared/zone/big picture.md.
+Both arguments default to this repo's memory folder and shared/zone/unfinished.md.
 Prints the number of lines written."""
 import datetime
 import os
@@ -14,8 +14,10 @@ from urllib.parse import quote
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MEMORY = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', 'memory')
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(MEMORY, 'shared', 'zone', 'big picture.md')
-SKIP_FOLDERS = {'archive', 'done', 'logs', 'node_modules'}
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(MEMORY, 'shared', 'zone', 'unfinished.md')
+# A logs folder is walked: since 13 September 2026 it holds the project's log.md beside the app's own
+# logs, which are not markdown and are passed over by their names.
+SKIP_FOLDERS = {'archive', 'done', 'node_modules'}
 
 
 def plural(n, one, many):
@@ -81,13 +83,14 @@ def walk(memory):
         for folder, subfolders, files in os.walk(root):
             subfolders[:] = sorted(s for s in subfolders if s not in SKIP_FOLDERS and not s.startswith('.'))
             for name in sorted(files):
-                if not name.endswith('.md') or name == 'big picture.md':
+                if not name.endswith('.md') or name == 'unfinished.md':
                     continue
                 path = os.path.join(folder, name)
                 relative = os.path.relpath(path, root)
                 top = relative.split(os.sep)[0]
                 letter = {'zone': 'z', 'truth': 't'}.get(top)
-                shown = relative.split(os.sep, 1)[1] if letter else relative
+                # The log sits in the logs folder, shown by its own name and no letter.
+                shown = relative.split(os.sep, 1)[1] if letter or top == 'logs' else relative
                 with open(path, encoding='utf-8') as f:
                     text = f.read()
                 clauses = clauses_for(path, name, letter == 't', text)
@@ -99,9 +102,9 @@ def walk(memory):
 def main():
     rows = walk(os.path.abspath(MEMORY))
     today = datetime.date.today().isoformat()
-    lines = ['# Big picture', '',
+    lines = ['# Unfinished', '',
              f'{len(rows)} files hold unfinished work, as of {today}.']
-    # One table per project. The file is a link, relative to where big picture.md sits:
+    # One table per project. The file is a link, relative to where unfinished.md sits:
     # memory/shared/zone/. A root file's z/t cell is empty.
     current = None
     for project, letter, shown, relative, clauses in rows:
@@ -127,9 +130,9 @@ def record_labels(out, today):
         return
     sys.path.insert(0, os.path.join(HERE, 'hub'))
     import database
-    database.record_file(os.path.relpath(full, repo), full, 'analyze', ['now'], title='Big picture',
+    database.record_file(os.path.relpath(full, repo), full, 'analyze', ['now'], title='Unfinished',
                          description='One line per memory file holding unfinished work, across every project. '
-                                     'Written by tools/big-picture.py, edit nothing here by hand.',
+                                     'Written by tools/unfinished.py, edit nothing here by hand.',
                          date=today)
 
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Feeds big-picture.py a made-up memory folder and reads what it writes.
-    python3 tools/test_big_picture.py"""
+"""Feeds unfinished.py a made-up memory folder and reads what it writes.
+    python3 tools/test_unfinished.py"""
 import os
 import subprocess
 import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SCRIPT = os.path.join(HERE, 'big-picture.py')
+SCRIPT = os.path.join(HERE, 'unfinished.py')
 
 
 def put(root, relative, text):
@@ -25,7 +25,7 @@ def main():
         put(memory, 'zz/truth/decisions.md', '## Decisions made\n\n- x\n\n## Evaluations (pac)\n\n- 1 Jan; **a.** For. Decided 2 Jan: yes.\n- 2 Jan; **b.** For. Against.\n')
         put(memory, 'zz/zone/proposals.md', '# P\n\n## one\n\nProposal.\n\n## two\n\nDecided and built.\n\n## three\n\nReading (3) is dead.\n')
         put(memory, 'zz/zone/questions.md', '# q\n\n- why\n- how\n- when\n')
-        put(memory, 'zz/log.md', '# log\n\n<!-- consolidated: never -->\n\n## day\n\n- S: settled, not counted\n- D: a, not counted\n- I: b\n- I: c\n\n---\n\n## old list, below the rule\n\n- never counted\n- never counted\n')
+        put(memory, 'zz/logs/log.md', '# log\n\n<!-- consolidated: never -->\n\n## day\n\n- S: settled, not counted\n- D: a, not counted\n- I: b\n- I: c\n\n---\n\n## old list, below the rule\n\n- never counted\n- never counted\n')
         put(memory, 'zz/zone/learn.md', '## Raw Log\n\n- 2. 2026-01-02 **b.**\n- 1. 2026-01-01 **a.**\n\n## Distilled\n')
         put(memory, 'zz/zone/collisions.md', '# c\n\n## first\n\ntext\n\n## second\n\ntext\n')
         put(memory, 'zz/zone/drive.md', '# Drive\n')
@@ -34,7 +34,7 @@ def main():
         put(memory, 'zz/archive/old.md', '- [ ] retired, never counted\n')
         put(memory, 'zz/zone/work/done/finished.md', '- [ ] finished by its folder, never counted\n')
         put(memory, 'shared/zone/placeholder.md', '# nothing\n')
-        out = os.path.join(memory, 'shared', 'zone', 'big picture.md')
+        out = os.path.join(memory, 'shared', 'zone', 'unfinished.md')
         count = subprocess.run([sys.executable, SCRIPT, memory, out], capture_output=True, text=True).stdout.strip()
         with open(out, encoding='utf-8') as f:
             body = f.read()
@@ -58,7 +58,7 @@ def main():
         check('open pacs',                 '| t | [decisions.md](../../zz/truth/decisions.md) | decide 1 pac |')
         check('open proposals',            '| z | [proposals.md](../../zz/zone/proposals.md) | decide 1 proposal |')
         check('questions',                 '| z | [questions.md](../../zz/zone/questions.md) | answer 3 questions |')
-        check('log lines, no letter',      '|  | [log.md](../../zz/log.md) | settle 2 lines |')
+        check('log lines, no letter',      '|  | [log.md](../../zz/logs/log.md) | settle 2 lines |')
         check('learn under work',          '| z | [learn.md](../../zz/zone/learn.md) | distill 2 entries |')
         check('collisions',                '| z | [collisions.md](../../zz/zone/collisions.md) | rewrite 2 collisions |')
         check('drive',                     '| z | [drive.md](../../zz/zone/drive.md) | dissolve the drive |')

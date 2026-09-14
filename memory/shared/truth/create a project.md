@@ -9,16 +9,16 @@ Two halves. The memory half is always done; the code half only when the project 
 ```text
 memory/<name>/
   index.md         what it is, how it stands, the truths listed
-  log.md           the diary, empty but for the day it was brought up
   truth/           empty; nothing is incorporated on day one
   zone/
     questions.md   what is unanswered, one line each
     ideas.md       one file to gather in
-  logs/            not made by hand — servers.sh makes it on first start; gitignored
+  logs/
+    log.md         the diary, empty but for the day it was brought up; the app's own logs come to sit beside it
 ```
 
 - **index.md** — frontmatter with only `description:`. Then the name as a heading, a line or two saying what the project is, a **Current state:** paragraph, and a `## Truths` heading reading "None yet."
-- **log.md** — the usual frontmatter (`kind: analyze`, title `<name> log`, `tags: [journal, now]`, today's date), the heading, then `<!-- consolidated: never -->`, then today's day heading with a `S:` line saying it was brought up. What is still unknown goes into `zone/questions.md`, not the log.
+- **logs/log.md** — the usual frontmatter (`kind: analyze`, title `<name> log`, `tags: [journal, now]`, today's date), the heading, then `<!-- consolidated: never -->`, then today's day heading with a `S:` line saying it was brought up. What is still unknown goes into `zone/questions.md`, not the log.
 - **truth/** — left empty. A truth on day one is a guess.
 - **zone/** — `questions.md`, and one file named for what will gather there: `ideas.md` for a project about building something, `observations.md` for one about watching something. Frontmatter and a heading, nothing else.
 
