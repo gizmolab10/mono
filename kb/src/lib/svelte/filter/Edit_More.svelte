@@ -1,38 +1,37 @@
 <script lang='ts'>
-	import { foot_is_all_folds, inverted, toggle_all_areas, toggle_area, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
-	import { title_from_name } from '../../ts/utilities/Labels';
+	import { foot_is_all_folds, inverted, toggle_all_areas, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
 	import { in_order, type File } from '../../ts/types/File';
 	import { customizations } from '../../ts/common/Customizations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { file_path_of, save_file } from '../../ts/utilities/Saving';
-	import { smooth_height } from '../../ts/common/Core';
+	import { file_path_of } from '../../ts/utilities/Saving';
 	import { Action, T_Position } from '../../ts/common/Core';
 	import { T_Hit_Target } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/common/Core';
 	import { T_Edge } from '../../ts/common/Core';
 	import { WAY_OUT } from '../../ts/common/Core';
-	import { area_reads, tags_shown } from '../../ts/types/Tag_Areas';
 	import { Separator } from '../../ts/common/Core';
-	import { Big_Pill } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
 	import { Section } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
 	import { hits } from '../../ts/common/Core';
 	import { Stack } from '../../ts/common/Core';
+	import Kinds_Row from './Kinds_Row.svelte';
+	import Tag_Rows from './Tag_Rows.svelte';
 	import Search from './Search.svelte';
 	import type { Snippet } from 'svelte';
 
-	// What a guide is labeled: its title, its date, the line saying what it is for, its one kind,
-	// and its tags. The labels are never on the page — they are taken off before the words are
-	// drawn — so this is where they are read and changed. Nothing here is typed as free text
-	// where it matters: the kind and the tags are picked from the only lists the app accepts.
+	// The label form: what a guide is labeled, one stack above its words. The labels are never on
+	// the page — they are taken off before the words are drawn — so this is where they are read
+	// and changed. kb's own here are the kind and the tags, picked from the only lists the app
+	// accepts, and the search. The information rows are the host's since step 10 of the plan,
+	// handed in as the edit filter section and drawn above the kinds row.
 
 	let {
 		name, guide, tags, text = $bindable(''), page = null,
 		find = $bindable(null), folded = $bindable(false), onclose, onshow, edit_filter,
 	}: {
-		edit_filter? : Snippet<[File]>;      // the host's own rows, given the file, between the kinds row and the tag areas
+		edit_filter? : Snippet<[File, string, (words: string) => void]>;   // the host's own rows, given the file, its words and a call that sets them, above the kinds row
 		guide       : File;                 	// the record of the file being read
 		name        : string;                	// what the file is called
 		page        : HTMLElement | null;    	// the drawn words, handed through to the search row
@@ -44,29 +43,9 @@
 		onshow       : (message: string) => void;  // something to tell the reader, briefly
 	} = $props();
 
-	let form_description = $state('');
-	let form_use_when    = $state('');   // one occasion to a line, since a file may name several
-
-	// One row tall until the text needs a second, then exactly as tall as it needs — a wrapped
-	// long line included, which a count of returns would miss. The field itself is asked: told
-	// to be no taller than nothing, it reports how much it cannot fit, and is given exactly
-	// that. Runs on every change of the value, since that is the only thing that changes it.
-	let use_when_field = $state<HTMLTextAreaElement | null>(null);
-	$effect(() => {
-		form_use_when;
-		const field = use_when_field;
-		if (!field) { return; }
-		field.style.height = 'auto';
-		field.style.height = `${field.scrollHeight + field.offsetHeight - field.clientHeight}px`;
-	});
-	let form_title       = $state('');
 	let form_kind        = $state('');
-	let form_date        = $state('');
-	let form_authors     = $state('');   // who wrote it, names separated by commas
-	let form_from        = $state('');   // where it came from, a url or a person
 	let form_tags        = $state<string[]>([]);
 	let tags_lit         = $state(false);   // the cursor is among the tag areas, so their own word lights
-	const KINDS = customizations.kinds;
 
 	// Whether the form is on screen at all. Remembered across visits, since it is a way of
 	// working rather than something about one guide.
@@ -109,9 +88,9 @@
 		debug.log(`Editing "${name}": the search row is now ${!$w_show_search ? 'folded away' : 'shown'}.`);
 	}
 
-	// The words about the guide take three rows of their own, folded away like the others. The
-	// clickable says only its name, open or folded — the title is already the biggest thing on
-	// the screen, so repeating it here said nothing.
+	// The host's rows, ai's information rows, fold away like the others. The clickable says only
+	// its name, open or folded — the title is already the biggest thing on the screen, so
+	// repeating it here said nothing.
 	let show_form_info = $derived(!$w_form_folded.includes('info'));
 	let form_info_word = 'information';
 
@@ -141,14 +120,32 @@
 	let kinds_button     = $state<HTMLElement | null>(null);
 	let kinds_clear      = $state<HTMLElement | null>(null);
 	let info_button      = $state<HTMLElement | null>(null);
+
+	// Whatever the host's rows mark with the class rides-the-line, ai's title tools, is put on
+	// the host subsection's line, centered, the way the information rows' own tools rode it while
+	// they were kb's. Looked for once the rows are drawn, and only while the form shows: folded,
+	// it would act on hidden fields.
+	let host_box   = $state<HTMLElement | null>(null);
+	let host_tools = $state<HTMLElement | null>(null);
+	$effect(() => {
+		const box = host_box;
+		if (!box) { return; }
+		requestAnimationFrame(() => {
+			host_tools = box.querySelector('.rides-the-line');
+			// Said once the line has taken them: how tall the browser drew the host's tools and the
+			// information clickable beside them, which are meant to be the same.
+			requestAnimationFrame(() => requestAnimationFrame(() => {
+				const tool = host_tools?.firstElementChild?.getBoundingClientRect().height ?? 0;
+				const word = info_button?.getBoundingClientRect().height ?? 0;
+				debug.log(`Editing "${name}": the host's tools stand ${tool.toFixed(2)} tall on the line, the information clickable ${word.toFixed(2)}.`);
+			}));
+		});
+	});
 	let tags_button      = $state<HTMLElement | null>(null);
 
 	// The two presses that change which tags the guide wears. They stand on the tags line at the
 	// middle, beside the word that folds the areas rather than inside what that word folds away.
 	let picking_control = $state<HTMLElement | null>(null);
-	// The two title tools stand on the same line, right of the word that folds the form —
-	// and only while the form shows: folded, they would act on a hidden field.
-	let title_tools = $state<HTMLElement | null>(null);
 
 	const picking_action     = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
 	const search_clearer     = $derived(Object.assign(new Action(), { element: search_clear,    position: T_Position.center }));
@@ -156,9 +153,9 @@
 	const filters_action     = $derived(Object.assign(new Action(), { element: filters_button,  position: T_Position.left }));
 	const search_action      = $derived(Object.assign(new Action(), { element: search_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const info_action        = $derived(Object.assign(new Action(), { element: info_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
+	const host_tools_action  = $derived(Object.assign(new Action(), { element: $w_show_filters ? host_tools : null, position: T_Position.center, transparent: true }));
 	const kinds_action       = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const tags_action        = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
-	const title_tools_action = $derived(Object.assign(new Action(), { element: $w_show_filters ? title_tools : null, position: T_Position.center, transparent: true }));
 
 	/** Put the whole form away, or bring it back. */
 	function toggle_filters() {
@@ -172,10 +169,10 @@
 		debug.log(`Editing "${name}": the kinds row is now ${show_form_kinds ? 'folded away' : 'shown'}.`);
 	}
 
-	/** Put the words about the guide away, or bring them back. */
+	/** Put the host's rows away, or bring them back. */
 	function toggle_info() {
 		fold_form('info', show_form_info);
-		debug.log(`Editing "${name}": the information rows are now ${show_form_info ? 'folded away' : 'shown'}.`);
+		debug.log(`Editing "${name}": the host's rows are now ${show_form_info ? 'folded away' : 'shown'}.`);
 	}
 
 	/** Put the tag areas away, or bring them back. */
@@ -184,131 +181,42 @@
 		debug.log(`Editing "${name}": the tag areas are now ${show_form_tags ? 'folded away' : 'shown'}.`);
 	}
 
-	// Whenever another guide comes on screen, the form starts from what that guide says.
+	// Whenever another guide comes on screen, the form starts from what that guide wears.
 	$effect(() => {
-		form_use_when    = (guide.use_when ?? []).join('\n');
-		form_description = guide.description;
-		form_title       = guide.title;
-		form_kind        = guide.kind;
-		form_date        = guide.date;
-		form_tags        = [...tags];
-		// Its sources are the db's alone: one row per author, each saying where it came from.
-		const sources    = files.sources_of(guide);
-		form_authors     = sources.map((one) => one.author).filter((one) => one !== '').join(', ');
-		form_from        = sources[0]?.came_from ?? '';
+		form_kind = guide.kind;
+		form_tags = [...tags];
 	});
 
 
 	/**
-	 * Write the filters to the db, if any of them changed: the kind and the tags as labels, the
-	 * title, description, use_when and date as the four fields on the file's row. Nothing is
-	 * written to the file. A refusal leaves the record as it was, and is said along the bottom.
+	 * Write the kind and the tags to the db as labels, if either changed. Nothing is written to
+	 * the file. The four fields and the sources are the host's rows' to write. A refusal leaves
+	 * the record as it was, and is said along the bottom.
 	 */
 	async function save_filters() {
-		const use_when = form_use_when.split('\n').map((one) => one.trim()).filter((one) => one.length > 0);
-		const filters = { kind: form_kind, title: form_title, description: form_description, use_when, date: form_date, labeled: true };
 		const worn = files.hierarchy.tag_names_of(guide.id);
 		const same_tags = worn.length === form_tags.length && worn.every((tag) => form_tags.includes(tag));
-		const same_fields = guide.title === form_title && guide.description === form_description
-			&& (guide.use_when ?? []).join('\n') === use_when.join('\n') && guide.date === form_date;
-		const authors = form_authors.split(',').map((one) => one.trim()).filter((one) => one.length > 0);
-		const came_from = form_from.trim();
-		const sources = files.sources_of(guide);
-		const same_sources = authors.join('\n') === sources.map((one) => one.author).filter((one) => one !== '').join('\n')
-			&& came_from === (sources[0]?.came_from ?? '');
-		if (guide.labeled && guide.kind === form_kind && same_tags && same_fields && same_sources) { return; }
+		if (guide.labeled && guide.kind === form_kind && same_tags) { return; }
 		const where = file_path_of(guide.bundle, guide.path);
-		debug.log(`Editing "${name}": the filters changed — writing them to the db for ${where}.`);
+		debug.log(`Editing "${name}": the kind or the tags changed — writing them to the db for ${where}.`);
 		const in_db = await files.write_labels(guide, form_kind, form_tags);
 		if (!in_db.ok) {
 			onshow(`not saved — ${in_db.why}`);
 			debug.log(`Editing "${name}": the kind and tags were NOT written to the db — ${in_db.why}.`);
 			return;
 		}
-		const fields = await files.write_fields(guide, filters);
-		if (!fields.ok) {
-			onshow(`not saved — ${fields.why}`);
-			debug.log(`Editing "${name}": the title, description, use_when and date were NOT written to the db — ${fields.why}.`);
-			return;
-		}
-		if (!same_sources) {
-			const wrote = await files.write_sources(guide, authors, came_from);
-			if (!wrote.ok) {
-				onshow(`not saved — ${wrote.why}`);
-				debug.log(`Editing "${name}": the authors and where it came from were NOT written to the db — ${wrote.why}.`);
-				return;
-			}
-		}
-		// The list shows the title and the tags, so it is told at once rather than waiting for
-		// every file to be read again. A fault here would leave the db written and the app still
-		// holding the old labels, so it is said out loud.
+		// The list shows the tags, so it is told at once rather than waiting for every file to be
+		// read again, the four fields as the record has them. A fault here would leave the db
+		// written and the app still holding the old labels, so it is said out loud.
+		const labels = { kind: form_kind, title: guide.title, description: guide.description, use_when: guide.use_when ?? [], date: guide.date, labeled: true };
 		try {
-			files.relabel(guide, filters, form_tags);
+			files.relabel(guide, labels, form_tags);
 		} catch (trouble) {
 			onshow('written, but the list was not told');
 			debug.log(`Editing "${name}": the db was written, but telling the list failed — ${String(trouble)}. The app still holds the old labels.`);
 			return;
 		}
-		debug.log(`Editing "${name}": filters written — kind "${filters.kind}", ${form_tags.length} tag(s), title "${filters.title}".`);
-	}
-
-	/** Copy between the title and the file's top heading, exactly — onto it (making one if
-	 * there is none), or from it into the title. */
-	function H1_copy(to: boolean = true) {
-		if (text === '') { return; }
-		const lines = text.split('\n');
-		let at = 0;
-		if (lines[0] === '---') {
-			const close = lines.indexOf('---', 1);
-			if (close > 0) { at = close + 1; }
-		}
-		if (!to) {   // from the heading: it becomes the title
-			for (let i = at; i < lines.length; i++) {
-				if (lines[i].startsWith('# ')) {
-					const heading = lines[i].slice(2).trim();
-					if (heading !== '' && heading !== form_title) {
-						form_title = heading;
-						save_filters();
-						debug.log(`Editing "${name}": the top heading was copied into the title.`);
-					}
-					return;
-				}
-			}
-			return;   // no heading — nothing to copy
-		}
-		if (form_title.trim() === '') { return; }
-		let replaced = false;
-		for (let i = at; i < lines.length; i++) {
-			if (lines[i].startsWith('# ')) { lines[i] = `# ${form_title}`; replaced = true; break; }
-		}
-		if (!replaced) { lines.splice(at, 0, `# ${form_title}`, ''); }
-		const whole = lines.join('\n');
-		if (whole === text) { return; }
-		const was   = text;
-		const where = file_path_of(guide.bundle, guide.path);
-		text = whole;
-		save_file(where, whole, was).then((answer) => {
-			if (!answer.ok) {
-				text = was;
-				onshow(`not saved — ${answer.why}`);
-				return;
-			}
-			debug.log(`Editing "${name}": the title was ${replaced ? 'copied onto the top heading' : 'made the top heading'}.`);
-		});
-	}
-
-	/** Copy between the title and the file's own name — onto it (a rename, links and all),
-	 * or from it into the title, capitalized. */
-	function filename_copy(to: boolean = true) {
-		if (to) {   // onto the name: the file takes the title as its name
-			if (form_title.trim() === '') { return; }
-			files.rename(guide, form_title.toLowerCase());
-			return;
-		}
-		const titled = title_from_name(name);
-		if (form_title === titled) { return; }
-		form_title = titled;
-		save_filters();
+		debug.log(`Editing "${name}": labels written — kind "${form_kind}", ${form_tags.length} tag(s).`);
 	}
 
 	/** Put a tag on this guide or take it off, and write it. The same ladder as the list's
@@ -367,16 +275,6 @@
 	{/if}
 	<button type='button' class='clickable' class:forced={tags_lit || way_out_lit} bind:this={tags_button}
 		use:hit_target={{ id: 'editor.fold.tags', onpress: toggle_tags }}>{form_tags_word}</button>
-	<span class='title-tools' bind:this={title_tools}>
-		<button class='title-button'
-			use:hit_target={{ id: 'editor.title.from-h1', onpress: () => H1_copy(false), tip: "copy exactly this title from the file's top heading" }}>H1 ⮕</button>
-		<button class='title-button'
-			use:hit_target={{ id: 'editor.title.to-name', onpress: () => filename_copy(true), tip: "copy the title onto the file's own name, capitalized" }}>⮕ filename</button>
-		<button class='title-button'
-			use:hit_target={{ id: 'editor.title.from-name', onpress: () => filename_copy(false), tip: "copy the title from the file's own name, capitalized" }}>filename ⮕</button>
-		<button class='title-button'
-			use:hit_target={{ id: 'editor.title.to-h1', onpress: () => H1_copy(true), tip: "copy exactly this title onto the file's top heading" }}>⮕ H1</button>
-	</span>
 	<!-- Two presses. Neither is a state — a guide wears the tags it wears — so neither ever reads
 	     as picked; they answer under the cursor only. -->
 	<span class='picking' bind:this={picking_control}>
@@ -389,49 +287,6 @@
 	</span>
 </div>
 
-<!-- What a guide says about itself in words: its title, its date, one line saying what it is
-     for, the occasions to read it on, who wrote it and where it came from. They sit closer
-     together than sections do, since they are rows of one thing rather than things of their
-     own. Each field is a control the manager knows about; the bare space among them answers
-     nothing. -->
-{#snippet information_rows()}
-	<div class='label-rows information'>
-		<div class='information-rows'>
-			<div class='filter-row'>
-				<span class='filter-word'>title</span>
-				<input class='filter-field' bind:value={form_title} onblur={save_filters}
-					use:hit_target={{ id: 'editor.field.title', tip: 'what this guide is called' }} />
-				<span class='filter-word'>date</span>
-				<input class='filter-field date' bind:value={form_date} onblur={save_filters}
-					use:hit_target={{ id: 'editor.field.date', tip: 'when it was last worked on' }} />
-			</div>
-			<div class='filter-row'>
-				<span class='filter-word'>brief</span>
-				<input class='filter-field' bind:value={form_description} onblur={save_filters}
-					use:hit_target={{ id: 'editor.field.brief', tip: 'one sentence saying what it is for' }} />
-			</div>
-			<!-- A guide may name several occasions it should be read on, so this field holds more
-			     than one line — one occasion to a line, blank lines dropped on the way to the file. -->
-			<div class='filter-row top'>
-				<span class='filter-word'>use when</span>
-				<textarea class='filter-field tall' rows='1' bind:this={use_when_field} bind:value={form_use_when} onblur={save_filters}
-					use:hit_target={{ id: 'editor.field.use-when', tip: 'the occasions to read this guide on, one to a line' }}></textarea>
-			</div>
-			<!-- Who wrote it and where it came from. A markdown file carries neither, so both are
-			     typed here, and both live in the db alone: one row per author, each saying where
-			     the file came from. -->
-			<div class='filter-row'>
-				<span class='filter-word'>authors</span>
-				<input class='filter-field' bind:value={form_authors} onblur={save_filters}
-					use:hit_target={{ id: 'editor.field.authors', tip: 'who wrote it, names separated by commas' }} />
-				<span class='filter-word'>from</span>
-				<input class='filter-field' bind:value={form_from} onblur={save_filters}
-					use:hit_target={{ id: 'editor.field.from', tip: 'where it came from, a url or a person' }} />
-			</div>
-		</div>
-	</div>
-{/snippet}
-
 <!-- Looking through the file on screen. It stands bare here: its line, its gap and the place
      its word stands are this stack's, exactly as they are for the kinds and the tags. -->
 {#snippet search_rows()}
@@ -441,50 +296,23 @@
 {/snippet}
 
 
-<!-- The host's own rows, given the file, rendered only where the host hands them. -->
+<!-- The host's own rows, given the file, its words and a call that sets them, rendered only where
+     the host hands them: ai's information rows, above the kinds row. -->
 {#snippet host_rows()}
-	<div class='label-rows'>
-		{@render edit_filter?.(guide)}
+	<div class='label-rows information' bind:this={host_box}>
+		{@render edit_filter?.(guide, text, (words) => { text = words; })}
 	</div>
 {/snippet}
 
-<!-- The kinds. No word beside them: the separator above already says what they are. -->
+<!-- The kinds row, kb's own component: the form keeps the kind and writes it. -->
 {#snippet kinds_picker()}
-	<div class='label-rows kinds'>
-		<div class='filter-row wrapping'>
-			{#each KINDS as one (one)}
-				<!-- A guide wears one kind, so pressing the one it wears takes it off and pressing
-				     any other puts that one on in its place. -->
-				<button class='filter-pick' class:on={form_kind === one}
-					use:hit_target={{ id: `editor.kind.${one}`,
-						tip: `${form_kind === one ? 'remove' : 'add'} "${one}" kind`,
-						onpress: () => { form_kind = form_kind === one ? '' : one; save_filters(); } }}>{one}</button>
-			{/each}
-		</div>
-	</div>
+	<Kinds_Row kind={form_kind} onpick={(kind) => { form_kind = kind; save_filters(); }} />
 {/snippet}
 
-<!-- The same areas the filters use. Every tag is within reach here, since this is where a file's
-     own tags are set rather than where files are narrowed. A press on the bare space among them
-     shuts them all; a press on an area itself is that area's own.
-
-     Each area is wrapped so it can be slid: opening one grows it from a word to a run of segments,
-     and the pills after it move a long way at once. -->
+<!-- The tag rows, kb's own component: the form keeps the tags and writes them, and lights their
+     word while the cursor is among them. -->
 {#snippet tags_picker()}
-	<div class='bare-answers' role='presentation'
-		onmouseenter={() => { tags_lit = true; }}
-		onmouseleave={() => { tags_lit = false; }}
-		onkeyup={() => {}}>
-		<div class='filter-row wrapping tags-row' use:smooth_height>
-			{#each customizations.tag_areas as area (area.name)}
-				<span class='pill-slot'>
-					<Big_Pill row='editor' name={area.name} items={area.tags} shown={tags_shown(area, customizations.tags, form_tags)}
-						reads={area_reads(area, form_tags)} chosen={form_tags} ontoggle={toggle_tag}
-						ontoggle_area={toggle_area} opened={$w_areas_open} />
-				</span>
-			{/each}
-		</div>
-	</div>
+	<Tag_Rows tags={form_tags} ontoggle={toggle_tag} onhover={(over) => { tags_lit = over; }} />
 {/snippet}
 
 <!-- Folded, this whole block is bare space above the file's contents, so it is another way back to
@@ -494,7 +322,7 @@
 	use:hit_target={{ id: `${WAY_OUT}.block`, type: T_Hit_Target.section,
 		dormant: $w_show_filters, onpress: onclose, tip: 'resume browse' }}>
 	<!-- What the guide is labeled, as a section of its own: its line carries the word that folds
-		the whole form away, and holds five subsections — the search, the back links, the information, the kinds, the tags.
+		the whole form away, and holds four subsections — the search, the host's rows, the kinds row, the tag rows.
 
 		It asks for no gap at all, which is how a section says it should stand flat when folded: the
 		words below come straight up under its line, and the line that would have stood under it is
@@ -507,18 +335,18 @@
 		folded={!$w_show_filters}
 		actions={[filters_action]}>
 		{#snippet contents()}
-			<!-- The form is one stack of five subsections: looking through the file, the back links, what the guide says about
-				itself in words, its one kind, and its tags. The heavy line carrying the clickable that folds the whole form away
+			<!-- The form is one stack of four subsections: looking through the file, the host's rows, its one kind,
+				and its tags. The heavy line carrying the clickable that folds the whole form away
 				is drawn by the section holding us, so we say how thick it is and the stack measures from
 				its middle like every other separator. -->
 			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[search_action, search_clearer]} sections={[
 				// The search is first, so its clickable and its clear ride the stack's own leading line.
 				// None of these three answers the cursor on its bare space.
 				{ subsection: search_rows, folded: !$w_show_search },
-				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
+				// The host's own rows, above the kinds row, only where the host hands them, folding under
+				// the information clickable as the information rows did while they were kb's.
+				...(edit_filter ? [{ subsection: host_rows, rides: [info_action, host_tools_action], folded: !show_form_info }] : []),
 				{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_form_kinds },
-				// The host's own rows, between the kinds and the tags, only where the host hands them.
-				...(edit_filter ? [{ subsection: host_rows }] : []),
 				// A press on the bare space among the tagsets shuts them all. The slot answers, not the row.
 				{ subsection: tags_picker,  rides: [tags_action, picking_action], folded: !show_form_tags,
 					answers: { id: 'editor.tags', type: T_Hit_Target.section,
@@ -550,11 +378,11 @@
 		flex       : 0 0 auto;
 	}
 
-	/* A word that folds its section away, standing on the line above it. Its page-colored
+	/* A word that folds its section away, standing on the line above it. Its white
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.clickable {
-		background    : var(--section-bg, var(--bg));
+		background    : var(--white);
 		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
@@ -575,7 +403,7 @@
 
 	.clickable.forced {
 		border-color : var(--darkgray);
-		background   : var(--bg);
+		background   : var(--white);
 	}
 
 	/* Folded, this whole block is bare space above the file's contents, so it is a way back to the
@@ -612,36 +440,9 @@
 		padding-bottom : calc(var(--gap-tiny) + var(--gap-faint));
 	}
 
-	/* The kinds sit a tiny gap lower than the other label rows, a tiny gap each side, the row no taller. */
-	.label-rows.kinds {
-		padding-top    : var(--gap-tiny);
-		padding-bottom : var(--gap-tiny);
-	}
-
-	/* The information rows hold a small gap below, less than the other label rows. */
+	/* The host's rows hold a small gap below, less than the other label rows. */
 	.label-rows.information {
 		padding-bottom : var(--gap-small);
-	}
-
-	/* A small gap above the tagsets, one gap below. The press on the bare space among them, and
-	   the fill that answers the cursor, are the slot's — said in the stack's sections list. */
-	.bare-answers {
-		padding-top    : var(--gap-small);
-		padding-bottom : var(--gap);
-	}
-
-	/* Rows of one thing, so they sit closer together than sections do. */
-	.information-rows {
-		padding-top    : var(--gap-small);
-		gap            : var(--gap-tiny);
-		flex-direction : column;
-		display        : flex;
-	}
-
-	/* The wrapper that carries a pill's slide. It hugs whatever it holds, so the row measures
-	   exactly as it did before there was anything to slide. */
-	.pill-slot {
-		display : inline-flex;
 	}
 
 	/* The two presses, standing on the tags line beside the word that folds the areas. They take
@@ -682,80 +483,6 @@
 		background : var(--hover);
 	}
 
-	.filter-row {
-		gap         : var(--gap-tiny);
-		align-items : center;
-		display     : flex;
-	}
-
-	/* The row whose field is taller than a line: its word stands beside that field's first line
-	   rather than halfway down it. */
-	.filter-row.top {
-		align-items : flex-start;
-	}
-
-	.filter-row.top .filter-word {
-		line-height : var(--height);
-	}
-
-	/* The run always holds a small gap above itself, so a name riding above a pill in the topmost
-	   row sits clear of the line overhead. It is a margin, so it sits outside the height this box
-	   is told to hold and never joins the slide. Between one row of tags and the next, where they
-	   wrap, another small gap: a between-row gap only exists once there is more than one row, so no
-	   counting is needed — one row shows none of it. */
-	.filter-row.wrapping.tags-row {
-		margin-top : var(--gap-small);
-		row-gap    : var(--gap-small);
-	}
-
-
-	/* The gap below the tag areas is the section's, not theirs. Wrapped onto more than one row,
-	   they stand a full gap apart both ways — the same as the tag areas among the filters.
-	   When a pill grows or shrinks enough to take a row of its own, or to give one back, this box
-	   changes height and everything under it moves. That change takes the same time the pill
-	   itself takes, so the two read as one movement rather than a slide and then a jump. */
-	/* The rows keep their own height whatever the box is told to be. Left to stretch, they would
-	   grow to fill a stated height — and since that height is worked out from how tall they are,
-	   each would make the other larger, over and over. */
-	/* Nothing is clipped here: each pill's own name rides above its top edge, so a box that cut
-	   off what falls outside it would take the names with it. */
-	.filter-row.wrapping {
-		transition      : height var(--slide-rows) linear;
-		justify-content : center;
-		align-content   : flex-start;
-		align-items     : center;
-		flex-wrap       : wrap;
-		gap             : var(--gap);
-	}
-
-	.filter-word {
-		white-space : nowrap;
-		opacity    : var(--opacity-header);
-		font-size  : var(--font-tiny);
-		color      : var(--text);
-		flex       : 0 0 auto;
-		text-align : right;
-		width      : 45px;
-	}
-
-	.filter-field {
-		border        : var(--thick) solid var(--black);
-		padding       : var(--pad-control);
-		border-radius : var(--radius-pill);
-		font-size     : var(--font-tiny);
-		height        : var(--height);
-		background    : var(--white);
-		color         : var(--text);
-		box-sizing    : border-box;
-		flex          : 1 1 auto;
-		font-family   : inherit;
-		min-width     : 0;
-	}
-
-	.title-tools {
-		display : flex;
-		gap     : var(--gap-small);
-	}
 
 	/* The clear on the search line, matching the list's. */
 	.clear {
@@ -777,60 +504,4 @@
 		background   : var(--hover);
 	}
 
-	.title-button {
-		border        : var(--thick-small) solid var(--black);
-		border-radius : var(--radius-pill);
-		font-size     : var(--font-faint);
-		background    : var(--bg);
-		color         : var(--darkgray);
-		padding       : 0 var(--gap);
-		white-space   : nowrap;
-		cursor        : pointer;
-	}
-
-	.title-button:global([data-hit]) {
-		border-color : var(--darkgray);
-		background   : var(--hover);
-	}
-
-	/* The one field that holds more than a line. It grows from the top like every other field —
-	   the height is its own, since a line count means nothing against a pill's padding. */
-	.filter-field.tall {
-		border-radius : var(--radius-small);
-		white-space   : pre-wrap;
-		line-height   : 1.3;
-		padding       : var(--gap-tiny) var(--gap);
-		resize        : none;
-		height        : auto;
-	}
-
-	.filter-field.date {
-		flex  : 0 0 auto;
-		width : 110px;
-	}
-
-	.filter-pick {
-		border        : var(--thick) solid var(--black);
-		border-radius : var(--radius-pill);
-		padding       : var(--pad-control);
-		font-size     : var(--font-tiny);
-		height        : var(--height);
-		background    : var(--white);
-		color         : var(--text);
-		box-sizing    : border-box;
-		flex          : 0 0 auto;
-		cursor        : pointer;
-		white-space   : nowrap;
-	}
-
-	.filter-pick:not(.on):global([data-hit]) {
-		background : var(--hover);
-	}
-
-	/* Picked, it wears the accent, and its words read the color that stays legible on it — white
-	   on a dark accent, black on a light one — the same as every other picked thing. */
-	.filter-pick.on {
-		background : var(--accent);
-		color      : var(--text-on-accent);
-	}
 </style>

@@ -1,4 +1,4 @@
-# Shared lexicon
+# Lexicon — shared
 
 The words used across every project. Use them exactly, even when a near synonym exists. If it is here, that is its name.
 
@@ -61,6 +61,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **I AM GUESSING** — the exact words that must open any claim with no evidence behind it.
 - **evidence** — a line number and a file name. Do not reveal until Jonathan asks you to describe the evidence. See always rule 4 in [conventions](conventions.md).
 - **visual confirmation** — Jonathan looked at the screen and said what he saw. Never *eyeball*, never *nod*.
+- **headless** — a browser co runs from a script on this machine, with no window on any screen. It loads the page, presses what the script says, and answers what it drew: sizes, places, colors, the requests it made, the lines the page logged. Co reads those numbers (rather than guessing what a browser would do). It is not Jonathan's browser, so it cannot see his fonts, his window or his settings.
 - **mistrust point** — a mark against trust, earned by stating a thing as fact without checking it, or by calling work done while steps remain.
 - **complaint** — one row in the murk record: a reply Jonathan could not read. **rate** is complaints per 100 replies.
 

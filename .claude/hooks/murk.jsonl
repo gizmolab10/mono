@@ -2130,3 +2130,19 @@
 {"timestamp":"2026-09-14T18:45:39Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"141","plain_words":""}
 {"timestamp":"2026-09-14T18:52:56Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"114","plain_words":""}
 {"timestamp":"2026-09-14T18:56:09Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"48","plain_words":""}
+{"timestamp":"2026-09-14T19:00:11Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"327","plain_words":""}
+{"timestamp":"2026-09-14T19:03:10Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"130","plain_words":""}
+{"timestamp":"2026-09-14T19:06:21Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"114","plain_words":""}
+{"timestamp":"2026-09-14T19:08:14Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"148","plain_words":""}
+{"timestamp":"2026-09-14T19:10:04Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"105","plain_words":""}
+{"timestamp":"2026-09-14T19:11:08Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"74","plain_words":""}
+{"timestamp":"2026-09-14T19:11:14Z","action":"complaint","word":"t","murky":"one thing.\n\n1. **Where a refusal is said.** Today \"not saved\" and the reason go to the note line along the bottom of the words, through Edit.svelte's say, which the snippet cannot reach. The step says show_status, the status line. That is a change of place, and the step should say so, or the snippet gets say as a fourth parameter. I recommend the status line, since Kb.ts hands show_status already.","plain":"1. When a save fails, the page says \"not saved\" and why. Today that message appears on the note line at the bottom of the words, and only Edit.svelte can write there. ai's rows cannot. So the message would go on the status line instead, through show_status, which Kb.ts already hands over. The step should say that, or hand the rows a way to write on the note line. I recommend the status line.","rule":"any-line","words":"105","plain_words":"74"}
+{"timestamp":"2026-09-14T19:12:01Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"36","plain_words":""}
+{"timestamp":"2026-09-14T19:13:12Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"105","plain_words":""}
+{"timestamp":"2026-09-14T19:54:30Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"45","plain_words":""}
+{"timestamp":"2026-09-14T21:04:01Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"60","plain_words":""}
+{"timestamp":"2026-09-14T21:05:09Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"69","plain_words":""}
+{"timestamp":"2026-09-14T21:14:20Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"223","plain_words":""}
+{"timestamp":"2026-09-14T21:31:08Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"173","plain_words":""}
+{"timestamp":"2026-09-14T21:34:52Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"132","plain_words":""}
+{"timestamp":"2026-09-14T21:59:13Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"85","plain_words":""}

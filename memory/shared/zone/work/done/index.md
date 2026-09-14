@@ -3,7 +3,6 @@
 ## Contents
 
 - [Class-lists](class-lists.md)
-- [Code](code.md)
 - [Cleanup](dead%20links.md)
 - [Gating](gating.md)
 - [Guides-clutter](guides-clutter.md)

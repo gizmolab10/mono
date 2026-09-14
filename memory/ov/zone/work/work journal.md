@@ -2,6 +2,16 @@
 
 What's been finished, newest first.
 
+## 2026-09-14 — the information rows are ai's
+
+Step 10 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). The label form's four information rows and the title's two tools left kb's Edit_More.svelte for ai's Edit_Fields.svelte, handed back as the edit filter section, given the file, its words and a call that sets them, and drawn above the kinds row under the information fold. Edit_More keeps the kind and the tags and draws two kb components of their own, Kinds_Row.svelte and Tag_Rows.svelte. Kb.ts hands show_status, save_file, file_path_of, title_from_name and three types; ai's Core.ts hands hit_target. A refusal is said on the status line. kb's lexicon gained label form, kinds row and tag rows.
+
+### Verification
+
+- Headless: ai's editor draws the six fields filled from the record and the four tools above the kinds row and the tag rows, five kinds with the worn one picked, ten tag areas, every fold clickable present, no page errors.
+- kb clean at 542 files, 324 tests. ai clean at 537 files, 15 tests, and it builds.
+- Not looked at in a browser by Jonathan.
+
 ## 2026-09-14 — the back links at the foot
 
 The back links left the label form's stack for the bottom of the edit view, a section of their own drawn by Back_Links, and the count follows the steppers in the controls row. Folded, the section is a band of accent at the very foot, reaching down over the gap the region holds below the view, its line the thin one; every folded section's black line is held in by --gap-huge at each side, in core's Section and Stack alike. Section gained line_down_when_folded, unused after Jonathan settled the band by hand. Back_Links logs how many guides point at the open guide and whether the section is drawn, shown or folded, which answered why nothing showed: the section was folded, as remembered.

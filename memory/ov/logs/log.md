@@ -4,6 +4,12 @@
 
 ## 14 September 2026
 
+- D: step 10 built, the information rows ai's, as the plan's Built note says. In the work journal, working features row 91
+- D: step 10 names the snippet type's path, Main.svelte, Operation.svelte and Edit.svelte carrying it and Edit_More rendering it with the file, its text and the call
+- D: step 10 says what the kinds row and tag rows components hold, Edit_More keeping the state and the saving, and that kb's lexicon gains label form, information rows, kinds row and tag rows at the build
+- D: step 10 says a refusal is said on the status line, through show_status, no longer on the note line under the words. Jonathan's choice
+- D: step 10 amended: the title's two tools go to ai with the rows, since they set and read the title field's text, and the edit filter snippet takes the file, its words and a call handing changed words back, Kb.ts handing save_file, file_path_of and title_from_name too. adopt kb says the same
+- D: step 10 of zone/music and ai.md rewritten from the reading before it: the four rows hold six fields, the sources among them; the host slot moves above the kinds row; what Kb.ts and ai's Core.ts hand the snippet; the host subsection takes the fold; the two kb components named; the title's tools stay kb's; the proof widened. adopt kb's row says where the section sits
 - D: step 9 built, the preferences prefix, as the plan's Built note says. Proposals 9a to 9d built as written, Convert_Preferences the name. In the work journal
 
 ## 10 September 2026

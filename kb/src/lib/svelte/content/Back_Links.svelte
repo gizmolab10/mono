@@ -131,10 +131,11 @@
 		margin-bottom : calc(var(--gap-fat) * -1);
 	}
 
-	/* The clickable that folds this section away, standing on the line above it. Its page-colored
+	/* The clickable that folds this section away, standing on the line above it. Its white
 	   background masks the line behind it. The edge is held see-through and counted inside its own
 	   space, so the hover edge adds no width and it never shifts. */
 	.clickable {
+		background    : var(--white);
 		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);

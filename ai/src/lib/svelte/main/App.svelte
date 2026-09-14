@@ -1,8 +1,14 @@
 <script lang='ts'>
-	import { Main } from '../../ts/common/Kb';
+	import Edit_Fields from '../content/Edit_Fields.svelte';
+	import { Main, type File } from '../../ts/common/Kb';
 
-	// The host of kb's page. At step 4 of the plan it draws the page and nothing more: the
-	// snippets and the configuration a host hands kb come at step 5.
+	// The host of kb's page: draws it, and hands it the edit filter section since step 10 of the
+	// plan, ai's information rows, given the file, its words and a call that sets them. The other
+	// three snippets come with their steps.
 </script>
 
-<Main />
+{#snippet edit_filter(guide: File, text: string, set_text: (words: string) => void)}
+	<Edit_Fields {guide} {text} {set_text} />
+{/snippet}
+
+<Main {edit_filter} />

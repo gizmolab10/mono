@@ -122,7 +122,7 @@
 		display : none;
 	}
 
-	/* A word that folds its section away, standing on the separator above it. Its page-colored
+	/* A word that folds its section away, standing on the separator above it. Its white
 	   background masks the separator behind it. */
 	.clickable {
 		border        : var(--thick-small) solid var(--black);
@@ -130,7 +130,7 @@
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
 		padding       : 0 var(--gap);
-		background    : var(--bg);
+		background    : var(--white);
 		box-sizing    : border-box;
 		font-family   : inherit;
 		white-space   : nowrap;

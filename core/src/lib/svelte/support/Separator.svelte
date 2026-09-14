@@ -153,9 +153,9 @@
 	/* The mask is a pill, the same shape as whatever stands in it — a square one leaves the line's
 	   cut ends showing past the curve at top and bottom, or stops short of it in the middle. */
 	.placed {
-		transform     : translateY(-50%);
-		border-radius : var(--radius-pill);
 		background    : var(--section-bg, var(--bg));
+		border-radius : var(--radius-pill);
+		transform     : translateY(-50%);
 		position      : absolute;
 		align-items   : center;
 		display       : flex;

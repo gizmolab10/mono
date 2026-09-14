@@ -17,7 +17,7 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 | hierarchies | the hierarchies the list offers, folder first, each naming the label it groups by and the order within a group, decided 13 September 2026, which music's track order needs | the folders alone, Files.ts | folder | folder, artist, album, name |
 | builds | the build notes table's text, which the build button opens | builds.md, read raw in App.svelte, Main.svelte in kb | ai's file | mu's file |
 
-At step 5 ai fills name, host, hierarchies and builds, and since step 7, 13 September 2026, kinds, tags and tag_areas. prefix is read since step 9, 14 September 2026, set by ai's Convert_Preferences.ts ahead of kb.
+At step 5 ai fills name, host, hierarchies and builds, and since step 7, 13 September 2026, kinds, tags and tag_areas. prefix is read since step 9, 14 September 2026, set by ai's Convert_Preferences.ts ahead of kb. The edit filter section is handed since step 10, the same day.
 
 ## the snippets
 
@@ -26,7 +26,7 @@ The host's App.svelte draws kb's page, Main.svelte, which draws panel and hands 
 | snippet | takes | rendered | ai hands | mu hands |
 | --- | --- | --- | --- | --- |
 | the browse filter section | nothing | among browse's filters above its list of files, after kb's search, collection, kind and tag rows, last, decided 13 September 2026 | nothing: ai's projects are its collections, which kb's collection filter narrows | nothing |
-| the edit filter section | the clicked file | in the editor's label form, where the four fields' rows sit today, between kb's kinds row and tag areas | the four rows, title, date, brief and use when, with the title's two tools, Edit_Filters.svelte's today | nothing |
+| the edit filter section | the file, its words and a call handing changed words back | in the editor's label form, above kb's kinds row, where the information rows sit today; the slot moves up there from between the kinds and the tags at step 10 | the four rows, title and date, brief, use when, authors and from, Edit_More.svelte's today, the title's two tools with them; an element the rows mark with the class rides-the-line is put on the section's line, centered | nothing |
 | the details section | nothing | a section in the details column, below preferences and rules | repair, D_Repair.svelte | nothing |
 | the operation view | the clicked file, and the width and height kb's frame gives it | inside kb's editor frame, Edit.svelte, below the label form | the drawn markdown, Edit_Markdown.svelte, with search and back links | the player |
 
@@ -57,7 +57,7 @@ export const customizations = {
 };
 ```
 
-Main.svelte's four snippet props, named for the four places above, browse_filter, edit_filter, details_section and operation_view: the two sections that take nothing, the edit filter section that takes the file, and the operation view that takes the file, the width and the height. Each is optional.
+Main.svelte's four snippet props, named for the four places above, browse_filter, edit_filter, details_section and operation_view: the two sections that take nothing, the edit filter section that takes the file, its words and a call handing changed words back since step 10, and the operation view that takes the file, the width and the height. Each is optional.
 
 ## proof
 

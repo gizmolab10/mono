@@ -25,13 +25,14 @@
 	// controls row's right end, the details column, the operation view and the status line. What the
 	// host hands kb comes two ways: the facts in Customizations.ts, filled before this mounts, and
 	// these four snippets, each optional and each rendered in one place — a filter among browse's,
-	// after tag; the edit filter section, given the file, between the kinds row and the tag areas; a
+	// after tag; the edit filter section, given the file, its words and a call that sets them, above
+	// the kinds row; a
 	// section in the details column, below the rules; and the operation view, given the file and the
 	// room the frame gives it, inside the editor frame. Where a host hands none, kb draws nothing
 	// there once the piece has moved out; until then kb draws the piece as it did in ov.
 	let { browse_filter, edit_filter, details_section, operation_view }: {
 		browse_filter?   : Snippet;
-		edit_filter?     : Snippet<[File]>;
+		edit_filter?     : Snippet<[File, string, (words: string) => void]>;
 		details_section? : Snippet;
 		operation_view?  : Snippet<[File, number, number]>;
 	} = $props();

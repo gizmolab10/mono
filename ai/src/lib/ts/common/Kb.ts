@@ -9,3 +9,8 @@ export { preferences, T_Preference } from 'kb/ts/managers/Preferences';
 export { w_operation, w_view_file, T_Operation } from 'kb/ts/managers/Operations';
 export { w_app, S_App } from 'kb/ts/types/App';
 export { area_of, area_reads, tags_shown, tags_without_area } from 'kb/ts/types/Tag_Areas';
+export { show_status } from 'kb/ts/managers/Status';
+export { file_path_of, save_file } from 'kb/ts/utilities/Saving';
+export { title_from_name } from 'kb/ts/utilities/Labels';
+export type { File, Labels } from 'kb/ts/types/File';
+export type { Source } from 'kb/ts/utilities/Saving';

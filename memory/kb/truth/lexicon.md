@@ -30,7 +30,10 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **subsection** — a section of a stack that is itself a section of another stack.
 - **separator** — the drawn divider between things. Never *line* in prose, never *divider*. Drawn with flares at each end.
 - **clickable** — the pill button standing on a separator that folds the section below it away, and says what it hides while folded. Not: any other button; not a word in the file's contents.
-- **information rows** — the rows of the editor's label form holding title, date, brief, use when, authors and from. Not: the kinds row, the tag rows.
+- **information rows** — the four rows of the editor's label form holding title, date, brief, use when, authors and from, ai's since step 10 of the plan, handed to kb as the edit filter section and drawn above the kinds row. Not: the kinds row, the tag rows.
+- **kinds row** — the row of the label form holding every kind on the host's closed list, the one the guide wears picked, `Kinds_Row.svelte`.
+- **tag rows** — the rows of the label form holding the tag areas, every tag within reach, `Tag_Rows.svelte`. Not: the tag areas among the filters.
+- **label form** — the section above a guide's words, `Edit_More.svelte`: one stack of the search, the host's rows, the kinds row and the tag rows, folding whole under the word on its line.
 - **rule** — a row in the db the dispatcher runs on every file added or changed: what it reads, the file's name, its location or its content, the regex it matches, and the label it gives, a kind or a tag. A rule never changes or removes a label a person put on.
 - **kb** — the library extracted from ov, which mu and ai import: the files list, the filter sections, the operation view, the details column, the drop box, the db and the dispatcher's watcher. ov stays as it is, the reference kb is tested against.
 - **plugin** — `plugin.py` in a host's folder, mono/ai or mono/mu, the folder the host's ports.json entry names, the code the dispatcher imports and runs for that host: its listing rule, its labeler and its own routes. The snippets and the configuration are the host's page's to hand kb, not the plugin's. Together with them it makes the host's specialty. Never *reader*.

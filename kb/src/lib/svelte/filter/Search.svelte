@@ -256,7 +256,7 @@
 		display : none;
 	}
 
-	/* The clickable that folds this section away, standing on the line above. Its page-colored
+	/* The clickable that folds this section away, standing on the line above. Its white
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.clickable {
@@ -266,7 +266,7 @@
 		color         : var(--darkgray);
 		padding       : 0 var(--gap);
 		box-sizing    : border-box;
-		background    : var(--bg);
+		background    : var(--white);
 		font-family   : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;
@@ -281,7 +281,7 @@
 
 	.clickable.forced {
 		border-color : var(--darkgray);
-		background   : var(--bg);
+		background   : var(--white);
 	}
 
 	/* The search row, under the top row: the walking triangles, then the field. */

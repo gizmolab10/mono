@@ -14,7 +14,7 @@
 		width           : number;
 		height          : number;
 		browse_filter?  : Snippet;
-		edit_filter?    : Snippet<[File]>;
+		edit_filter?    : Snippet<[File, string, (words: string) => void]>;
 		operation_view? : Snippet<[File, number, number]>;
 	} = $props();
 

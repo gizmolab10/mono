@@ -12,3 +12,4 @@ export { default, k } from 'core/ts/common/Constants';
 export { Colors, colors } from 'core/ts/utilities/Colors';
 export { debug } from 'core/ts/common/Debug';
 export { Preferences } from 'core/ts/utilities/Preferences';
+export { hit_target } from 'core/ts/events/Hit_Target';

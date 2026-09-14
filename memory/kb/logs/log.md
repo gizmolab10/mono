@@ -2,6 +2,9 @@
 
 ## 14 September 2026
 
+- D: every clickable riding a separator is white while the cursor is off it, in Back_Links, Browse_Filters, Search, Details and Edit_More, the forced state too; hovered it fills as before
+- D: Edit_More puts on the host subsection's line, centered, whatever element the host's rows mark with the class rides-the-line, looked for once the rows are drawn, the way the title tools rode it while they were kb's. adopt kb says so
+- D: step 10: the information rows and the title's tools left Edit_More.svelte, which keeps the kind and the tags and draws Kinds_Row.svelte and Tag_Rows.svelte, kb components of their own; the edit filter snippet takes the file, its words and a call that sets them, through Main, Operation and Edit; the lexicon gained label form, kinds row and tag rows. Check clean at 542 files, 324 tests
 - D: Edit_Filters.svelte renamed Edit_More.svelte, git recording the move, Edit.svelte, the map and the plan's step 10 naming it. Jonathan's decision in memory/ov/truth/decisions.md
 - D: the folded back links section in Back_Links.svelte, as Jonathan settled it: a band of accent a faint gap more than the usual folded height, reaching a fat gap down over the region's gap below the view, its line the thin one while folded and the heavy one while shown, the hairline at the band's middle. Jonathan's decision in memory/ov/truth/decisions.md
 - D: step 9: Preferences.ts reads the host's prefix off the customizations when asked, kb_ where no host set one. The map and adopt kb say so. Check clean at 540 files, 324 tests

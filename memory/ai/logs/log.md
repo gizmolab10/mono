@@ -2,6 +2,8 @@
 
 ## 14 September 2026
 
+- D: Edit_Fields marks its title tools rides-the-line, so kb puts them on the information line, centered; each is white and the information clickable's size, the same text, edge and padding, the arrow the plain one, since the fat one came from a fallback font a pixel taller, measured headless
+- D: step 10 built: Edit_Fields.svelte draws the information rows and the title's two tools, App.svelte hands it as the edit filter section, Kb.ts hands show_status, save_file, file_path_of, title_from_name and the types, Core.ts hands hit_target. Headless: the rows above the kinds row, filled from the record. Check clean at 537 files, 15 tests, and the build
 - D: step 9 built: Convert_Preferences.ts, imported by main.ts ahead of kb, sets kb's nine facts, moved out of main.ts, and moves every value saved under ov_ under ai_; Core.ts adopts core's Preferences; core_alias.test names it as the second reach through kb. Headless proof: 28 keys all under ai_ after a reload, the seeded value read back. Check clean at 534 files, 15 tests, and the build
 
 ## 12 September 2026

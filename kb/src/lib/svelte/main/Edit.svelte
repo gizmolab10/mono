@@ -23,12 +23,12 @@
 	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the file and call back.
 	//
-	// The host's two snippets for the frame: its edit filter section, given the file, which the
-	// label form renders between the kinds row and the tag areas, and its operation view, given the
+	// The host's two snippets for the frame: its edit filter section, given the file, its words and
+	// a call that sets them, which the label form renders above the kinds row, and its operation view, given the
 	// file and the room the frame has, rendered below the label form.
 	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {}, width = 0, height = 0, edit_filter, operation_view }:
 		{ name: string; address: string; tags: string[]; guide: File; onclose: () => void; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void;
-		  width?: number; height?: number; edit_filter?: Snippet<[File]>; operation_view?: Snippet<[File, number, number]> } = $props();
+		  width?: number; height?: number; edit_filter?: Snippet<[File, string, (words: string) => void]>; operation_view?: Snippet<[File, number, number]> } = $props();
 
 	// The whole file, held only while it is on screen. Two of the three below write to it: the
 	// labels at the top, and a piece of the words being changed. One place holds it, so neither

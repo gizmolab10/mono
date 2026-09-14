@@ -96,3 +96,27 @@ $ vite
 11:51:47 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/Back_Links.svelte
 11:54:47 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_Filters.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_Filters.svelte?svelte&type=style&lang.css
 11:54:47 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Edit.svelte
+2:10:17 PM [vite] (client) page reload src/lib/ts/common/Kb.ts
+2:10:17 PM [vite] (client) page reload src/lib/ts/common/Core.ts
+2:10:17 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte
+2:10:17 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte?svelte&type=style&lang.css
+2:10:17 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Main.svelte
+2:10:17 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Edit.svelte
+2:11:27 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte
+2:23:44 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte
+2:23:44 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Fields.svelte, /src/lib/svelte/content/Edit_Fields.svelte?svelte&type=style&lang.css
+2:24:45 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+2:25:05 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+2:25:19 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+2:25:25 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+2:25:47 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+2:27:08 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+2:27:25 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+2:28:21 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Fields.svelte, /src/lib/svelte/content/Edit_Fields.svelte?svelte&type=style&lang.css
+2:30:11 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/Back_Links.svelte?svelte&type=style&lang.css
+2:30:11 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte?svelte&type=style&lang.css
+2:30:11 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Details.svelte?svelte&type=style&lang.css
+2:30:12 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Search.svelte?svelte&type=style&lang.css
+2:30:12 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte?svelte&type=style&lang.css
+2:33:32 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Fields.svelte, /src/lib/svelte/content/Edit_Fields.svelte?svelte&type=style&lang.css
+2:33:32 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte
