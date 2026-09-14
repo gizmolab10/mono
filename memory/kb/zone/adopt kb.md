@@ -9,7 +9,7 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 | field | holds | today in ov | ai fills | mu fills |
 | --- | --- | --- | --- | --- |
 | name | what the controls row calls the host | none: ov's row shows no host name, panel's centers one | ai | mu |
-| prefix | what every remembered value is saved under | Preferences.ts, `ov_` | ai and an underscore | mu and an underscore |
+| prefix | what every remembered value is saved under, read when asked; a host sets it ahead of importing kb, since kb's stores read storage at import | Preferences.ts, `kb_` | `ai_`, set by Convert_Preferences.ts, the values saved under `ov_` moved once | mu and an underscore |
 | host | the host's name, which ports.json pairs with its db, so kb asks the dispatcher for that db's rows alone. ai's entry names `ai.db`, made from `ov.db` on 13 September 2026 | none, the dispatcher answers ai's db | ai | mu |
 | kinds | the closed list of kinds, drawn in the kinds row | T_Kind in File.ts | the five, music dropped 13 September 2026 | music, images, text and video, four, decided 13 September 2026 |
 | tags | the closed list of tags | ALL_TAGS in File.ts | the 39 | jazz, classical, rock and hifi, four, decided 13 September 2026 |
@@ -17,7 +17,7 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 | hierarchies | the hierarchies the list offers, folder first, each naming the label it groups by and the order within a group, decided 13 September 2026, which music's track order needs | the folders alone, Files.ts | folder | folder, artist, album, name |
 | builds | the build notes table's text, which the build button opens | builds.md, read raw in App.svelte, Main.svelte in kb | ai's file | mu's file |
 
-At step 5 ai fills name, host, hierarchies and builds, and since step 7, 13 September 2026, kinds, tags and tag_areas. prefix is read at step 9.
+At step 5 ai fills name, host, hierarchies and builds, and since step 7, 13 September 2026, kinds, tags and tag_areas. prefix is read since step 9, 14 September 2026, set by ai's Convert_Preferences.ts ahead of kb.
 
 ## the snippets
 

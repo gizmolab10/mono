@@ -11,3 +11,4 @@ export { c } from 'core/ts/common/Configuration';
 export { default, k } from 'core/ts/common/Constants';
 export { Colors, colors } from 'core/ts/utilities/Colors';
 export { debug } from 'core/ts/common/Debug';
+export { Preferences } from 'core/ts/utilities/Preferences';

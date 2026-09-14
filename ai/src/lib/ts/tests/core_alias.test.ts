@@ -4,7 +4,9 @@ import { dirname, join, relative } from 'path';
 import { fileURLToPath } from 'url';
 
 // Two libraries reach ai through an alias, core and kb, and each has its bridges: common/Core.ts
-// for core, with main.ts for core's stylesheet alone, and common/Kb.ts for kb. A stylesheet has
+// for core, with main.ts for core's stylesheet alone, and common/Kb.ts for kb, with
+// common/Convert_Preferences.ts for kb's customizations alone, since it has to run ahead of kb
+// and Kb.ts pulls all of kb in. A stylesheet has
 // no exports to re-export, and where it loads decides which rule wins between two that match
 // equally — through a bridge it would arrive with whichever file was pulled in first. Every
 // other file of ai's imports from a bridge. A third alias, panel, is carried for the build,
@@ -17,7 +19,7 @@ const SRC = join(dirname(fileURLToPath(import.meta.url)), '../../..');
 
 const BRIDGES: Record<string, string[]> = {
 	core  : ['lib/ts/common/Core.ts', 'lib/ts/main.ts'],
-	kb    : ['lib/ts/common/Kb.ts'],
+	kb    : ['lib/ts/common/Kb.ts', 'lib/ts/common/Convert_Preferences.ts'],
 	panel : [],
 };
 

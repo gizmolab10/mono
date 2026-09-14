@@ -1,16 +1,16 @@
 # Unfinished
 
-86 files hold unfinished work, as of 2026-09-13.
+86 files hold unfinished work, as of 2026-09-14.
 
-## ai
+## ai (60)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
-| z | [music and ai.md](../../ai/zone/music%20and%20ai.md) | 61 open |
+| z | [music and ai.md](../../ai/zone/music%20and%20ai.md) | 60 open |
 
-## core
+## core (29)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../core/logs/log.md) | settle 4 lines |
 | t | [decisions.md](../../core/truth/decisions.md) | decide 2 pacs |
@@ -18,9 +18,9 @@
 | z | [ideas.md](../../core/zone/ideas.md) | 7 open |
 | z | [work/soon/hits manager.md](../../core/zone/work/soon/hits%20manager.md) | 7 open |
 
-## di
+## di (198)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | t | [always.md](../../di/truth/always.md) | 9 open truths |
 | t | [development/early di spec.md](../../di/truth/development/early%20di%20spec.md) | 16 open truths |
@@ -39,73 +39,73 @@
 | z | [work/now/steve melville.md](../../di/zone/work/now/steve%20melville.md) | 6 open |
 | z | [work/now/talk.md](../../di/zone/work/now/talk.md) | 10 open |
 
-## ga
+## ga (38)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [work/phaser.editor.md](../../ga/zone/work/phaser.editor.md) | 3 open |
 | z | [work/phaser.start.md](../../ga/zone/work/phaser.start.md) | 32 open |
 | z | [work/revisit.ga.md](../../ga/zone/work/revisit.ga.md) | 3 open |
 
-## gallery
+## gallery (2)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../gallery/logs/log.md) | settle 2 lines |
 
-## ji
+## ji (77)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [ideas.md](../../ji/zone/ideas.md) | 61 open |
 | z | [designs/ji road map.md](../../ji/zone/designs/ji%20road%20map.md) | 9 open |
 | z | [work/sideband storage proposal.md](../../ji/zone/work/sideband%20storage%20proposal.md) | 3 open |
 | z | [work/proposals/chat history proposal.md](../../ji/zone/work/proposals/chat%20history%20proposal.md) | 4 open |
 
-## kb
+## kb (1)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [ideas.md](../../kb/zone/ideas.md) | 1 open |
 
-## lv
+## lv (2)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [ideas.md](../../lv/zone/ideas.md) | 1 open |
 | z | [questions.md](../../lv/zone/questions.md) | answer 1 question |
 
-## ma
+## ma (14)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [work/plan.md](../../ma/zone/work/plan.md) | 14 open |
 
-## me
+## me (9)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [ideas.md](../../me/zone/ideas.md) | 3 open |
 | z | [questions.md](../../me/zone/questions.md) | answer 1 question |
 | z | [work/jonathan.md](../../me/zone/work/jonathan.md) | 3 open |
 | z | [work/revisit.me.md](../../me/zone/work/revisit.me.md) | 2 open |
 
-## mj
+## mj (2)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [ideas.md](../../mj/zone/ideas.md) | 2 open |
 
-## mu
+## mu (23)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | z | [ideas.md](../../mu/zone/ideas.md) | 6 open |
 | z | [project goal.md](../../mu/zone/project%20goal.md) | 17 open |
 
-## ov
+## ov (121)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../ov/logs/log.md) | settle 15 lines |
 | t | [decisions.md](../../ov/truth/decisions.md) | decide 6 pacs |
@@ -117,16 +117,16 @@
 | z | [work/soon/hits manager.md](../../ov/zone/work/soon/hits%20manager.md) | 7 open |
 | z | [work/soon/tag drift.md](../../ov/zone/work/soon/tag%20drift.md) | 1 open |
 
-## panel
+## panel (2)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../panel/logs/log.md) | settle 1 line |
 | z | [questions.md](../../panel/zone/questions.md) | answer 1 question |
 
-## shared
+## shared (338)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../shared/logs/log.md) | settle 11 lines |
 | t | [decisions.md](../../shared/truth/decisions.md) | decide 34 pacs |
@@ -151,9 +151,9 @@
 | z | [work/next/commoditize.md](../../shared/zone/work/next/commoditize.md) | 11 open |
 | z | [work/next/curiosity.md](../../shared/zone/work/next/curiosity.md) | 3 open |
 
-## ws
+## ws (164)
 
-| z/t | file | verb |
+| z/t | file | needs this |
 | --- | --- | --- |
 | t | [architecture/core/hits.md](../../ws/truth/architecture/core/hits.md) | 4 open truths |
 | t | [architecture/core/styles.md](../../ws/truth/architecture/core/styles.md) | 1 open truth |

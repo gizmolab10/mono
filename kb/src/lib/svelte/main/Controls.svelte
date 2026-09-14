@@ -15,7 +15,7 @@
 	// The controls row's right end, handed to panel, which draws the hamburger at the row's left
 	// and the host's name in its middle. Browsing, the dispatcher at the right starts over, and the
 	// build number beyond it opens the notes. Editing, the way back to the list follows the
-	// hamburger, and the rest of the row is a section of its own — the count, the steppers, the
+	// hamburger, and the rest of the row is a section of its own — the steppers, the count, the
 	// folders, the file's name, and the four buttons — and the name yields to it.
 	let { buildNumber, onBuildOpen, onRestart, restarting }:
 		{ buildNumber: number; onBuildOpen: () => void; onRestart: () => void; restarting: boolean } = $props();
@@ -151,15 +151,15 @@
 		<div class='upright-line'></div>
 		<!-- The file's section. Its bare space answers nothing: the way back is the button beside it. -->
 		<div class='file-section'>
-			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
-			     while reading off the list, on a run of files reached by links. -->
-			{#if $w_file_site}
-				<span class='file-count'>{$w_file_site.at} of {$w_file_site.of}</span>
-			{/if}
 			<Steppers id='editor.step' can_back={$w_can_back} can_forward={$w_can_forward}
 				onprev={(repeated) => step_view(-1, repeated)} onnext={(repeated) => step_view(1, repeated)}
 				back_says={$w_file_back ?? 'previous file'} forward_says={$w_file_forward ?? 'next file'} />
-			<!-- The folders above the file follow the steppers at the left. -->
+			<!-- Which of the files the filters leave is being read, and how many there are, after the
+			     steppers. Nothing while reading off the list, on a run of files reached by links. -->
+			{#if $w_file_site}
+				<span class='file-count'>{$w_file_site.at} of {$w_file_site.of}</span>
+			{/if}
+			<!-- The folders above the file follow the count at the left. -->
 			<span class='view-ancestry'>{sits_at}</span>
 			<!-- An empty run on either side, so the name sits at the middle of whatever the folders
 			     leave over rather than at the middle of the whole row. -->

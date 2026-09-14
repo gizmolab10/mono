@@ -318,10 +318,11 @@
 		left           : 0;
 	}
 
-	/* A hairline down its exact middle, so it reads as a line rather than as a stripe of color.
-	   Half a pixel, pulled back half of its own height. */
+	/* A hairline down its exact middle, so it reads as a line rather than as a stripe of color,
+	   held in from the box's own edges by the huge gap. Half a pixel, pulled back half of its own
+	   height. */
 	.hair {
-		margin         : 0 calc(var(--gap) * -1);
+		margin         : 0 var(--gap-micro);
 		z-index        : var(--z-frontmost);
 		transform      : translateY(-50%);
 		background     : var(--black);

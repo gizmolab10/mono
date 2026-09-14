@@ -2,6 +2,11 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 14 September 2026
+
+- D: a folded section's hairline is held in by --gap-huge at each side, in Section.svelte and Stack.svelte, and Section takes line_down_when_folded, how far below the band's middle its hairline sits, a style variable the hairline reads. Jonathan's decision in memory/ov/truth/decisions.md
+- D: Preferences takes a prefix or a function answering it, prefix_now reading it at each call, and gains adopt, which moves every value saved under another prefix and drops the old keys; Storage_Like names length and key for the walk. Two cases in preferences.test. Check clean at 470 files, 100 tests
+
 ## 13 September 2026
 
 - D: Debug.ts gathers log lines for 50 ms and sends them in one request per log file, the first request erasing as the first line did. Sending each line as it came made about 2,850 requests in a burst when kb's page related every link after a write, past the cap a browser puts on a page's requests, and the browser then failed the write itself with ERR_INSUFFICIENT_RESOURCES, read by the page as Failed to fetch. Reproduced in a headless browser at a burst of 2,000, not at 1,000. After: 54 log requests in a page's first 15 seconds against 1,661. Core check clean at 470 files, 98 tests, kb 540 and ai 533 clean

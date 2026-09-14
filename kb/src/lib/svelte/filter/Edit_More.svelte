@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { foot_is_all_folds, inverted, toggle_all_areas, toggle_area, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
 	import { title_from_name } from '../../ts/utilities/Labels';
-	import { in_order, key_of, type File } from '../../ts/types/File';
+	import { in_order, type File } from '../../ts/types/File';
 	import { customizations } from '../../ts/common/Customizations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
 	import { file_path_of, save_file } from '../../ts/utilities/Saving';
@@ -20,7 +20,6 @@
 	import { debug } from '../../ts/common/Core';
 	import { hits } from '../../ts/common/Core';
 	import { Stack } from '../../ts/common/Core';
-	import Back_Links from '../content/Back_Links.svelte';
 	import Search from './Search.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -77,19 +76,6 @@
 	// the stack has to leave the folded space for it — one remembered value, two readers.
 	const w_show_search = preferences.persistent<boolean>(T_Preference.show_search, true);
 
-	// Whether the back links row is shown, and how many point here. The count is read here as
-	// well as inside the row, since the folded clickable is ours and has to say it.
-	const w_show_backlinks = preferences.persistent<boolean>(T_Preference.show_backlinks, true);
-	const w_pointing_at = files.w_pointing_at;
-	let backlinks_count = $derived(($w_pointing_at.get(key_of(guide)) ?? []).length);
-	let backlinks_word = $derived($w_show_backlinks ? 'back links' : `back links ➜ ${backlinks_count}`);
-
-	/** Put the back links away, or bring them back. */
-	function toggle_backlinks() {
-		w_show_backlinks.set(!$w_show_backlinks);
-		debug.log(`Editing "${name}": the back links are now ${!$w_show_backlinks ? 'folded away' : 'shown'}.`);
-	}
-
 	// Said outward, so whoever stacks this knows its own line would stand on the line above with
 	// nothing between them. That is so with the whole form away, and equally with the kinds and
 	// the tags both folded — the tags then stand flat and the kinds' line is the last thing.
@@ -145,11 +131,10 @@
 		: `more ➜ ${[form_kind, ...[...form_tags].sort(in_order)]
 			.filter((one) => one !== '').join(', ') || 'none'}`);
 
-	// The four clickables that fold these sections away are ours, not the lines'. Each is built as a
+	// The three clickables that fold these sections away are ours, not the lines'. Each is built as a
 	// button below, out of sight; the browser makes it one drawing after we ask, so each of these
 	// holds nothing on the first drawing and the made button on the next — which is itself a
 	// change, so the line it stands on is told at once.
-	let backlinks_button = $state<HTMLElement | null>(null);
 	let filters_button   = $state<HTMLElement | null>(null);
 	let search_button    = $state<HTMLElement | null>(null);
 	let search_clear     = $state<HTMLElement | null>(null);
@@ -174,7 +159,6 @@
 	const kinds_action       = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const tags_action        = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const title_tools_action = $derived(Object.assign(new Action(), { element: $w_show_filters ? title_tools : null, position: T_Position.center, transparent: true }));
-	const backlinks_action   = $derived(Object.assign(new Action(), { element: backlinks_count > 0 ? backlinks_button : null, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 
 	/** Put the whole form away, or bring it back. */
 	function toggle_filters() {
@@ -371,8 +355,6 @@
 			use:hit_target={{ id: 'editor.clear.search', onpress: () => { w_search_text.set(''); find?.light_hit(0); },
 				tip: 'empty the search field' }}>clear</button>
 	{/if}
-	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={backlinks_button}
-		use:hit_target={{ id: 'editor.fold.backlinks', onpress: toggle_backlinks, tip: 'which files point at this one' }}>{backlinks_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={info_button}
 		use:hit_target={{ id: 'editor.fold.info', onpress: toggle_info }}>{form_info_word}</button>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={kinds_button}
@@ -459,14 +441,6 @@
 {/snippet}
 
 
-<!-- Which files point at this one. It stands bare here: its line, its gap and its clickable
-     are this stack's, the same as the search's. -->
-{#snippet backlinks_rows()}
-	<div class='label-rows'>
-		<Back_Links bare key={key_of(guide)} {name} />
-	</div>
-{/snippet}
-
 <!-- The host's own rows, given the file, rendered only where the host hands them. -->
 {#snippet host_rows()}
 	<div class='label-rows'>
@@ -539,11 +513,8 @@
 				its middle like every other separator. -->
 			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[search_action, search_clearer]} sections={[
 				// The search is first, so its clickable and its clear ride the stack's own leading line.
-				// None of these four answers the cursor on its bare space.
+				// None of these three answers the cursor on its bare space.
 				{ subsection: search_rows, folded: !$w_show_search },
-				// With nothing pointing here the section hides in place — no row, no line — but it
-				// never leaves the list, so the sections below it keep their own separators.
-				{ subsection: backlinks_rows, rides: [backlinks_action], folded: !$w_show_backlinks, hidden: backlinks_count === 0 },
 				{ subsection: information_rows, rides: [info_action, title_tools_action], folded: !show_form_info },
 				{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer], folded: !show_form_kinds },
 				// The host's own rows, between the kinds and the tags, only where the host hands them.

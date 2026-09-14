@@ -1,5 +1,3 @@
-from pathlib import Path
-
 # Define the summary content
 content = """ ✅ Summary of Strategies Attempted to Solve Hydration Lateness in Bubble Plugin:
 

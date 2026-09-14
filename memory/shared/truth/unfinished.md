@@ -4,7 +4,7 @@ i wanted one place that says where unfinished work sits, across every project, w
 
 ## The row
 
-One table per project, under the project's own heading, three columns: z/t, the file as a link, the verb. A file in zone gets z, a file in truth gets t, and a file outside both, the log among them, no letter. The link is relative to where unfinished.md sits, a space in a name percent-encoded.
+One table per project, under the project's own heading, which carries how many items the project's tables name: the numbers in its clauses added up, a clause with no number counting one. Three columns: z/t, the file as a link, needs this. A file in zone gets z, a file in truth gets t, and a file outside both, the log among them, no letter. The link is relative to where unfinished.md sits, a space in a name percent-encoded.
 
 ## The patterns
 

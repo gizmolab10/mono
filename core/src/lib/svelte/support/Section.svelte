@@ -16,34 +16,36 @@
 
 	let {
 		id,
-		edge                = T_Edge.thin,
-		gap                 = USUAL_GAP,
-		onbare              = undefined,
-		onhover             = undefined,
-		gap_at_foot         = undefined,
-		accent_when_folded  = false,
-		holds_subsections   = false,
-		fills_when_bare     = false,
-		folded              = false,
-		actions             = null,
-		bare_says           = '',
-		extra_when_folded   = 0,
+		edge                   = T_Edge.thin,
+		gap                    = USUAL_GAP,
+		onbare                 = undefined,
+		onhover                = undefined,
+		gap_at_foot            = undefined,
+		accent_when_folded     = false,
+		holds_subsections      = false,
+		fills_when_bare        = false,
+		folded                 = false,
+		actions                = null,
+		bare_says              = '',
+		extra_when_folded      = 0,
+		line_down_when_folded  = 0,
 		contents,
 	}: {
-		onhover?            : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
-		onbare?             : (() => void) | undefined;               // a press landed on the bare background, on nothing that answers for itself
-		actions?            : Action[] | null;         // things to sit on the line, each at its own end or middle
-		contents            : Snippet;                 // what it shows
-		accent_when_folded? : boolean;                 // folded, its space takes the accent — the same run of color a stack draws for a fold of its own
-		holds_subsections?  : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
-		fills_when_bare?    : boolean;                 // its whole background fills while the cursor is on bare space, because a press there does something
-		folded?             : boolean;                 // its content is put away, so it holds no gap
-		edge?               : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
-		id                  : string;                  // what this section is called, said once by whoever draws it
-		bare_says?          : string;                  // what a press on the bare background would do, shown while the cursor is on it
-		gap?                : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
-		gap_at_foot?        : number;                  // a different number below its content, where the two sides are drawn against different things
-		extra_when_folded?  : number;                  // more than the one folded height, for the one section that needs it
+		onhover?               : ((over: boolean) => void) | undefined;  // the cursor entered or left the content
+		onbare?                : (() => void) | undefined;               // a press landed on the bare background, on nothing that answers for itself
+		actions?               : Action[] | null;         // things to sit on the line, each at its own end or middle
+		contents               : Snippet;                 // what it shows
+		accent_when_folded?    : boolean;                 // folded, its space takes the accent — the same run of color a stack draws for a fold of its own
+		holds_subsections?     : boolean;  				  // its content is itself sections, which hold the gap at its own boundaries
+		fills_when_bare?       : boolean;                 // its whole background fills while the cursor is on bare space, because a press there does something
+		folded?                : boolean;                 // its content is put away, so it holds no gap
+		edge?                  : T_Edge;                  // what bounds it above: an edge of the view, a hair, or the heavy line
+		id                     : string;                  // what this section is called, said once by whoever draws it
+		bare_says?             : string;                  // what a press on the bare background would do, shown while the cursor is on it
+		gap?                   : number;                  // how much it holds above and below its content — one number, both sides; ignored while it holds subsections
+		gap_at_foot?           : number;                  // a different number below its content, where the two sides are drawn against different things
+		extra_when_folded?     : number;                  // more than the one folded height, for the one section that needs it
+		line_down_when_folded? : number;         	      // folded, its hairline sits this much below the band's middle, for the section at the foot of the view
 	} = $props();
 
 	// Said once here, so the line and the gap can never disagree about what this section is.
@@ -101,6 +103,7 @@
 		style:padding-top='{gap_under_line}px'
 		style:padding-bottom='{gap_below}px'
 		style:min-height='{folded ? folded_height(gap, bar, extra_when_folded) : 0}px'
+		style:--fold-line-down='{line_down_when_folded}px'
 		role='presentation'
 		use:hit_target={{ id, type: T_Hit_Target.section, dormant: folded,
 			onpress: folded ? undefined : onbare,
@@ -116,9 +119,9 @@
 	/* No gap of its own between the line and what it bounds — the gap inside is the body's, and
 	   two sources of gap is exactly the fault this piece exists to remove. */
 	.section {
+		flex           : 0 0 auto;
 		flex-direction : column;
 		display        : flex;
-		flex           : 0 0 auto;
 		gap            : 0;
 	}
 
@@ -142,31 +145,32 @@
 		margin-right   : calc(var(--gap) * -1);
 		padding-left   : var(--gap);
 		padding-right  : var(--gap);
+		flex           : 0 0 auto;
 		flex-direction : column;
 		display        : flex;
-		flex           : 0 0 auto;
 	}
 
 	/* Folded, it stands its own gap tall with nothing in it, and takes the accent — so the fold
 	   reads as one band of color between its line and the line below. */
 	.section-body.folded {
-		position   : relative;
 		background : var(--accent);
+		position   : relative;
 	}
 
-	/* A hairline down the exact middle of that band, so the fold reads as a line rather than as
-	   a stripe of color. Half a pixel, and pulled back half of its own height, which is what puts
-	   its middle on the band's middle whatever the band's height turns out to be. */
+	/* A hairline down the middle of that band, so the fold reads as a line rather than as a
+	   stripe of color, held in from each side by the huge gap. Half a pixel, and pulled back half
+	   of its own height, which is what puts its middle on the band's middle whatever the band's
+	   height turns out to be, and below the middle by whatever the caller asked. */
 	.section-body.folded::after {
-		background     : var(--black);
+		top            : calc(50% + var(--fold-line-down, 0px));
 		transform      : translateY(-50%);
-		pointer-events : none;
+		background     : var(--black);
+		right          : var(--gap);
+		left           : var(--gap);
 		position       : absolute;
-		content        : '';
 		height         : 0.5px;
-		right          : 0;
-		left           : 0;
-		top            : 50%;
+		pointer-events : none;
+		content        : '';
 	}
 
 

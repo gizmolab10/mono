@@ -1,10 +1,14 @@
+import { customizations } from '../common/Customizations';
 import { Preferences } from '../common/Core';
 
 /**
  * Preferences — what the browser remembers between visits.
  *
- * The way to read and write one is core's. What is ov's: every name below, which is
- * the word a value is saved under, and the "ov_" start every saved name wears. Each
+ * The way to read and write one is core's. What is kb's: every name below, which is
+ * the word a value is saved under. The start every saved name wears is the host's, its
+ * prefix in the customizations, read when asked, since step 9 of the plan. The stores
+ * the managers make read storage the moment kb is imported, so a host sets its prefix
+ * ahead of importing kb, as ai's Convert_Preferences.ts does. Each
  * name is spelled the same way: the parts of the name joined by underscores, plainest
  * part first ("show_details", not "showDetails"), so the code and the browser's saved
  * settings always match.
@@ -68,5 +72,5 @@ export enum T_Preference {
 	status_made     = 'status_made',
 }
 
-// Every saved name of ours starts with this.
-export const preferences = new Preferences('ov_');
+// Every saved name starts with the host's prefix, kb_ where no host has set one.
+export const preferences = new Preferences(() => customizations.prefix);

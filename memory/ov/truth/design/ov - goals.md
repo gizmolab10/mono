@@ -1,6 +1,6 @@
 # ov — overview
 
-## What i want
+## What i want [[constants & subtypes]] 
 
 A new project, `ov` — short for **overview** — that starts life as an empty room with good bones. No documents, no storage, no AI, no operations. Just a window with a details column on the **left**, one thing inside it — the accent color picker — and every size, color and spacing number already coming from one place.
 

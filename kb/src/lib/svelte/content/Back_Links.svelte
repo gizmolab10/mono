@@ -62,6 +62,12 @@
 		debug.log(`Reading "${name}": the back links are now ${!$w_show_backlinks ? 'folded away' : 'shown'}.`);
 	}
 
+	// Said whenever the guide, what points at it, or the fold changes: what is drawn here, or why
+	// nothing is.
+	$effect(() => {
+		debug.log(`Back links: ${pointing.length} guide(s) point at "${name}" at ${key}, so the section is ${pointing.length === 0 ? 'not drawn' : bare ? 'drawn bare' : $w_show_backlinks ? 'drawn and shown' : 'drawn and folded'}.`);
+	});
+
 	function open(at: string) {
 		debug.log(`Back links: opening "${at}", one of the ${pointing.length} guide(s) that point at "${name}".`);
 		open_view(at);
@@ -99,14 +105,19 @@
 
 	     It holds no gap below its own pills: the box these stand in already holds one at its
 	     foot, and the two together read as twice the gap every other pair holds. -->
-	<!-- Folded, it asks for one heavy line less than the usual folded height: what it holds away
-	     is a run of pills at the very foot of the view, and the usual fold leaves the two lines
-	     further apart down there than they read anywhere else. -->
-	<Section id='editor.backlinks' gap={k.gap.normal + k.thickness.huge / 2} gap_at_foot={0}
-		extra_when_folded={-k.thickness.huge} accent_when_folded
-		edge={T_Edge.thick} actions={[to_fold]} folded={!$w_show_backlinks}>
-		{#snippet contents()}{@render pills()}{/snippet}
-	</Section>
+	<!-- Folded, it is a band of accent at the very foot of the view, a faint gap more than the
+	     usual folded height, reaching a fat gap down over the gap the region holds below the view,
+	     so no page color shows under it, its hairline at its middle. Its line is the heavy one
+	     while the pills show and the thin one while they are folded away. -->
+	<div class='foot' class:folded={!$w_show_backlinks}>
+		<Section id='editor.backlinks' gap_at_foot={0}
+			edge={$w_show_backlinks ? T_Edge.thick : T_Edge.thin}
+			extra_when_folded={k.gap.faint}
+			actions={[to_fold]} folded={!$w_show_backlinks}
+			gap={k.gap.normal + k.thickness.huge / 2}>
+			{#snippet contents()}{@render pills()}{/snippet}
+		</Section>
+	</div>
 {/if}
 
 <style>
@@ -115,11 +126,15 @@
 		display : none;
 	}
 
+	/* Folded, the band reaches down over the gap the region holds below the view. */
+	.foot.folded {
+		margin-bottom : calc(var(--gap-fat) * -1);
+	}
+
 	/* The clickable that folds this section away, standing on the line above it. Its page-colored
 	   background masks the line behind it. The edge is held see-through and counted inside its own
 	   space, so the hover edge adds no width and it never shifts. */
 	.clickable {
-		background    : var(--section-bg, var(--bg));
 		border        : var(--thick-small) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
@@ -153,9 +168,9 @@
 		font-size     : var(--font-faint);
 		height        : var(--height);
 		padding       : 0 var(--gap);
+		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
-		background    : var(--bg);
 		font-family   : inherit;
 		cursor        : pointer;
 		white-space   : nowrap;

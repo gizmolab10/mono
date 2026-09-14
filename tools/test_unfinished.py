@@ -52,7 +52,7 @@ def main():
             print('PASS: ten lines counted'); passed += 1
         else:
             print(f'FAIL: ten lines counted — got {count}'); failed += 1
-        check('a table per project',       '## zz\n\n| z/t | file | verb |')
+        check('a table per project, its heading counting the items', '## zz — 16\n\n| z/t | file | needs this |')
         check('unchecked in zone',         '| z | [ideas.md](../../zz/zone/ideas.md) | 2 open |')
         check('unchecked in truth',        '| t | [rules.md](../../zz/truth/rules.md) | 1 open truth |')
         check('open pacs',                 '| t | [decisions.md](../../zz/truth/decisions.md) | decide 1 pac |')

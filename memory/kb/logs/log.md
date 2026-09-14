@@ -1,7 +1,14 @@
 # kb log
 
+## 14 September 2026
+
+- D: Edit_Filters.svelte renamed Edit_More.svelte, git recording the move, Edit.svelte, the map and the plan's step 10 naming it. Jonathan's decision in memory/ov/truth/decisions.md
+- D: the folded back links section in Back_Links.svelte, as Jonathan settled it: a band of accent a faint gap more than the usual folded height, reaching a fat gap down over the region's gap below the view, its line the thin one while folded and the heavy one while shown, the hairline at the band's middle. Jonathan's decision in memory/ov/truth/decisions.md
+- D: step 9: Preferences.ts reads the host's prefix off the customizations when asked, kb_ where no host set one. The map and adopt kb say so. Check clean at 540 files, 324 tests
+
 ## 13 September 2026
 
+- D: the back links moved from the label form's stack in Edit_Filters.svelte to the bottom of Edit.svelte, Back_Links drawing its own section there, and the count follows the steppers in Controls.svelte. Jonathan's decision in memory/ov/truth/decisions.md
 - D: rule_index, a third preference name, 0 by default, the steppers moving it and the form showing the db's rule at it, reads and gives picked, regex and label filled in, the added rule becoming the one shown. Jonathan's decision in memory/ov/truth/decisions.md
 - D: the rules form on four rows in D_Rules.svelte, reversed: steppers at the far left of the first row, walking the rules the db holds with the one stepped to filling the form, then the kind/tag control and add at the right, the reads control centered on the second, then the regex and the label. D_Repair's two buttons at --font-tiny and D_Preferences' two labels at --font, both having named -font-control, one dash, no such variable. Jonathan's decision in memory/ov/truth/decisions.md
 - D: the rules form's two dropdowns are segmented controls in D_Rules.svelte, drawn as the kinds row's, each a single choice remembered through two new preference names, rule_reads and rule_gives, location and kind until changed, and every rules element at --font-tiny, Jonathan's decision in memory/ov/truth/decisions.md

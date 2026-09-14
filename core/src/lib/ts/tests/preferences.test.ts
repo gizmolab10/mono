@@ -10,6 +10,8 @@ function fake_storage() {
 		getItem: (key: string) => held.get(key) ?? null,
 		setItem: (key: string, value: string) => { held.set(key, value); },
 		removeItem: (key: string) => { held.delete(key); },
+		get length() { return held.size; },
+		key: (at: number) => [...held.keys()][at] ?? null,
 	};
 }
 
@@ -65,6 +67,32 @@ describe('preferences', () => {
 		expect(storage.held.get('x.count')).toBe('7');
 		const fresh = preferences.persistent<number>('other', 9);
 		expect(get(fresh)).toBe(9);
+	});
+
+	it('reads its prefix through a function, when handed one', () => {
+		const storage = fake_storage();
+		let prefix = 'kb_';
+		const preferences = new Preferences(() => prefix, storage);
+		preferences.write('a', 1);
+		prefix = 'ai_';
+		preferences.write('a', 2);
+		expect([...storage.held.keys()]).toEqual(['kb_a', 'ai_a']);
+		expect(preferences.read('a')).toBe(2);
+	});
+
+	it('adopts what an old prefix held, keeps its own where it has one, and drops the old keys', () => {
+		const storage = fake_storage();
+		storage.setItem('ov_sorts', '[1]');
+		storage.setItem('ov_open', 'true');
+		storage.setItem('ai_open', 'false');
+		storage.setItem('kb_other', '3');
+		const preferences = new Preferences('ai_', storage);
+		expect(preferences.adopt('ov_')).toBe(1);
+		expect(storage.held.get('ai_sorts')).toBe('[1]');
+		expect(storage.held.get('ai_open')).toBe('false');
+		expect([...storage.held.keys()].filter((key) => key.startsWith('ov_'))).toEqual([]);
+		expect(storage.held.get('kb_other')).toBe('3');
+		expect(new Preferences('ai_', null).adopt('ov_')).toBe(0);
 	});
 
 	it('answers nothing and saves nothing with no storage at all', () => {

@@ -2,6 +2,10 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 14 September 2026
+
+- D: zone/architecture/libraries.md rule 2 allows a second, smaller reach for a library whose modules read a fact at import, ai's Convert_Preferences.ts for kb, named in the test with the bridge
+
 ## 13 September 2026
 
 - D: big picture renamed unfinished: the output file, the truth, the script and its test moved by git, the shorthand row, the index, the proposal's Built line and the two lexicons' author examples reworded. Decision in truth/decisions.md

@@ -2,6 +2,25 @@
 
 What's been finished, newest first.
 
+## 2026-09-14 — the back links at the foot
+
+The back links left the label form's stack for the bottom of the edit view, a section of their own drawn by Back_Links, and the count follows the steppers in the controls row. Folded, the section is a band of accent at the very foot, reaching down over the gap the region holds below the view, its line the thin one; every folded section's black line is held in by --gap-huge at each side, in core's Section and Stack alike. Section gained line_down_when_folded, unused after Jonathan settled the band by hand. Back_Links logs how many guides point at the open guide and whether the section is drawn, shown or folded, which answered why nothing showed: the section was folded, as remembered.
+
+### Verification
+
+- Headless: the section drawn for core's CLAUDE file shown and folded, the band's bottom on the region's edge, no page color under it, measured. kb clean at 540 files, 324 tests; core at 470 and 100; ai at 534.
+- Looked at by Jonathan, who settled the folded band's height, margin and line himself.
+
+## 2026-09-14 — every remembered value is ai's
+
+Step 9 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). kb's Preferences.ts reads the host's prefix off the customizations when asked, and core's Preferences takes a prefix or a function answering it and gains adopt, which moves every value saved under another prefix and drops the old keys. ai's Convert_Preferences.ts, imported by main.ts ahead of kb, sets kb's nine facts, the fill moved out of main.ts, then moves everything saved under ov_ under ai_: the second file reaching kb through its alias, for the customizations alone, which libraries.md's rule 2 and core_alias.test now allow by name.
+
+### Verification
+
+- Headless, after a reload with two values seeded under ov_: 28 keys, all under ai_, none under ov_, the seeded value read back, and show_details read at import.
+- core clean at 470 files, 100 tests. kb clean at 540 files, 324 tests. ai clean at 534 files, 15 tests, and it builds.
+- Not looked at in a browser by Jonathan.
+
 ## 2026-09-13 — ai reads its own db
 
 ai.db, made from ov.db through sqlite's backup less the 23 rows under memory/filter tree, a folder a commit removed, which the list drew struck through. ports.json names ai.db under ai and no db under ov, PLACE is ai.db and the dispatcher's default host is ai, so ov's frozen page reads ai.db too. The dump is ai.sql and ov.sql is gone. The suites prove the hosts ai and mu, ov no longer. Decision in [decisions](../../truth/decisions.md).

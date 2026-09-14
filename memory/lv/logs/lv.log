@@ -5,3 +5,15 @@ $ vite
 
   ➜  Local:   http://localhost:5179/
   ➜  Network: use --host to expose
+10:12:20 AM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/utilities/Preferences.ts
+10:37:08 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+10:47:12 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+10:47:35 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+10:50:58 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+11:01:02 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+11:01:24 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+11:01:26 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+11:01:45 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+11:01:48 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+11:01:55 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
+11:01:58 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css

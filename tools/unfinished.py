@@ -104,13 +104,20 @@ def main():
     today = datetime.date.today().isoformat()
     lines = ['# Unfinished', '',
              f'{len(rows)} files hold unfinished work, as of {today}.']
-    # One table per project. The file is a link, relative to where unfinished.md sits:
-    # memory/shared/zone/. A root file's z/t cell is empty.
+    # How many items each project's needs-this column names: the numbers in its clauses added
+    # up, a clause with no number, "dissolve the drive", counting one.
+    quantity = {}
+    for project, _letter, _shown, _relative, clauses in rows:
+        for clause in clauses:
+            numbers = [int(n) for n in re.findall(r'\d+', clause)]
+            quantity[project] = quantity.get(project, 0) + (sum(numbers) if numbers else 1)
+    # One table per project, its heading carrying the quantity. The file is a link, relative to
+    # where unfinished.md sits: memory/shared/zone/. A root file's z/t cell is empty.
     current = None
     for project, letter, shown, relative, clauses in rows:
         if project != current:
             current = project
-            lines += ['', f'## {project}', '', '| z/t | file | verb |', '| --- | --- | --- |']
+            lines += ['', f'## {project} ({quantity[project]})', '', '| z/t | file | needs this |', '| --- | --- | --- |']
         href = quote(f'../../{project}/{relative}')
         lines.append(f'| {letter or ""} | [{shown}]({href}) | ' + ' and '.join(clauses) + ' |')
     with open(OUT, 'w', encoding='utf-8') as f:

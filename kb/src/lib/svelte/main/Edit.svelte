@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { w_search_at, w_search_for } from '../../ts/managers/Operations';
 	import { report_gaps_below_lines, report_line_spacing } from '../../ts/common/Core';
-	import { type File } from '../../ts/types/File';
+	import { key_of, type File } from '../../ts/types/File';
 	import Edit_Markdown from '../content/Edit_Markdown.svelte';
+	import Back_Links from '../content/Back_Links.svelte';
 	import { w_search_text } from '../../ts/managers/Filters';
-	import Edit_Filters from '../filter/Edit_Filters.svelte';
+	import Edit_More from '../filter/Edit_More.svelte';
 	import { T_Hit_Target } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/common/Core';
 	import Search from '../filter/Search.svelte';
@@ -112,7 +113,7 @@
 </script>
 
 <div class='viewer'>
-	<Edit_Filters {name} {guide} {tags} {page} {onclose} onshow={say} {edit_filter}
+	<Edit_More {name} {guide} {tags} {page} {onclose} onshow={say} {edit_filter}
 		bind:find bind:text={text_of_file} bind:folded={filters_folded} />
 	{@render operation_view?.(guide, width, height)}
 	<Edit_Markdown {name} {address} {guide} onshow={say}
@@ -125,6 +126,9 @@
 		<div class='view-note-line'
 			use:hit_target={{ id: 'editor.note', type: T_Hit_Target.section }}>{note}</div>
 	{/if}
+	<!-- Which files point at this one, at the very bottom, above the status line when that is
+	     showing. A section of its own, drawn only where something points here. -->
+	<Back_Links key={key_of(guide)} {name} />
 </div>
 
 <style>

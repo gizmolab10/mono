@@ -2,6 +2,10 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 14 September 2026
+
+- D: step 9 built, the preferences prefix, as the plan's Built note says. Proposals 9a to 9d built as written, Convert_Preferences the name. In the work journal
+
 ## 10 September 2026
 
 - D: knowledge bases phase 2 built, short of the removal. dispatcher.py answers /scan (every listed file's kind and tags into the db as hand labels, run once on the real db: 485 files, 321 kinds, 780 tags, 152 with no block), /all-labels (every label in one answer) and /strip-labels (built, guarded by a confirm word, not run). database.py gained replace_labels, record_file and all_labels. Files.ts asks for every label beside the listing and takes kind and tags from the db, never the block, and writes the db first on any change, through Labels.ts's label_changes, which is tested. Edit_Filters.svelte and Edit_Markdown.svelte write the db before the file. The block is still written whole until the removal runs. 49 checks in test_database.py, 35 in test_dispatcher.py, ov 339 tests, check clean at 532 files
