@@ -1,16 +1,12 @@
 <script lang='ts'>
-	import { w_search_at, w_search_for } from '../../ts/managers/Operations';
 	import { report_gaps_below_lines, report_line_spacing } from '../../ts/common/Core';
 	import { key_of, type File } from '../../ts/types/File';
 	import Back_Links from '../content/Back_Links.svelte';
-	import { w_search_text } from '../../ts/managers/Filters';
 	import Edit_More from '../filter/Edit_More.svelte';
 	import { T_Hit_Target } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/common/Core';
-	import Search from '../filter/Search.svelte';
 	import { hits } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
-	import { get } from 'svelte/store';
 	import type { Snippet } from 'svelte';
 
 	// Show one file. This is the frame: the things stacked in it — looking through the file, what
@@ -23,26 +19,20 @@
 	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the file and call back.
 	//
-	// The host's two snippets for the frame: its edit filter section, given the file, its words and
-	// a call that sets them, which the label form renders above the kinds row, and its operation
-	// view, given the file, the room the frame has, the words and a call that sets them, a call
-	// that takes the html for the search, and calls for drawn, redrawn and a note, rendered
-	// below the label form where the words were.
-	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {}, width = 0, height = 0, edit_filter, operation_view }:
+	// The host's three snippets for the frame: its edit filter section, given the file, its words
+	// and a call that sets them, which the label form renders above the kinds row; its search row,
+	// given the file's name, which the label form renders first; and its operation view, given the
+	// file, the room the frame has, the words and a call that sets them, and a call for a note,
+	// rendered below the label form where the words were. The search and the drawer are wired to
+	// each other by the host since step 13 of the plan, so the frame holds neither.
+	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {}, width = 0, height = 0, edit_filter, search_row, operation_view }:
 		{ name: string; address: string; tags: string[]; guide: File; onclose: () => void; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void;
-		  width?: number; height?: number; edit_filter?: Snippet<[File, string, (words: string) => void]>; operation_view?: Snippet<[File, number, number, string, (words: string) => void, (page: HTMLElement | null) => void, () => void, () => void, (message: string) => void]> } = $props();
+		  width?: number; height?: number; edit_filter?: Snippet<[File, string, (words: string) => void]>; search_row?: Snippet<[string]>; operation_view?: Snippet<[File, number, number, string, (words: string) => void, (message: string) => void]> } = $props();
 
 	// The whole file, held only while it is on screen. Two of the three below write to it: the
 	// labels at the top, and a piece of the words being changed. One place holds it, so neither
 	// can be working from a stale copy.
 	let text_of_file = $state('');
-
-	// The drawn words, so a search can look inside them.
-	let page = $state<HTMLElement | null>(null);
-
-	// The search is held so the frame can reach it: a file just drawn, or drawn again, has to be
-	// told to look through the new words rather than the ones it highlighted before.
-	let find: ReturnType<typeof Search> | null = $state(null);
 
 	// Whether the label form is put away. Folded, it stands flat, so the words below draw no line
 	// of their own — the form's own line is already standing there.
@@ -90,34 +80,12 @@
 		hits.defer_recalibrate();
 	});
 
-	/**
-	 * A file has just been read and drawn. Anything highlighted belonged to the drawing before
-	 * it, and the words in the field are looked for again in this one — so coming back from the
-	 * list, or from a refresh, lands where the search left off. A file with fewer places than
-	 * that wraps back into range on its own.
-	 */
-	function drawn() {
-		find?.forget();
-		// A dead link picked out of a report asks for its own words to be highlighted here.
-		const wanted = get(w_search_for);
-		if (wanted !== '') {
-			w_search_for.set('');
-			w_search_text.set(wanted);
-			requestAnimationFrame(() => find?.light_hit(0));
-			return;
-		}
-		if (get(w_search_text) !== '') {
-			const was_at = get(w_search_at);
-			requestAnimationFrame(() => find?.light_hit(was_at));
-		}
-	}
-
 </script>
 
 <div class='viewer'>
-	<Edit_More {name} {guide} {tags} {page} {onclose} onshow={say} {edit_filter}
-		bind:find bind:text={text_of_file} bind:folded={filters_folded} />
-	{@render operation_view?.(guide, width, height, text_of_file, (words) => { text_of_file = words; }, (drawn_page) => { page = drawn_page; }, drawn, () => find?.forget(), say)}
+	<Edit_More {name} {guide} {tags} {onclose} onshow={say} {edit_filter} {search_row}
+		bind:text={text_of_file} bind:folded={filters_folded} />
+	{@render operation_view?.(guide, width, height, text_of_file, (words) => { text_of_file = words; }, say)}
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds.
 	     Registered while it is showing, as a section, so the manager knows the cursor is on it and
 	     nothing underneath answers instead. -->

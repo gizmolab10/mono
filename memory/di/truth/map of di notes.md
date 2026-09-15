@@ -12,7 +12,7 @@ Moved whole into `truth/` on 7 September 2026, folders and all: `project/` (the 
 
 ## work/ — active tracking
 
-- `now/` — the current working files: [code debt.md](../../work/now/code%20debt.md) — whose finished half sits under its own `done` heading —, [handoff.md](../../work/now/handoff.md), [work journal.md](../../work/now/work%20journal.md), [working features.md](../../work/now/working%20features.md), `learn.md`, [revisit.di.md](../../work/now/revisit.di.md), and the loose notes beside them.
+- `now/` — the current working files: [code debt.md](../../work/now/tasks%20%E2%80%94%20di.md) — whose finished half sits under its own `done` heading —, [handoff.md](../../work/now/handoff.md), [work journal.md](../../work/now/work%20journal.md), [working features.md](../../work/now/working%20features.md), `learn.md`, [revisit.di.md](../../work/now/revisit.di.md), and the loose notes beside them.
 - `next/` — planned work not yet started.
 - `milestones/` — work bundled into named milestones, open and done.
 - `done/` — finished notes and historical sessions.
@@ -21,4 +21,4 @@ Moved whole into `truth/` on 7 September 2026, folders and all: `project/` (the 
 
 ## tools/
 
-- [sync-next.mjs](../../tools/sync-next.mjs) — reads the first unchecked item out of [work/now/code debt.md](../../work/now/code%20debt.md).
+- [sync-next.mjs](../../tools/sync-next.mjs) — reads the first unchecked item out of [work/now/code debt.md](../../work/now/tasks%20%E2%80%94%20di.md).

@@ -94,7 +94,7 @@ Nothing new is written here; what lives on has entered `truth/` (the lexicon, ac
 
 - [editing](design/editing.md) — the plan we followed for changing a guide from inside the app.
 - `design/` (moved from `notes/guides/design/` 7 September 2026) — what the app is for and how it got here: [okf — is it worth it?](design/okf%20—%20is%20it%20worth%20it?.md), the OKF and its midway review, [ov - goals.md](design/ov%20-%20goals.md), [compose an email.md](design/compose%20an%20email.md), [rewrite guides.md](../zone/work/soon/rewrite%20guides.md).
-- [work/work journal.md](../zone/work/work%20journal.md) — what's been finished, newest first.
+- [work/work journal.md](../logs/work%20journal.md) — what's been finished, newest first.
 - [work/current context.md](../zone/work/current%20context.md) — what the code cannot say for itself.
 - [work/AI memory redesign.md](../zone/work/AI%20memory%20redesign.md) — the rationale behind the memory system; [handbook.md](../../shared/truth/handbook.md) is its law.
 - [hits manager](../zone/work/soon/hits%20manager.md) — the reckoning behind the one manager that answers the cursor.

@@ -1,11 +1,8 @@
-import { KIND_UNTIL_TOLD, NEEDS_A_LOOK, TAG_WHEN_NEW, blank_file, free_name, has_labels, kind_from_where, label_block, label_changes, labels_for, labels_from, moment_written_out, with_labels_added, with_labels_replaced } from '../utilities/Labels';
+import { blank_file, free_name, label_changes, moment_written_out } from '../utilities/Labels';
 import { describe, expect, it } from 'vitest';
-import { customizations } from '../common/Customizations';
 
-// The tag list is the host's since step 7 of the plan, so the words these cases read off blocks are
-// declared here, a list of the library's own.
-customizations.tags = ['journal', 'notes', 'now', 'proposal', 'prose', 'setup', 'soon', 'stale'];
-import type { Labels } from '../types/File';
+// What kb still does with labels since step 12 of the plan, when composing labels went to ai
+// with its cases, and the label block code, dead since 10 September 2026, went with its five.
 
 describe('the writes that take a file\'s kind and tags in the db from what they were to what they are', () => {
 	it('puts on what is new and takes off what is gone', () => {
@@ -27,192 +24,13 @@ describe('the writes that take a file\'s kind and tags in the db from what they 
 	});
 });
 
-// A file added since the app last looked carries no labels at all. One is
-// composed from its own words and marked for a person to look at.
-
-const TODAY = '2026-08-06';
-
-describe('labeling a file that has none', () => {
-	it('knows a file that is already labeled from one that is not', () => {
-		expect(has_labels('---\nkind: rule\n---\n\n# a title')).toBe(true);
-		expect(has_labels('# a title\n\nwords')).toBe(false);
-		expect(has_labels('---\nkind: rule\n')).toBe(false);       // opened but never closed
-		expect(has_labels('')).toBe(false);
-	});
-
-	it('takes the title from the first heading', () => {
-		const { labels } = labels_for('# design trade-offs\n\nwhat was weighed.', 'research.md', TODAY);
-		expect(labels.title).toBe('design trade-offs');
-	});
-
-	it('falls back to the file\'s own name, tidied, when there is no heading', () => {
-		const { labels } = labels_for('just words', 'pitch - aaron good.md', TODAY);
-		expect(labels.title).toBe('Pitch   aaron good');
-	});
-
-	it('takes the description from the first thing the file says, to its first full stop', () => {
-		const { labels } = labels_for('# a title\n\nWhat ji should become. Nothing here is built yet.', 'x.md', TODAY);
-		expect(labels.description).toBe('What ji should become');
-	});
-
-	it('walks past headings, rules, lists, quotes and code to find that', () => {
-		const text = '# a title\n\n---\n\n- a list\n\n> a quote\n\n```\ncode. not this\n```\n\nThe real words.';
-		expect(labels_for(text, 'x.md', TODAY).labels.description).toBe('The real words');
-	});
-
-	it('leaves the description empty when the file says nothing plain', () => {
-		expect(labels_for('# only a title', 'x.md', TODAY).labels.description).toBe('');
-	});
-
-	it('marks every one as the one being worked on and for a person to look at, and starts at one kind', () => {
-		const { labels, tags } = labels_for('# a title\n\nwords.', 'x.md', TODAY);
-		expect(tags).toEqual([TAG_WHEN_NEW, NEEDS_A_LOOK]);
-		expect(labels.kind).toBe(KIND_UNTIL_TOLD);
-		expect(labels.date).toBe(TODAY);
-	});
-});
-
-describe('what the folders above a file say it is', () => {
-	it('says nothing, whatever the folder is called', () => {
-		// A designs folder used to make its files designs. That kind is gone, so every one of
-		// these falls back and the stale mark asks for a real answer.
-		expect(kind_from_where('designs/roadmap.md')).toBe(KIND_UNTIL_TOLD);
-		expect(kind_from_where('design/constants.md')).toBe(KIND_UNTIL_TOLD);
-		expect(kind_from_where('project/design/notes.md')).toBe(KIND_UNTIL_TOLD);
-		expect(kind_from_where('develop/add a file.md')).toBe(KIND_UNTIL_TOLD);
-		expect(kind_from_where('work/handoff.md')).toBe(KIND_UNTIL_TOLD);
-	});
-
-	it('reaches the composed labels', () => {
-		expect(labels_for('# a title\n\nwords.', 'x.md', TODAY, 'design/x.md').labels.kind).toBe(KIND_UNTIL_TOLD);
-	});
-});
-
-describe('putting a composed block at the top of a file', () => {
-	it('leaves the file\'s own words exactly as they are', () => {
-		const text = '# a title\n\nWords.\n';
-		const done = with_labels_added(text, 'x.md', TODAY);
-		expect(done.endsWith(text)).toBe(true);
-		expect(done.startsWith('---\ntitle: "a title"\n')).toBe(true);
-	});
-
-	it('composes the kind and the tags for the db, and writes neither into the file', () => {
-		const text = '# a title\n\nWords.\n';
-		const { labels, tags } = labels_for(text, 'x.md', TODAY);
-		expect(labels.kind).toBe(KIND_UNTIL_TOLD);
-		expect(tags).toEqual([TAG_WHEN_NEW, NEEDS_A_LOOK]);
-		const done = with_labels_added(text, 'x.md', TODAY);
-		expect(done).not.toContain('kind:');
-		expect(done).not.toContain('tags:');
-	});
-
-	it('hands back a file that already has labels, untouched', () => {
-		const text = '---\nkind: rule\ntitle: "A"\n---\n\n# a title';
-		expect(with_labels_added(text, 'x.md', TODAY)).toBe(text);
-	});
-});
-
-// The labels are the one part of a guide the app itself reads, so writing them back
-// has to come out exactly as a guide's top is written by hand.
-
-const full: Labels = {
-	kind        : 'howto',
-	title       : 'Adding a Guide',
-	description : 'What a new guide needs.',
-	use_when    : [],
-	date        : '2026-08-02',
-	labeled     : true,
-};
-
-describe('writing the labels', () => {
-	it('writes them in their settled order, fenced above and below', () => {
-		expect(label_block(full, ['notes', 'setup'])).toBe([
-			'---',
-			'title: "Adding a Guide"',
-			'description: "What a new guide needs."',
-			'date: 2026-08-02',
-			'---',
-		].join('\n'));
-	});
-
-	it('writes neither the kind nor the tags, which live in the db', () => {
-		expect(label_block(full, ['notes', 'setup'])).not.toContain('kind:');
-		expect(label_block(full, ['notes', 'setup'])).not.toContain('tags:');
-	});
-
-	it('keeps a quote mark inside a title from breaking the line', () => {
-		expect(label_block({ ...full, title: 'The "Big" One' }, [])).toContain('title: "The \\"Big\\" One"');
-	});
-});
-
-describe('putting the labels back into a file', () => {
-	const file = ['---', 'kind: rule', 'title: "Old"', 'description: "Was."', 'tags: [prose]', 'date: 2026-01-01', '---', '', '# Old', '', 'words'].join('\n');
-
-	it('swaps the block and leaves every word below it alone', () => {
-		const after = with_labels_replaced(file, full, ['notes']);
-		expect(after).toContain('title: "Adding a Guide"');
-		expect(after.endsWith('\n\n# Old\n\nwords')).toBe(true);
-		expect(after).not.toContain('title: "Old"');
-	});
-
-	it('gives a file with no labels a block at the very top', () => {
-		const bare = '# Just words\n\nhere';
-		const after = with_labels_replaced(bare, full, ['notes']);
-		expect(after.startsWith('---\ntitle: "Adding a Guide"')).toBe(true);
-		expect(after.endsWith('\n# Just words\n\nhere')).toBe(true);
-	});
-
-	it('leaves a file whose labels never close alone below the block it adds', () => {
-		const odd = '---\nkind: rule\nno closing fence';
-		const after = with_labels_replaced(odd, full, []);
-		expect(after).toContain('no closing fence');
-		expect(after.startsWith('---\ntitle: "Adding a Guide"')).toBe(true);
-	});
-
-	it('changes nothing when the labels are the same and the block already carries no kind or tags', () => {
-		const stripped = ['---', 'title: "Old"', 'description: "Was."', 'date: 2026-01-01', '---', '', '# Old', '', 'words'].join('\n');
-		const same = with_labels_replaced(stripped, { kind: 'rule', title: 'Old', description: 'Was.', use_when: [], date: '2026-01-01', labeled: true }, ['prose']);
-		expect(same).toBe(stripped);
-	});
-
-	it('takes the kind and tags lines out of a block that still carries them', () => {
-		const after = with_labels_replaced(file, { kind: 'rule', title: 'Old', description: 'Was.', use_when: [], date: '2026-01-01', labeled: true }, ['prose']);
-		expect(after).not.toContain('kind: rule');
-		expect(after).not.toContain('tags: [prose]');
-		expect(after.endsWith('\n\n# Old\n\nwords')).toBe(true);
-	});
-});
-
 // A guide made from nothing: labeled before it holds a word, so it never shows as unlabeled
 // and never needs a person to go and label it.
-
-// The occasions a guide names. Unlike the tags there is no closed list — they are phrases, kept
-// exactly as written — and a guide that names none carries no line for them at all.
-
-describe('the occasions a guide names', () => {
-	it('writes the line only when the guide names any', () => {
-		expect(label_block(full, ['prose'])).not.toContain('use_when');
-		expect(label_block({ ...full, use_when: ['every session', 'settling'] }, ['prose']))
-			.toContain('use_when: [every session, settling]');
-	});
-
-	it('reads them back off the one line, and off names below a bare label', () => {
-		const one_line = '---\nkind: howto\ntitle: "T"\ndescription: "D"\nuse_when: [every session, settling]\ntags: [prose]\ndate: 2026-08-27\n---\n# T\n';
-		expect(labels_from(one_line, 'x.md').labels.use_when).toEqual(['every session', 'settling']);
-		const below = '---\nkind: howto\ntitle: "T"\ndescription: "D"\nuse_when:\n  - every session\n  - settling\ntags: [prose]\ndate: 2026-08-27\n---\n# T\n';
-		expect(labels_from(below, 'x.md').labels.use_when).toEqual(['every session', 'settling']);
-	});
-
-	it('gives a guide that names none an empty list', () => {
-		const bare = '---\nkind: howto\ntitle: "T"\ndescription: "D"\ntags: [prose]\ndate: 2026-08-27\n---\n# T\n';
-		expect(labels_from(bare, 'x.md').labels.use_when).toEqual([]);
-	});
-});
 
 describe('a brand new guide', () => {
 	it('is its own heading and nothing else, its labels being the db\'s', () => {
 		expect(blank_file('unnamed')).toBe('# unnamed\n');
-		expect(has_labels(blank_file('a second try'))).toBe(false);
+		expect(blank_file('a second try')).not.toContain('---');
 	});
 
 	it('keeps a quote mark in the name as it is', () => {
@@ -255,38 +73,5 @@ describe('a moment written out for reading', () => {
 	it('says midnight and midday as twelve, never as nothing', () => {
 		expect(moment_written_out(new Date(2026, 5, 2, 0, 0))).toBe('2 June, 2026 at 12:00 AM');
 		expect(moment_written_out(new Date(2026, 5, 2, 12, 0))).toBe('2 June, 2026 at 12:00 PM');
-	});
-});
-
-// The tags a file names, in either of the two structures one can be written in. This app writes them
-// all on one line; Obsidian writes them one to a line, and rewrites a file into that structure the
-// moment its tags are touched there.
-
-describe('reading the tags off a file', () => {
-	it('reads them from one line, in brackets', () => {
-		const text = ['---', 'kind: specify', 'tags: [journal, now, proposal]', '---', '# A'].join('\n');
-		expect(labels_from(text, 'a').tags).toEqual(['journal', 'now', 'proposal']);
-	});
-
-	it('reads them one to a line, under a bare label', () => {
-		const text = ['---', 'kind: specify', 'tags:', '  - journal', '  - now', '  - proposal', '---', '# A'].join('\n');
-		expect(labels_from(text, 'a').tags).toEqual(['journal', 'now', 'proposal']);
-	});
-
-	it('stops at the next label rather than reading on', () => {
-		const text = ['---', 'tags:', '  - now', 'date: 2026-08-17', '---', '# A'].join('\n');
-		const read = labels_from(text, 'a');
-		expect(read.tags).toEqual(['now']);
-		expect(read.labels.date).toBe('2026-08-17');
-	});
-
-	it('drops a name that is not on the closed list, keeping the rest', () => {
-		const text = ['---', 'tags:', '  - now', '  - invented', '  - proposal', '---', '# A'].join('\n');
-		expect(labels_from(text, 'a').tags).toEqual(['now', 'proposal']);
-	});
-
-	it('gives a file no tags where it names none', () => {
-		const text = ['---', 'kind: specify', 'tags:', '---', '# A'].join('\n');
-		expect(labels_from(text, 'a').tags).toEqual([]);
 	});
 });

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Feeds unfinished.py a made-up memory folder and reads what it writes.
-    python3 tools/test_unfinished.py"""
+"""Feeds code_debt.py a made-up memory folder and reads what it writes.
+    python3 tools/test_code_debt.py"""
 import os
 import subprocess
 import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SCRIPT = os.path.join(HERE, 'unfinished.py')
+SCRIPT = os.path.join(HERE, 'code_debt.py')
 
 
 def put(root, relative, text):
@@ -34,7 +34,7 @@ def main():
         put(memory, 'zz/archive/old.md', '- [ ] retired, never counted\n')
         put(memory, 'zz/zone/work/done/finished.md', '- [ ] finished by its folder, never counted\n')
         put(memory, 'shared/zone/placeholder.md', '# nothing\n')
-        out = os.path.join(memory, 'shared', 'zone', 'unfinished.md')
+        out = os.path.join(memory, 'shared', 'zone', 'code debt.md')
         count = subprocess.run([sys.executable, SCRIPT, memory, out], capture_output=True, text=True).stdout.strip()
         with open(out, encoding='utf-8') as f:
             body = f.read()
@@ -52,7 +52,7 @@ def main():
             print('PASS: ten lines counted'); passed += 1
         else:
             print(f'FAIL: ten lines counted — got {count}'); failed += 1
-        check('a table per project, its heading counting the items', '## zz — 16\n\n| z/t | file | needs this |')
+        check('a table per project, its heading counting the items', '## zz (16)\n\n| z/t | file | needs this |')
         check('unchecked in zone',         '| z | [ideas.md](../../zz/zone/ideas.md) | 2 open |')
         check('unchecked in truth',        '| t | [rules.md](../../zz/truth/rules.md) | 1 open truth |')
         check('open pacs',                 '| t | [decisions.md](../../zz/truth/decisions.md) | decide 1 pac |')

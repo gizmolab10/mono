@@ -3,6 +3,7 @@
 	import { w_viewed, w_can_back, w_can_forward, w_file_back, w_file_forward, w_file_site } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, read_file, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of } from '../../ts/types/File';
+	import { customizations } from '../../ts/common/Customizations';
 	import { files } from '../../ts/managers/Files';
 	import { hit_target } from '../../ts/common/Core';
 	import { svg_paths } from '../../ts/common/Core';
@@ -13,7 +14,8 @@
 	import { k } from '../../ts/common/Core';
 
 	// The controls row's right end, handed to panel, which draws the hamburger at the row's left
-	// and the host's name in its middle. Browsing, the dispatcher at the right starts over, and the
+	// and the host's name in its middle. Browsing, the host's open buttons come first, each opening
+	// one file in the editor, then the dispatcher at the right starts over, and the
 	// build number beyond it opens the notes. Editing, the way back to the list follows the
 	// hamburger, and the rest of the row is a section of its own — the steppers, the count, the
 	// folders, the file's name, and the four buttons — and the name yields to it.
@@ -216,6 +218,14 @@
 			{/if}
 		</div>
 	{:else}
+		<!-- The host's open buttons, at the left next to the hamburger: each opens one file in the
+		     editor, the file named by its key in the configuration. -->
+		{#each customizations.open_buttons as open (open.key)}
+			<button class='build-button'
+				use:hit_target={{ id: `controls.open.${open.title}`, onpress: () => { debug.log(`Open button "${open.title}" pressed: opening ${open.key}.`); open_view(open.key); }, tip: `open ${open.title}` }}>
+				{open.title}
+			</button>
+		{/each}
 		<span class='spacer'></span>
 		<!-- While it is starting over it answers nothing, so it hands the manager no press and no
 		     words — the same as being disabled, said the one way a target can say it. -->

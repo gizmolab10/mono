@@ -14,10 +14,13 @@ One object kb declares in its common folder, `customizations`, the name gallery,
 | kinds | the closed list of kinds, drawn in the kinds row | T_Kind in File.ts | the five, music dropped 13 September 2026 | music, images, text and video, four, decided 13 September 2026 |
 | tags | the closed list of tags | ALL_TAGS in File.ts | the 39 | jazz, classical, rock and hifi, four, decided 13 September 2026 |
 | tag_areas | the tags gathered into areas, each folding its tags away | TAG_AREAS in Tag_Areas.ts | the ten | one or two, 29d's question |
+| kind_when_new | the kind a new or unlabeled file starts with, since step 12 | KIND_UNTIL_TOLD in Labels.ts, analyze | analyze | undecided |
+| tag_when_new | the tag a new or unlabeled file starts with, since step 12 | TAG_WHEN_NEW in Labels.ts, now | now | undecided |
 | hierarchies | the hierarchies the list offers, folder first, each naming the label it groups by and the order within a group, decided 13 September 2026, which music's track order needs | the folders alone, Files.ts | folder | folder, artist, album, name |
 | builds | the build notes table's text, which the build button opens | builds.md, read raw in App.svelte, Main.svelte in kb | ai's file | mu's file |
+| open_buttons | the open buttons at the left of the controls row while browsing, each a title and the key of the file it opens in the editor, since 14 September 2026 | none | code debt, memory/shared/zone/code debt.md | none |
 
-At step 5 ai fills name, host, hierarchies and builds, and since step 7, 13 September 2026, kinds, tags and tag_areas. prefix is read since step 9, 14 September 2026, set by ai's Convert_Preferences.ts ahead of kb. The edit filter section is handed since step 10, the same day, and the operation view since step 11, the same day.
+At step 5 ai fills name, host, hierarchies and builds, and since step 7, 13 September 2026, kinds, tags and tag_areas. prefix is read since step 9, 14 September 2026, set by ai's Convert_Preferences.ts ahead of kb. The edit filter section is handed since step 10, the same day, and the operation view since step 11, the same day. kind_when_new and tag_when_new are filled since step 12, 14 September 2026, and open_buttons since the same day. The search row is handed since step 13, 15 September 2026.
 
 ## the snippets
 
@@ -28,7 +31,8 @@ The host's App.svelte draws kb's page, Main.svelte, which draws panel and hands 
 | the browse filter section | nothing | among browse's filters above its list of files, after kb's search, collection, kind and tag rows, last, decided 13 September 2026 | nothing: ai's projects are its collections, which kb's collection filter narrows | nothing |
 | the edit filter section | the file, its words and a call handing changed words back | in the editor's label form, above kb's kinds row, where the information rows sit today; the slot moves up there from between the kinds and the tags at step 10 | the four rows, title and date, brief, use when, authors and from, Edit_More.svelte's today, the title's two tools with them; an element the rows mark with the class rides-the-line is put on the section's line, centered | nothing |
 | the details section | nothing | a section in the details column, below preferences and rules | repair, D_Repair.svelte | nothing |
-| the operation view | the file, the width and height kb's frame gives it, the words and a call handing changed words back, a call handing the html back, and calls for drawn, redrawn and a note, since step 11 | inside kb's editor frame, Edit.svelte, in Edit_Markdown's place | the drawn markdown, Edit_Markdown.svelte, the search and the back links staying kb's | the player |
+| the search row | the file's name, since step 13 | in the editor's label form, its first subsection, whose line, gap and fold word stay kb's | the field, the count and the steppers, Search.svelte, highlighting places in the html | nothing |
+| the operation view | the file, the width and height kb's frame gives it, the words and a call handing changed words back, and a call for a note, since step 11; until step 13 also a call handing the html back and calls for drawn and redrawn, which the host wires to its own search from then on | inside kb's editor frame, Edit.svelte, in Edit_Markdown's place | the drawn markdown, Edit_Markdown.svelte, the search and the back links staying kb's | the player |
 
 The authors and from rows stay kb's, since the sources table is kb's. The kinds row and the tag areas stay kb's, since every specialty has a kind and tags, and each becomes a kb component of its own at step 10.
 
@@ -57,7 +61,7 @@ export const customizations = {
 };
 ```
 
-Main.svelte's four snippet props, named for the four places above, browse_filter, edit_filter, details_section and operation_view: the two sections that take nothing, the edit filter section that takes the file, its words and a call handing changed words back since step 10, and the operation view that takes the file, the width and the height, and since step 11 the words, a call handing changed words back, a call handing the html back, and calls for drawn, redrawn and a note. Each is optional.
+Main.svelte's snippet props, four until step 13 and five from it, named for the places above, browse_filter, edit_filter, details_section and operation_view: the two sections that take nothing, the edit filter section that takes the file, its words and a call handing changed words back since step 10, and the operation view that takes the file, the width and the height, and since step 11 the words, a call handing changed words back, a call handing the html back, and calls for drawn, redrawn and a note. Each is optional.
 
 ## proof
 

@@ -13,4 +13,4 @@ date: 2026-09-10
 
 Its memory is `memory/panel/` — the index, the log, and `zone/ideas.md`. Everything it takes from core arrives through `common/Core.ts`, the only file that reaches through the `core` alias. `Customizations.ts` holds the name.
 
-Past mistakes never to repeat, this project's own, are in `memory/panel/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.
+Past mistakes never to repeat, this project's own, are in `memory/panel/logs/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/logs/learn.md`.

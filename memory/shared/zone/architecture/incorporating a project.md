@@ -29,13 +29,13 @@ panel is the three regions together — the controls row, the details column, th
 
 ## Not covered
 
-ov. ov's own four hold 980 lines that panel does not, and the way ov incorporates panel is an open proposal in [proposals](proposals.md). These steps are for a host whose `App.svelte` draws a line or nothing.
+ov. ov's own four hold 980 lines that panel does not, and the way ov incorporates panel is an open proposal in [proposals](memory/ov/logs/proposals.md). These steps are for a host whose `App.svelte` draws a line or nothing.
 
 ## Importing
 
 Proposal, 8 September 2026 — core, panel and gallery each become a library a host imports, the way every host imports core today: an alias, a bridge, one line per thing taken. panel and gallery import core themselves. The steps above, which take panel by file, are then replaced by importing it.
 
-gallery's half was built 9 September 2026: lv and mj import it, recorded under "lv and mj import gallery" in [proposals](../proposals.md). panel's half was built 10 September 2026: `Panel.svelte` is the page as a component, taking the name, whether the details column is shown with the toggle handed back, what goes in each region as snippets, and words for a status line. panel's own App.svelte is its smallest host, and gallery, mj and mu import it, each through its own `Panel.ts`. mu's and mj's own versions of the three region files are deleted, so the steps above are history: a host imports panel now, and takes nothing by file.
+gallery's half was built 9 September 2026: lv and mj import it, recorded under "lv and mj import gallery" in [proposals](memory/shared/logs/proposals.md). panel's half was built 10 September 2026: `Panel.svelte` is the page as a component, taking the name, whether the details column is shown with the toggle handed back, what goes in each region as snippets, and words for a status line. panel's own App.svelte is its smallest host, and gallery, mj and mu import it, each through its own `Panel.ts`. mu's and mj's own versions of the three region files are deleted, so the steps above are history: a host imports panel now, and takes nothing by file.
 
 **Where each is today.** core is imported through the `core` alias by ov, lv, gallery, mj, mu and panel. panel is imported by nobody: mu and mj hold their own version of its four files. gallery is lv's whole code duplicated and renamed, with no alias in lv and nothing lv imports from it. panel and gallery both already import core.
 

@@ -22,3 +22,5 @@ export { CHECKBOX, svg_paths } from 'core/ts/utilities/SVG_Paths';
 export { Direction } from 'core/ts/types/Angle';
 export { foldable_headings, hidden_pieces, top_headings } from 'core/ts/utilities/Sections';
 export { default as Separator } from 'core/svelte/support/Separator.svelte';
+export { default as Steppers } from 'core/svelte/support/Steppers.svelte';
+export { gap_below_line } from 'core/ts/utilities/Separator_Spacing';

@@ -376,7 +376,9 @@ export default class Hits {
 		this.drift_check = setInterval(() => {
 			const held = target.rect;
 			const drawn = Rect.rect_forElement(target.html_element);
-			if (!held || !drawn || !held.differs_from(drawn, k.thickness.faint)) { return; }
+			// Off by less than the thin line's thickness, a pixel and a tenth, answers the same presses,
+			// so it raises nothing: the alert is for a strip a press could miss.
+			if (!held || !drawn || !held.differs_from(drawn, k.thickness.normal)) { return; }
 			this.say_it_drifted(target, held, drawn);
 		}, k.timeout.drift);
 	}
@@ -408,9 +410,17 @@ export default class Hits {
 			`Something moved it and nothing told the hits manager. Whatever does the moving must say`,
 			`so — hits.recalibrate() for a change of shape, hits.shift_inside() for a scroll, or`,
 			`hits.defer_recalibrate() to wait for the drawing first.`,
-		].join('\n');
-		debug.log(words);
-		alert(words);
+		];
+		// Every box above the element, its height, its top and how far it is scrolled, said in the
+		// log alone: the mover is one of these, and a strip off by a fraction means a box above it
+		// changed height or scrolled by that fraction.
+		const above: string[] = [];
+		for (let up = element?.parentElement ?? null; up; up = up.parentElement) {
+			const box = up.getBoundingClientRect();
+			above.push(`    above    <${up.tagName.toLowerCase()} class="${up.className}"> ${box.height.toFixed(2)} tall at ${box.top.toFixed(2)}, scrolled ${up.scrollTop.toFixed(2)}`);
+		}
+		debug.log([...words, '', ...above].join('\n'));
+		alert(words.join('\n'));
 	}
 
 	private insert_into_rbush(target: S_Hit_Target, into_rbush: RBush<Target_RBRect>) {

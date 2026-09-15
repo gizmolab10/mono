@@ -7,3 +7,4 @@
 - [ ] [[using rules]]
 - [ ] better markdown editing
 - [ ] better rule editing
+- [ ] button to open 'unfinished'

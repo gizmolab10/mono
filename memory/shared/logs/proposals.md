@@ -4,7 +4,7 @@
 
 Dead, 10 September 2026. The aliases and the bridges stay: one alias per library in each host's tsconfig and vite config, one bridge per library in each host, and a library that imports a library does the same. An exports map saves one line per library at the cost of an extension on 110 bridge lines and an unproved link on Netlify.
 
-Proposal — the answer to the open thread in [handoff](handoff.md). What exists, read today: mono is one yarn workspace. The root package.json lists core, panel, gallery and the hosts, and yarn has linked core, gallery and panel into the root node_modules. Nothing is published outside mono: no package has an `exports` field, and the two live sites, lv and mj, are built by vite from the whole checkout on Netlify. So the handoff's first situation is the one that applies: no build step per library, no svelte-package, no Turborepo or Nx.
+Proposal — the answer to the open thread in [handoff](memory/shared/zone/work/done/handoff.md). What exists, read today: mono is one yarn workspace. The root package.json lists core, panel, gallery and the hosts, and yarn has linked core, gallery and panel into the root node_modules. Nothing is published outside mono: no package has an `exports` field, and the two live sites, lv and mj, are built by vite from the whole checkout on Netlify. So the handoff's first situation is the one that applies: no build step per library, no svelte-package, no Turborepo or Nx.
 
 **What mono does today.** Each host reaches a library through an alias written in three places, tsconfig's paths, vite's resolve, and a standalone vitest config where a host has one. Each library's own files reach core the same way, through whatever host is building them. Seven tsconfigs carry the core alias, two the gallery alias.
 
@@ -46,7 +46,7 @@ Decided and built 9 September 2026. gallery holds nothing of lv's. The `gallery`
 
 **Cost.** gallery: the removal, then the naming of each file. lv: two config lines, one bridge, one deletion per piece, forty or so. mj: two config lines, one bridge, its pictures, and the fitting of gallery's sidebar and renderer to panel's three regions or the other way.
 
-**Open.** gallery's own two questions come first. mj has two layouts on offer, panel's three regions and gallery's sidebar beside a renderer, and one must go. Where mj's pictures live, since lv's gallery truth names the repo today and remote storage as the alternative. Whether Router, Parser and Persistence are gallery's or the host's, weighed in [gallery's proposals](../../gallery/zone/proposals.md). The library pac in truth/decisions.md, undecided, is answered for gallery by this: a project made to be taken.
+**Open.** gallery's own two questions come first. mj has two layouts on offer, panel's three regions and gallery's sidebar beside a renderer, and one must go. Where mj's pictures live, since lv's gallery truth names the repo today and remote storage as the alternative. Whether Router, Parser and Persistence are gallery's or the host's, weighed in [gallery's proposals](../../gallery/logs/proposals.md). The library pac in truth/decisions.md, undecided, is answered for gallery by this: a project made to be taken.
 
 ## a name for the outer div, for every project (9 September 2026)
 

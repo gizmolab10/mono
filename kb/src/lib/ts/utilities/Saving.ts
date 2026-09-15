@@ -12,45 +12,43 @@ import { k } from '../common/Core';
 
 export type Saved = { ok: boolean; why: string };
 
-// A collection's notes folder, counting from the top of the repo. Every one sits inside the
-// memory system, under its project's folder there; the shared collection's sits under shared.
-function notes_of(bundle: T_Bundle): string {
-	return `memory/${bundle === T_Bundle.mono ? 'shared' : bundle}/notes`;
-}
-
 /**
- * The memory system, at the top of the repo. A file in it that is not inside a collection's notes
- * folder belongs to no collection, so the shared one carries it, and its path is the whole way
- * there.
+ * The memory system, at the top of the repo. A file in it is the memory collection's, and its
+ * path is the whole way there below memory.
  */
 const MEMORY = 'memory/';
 
-// Where a file sits, counting from the top of the repo. A design's path already begins with
-// "designs" and a work note's with "work", so those two hang straight off the notes folder;
-// everything else is under guides.
+/**
+ * A collection's own folder, counting from the top of the repo: the repo itself for mono, and
+ * the project's folder for every other collection. Its CLAUDE file sits there. The notes layout,
+ * a notes folder under memory for every collection, left here 14 September 2026: no file has sat
+ * in one since the memory system took the guides in.
+ */
+function top_of(bundle: T_Bundle): string {
+	return bundle === T_Bundle.mono ? '' : bundle;
+}
+
+// Where a file sits, counting from the top of the repo: its path below its collection's own
+// folder. The ending is added where the path has none, and kept as spelled where it has one, so
+// CLAUDE.MD stays CLAUDE.MD.
 export function file_path_of(bundle: T_Bundle, path: string): string {
-	if (path.split('/').pop()?.toLowerCase() === 'claude.md') {
-		return bundle === T_Bundle.mono ? path : `${bundle}/${path}`;
-	}
-	const ending = path.endsWith('.md') ? path : `${path}.md`;
-	if (bundle === T_Bundle.memory) { return `memory/${ending}`; }
-	const beside = ending.startsWith('designs/') || ending.startsWith('work/');
-	const inside = beside ? ending : `guides/${ending}`;
-	return `${notes_of(bundle)}/${inside}`;
+	const ending = path.toLowerCase().endsWith('.md') ? path : `${path}.md`;
+	if (bundle === T_Bundle.memory) { return `${MEMORY}${ending}`; }
+	const top = top_of(bundle);
+	return top === '' ? ending : `${top}/${ending}`;
 }
 
 /**
  * The other way round: which collection a file belongs to, and where it sits inside that
- * collection, read off where it stands in the repo. Which work notes exist is the dispatcher's
- * plugin's rule since step 6 of the plan, so a work note here is one the listing gave. Anything
- * that is not a guide reads as nothing.
+ * collection, read off where it stands in the repo. Which files exist is the dispatcher's
+ * plugin's rule since step 6 of the plan, so a path here is one the listing gave. Anything that
+ * is not markdown reads as nothing.
  */
 export type File_Site = { bundle: T_Bundle; path: string; is_design: boolean };
 
 export function site_of_file(where: string): File_Site | null {
 	// A collection's CLAUDE file sits at its very top, spelled CLAUDE.MD or CLAUDE.md — so
 	// this stands before the lowercase .md gate, which would turn the uppercase spelling away.
-	// It hangs off the collection's own top folder, beside guides, designs and work.
 	const steps = where.split('/');
 	if (steps[steps.length - 1].toLowerCase() === 'claude.md') {
 		if (steps.length === 1) { return { bundle: T_Bundle.mono, path: steps[0], is_design: false }; }
@@ -59,30 +57,18 @@ export function site_of_file(where: string): File_Site | null {
 		return null;
 	}
 	if (!where.endsWith('.md')) { return null; }
-	// A collection's notes folder sits inside memory, so it is asked for before memory's own
-	// catch-all: a guide keeps its collection and its path inside guides.
-	for (const bundle of Object.values(T_Bundle)) {
-		const notes = `${notes_of(bundle)}/`;
-		if (!where.startsWith(notes)) { continue; }
-		const inside = where.slice(notes.length);
-		if (inside.startsWith('guides/'))  { return { bundle, path: inside.slice('guides/'.length), is_design: false }; }
-		if (inside.startsWith('designs/')) { return { bundle, path: inside, is_design: true }; }
-		if (inside.startsWith('work/'))    { return { bundle, path: inside, is_design: false }; }
-		return null;
-	}
 	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.memory, path: where.slice(MEMORY.length), is_design: false }; }
-	return null;
+	// Below a project's own folder, the project's; at the top of the repo, mono's.
+	const owner = steps.length > 1 ? Object.values(T_Bundle).find((one) => one === steps[0]) : undefined;
+	if (owner) { return { bundle: owner, path: steps.slice(1).join('/'), is_design: false }; }
+	return { bundle: T_Bundle.mono, path: where, is_design: false };
 }
 
-// The folder a file sits in, counting from the top of the repo. A collection's own top folder
-// has no path inside it, so the guides folder itself is the answer. The designs folder and the
-// work folder stand beside files rather than inside it.
+// The folder a file sits in, counting from the top of the repo: the collection's own folder,
+// then the folder's path inside it. mono's own folder is the repo, which has no name here.
 export function folder_path_of(bundle: T_Bundle, folder_path: string): string {
-	if (bundle === T_Bundle.memory) { return folder_path === '' ? 'memory' : `memory/${folder_path}`; }
-	const notes = notes_of(bundle);
-	if (folder_path === '') { return `${notes}/guides`; }
-	const beside = folder_path.startsWith('designs') || folder_path.startsWith('work');
-	return beside ? `${notes}/${folder_path}` : `${notes}/guides/${folder_path}`;
+	const top = bundle === T_Bundle.memory ? 'memory' : top_of(bundle);
+	return [top, folder_path].filter((part) => part !== '').join('/');
 }
 
 // Nothing restarts this app any more. Moving or renaming a guide used to, because the list of

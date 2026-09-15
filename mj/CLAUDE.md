@@ -22,4 +22,4 @@ This project's terms live in [memory/mj/](../memory/mj/) — read them at sessio
 
 Plain english. Casual. First person. Short sentences. Let ideas breathe.
 
-Past mistakes never to repeat, this project's own, are in `memory/mj/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.
+Past mistakes never to repeat, this project's own, are in `memory/mj/logs/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/logs/learn.md`.

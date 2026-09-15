@@ -10,4 +10,4 @@ core has no file map. `memory/core/truth/structure.md` says what core is and the
 
 Tags, kinds and labels are the app's own vernacular.
 
-Past mistakes never to repeat, this project's own, are in `memory/core/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.
+Past mistakes never to repeat, this project's own, are in `memory/core/logs/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/logs/learn.md`.

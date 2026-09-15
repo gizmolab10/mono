@@ -3,7 +3,7 @@
 ## Done so far
 
 - ov brought up in the memory system: index, scope and lexicon truths, zone, log.
-- CLAUDE files made first-class in ov and the dispatcher; three case bugs fixed; recorded in [claude-files.md](../../ov/truth/design/claude-files.md); all CLAUDE files renamed lowercase.
+- CLAUDE files made first-class in ov and the dispatcher; three case bugs fixed; recorded in [claude-files.md](memory/ov/truth/design/claude-files.md); all CLAUDE files renamed lowercase.
 - First settle run and committed (`memory: settle ov`); ov named the first project.
 - Root vitest config added so tests run right from mono's top.
 

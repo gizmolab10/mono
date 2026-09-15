@@ -18,7 +18,7 @@ memory/<name>/
 ```
 
 - **index.md** — frontmatter with only `description:`. Then the name as a heading, a line or two saying what the project is, a **Current state:** paragraph, and a `## Truths` heading reading "None yet."
-- **logs/log.md** — the usual frontmatter (`kind: analyze`, title `<name> log`, `tags: [journal, now]`, today's date), the heading, then `<!-- consolidated: never -->`, then today's day heading with a `S:` line saying it was brought up. What is still unknown goes into `zone/questions.md`, not the log.
+- **logs/log.md** — the usual frontmatter (`kind: analyze`, title `<name> log`, `tags: [journal, now]`, today's date), the heading, then `<!-- consolidated: never -->`, then today's day heading with a `S:` line saying it was brought up. What is still unknown goes into `logs/questions.md`, not the log.
 - **truth/** — left empty. A truth on day one is a guess.
 - **zone/** — `questions.md`, and one file named for what will gather there: `ideas.md` for a project about building something, `observations.md` for one about watching something. Frontmatter and a heading, nothing else.
 

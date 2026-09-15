@@ -11,7 +11,7 @@ The proposal that started this project is in ji, at `ji/notes/work/proposals/ov.
 - [Creativity](creativity.md) — notes on how the work itself is done.
 - [Md audit](md%20audit.md) — every md file in ov read end to end, and what each wants changed.
 - [Md improvements](md%20improvements.md) — what to do about the audit, in three passes.
-- [Work journal](work%20journal.md) — what's been finished, newest first.
+- [Work journal](memory/ov/logs/work%20journal.md) — what's been finished, newest first.
 
 One folder down:
 
@@ -28,4 +28,4 @@ Elsewhere:
 - [AI on my mac](AI%20on%20my%20mac.md)
 - [Assessment of our guides](../../../shared/notes/guides/assessment%20of%20our%20guides.md)
 - [Md audit 1](./md%20audit%201.md)
-- [Memory-system-design](AI%20memory%20redesign.md)
+- [Memory-system-design](memory/ov/zone/work/AI%20memory%20redesign.md)

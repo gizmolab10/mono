@@ -32,8 +32,8 @@ Read every `.md` file in:
 
 Also read:
 
-* `memory/shared/zone/learn.md` — past mistakes that apply across every project; never repeat them. Read at session start, not on every response.
-* `memory/<X>/zone/learn.md` — past mistakes specific to the active project, made the day its first one is written; never repeat them. If twenty or more entries, say: "Feedstock: \[N\] — time to distill."
+* `memory/shared/logs/learn.md` — past mistakes that apply across every project; never repeat them. Read at session start, not on every response.
+* `memory/<X>/logs/learn.md` — past mistakes specific to the active project, made the day its first one is written; never repeat them. If twenty or more entries, say: "Feedstock: \[N\] — time to distill."
 * `memory/<X>/truth/always.md` — the active project's own always file. Every project keeps its own at the same relative spot (di's is at `memory/di/truth/always.md`).
 * The project's file map — one per project, at the path that project's own CLAUDE names (locations vary; not every project has one). Read it instead of discovering files using regex and wildcards. Update it when files are added, moved, or removed. Skip folders listed in `memory/shared/notes/guides/collaborate/exclude.md` (when building maps; not for general searching).
 

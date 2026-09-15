@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Writes memory/shared/zone/unfinished.md: one line per memory file that holds unfinished
+"""Writes memory/shared/zone/code debt.md: one line per memory file that holds unfinished
 work, across every project. Eight patterns, one verb each, no judgment anywhere.
 
-    python3 tools/unfinished.py [memory_root] [out_file]
+    python3 tools/code_debt.py [memory_root] [out_file]
 
-Both arguments default to this repo's memory folder and shared/zone/unfinished.md.
+Both arguments default to this repo's memory folder and shared/zone/code debt.md.
 Prints the number of lines written."""
 import datetime
 import os
@@ -14,7 +14,7 @@ from urllib.parse import quote
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MEMORY = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', 'memory')
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(MEMORY, 'shared', 'zone', 'unfinished.md')
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(MEMORY, 'shared', 'zone', 'code debt.md')
 # A logs folder is walked: since 13 September 2026 it holds the project's log.md beside the app's own
 # logs, which are not markdown and are passed over by their names.
 SKIP_FOLDERS = {'archive', 'done', 'node_modules'}
@@ -83,7 +83,7 @@ def walk(memory):
         for folder, subfolders, files in os.walk(root):
             subfolders[:] = sorted(s for s in subfolders if s not in SKIP_FOLDERS and not s.startswith('.'))
             for name in sorted(files):
-                if not name.endswith('.md') or name == 'unfinished.md':
+                if not name.endswith('.md') or name == 'code debt.md':
                     continue
                 path = os.path.join(folder, name)
                 relative = os.path.relpath(path, root)
@@ -102,7 +102,7 @@ def walk(memory):
 def main():
     rows = walk(os.path.abspath(MEMORY))
     today = datetime.date.today().isoformat()
-    lines = ['# Unfinished', '',
+    lines = ['# Code debt', '',
              f'{len(rows)} files hold unfinished work, as of {today}.']
     # How many items each project's needs-this column names: the numbers in its clauses added
     # up, a clause with no number, "dissolve the drive", counting one.
@@ -112,13 +112,14 @@ def main():
             numbers = [int(n) for n in re.findall(r'\d+', clause)]
             quantity[project] = quantity.get(project, 0) + (sum(numbers) if numbers else 1)
     # One table per project, its heading carrying the quantity. The file is a link, relative to
-    # where unfinished.md sits: memory/shared/zone/. A root file's z/t cell is empty.
+    # where code debt.md sits, memory/shared/zone/ unless told otherwise. A root file's z/t cell is empty.
+    up = os.path.relpath(os.path.abspath(MEMORY), os.path.dirname(os.path.abspath(OUT)))
     current = None
     for project, letter, shown, relative, clauses in rows:
         if project != current:
             current = project
             lines += ['', f'## {project} ({quantity[project]})', '', '| z/t | file | needs this |', '| --- | --- | --- |']
-        href = quote(f'../../{project}/{relative}')
+        href = quote(f'{up}/{project}/{relative}')
         lines.append(f'| {letter or ""} | [{shown}]({href}) | ' + ' and '.join(clauses) + ' |')
     with open(OUT, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines) + '\n')
@@ -137,9 +138,9 @@ def record_labels(out, today):
         return
     sys.path.insert(0, os.path.join(HERE, 'hub'))
     import database
-    database.record_file(os.path.relpath(full, repo), full, 'analyze', ['now'], title='Unfinished',
+    database.record_file(os.path.relpath(full, repo), full, 'analyze', ['now'], title='Code debt',
                          description='One line per memory file holding unfinished work, across every project. '
-                                     'Written by tools/unfinished.py, edit nothing here by hand.',
+                                     'Written by tools/code_debt.py, edit nothing here by hand.',
                          date=today)
 
 

@@ -29,7 +29,7 @@ There are two different situations, and the right approach depends on which one 
 
 ## Answered, 10 September 2026
 
-The files were read. Nothing is published outside mono, so the first situation applies. The concrete recommendation is the proposal "libraries resolve through the workspace, not through aliases" in [proposals](proposals.md).
+The files were read. Nothing is published outside mono, so the first situation applies. The concrete recommendation is the proposal "libraries resolve through the workspace, not through aliases" in [proposals](memory/ov/logs/proposals.md).
 
 ## Open thread / where to pick up
 

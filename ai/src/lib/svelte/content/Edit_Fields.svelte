@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { files, show_status, file_path_of, save_file, title_from_name, type File, type Labels } from '../../ts/common/Kb';
+	import { files, show_status, file_path_of, save_file, type File, type Labels } from '../../ts/common/Kb';
+	import { title_from_name } from '../../ts/utilities/Labels';
 	import { debug, hit_target } from '../../ts/common/Core';
 
 	// What a guide says about itself in words, ai's since step 10 of the plan: its title, its date,

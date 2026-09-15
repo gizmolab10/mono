@@ -1,7 +1,19 @@
 # kb log
 
+## 15 September 2026
+
+- D: step 13: Search.svelte, Searching.ts and searching.test left for ai; the search row is the fifth snippet, through Main, Operation, Edit and Edit_More, which stacks it first where the host hands one; Edit.svelte dropped find, page and drawn, the operation view snippet narrowing; the clear button empties the store alone; the lexicon's snippet entry says five. Check clean at 512 files, 176 tests
+- D: the bare prop left Search.svelte with the form it hid, a section of its own with a fold clickable, rendered nowhere; the props hovered, onclose and fold_element and five imports went with it. The search draws the field, the count and the steppers; Edit_More's stack draws the line, the gap and the fold word. Jonathan's call
+
 ## 14 September 2026
 
+- D: open_buttons, a configuration fact, each a title and the key of a file: Controls.svelte draws them first in the browse row, next to the hamburger, and opens the file with open_view on a press. The lexicon has open button, adopt kb the row. Jonathan's decision in memory/ov/truth/decisions.md
+- D: a file dropped onto a project's top row moves to memory/<project>/<name>: Files.ts's move sends the dispatcher that path and rehangs the record with the memory bundle, Hierarchy.rehang taking the bundle as a fifth argument, and rename keeps the guide's own bundle. Before, the drop asked for <project>/<name>, the code folder, refused as not a guide. Headless: a drag onto the ai row moved a file to memory/ai, the status line saying so, and the index mended. Check clean at 515 files, 181 tests
+- D: T_Bundle keeps its name, Jonathan's decision over five others weighed; bundle is in the lexicon, and File.ts's comments say what the value holds, the folder a path counts from, not the collection
+- D: Saving.ts's three path functions drop the notes layout: every collection's path counts from its own folder at the top of the repo, memory's under memory, mono's the repo itself, a project's its folder. A drop onto the mo folder now asks the dispatcher for the repo top, which it refuses as not a guide, in place of a notes folder that no longer exists. The saving test's cases say the new layout. Check clean at 515 files, 181 tests
+- D: step 12: composing labels left Labels.ts for ai with its cases; the label block code, called by nothing since 10 September, went with its five test groups; KIND_UNTIL_TOLD and TAG_WHEN_NEW became the facts kind_when_new and tag_when_new, empty by default, Files.ts reading them for a new file; customizations.test proves the two. Check clean at 515 files, 190 tests
+- D: unlabeled file, a file the db holds no row for, in the lexicon, Jonathan's word over bare file
+- D: two comments in Files.ts and Labels.ts said a composed or new file starts at refer, a kind gone since step 7; they say KIND_UNTIL_TOLD
 - D: markdown-it out of kb's package.json, read by nothing of kb's since step 11; Main.svelte's comment says the html, the lexicon's word, not the drawn page. Jonathan's call
 - D: step 11: Edit_Markdown.svelte, Emphasis.ts and the drawing half of Markdown_Blocks.ts left for ai, the link readers staying in utilities/Links.ts, which Files.ts reads; the three tests went with their code and the readers' cases joined wiki_links.test; the operation view snippet takes the words, a call that sets them, a call handing the html back and calls for drawn, redrawn and a note, through Main, Operation and Edit, which draws it in Edit_Markdown's place; the lexicon gained link readers. Check clean at 515 files, 218 tests
 - D: every clickable riding a separator is white while the cursor is off it, in Back_Links, Browse_Filters, Search, Details and Edit_More, the forced state too; hovered it fills as before

@@ -28,7 +28,7 @@ A file holding a rune must end `.svelte.ts`, whatever else its name says. Droppi
 
 ## Sizes on screen
 
-The stylesheet is gallery's now. Fifteen px values in it read core's rungs — the hairline borders, the pill radii, one margin. Every rem is left exactly as it is, waiting on a decision; the proposal in `zone/proposals.md` names the rung each would read.
+The stylesheet is gallery's now. Fifteen px values in it read core's rungs — the hairline borders, the pill radii, one margin. Every rem is left exactly as it is, waiting on a decision; the proposal in `logs/proposals.md` names the rung each would read.
 
 No scrollbar is drawn anywhere, across or down. The rule sits on every element rather than on two named boxes, so a bar cannot turn up on something new. Everything still scrolls by wheel, trackpad and arrow key.
 

@@ -1,4 +1,4 @@
-# Code Debt
+# Tasks — di
 
 Running a project according to code debt changes the dynamic. unpaid code debt makes development and maintenance harder. paying it as a high priority helps prevent the project from spiraling into tangles.
 

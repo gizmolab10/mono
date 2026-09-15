@@ -42,7 +42,7 @@ Injected every turn or in rotation (mono-pre-flight + shared-t):
 1. [always.md](../truth/conventions.md) (mono-pre-flight) — the nine
 2. [response.md](../truth/conventions.md) (mono-pre-flight) — 9 reply rules
 3. [agency.md](../truth/agency.md) (mono-pre-flight) — 21 work rules
-4. [lexicon.md](../truth/lexicon.md) (mono-pre-flight) — the word rules
+4. [lexicon.md](memory/ai/truth/lexicon.md) (mono-pre-flight) — the word rules
 5. [conventions.md](../truth/conventions.md) (shared-t) — about 30 conventions
 
 Read on trigger and at session start (mono-pre-flight):
@@ -54,16 +54,16 @@ Read on trigger and at session start (mono-pre-flight):
 
 Per project (each project's pre-flight):
 
-10. di: [always.md](../../di/truth/always.md), [lexicon.md](../../di/truth/lexicon.md), [banned words.md](../../di/truth/banned%20words.md), [banned.md](../../di/notes/guides/pre-flight/banned.md)
-11. ji: [lexicon.md](../../ji/truth/lexicon.md)
-12. ov: [banned words.md](../../ov/truth/banned%20words.md)
-13. core: [banned words.md](../../core/truth/banned%20words.md)
+10. di: [always.md](always.md), [lexicon.md](memory/di/truth/lexicon.md), [banned words.md](memory/di/truth/banned%20words.md), [banned.md](../../di/notes/guides/pre-flight/banned.md)
+11. ji: [lexicon.md](memory/ji/truth/lexicon.md)
+12. ov: [banned words.md](memory/ov/truth/banned%20words.md)
+13. core: [banned words.md](memory/core/truth/banned%20words.md)
 
 Rules about working:
 
-14. [CLAUDE.md](../../../CLAUDE.md) (mono) — principles, defaults, reading on load
+14. [CLAUDE.md](CLAUDE.md) (mono) — principles, defaults, reading on load
 15. [handbook.md](../truth/handbook.md) (shared-t) — the memory system's rules
-16. [learn.md](memory/di/zone/learn.md) (mono-work) — past mistakes as rules-in-waiting
+16. [learn.md](memory/di/logs/learn.md) (mono-work) — past mistakes as rules-in-waiting
 
 at session start (CLAUDE.md names them):
 

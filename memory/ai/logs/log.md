@@ -1,7 +1,16 @@
 # ai log
 
+## 15 September 2026
+
+- D: the open button reads code debt and opens memory/shared/zone/code debt.md
+- D: the open button unfinished opens memory/shared/zone/unfinished.md, the file back there
+- D: step 13 built: Search.svelte draws the search row, handed by App.svelte, which wires the drawer to the search; Searching.ts and searching.test with it; Kb.ts hands the three search stores, Core.ts Steppers and gap_below_line. Headless: 1 of 3, 2 of 3, cleared, and a report's finding opening its file with 1 of 1 highlighted. Check clean at 544 files, 135 tests, and the build
 ## 14 September 2026
 
+- D: Customizations.ts holds one open button, unfinished, opening memory/zone/unfinished.md, and Convert_Preferences fills the fact
+- D: the index's Zone entries point where the eight files from shared sit today, three in zone and five in zone/work, one line per place
+- D: step 12 built: ts/utilities/Labels.ts composes labels for an unlabeled file, with labels.test; Customizations.ts holds kind_when_new analyze and tag_when_new now, Convert_Preferences fills them; Edit_Markdown and Edit_Fields import from the new file, Kb.ts hands today alone. Headless: an unlabeled file opened got analyze, now and stale in the db, then went through delete-guide. Check clean at 543 files, 130 tests, and the build
+- D: composing labels, labels_for, in the lexicon, Jonathan's words over the composing; step 12's proof makes an unlabeled file under memory and throws it away through delete-guide
 - D: the html, kb's lexicon word, in place of the drawn page in Edit_Markdown.svelte's three comments, Markdown_Blocks.ts's one, two test names in markdown_blocks.test and the plan's step 13 title. Jonathan's call
 - D: step 11 built: Edit_Markdown.svelte draws a guide's words as the operation view, handed by App.svelte, with Markdown_Blocks.ts and Emphasis.ts in ts/utilities and their three tests; Kb.ts hands the drawer's fourteen reaches into kb, Core.ts its ten into core; package.json declares markdown-it. Headless: the plan's page drawn, 375 pieces, 27 named headings, 46 fold buttons, the search finding 137. Check clean at 541 files, 121 tests, and the build
 - D: Edit_Fields marks its title tools rides-the-line, so kb puts them on the information line, centered; each is white and the information clickable's size, the same text, edge and padding, the arrow the plain one, since the fat one came from a fallback font a pixel taller, measured headless

@@ -2,6 +2,9 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 15 September 2026
+
+- D: the hits manager's drift check raises its alert only past the thin line's thickness, a pixel and a tenth, where it raised it past half a pixel: six alerts in ai's editor were each under a pixel, the whole editor moved up by a fraction after it was measured, and a strip off by that much answers the same presses. The alert also logs every box above the element, its height, its top and its scroll, so the next one names the mover. Check clean at 470 files, 100 tests
 ## 14 September 2026
 
 - D: a folded section's hairline is held in by --gap-huge at each side, in Section.svelte and Stack.svelte, and Section takes line_down_when_folded, how far below the band's middle its hairline sits, a style variable the hairline reads. Jonathan's decision in memory/ov/truth/decisions.md

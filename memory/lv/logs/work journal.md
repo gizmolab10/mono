@@ -32,7 +32,7 @@
 - **Wiki-link handling — string preprocessor instead of `@portaljs/remark-wiki-link`.** The plugin crashed at runtime because its dependencies pin it to micromark v2 but the rest of the stack runs micromark v4. Every wiki-link plugin in the ecosystem (`remark-wiki-link`, `remark-wiki-link-plus`, `remark-obsidian-link`) shares the same pinning. Instead of holding the stack back to micromark v2, we wrote a small preprocessor that turns `![[name.png]]` and `[[Other Note]]` (and the `[[Target|Display]]` alias form) into standard markdown image and link syntax, using the name-resolver to fill in URLs. Standard `remark-parse` then handles the result. Trade-off: the preprocessor runs on the raw string rather than the parsed tree, so wiki-link syntax inside fenced code blocks gets transformed too. Edge case is not expected to come up; can be fixed later by walking the tree instead.
 - **Relaxed link form: spaces inside standard `[Label](URL)` allowed.** Standard markdown stops the URL at the first space, so `[Home](Little Cloud Vineyard)` would normally render as plain text. The preprocessor finds the relaxed form and replaces internal spaces with `%20` before the parser sees it. The legitimate `[Label](url "title")` form is left alone because the regex excludes the quote characters that mark a title.
 - **Sidebar state remembered across reloads.** The browser's local storage holds two small things: whether the sidebar is shown, and whether each folder is open or folded (kept by folder name). Both load at startup and save on change. A first-time visitor, or a browser with storage turned off, falls back to shown and open.
-- **Menu buttons and fold triangle are drawn, not typed.** The three-bar menu button and the fat-cornered fold triangle are the same shapes the di project uses. Their drawing math was copied into this project and stripped of di's geometry helpers, so this project stays independent. The triangle points right when a folder is folded and turns a quarter-turn to point down when it opens. Both take their colour from the surrounding text.
+- **Menu and fold triangle buttons are drawn, not typed.** The three-bar menu decoration and the fat-cornered fold triangle are the same shapes the di project uses. Their drawing math was copied into this project and stripped of di's geometry helpers, so this project stays independent. The triangle points right when a folder is folded and turns a quarter-turn to point down when it opens. Both take their colour from the surrounding text.
 - **Type checker includes only imported types.** The checker was pulling in every shared type package in the monorepo and warning about one with no definitions. It now includes only the types the code actually imports, which clears the warning without changing any behaviour.
 - **Image embeds can carry a size.** After the bar in an image embed, a plain number sets the width and a number-by-number sets width and height — the same shorthand Obsidian uses. The picture is then drawn at that size. Any other text after the bar is still treated as the caption.
 - **Tests live in their own folder.** The unit tests moved out from beside the code they check into a single `test` folder next to the code folders, with their links to the code repointed to match.
@@ -46,7 +46,7 @@
 - **The passphrase is the only guard.** Typed once, remembered in that browser, forgotten when it is wrong. Netlify holds the real one, and the key to the repository, and the page holds neither.
 - **A file added from the live site travels in the request**, which Netlify caps at about five megabytes. A photo fits; a movie is a job for the dev server. The refusal is said twice — by the page before it sends, and by the function if it arrives anyway.
 - **The commit is made the long way** — a blob, a tree, a commit, then the branch moved — since that path takes a file of any size where the short one stops at a megabyte.
-- **`gallery.technical` says three things now**: unset, and there is no edit button at all; false, and the table shows without the drop box; true, and a file may be added.
+- **`lv.technical` says three things now**: unset, and there is no edit button at all; false, and the table shows without the drop box; true, and a file may be added.
 - **A caption's words are not its language.** exifr hands a title back as a pair — the language and the words — and the first read took the language, so every jpeg's caption read `x-default`. The words are taken now, in every shape a title arrives in.
 - **A file thrown away leaves the working files only.** Every commit that held it still holds it, so deleting frees nothing in the repository.
 
@@ -54,7 +54,7 @@
 
 - **A gallery is one folder of pictures.** Each folder under `src/assets/` is a gallery, shown one picture at a time. The build already found every picture there but filed each by name alone; one more function keeps the folder as well.
 - **A folder's name is matched loosely.** Case is ignored, and a space, a hyphen and an underscore all read as the same character — so `the vineyard` answers a page asking for `the-vineyard`, and a dropped picture goes into the folder already on disk rather than making a second one beside it.
-- **A gallery is asked for as a callout**, `> [!gallery] the vineyard`, with `|400` after the name to draw every picture 400 tall. The first shape tried was `![[gallery: x]]`, and Obsidian read it as an embed of a note by that name, found none, and offered to make one. A callout is a shape Obsidian draws without complaint; the preprocessor catches it before the callout plugin runs, the same path the centered line takes.
+- **A gallery is asked for as a callout**, `> [!gallery] the vineyard`, with `|400` after the name to draw every picture 400 tall. The first structure tried was `![[gallery: x]]`, and Obsidian read it as an embed of a note by that name, found none, and offered to make one. A callout is a shape Obsidian draws without complaint; the preprocessor catches it before the callout plugin runs, the same path the centered line takes.
 - **Html cannot answer a click**, so the renderer finds each gallery's empty box in the finished html and builds a live piece inside it. Each one is taken off as the page changes: the arrow keys are heard on the window, and a window listener outlives the element that set it.
 - **Movies play**, with sound and their own controls, and start on their own. A movie is not the button that steps to the next picture — its controls own every press inside it — so the arrow keys do that. Stepping away builds a fresh element, which stops the movie.
 - **A picture is called by the title it carries inside itself.** JPEG keeps one in an XMP block, PNG in a `tEXt` chunk, GIF in a comment block, a movie in a `©nam` block inside its description. No browser hands a page what a file carries, so the titles are read while the site is built and handed over as a plain list. A file carrying none is called by its file name.
@@ -67,7 +67,7 @@
 - **The titles are read again whenever a file changes.** The list is built once and held; nothing about it tells the dev server a file on disk changed, so the assets folder is watched and any file arriving, changing or leaving throws the list away.
 - **Editing survives the reload** that follows a write, so a run of captions can be written one after another.
 - **No scrollbars.** The sidebar and the page still scroll by wheel, trackpad and arrow key; the bars are never drawn.
-- **The hamburger is out of sight** for now. Its button and its styling stand; one line in the page shell brings it back.
+- **The hamburger is out of sight** for now. Its button and its styling remain; one line in the page shell brings it back.
 
 ## Deferred — possible future features
 
@@ -102,7 +102,7 @@ The six steps from the proposal's "Order of work":
 - [x] Step 4 — router plus click handling (link interceptor and back/forward listener).
 - [x] Step 5 — status line; read `Sidebar.md` to drive the sidebar.
 - [x] Step 6 — sidebar component (active-entry pill, collapsible sections, home-entry treatment) and the `[!center]` callout override.
-- [x] The photo gallery — see the entry above, and [photo gallery](photo%20gallery.md) for how each piece works.
+- [x] The photo gallery — see the entry above, and [photo gallery](../zone/work/photo%20gallery.md) for how each piece works.
 - [x] Reordering a gallery — the table shows where each file sits, a click or the up and down keys move the highlight, option with them moves the file, and the list is written by the dev server or by Netlify. Both wrap at the ends. Proved on 2026-08-23 with `yarn dev`.
 
 ## Sources

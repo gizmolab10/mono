@@ -2,6 +2,10 @@
 
 
 
+## Open
+
+- [ ] working features row 65 is broken: command on a folder row, or command with option on a file's row, is meant to show the folder in the Finder, but the dispatcher's show-folder route accepts only a path holding `notes/guides`, `notes/designs` or `notes/work`, folders gone since 7 September 2026, so every such click is refused. Fix the route to accept any folder inside memory, or drop the feature?
+
 ## Inconsistencies and duplications
 
 - [ ] pac destination has three claimants — handbook line 83 says `zone/decisions.md`, its Skills pac entry and all practice say `truth/decisions.md`; which yields?

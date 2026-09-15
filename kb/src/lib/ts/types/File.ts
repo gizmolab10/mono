@@ -16,8 +16,10 @@ export function in_order(one: string, two: string): number {
 	return one.localeCompare(two, undefined, { sensitivity: 'base' });
 }
 
-// The collections the files live in, each named for the folder that holds it.
-// The shared files sit at the top of the repo, so their root is the repo's own folder.
+// The folder a record's path counts from, each named for the folder that holds it: memory for
+// every file under memory, mo for the repo itself, a project's id for its CLAUDE file. A memory
+// file's project is read off its path by project_at, not off this. The name is from ov's first
+// build, when each collection's guides were a Vite glob bundle; kept 14 September 2026.
 export enum T_Bundle {
 	mono    = 'mo',
 	memory  = 'memory',
@@ -66,7 +68,7 @@ export type Labels = {
 export type File = Labels & {
 	id        : string;      // unique within this launch
 	name      : string;      // the file's or folder's own name
-	bundle    : T_Bundle;    // which collection it belongs to
+	bundle    : T_Bundle;    // which folder its path counts from
 	path      : string;      // where it sits inside that collection, folders and all
 	address   : string;      // where its text can be read from, if ever wanted
 	is_folder : boolean;

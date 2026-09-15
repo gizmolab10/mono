@@ -21,7 +21,7 @@ The form is the four rows at the end of the section. On the first, press what th
 The form shows one of the rules in the db, the first at launch: what it reads and gives picked, its regex and label filled in. The steppers at the far left of the first row move to the rule before or after, and the one shown is remembered across launches. Change what is shown and press add to write a new rule from it; the new rule becomes the one shown.
 
 1. **name** is the file's name with its ending, such as `questions.md`.
-2. **location** is the file's path from the top of the repo, such as `memory/lv/zone/questions.md`.
+2. **location** is the file's path from the top of the repo, such as `memory/lv/logs/questions.md`.
 3. **content** is the file's words, read only when a rule asks for them.
 
 A regex that will not compile is refused, and so is a rule missing its regex or its label.

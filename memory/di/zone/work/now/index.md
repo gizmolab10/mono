@@ -13,12 +13,12 @@ Active non-milestone work. The files in this folder are the current working docu
 - [(newer than SDD) methodology](./(newer%20than%20SDD)%20methodology.md)
 - [27.selection.algorithm](./27.selection.algorithm.md)
 - [30.licensing](./30.licensing.md)
-- [Code debt](./code%20debt.md)
 - [Handoff](./handoff.md)
 - [Learn](./learn.md) — mistakes in di's own workings, never to be repeated.
 - [Open Items](./open items.md)
 - [Our Process](./our process.md)
 - [Steve Melville](./steve melville.md)
 - [Talk](./talk.md)
+- [Code debt](./tasks%20%E2%80%94%20di.md)
 - [Work Journal](./work journal.md)
 

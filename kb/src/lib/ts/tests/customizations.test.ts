@@ -15,11 +15,14 @@ describe('the configuration\'s defaults', () => {
 		expect(customizations.host).toBe('');
 	});
 
-	it('hold no keys, which step 7 fills, and no build notes', () => {
+	it('hold no keys, which step 7 fills, no build notes, no kind or tag for a new file, which step 12 fills, and no open buttons', () => {
 		expect(customizations.kinds).toEqual([]);
 		expect(customizations.tags).toEqual([]);
 		expect(customizations.tag_areas).toEqual([]);
 		expect(customizations.builds).toBe('');
+		expect(customizations.kind_when_new).toBe('');
+		expect(customizations.tag_when_new).toBe('');
+		expect(customizations.open_buttons).toEqual([]);
 	});
 
 	it('offer the folder hierarchy alone, ordered by name', () => {

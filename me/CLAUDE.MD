@@ -20,4 +20,4 @@ Casual. First person. Short sentences. Let ideas breathe.
 
 No code unless an idea demands it. No deadlines. No deliverables. Just exploration.
 
-Past mistakes never to repeat, this project's own, are in `memory/me/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.
+Past mistakes never to repeat, this project's own, are in `memory/me/logs/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/logs/learn.md`.

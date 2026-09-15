@@ -1,7 +1,7 @@
 import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, labels_on_disk, move_file, moved_into, path_of_address, remove_label, set_fields, set_sources, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved, type Source } from '../utilities/Saving';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
-import { blank_file, free_name, label_changes, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
+import { blank_file, free_name, label_changes, today, NAME_UNTIL_TOLD } from '../utilities/Labels';
 import { T_Bundle, in_order, key_of, project_of, project_at, type File, type Labels, type Filtered_File } from '../types/File';
 import { customizations } from '../common/Customizations';
 import { links_in, plain_links } from '../utilities/Links';
@@ -299,9 +299,16 @@ class Files {
 	 */
 	async move(guide: File, folder: File): Promise<void> {
 		const name = guide.path.split('/').pop() ?? guide.name;
-		const to_path = moved_into(folder.path, name);
+		// A project's top row is its folder in memory, memory/<project>, so a file dropped there is
+		// memory's, its path beginning with the project's id, the way the launch hangs it. Every
+		// other folder row is the file's folder as it is. mo's top is the repo itself, where the
+		// dispatcher lists only the CLAUDE file, so that drop stays refused.
+		const onto_top = folder.path === '' && folder.bundle !== T_Bundle.memory && folder.bundle !== T_Bundle.mono;
+		const bundle   = onto_top ? T_Bundle.memory : folder.bundle;
+		const to_path  = onto_top ? `${folder.bundle}/${name}` : moved_into(folder.path, name);
 		const from = file_path_of(guide.bundle, guide.path);
-		const to   = file_path_of(folder.bundle, to_path);
+		const to   = file_path_of(bundle, to_path);
+		debug.log(`Moving "${guide.name}" onto "${folder.name}"${onto_top ? ", the project's top row" : ''}: asking the dispatcher to move ${from} to ${to}.`);
 		const answer = await move_file(from, to);
 		if (!answer.ok) {
 			show_status(`"${guide.name}" was not moved — ${answer.why}`);
@@ -309,7 +316,7 @@ class Files {
 			return;
 		}
 		const was_key = key_of(guide);
-		this.hierarchy.rehang(guide, folder, to_path, address_of_file(answer.full_path));
+		this.hierarchy.rehang(guide, folder, to_path, address_of_file(answer.full_path), bundle);
 		this.renarrow();
 		// A guide is named by where it sits, so anything reading this one has to follow it. The
 		// links it holds are named by where it sits too, and every link written relative to it
@@ -456,7 +463,9 @@ class Files {
 			return '';
 		}
 
-		this.hierarchy.rehang(guide, folder, to_path, address_of_file(answer.full_path));
+		// A rename keeps the guide's own bundle: its folder may be a project's top row, whose
+		// bundle is the project's, while a file under it is memory's.
+		this.hierarchy.rehang(guide, folder, to_path, address_of_file(answer.full_path), guide.bundle);
 		guide.name = named;
 		this.renarrow();
 		// Said at once, before the slow work of mending links: a guide is named by where it
@@ -533,7 +542,7 @@ class Files {
 
 	/**
 	 * A new guide in the same folder as one already open. It arrives named "unnamed", labeled
-	 * as something to refer to and marked as the one being worked on — so it never shows up
+	 * kind_when_new and marked as the one being worked on — so it never shows up
 	 * unlabeled and nobody has to go back and label it.
 	 *
 	 * Everything is done here that a restart would otherwise be needed for: the file is written,
@@ -550,13 +559,13 @@ class Files {
 
 		// Labeled to match whatever the list is filtered by, so the new guide is one of the files
 		// on screen and can be opened straight away. A kind nobody picked, or the one that means
-		// "no kind at all", leaves it at refer; tags nobody picked leave it wearing the one that
+		// "no kind at all", leaves it at kind_when_new; tags nobody picked leave it wearing the one that
 		// says it is being worked on. Under any-but the picked tags are the ones to keep off it,
 		// so only that one tag goes on.
 		const wanted_kind = get(w_kind);
-		const kind = wanted_kind === '' || wanted_kind === UNLABELED ? KIND_UNTIL_TOLD : wanted_kind;
+		const kind = wanted_kind === '' || wanted_kind === UNLABELED ? customizations.kind_when_new : wanted_kind;
 		const picked = get(w_tag_picking) === T_Picking.but ? [] : get(w_tags);
-		const tags = picked.length === 0 ? [TAG_WHEN_NEW] : picked;
+		const tags = picked.length === 0 ? [customizations.tag_when_new] : picked;
 
 		const path = renamed_path(guide.path, name);
 		const where = file_path_of(guide.bundle, path);

@@ -176,10 +176,12 @@ export class Hierarchy {
 	 * now sits and where its words can be read from. The link to its old folder goes, so it
 	 * is never under two.
 	 */
-	rehang(guide: File, folder: File, path: string, address: string): void {
+	rehang(guide: File, folder: File, path: string, address: string, bundle: T_Bundle = folder.bundle): void {
 		const contains = this.predicate_for(CONTAINS).id;
 		this.relationships = this.relationships.filter((r) => !(r.predicate_id === contains && r.child_id === guide.id));
-		guide.bundle  = folder.bundle;
+		// The folder's bundle, unless the caller says otherwise: a file dropped onto a project's
+		// top row is memory's, though the row's own bundle is the project's.
+		guide.bundle  = bundle;
 		guide.path    = path;
 		guide.address = address;
 		this.add_relationship(folder.id, guide.id);

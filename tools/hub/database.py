@@ -5,7 +5,7 @@ host knows about its files that the files themselves do not say. Only the dispat
 writes them, through the calls here. Every call takes a host, and a call told none opens PLACE,
 ov's db. ports.json names each host's db beside its port.
 
-Five tables, as memory/ov/zone/music and ai.md lays them out:
+Five tables, as memory/kb/zone/music and ai.md lays them out:
   files   -- one row per file: its collection, its path from the top of the repo, its size,
              when it was last changed, its fingerprint, a short code computed from its bytes
              (same bytes, same code), and the four fields the file's label block used to

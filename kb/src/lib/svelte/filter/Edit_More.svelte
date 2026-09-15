@@ -18,24 +18,23 @@
 	import { Stack } from '../../ts/common/Core';
 	import Kinds_Row from './Kinds_Row.svelte';
 	import Tag_Rows from './Tag_Rows.svelte';
-	import Search from './Search.svelte';
 	import type { Snippet } from 'svelte';
 
 	// The label form: what a guide is labeled, one stack above its words. The labels are never on
 	// the page — they are taken off before the words are drawn — so this is where they are read
 	// and changed. kb's own here are the kind and the tags, picked from the only lists the app
-	// accepts, and the search. The information rows are the host's since step 10 of the plan,
-	// handed in as the edit filter section and drawn above the kinds row.
+	// accepts. The information rows are the host's since step 10 of the plan, handed in as the
+	// edit filter section and drawn above the kinds row; the search row is the host's since step
+	// 13, rendered first, its line, gap and fold word this stack's.
 
 	let {
-		name, guide, tags, text = $bindable(''), page = null,
-		find = $bindable(null), folded = $bindable(false), onclose, onshow, edit_filter,
+		name, guide, tags, text = $bindable(''),
+		folded = $bindable(false), onclose, onshow, edit_filter, search_row,
 	}: {
 		edit_filter? : Snippet<[File, string, (words: string) => void]>;   // the host's own rows, given the file, its words and a call that sets them, above the kinds row
+		search_row?  : Snippet<[string]>;    	// the host's search row, given the file's name, first in the stack
 		guide       : File;                 	// the record of the file being read
 		name        : string;                	// what the file is called
-		page        : HTMLElement | null;    	// the drawn words, handed through to the search row
-		find        : ReturnType<typeof Search> | null;  // the search row itself, so the editor can tell it a file was redrawn
 		text        : string;                	// the whole file, which a write here changes
 		folded      : boolean;               	// nothing stands open at the foot of this form, told outward so the words below draw no line of their own
 		tags        : string[];              	// the tags it wears right now
@@ -260,7 +259,7 @@
 	     Clearing also puts the highlighted words back. -->
 	{#if $w_search_text !== ''}
 		<button class='clear' bind:this={search_clear}
-			use:hit_target={{ id: 'editor.clear.search', onpress: () => { w_search_text.set(''); find?.light_hit(0); },
+			use:hit_target={{ id: 'editor.clear.search', onpress: () => w_search_text.set(''),
 				tip: 'empty the search field' }}>clear</button>
 	{/if}
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={info_button}
@@ -287,11 +286,12 @@
 	</span>
 </div>
 
-<!-- Looking through the file on screen. It stands bare here: its line, its gap and the place
-     its word stands are this stack's, exactly as they are for the kinds and the tags. -->
+<!-- Looking through the file on screen, the host's search row, given the file's name. Its line,
+     its gap and the place its word stands are this stack's, exactly as they are for the kinds and
+     the tags. -->
 {#snippet search_rows()}
 	<div class='label-rows search-rows'>
-		<Search bare bind:this={find} {name} {page} {onclose} hovered={way_out_lit} />
+		{@render search_row?.(name)}
 	</div>
 {/snippet}
 
@@ -341,8 +341,9 @@
 				its middle like every other separator. -->
 			<Stack gap={k.gap.big} thickness={k.thickness.normal} over={k.thickness.huge} foot='below' leads={[search_action, search_clearer]} sections={[
 				// The search is first, so its clickable and its clear ride the stack's own leading line.
-				// None of these three answers the cursor on its bare space.
-				{ subsection: search_rows, folded: !$w_show_search },
+				// None of these three answers the cursor on its bare space. The row is the host's, so it
+				// is stacked only where the host hands one.
+				...(search_row ? [{ subsection: search_rows, folded: !$w_show_search }] : []),
 				// The host's own rows, above the kinds row, only where the host hands them, folding under
 				// the information clickable as the information rows did while they were kb's.
 				...(edit_filter ? [{ subsection: host_rows, rides: [info_action, host_tools_action], folded: !show_form_info }] : []),

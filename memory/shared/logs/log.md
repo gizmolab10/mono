@@ -2,8 +2,18 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 15 September 2026
+
+- D: row 378, the truth of the code debt tool, repathed by hand to truth/code debt.md and its missing mark cleared, having lost its pairing to a git mv and an edit in one script; lesson 32
+- D: unfinished renamed code debt, Jonathan's decision: tools/code_debt.py and its test by git, memory/shared/zone/code debt.md through the dispatcher so its row followed, the truth code debt.md; the debt shorthand, the index, the lexicons, adopt kb and working features say the name
+- D: unfinished.md back at memory/shared/zone, Jonathan's decision over memory's own zone: the tool, its test, the shorthand, the index, the truth, the root index and ai's open button say the place; memory/zone removed, empty
 ## 14 September 2026
 
+- D: unfinished.md moved to memory/zone, Jonathan's answer to the question, which leaves logs/questions.md: tools/unfinished.py writes there by default, its links relative to wherever it writes, its test writes there too; the shorthand, the index, the truth and the root index name the place. Decision in ov's decisions.md
+- D: mor, missing or ready, in the shorthand abbreviations; the question of where unfinished.md lives in logs/questions.md, after a drop onto the mo row was refused
+- D: zone/converting guides to new memory design.md gathers the move of the guides into truth from shared's decisions, ov's consolidate, the inception checklist and the indexes: what moved and when, the 7 September decision, the sorting folder by folder, what is still open. The four sources still say what they said
+- D: shared's proposals.md, moved to logs, had lost its row's pairing: row 280 sat at the old path marked missing, which the list drew struck through, and the new path had no row. The row is repathed by hand and the mark cleared; its four labels, kind analyze and tags now, proposal and weighed, are back on it
+- D: logs is the third folder of a project's memory, beside truth and zone, Jonathan's decision: the lexicon entry, the decision in ov's decisions.md, and every CLAUDE file, shorthand and the handbook naming logs for learn, proposals and questions
 - D: zone/architecture/libraries.md rule 2 allows a second, smaller reach for a library whose modules read a fact at import, ai's Convert_Preferences.ts for kb, named in the test with the bridge
 
 ## 13 September 2026

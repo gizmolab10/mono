@@ -21,6 +21,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **host** — a project that imports a library: every app, and a library that imports a library, as gallery imports core. A host holds the state, the library the behavior.
 - **drive** — the current undertaking: the one proposal being decided and implemented, held in `zone/drive.md` until it dissolves into truth.
 - **zone** — the folder holding a project's live thinking: active plans, research, considerations, bright ideas, visual references. Named for the state of mind that fills it and the zoning-in that empties it. Not: truth, not a waiting room for belief.
+- **logs** — the third folder of a project's memory, beside truth and zone, holding what happened and what is waiting on it: the log, the journal, learn, proposals, questions, collisions, and the app's own log files. Decided 14 September 2026. Not: truth, which states the current design; not zone, which holds live thinking.
 
 ## Who
 
@@ -31,7 +32,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 
 - **guide** — a file in a project's `notes/guides/`, under `memory/`. Living reference; it holds decisions, not work.
 - **work note** — a file in a project's `notes/work/`, under `memory/`. What is being done now.
-- **collection** — one project's whole set of files: mono, di, ji, ov, ga, me. When the six entries under new lexicon in memory/ov/zone/music and ai.md are decided, this entry changes with them, a collection becoming a dropped folder for mu and a project for ai, and ov's lexicon takes their definitions.
+- **collection** — one project's whole set of files: mono, di, ji, ov, ga, me. When the six entries under new lexicon in memory/kb/zone/music and ai.md are decided, this entry changes with them, a collection becoming a dropped folder for mu and a project for ai, and ov's lexicon takes their definitions.
 - **label** — a name and a value on a file, with who wrote it, hand, rule or ai: a row in the db beside the dispatcher, never a line in the file since 10 September 2026. For a markdown file, its kind and each of its tags. For a song, its artist, album and title. Never the screen's text beside a control, which this word does not name here. Decided 12 September 2026, over key, trait, field, aspect, attribute, fact, property, tuple and kvp.
 - **kind** — the label saying what sort of file it is, one per file. Six exist: analyze, arch, explain, howto, music, specify.
 - **tag** — a label saying what the file is about, any number per file, from a closed list.
@@ -39,7 +40,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **map** — a project's file map. Read it instead of discovering files using regex and wildcards; update it when files move.
 - **index** — the list of what a folder holds. Update it when files come or go.
 - **handoff** — current status and the one **Next** action. Read first each session.
-- **code debt** — open tasks as checkboxes. **code debt paid** holds the finished ones.
+- **code debt** — one line per memory file holding unfinished work, across every project: `memory/shared/zone/code debt.md`, written by `tools/code_debt.py` and never by hand; the shorthand `debt` runs it. Named unfinished until 15 September 2026. Until then the name of a project's own file of open tasks as checkboxes, whose finished ones went to **code debt paid**.
 - **journal** — finished work, newest first.
 - **learn** — past mistakes, never to be repeated. Twenty entries means time to distill.
 - **lexicon** — this file.

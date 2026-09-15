@@ -24,4 +24,4 @@ This project's terms live in [memory/lv/truth/lexicon.md](../memory/lv/truth/lex
 
 Plain english or industry standard terminology. Precise. First person. Let ideas breathe.
 
-Past mistakes never to repeat, this project's own, are in `memory/lv/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.
+Past mistakes never to repeat, this project's own, are in `memory/lv/logs/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/logs/learn.md`.

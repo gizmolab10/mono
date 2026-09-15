@@ -2,9 +2,29 @@
 
 What's been finished, newest first.
 
+## 2026-09-15 — the search row is ai's
+
+Step 13 of the plan in [music and ai](../../kb/zone/music%20and%20ai.md). Search.svelte, Searching.ts and searching.test left kb for ai. App.svelte hands the search row as the fifth snippet, given the file's name, which Edit_More renders first in the label form's stack where a host hands one, and wires its drawer to its search: the html handed up, forget and light_hit on drawn and redrawn, a dead link's words from the report first. Edit.svelte holds neither the search nor the html, and the operation view snippet narrowed to the file, the width and the height, the words, the call that sets them and the note. Edit_More's clear button empties the store alone, and ai's Search answers the store going empty with the three things an empty field asked for. Kb.ts hands the three search stores, ai's Core.ts Steppers and gap_below_line. The bare prop had left Search.svelte the same day, with the section of its own it hid.
+
+### Verification
+
+- Headless: the row drawn in the label form; "step" typed reads 1 of 3 with one place highlighted, the forward stepper reads 2 of 3, clearing leaves none; the dead links report, 255 findings, a finding pressed opens its file reading 1 of 1 with the link's words highlighted; no page errors but one 404 for a resource the report's file asked for.
+- kb clean at 512 files, 176 tests in 10 files. ai clean at 544 files, 135 tests in 7 files, and it builds.
+- Not looked at in a browser by Jonathan.
+
+## 2026-09-14 — composing labels is ai's
+
+Step 12 of the plan in [music and ai](../../kb/zone/music%20and%20ai.md), which moved to kb's zone today. labels_for left kb's Labels.ts for ai's ts/utilities/Labels.ts with first_heading, first_words, kind_from_where, NEEDS_A_LOOK and title_from_name, and its test cases with it; Edit_Markdown and Edit_Fields import from there. kb's Labels.ts keeps label_changes, today, blank_file, free_name, NAME_UNTIL_TOLD and moment_written_out, and the label block code, called by nothing since 10 September, is deleted with its five test groups. KIND_UNTIL_TOLD and TAG_WHEN_NEW became the facts kind_when_new and tag_when_new, empty in kb, analyze and now in ai, filled by Convert_Preferences and read by Files.ts for a new file. Kb.ts hands today alone of the three. The lexicons gained unlabeled file and composing labels.
+
+### Verification
+
+- Headless: an unlabeled file written under memory had no row and no labels; opened in ai's editor it got kind analyze and tags now and stale, its title from its heading, its brief from its first sentence and today's date, all in the db; delete-guide then dropped the file and its row, nothing left.
+- kb clean at 515 files, 190 tests in 11 files. ai clean at 543 files, 130 tests in 6 files, and it builds.
+- Not looked at in a browser by Jonathan.
+
 ## 2026-09-14 — the words are ai's
 
-Step 11 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). Edit_Markdown.svelte and Emphasis.ts left kb whole for ai, and Markdown_Blocks.ts was cut: the drawing went with them, the link readers stayed kb's in utilities/Links.ts, since Files.ts reads every guide with them at launch and a library never imports a host. The three tests went with their code, the readers' cases joining kb's wiki_links.test. App.svelte hands the drawer as the operation view snippet, given the file, the width and the height, the words and a call that sets them, a call handing the html back for the search, and calls for drawn, redrawn and a note; Edit.svelte draws it where Edit_Markdown was and draws nothing there when no host hands one. Kb.ts hands the drawer's fourteen reaches into kb and ai's Core.ts its ten into core; ai's package.json declares markdown-it. kb's lexicon gained link readers.
+Step 11 of the plan in [music and ai](music%20and%20ai.md). Edit_Markdown.svelte and Emphasis.ts left kb whole for ai, and Markdown_Blocks.ts was cut: the drawing went with them, the link readers stayed kb's in utilities/Links.ts, since Files.ts reads every guide with them at launch and a library never imports a host. The three tests went with their code, the readers' cases joining kb's wiki_links.test. App.svelte hands the drawer as the operation view snippet, given the file, the width and the height, the words and a call that sets them, a call handing the html back for the search, and calls for drawn, redrawn and a note; Edit.svelte draws it where Edit_Markdown was and draws nothing there when no host hands one. Kb.ts hands the drawer's fourteen reaches into kb and ai's Core.ts its ten into core; ai's package.json declares markdown-it. kb's lexicon gained link readers.
 
 ### Verification
 
@@ -14,7 +34,7 @@ Step 11 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). Edi
 
 ## 2026-09-14 — the information rows are ai's
 
-Step 10 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). The label form's four information rows and the title's two tools left kb's Edit_More.svelte for ai's Edit_Fields.svelte, handed back as the edit filter section, given the file, its words and a call that sets them, and drawn above the kinds row under the information fold. Edit_More keeps the kind and the tags and draws two kb components of their own, Kinds_Row.svelte and Tag_Rows.svelte. Kb.ts hands show_status, save_file, file_path_of, title_from_name and three types; ai's Core.ts hands hit_target. A refusal is said on the status line. kb's lexicon gained label form, kinds row and tag rows.
+Step 10 of the plan in [music and ai](music%20and%20ai.md). The label form's four information rows and the title's two tools left kb's Edit_More.svelte for ai's Edit_Fields.svelte, handed back as the edit filter section, given the file, its words and a call that sets them, and drawn above the kinds row under the information fold. Edit_More keeps the kind and the tags and draws two kb components of their own, Kinds_Row.svelte and Tag_Rows.svelte. Kb.ts hands show_status, save_file, file_path_of, title_from_name and three types; ai's Core.ts hands hit_target. A refusal is said on the status line. kb's lexicon gained label form, kinds row and tag rows.
 
 ### Verification
 
@@ -33,7 +53,7 @@ The back links left the label form's stack for the bottom of the edit view, a se
 
 ## 2026-09-14 — every remembered value is ai's
 
-Step 9 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). kb's Preferences.ts reads the host's prefix off the customizations when asked, and core's Preferences takes a prefix or a function answering it and gains adopt, which moves every value saved under another prefix and drops the old keys. ai's Convert_Preferences.ts, imported by main.ts ahead of kb, sets kb's nine facts, the fill moved out of main.ts, then moves everything saved under ov_ under ai_: the second file reaching kb through its alias, for the customizations alone, which libraries.md's rule 2 and core_alias.test now allow by name.
+Step 9 of the plan in [music and ai](music%20and%20ai.md). kb's Preferences.ts reads the host's prefix off the customizations when asked, and core's Preferences takes a prefix or a function answering it and gains adopt, which moves every value saved under another prefix and drops the old keys. ai's Convert_Preferences.ts, imported by main.ts ahead of kb, sets kb's nine facts, the fill moved out of main.ts, then moves everything saved under ov_ under ai_: the second file reaching kb through its alias, for the customizations alone, which libraries.md's rule 2 and core_alias.test now allow by name.
 
 ### Verification
 
@@ -43,7 +63,7 @@ Step 9 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). kb's
 
 ## 2026-09-13 — ai reads its own db
 
-ai.db, made from ov.db through sqlite's backup less the 23 rows under memory/filter tree, a folder a commit removed, which the list drew struck through. ports.json names ai.db under ai and no db under ov, PLACE is ai.db and the dispatcher's default host is ai, so ov's frozen page reads ai.db too. The dump is ai.sql and ov.sql is gone. The suites prove the hosts ai and mu, ov no longer. Decision in [decisions](../../truth/decisions.md).
+ai.db, made from ov.db through sqlite's backup less the 23 rows under memory/filter tree, a folder a commit removed, which the list drew struck through. ports.json names ai.db under ai and no db under ov, PLACE is ai.db and the dispatcher's default host is ai, so ov's frozen page reads ai.db too. The dump is ai.sql and ov.sql is gone. The suites prove the hosts ai and mu, ov no longer. Decision in [decisions](../truth/decisions.md).
 
 The hub page's dispatcher button had said ✓ without restarting anything. It now reads the dispatcher's start time before and after, says ✓ only when a later time answers, and says ✗ when the old process still answers or nothing does. Every action button says busy in place of doing nothing while another operation runs. A rule added or taken away under host ai runs on every file again, which it had not since ai began naming its host. [using rules](using%20rules.md) says how the rules section is used.
 
@@ -222,7 +242,7 @@ The ⤴ mark hands the browser a `mailto:` address. Windows hands that to a prog
 
 **Overview has a second wall behind that one.** Gmail's handler caps at about 4,096 characters after encoding, and Chrome reaches Gmail by putting the whole `mailto:` inside a second address, so every escape is escaped again. Every guide in the repo is past the ceiling before the doubling — handoff.md alone comes to 4,289. Carrying a whole file to Gmail needs another way altogether.
 
-The steps for a Windows machine are written into [ov installer](soon/ov%20installer.md).
+The steps for a Windows machine are written into [ov installer](../zone/work/soon/ov%20installer.md).
 
 **Nine dead links found in the work index.** Eight rows named files that had moved into `soon/`, and one sat under "More" with a top-level path. That folder has an index of its own now, and the parent goes through one row for it.
 

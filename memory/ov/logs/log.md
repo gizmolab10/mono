@@ -2,8 +2,19 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 15 September 2026
+
+- D: the stale hit target alert, six times under a pixel in ai's editor: core's drift check now allows the thin line's thickness and logs the boxes above the element. Not reproduced headless, where nothing moved
+- D: step 13 built, the search row ai's, as the plan's Built note says. In the work journal, working features row 95
+- D: step 13 amended after the bare prop left Search.svelte: ai's Core.ts gains gap_below_line and Steppers alone, the host's search does all three of light_hit's empty-field effects when the store empties, and Edit_More's find and page props go with Edit.svelte's
+- D: step 13 of memory/kb/zone/music and ai.md rewritten from the reading before it: Search.svelte and Searching.ts go whole with searching.test, the non-bare form with them; the search row is the fifth snippet, rendered in the label form's first subsection; the wiring between the drawer and the search is ai's, so the operation view snippet narrows; the clear button empties the store alone; the stores stay kb's and Kb.ts hands them; the proof widened. Step 19's list amended, adopt kb's table the row and the narrower take
+
 ## 14 September 2026
 
+- D: every project's proposals, questions and work journal moved to logs, di's learn with them, Jonathan's decision: fifteen files, twenty links and twelve plain mentions re-pointed, the work journals' own links among them. The handbook's two logs bullets sit under a Logs heading of their own. Still needing a hand: each work folder's index still lists its journal
+- D: cleanup after Jonathan's moves: the plan and ov as knowledge bases to kb's zone, AI memory redesign and shared's eight ai files to ai's zone, shared's and ov's learn, proposals, questions, collisions, journal, remember and big rewrite log and lv's work journal to logs. Three links re-pointed, fourteen CLAUDE files, shorthand, the handbook, the lexicon, two tool comments and the indexes of ai, shared, ov and kb fixed. Still needing a hand: di's learn and every other project's proposals, questions and work journal still sit in zone; the handbook's Zone list names two logs files
+- D: step 12 built, composing labels ai's, as the plan's Built note says; the plan is at memory/kb/zone/music and ai.md since today, Jonathan's move. In the work journal, working features row 93
+- D: step 12 of zone/music and ai.md rewritten from the reading before it: today, blank_file, free_name, NAME_UNTIL_TOLD and moment_written_out stay kb's, since Files.ts and Status.ts read them; KIND_UNTIL_TOLD and TAG_WHEN_NEW become the facts kind_when_new and tag_when_new, adopt kb's table saying so; the label block code, dead since 10 September, is deleted with its five test groups; title_from_name goes with the composing; the proof widened. Step 19's labels line amended
 - D: step 11 built, the words ai's, as the plan's Built note says. In the work journal, working features row 92
 - D: step 11 says wiki_links.test takes markdown_blocks' cases for the link readers when the rest goes to ai
 - D: step 11 of zone/music and ai.md rewritten from the reading before it: Markdown_Blocks.ts cut, the link readers staying kb's in Links.ts; the three tests going with their code now and step 19's list amended; the operation view snippet taking the words, the page and three calls, adopt kb saying so; what Kb.ts and ai's Core.ts hand over; markdown-it in ai's package.json; Edit.svelte's part; the proof widened
@@ -19,6 +30,7 @@
 
 - D: knowledge bases phase 2 built, short of the removal. dispatcher.py answers /scan (every listed file's kind and tags into the db as hand labels, run once on the real db: 485 files, 321 kinds, 780 tags, 152 with no block), /all-labels (every label in one answer) and /strip-labels (built, guarded by a confirm word, not run). database.py gained replace_labels, record_file and all_labels. Files.ts asks for every label beside the listing and takes kind and tags from the db, never the block, and writes the db first on any change, through Labels.ts's label_changes, which is tested. Edit_Filters.svelte and Edit_Markdown.svelte write the db before the file. The block is still written whole until the removal runs. 49 checks in test_database.py, 35 in test_dispatcher.py, ov 339 tests, check clean at 532 files
 - D: the removal ran. /strip-labels, asked with a confirm word, took the kind and tags lines out of 332 files, left 1 untouched and passed over 152 the db holds nothing for. Labels.ts's label_block writes neither line any more, so a block still carrying them loses them when next written. test_database.py proves the scan and the strip on a repo made for the run, 58 checks. ov 341 tests, check clean
+
 ## 12 September 2026
 
 - D: the plugin entry in kb's lexicon says plugin.py alone, the dispatcher-side code with its three jobs, the snippets and the configuration being the host's page's to hand kb, and the plugin's folder is the host's own, named by its ports.json entry, at what it is and in ov's lexicon, in place of the collections row, which no longer holds it

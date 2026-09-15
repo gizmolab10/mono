@@ -86,7 +86,7 @@ The ⤴ button hands the browser a `mailto:` address. Windows hands that to a pr
 
 **Overview has a second wall behind that one.** Gmail's handler caps at about 4,096 characters after encoding, and Chrome reaches Gmail by putting the whole `mailto:` inside a second address, so every escape is escaped again. Every guide in the repo is past the ceiling before the doubling — handoff.md alone comes to 4,289. Carrying a whole file to Gmail needs another way altogether.
 
-The steps for a Windows machine are written into [ov installer](soon/ov%20installer.md).
+The steps for a Windows machine are written into [ov installer](../zone/work/soon/ov%20installer.md).
 
 **Nine dead links found in the work index.** Eight rows named files that had moved into `soon/`, and one sat under "More" with a top-level path. That folder has an index of its own now, and the parent goes through one row for it.
 
@@ -106,7 +106,7 @@ A stack owns the gaps between its sections and draws a line centred in each one.
 
 **A word lent to a line was never given back.** A caller builds its fold word out of sight and the line takes it. When that line went, the word was taken off the page and left there — so the hits manager let its target go for good, and the word sat on screen answering nothing. It goes back to where it was built now.
 
-[sections](../../../shared/truth/develop/sections.md) holds the design. [sections spec](../../../shared/truth/develop/sections%20spec.md) holds the instructions for putting it into di, ji and ws.
+[sections](../../shared/truth/develop/sections.md) holds the design. [sections spec](../../shared/truth/develop/sections%20spec.md) holds the instructions for putting it into di, ji and ws.
 
 ## 2026-08-17 — five words for how soon
 

@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { body_of, files, preferences, T_Preference, show_status, offer_status, save_file, read_file, file_path_of, path_of_address, follow_link, halt_stepping, leaving_file, left_at_of, w_command_down, key_of, labels_for, today, code_link_of, is_code_link, type File } from '../../ts/common/Kb';
+	import { body_of, files, preferences, T_Preference, show_status, offer_status, save_file, read_file, file_path_of, path_of_address, follow_link, halt_stepping, leaving_file, left_at_of, w_command_down, key_of, today, code_link_of, is_code_link, type File } from '../../ts/common/Kb';
+	import { labels_for } from '../../ts/utilities/Labels';
 	import { flipped_task, lines_between, markup_prefix, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { T_Hit_Target, Point, hit_target, hits, free_thumb, type Free_Thumb, svg_paths, Separator, Direction, debug, k, foldable_headings, hidden_pieces, top_headings } from '../../ts/common/Core';
