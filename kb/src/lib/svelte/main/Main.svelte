@@ -27,14 +27,15 @@
 	// these four snippets, each optional and each rendered in one place — a filter among browse's,
 	// after tag; the edit filter section, given the file, its words and a call that sets them, above
 	// the kinds row; a
-	// section in the details column, below the rules; and the operation view, given the file and the
-	// room the frame gives it, inside the editor frame. Where a host hands none, kb draws nothing
+	// section in the details column, below the rules; and the operation view, given the file, the
+	// width and height the frame gives it, the words and a call that sets them, a call that takes the
+	// html, and calls for drawn, redrawn and a note, in Edit_Markdown's place inside the editor frame. Where a host hands none, kb draws nothing
 	// there once the piece has moved out; until then kb draws the piece as it did in ov.
 	let { browse_filter, edit_filter, details_section, operation_view }: {
 		browse_filter?   : Snippet;
 		edit_filter?     : Snippet<[File, string, (words: string) => void]>;
 		details_section? : Snippet;
-		operation_view?  : Snippet<[File, number, number]>;
+		operation_view?  : Snippet<[File, number, number, string, (words: string) => void, (page: HTMLElement | null) => void, () => void, () => void, (message: string) => void]>;
 	} = $props();
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;

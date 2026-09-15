@@ -2,7 +2,6 @@
 	import { w_search_at, w_search_for } from '../../ts/managers/Operations';
 	import { report_gaps_below_lines, report_line_spacing } from '../../ts/common/Core';
 	import { key_of, type File } from '../../ts/types/File';
-	import Edit_Markdown from '../content/Edit_Markdown.svelte';
 	import Back_Links from '../content/Back_Links.svelte';
 	import { w_search_text } from '../../ts/managers/Filters';
 	import Edit_More from '../filter/Edit_More.svelte';
@@ -14,21 +13,24 @@
 	import { get } from 'svelte/store';
 	import type { Snippet } from 'svelte';
 
-	// Show one file. This is the frame: the three things stacked in it — looking through the
-	// file, what it is labeled, and the file's own words. Each of those owns its own workings;
+	// Show one file. This is the frame: the things stacked in it — looking through the file, what
+	// it is labeled, the file's own words, and the back links. Each of those owns its own workings;
 	// what they share is here — the whole file's text, and the line at the bottom that speaks up
 	// briefly. Which file it is, and what can be done to it, is said in the row across the top,
-	// which Controls draws.
+	// which Controls draws. The words are the host's since step 11 of the plan, handed in as the
+	// operation view snippet and drawn where Edit_Markdown was.
 	//
 	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the file and call back.
 	//
 	// The host's two snippets for the frame: its edit filter section, given the file, its words and
-	// a call that sets them, which the label form renders above the kinds row, and its operation view, given the
-	// file and the room the frame has, rendered below the label form.
+	// a call that sets them, which the label form renders above the kinds row, and its operation
+	// view, given the file, the room the frame has, the words and a call that sets them, a call
+	// that takes the html for the search, and calls for drawn, redrawn and a note, rendered
+	// below the label form where the words were.
 	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {}, width = 0, height = 0, edit_filter, operation_view }:
 		{ name: string; address: string; tags: string[]; guide: File; onclose: () => void; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void;
-		  width?: number; height?: number; edit_filter?: Snippet<[File, string, (words: string) => void]>; operation_view?: Snippet<[File, number, number]> } = $props();
+		  width?: number; height?: number; edit_filter?: Snippet<[File, string, (words: string) => void]>; operation_view?: Snippet<[File, number, number, string, (words: string) => void, (page: HTMLElement | null) => void, () => void, () => void, (message: string) => void]> } = $props();
 
 	// The whole file, held only while it is on screen. Two of the three below write to it: the
 	// labels at the top, and a piece of the words being changed. One place holds it, so neither
@@ -115,10 +117,7 @@
 <div class='viewer'>
 	<Edit_More {name} {guide} {tags} {page} {onclose} onshow={say} {edit_filter}
 		bind:find bind:text={text_of_file} bind:folded={filters_folded} />
-	{@render operation_view?.(guide, width, height)}
-	<Edit_Markdown {name} {address} {guide} onshow={say}
-		bind:text={text_of_file} bind:page
-		ondrawn={drawn} onredrawn={() => find?.forget()} />
+	{@render operation_view?.(guide, width, height, text_of_file, (words) => { text_of_file = words; }, (drawn_page) => { page = drawn_page; }, drawn, () => find?.forget(), say)}
 	<!-- What a link that leads nowhere has to say. It clears itself after a few seconds.
 	     Registered while it is showing, as a section, so the manager knows the cursor is on it and
 	     nothing underneath answers instead. -->

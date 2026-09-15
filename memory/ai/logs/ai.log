@@ -120,3 +120,19 @@ $ vite
 2:30:12 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte?svelte&type=style&lang.css
 2:33:32 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Fields.svelte, /src/lib/svelte/content/Edit_Fields.svelte?svelte&type=style&lang.css
 2:33:32 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Edit_More.svelte
+5:43:17 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
+5:43:17 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/utilities/Markdown_Blocks.ts
+5:43:17 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/Edit_Markdown.svelte
+5:43:17 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/Edit_Markdown.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+5:43:17 PM [vite] (client) Pre-transform error: Failed to load url /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/Edit_Markdown.svelte (resolved id: /Users/sand/GitHub/mono/kb/src/lib/svelte/content/Edit_Markdown.svelte) in /Users/sand/GitHub/mono/kb/src/lib/svelte/main/Edit.svelte. Does the file exist?
+5:43:17 PM [vite] (client) page reload src/lib/ts/common/Kb.ts
+5:43:17 PM [vite] (client) page reload src/lib/ts/common/Core.ts
+5:43:18 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Main.svelte
+5:43:18 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Edit.svelte
+5:43:18 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte
+5:48:50 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte
+5:48:50 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+5:48:50 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Edit.svelte
+6:02:39 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+6:02:40 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+6:02:40 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Main.svelte

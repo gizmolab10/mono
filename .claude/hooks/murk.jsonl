@@ -2146,3 +2146,12 @@
 {"timestamp":"2026-09-14T21:31:08Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"173","plain_words":""}
 {"timestamp":"2026-09-14T21:34:52Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"132","plain_words":""}
 {"timestamp":"2026-09-14T21:59:13Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"85","plain_words":""}
+{"timestamp":"2026-09-14T22:12:13Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"312","plain_words":""}
+{"timestamp":"2026-09-14T22:26:56Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"124","plain_words":""}
+{"timestamp":"2026-09-14T22:30:36Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"50","plain_words":""}
+{"timestamp":"2026-09-14T22:31:34Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"28","plain_words":""}
+{"timestamp":"2026-09-14T22:48:32Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"70","plain_words":""}
+{"timestamp":"2026-09-15T00:49:59Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"396","plain_words":""}
+{"timestamp":"2026-09-15T01:01:22Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"73","plain_words":""}
+{"timestamp":"2026-09-15T01:01:26Z","action":"complaint","word":"t","murky":" nothing of kb's reads it now. The plan did not say to drop it, so I left it and the kb map says so.\n2. kb's lexicon says never \"the drawn page\", say \"the html\". I used the html in step 11's new lines, but the plan's step 13 title and older comments in Edit_Markdown still say the drawn page.\n\nStill open from before: your `r` after a reload for the tools' heights log line, and the kind-change redo.","plain":"s package.json still lists markdown-it as a dependency, but no kb file imports it anymore. Remove the line, or leave it. The plan does not say. I left it.\n2. kb's lexicon bans the phrase \"the drawn page\" and says to use \"the html\". My new comments say \"the html\". Older comments in Edit_Markdown.svelte and the plan's step 13 title still say \"the drawn page\". Rename them, or change the lexicon rule.","rule":"any-line","words":"396","plain_words":"73"}
+{"timestamp":"2026-09-15T01:03:45Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"62","plain_words":""}

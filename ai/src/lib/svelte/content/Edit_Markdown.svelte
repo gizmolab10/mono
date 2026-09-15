@@ -1,44 +1,35 @@
 <script lang='ts'>
-	import { body_of, flipped_task, lines_between, markup_prefix, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
-	import { labels_for, today } from '../../ts/utilities/Labels';
-	import { foldable_headings, hidden_pieces, top_headings } from '../../ts/common/Core';
+	import { body_of, files, preferences, T_Preference, show_status, offer_status, save_file, read_file, file_path_of, path_of_address, follow_link, halt_stepping, leaving_file, left_at_of, w_command_down, key_of, labels_for, today, code_link_of, is_code_link, type File } from '../../ts/common/Kb';
+	import { flipped_task, lines_between, markup_prefix, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
-	import { file_path_of, path_of_address, read_file, save_file } from '../../ts/utilities/Saving';
-	import { code_link_of, is_code_link } from '../../ts/utilities/Opening_Code';
-	import { T_Hit_Target } from '../../ts/common/Core';
-	import { Point } from '../../ts/common/Core';
-	import { hit_target } from '../../ts/common/Core';
-	import { hits } from '../../ts/common/Core';
-	import { offer_status, show_status } from '../../ts/managers/Status';
-	import { follow_link, halt_stepping, leaving_file, left_at_of, w_command_down } from '../../ts/managers/Operations';
-	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { free_thumb, type Free_Thumb } from '../../ts/common/Core';
-	import { key_of, type File } from '../../ts/types/File';
-	import { svg_paths } from '../../ts/common/Core';
-	import { Separator } from '../../ts/common/Core';
-	import { files } from '../../ts/managers/Files';
-	import { Direction } from '../../ts/common/Core';
-	import { debug } from '../../ts/common/Core';
-	import { k } from '../../ts/common/Core';
+	import { T_Hit_Target, Point, hit_target, hits, free_thumb, type Free_Thumb, svg_paths, Separator, Direction, debug, k, foldable_headings, hidden_pieces, top_headings } from '../../ts/common/Core';
 	import MarkdownIt from 'markdown-it';
 
-	// One guide's own words: read from disk, drawn as a page, folded by heading, and changed a
-	// piece at a time. Everything that touches the drawn page lives here — the links inside it,
-	// the box that stands in for a piece being changed, the fold marks, and the bar beside it.
+	// One guide's own words, ai's since step 11 of the plan: read from disk, drawn as a page,
+	// folded by heading, and changed a piece at a time. Everything that touches the html
+	// lives here — the links inside it, the box that stands in for a piece being changed, the
+	// fold marks, and the bar beside it. kb's frame hands this in as the operation view snippet
+	// and answers the calls: the words set, the html taken for the search, drawn and
+	// redrawn told, a note said on the line along the bottom.
 
 	let {
-		name, address, guide, text = $bindable(''), page = $bindable<HTMLElement | null>(null),
+		name, address, guide, text, set_text, set_page,
 		onshow, ondrawn, onredrawn,
 	}: {
 		name       : string;                  // what the file is called
 		address    : string;                  // which file it is, so folds belong to one file at a time
 		guide      : File;                   // the record of the file being read
 		text       : string;                  // the whole file, held only while it is on screen
-		page       : HTMLElement | null;      // the drawn words, so a search can look inside them
+		set_text   : (words: string) => void; // hands changed words back to the frame, which holds them
+		set_page   : (page: HTMLElement | null) => void;   // hands the drawn words to the frame, so a search can look inside them
 		onshow      : (message: string) => void; // something to tell the reader, briefly
 		ondrawn    : () => void;              // a file has just been read and drawn
 		onredrawn  : () => void;              // the page was built afresh from changed words
 	} = $props();
+
+	// The drawn words, handed to the frame the moment they exist.
+	let page = $state<HTMLElement | null>(null);
+	$effect(() => { set_page(page); });
 
 	// The files are written in markdown, so they are turned into a real page before being
 	// shown. Any markup written into a guide is left as plain characters rather than acted
@@ -672,7 +663,7 @@
 	// on a section's own pointer hands the file its own folds, starting from where they sit.
 	let touched   = false;
 
-	/** The level of each piece of the drawn page: 1 for a top heading, 0 for anything else. */
+	/** The level of each piece of the html: 1 for a top heading, 0 for anything else. */
 	function levels_of(box: HTMLElement): number[] {
 		return [...box.children].map((piece) => {
 			const found = /^H([1-6])$/.exec(piece.tagName);
@@ -917,7 +908,7 @@
 		hits.defer_recalibrate();
 	}
 
-	// The marks are put on the drawn page by hand, so they are drawn again every time the words
+	// The marks are put on the html by hand, so they are drawn again every time the words
 	// change or another file opens — after the page itself is on screen, never before.
 	$effect(() => {
 		words;
@@ -1049,7 +1040,7 @@
 			if (saving_wait !== null) { clearTimeout(saving_wait); saving_wait = null; }
 			close_box(false);
 			words = null;
-			text = '';
+			set_text('');
 			drawn_body = '';
 		};
 	});

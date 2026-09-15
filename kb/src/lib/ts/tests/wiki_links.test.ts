@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { plain_links } from '../utilities/Markdown_Blocks';
+import { body_of, links_in, plain_links } from '../utilities/Links';
 
 // Obsidian's own way of naming another guide is two square brackets round its name. The reader
 // knows only the ordinary form, so each one is turned into that before the words are drawn —
@@ -56,5 +56,76 @@ describe('turning double brackets into ordinary links', () => {
 	it('never changes how many lines there are', () => {
 		const text = '# a title\n\n[[one]] and [[two]]\n\n```\n[[in code]]\n```\n\n- [[a|b]]\n';
 		expect(plain_links(text).split('\n').length).toBe(text.split('\n').length);
+	});
+});
+
+// The other two readers. Their cases came from markdown_blocks.test at step 11 of the plan, when
+// the drawing went to ai and the readers stayed kb's.
+
+// A link is two things: where it points, and what it reads as. Both are wanted, because only the
+// words are ever drawn on the page — so a search through those words can never find an address.
+
+describe('the links a guide holds', () => {
+	const addresses = (text: string) => links_in(text).map((one) => one.address);
+
+	it('finds one in a sentence and one in a list', () => {
+		expect(addresses('see [that](./that.md) for more\n\n- [other](../other/other.md)'))
+			.toEqual(['./that.md', '../other/other.md']);
+	});
+
+	it('keeps a link to a heading in the same guide', () => {
+		expect(addresses('jump to [naming](#naming)')).toEqual(['#naming']);
+	});
+
+	it('leaves out anything that says outright it is on the web', () => {
+		expect(addresses('[here](https://example.com) and [there](./there.md)')).toEqual(['./there.md']);
+	});
+
+	it('leaves out what a fenced chunk of code is showing', () => {
+		const text = 'real [one](./one.md)\n\n```\nshown [two](./two.md)\n```\n\nreal [three](./three.md)';
+		expect(addresses(text)).toEqual(['./one.md', './three.md']);
+	});
+
+	it('finds nothing in a guide with no links', () => {
+		expect(links_in('# just words\n\nnothing to follow')).toEqual([]);
+	});
+
+	it('hands back the words each link reads as, beside where it points', () => {
+		expect(links_in('see [thin proxy proposal](../work/proposals/thin%20proxy%20proposal.md).'))
+			.toEqual([{ address: '../work/proposals/thin%20proxy%20proposal.md', words: 'thin proxy proposal' }]);
+	});
+
+	it('hands back nothing for words where a link has none', () => {
+		expect(links_in('[](./bare.md)')).toEqual([{ address: './bare.md', words: '' }]);
+	});
+
+	it('sees Obsidian\'s own form once it is turned into the ordinary one, the way the drawing does', () => {
+		const text = 'see [[thin proxy proposal]] for how.';
+		expect(links_in(text)).toEqual([]);
+		expect(links_in(plain_links(text)))
+			.toEqual([{ address: 'thin%20proxy%20proposal.md', words: 'thin proxy proposal' }]);
+	});
+});
+
+describe('taking the labels off', () => {
+	it('leaves the words and says how many lines went', () => {
+		const text = ['---', 'kind: rule', 'title: "A"', '---', '', 'hello'].join('\n');
+		const { body, skipped } = body_of(text);
+		expect(body).toBe('\nhello');
+		expect(skipped).toBe(4);
+	});
+
+	it('leaves a file with no labels exactly as it was', () => {
+		const text = 'hello\n\nthere';
+		const { body, skipped } = body_of(text);
+		expect(body).toBe(text);
+		expect(skipped).toBe(0);
+	});
+
+	it('leaves a file whose labels never close alone', () => {
+		const text = '---\nkind: rule\nhello';
+		const { body, skipped } = body_of(text);
+		expect(body).toBe(text);
+		expect(skipped).toBe(0);
 	});
 });

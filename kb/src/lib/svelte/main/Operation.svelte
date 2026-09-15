@@ -15,7 +15,7 @@
 		height          : number;
 		browse_filter?  : Snippet;
 		edit_filter?    : Snippet<[File, string, (words: string) => void]>;
-		operation_view? : Snippet<[File, number, number]>;
+		operation_view? : Snippet<[File, number, number, string, (words: string) => void, (page: HTMLElement | null) => void, () => void, () => void, (message: string) => void]>;
 	} = $props();
 
 	// A guide the list no longer shows (its file gone, or a filter now hiding it) closes

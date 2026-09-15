@@ -1,12 +1,13 @@
 # Unfinished
 
-86 files hold unfinished work, as of 2026-09-14.
+87 files hold unfinished work, as of 2026-09-14.
 
-## ai (60)
+## ai (63)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-| z | [music and ai.md](../../ai/zone/music%20and%20ai.md) | 60 open |
+| z | [ideas.md](../../ai/zone/ideas.md) | 5 open |
+| z | [music and ai.md](../../ai/zone/music%20and%20ai.md) | 58 open |
 
 ## core (29)
 
@@ -62,11 +63,11 @@
 | z | [work/sideband storage proposal.md](../../ji/zone/work/sideband%20storage%20proposal.md) | 3 open |
 | z | [work/proposals/chat history proposal.md](../../ji/zone/work/proposals/chat%20history%20proposal.md) | 4 open |
 
-## kb (1)
+## kb (4)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-| z | [ideas.md](../../kb/zone/ideas.md) | 1 open |
+| z | [ideas.md](../../kb/zone/ideas.md) | 4 open |
 
 ## lv (2)
 

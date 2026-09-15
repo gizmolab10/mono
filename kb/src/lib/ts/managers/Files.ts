@@ -4,7 +4,7 @@ import { fresh_index, line_for, relative_address, renamed_address, repaired_inde
 import { blank_file, free_name, label_changes, today, KIND_UNTIL_TOLD, NAME_UNTIL_TOLD, TAG_WHEN_NEW } from '../utilities/Labels';
 import { T_Bundle, in_order, key_of, project_of, project_at, type File, type Labels, type Filtered_File } from '../types/File';
 import { customizations } from '../common/Customizations';
-import { links_in, plain_links } from '../utilities/Markdown_Blocks';
+import { links_in, plain_links } from '../utilities/Links';
 import { show_status, type Finding } from './Status';
 import { CANNOT_FIND, Hierarchy } from './Hierarchy';
 import { writable, get } from 'svelte/store';

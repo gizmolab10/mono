@@ -2,6 +2,16 @@
 
 What's been finished, newest first.
 
+## 2026-09-14 — the words are ai's
+
+Step 11 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). Edit_Markdown.svelte and Emphasis.ts left kb whole for ai, and Markdown_Blocks.ts was cut: the drawing went with them, the link readers stayed kb's in utilities/Links.ts, since Files.ts reads every guide with them at launch and a library never imports a host. The three tests went with their code, the readers' cases joining kb's wiki_links.test. App.svelte hands the drawer as the operation view snippet, given the file, the width and the height, the words and a call that sets them, a call handing the html back for the search, and calls for drawn, redrawn and a note; Edit.svelte draws it where Edit_Markdown was and draws nothing there when no host hands one. Kb.ts hands the drawer's fourteen reaches into kb and ai's Core.ts its ten into core; ai's package.json declares markdown-it. kb's lexicon gained link readers.
+
+### Verification
+
+- Headless: ai's editor draws the plan's own page, 375 stamped pieces, 27 named headings, 46 fold buttons, the information rows and the back links around it, and the search finds a word 137 times and highlights one, so the html reached the frame; no page errors.
+- kb clean at 515 files, 218 tests in 11 files. ai clean at 541 files, 121 tests in 5 files, and it builds.
+- The change of a piece is not proved here. Not looked at in a browser by Jonathan.
+
 ## 2026-09-14 — the information rows are ai's
 
 Step 10 of the plan in [music and ai](../../../ai/zone/music%20and%20ai.md). The label form's four information rows and the title's two tools left kb's Edit_More.svelte for ai's Edit_Fields.svelte, handed back as the edit filter section, given the file, its words and a call that sets them, and drawn above the kinds row under the information fold. Edit_More keeps the kind and the tags and draws two kb components of their own, Kinds_Row.svelte and Tag_Rows.svelte. Kb.ts hands show_status, save_file, file_path_of, title_from_name and three types; ai's Core.ts hands hit_target. A refusal is said on the status line. kb's lexicon gained label form, kinds row and tag rows.

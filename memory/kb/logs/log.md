@@ -2,6 +2,8 @@
 
 ## 14 September 2026
 
+- D: markdown-it out of kb's package.json, read by nothing of kb's since step 11; Main.svelte's comment says the html, the lexicon's word, not the drawn page. Jonathan's call
+- D: step 11: Edit_Markdown.svelte, Emphasis.ts and the drawing half of Markdown_Blocks.ts left for ai, the link readers staying in utilities/Links.ts, which Files.ts reads; the three tests went with their code and the readers' cases joined wiki_links.test; the operation view snippet takes the words, a call that sets them, a call handing the html back and calls for drawn, redrawn and a note, through Main, Operation and Edit, which draws it in Edit_Markdown's place; the lexicon gained link readers. Check clean at 515 files, 218 tests
 - D: every clickable riding a separator is white while the cursor is off it, in Back_Links, Browse_Filters, Search, Details and Edit_More, the forced state too; hovered it fills as before
 - D: Edit_More puts on the host subsection's line, centered, whatever element the host's rows mark with the class rides-the-line, looked for once the rows are drawn, the way the title tools rode it while they were kb's. adopt kb says so
 - D: step 10: the information rows and the title's tools left Edit_More.svelte, which keeps the kind and the tags and draws Kinds_Row.svelte and Tag_Rows.svelte, kb components of their own; the edit filter snippet takes the file, its words and a call that sets them, through Main, Operation and Edit; the lexicon gained label form, kinds row and tag rows. Check clean at 542 files, 324 tests

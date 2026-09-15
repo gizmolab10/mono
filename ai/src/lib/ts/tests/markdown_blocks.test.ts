@@ -1,4 +1,4 @@
-import { body_of, boxes_for_tasks, flipped_task, lines_between, links_in, mark_the_links, markup_prefix, page_of, plain_links, stamp_blocks, still_reads, with_lines_replaced, without_words_above_heading, words_for_link } from '../utilities/Markdown_Blocks';
+import { boxes_for_tasks, flipped_task, lines_between, mark_the_links, markup_prefix, page_of, stamp_blocks, still_reads, with_lines_replaced, without_words_above_heading, words_for_link } from '../utilities/Markdown_Blocks';
 import { describe, expect, it } from 'vitest';
 import MarkdownIt from 'markdown-it';
 
@@ -91,7 +91,7 @@ describe('the words the hover says over a link', () => {
 	});
 });
 
-describe('the markup the drawn page gives no width to', () => {
+describe('the markup the html gives no width to', () => {
 	it('takes a heading of every rank, with its space', () => {
 		expect(markup_prefix('# a title')).toBe('# ');
 		expect(markup_prefix('###### deep down')).toBe('###### ');
@@ -109,80 +109,12 @@ describe('the markup the drawn page gives no width to', () => {
 		expect(markup_prefix('1. [ ] numbered')).toBe('1. [ ] ');
 	});
 
-	it('finds nothing where the drawn page spends the same width', () => {
+	it('finds nothing where the html spends the same width', () => {
 		expect(markup_prefix('an ordinary paragraph')).toBe('');
 		expect(markup_prefix('- a plain bullet')).toBe('');
 		expect(markup_prefix('#no space, so no heading')).toBe('');
 		expect(markup_prefix('    # four spaces, so a stepped-in line')).toBe('');
 		expect(markup_prefix('')).toBe('');
-	});
-});
-
-// A link is two things: where it points, and what it reads as. Both are wanted, because only the
-// words are ever drawn on the page — so a search through those words can never find an address.
-
-describe('the links a guide holds', () => {
-	const addresses = (text: string) => links_in(text).map((one) => one.address);
-
-	it('finds one in a sentence and one in a list', () => {
-		expect(addresses('see [that](./that.md) for more\n\n- [other](../other/other.md)'))
-			.toEqual(['./that.md', '../other/other.md']);
-	});
-
-	it('keeps a link to a heading in the same guide', () => {
-		expect(addresses('jump to [naming](#naming)')).toEqual(['#naming']);
-	});
-
-	it('leaves out anything that says outright it is on the web', () => {
-		expect(addresses('[here](https://example.com) and [there](./there.md)')).toEqual(['./there.md']);
-	});
-
-	it('leaves out what a fenced chunk of code is showing', () => {
-		const text = 'real [one](./one.md)\n\n```\nshown [two](./two.md)\n```\n\nreal [three](./three.md)';
-		expect(addresses(text)).toEqual(['./one.md', './three.md']);
-	});
-
-	it('finds nothing in a guide with no links', () => {
-		expect(links_in('# just words\n\nnothing to follow')).toEqual([]);
-	});
-
-	it('hands back the words each link reads as, beside where it points', () => {
-		expect(links_in('see [thin proxy proposal](../work/proposals/thin%20proxy%20proposal.md).'))
-			.toEqual([{ address: '../work/proposals/thin%20proxy%20proposal.md', words: 'thin proxy proposal' }]);
-	});
-
-	it('hands back nothing for words where a link has none', () => {
-		expect(links_in('[](./bare.md)')).toEqual([{ address: './bare.md', words: '' }]);
-	});
-
-	it('sees Obsidian\'s own form once it is turned into the ordinary one, the way the drawing does', () => {
-		const text = 'see [[thin proxy proposal]] for how.';
-		expect(links_in(text)).toEqual([]);
-		expect(links_in(plain_links(text)))
-			.toEqual([{ address: 'thin%20proxy%20proposal.md', words: 'thin proxy proposal' }]);
-	});
-});
-
-describe('taking the labels off', () => {
-	it('leaves the words and says how many lines went', () => {
-		const text = ['---', 'kind: rule', 'title: "A"', '---', '', 'hello'].join('\n');
-		const { body, skipped } = body_of(text);
-		expect(body).toBe('\nhello');
-		expect(skipped).toBe(4);
-	});
-
-	it('leaves a file with no labels exactly as it was', () => {
-		const text = 'hello\n\nthere';
-		const { body, skipped } = body_of(text);
-		expect(body).toBe(text);
-		expect(skipped).toBe(0);
-	});
-
-	it('leaves a file whose labels never close alone', () => {
-		const text = '---\nkind: rule\nhello';
-		const { body, skipped } = body_of(text);
-		expect(body).toBe(text);
-		expect(skipped).toBe(0);
 	});
 });
 
@@ -402,7 +334,6 @@ describe('stamping a block with its lines', () => {
 		expect([...stamp_blocks(reader, 'hello\n\nthere', 0).matchAll(/data-number="(\d+)"/g)].map((hit) => hit[1]))
 			.toEqual(['1', '3']);
 	});
-
 
 	it('moves all four out of a fenced chunk of code, onto the box around it', () => {
 		const html = stamp_blocks(reader, '```\nsome code\n```', 0);

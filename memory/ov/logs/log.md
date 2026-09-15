@@ -4,6 +4,9 @@
 
 ## 14 September 2026
 
+- D: step 11 built, the words ai's, as the plan's Built note says. In the work journal, working features row 92
+- D: step 11 says wiki_links.test takes markdown_blocks' cases for the link readers when the rest goes to ai
+- D: step 11 of zone/music and ai.md rewritten from the reading before it: Markdown_Blocks.ts cut, the link readers staying kb's in Links.ts; the three tests going with their code now and step 19's list amended; the operation view snippet taking the words, the page and three calls, adopt kb saying so; what Kb.ts and ai's Core.ts hand over; markdown-it in ai's package.json; Edit.svelte's part; the proof widened
 - D: step 10 built, the information rows ai's, as the plan's Built note says. In the work journal, working features row 91
 - D: step 10 names the snippet type's path, Main.svelte, Operation.svelte and Edit.svelte carrying it and Edit_More rendering it with the file, its text and the call
 - D: step 10 says what the kinds row and tag rows components hold, Edit_More keeping the state and the saving, and that kb's lexicon gains label form, information rows, kinds row and tag rows at the build
