@@ -8,3 +8,5 @@ $ vite
   ➜  Network: use --host to expose
 10:12:20 AM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/utilities/Preferences.ts
 1:10:37 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/events/Hits.ts
+3:52:23 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:52:23 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts

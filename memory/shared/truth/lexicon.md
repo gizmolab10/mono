@@ -6,7 +6,7 @@ Reaching for a word that is not here, say so and stop. Do not invent one.
 
 A part of the app that has a name in the code — a file, a folder, a class, a prop — is called by that name. Plain english says what a thing **does**; it never renames what a thing **is**. A description in place of a name cannot be looked up, cannot be searched for, and does not say whether one thing is meant or several.
 
-Each project keeps its own lexicon for its own things — [core](../../core/truth/lexicon.md), [di](../../di/truth/lexicon.md), [ji](../../ji/truth/lexicon.md), [lv](../../lv/truth/lexicon.md), [ov](../../ov/truth/lexicon.md). Nothing here is repeated there.
+Each project keeps its own lexicon for its own things — [core](../../core/truth/lexicon.md), [di](../../di/truth/lexicon.md), [ji](../../ji/truth/lexicon.md), [lv](../../lv/truth/lexicon.md), [ov](../../ai/truth/lexicon.md). Nothing here is repeated there.
 
 ## The memory system
 
@@ -32,7 +32,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 
 - **guide** — a file in a project's `notes/guides/`, under `memory/`. Living reference; it holds decisions, not work.
 - **work note** — a file in a project's `notes/work/`, under `memory/`. What is being done now.
-- **collection** — one project's whole set of files: mono, di, ji, ov, ga, me. When the six entries under new lexicon in memory/kb/zone/music and ai.md are decided, this entry changes with them, a collection becoming a dropped folder for mu and a project for ai, and ov's lexicon takes their definitions.
+- **collection** — one project's whole set of files: mono, di, ji, ov, ga, me. When the six entries under new lexicon in memory/ai/zone/work/music and ai.md are decided, this entry changes with them, a collection becoming a dropped folder for mu and a project for ai, and ov's lexicon takes their definitions.
 - **label** — a name and a value on a file, with who wrote it, hand, rule or ai: a row in the db beside the dispatcher, never a line in the file since 10 September 2026. For a markdown file, its kind and each of its tags. For a song, its artist, album and title. Never the screen's text beside a control, which this word does not name here. Decided 12 September 2026, over key, trait, field, aspect, attribute, fact, property, tuple and kvp.
 - **kind** — the label saying what sort of file it is, one per file. Six exist: analyze, arch, explain, howto, music, specify.
 - **tag** — a label saying what the file is about, any number per file, from a closed list.
@@ -41,6 +41,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **index** — the list of what a folder holds. Update it when files come or go.
 - **handoff** — current status and the one **Next** action. Read first each session.
 - **code debt** — one line per memory file holding unfinished work, across every project: `memory/shared/zone/code debt.md`, written by `tools/code_debt.py` and never by hand; the shorthand `debt` runs it. Named unfinished until 15 September 2026. Until then the name of a project's own file of open tasks as checkboxes, whose finished ones went to **code debt paid**.
+- **finished** — one line per memory file holding finished work, across every project: `memory/shared/zone/finished.md`, written by `tools/finished.py` and never by hand; the shorthand `finished` runs it. Checked boxes and settled proposals count; a work journal's entries and decided pacs do not, the journal being where finished items end up and decisions.md the rationale's home. `tools/process_finished.py`, the shorthand `process finished <X>`, moves one project's finished items into its work journal, `memory/X/logs/work journal.md`, and each done folder's files into its logs folder. Decided 15 September 2026.
 - **journal** — finished work, newest first.
 - **learn** — past mistakes, never to be repeated. Twenty entries means time to distill.
 - **lexicon** — this file.

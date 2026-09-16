@@ -2,7 +2,7 @@
 
 The words used in this project. When writing prose, comments, log lines, or test names, use these words exactly, even when near synonyms exist. If it's here, that's its name. Reaching for a word that is not here, say so and stop — do not invent one.
 
-The shared [banned words](../../shared/truth/conventions.md) list holds the words that mean nothing to Jonathan, each with the word to use instead; ov's own [banned words](../../ov/truth/banned%20words.md) does the same for this project. The words every project says — guide, work note, collection, labels, kind, tag, brief — are not repeated here.
+The shared [banned words](../../shared/truth/conventions.md) list holds the words that mean nothing to Jonathan, each with the word to use instead; ov's own [banned words](../../ai/truth/banned%20words.md) does the same for this project. The words every project says — guide, work note, collection, labels, kind, tag, brief — are not repeated here.
 
 ## Three views (details, browser, editor)
 

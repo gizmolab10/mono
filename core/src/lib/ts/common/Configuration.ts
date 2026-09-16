@@ -33,6 +33,7 @@ class Configuration {
 		root.setProperty('--gap-big',            `${k.gap.big}px`);
 		root.setProperty('--gap-fat',            `${k.gap.fat}px`);
 		root.setProperty('--gap-huge',           `${k.gap.huge}px`);
+		root.setProperty('--thick-micro',        `${k.thickness.micro}px`);
 		root.setProperty('--thick-faint',        `${k.thickness.faint}px`);
 		root.setProperty('--thick-small',        `${k.thickness.small}px`);
 		root.setProperty('--thick',              `${k.thickness.normal}px`);

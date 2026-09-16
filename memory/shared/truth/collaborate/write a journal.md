@@ -1,6 +1,6 @@
 # Journals
 
-Rules for the journal file (`notes/work/journal.md`).
+Rules for the journal file, `memory/<project>/logs/work journal.md` since 15 September 2026.
 
 ## Format
 
@@ -27,7 +27,7 @@ Rules for the journal file (`notes/work/journal.md`).
 
 ## Daily workflow
 
-1. Start of session: read `notes/work/journals/journal.md` to recall context
+1. Start of session: read `logs/work journal.md` to recall context
 2. During work: update active work files in `notes/work/`
 3. End of session: add a journal entry summarizing what happened
 

@@ -4,7 +4,7 @@ To make my projects easier to begin and share UX features and improvements, I wa
 
 - [ ] core
     - [ ] panel
-        - [ ] filter tree
+        - [ ] kb
             - [ ] ws
             - [ ] ov
             - [ ] mu

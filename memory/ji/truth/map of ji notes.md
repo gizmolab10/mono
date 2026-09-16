@@ -9,7 +9,7 @@ Moved whole into `truth/` on 7 September 2026: `project/`, `setup/`, `specificat
 
 - [map of ji files.md](map%20of%20ji%20files.md) — the source-code map: what each file under `src/` does.
 - `map of ji notes.md` — this file: the map of `notes/` itself.
-- [ji road map.md](../zone/designs/ji%20road%20map.md) — where ji is going (direction and plans), in `memory/ji/notes/designs/`.
+- [ji road map.md](ji%20road%20map.md) — where ji is going (direction and plans), in `memory/ji/notes/designs/`.
 - [lexicon.md](lexicon.md) — in `truth/`: the words this project uses, and the ones it never uses. Read before writing prose, comments, log lines or test names.
 - [Minimum Viable INTERSECTION app.md](../../work/future/Minimum%20Viable%20INTERSECTION%20app.md) — research note: a DeepSeek Q&A on building the AI component in minimal form.
 

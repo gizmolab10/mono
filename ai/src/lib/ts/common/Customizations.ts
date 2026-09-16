@@ -42,9 +42,9 @@ export const customizations = {
 	// The kind and the tag a new or unlabeled file starts with, since step 12 of the plan: a taking
 	// apart, and the one being worked on. Composing labels puts stale on beside now.
 	kind_when_new : 'analyze',
-	tag_when_new  : 'now',
+	tag_when_new  : 'born',
 
-	// The open buttons at the left of the controls row while browsing, each opening one file in
+	// The open buttons at the far right of the controls row while browsing, each opening one file in
 	// the editor: code debt, the memory system's one line per file holding unfinished work.
 	open_buttons : [{ title: 'code debt', key: 'memory/shared/zone/code debt.md' }],
 };

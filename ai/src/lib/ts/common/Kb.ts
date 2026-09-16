@@ -14,7 +14,7 @@ export { file_path_of, save_file } from 'kb/ts/utilities/Saving';
 export type { File, Labels } from 'kb/ts/types/File';
 export type { Source } from 'kb/ts/utilities/Saving';
 export { read_file, path_of_address } from 'kb/ts/utilities/Saving';
-export { follow_link, halt_stepping, leaving_file, left_at_of, w_command_down, w_search_at, w_search_for } from 'kb/ts/managers/Operations';
+export { follow_link, halt_stepping, leaving_file, left_at_of, open_view, w_command_down, w_search_at, w_search_for } from 'kb/ts/managers/Operations';
 export { w_search_text } from 'kb/ts/managers/Filters';
 export { offer_status } from 'kb/ts/managers/Status';
 export { key_of } from 'kb/ts/types/File';

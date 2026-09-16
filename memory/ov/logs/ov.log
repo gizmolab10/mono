@@ -35,3 +35,10 @@ $ vite
 2:27:08 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
 2:27:25 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
 1:10:37 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/events/Hits.ts
+3:35:22 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+3:36:02 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
+3:52:23 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:52:23 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
+3:52:23 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Big_Pill.svelte?svelte&type=style&lang.css
+7:52:35 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Big_Pill.svelte?svelte&type=style&lang.css
+7:56:55 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Big_Pill.svelte?svelte&type=style&lang.css

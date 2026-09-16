@@ -26,7 +26,7 @@ UPDATE_DOCS = os.path.join(GITHUB_DIR, 'tools/docs/update-project-docs.sh')
 
 # --- the plugins ------------------------------------------------------------------------------------
 # One plugin.py per host, imported from the host's folder, mono/<host>, for each host the host list
-# names, database.HOSTS: the specialty's code, as memory/kb/zone/music and ai.md's plugin api table
+# names, database.HOSTS: the specialty's code, as memory/ai/zone/music and ai.md's plugin api table
 # lays it out. Its listing rule says which files under the root are listed, is listed says it of one
 # path, and labels gives a file its labels inside the rules pass. The import and every call are
 # wrapped: a fault is said in the log and fails that file or that request, never the server. A host

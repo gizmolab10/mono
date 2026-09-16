@@ -27,7 +27,7 @@ Every project folder under memory, every markdown file however deep, code debt.m
 
 ## What it writes
 
-The file whole: today's date and the count, then the tables. Running it twice writes the same file. The file's own labels, kind analyze, tag now, its title and description, go into the db beside the dispatcher, never into the file.
+The file whole: every project's items added up in the H1, since 15 September 2026; today's date and the count of files; then the tables. Running it twice writes the same file. The file's own labels, kind analyze, tag now, its title and description, go into the db beside the dispatcher, never into the file.
 
 ## The proof
 

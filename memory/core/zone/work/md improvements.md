@@ -1,6 +1,6 @@
 # md improvements
 
-What to do about [md audit](md%20audit.md). Each pass stands alone and can be stopped after.
+What to do about [md audit](memory/core/zone/work/md%20audit.md). Each pass stands alone and can be stopped after.
 
 ## Pass one — the entry points and the labels
 

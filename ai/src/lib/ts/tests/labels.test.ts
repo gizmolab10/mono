@@ -11,7 +11,7 @@ const TODAY = '2026-08-06';
 describe('the kind and the tag ai gives a new or unlabeled file', () => {
 	it('are analyze and now, and stale goes on beside now when the labels were composed', () => {
 		expect(customizations.kind_when_new).toBe('analyze');
-		expect(customizations.tag_when_new).toBe('now');
+		expect(customizations.tag_when_new).toBe('born');
 		expect(NEEDS_A_LOOK).toBe('stale');
 	});
 });

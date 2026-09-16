@@ -4,6 +4,15 @@
 
 ## 15 September 2026
 
+- D: the handbook's Consolidation section stays where it is; the merge into zone/consolidate.md proposed and declined. Jonathan's decision in memory/ai/truth/decisions.md
+- D: tools/process_finished.py built with its test, the shorthand process finished <X>, the finished truth's process section, the lexicon entry, tools' index; finished.py no longer counts decided pacs; write a journal.md names logs/work journal.md. Jonathan's decisions in memory/ai/truth/decisions.md
+- D: tools/finished.py built, a twin of code_debt.py, with tools/test_finished.py, truth/finished.md, a lexicon entry, index lines, the proposal marked decided. Jonathan's decision in memory/ai/truth/decisions.md
+- D: the code debt file's H1 carries every project's items added up, tools/code_debt.py, one more check in its test, the truth saying so. Jonathan's decision in memory/ai/truth/decisions.md
+- the dispatcher's tests name ai's plan file as their work note where they named ov's current context, moved today; three checks failed on the old path, tools/hub/test_dispatcher.py
+- D: consolidate.md listed in the index, Jonathan's move from ai; murk journal now core's newer copy, organize the one copy, zone/work/index.md saying so. Jonathan's decision in memory/ai/truth/decisions.md
+- D: ten work notes arrived at the top of zone/work from ai, ov's before that: AI on my mac, claude code, claude session output, fable, rewrite the guides, assessment of our guides, murk journal, organize, truth and zone and design?, the publish article; zone/work/index.md lists them. Jonathan's decision in memory/ai/truth/decisions.md
+- D: ov's decisions, design folder and zone moved to memory/ai, 31 files, rows following; ov's lexicon, banned words, working features and ideas merged into ai's; 28 links and 56 mentions re-pointed. Jonathan's decision in memory/ai/truth/decisions.md
+- the journal's Current entry added at its top, what is being worked on now, per write a journal.md
 - D: row 378, the truth of the code debt tool, repathed by hand to truth/code debt.md and its missing mark cleared, having lost its pairing to a git mv and an edit in one script; lesson 32
 - D: unfinished renamed code debt, Jonathan's decision: tools/code_debt.py and its test by git, memory/shared/zone/code debt.md through the dispatcher so its row followed, the truth code debt.md; the debt shorthand, the index, the lexicons, adopt kb and working features say the name
 - D: unfinished.md back at memory/shared/zone, Jonathan's decision over memory's own zone: the tool, its test, the shorthand, the index, the truth, the root index and ai's open button say the place; memory/zone removed, empty
@@ -23,7 +32,7 @@
 - D: zone/learn.md entry 30: a moved file is left alone for one look of the dispatcher before it is edited, from shared's log losing its row's pairing when moved and written in one script
 - D: every project's log.md moved into its logs folder, 14 of them, git recording each move. tools/big-picture.py no longer skips logs folders and its test puts the log there. truth/create a project.md, truth/handbook.md and zone/proposals.md name the new place. Decision in truth/decisions.md
 - D: Always rule 2 in truth/conventions.md puts standard technical English first and everyday English second, a decision in truth/decisions.md
-- D: lexicon's collection entry carries a note: when the six new lexicon entries in memory/ov/zone/music and ai.md are decided, it changes with them and ov's lexicon takes their definitions
+- D: lexicon's collection entry carries a note: when the six new lexicon entries in memory/ai/zone/work/music and ai.md are decided, it changes with them and ov's lexicon takes their definitions
 - D: zone/learn.md entry 29: co wrote landed three times and ignored the hook's warning each time. The banned-words table now lists worked as the word to use and landed as banned
 - D: zone/learn.md entries 27 and 28: stand is banned and co wrote it after being told, and a fault seen in a browser is found in a browser, from two lost edits that python and curl could not reproduce and a headless browser did
 - D: zone/learn.md entry 26: where two pieces of code meet, say api and table the functions, from three replies explaining a plugin's routes as addresses, branches and functions before Jonathan named the two apis
@@ -34,7 +43,7 @@
 - D: tools/hub/index.md updated: ov.sql and the saved db named, servers.sh and start-hub.sh each on a line saying what it does and who runs it, and clean.worktrees.sh named where it sits today, tools/scripts, moving back to hub
 - D: pac for moving servers.sh and start-hub.sh from tools/hub to tools/scripts, in truth/decisions.md: for, one kind of thing per folder and the precedent of clean.worktrees.sh. Against, neither is standalone, both reach ports.json and dispatcher.py through their own folder, the dispatcher runs servers.sh from hub in four places, and a shell alias, three truths and an index name the path. Deciding question: sorted by what it is, or by what it serves. A finding: hub's index still links clean.worktrees.sh beside servers.sh, though it sits in scripts
 - D: zone/learn.md gained twelve raw entries, 9 to 20, the reasons for Jonathan's edits of ov's plan on 11 and 12 September: the issue first, a risk as what a step avoids, error not slip, one idea per bullet, label stays, configuration against choice or option, question substeps in bold, one numbered list, gather then remove redundancy, headings that say their subject, a file named for what the reader does, and an answer where its question is. Three reasons are marked as guesses
-- D: lexicon's label entry rewritten: a name and a value on a file with who wrote it, a row in the db beside the dispatcher, never a line in the file since 10 September, never the screen's text beside a control. kind says six with music, tag says any number from a closed list, brief says a field on the file's row. Decided in ov over nine other words, the pacs in memory/ov/truth/decisions.md
+- D: lexicon's label entry rewritten: a name and a value on a file with who wrote it, a row in the db beside the dispatcher, never a line in the file since 10 September, never the screen's text beside a control. kind says six with music, tag says any number from a closed list, brief says a field on the file's row. Decided in ov over nine other words, the pacs in memory/ai/truth/decisions.md
 
 ## 9 September 2026
 

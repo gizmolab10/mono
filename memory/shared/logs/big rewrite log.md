@@ -237,7 +237,7 @@ Total for this section: 6 files touched, 4 word-categories fixed (~11 individual
 
 ## ov
 
-Scope: all of `ov/` (85 files). ov has its own `notes/guides/pre-flight/banned words.md` (2 rows: "joined line," "block of drawing," neither found anywhere in the corpus) and a read-only `memory/ov/truth/lexicon.md` not touched. Raw hits were very high (`words` 569, `mark` 273, `stand` 243, `edge` 135, `bar` 116, `glob` 125, `split` 97) — ov is a markdown-file browser/editor, so `words`, `mark`, `edge` and `bar` are constantly used in ov's own literal editor/UI vocabulary, same pattern as ji. This pass again worked highest-signal-first: `shape` (ov's biggest real category) was checked exhaustively; `cross-project`, `absorb`, `ship`, `slid` were checked exhaustively (small counts); the huge literal categories were sampled.
+Scope: all of `ov/` (85 files). ov has its own `notes/guides/pre-flight/banned words.md` (2 rows: "joined line," "block of drawing," neither found anywhere in the corpus) and a read-only `memory/ai/truth/lexicon.md` not touched. Raw hits were very high (`words` 569, `mark` 273, `stand` 243, `edge` 135, `bar` 116, `glob` 125, `split` 97) — ov is a markdown-file browser/editor, so `words`, `mark`, `edge` and `bar` are constantly used in ov's own literal editor/UI vocabulary, same pattern as ji. This pass again worked highest-signal-first: `shape` (ov's biggest real category) was checked exhaustively; `cross-project`, `absorb`, `ship`, `slid` were checked exhaustively (small counts); the huge literal categories were sampled.
 
 ### Swaps made
 

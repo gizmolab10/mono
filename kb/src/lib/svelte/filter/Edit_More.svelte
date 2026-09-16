@@ -384,7 +384,7 @@
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.clickable {
 		background    : var(--white);
-		border        : var(--thick-small) solid var(--black);
+		border        : var(--thick-faint) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);

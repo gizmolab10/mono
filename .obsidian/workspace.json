@@ -37,17 +37,45 @@
             }
           },
           {
-            "id": "1bfe001573455865",
+            "id": "467c5a05a0e18cd6",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/develop/constants & subtypes.md",
+                "file": "memory/ai/zone/work/music and ai.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "constants & subtypes"
+              "title": "music and ai"
+            }
+          },
+          {
+            "id": "b5161f9a05d80776",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/zone/finished.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "finished"
+            }
+          },
+          {
+            "id": "e37ee2a3ec952109",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/zone/code debt.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "code debt"
             }
           },
           {
@@ -63,23 +91,9 @@
               "icon": "lucide-file",
               "title": "shorthand"
             }
-          },
-          {
-            "id": "35704401b6337c86",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/ai/zone/music and ai.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "music and ai"
-            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -216,7 +230,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/ai/zone/music and ai.md",
+                "file": "memory/shared/zone/finished.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -240,7 +254,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 258.068115234375
+    "width": 228.9627685546875
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -254,44 +268,43 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "35704401b6337c86",
+  "active": "b5161f9a05d80776",
   "lastOpenFiles": [
-    "memory/shared/truth/shorthand.md",
-    "memory/ai/zone/ov as knowledge bases.md",
-    "memory/ai/zone/music and ai.md",
-    "memory/ai/zone/adopt kb.md",
     "tools/hub/ai.db-journal",
-    "ai/dist/assets/index-fx_aUvvB.js",
-    "ai/dist/assets/index-DjVnXJhJ.css",
+    "memory/shared/zone/proposal for finished.md",
+    "memory/shared/zone/proposal for finished, done?.md",
+    "ai/dist/assets/index-Ks_kEeiN.js",
+    "ai/dist/assets/index-DuTMCmVk.css",
     "ai/dist/assets",
+    "ai/dist/assets/index-D57BycTZ.js",
+    "ai/dist/assets/index-4WRw46o_.css",
+    "memory/shared/zone/per-guide fates.md",
+    "tools/test_process_finished.py",
+    "tools/process_finished.py",
+    "memory/shared/truth/shorthand.md",
+    "memory/ai/truth/design/edges.md",
+    "memory/shared/truth/finished.md",
+    "memory/shared/truth/handbook.md",
+    "memory/shared/zone/finished.md",
+    "tools/test_finished.py",
+    "tools/finished.py",
+    "memory/kb/zone/ideas.md",
     "memory/shared/zone/code debt.md",
-    "memory/shared/truth/code debt.md",
-    "tools/test_code_debt.py",
-    "tools/code_debt.py",
-    "ai/dist/index.html",
-    "ai/dist/assets/index-DCXMsNEY.js",
-    "memory/shared/zone/unfinished.md",
-    "memory/kb/zone/music and ai.md",
-    "ai/dist/assets/index-Ckl1lJkc.js",
-    "memory/di/zone/work/now/tasks — di.md",
-    "ai/dist/assets/index-QJZ4BPHq.js",
-    "memory/ai/zone/AI memory redesign.md",
-    "memory/zone/unfinished.md",
-    "memory/ai/zone/converting guides to new memory design.md",
-    "memory/ai/zone/inception into the new design.md",
-    "memory/ai/zone/adopting the ai memory design.md",
-    "memory/ai/converting guides to new memory design.md",
-    "memory/ai/zone/work/claude code.md",
-    "memory/ai/claude code.md",
-    "memory/shared/zone/drop proof.md",
-    "memory/ai/zone/work/truth and zone and design?.md",
-    "memory/ai/zone/work/rewrite the guides.md",
-    "memory/ai/zone/publish — can an AI actually learn?.md",
-    "memory/ai/zone/work/inception into the new design.md",
-    "memory/ai/zone/work/fable.md",
-    "memory/ai/zone/work/claude session output.md",
-    "memory/ai/zone/work/adopting the ai memory design.md",
-    "memory/ai/zone/truth and zone and design?.md",
+    "memory/ai/zone/work/music and ai.md",
+    "memory/shared/zone/now/AI on my mac.md",
+    "memory/shared/zone/now/co.md",
+    "memory/shared/zone/now/claude session output.md",
+    "memory/shared/zone/now/claude code.md",
+    "memory/shared/zone/now/claude agent skills.md",
+    "memory/shared/zone/now/assessment of our guides.md",
+    "memory/shared/zone/now/fable.md",
+    "memory/shared/zone/now/worktrees.md",
+    "memory/shared/zone/now/truth and zone and design?.md",
+    "memory/shared/zone/now/rewrite the guides.md",
+    "memory/shared/zone/now/organize.md",
+    "memory/shared/zone/now/publish — can an AI actually learn?.md",
+    "memory/shared/zone/now/murk journal.md",
+    "memory/ai/zone/ideas.md",
     "lv/dist/assets/lcv.label-CyYn_a6Q.png",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "lv/dist/assets/Vyd_2014_0321_Haley-29NNKbHz.jpg",

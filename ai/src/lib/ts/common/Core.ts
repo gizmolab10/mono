@@ -24,3 +24,6 @@ export { foldable_headings, hidden_pieces, top_headings } from 'core/ts/utilitie
 export { default as Separator } from 'core/svelte/support/Separator.svelte';
 export { default as Steppers } from 'core/svelte/support/Steppers.svelte';
 export { gap_below_line } from 'core/ts/utilities/Separator_Spacing';
+export { default as Action, T_Position } from 'core/ts/types/Action';
+export { T_Edge } from 'core/ts/utilities/Sectioning';
+export { default as Section } from 'core/svelte/support/Section.svelte';

@@ -125,7 +125,7 @@
 	/* A word that folds its section away, standing on the separator above it. Its white
 	   background masks the separator behind it. */
 	.clickable {
-		border        : var(--thick-small) solid var(--black);
+		border        : var(--thick-faint) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);

@@ -454,7 +454,7 @@
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   clickable's own space, so the hover edge adds no width and it never shifts. */
 	.clickable {
-		border        : var(--thick-small) solid var(--black);
+		border        : var(--thick-faint) solid var(--black);
 		background    : var(--white);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);

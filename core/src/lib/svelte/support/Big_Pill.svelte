@@ -370,9 +370,12 @@
 
 	/* The name sitting on the top edge, its page-colored background breaking the border so the
 	   word reads as a heading on the pill rather than as one of its tags. It starts where the
-	   pill starts, whatever state the pill is in, so a row of them reads down a straight line. */
+	   pill starts, whatever state the pill is in, so a row of them reads down a straight line.
+	   Edged with the micro thickness since 15 September 2026, and a micro gap lower than it
+	   sat before that day. */
 	.area-name {
 		background     : var(--section-bg, var(--bg));
+		border         : var(--thick-micro) solid var(--black);
 		transform      : translateY(-50%);
 		border-radius  : var(--radius-pill);
 		font-size      : var(--font-faint);
@@ -381,7 +384,7 @@
 		position       : absolute;
 		white-space    : nowrap;
 		pointer-events : none;
-		top            : calc(-2px - var(--gap-faint));
+		top            : calc(var(--gap-micro) - 2px - var(--gap-faint));
 		left           : 0;
 	}
 

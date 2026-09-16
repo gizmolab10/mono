@@ -26,7 +26,7 @@ In one line: murk is invisible to its author, so it can only be found by countin
 
 ## Where each one came from
 
-Every strategy above was pulled out of one case: this collection's own rule set, which was found to be manufacturing the murk it forbade. The hypothesis, the twelve causes, the counting hook and the daily rate all live in the record — [murk.md](../../../ov/zone/work/soon/murk%20journal.md).
+Every strategy above was pulled out of one case: this collection's own rule set, which was found to be manufacturing the murk it forbade. The hypothesis, the twelve causes, the counting hook and the daily rate all live in the record — [murk.md](../../zone/work/murk%20journal.md).
 
 That record is still open. Six of the twelve causes are closed, and three parts of the machine have never been examined.
 

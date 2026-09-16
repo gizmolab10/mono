@@ -24,19 +24,21 @@
 	// kb's page, which a host's App.svelte draws. It draws panel and hands panel kb's own four: the
 	// controls row's right end, the details column, the operation view and the status line. What the
 	// host hands kb comes two ways: the facts in Customizations.ts, filled before this mounts, and
-	// these five snippets, each optional and each rendered in one place — a filter among browse's,
+	// these six snippets, each optional and each rendered in one place — a filter among browse's,
 	// after tag; the edit filter section, given the file, its words and a call that sets them, above
 	// the kinds row; the search row, given the file's name, the label form's first subsection; a
 	// section in the details column, below the rules; and the operation view, given the file, the
 	// width and height the frame gives it, the words and a call that sets them, and a call for a note,
-	// in Edit_Markdown's place inside the editor frame. Where a host hands none, kb draws nothing
+	// in Edit_Markdown's place inside the editor frame; and the back links, given the file's key and
+	// its name, at the foot of the editor frame. Where a host hands none, kb draws nothing
 	// there once the piece has moved out; until then kb draws the piece as it did in ov.
-	let { browse_filter, edit_filter, search_row, details_section, operation_view }: {
+	let { browse_filter, edit_filter, search_row, details_section, operation_view, back_links }: {
 		browse_filter?   : Snippet;
 		edit_filter?     : Snippet<[File, string, (words: string) => void]>;
 		details_section? : Snippet;
 		search_row?      : Snippet<[string]>;
 		operation_view?  : Snippet<[File, number, number, string, (words: string) => void, (message: string) => void]>;
+		back_links?      : Snippet<[string, string]>;
 	} = $props();
 
 	const { w_background_color, w_accent_color, w_hover_color, w_text_color } = colors;
@@ -158,7 +160,7 @@
 	<Details {width} section={details_section} />
 {/snippet}
 {#snippet operation(width: number, height: number)}
-	<Operation {width} {height} {browse_filter} {edit_filter} {search_row} {operation_view} />
+	<Operation {width} {height} {browse_filter} {edit_filter} {search_row} {operation_view} {back_links} />
 {/snippet}
 
 <Panel name={editing ? '' : customizations.name} details_shown={$w_show_details} ontoggle={toggle_details}

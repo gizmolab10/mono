@@ -99,7 +99,7 @@
 	/** Copy between the title and the file's top heading, exactly — onto it (making one if
 	 * there is none), or from it into the title. */
 	function H1_copy(to: boolean = true) {
-		if (text === '') { return; }
+		if (text === '') { show_status("the file's words are not on screen"); return; }
 		const lines = text.split('\n');
 		let at = 0;
 		if (lines[0] === '---') {
@@ -114,20 +114,23 @@
 						form_title = heading;
 						save_fields();
 						debug.log(`Editing "${guide.name}": the top heading was copied into the title.`);
+					} else {
+						show_status('the title already says what the top heading says');
 					}
 					return;
 				}
 			}
-			return;   // no heading — nothing to copy
+			show_status('no top heading to copy from');
+			return;
 		}
-		if (form_title.trim() === '') { return; }
+		if (form_title.trim() === '') { show_status('the title is empty'); return; }
 		let replaced = false;
 		for (let i = at; i < lines.length; i++) {
 			if (lines[i].startsWith('# ')) { lines[i] = `# ${form_title}`; replaced = true; break; }
 		}
 		if (!replaced) { lines.splice(at, 0, `# ${form_title}`, ''); }
 		const whole = lines.join('\n');
-		if (whole === text) { return; }
+		if (whole === text) { show_status('the top heading already says what the title says'); return; }
 		const was   = text;
 		const where = file_path_of(guide.bundle, guide.path);
 		set_text(whole);
@@ -169,13 +172,13 @@
 			use:hit_target={{ id: 'editor.field.date', tip: 'when it was last worked on' }} />
 		<span class='title-tools rides-the-line'>
 			<button class='title-button'
-				use:hit_target={{ id: 'editor.title.from-h1', onpress: () => H1_copy(false), tip: "copy exactly this title from the file's top heading" }}>H1 <span class='arrow'>→</span></button>
+				use:hit_target={{ id: 'editor.title.from-h1', onpress: () => H1_copy(false), tip: "copy exactly this title from the file's top heading" }}>H1 <span class='arrow'>➜</span></button>
 			<button class='title-button'
-				use:hit_target={{ id: 'editor.title.to-name', onpress: () => filename_copy(true), tip: "copy the title onto the file's own name, capitalized" }}><span class='arrow'>→</span> filename</button>
+				use:hit_target={{ id: 'editor.title.to-name', onpress: () => filename_copy(true), tip: "copy the title onto the file's own name, capitalized" }}><span class='arrow'>➜</span> filename</button>
 			<button class='title-button'
-				use:hit_target={{ id: 'editor.title.from-name', onpress: () => filename_copy(false), tip: "copy the title from the file's own name, capitalized" }}>filename <span class='arrow'>→</span></button>
+				use:hit_target={{ id: 'editor.title.from-name', onpress: () => filename_copy(false), tip: "copy the title from the file's own name, capitalized" }}>filename <span class='arrow'>➜</span></button>
 			<button class='title-button'
-				use:hit_target={{ id: 'editor.title.to-h1', onpress: () => H1_copy(true), tip: "copy exactly this title onto the file's top heading" }}><span class='arrow'>→</span> H1</button>
+				use:hit_target={{ id: 'editor.title.to-h1', onpress: () => H1_copy(true), tip: "copy exactly this title onto the file's top heading" }}><span class='arrow'>➜</span> H1</button>
 		</span>
 	</div>
 	<div class='filter-row'>
@@ -238,8 +241,10 @@
 		width      : 45px;
 	}
 
+	/* Every information element's edge is the faint thickness since 15 September 2026, the
+	   fields and the title tools alike. */
 	.filter-field {
-		border        : var(--thick) solid var(--black);
+		border        : var(--thick-faint) solid var(--black);
 		padding       : var(--pad-control);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-tiny);
@@ -281,7 +286,7 @@
 	   edge, the same padding, and white. The arrow is the plain one, which the system font has; the
 	   fat one came from a fallback font a pixel taller. */
 	.title-button {
-		border        : var(--thick-small) solid var(--black);
+		border        : var(--thick-faint) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		background    : var(--white);

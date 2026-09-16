@@ -2,16 +2,16 @@
 
 The words used in this project. When writing prose, comments, log lines, or test names, use these words exactly, even when near synonyms exist. If it's here, that's its name. Reaching for a word that is not here, say so and stop — do not invent one.
 
-The shared [banned words](../../shared/truth/conventions.md) list holds the words that mean nothing to Jonathan, each with the word to use instead; ov's own [banned words](../../ov/truth/banned%20words.md) does the same for ov's code, which is kb's since 12 September 2026. The words every project says — guide, work note, collection, labels, kind, tag, brief — are not repeated here.
+The shared [banned words](../../shared/truth/conventions.md) list holds the words that mean nothing to Jonathan, each with the word to use instead; ov's own [banned words](../../ai/truth/banned%20words.md) does the same for ov's code, which is kb's since 12 September 2026. The words every project says — guide, work note, collection, labels, kind, tag, brief — are not repeated here.
 
 ## kb, its hosts and its db
 
 - **host** — ai or mu, they import the kb library (later ji as well)
 - **collection** — a folder of files (mu -> the folder dropped, aka the root; ai -> each project inside mono)
 - **dump** — ov.sql or mu.sql, one per host, every table of the db as statements, from which a db is rebuilt
-- **api** — the functions one piece of code offers another, each with what it takes and what it answers. Two meet at the dispatcher: the dispatcher's, the addresses the page asks, and the plugin's, the functions the dispatcher's call, four every plugin has and then the specialty's own, tabled under plugin api in memory/ov/zone/music and ai.md.
+- **api** — the functions one piece of code offers another, each with what it takes and what it answers. Two meet at the dispatcher: the dispatcher's, the addresses the page asks, and the plugin's, the functions the dispatcher's call, four every plugin has and then the specialty's own, tabled under plugin api in memory/ai/zone/work/music and ai.md.
 - **configuration** — the facts a host hands kb before anything mounts: `customizations` in kb's common folder, one field per fact, which the host's main.ts fills. Never *switches*.
-- **snippet** — a piece of drawing a host hands kb, svelte's word, which kb renders in one place. Five: the browse filter, the edit filter section, the search row, the details section and the operation view.
+- **snippet** — a piece of drawing a host hands kb, svelte's word, which kb renders in one place. Six: the browse filter, the edit filter section, the search row, the details section, the operation view and the back links.
 - **author** — the name of who wrote a file (a person or a tool: jonathan, Jeff, co, code_debt.py). In `ai`, it is often entered by hand in the editor's information rows, thereafter taken as SOT, never verified. In `mu`, it can be the artist's name: whether the artist is a source or a label is 22b's question.
 
 ## Three views (details, browser, editor)
@@ -34,7 +34,7 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **kinds row** — the row of the label form holding every kind on the host's closed list, the one the guide wears picked, `Kinds_Row.svelte`.
 - **tag rows** — the rows of the label form holding the tag areas, every tag within reach, `Tag_Rows.svelte`. Not: the tag areas among the filters.
 - **label form** — the section above a guide's words, `Edit_More.svelte`: one stack of the search, the host's rows, the kinds row and the tag rows, folding whole under the word on its line.
-- **open button** — a button at the left of the controls row while browsing, next to the hamburger, which opens one file in the editor. The host names each in the configuration's open_buttons, a title and the key of the file; kb draws them as it draws the dispatcher and build buttons. ai's one is code debt, opening memory/shared/zone/code debt.md. Decided 14 September 2026.
+- **open button** — a button at the far right of the controls row while browsing, past the build number since 15 September 2026, which opens one file in the editor. The host names each in the configuration's open_buttons, a title and the key of the file; kb draws them as it draws the dispatcher and build buttons. ai's one is code debt, opening memory/shared/zone/code debt.md. Decided 14 September 2026.
 - **bundle** — `T_Bundle` in File.ts, the field every file and folder record carries: which folder its path counts from. memory for every file under memory, mo for the repo itself, a project's id for that project's CLAUDE file. Not: the file's project, which project_at reads off a memory file's path. The name is from ov's first build, 30 July 2026, when each collection's guides were a Vite glob bundle; kept 14 September 2026, until step 25 of the plan deletes the enum.
 - **unlabeled file** — a file the db holds no row for, `labeled` false on its record in File.ts: the list shows it with no kind, and its labels are composed the first time it is opened for editing. Decided 14 September 2026.
 - **link readers** — body_of, links_in and plain_links in `utilities/Links.ts`, kb's since step 11 of the plan: what a guide's words point at, read out of the text alone with no html made. Files.ts reads every guide with them at launch; the drawing, ai's, reads two of them through Kb.ts. Not: the drawing, which is Markdown_Blocks.ts, ai's.

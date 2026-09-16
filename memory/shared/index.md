@@ -18,6 +18,7 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [gates.md](truth/gates.md) — which guide must be read before which kind of task.
 - [kinds of tasks.md](truth/kinds%20of%20tasks.md) — task types, the guides each one needs, and the conflicts between those guides.
 - [code debt.md](truth/code%20debt.md) — what the code debt file is: the row, the eight patterns counted by grep, the walk, the script that writes it and its test.
+- [finished.md](truth/finished.md) — what the finished file is: the row, the three patterns counted by grep, the walk through done folders, what the tool writes, and its proof. A twin of code debt, 15 September 2026.
 - [pitfalls.md](truth/pitfalls.md) — edge cases that have caused mistakes, mostly failures to read before acting.
 - `collaborate/` — chat roles, prose voice, workflow discipline; moved whole from `notes/guides/collaborate/`, unsorted.
 - `develop/` — how to migrate, refactor, port, style and test code; moved whole from `notes/guides/develop/`, unsorted.
@@ -32,7 +33,10 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [incorporating a project.md](zone/architecture/incorporating%20a%20project.md) — the steps a host follows to take panel in, as mu and mj did.
 - [libraries.md](zone/architecture/libraries.md) — what a library is, and how a host takes one on: one alias and one bridge per library per host, nothing built on its own.
 - [library projects.md](zone/architecture/library%20projects.md) — the chain of libraries, each importing the one above it, and the proposal to make the code match it.
+- [proposal for finished.md](zone/proposal%20for%20finished.md) — the finished tool the shorthand names: a twin of code debt counting finished work. Proposed and decided 15 September 2026, built the same day.
+- [consolidate.md](zone/consolidate.md) — the folder-by-folder detail behind the guides sorting: of the 142 now in truth/, 91 stay, 17 fold, 22 archive, 6 to zone, 9 to ws's manual, 6 die; the mechanical move is built, the sorting is a pending pac in shared's decisions.md, the drive dissolved. ov's until 15 September 2026, as is everything below from ov. ov's, then ai's, until 15 September 2026.
 - [code debt.md](zone/code%20debt.md) — one line per memory file holding unfinished work, across every project. Written by tools/code_debt.py, never by hand. Named unfinished until 15 September 2026, and in memory's own zone for the day before.
+- [finished.md](zone/finished.md) — one line per memory file holding finished work, across every project. Written by tools/finished.py, never by hand; the shorthand `finished` runs it.
 - [converting guides to new memory design.md](zone/converting%20guides%20to%20new%20memory%20design.md) — the move of the 142 guides from every project's notes folder into truth, gathered 14 September 2026: what moved and when, the 7 September decision, the sorting folder by folder, and what is still open.
 
 ## Logs

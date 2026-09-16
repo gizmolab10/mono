@@ -4,10 +4,14 @@
 
 ## 15 September 2026
 
+- D: the area's name on a big pill sits a micro gap lower, Big_Pill.svelte. Jonathan's decision in memory/ai/truth/decisions.md
+- D: organize.md deleted, the same file as shared's; murk journal moved to shared, the newer copy; zone/work/soon/index.md no longer names them. Jonathan's decision in memory/ai/truth/decisions.md
+- D: core's hits manager and mouse ux in zone/work/soon are the one copy, ai's older twins deleted. Jonathan's decision in memory/ai/truth/decisions.md
+- D: a micro rung on the thickness ladder, a quarter of the normal, pushed to the page as --thick-micro, Constants.ts and Configuration.ts; the area's name on a big pill edged with it, Big_Pill.svelte. Jonathan's decision in memory/ai/truth/decisions.md
 - D: the hits manager's drift check raises its alert only past the thin line's thickness, a pixel and a tenth, where it raised it past half a pixel: six alerts in ai's editor were each under a pixel, the whole editor moved up by a fraction after it was measured, and a strip off by that much answers the same presses. The alert also logs every box above the element, its height, its top and its scroll, so the next one names the mover. Check clean at 470 files, 100 tests
 ## 14 September 2026
 
-- D: a folded section's hairline is held in by --gap-huge at each side, in Section.svelte and Stack.svelte, and Section takes line_down_when_folded, how far below the band's middle its hairline sits, a style variable the hairline reads. Jonathan's decision in memory/ov/truth/decisions.md
+- D: a folded section's hairline is held in by --gap-huge at each side, in Section.svelte and Stack.svelte, and Section takes line_down_when_folded, how far below the band's middle its hairline sits, a style variable the hairline reads. Jonathan's decision in memory/ai/truth/decisions.md
 - D: Preferences takes a prefix or a function answering it, prefix_now reading it at each call, and gains adopt, which moves every value saved under another prefix and drops the old keys; Storage_Like names length and key for the walk. Two cases in preferences.test. Check clean at 470 files, 100 tests
 
 ## 13 September 2026

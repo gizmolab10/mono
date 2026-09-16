@@ -73,7 +73,7 @@ check('listing the guides succeeds', said.get('success'), True)
 # by a tenth and not by three times.
 
 listed = said.get('paths', [])
-check('the top of a work folder is listed', 'memory/ov/zone/work/current context.md' in listed, True)
+check('the top of a work folder is listed', 'memory/ai/zone/work/music and ai.md' in listed, True)
 check('the shared collection\'s work is listed too', 'memory/shared/zone/work/co.md' in listed, True)
 deeper = [one for one in listed if '/notes/work/' in f'/{one}' and one.count('/') > 5]
 check('nothing deeper than the top of a work folder is listed', deeper, [])
@@ -143,7 +143,7 @@ check('naming no file is refused', code, 400)
 code, said = ask('/read-guide', where='ov/src/lib/main.css')
 check('anything that is not a guide is refused', code, 409)
 
-code, said = ask('/read-guide', where='memory/ov/zone/work/current context.md')
+code, said = ask('/read-guide', where='memory/ai/zone/work/music and ai.md')
 check('a work note at the top of a work folder is read', said.get('success'), True)
 
 code, said = ask('/read-guide', where='memory/di/zone/work/milestones/33.drag/handoff.md')
@@ -159,7 +159,7 @@ check('a guide that is not there is refused', code, 404)
 # the guard. "the file changed since it was opened" proves the guard let a work note through.
 
 code, said = tell('/save-guide', {'text': 'x', 'as_opened': 'not what is on disk'},
-                  where='memory/ov/zone/work/current context.md')
+                  where='memory/ai/zone/work/music and ai.md')
 check('a work note passes the writing guard', said.get('error'), 'the file changed since it was opened')
 
 code, said = tell('/save-guide', {'text': 'x', 'as_opened': ''}, where='ov/src/lib/main.css')
@@ -185,7 +185,7 @@ check('a work note sitting deeper is refused a throwing-away', code, 409)
 # back are proved against a db of their own in test_database.py. This only proves the
 # running dispatcher answers for labels at all.
 
-code, said = ask('/labels', where='memory/ov/zone/work/current context.md')
+code, said = ask('/labels', where='memory/ai/zone/work/music and ai.md')
 check('the labels on a work note are read', code, 200)
 check('the labels come as a list', isinstance(said.get('labels'), list), True)
 

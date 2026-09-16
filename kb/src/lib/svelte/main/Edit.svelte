@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { report_gaps_below_lines, report_line_spacing } from '../../ts/common/Core';
 	import { key_of, type File } from '../../ts/types/File';
-	import Back_Links from '../content/Back_Links.svelte';
 	import Edit_More from '../filter/Edit_More.svelte';
 	import { T_Hit_Target } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/common/Core';
@@ -19,15 +18,16 @@
 	// Which of the files is on screen, and the run they were stepped through, is the list's;
 	// here we only draw the file and call back.
 	//
-	// The host's three snippets for the frame: its edit filter section, given the file, its words
+	// The host's four snippets for the frame: its edit filter section, given the file, its words
 	// and a call that sets them, which the label form renders above the kinds row; its search row,
-	// given the file's name, which the label form renders first; and its operation view, given the
+	// given the file's name, which the label form renders first; its operation view, given the
 	// file, the room the frame has, the words and a call that sets them, and a call for a note,
-	// rendered below the label form where the words were. The search and the drawer are wired to
-	// each other by the host since step 13 of the plan, so the frame holds neither.
-	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {}, width = 0, height = 0, edit_filter, search_row, operation_view }:
+	// rendered below the label form where the words were; and its back links, given the file's key
+	// and its name, rendered at the foot, below the note line. The search and the drawer are wired
+	// to each other by the host since step 13 of the plan, so the frame holds neither.
+	let { name, address, tags, guide, onclose, onprev = () => {}, onnext = () => {}, width = 0, height = 0, edit_filter, search_row, operation_view, back_links }:
 		{ name: string; address: string; tags: string[]; guide: File; onclose: () => void; onprev?: (repeated?: boolean) => void; onnext?: (repeated?: boolean) => void;
-		  width?: number; height?: number; edit_filter?: Snippet<[File, string, (words: string) => void]>; search_row?: Snippet<[string]>; operation_view?: Snippet<[File, number, number, string, (words: string) => void, (message: string) => void]> } = $props();
+		  width?: number; height?: number; edit_filter?: Snippet<[File, string, (words: string) => void]>; search_row?: Snippet<[string]>; operation_view?: Snippet<[File, number, number, string, (words: string) => void, (message: string) => void]>; back_links?: Snippet<[string, string]> } = $props();
 
 	// The whole file, held only while it is on screen. Two of the three below write to it: the
 	// labels at the top, and a piece of the words being changed. One place holds it, so neither
@@ -93,9 +93,9 @@
 		<div class='view-note-line'
 			use:hit_target={{ id: 'editor.note', type: T_Hit_Target.section }}>{note}</div>
 	{/if}
-	<!-- Which files point at this one, at the very bottom, above the status line when that is
-	     showing. A section of its own, drawn only where something points here. -->
-	<Back_Links key={key_of(guide)} {name} />
+	<!-- Which files point at this one, the host's back links since step 14 of the plan, at the very
+	     bottom, above the status line when that is showing; nothing where no host hands them. -->
+	{@render back_links?.(key_of(guide), name)}
 </div>
 
 <style>

@@ -102,15 +102,16 @@ def walk(memory):
 def main():
     rows = walk(os.path.abspath(MEMORY))
     today = datetime.date.today().isoformat()
-    lines = ['# Code debt', '',
-             f'{len(rows)} files hold unfinished work, as of {today}.']
     # How many items each project's needs-this column names: the numbers in its clauses added
-    # up, a clause with no number, "dissolve the drive", counting one.
+    # up, a clause with no number, "dissolve the drive", counting one. The H1 carries every
+    # project's added up, since 15 September 2026.
     quantity = {}
     for project, _letter, _shown, _relative, clauses in rows:
         for clause in clauses:
             numbers = [int(n) for n in re.findall(r'\d+', clause)]
             quantity[project] = quantity.get(project, 0) + (sum(numbers) if numbers else 1)
+    lines = [f'# Code debt ({sum(quantity.values())})', '',
+             f'{len(rows)} files hold unfinished work, as of {today}.']
     # One table per project, its heading carrying the quantity. The file is a link, relative to
     # where code debt.md sits, memory/shared/zone/ unless told otherwise. A root file's z/t cell is empty.
     up = os.path.relpath(os.path.abspath(MEMORY), os.path.dirname(os.path.abspath(OUT)))

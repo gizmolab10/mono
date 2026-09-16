@@ -4,6 +4,14 @@
 
 ## 15 September 2026
 
+- D: ov's decisions, design folder and zone moved to memory/ai, 31 files, rows following; ov's lexicon, banned words, working features and ideas merged into ai's; 28 links and 56 mentions re-pointed. Jonathan's decision in memory/ai/truth/decisions.md
+- the journal's Current entry added at its top, what is being worked on now, per write a journal.md
+- D: the controls truth describes the way back as the x-cross in a round white button at the row's far right; its line on the fat triangle beside the hamburger was stale since the morning
+- D: step 14 built, the back links ai's, as the plan's Built note says. In the work journal, working features row 96
+- D: step 14 of memory/ai/zone/work/music and ai.md rewritten from the reading before it: Back_Links.svelte goes whole as the sixth snippet, the gathering stays kb's in Files.ts, the bare prop goes with the move, Kb.ts and ai's Core.ts named, a headless read in the proof. adopt kb's table has the row
+- D: step 19 begun: ai's working features file made from ov's table; the tests wait on steps 14 to 18
+- D: step 19 of memory/ai/zone/work/music and ai.md rewritten from the reading before it: after steps 14 to 18, the three tests still to go, the seven that stay named, ai's working features file made there from ov's 94 rows; step 25's sentence about Saving.ts says today's paths
+- D: cleanup after the plan's move back to memory/ai/zone: the shared lexicon, ai's, ov's and kb's indexes, the journal's two links, both CLAUDE files and two dispatcher comments re-pointed. Nothing still needs a hand
 - D: the stale hit target alert, six times under a pixel in ai's editor: core's drift check now allows the thin line's thickness and logs the boxes above the element. Not reproduced headless, where nothing moved
 - D: step 13 built, the search row ai's, as the plan's Built note says. In the work journal, working features row 95
 - D: step 13 amended after the bare prop left Search.svelte: ai's Core.ts gains gap_below_line and Steppers alone, the host's search does all three of light_hit's empty-field effects when the store empties, and Edit_More's find and page props go with Edit.svelte's
@@ -258,7 +266,7 @@ Formerly: **code debt paid**.
     - a press and the first beat of the repeating are the same act, said once
     - the hover changing no longer stops the patter, so a mark redrawn under the cursor keeps
         beating
-    - [[memory/ov/zone/work/soon/mouse ux]] — the pressed thing is remembered, and letting go elsewhere does nothing
+    - [[memory/core/zone/work/soon/mouse ux]] — the pressed thing is remembered, and letting go elsewhere does nothing
 - the count in the editor's top row holds one width, its words to the right
     - `width.tiny` — 80 — added to the one ladder of sizes, so nothing writes a number alone
 - every picking row holds the same gap under its own line

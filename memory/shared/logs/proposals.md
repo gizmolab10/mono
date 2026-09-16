@@ -89,7 +89,7 @@ Proposal — CLAUDE.md names a per-project learn file at `zone/work/now/learn.md
 
 Proposal — a script writes `memory/shared/zone/big picture.md`: one line per memory file that holds unfinished work, across every project. A shorthand runs it.
 
-**The row.** One table per project, under its own heading, three columns: z/t, file as a link, verb. Root files carry no letter. Two examples: `| z | [ideas.md](../../ov/zone/ideas.md) | 34 open |`, `| shared-t | decisions.md | decide 3 pacs |`. Decided 9 September 2026, from bullets.
+**The row.** One table per project, under its own heading, three columns: z/t, file as a link, verb. Root files carry no letter. Two examples: `| z | [ideas.md](../../ai/zone/ideas.md) | 34 open |`, `| shared-t | decisions.md | decide 3 pacs |`. Decided 9 September 2026, from bullets.
 
 **The counts, one pattern each.** Robust means grep, not reading. A file gets a line for each nonzero count, joined with "and".
 

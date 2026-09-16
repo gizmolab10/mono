@@ -38,7 +38,7 @@ When co notices a commonly added, adjacent thing that Jonathan didn't ask for (e
 
 ### 4. Naming a file
 
-Write every file name as a clickable link. As an aid to finding it, add where the file lives — in parentheses: project hyphen folder, the one holding the file. Two folders are so common they only need one character — truth becomes `t`, zone becomes `z`. If the folder IS the project, just show that. Example: [ideas.md](../../ov/zone/ideas.md) (ov-z) is in the zone folder in ov's memory.
+Write every file name as a clickable link. As an aid to finding it, add where the file lives — in parentheses: project hyphen folder, the one holding the file. Two folders are so common they only need one character — truth becomes `t`, zone becomes `z`. If the folder IS the project, just show that. Example: [ideas.md](../../ai/zone/ideas.md) (ov-z) is in the zone folder in ov's memory.
 
 When presenting a clickable link to a specific line in a file, add the line number after the parentheses.
 

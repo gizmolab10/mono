@@ -122,8 +122,9 @@ export default class Constants {
 		fat			 : common_thickness * 3,	// 3.33
 		big			 : common_thickness * 1.5,	// 1.67
 		normal		 : common_thickness,		// 1.11
-		small        : 0.75,					// the edge every clickable is drawn with; said flat, not from the ladder
-		faint		 : common_thickness * 0.5,	// 0.56
+		small        : 0.75,					// the edge many buttons are drawn with; said flat, not from the ladder
+		faint		 : common_thickness * 0.5,	// 0.56  — a clickable's edge, since 15 September 2026
+		micro		 : common_thickness * 0.25,	// 0.28  — the edge an area's name wears on a big pill
 	};
 
 	// Smallest first, the same as the widths.

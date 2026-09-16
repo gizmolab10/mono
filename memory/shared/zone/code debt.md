@@ -1,15 +1,21 @@
-# Code debt
+# Code debt (1088)
 
-87 files hold unfinished work, as of 2026-09-15.
+86 files hold unfinished work, as of 2026-09-15.
 
-## ai (70)
+## ai (168)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-| z | [adopting the ai memory design.md](../../ai/zone/adopting%20the%20ai%20memory%20design.md) | 1 open |
-| z | [ideas.md](../../ai/zone/ideas.md) | 8 open |
-| z | [inception into the new design.md](../../ai/zone/inception%20into%20the%20new%20design.md) | 5 open |
-| z | [music and ai.md](../../ai/zone/music%20and%20ai.md) | 56 open |
+|  | [log.md](../../ai/logs/log.md) | settle 2 lines |
+| t | [decisions.md](../../ai/truth/decisions.md) | decide 6 pacs |
+| t | [design/action type.md](../../ai/truth/design/action%20type.md) | 1 open truth |
+| t | [design/ov - goals.md](../../ai/truth/design/ov%20-%20goals.md) | 9 open truths |
+| z | [drive.md](../../ai/zone/drive.md) | 2 open and dissolve the drive |
+| z | [ideas.md](../../ai/zone/ideas.md) | 85 open |
+| z | [work/adopting the ai memory design.md](../../ai/zone/work/adopting%20the%20ai%20memory%20design.md) | 1 open |
+| z | [work/inception into the new design.md](../../ai/zone/work/inception%20into%20the%20new%20design.md) | 5 open |
+| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 55 open |
+| z | [work/soon/tag drift.md](../../ai/zone/work/soon/tag%20drift.md) | 1 open |
 
 ## core (29)
 
@@ -61,15 +67,15 @@
 | z/t | file | needs this |
 | --- | --- | --- |
 | z | [ideas.md](../../ji/zone/ideas.md) | 61 open |
-| z | [designs/ji road map.md](../../ji/zone/designs/ji%20road%20map.md) | 9 open |
+| z | [design/ji road map.md](../../ji/zone/design/ji%20road%20map.md) | 9 open |
 | z | [work/sideband storage proposal.md](../../ji/zone/work/sideband%20storage%20proposal.md) | 3 open |
 | z | [work/proposals/chat history proposal.md](../../ji/zone/work/proposals/chat%20history%20proposal.md) | 4 open |
 
-## kb (4)
+## kb (3)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-| z | [ideas.md](../../kb/zone/ideas.md) | 4 open |
+| z | [ideas.md](../../kb/zone/ideas.md) | 3 open |
 
 ## lv (2)
 
@@ -106,19 +112,12 @@
 | z | [ideas.md](../../mu/zone/ideas.md) | 6 open |
 | z | [project goal.md](../../mu/zone/project%20goal.md) | 17 open |
 
-## ov (121)
+## ov (19)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-|  | [log.md](../../ov/logs/log.md) | settle 15 lines |
+|  | [log.md](../../ov/logs/log.md) | settle 16 lines |
 |  | [proposals.md](../../ov/logs/proposals.md) | decide 3 proposals |
-| t | [decisions.md](../../ov/truth/decisions.md) | decide 6 pacs |
-| t | [design/action type.md](../../ov/truth/design/action%20type.md) | 1 open truth |
-| t | [design/ov - goals.md](../../ov/truth/design/ov%20-%20goals.md) | 9 open truths |
-| z | [drive.md](../../ov/zone/drive.md) | 2 open and dissolve the drive |
-| z | [ideas.md](../../ov/zone/ideas.md) | 76 open |
-| z | [work/soon/hits manager.md](../../ov/zone/work/soon/hits%20manager.md) | 7 open |
-| z | [work/soon/tag drift.md](../../ov/zone/work/soon/tag%20drift.md) | 1 open |
 
 ## panel (2)
 
@@ -127,13 +126,13 @@
 |  | [log.md](../../panel/logs/log.md) | settle 1 line |
 |  | [questions.md](../../panel/logs/questions.md) | answer 1 question |
 
-## shared (336)
+## shared (338)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [collisions.md](../../shared/logs/collisions.md) | rewrite 5 collisions |
 |  | [learn.md](../../shared/logs/learn.md) | 8 open and distill 32 entries |
-|  | [log.md](../../shared/logs/log.md) | settle 11 lines |
+|  | [log.md](../../shared/logs/log.md) | settle 13 lines |
 |  | [proposals.md](../../shared/logs/proposals.md) | decide 2 proposals |
 |  | [questions.md](../../shared/logs/questions.md) | 20 open and answer 20 questions |
 | t | [decisions.md](../../shared/truth/decisions.md) | decide 34 pacs |

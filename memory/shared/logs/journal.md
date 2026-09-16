@@ -1,5 +1,8 @@
 # Journal
 
+**Current** The plan in [music and ai](../../ai/zone/work/music%20and%20ai.md), ov's strip down into kb and ai, step 14 built and step 19 begun 15 September 2026. shared's drive is empty.
+
+
 **Summary** Started webseriously as graph visualization tool. Built di as quaternion rotation demo, rebuilding a 20-year-old CAD program. Developed collaboration workflow with Claude through trial and error — CLAUDE.MD files, structured guides, work tracking.
 
 ---

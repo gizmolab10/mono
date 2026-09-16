@@ -92,16 +92,16 @@ Overview's files. Update this when files are added, moved, or removed.
 
 Nothing new is written here; what lives on has entered `truth/` (the lexicon, action type, scope, working features, banned words, this map).
 
-- [editing](design/editing.md) — the plan we followed for changing a guide from inside the app.
-- `design/` (moved from `notes/guides/design/` 7 September 2026) — what the app is for and how it got here: [okf — is it worth it?](design/okf%20—%20is%20it%20worth%20it?.md), the OKF and its midway review, [ov - goals.md](design/ov%20-%20goals.md), [compose an email.md](design/compose%20an%20email.md), [rewrite guides.md](../zone/work/soon/rewrite%20guides.md).
+- [editing](../../ai/truth/design/editing.md) — the plan we followed for changing a guide from inside the app.
+- `design/` (moved from `notes/guides/design/` 7 September 2026) — what the app is for and how it got here: [okf — is it worth it?](../../ai/truth/design/okf%20—%20is%20it%20worth%20it?.md), the OKF and its midway review, [ov - goals.md](../../ai/truth/design/ov%20-%20goals.md), [compose an email.md](../../ai/truth/design/compose%20an%20email.md), [rewrite guides.md](../../ai/zone/work/soon/rewrite%20guides.md).
 - [work/work journal.md](../logs/work%20journal.md) — what's been finished, newest first.
-- [work/current context.md](../zone/work/current%20context.md) — what the code cannot say for itself.
-- [work/AI memory redesign.md](../zone/work/AI%20memory%20redesign.md) — the rationale behind the memory system; [handbook.md](../../shared/truth/handbook.md) is its law.
-- [hits manager](../zone/work/soon/hits%20manager.md) — the reckoning behind the one manager that answers the cursor.
-- [mouse ux](../zone/work/soon/mouse%20ux.md) — what a press means when the thing under the cursor changes between pressing and letting go: three faults with one cause, and the two ways out weighed.
+- [work/current context.md](../../ai/zone/work/next/current%20context.md) — what the code cannot say for itself.
+- [work/AI memory redesign.md](../../ai/zone/work/AI%20memory%20redesign.md) — the rationale behind the memory system; [handbook.md](../../shared/truth/handbook.md) is its law.
+- [hits manager](../../core/zone/work/soon/hits%20manager.md) — the reckoning behind the one manager that answers the cursor.
+- [mouse ux](../../core/zone/work/soon/mouse%20ux.md) — what a press means when the thing under the cursor changes between pressing and letting go: three faults with one cause, and the two ways out weighed.
 - [sections](../../shared/truth/develop/sections.md) — everything about sections: a stack owns the gaps between them, a separator stands centred in each one, and eleven props become five.
-- [murk journal](../zone/work/soon/murk%20journal.md) — the running count of replies Jonathan could not read, and the case behind the nine strategies.
-- [assessment of our guides](../zone/work/assessment%20of%20our%20guides.md), [stale guides](../zone/work/soon/stale%20guides.md), `work/soon/repair staleness of files.md`, `work/soon/tag drift.md`, `work/soon/organize.md` — the state of the collection itself.
+- [murk journal](../../shared/zone/work/murk%20journal.md) — the running count of replies Jonathan could not read, and the case behind the nine strategies.
+- [assessment of our guides](../../shared/zone/work/assessment%20of%20our%20guides.md), [stale guides](../../ai/zone/work/soon/stale%20guides.md), `work/soon/repair staleness of files.md`, `work/soon/tag drift.md`, `work/soon/organize.md` — the state of the collection itself.
 - Every folder carries its own `index.md` saying what it holds.
 
-The proposal that started this project was written in ji; it became [ov - goals.md](design/ov%20-%20goals.md).
+The proposal that started this project was written in ji; it became [ov - goals.md](../../ai/truth/design/ov%20-%20goals.md).

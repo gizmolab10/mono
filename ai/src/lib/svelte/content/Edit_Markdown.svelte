@@ -625,6 +625,7 @@
 	function redraw(whole: string) {
 		const was_at = page?.scrollTop ?? 0;
 		text  = whole;
+		set_text(whole);                     // the frame holds the words too, for the title's tools
 		words = page_of(reader, whole);
 		drawn_body = body_of(whole).body;
 		// An edit can write a link or take one away, so what points at what is worked out again.
@@ -966,6 +967,7 @@
 			return;
 		}
 		text  = cleared;
+		set_text(cleared);
 		words = page_of(reader, cleared);
 		drawn_body = body_of(cleared).body;
 		files.links_changed(key_of(guide), cleared);
@@ -1005,6 +1007,7 @@
 				// and marked stale so Jonathan corrects whatever came out wrong.
 				whole  = await label_it_if_bare(whole);
 				text   = whole;                      // what an edit slices its own words out of
+				set_text(whole);                     // and what the frame holds, for the title's tools, since 15 September 2026
 				words  = page_of(reader, whole);
 				drawn_body = body_of(whole).body;
 				loaded = true;
