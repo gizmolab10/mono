@@ -63,7 +63,7 @@ A rule in three files is three wordings, and no reader can tell whether they dif
 - [exclude](collaborate/exclude%20from%20maps.md) (8 lines of body) — three folder names and one sentence. Missing: why each is skipped, and what breaks when one is not.
 - [port](develop/port.md) — the three steps and a template. Missing: a worked example from a real port, what went wrong in it, and how to tell the port matches the original.
 - [limitations](philosophy/limitations.md) — names three failure modes and says outright, in its own last section, that naming is not enough to catch one in the act. Missing: the symptom each one shows on the surface.
-- [constants](develop/constants%20%26%20subtypes.md) and [conceptual composition](develop/conceptual%20composition.md) — both carry an empty brief, so neither says what it is for before it is opened.
+- [constants](develop/constants.md) and [conceptual composition](develop/conceptual%20composition.md) — both carry an empty brief, so neither says what it is for before it is opened.
 
 ### Partial — substance present, an obvious gap on first use
 
@@ -135,7 +135,7 @@ Seven, each holding one kind of guidance.
 - [skills](collaborate/skills.md) — the words typed with a leading slash, and what each does.
 - [tags hierarchy](develop/tags%20hierarchy.md) — the seven areas the tags are read in.
 - [voice](collaborate/voice.md) — how prose written into files reads: first person, warm, punchy.
-- [workflow](collaborate/workflow.md) — the turn-taking cadence and the propose-before-acting discipline.
+- [workflow](workflow.md) — the turn-taking cadence and the propose-before-acting discipline.
 - [write a journal](collaborate/write%20a%20journal.md) — the formatting rules for a running journal.
 
 ### develop — how to write the code, and how to write about it
@@ -145,7 +145,7 @@ Seven, each holding one kind of guidance.
 - [build](develop/build.md) — Netlify, VitePress and related tooling, with the gotchas that bite.
 - [build notes](develop/build%20notes.md) — hand-distilling the build-notes table from the change history.
 - [conceptual composition](develop/conceptual%20composition.md) — no brief; opens on its own subject.
-- [constants](develop/constants%20%26%20subtypes.md) — the one ladder of measurement names, and the table it replaced.
+- [constants](develop/constants.md) — the one ladder of measurement names, and the table it replaced.
 - [create a design](develop/create%20a%20design.md) — how the two of us write a design document together.
 - [create a proposal](develop/create%20a%20proposal.md) — a worked example of writing a proposal in short cycles.
 - [css](develop/css.md) — styling patterns and gotchas from real work.

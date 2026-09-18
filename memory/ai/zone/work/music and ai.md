@@ -181,14 +181,14 @@ The steps that take ov down to kb, in order, each naming the ov file that does t
 
 #### next
 
-- [ ] 15. **Follow a link, judge a dead one, and walk the link stack.** 
-    - `Following_Links.ts`, `Hierarchy.explore` and `likely_meant`, `Report.svelte`, `find_dead_links` in `Files.ts`. 
-    - `Operations.ts` is two things: the stepping through the list, which stays kb's, and the stack of files reached by links that the steppers walk off the list, which goes. 
-    - Proof: following_links test, and a visual report of a link followed and the steppers walking back.
-- [ ] 16. **Make, rename, move and throw away a markdown file, links and index files mended.** 
-    - `create_beside`, `rename`, `move` and `delete_one` in `Files.ts`, the file's four buttons in `Controls.svelte`, and the moves behind the title tools that went at step 10. 
-    - Moving and throwing away a file are kb's; mending what pointed at it is not. 
-    - Proof: a visual report of the four buttons.
+- [x] 15. **Follow a link, judge a dead one, and walk the link stack: kb keeps all three.** Rewritten 15 September 2026; nothing moves. Proved the same day: the following_links test among kb's 176; headless, the finished truth's link to code debt followed and the back stepper returning, the stack of one walked; the visual report pending.
+    - `Following_Links.ts`, `Hierarchy.explore` and `likely_meant`, `find_dead_links` in `Files.ts` and `Report.svelte` stay kb's: the files manager reads every guide's links at launch, and a music file has none, so the readers cost mu nothing.
+    - `Operations.ts` stays whole, the stepping through the list and the stack of files reached by links: only `follow_link` fills the stack, and the host's renderer calls it through the bridge.
+    - Proof: following_links test as it is, a headless follow of a link and the steppers walking back, and a visual report of the same.
+- [x] 16. **Make, rename, move and throw away a markdown file, links and index files mended: kb keeps all of it.** Rewritten 15 September 2026; nothing moves. Proved the same day headless: a throwaway file made beside drive.md through the new button, renamed through the name field, dropped onto ai's zone/work folder row with the page's own drag events, and thrown away through the delete question, the disk and the db checked at each step; the visual report pending.
+    - `create_beside`, `rename`, `move` and `delete_one` in `Files.ts`, the file's four buttons in `Controls.svelte`, new, obsidian, send and delete with the delete question, and the rename behind the title tools that went at step 10.
+    - Mending what pointed at a renamed or moved file is kb's too: it reads the link map kb builds at launch and follows each link with kb's own explore. Index files are step 17's.
+    - Proof: headless, a throwaway file made beside a real one through the new button, renamed through the name field, moved by a drop onto a folder and thrown away through the delete question, the page's log read at each step and the disk checked; and a visual report of the four buttons.
 - [ ] 17. **Mend index files.** `Index_Files.ts`, `repair_indexes` and `mend_indexes` in `Files.ts`, the index files button in `D_Repair.svelte`. Proof: index_files test, and a visual report of the repair button.
 - [ ] 18. **Hand a file to Obsidian, a code file to VSCode, and a file into a message.** `obsidian_link` in `Saving.ts`, `Opening_Code.ts`, the compose button in `Controls.svelte`. Proof: opening_code test, and a visual report of the three hand-offs.
 - [ ] 19. **The tests go with their pieces.** Rewritten 15 September 2026 from the reading before it. 

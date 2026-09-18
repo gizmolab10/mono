@@ -2,8 +2,6 @@
 
 The intersection app: drop documents in, tag them, and ask an AI that has read them.
 
-**Current state:** its unpaid code debt leads `zone/ideas.md`, and the two maps (files, notes) live in `truth/`, moved whole from the old notes. Three guide folders followed 7 September 2026 — `project/` (1 file), `setup/` (2), `specifications/` (5) — moved whole, unsorted.
-
 ## Truths
 
 - [lexicon.md](truth/lexicon.md) — the words ji uses, and the ones it never uses.
@@ -13,3 +11,7 @@ The intersection app: drop documents in, tag them, and ask an AI that has read t
 - `project/` — the maps; moved whole from `notes/guides/project/`, unsorted.
 - `setup/` — launching the AI; moved whole from `notes/guides/setup/`, unsorted.
 - `specifications/` — the db, hierarchy and intersection specs; moved whole from `notes/guides/specifications/`, unsorted.
+
+## Zone
+
+- [drive.md](zone/drive.md) — the current undertaking, and the project's current state, moved here from this index 16 September 2026.

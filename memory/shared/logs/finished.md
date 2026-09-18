@@ -1,6 +1,12 @@
-# Finished (2032)
+# Finished (2023)
 
-74 files hold finished work, as of 2026-09-15.
+74 files hold finished work, as of 2026-09-17.
+
+## ai (2)
+
+| z/t | file | finished |
+| --- | --- | --- |
+| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 2 done |
 
 ## core (111)
 
@@ -85,11 +91,10 @@
 | --- | --- | --- |
 |  | [proposals.md](../../ov/logs/proposals.md) | 3 proposals settled |
 
-## shared (156)
+## shared (145)
 
 | z/t | file | finished |
 | --- | --- | --- |
-|  | [proposals.md](../../shared/logs/proposals.md) | 11 proposals settled |
 | t | [develop/migrate.md](../../shared/truth/develop/migrate.md) | 2 done |
 | z | [work/articles/write.article.md](../../shared/zone/work/articles/write.article.md) | 8 done |
 | z | [work/done/dead links.md](../../shared/zone/work/done/dead%20links.md) | 7 done |

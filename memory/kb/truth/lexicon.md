@@ -34,7 +34,7 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **kinds row** — the row of the label form holding every kind on the host's closed list, the one the guide wears picked, `Kinds_Row.svelte`.
 - **tag rows** — the rows of the label form holding the tag areas, every tag within reach, `Tag_Rows.svelte`. Not: the tag areas among the filters.
 - **label form** — the section above a guide's words, `Edit_More.svelte`: one stack of the search, the host's rows, the kinds row and the tag rows, folding whole under the word on its line.
-- **open button** — a button at the far right of the controls row while browsing, past the build number since 15 September 2026, which opens one file in the editor. The host names each in the configuration's open_buttons, a title and the key of the file; kb draws them as it draws the dispatcher and build buttons. ai's one is code debt, opening memory/shared/zone/code debt.md. Decided 14 September 2026.
+- **open button** — one segment of the segmented control at the left of the controls row while browsing, next to the hamburger, which opens one file in the editor; a segment fills under the cursor and none is ever current; its tip names the file, not the segment's title. A row of plain buttons until 17 September 2026; at the far right past the build number for part of 15 September 2026. The host names each in the configuration's open_buttons, a title and the key of the file; kb draws them as it draws the dispatcher and build buttons. ai's one is code debt, opening memory/shared/zone/code debt.md. Decided 14 September 2026.
 - **bundle** — `T_Bundle` in File.ts, the field every file and folder record carries: which folder its path counts from. memory for every file under memory, mo for the repo itself, a project's id for that project's CLAUDE file. Not: the file's project, which project_at reads off a memory file's path. The name is from ov's first build, 30 July 2026, when each collection's guides were a Vite glob bundle; kept 14 September 2026, until step 25 of the plan deletes the enum.
 - **unlabeled file** — a file the db holds no row for, `labeled` false on its record in File.ts: the list shows it with no kind, and its labels are composed the first time it is opened for editing. Decided 14 September 2026.
 - **link readers** — body_of, links_in and plain_links in `utilities/Links.ts`, kb's since step 11 of the plan: what a guide's words point at, read out of the text alone with no html made. Files.ts reads every guide with them at launch; the drawing, ai's, reads two of them through Kb.ts. Not: the drawing, which is Markdown_Blocks.ts, ai's.
@@ -47,7 +47,7 @@ The shared [banned words](../../shared/truth/conventions.md) list holds the word
 - **tagset** — one area of tags standing as a single pill. Never *area pill*.
 - **seg control** — the run of elements inside an elongated pill.
 - **soft pointer** — the small triangle that folds a thing away. Never *mark*, never *arrow*, never *triangle*.
-- **steppers** — the pair of fat triangles that step from one thing to the next.
+- **steppers** — the pair of fat triangles that step from one thing to the next: the link stack while it holds anything, the open buttons while the reading began at one, since 17 September 2026, the list otherwise.
 - **gap** — empty space. Never *room*.
 
 ## Presenting a file

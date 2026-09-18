@@ -12,17 +12,16 @@ The authority for how the memory system runs. The design rationale lives in `mem
 
 Log entries are one line each, tagged: `D:` decision · `I:` idea · `S:` state/progress. Questions are not log entries: they live in the project's `logs/questions.md`, one line each, removed when answered — a `D:` line records the answer. They stand under day headings (`## 25 August 2026`), in reverse chronological order — newest day first, newest line first within its day. A new entry goes at the top of today's heading. The writer asks the clock in the same write that stamps the heading — a date typed from memory is not a date, and a new day makes its heading at the top. Never reuse a stale heading: that is how dates get lost.
 
-## Consolidation
+## Consolidate
 
 Run when a project's log exceeds ~30 entries, or before a major work burst.
 
-1. Read every log entry above the `<!-- consolidated: DATE -->` marker.
-2. Read `logs/questions.md` too: strike any question the work has since answered, recording the answer as a `D:`. Then **settle each line** by tag: `D:` → edit the owning truth (and `decisions.md` if the rationale will be questioned again), and where no truth owns it, make one — and the `truth/` or `zone/` folder, where that is missing too; `S:` → rewrite the *current state* paragraph in the project's `index.md`; `I:` → promote to a truth / `ideas.md`, keep, or cull. While settling, scan the prose for defined terms used off-definition (reword or formally redefine) and undefined terms (reword into plain language — never retroactively coin).
+1. Read every log entry newer than the `<!-- consolidated: DATE -->` marker, the lines below it.
+2. Read `logs/questions.md` too: strike any question the work has since answered, recording the answer as a `D:`. Then **settle each line** by tag: `D:` → edit the owning truth (and `decisions.md` if the rationale will be questioned again), and where no truth owns it, make one — and the `truth/` or `zone/` folder, where that is missing too; `S:` → rewrite the *current state* paragraph in the project's `zone/drive.md`; `I:` → promote to a truth / `ideas.md`, keep, or cull. While settling, scan the prose for defined terms used off-definition (reword or formally redefine) and undefined terms (reword into plain language — never retroactively coin).
 3. **Map upkeep:** when the project's truth holds a map, ask git what changed under the project's code since the marker — files added, moved, removed — and edit the map to match. No change, no edit.
-4. **Clear the done ideas:** every checked box in `zone/ideas.md` goes, but only once the log holds a `D:` line saying what was done. Where none does, write it first, then delete the box. A ticked box is a record in the wrong file — the log holds what happened, and ideas.md holds only what is still wanted.
-5. Delete settled entries; move the marker.
-6. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, have a *new* session run this check.
-7. **No commit.** Settle never commits — committing `memory/` is Jonathan's act, done by him, when he chooses.
+4. Delete settled entries; move the marker.
+5. **Verification pass:** confirm every dropped line was settled into a named home or dismissed with a stated reason. For a large settle, report this step as 'unfinished' in the chat reply.
+6. **No commit.** Settle never commits — committing `memory/` is Jonathan's act, done by him, when he chooses.
 
 Never summarize prose into vaguer prose. Settling moves facts to their one home and throws away only what it names.
 
@@ -82,7 +81,7 @@ This is where collaborator can advise Jonathan about a decision, it is a key con
     - lexicon terms used exactly
     - no new terms
 - End with the question that would decide it
-- Record it in the most relevant project's `zone/decisions.md`
+- Record it in the most relevant project's `truth/decisions.md`
 - Waits there for resolution
 
 ## Decision process
@@ -98,15 +97,15 @@ Compressed stories of decided pacs gather in `shared/truth/cases.md` — the one
 
 One skill per procedure; the skill is a trigger, not a copy. Write skills (`d`, `pac`, `go`, `define`, `propose`, `settle`) log every run; read-only skills (`start`, `p`, `t`, `syns`, `obs`, `check`, `where`, `summary`) don't.
 
-- **d** (decision) — execute "Session protocol" (During) for one decision: edit the one truth file that owns it, add one `D:` log line. The workhorse; a write skill, logged by its nature.
+- **d** (decision) — execute "Session phases" (During) for one decision: edit the one truth file that owns it, add one `D:` log line. The workhorse; a write skill, logged by its nature.
 - **p** — pick the project to work on: `/p ov` writes `ov` to `.working_project` and says which is picked. A name with no folder at `~/GitHub/mono/<name>/` is refused. Nothing else is read and nothing is offered. Read-only of the memory system, so unlogged.
-- **start** — execute "Session protocol" (Start). Reply: two-line orientation — current state, truths loaded.
+- **start** — execute "Session phases" (Start). Reply: two-line orientation — current state, truths loaded.
 - **pac** — pros and cons of X; the response is written into the most relevant project's `truth/decisions.md`
 - **define** — execute "Prose and terminology" for one term. The lexicon's only door.
 - **propose** — capture without incorporating, into whichever project the idea is most relevant to: its `zone/ideas.md`, an `I:` line, or its `logs/questions.md`; truths untouched; promotion only at settle or on instruction. pac and propose stay two commands.
 - **go** (g) — implement the proposal or suggestion on the table, as stated. A write skill: the work it does leaves its own `D:`/`S:` lines.
 - **settle** — execute "Consolidation", every step; finish with the settle manifest (each line and where it went).
-- **check** — audit: OKF structure (frontmatter, `type`, links), the sizing table below, terminology drift, duplicated facts, skill pointers (every section a skill references must exist in this file), and colliding rules — read every always-tagged guide, the pre-flight guides included, and list any pair of rules that cannot both be obeyed. Aimed at a settle: verify the commit diff cold; if this session performed the settle, ask for a rerun in a new session. Report finding → file → fix; fix nothing unless instructed. The findings go into the project's `logs/questions.md`, under a `## checked` subsection, one line each — there is no separate report file.
+- **check** — audit: links, the sizing table below, terminology drift, duplicated facts, skill pointers (every section a skill references must exist in this file), and colliding rules — read every always-tagged guide, the pre-flight guides included, and list any pair of rules that cannot both be obeyed. Aimed at a settle: verify the commit diff cold; if this session performed the settle, ask for a rerun in a new session. Report finding → file → fix; fix nothing unless instructed. The findings go into the project's `logs/questions.md`, under a `## checked` subsection, one line each — there is no separate report file.
 - **t** (translate) — reword the last reply, or the quoted words, into plain language. Nothing is written; if the same wording needs translating twice, that is a conventions.md rule waiting to be recorded.
 - **where** — execute "Finding where to tweak"; reply with the one owning path.
 - **obs** (observations) — say what has been noticed but not said: suggestions, reminders, things seen in passing. The only place such things appear; no reply carries them unasked. Read-only.
@@ -139,11 +138,11 @@ these are soft limits. always allow them to be exceeded, and ask Jonathan in the
 
 | Thing | Limit | When exceeded |
 |---|---|---|
-| truth file | ~100 lines | split by concept; update index |
-| truths per project | ~15 | merge cold ones |
-| log | ~30 entries | settle |
+| truth file | ~300 lines | split by concept; update index |
+| truths per project | ~50 | merge cold ones |
+| log | ~60 entries | settle |
 | orientation read | ~2,000 words | prune index + fat truths |
-| `decisions.md` | ~10 live items | delete finalized ones |
+| `decisions.md` | ~100 live items | delete finalized ones |
 | `ideas.md` idea age | 3 consolidations | promote or cull |
-| `lexicon.md` | ~30 terms | delete dead terms |
+| `lexicon.md` | ~80 terms | delete dead terms |
 | toolkit | no two skills overlap; a definition stays near one line | merge the overlapping pair; trim the fat definition |

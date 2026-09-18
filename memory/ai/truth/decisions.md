@@ -2,6 +2,20 @@
 
 ## Decisions made during 2026
 
+- 17 September 2026; **finished.md lives in shared's logs**, a record of finished work, where it sat in the zone; the tools, the shorthand, the truth, the lexicon, the index and workflow say logs
+- 17 September 2026; **an open button's tip names the file it opens**, not the segment's title, and so do the steppers' tips while walking the open buttons
+- 17 September 2026; **the items table lives in workflow.md's development states section**, its third table; the zone file development states.md, decided and built, is deleted
+- 17 September 2026; **the steppers walk the open buttons while a reading began at one**: a press on a segment remembers its place, back and forward open the neighbouring buttons' files wrapping at both ends, the count reads n of m over them, the link stack keeps precedence, the way back forgets the place; kb's Operations.ts holds it
+- 17 September 2026; **the open buttons are one segmented control**, one segment per button, answering a press and a hover, no segment ever current, where they were plain buttons
+- 17 September 2026; **the merged development states hold**: the done shorthand gone, record in its place; the workflow's development states section is the merged cycle and any-time tables; corrections.md made, learn and distill writing into it; correction, record and four state words in the lexicon
+- 16 September 2026; **workflow.md rewritten for the memory system**: the sections saying notes/guides and notes/work gone, two sections saying where work lives and how it moves, the rest kept whole
+- 16 September 2026; **the dead links under memory are listed in memory/shared/zone/dead links.md**, one table per project, 1449 the day it was written
+- 16 September 2026; **the sizing limits are raised**: truth file 300 lines, truths per project 50, log 60 entries, decisions 100 live items, lexicon 80 terms; the check of the day found every row of the table passed
+- 16 September 2026; **a project's Current state paragraph lives in zone/drive.md, not index.md**: fourteen indexes gave theirs up, twelve drive files made; the handbook's consolidation, create a project and the lexicon's drive entry say drive
+- 15 September 2026; **step 16 of the plan moves nothing**: making, renaming, moving and throwing away a file stay kb's, and mending what pointed at it too, since the mending reads kb's link map and explore; the step is a proof, headless and visual
+- 15 September 2026; **the controls row pulls left by --gap-big, browsing and editing alike**, one rule, so the open buttons and the way back share a left edge; the browse row's --gap plus --gap-tiny pull of the same day withdrawn
+- 15 September 2026; **step 15 of the plan moves nothing**: link following, the dead link report and the link stack stay kb's, Operations.ts whole; the step is a proof, the test as it is, a headless follow and walk back, and a visual report
+- 15 September 2026; **the open buttons sit next to the hamburger while browsing**, first in kb's part of the row, where they sat at the far right past the build number earlier the same day
 - 15 September 2026; **the way back and the steppers sit a big gap closer to the hamburger**: the row pulls left by --gap-big while a file is open, the way back two pixels off the hamburger's box
 - 15 September 2026; **the renderer hands its words to the frame** when it reads a file, redraws it or clears above its heading, so the title's H1 tools have words to work on; each of the tools' silent returns says why on the status line
 - 15 September 2026; **the way back sits between the hamburger and the steppers while a file is open**, a gap off each, where it sat at the far right past the heavy upright line, which is gone; the row no longer pulls left

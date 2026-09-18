@@ -24,7 +24,7 @@ REPO = os.path.realpath(os.path.join(HERE, '..'))
 PROJECT = sys.argv[1] if len(sys.argv) > 1 else ''
 # Real paths throughout, so a folder reached through a link, as macOS's temp folder is, matches itself.
 MEMORY = os.path.realpath(sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, '..', 'memory'))
-FINISHED = os.path.realpath(sys.argv[3] if len(sys.argv) > 3 else os.path.join(MEMORY, 'shared', 'zone', 'finished.md'))
+FINISHED = os.path.realpath(sys.argv[3] if len(sys.argv) > 3 else os.path.join(MEMORY, 'shared', 'logs', 'finished.md'))
 SKIP_FOLDERS = {'archive', 'node_modules'}
 JOURNAL = 'work journal.md'
 BOX = re.compile(r'^(\s*)- \[x\]', re.I)

@@ -35,7 +35,7 @@ Now co has better guidance for next time. It's teaching by example, then extract
 
 See [shorthand.md](shorthand.md) for the full list of commands and abbreviations.
 
-## The Basic [Workflow](workflow)
+## The Basic [Workflow](../workflow.md)
 
 1. **Jonathan** defines the problem and goal
 2. **Co** proposes an approach

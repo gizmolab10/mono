@@ -1,7 +1,16 @@
 # kb log
 
+## 17 September 2026
+
+- D: the open buttons' tips name the file, name_of exported from Operations.ts and read by Controls.svelte and the steppers' tips. Jonathan's decision in memory/ai/truth/decisions.md
+- D: Operations.ts holds w_open_at, open_button, step_buttons and button_step; the can-step, name and count stores read it; open_view and close_view clear it; Controls.svelte's segments press open_button. Jonathan's decision in memory/ai/truth/decisions.md
+- D: the open buttons drawn as one segmented control, the segments styles of D_Rules.svelte's, a segment filling under the cursor, none current, Controls.svelte; the lexicon's open button entry says so. Jonathan's decision in memory/ai/truth/decisions.md
+
 ## 15 September 2026
 
+- D: one pull for the controls row, --gap-big, browsing and editing alike, so the open buttons and the way back share a left edge, Controls.svelte. Jonathan's decision in memory/ai/truth/decisions.md
+- D: the row pulls left by --gap plus --gap-tiny while browsing, the open button's box flush with the hamburger's, measured headless, Controls.svelte. Jonathan's decision in memory/ai/truth/decisions.md
+- D: the open buttons back next to the hamburger while browsing, first in the row before the spacer, Controls.svelte; the lexicon's open button entry says so. Jonathan's decision in memory/ai/truth/decisions.md
 - D: the row pulls left by --gap-big while a file is open, the way back two pixels off the hamburger's box, measured headless, Controls.svelte. Jonathan's decision in memory/ai/truth/decisions.md
 - D: the way back moved from the far right to between the hamburger and the steppers, a gap off each, the upright line and the row's pull left gone, Controls.svelte. Jonathan's decision in memory/ai/truth/decisions.md
 - D: the three clickables edged --thick-faint where they had --thick-small, Browse_Filters.svelte, Edit_More.svelte and Details.svelte. Jonathan's decision in memory/ai/truth/decisions.md

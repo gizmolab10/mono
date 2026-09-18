@@ -1,12 +1,11 @@
-# Code debt (1088)
+# Code debt (1087)
 
-86 files hold unfinished work, as of 2026-09-15.
+85 files hold unfinished work, as of 2026-09-15.
 
-## ai (168)
+## ai (165)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-|  | [log.md](../../ai/logs/log.md) | settle 2 lines |
 | t | [decisions.md](../../ai/truth/decisions.md) | decide 6 pacs |
 | t | [design/action type.md](../../ai/truth/design/action%20type.md) | 1 open truth |
 | t | [design/ov - goals.md](../../ai/truth/design/ov%20-%20goals.md) | 9 open truths |
@@ -14,7 +13,7 @@
 | z | [ideas.md](../../ai/zone/ideas.md) | 85 open |
 | z | [work/adopting the ai memory design.md](../../ai/zone/work/adopting%20the%20ai%20memory%20design.md) | 1 open |
 | z | [work/inception into the new design.md](../../ai/zone/work/inception%20into%20the%20new%20design.md) | 5 open |
-| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 55 open |
+| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 54 open |
 | z | [work/soon/tag drift.md](../../ai/zone/work/soon/tag%20drift.md) | 1 open |
 
 ## core (29)
@@ -126,25 +125,25 @@
 |  | [log.md](../../panel/logs/log.md) | settle 1 line |
 |  | [questions.md](../../panel/logs/questions.md) | answer 1 question |
 
-## shared (338)
+## shared (340)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [collisions.md](../../shared/logs/collisions.md) | rewrite 5 collisions |
-|  | [learn.md](../../shared/logs/learn.md) | 8 open and distill 32 entries |
+|  | [learn.md](../../shared/logs/learn.md) | 8 open and distill 34 entries |
 |  | [log.md](../../shared/logs/log.md) | settle 13 lines |
 |  | [proposals.md](../../shared/logs/proposals.md) | decide 2 proposals |
 |  | [questions.md](../../shared/logs/questions.md) | 20 open and answer 20 questions |
 | t | [decisions.md](../../shared/truth/decisions.md) | decide 34 pacs |
 | t | [collaborate/composition.md](../../shared/truth/collaborate/composition.md) | 15 open truths |
-| t | [collaborate/workflow.md](../../shared/truth/collaborate/workflow.md) | 2 open truths |
+| t | [collaborate/workflow.md](workflow.md) | 2 open truths |
 | t | [develop/migrate.md](../../shared/truth/develop/migrate.md) | 1 open truth |
 | t | [philosophy/logic driven design.md](../../shared/truth/philosophy/logic%20driven%20design.md) | 100 open truths |
 | t | [test/debugging.md](../../shared/truth/test/debugging.md) | 10 open truths |
 | z | [drive.md](../../shared/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../shared/zone/ideas.md) | 16 open |
 | z | [architecture/library projects.md](../../shared/zone/architecture/library%20projects.md) | 11 open |
-| z | [work/co.md](../../shared/zone/work/co.md) | 17 open |
+| z | [now/co.md](../../shared/zone/now/co.md) | 17 open |
 | z | [work/articles/accidental.programmer.md](../../shared/zone/work/articles/accidental.programmer.md) | 10 open |
 | z | [work/articles/how.to.build.it.md](../../shared/zone/work/articles/how.to.build.it.md) | 3 open |
 | z | [work/articles/write.article.md](../../shared/zone/work/articles/write.article.md) | 4 open |

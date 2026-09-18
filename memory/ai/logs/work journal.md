@@ -253,6 +253,27 @@ What's been finished, newest first. ai's own since 15 September 2026, taken whol
     - [x] Separator
     - [x] Section
 
+## 2026-09-15 — step 16: kb keeps the four file operations, proved
+
+Step 16 of the plan in [music and ai](../zone/work/music%20and%20ai.md), rewritten today so nothing moves: making, renaming, moving and throwing away a file stay kb's, and so does mending what pointed at a renamed or moved file, since the mending reads the link map kb builds at launch and follows each link with kb's own explore. Index files are step 17's.
+
+### Verification
+
+- Headless: drive.md opened, the page's log read first; a file made beside it through the new button, unnamed on disk; renamed to throwaway proof through the name field, the log's Renamed line waited for, the old name gone from disk; dropped onto ai's zone/work folder row with the page's own drag events, the log's Picked up line and the file at its new place on disk; opened again from the list and thrown away through the delete question, gone from disk and from the db.
+- The browser's own drag started no drag headless, so the page's drag events were fired on the rows; the drop code path is what was proved, not the browser's drag.
+- One delete pressed right after the move in the same page session had not removed the file within five seconds; a fresh page removed it at once. The reason is not read.
+- Not looked at in a browser by Jonathan.
+
+## 2026-09-15 — step 15: kb keeps link following, proved
+
+Step 15 of the plan in [music and ai](../zone/work/music%20and%20ai.md), rewritten today so nothing moves: link following, the dead link report and the link stack stay kb's, Operations.ts whole, since only follow_link fills the stack and the host's renderer calls it through the bridge.
+
+### Verification
+
+- kb clean, 176 tests in 10 files, the following_links test among them.
+- Headless: the finished truth opened, its row scrolled into view and the page's log read first; its link to code debt followed, Code debt on screen; the back stepper pressed, Finished on screen, the log saying the stack of one was walked back past its bottom; no page errors.
+- Not looked at in a browser by Jonathan.
+
 ## 2026-09-15 — the links after Obsidian's moves
 
 Jonathan moved eight files from ai's zone into zone/work, consolidate.md to shared's zone and five of ov's old work notes into zone/work/next, in Obsidian, whose link updating writes a bare name or a vault path, neither resolving as a relative link. 41 links and 11 mentions in 24 files re-pointed, ai's index and kb's CLAUDE file put right, three dispatcher checks re-aimed at the plan file. organize and murk journal are one copy each, shared's, core's twins gone.

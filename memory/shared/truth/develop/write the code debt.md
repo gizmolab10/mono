@@ -1,6 +1,6 @@
 # Code debt
 
-i wanted one place that says where unfinished work sits, across every project, without reading every file. `tools/code_debt.py` writes it: [code debt.md](../zone/code%20debt.md), one line per memory file that holds unfinished work. The shorthand `debt` runs the script and replies with the count of lines and the file's path.
+i wanted one place that says where unfinished work sits, across every project, without reading every file. `tools/code_debt.py` writes it: [code debt.md](code%20debt.md), one line per memory file that holds unfinished work. The shorthand `debt` runs the script and replies with the count of lines and the file's path.
 
 ## The row
 

@@ -2,8 +2,6 @@
 
 The di app.
 
-**Current state:** brought up in memory today; the three maps (files, guides, notes) live in `truth/`, moved whole. Three guide folders followed 7 September 2026 — `architecture/` (36 files), `development/` (6), `project/` (12) — moved whole, unsorted.
-
 ## Truths
 
 - [always.md](truth/always.md) — di's own rules, read every session beside the shared conventions.
@@ -16,3 +14,7 @@ The di app.
 - [map of di files.md](truth/map%20of%20di%20files.md) — every source file in di.
 - [map of di guides.md](truth/map%20of%20di%20guides.md) — every guide, with a line each.
 - [map of di notes.md](truth/map%20of%20di%20notes.md) — every folder under di's notes.
+
+## Zone
+
+- [drive.md](zone/drive.md) — the current undertaking, and the project's current state, moved here from this index 16 September 2026.

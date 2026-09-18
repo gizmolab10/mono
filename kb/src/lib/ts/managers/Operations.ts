@@ -3,6 +3,7 @@ import { derived, get, writable } from 'svelte/store';
 import type { Filtered_File } from '../types/File';
 import { debug } from '../common/Core';
 import { files } from './Files';
+import { customizations } from '../common/Customizations';
 
 /**
  * Operations — which of the two things the content box is doing.
@@ -97,15 +98,20 @@ export const w_viewed = derived([files.w_showing, w_view_file], ([rows, key]) =>
 // list, since a report is where the reader was and the list is not.
 export const w_from_report = writable(false);
 
+// Reading that began at one of the host's open buttons: which one, by its place in the
+// configuration's list. The steppers then walk the open buttons rather than the list, until the
+// view closes or a file is opened off the list. Nothing while the reading began elsewhere.
+export const w_open_at = writable<number | null>(null);
+
 /** Is there a guide behind this one — the report it was opened from, the one below on the stack, or a place in the list? */
-export const w_can_back = derived([files.w_showing, w_link_stack, w_from_report], ([rows, stack, from_report]) =>
-	from_report || stack.length > 0 || rows.filter((r) => !r.file.is_folder).length > 1);
+export const w_can_back = derived([files.w_showing, w_link_stack, w_from_report, w_open_at], ([rows, stack, from_report, open_at]) =>
+	from_report || stack.length > 0 || (open_at !== null ? customizations.open_buttons.length > 1 : rows.filter((r) => !r.file.is_folder).length > 1));
 
 /** Forward means the guide above on the stack; off the stack, it walks the list. */
-export const w_can_forward = derived([files.w_showing, w_link_stack, w_stack_at], ([rows, stack, at]) =>
+export const w_can_forward = derived([files.w_showing, w_link_stack, w_stack_at, w_open_at], ([rows, stack, at, open_at]) =>
 	stack.length > 0
 		? at < stack.length - 1
-		: rows.filter((r) => !r.file.is_folder).length > 1);
+		: open_at !== null ? customizations.open_buttons.length > 1 : rows.filter((r) => !r.file.is_folder).length > 1);
 
 /**
  * What each stepper would open, by name — so pointing at one says which file it goes to rather
@@ -117,7 +123,7 @@ export const w_can_forward = derived([files.w_showing, w_link_stack, w_stack_at]
  * Worked out afresh whenever the list, the stack or the guide being read changes — which is every
  * time either answer could differ.
  */
-function name_of(key: string | null): string | null {
+export function name_of(key: string | null): string | null {
 	if (key === null) { return null; }
 	return files.hierarchy.all_files.get(key)?.file.name ?? null;
 }
@@ -126,16 +132,17 @@ function file_a_step_away(by: number): string | null {
 	// A report is not a file, so stepping back to one has no name to give.
 	if (by < 0 && get(w_link_stack).length === 0 && get(w_from_report)) { return null; }
 	if (get(w_link_stack).length > 0) { return name_of(file_stack_step(by)); }
+	if (get(w_open_at) !== null) { const to = button_step(by); return to === null ? null : name_of(customizations.open_buttons[to].key); }
 	const step = row_list_step(by);
 	return step === null ? null : get(files.w_showing)[step.to].file.name;
 }
 
 export const w_file_back = derived(
-	[files.w_showing, w_link_stack, w_stack_at, w_view_file, w_from_report],
+	[files.w_showing, w_link_stack, w_stack_at, w_view_file, w_from_report, w_open_at],
 	() => file_a_step_away(-1));
 
 export const w_file_forward = derived(
-	[files.w_showing, w_link_stack, w_stack_at, w_view_file, w_from_report],
+	[files.w_showing, w_link_stack, w_stack_at, w_view_file, w_from_report, w_open_at],
 	() => file_a_step_away(1));
 
 // Is the command key held down right now? Watched at the app root. Clicking a file with it
@@ -162,7 +169,8 @@ export const w_search_at = preferences.persistent<number>(T_Preference.search_at
  * since the stepping walks past folders. Nothing while the guide being read is not among them,
  * as happens off the list, on a stack of links.
  */
-export const w_file_site = derived([files.w_showing, w_view_file], ([rows, key]) => {
+export const w_file_site = derived([files.w_showing, w_view_file, w_open_at], ([rows, key, open_at]) => {
+	if (open_at !== null) { return { at: open_at + 1, of: customizations.open_buttons.length }; }
 	const just_files = rows.filter((r) => !r.file.is_folder);
 	const at = just_files.findIndex((r) => r.key === key);
 	return at < 0 ? null : { at: at + 1, of: just_files.length };
@@ -180,6 +188,7 @@ export function open_view(key: string): void {
 	w_anchor.set(key);
 	w_view_file.set(key);
 	w_from_report.set(false);
+	w_open_at.set(null);
 	w_operation.set(T_Operation.edit);
 	w_stepping_halted.set(false);              // opening from the list is a fresh start
 	const just_files = rows.filter((r) => !r.file.is_folder);
@@ -195,6 +204,18 @@ export function open_view(key: string): void {
 export function open_from_report(key: string): void {
 	open_view(key);
 	if (get(w_operation) === T_Operation.edit) { w_from_report.set(true); }
+}
+
+/**
+ * Open the file one of the host's open buttons names, and remember which button, so the
+ * steppers walk the open buttons rather than the list until the view closes.
+ */
+export function open_button(at: number): void {
+	const button = customizations.open_buttons[at];
+	if (!button) { debug.log(`Open button ${at + 1}: there is none.`); return; }
+	open_view(button.key);
+	if (get(w_operation) === T_Operation.edit) { w_open_at.set(at); }
+	debug.log(`Open button "${button.title}" pressed: opening ${button.key}, number ${at + 1} of ${customizations.open_buttons.length}; the steppers walk the open buttons.`);
 }
 
 /**
@@ -258,6 +279,7 @@ export function step_view(by: number, repeated = false): void {
 	// itself. Forward from there steps the list, the same as any other reading.
 	if (by < 0 && stack.length === 0 && get(w_from_report)) { back_to_report(); return; }
 	if (stack.length > 0) { step_stack(by); return; }
+	if (get(w_open_at) !== null) { step_buttons(by); return; }
 	step_list(by);
 }
 
@@ -303,6 +325,24 @@ function step_stack(by: number): void {
 	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} on the stack, from number ${at + 1} to ${to + 1} of ${stack.length} — now reading "${row?.file.name ?? stack[to]}".`);
 }
 
+/** Which open button lies one step that way, wrapping at both ends; nothing with fewer than two. */
+function button_step(by: number): number | null {
+	const at = get(w_open_at);
+	const n = customizations.open_buttons.length;
+	if (at === null || n < 2) { return null; }
+	return ((at + by) % n + n) % n;
+}
+
+/** Walk the host's open buttons, while the reading began at one. */
+function step_buttons(by: number): void {
+	const from = get(w_open_at);
+	const to = button_step(by);
+	if (to === null) { debug.log(`Step ignored — ${customizations.open_buttons.length} open button(s).`); return; }
+	open_view(customizations.open_buttons[to].key);
+	if (get(w_operation) === T_Operation.edit) { w_open_at.set(to); }
+	debug.log(`Stepped ${by > 0 ? 'forward' : 'back'} among the open buttons, from number ${(from ?? 0) + 1} to ${to + 1} of ${customizations.open_buttons.length} — now reading "${customizations.open_buttons[to].title}".`);
+}
+
 /**
  * Which row the list holds one step that way, walking past folders and wrapping at both ends.
  * Nothing where one file is on screen or none, since there is nowhere to step to.
@@ -345,6 +385,7 @@ function step_list(by: number): void {
 /** Close the reading view, back to the list. The stack ends with the reading. */
 export function close_view(): void {
 	w_view_file.set(null);
+	w_open_at.set(null);
 	w_link_stack.set([]);
 	w_stack_at.set(-1);
 	w_from_report.set(false);

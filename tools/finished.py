@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Writes memory/shared/zone/finished.md: one line per memory file that holds finished work,
+"""Writes memory/shared/logs/finished.md: one line per memory file that holds finished work,
 across every project. Two patterns, one verb each, no judgment anywhere. A twin of
 code_debt.py, decided 15 September 2026.
 
     python3 tools/finished.py [memory_root] [out_file]
 
-Both arguments default to this repo's memory folder and shared/zone/finished.md.
+Both arguments default to this repo's memory folder and shared/logs/finished.md.
 Prints the number of lines written."""
 import datetime
 import os
@@ -15,7 +15,7 @@ from urllib.parse import quote
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MEMORY = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '..', 'memory')
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(MEMORY, 'shared', 'zone', 'finished.md')
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(MEMORY, 'shared', 'logs', 'finished.md')
 # Finished work sits in done folders, so they are walked; code debt skips them.
 SKIP_FOLDERS = {'archive', 'node_modules'}
 
@@ -80,7 +80,7 @@ def main():
     lines = [f'# Finished ({sum(quantity.values())})', '',
              f'{len(rows)} files hold finished work, as of {today}.']
     # One table per project, its heading carrying the quantity. The file is a link, relative to
-    # where finished.md sits, memory/shared/zone/ unless told otherwise. A root file's z/t cell is empty.
+    # where finished.md sits, memory/shared/logs/ unless told otherwise. A root file's z/t cell is empty.
     up = os.path.relpath(os.path.abspath(MEMORY), os.path.dirname(os.path.abspath(OUT)))
     current = None
     for project, letter, shown, relative, clauses in rows:

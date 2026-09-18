@@ -4,7 +4,7 @@
 
 ## 15 September 2026
 
-- D: Edit_Markdown.svelte hands its words to the frame with set_text on read, redraw and clear, so the ➜ H1 tool works; Edit_Fields.svelte's H1 tools say why on the status line when they do nothing. Headless: ➜ H1 on code debt said on the status line that the top heading already says what the title says, so the words were on screen. Jonathan's fix in memory/ai/truth/decisions.md
-- D: renderer, in the lexicon, for Edit_Markdown.svelte, where drawer was said; drawer is in ai's banned words; 8 mentions in ai's and kb's records and two code comments renamed. Jonathan's word
-- D: finished work processed: 73 items from 7 files and 0 settled proposals into logs/work journal.md; 0 done files moved to logs, 0 links re-pointed
-- S: consolidated 15 September 2026: 34 lines settled into the truths, the journal, the indexes and the design truth edges.md, or dismissed as superseded; the manifest in the chat
+- D: step 16 rewritten and proved headless, the four file operations on a throwaway file, the plan ticked, the journal's entry written; the visual report pending. Jonathan's go
+- D: step 15 proved headless, a link followed and the stepper walking back, the plan ticked, the journal's entry written; the visual report pending. Jonathan's go
+- D: step 15 rewritten in memory/ai/zone/work/music and ai.md: kb keeps link following, the report and the link stack; the step is a proof. Jonathan's decision in memory/ai/truth/decisions.md
+- S: consolidated again 15 September 2026: three D: lines settled, two into working features rows 91 and 92, one already home in the lexicon and the banned words, one already home in the journal and the finished truth; the manifest in the chat

@@ -46,5 +46,11 @@ export const customizations = {
 
 	// The open buttons at the far right of the controls row while browsing, each opening one file in
 	// the editor: code debt, the memory system's one line per file holding unfinished work.
-	open_buttons : [{ title: 'code debt', key: 'memory/shared/zone/code debt.md' }],
+	open_buttons : [
+		{ title: 'de', key: 'memory/shared/zone/code debt.md' },
+		{ title: 'wf', key: 'memory/shared/truth/workflow.md' },
+		{ title: 'hb', key: 'memory/shared/truth/handbook.md' },
+		{ title: 'sh', key: 'memory/shared/truth/shorthand.md' },
+		{ title: 'co', key: 'memory/shared/truth/develop/constants.md' }
+	],
 };

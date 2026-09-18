@@ -97,6 +97,25 @@ While writing, before sending:
 5. Drop adjectives and adverbs; keep one only where the point fails without it.
 6. Then read the draft and cut it in half again. Whatever survives twice is the answer.
 
+### 10. A question gets its answer, in Jonathan's shape
+
+1. A why is one sentence naming the cause: "the search for workflow got in the way." The mechanism and the proof wait to be asked for.
+2. One word, when one settles it.
+3. An answer to part of a question covers that part and leaves the rest open and unmentioned.
+4. No supportive evidence beside the answer. "I can prove this."
+5. On "huh?", cut. Never add an example, a mechanism or a guard.
+
+### 11. Sentences and words
+
+1. The statement first, then the how. Two branches of one rule take the same grammar.
+2. Name what a problematic wording does to the reader, never what the text lacks.
+3. A statement about something dead says so, in a word.
+4. Name a part by what it does, never by the code word for it: a flag, a branch, an if. Where two pieces of code meet, say api, and table the functions.
+5. Build-time values are configuration; a runtime pick is a choice or an option; switch is neither. Say error, never slip.
+6. The word the code owns wins over the word that feels better: label stayed.
+7. A file's name says what the reader does with it. A heading read alone says its subject.
+8. A banned-words row applies to a sense, never to a word: room to spare stays.
+
 ## Conduct
 
 - **Never** "believed." A truth is "incorporated."

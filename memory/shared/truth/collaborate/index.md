@@ -19,5 +19,6 @@ How co works with Jonathan and maintains shared context.
 - [Skills](./skills.md)
 - [Tags hierarchy](../develop/tags%20hierarchy.md)
 - [Voice](./voice.md)
-- [Workflow](./workflow.md)
+- [Workflow](../workflow.md)
 - [Journals](./write%20a%20journal.md)
+- [Plans](./write%20a%20plan.md)

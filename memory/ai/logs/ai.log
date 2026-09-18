@@ -207,3 +207,122 @@ $ vite
 8:09:31 PM [vite] (client) hmr update /src/lib/svelte/main/App.svelte
 8:09:31 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
 8:10:03 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+9:29:36 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte
+9:38:57 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+9:44:38 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+4:21:11 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:21:12 PM [vite] (client) Pre-transform error: Transform failed with 1 error:
+/Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:51:2: ERROR: Expected "]" but found "{"
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:51:2
+  
+  Expected "]" but found "{"
+  49 |  	open_buttons : [
+  50 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+  51 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+     |    ^
+  52 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+  53 |  	],
+  
+4:21:12 PM [vite] (client) Pre-transform error: Transform failed with 1 error:
+/Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:51:2: ERROR: Expected "]" but found "{"
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:51:2
+  
+  Expected "]" but found "{"
+  49 |  	open_buttons : [
+  50 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+  51 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+     |    ^
+  52 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+  53 |  	],
+  
+4:21:14 PM [vite] Internal server error: Transform failed with 1 error:
+/Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:51:2: ERROR: Expected "]" but found "{"
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:51:2
+  
+  Expected "]" but found "{"
+  49 |  	open_buttons : [
+  50 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+  51 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+     |    ^
+  52 |  		{ title: 'debt', key: 'memory/shared/zone/code debt.md' }
+  53 |  	],
+  
+      at failureErrorWithLog (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:1467:15)
+      at /Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:736:50
+      at responseCallbacks.<computed> (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:603:9)
+      at handleIncomingPacket (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:658:12)
+      at Socket.readFromStdout (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:581:7)
+      at Socket.emit (node:events:524:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+4:21:21 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:21:21 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:21:59 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:23:07 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:24:56 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:26:17 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:29:58 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+12:34:33 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+12:34:34 PM [vite] (client) Pre-transform error: Transform failed with 1 error:
+/Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:54:2: ERROR: Expected "]" but found "{"
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:54:2
+  
+  Expected "]" but found "{"
+  52 |  		{ title: 'handbook', key: 'memory/shared/truth/handbook.md' },
+  53 |  		{ title: 'shorthand', key: 'memory/shared/truth/shorthand.md' },s
+  54 |  		{ title: 'constants', key: 'memory/shared/truth/develop/constants.md' }
+     |    ^
+  55 |  	],
+  56 |  };
+  
+12:34:34 PM [vite] (client) Pre-transform error: Transform failed with 1 error:
+/Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:54:2: ERROR: Expected "]" but found "{"
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:54:2
+  
+  Expected "]" but found "{"
+  52 |  		{ title: 'handbook', key: 'memory/shared/truth/handbook.md' },
+  53 |  		{ title: 'shorthand', key: 'memory/shared/truth/shorthand.md' },s
+  54 |  		{ title: 'constants', key: 'memory/shared/truth/develop/constants.md' }
+     |    ^
+  55 |  	],
+  56 |  };
+  
+12:34:34 PM [vite] Internal server error: Transform failed with 1 error:
+/Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:54:2: ERROR: Expected "]" but found "{"
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/ai/src/lib/ts/common/Customizations.ts:54:2
+  
+  Expected "]" but found "{"
+  52 |  		{ title: 'handbook', key: 'memory/shared/truth/handbook.md' },
+  53 |  		{ title: 'shorthand', key: 'memory/shared/truth/shorthand.md' },s
+  54 |  		{ title: 'constants', key: 'memory/shared/truth/develop/constants.md' }
+     |    ^
+  55 |  	],
+  56 |  };
+  
+      at failureErrorWithLog (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:1467:15)
+      at /Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:736:50
+      at responseCallbacks.<computed> (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:603:9)
+      at handleIncomingPacket (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:658:12)
+      at Socket.readFromStdout (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:581:7)
+      at Socket.emit (node:events:524:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+12:34:35 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+12:34:35 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+12:37:15 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+2:23:12 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+2:23:37 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+2:23:57 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Operations.ts
+2:23:57 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte
+6:29:48 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Operations.ts
+6:29:48 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte

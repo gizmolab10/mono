@@ -1,6 +1,54 @@
 # Workflow
 
-See [motive.md](../philosophy/use%20ai.md) for the origin story and philosophy behind this system.
+See [motive.md](use%20ai.md) for the origin story and philosophy behind this system. See [[development states]] for details about how work (ahem) flows.
+
+## development states
+
+What we are doing, in order, and the tasks that run at any time. What each item is, with its states and the mark of each, is the third table.
+
+### the cycle, in order
+
+| step | who | what happens | tasks run | items that change state |
+| --- | --- | --- | --- | --- |
+| start | co | orients: root index, handbook, project index, lexicon, the truths that match, questions read and never reported | start | none |
+| debt | Jonathan | selects something from code debt.md | debt | none |
+| cadence | both | pac, where, propose, decide: Jonathan frames and decides, co reads and proposes | pac, where, propose, d | proposal open → decided or dead; pac open → decided; decision made |
+| go | co | builds what was decided, tests before saying done | go | plan step open → built; checkbox item open → done; question asked → answered |
+| v | Jonathan | looks at the screen: good, perfect or done is a sign-off, anything else a criticism | v | working feature row untried → tried |
+| record | co | moves done items to the work journal, rewritten corrections to their truths, done files to logs | record | checkbox item and plan step done → journaled; correction rewritten → placed; done folder file → in logs; proposal decided → journaled |
+| consolidate | co | settles every log line since the marker into its home, the marker moved; no commit | consolidate | log line new → settled; question answered → gone; idea kept → promoted or culled; decision live → final |
+| commit | Jonathan | commits memory | none | none |
+
+### at any time
+
+| task | who | what happens | items that change state |
+| --- | --- | --- | --- |
+| learn | co | a mistake captured as a correction, in co's words | correction → captured |
+| distill | co | raw lessons rewritten as corrections | lesson raw → distilled |
+| finished | co | finished.md written, one line per file holding done items | none |
+| check | co | the memory system audited; findings reported, nothing fixed | none |
+| cleanup | co | after files move: links, CLAUDE files, hooks, shorthand, maps and indexes put right | none |
+| define | co | a lexicon entry and its D: line | lexicon entry → defined |
+| pause, mothball | co | the current context written down, to pick up later | none |
+
+### items and their states
+
+| item | where it lives | states | marks |
+| --- | --- | --- | --- |
+| checkbox item | ideas.md, a work note | open, done, journaled | `- [ ]`, `- [x]`, moved into the work journal |
+| plan step | the plan | open, built, journaled | `- [ ]`, `- [x]` with a Built note, moved into the work journal |
+| correction | corrections.md | captured, rewritten, placed | `- [ ]` in co's words, `- [x]` in Jonathan's words, moved into its truth |
+| proposal | proposals.md, or a zone file of its own | open, decided or dead, journaled | its section; the word Decided or dead; moved into the work journal |
+| pac | decisions.md | open, decided | its bullet; the word Decided |
+| decision | decisions.md | live, final | its line; the line gone |
+| question | questions.md | asked, answered | its line; a D: line and the line gone |
+| log line | logs/log.md | new, settled | above the consolidated marker; gone |
+| lesson | learn.md | raw, distilled | its numbered entry; a correction made from it |
+| idea | ideas.md | kept, promoted or culled | its line; a truth or a proposal made from it, or the line gone |
+| done folder file | zone/work/done | done, in logs | the file; moved into logs |
+| working feature row | working features.md | untried, tried | `[ ]`, `[x]` in the done column |
+| drive | zone/drive.md | present, dissolved | the file; its proposal in truth and the file gone |
+| truth | truth/ | current, archived, dead | the file; in archive/; deleted, git remembering |
 
 ## Cadence
 
@@ -14,23 +62,28 @@ Co's query-response is best for Jonathan if it is precise, concise, and easy to 
 
 Living notes at [[cadence]].
 
-## The structure
-
-- `notes/guides/` — living reference (style, patterns, how-tos)
-- `notes/work/` — ALL work is recorded here, as we go
-- `CLAUDE.md` — entry point, tells co where to start
-
 ## One truth, one place
 
 Guides encode decisions, grouped by topic. CLAUDE.md is the entry point, the large scale map. Don't duplicate — reference.
 
-## Starting work
+## Where work lives
 
-When asked to "work on X":
+One project, three folders under `memory/<project>/`:
 
-1. Check if `notes/work/X.md` exists
-2. If yes → read and resume
-3. If no → create it with problem/goal/phases structure
+1. `truth/` — the decided design, one concept per file; the lexicon, the map of source files, working features, decisions.
+2. `zone/` — live thinking: `drive.md`, opening with the project's current state; `ideas.md`; work notes in `work/`, one folder down in `next/` or `soon/`.
+3. `logs/` — what happened and what waits on it: `log.md`, `work journal.md`, `questions.md`, `proposals.md`, `learn.md`.
+
+Three files are written by tools, never by hand: code debt and dead links in shared's zone, finished in shared's logs.
+
+## How work moves
+
+1. A session starts per the handbook's Session phases.
+2. Work is chosen from code debt.
+3. A work note in `zone/work/` holds the problem, the goal, the phases as checkboxes and the next action.
+4. A proposal opens as the section below says; decided, it dissolves into truth, with one line in decisions.md.
+5. Built work is recorded: record moves ticked items into the work journal and rewritten corrections into their truths; consolidate settles the log.
+6. A finished work note moves whole into `logs/`.
 
 ## Opening a proposal
 
@@ -47,67 +100,6 @@ we will rely on some stuff we have
 Jonathan wrote that at the top of the photo-gallery proposal; mine had the new piece buried inside a paragraph three sections down, where it read as a step rather than as the work. The list makes the whole structure plain: two things to lean on, one thing to build.
 
 Check every name on the list before writing it down. He had to ask whether all three existed, and one of them did not.
-
-## Work file structure
-
-```markdown
-# Title
-**Started:** YYYY-MM-DD
-**Status:** Phase N in progress
-
-## Problem
-What we're solving.
-
-## Goal
-What success looks like.
-
-## Phase 1: Name
-- [ ] Task
-- [ ] Task
-
-## Next Action
-**Phase N:** Specific next step
-```
-
-Update status and checkboxes as work progresses.
-
-## The handoff pieces
-
-The living work of a project sits in its work area — `notes/work/` for a light project (flat), `notes/work/now/` for a larger one. A small set of files, each with one job:
-
-- **`handoff.md`** — current status and the single **Next** action, the baton; read first each session.
-- **`code debt.md`** — open coding tasks, as checkboxes.
-- **`code debt paid.md`** — finished tasks, archived out of code debt (alternate location: 'done' subsection of code debt)
-- **`work journal.md`** — reverse-chronological log of implemented (and tested as successful) proposals.
-- **`working features.md`** — reverse-chronological list of what currently works.
-
-When to move things between these — done work to the journal, the active surface kept short — is [keep shop](keep%20shop.md)'s job.
-
-Two more are reference, kept in the project's `guides/` (`guides/` for a light project, `guides/project/` for a larger one):
-
-- **`map of <X> files.md`** — the source file map, ALWAYS updated when files move.
-- **`map of <X> guides.md`** — same for guides.
-
-**Locations vary; `done` and `up` don't care.** They act on whichever of these a project has, wherever it keeps them — so ji (flat in `notes/work/`, `guides/` sibling to work) and di (active files in `notes/work/now/`, maps under `guides/project/`) are both handled without hard-coding either path.
-
-**Minimal set.** A new project needs only `code debt.md` to start — a list of what to build. Add `handoff.md` once sessions span more than one sitting, then add other files as the project needs them.
-
-### Template guides (di) — where things sit
-
-di is the model these rules came from. It predates them and drifted; on 2026-08-20 it was brought into line, and this is the settled layout:
-
-- The road map is reference, not active work, so it sits in `notes/designs/`, where ji keeps its own.
-- The three maps — files, guides, notes — sit together in `guides/project/`.
-- Work file names are spaced, never dotted: `code debt.md`, `code debt paid.md`.
-
-## Finishing work
-
-When work is complete, one of two destinations:
-
-| Destination | When | Example |
-|-------------|------|---------|
-| `notes/work/done/` | Task is finished, doc is historical record | svelte.md, quaternions.md |
-| `notes/guides/` | Doc becomes living reference for future work | testing.md |
 
 ## Tidying up
 
@@ -164,14 +156,6 @@ This same growth strategy will work for the guides, for one reason: every lexico
 
 **3.** Adding and removing will hopefully improve communication in general, and also specifically with his understanding of each rule.
 
-### Read cadence — Added to [[response]] item 12 — on 2026-08-20
-
-Roles say what we do. Two duplicates of [[agency]] item 8 were cut. Replies: precise, concise, unexplained.
-
-## Diagnostic logging
-
-See the diagnostic-logging rule in the always files — always.md item 7.
-
 ## Writing design documents
 
-See [design.md](create%20a%20design.md).
+See [create a design](develop/create%20a%20design.md).

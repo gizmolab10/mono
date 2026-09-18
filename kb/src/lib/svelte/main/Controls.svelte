@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_operation, T_Operation, close_view, open_view, step_view } from '../../ts/managers/Operations';
+	import { w_operation, T_Operation, close_view, open_view, open_button, name_of, step_view } from '../../ts/managers/Operations';
 	import { w_viewed, w_can_back, w_can_forward, w_file_back, w_file_forward, w_file_site } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, read_file, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of } from '../../ts/types/File';
@@ -13,15 +13,15 @@
 	import { k } from '../../ts/common/Core';
 
 	// The controls row's right end, handed to panel, which draws the hamburger at the row's left
-	// and the host's name in its middle. Browsing, the dispatcher at the right starts over, the
-	// build number beyond it opens the notes, and the host's open buttons come last, at the far
-	// right, each opening one file in the editor. Editing, the row is a section of its own — the
+	// and the host's name in its middle. Browsing, the host's open buttons come first, next to the
+	// hamburger, each opening one file in the editor; the dispatcher at the right starts over and
+	// the build number beyond it opens the notes. Editing, the row is a section of its own — the
 	// steppers, the count, the folders, the file's name, and the four buttons — with the way back to
-	// the list at the far right, past the section, since 15 September 2026; the name yields to it.
+	// the list first, between the hamburger and the section, since 15 September 2026.
 	let { buildNumber, onBuildOpen, onRestart, restarting }:
 		{ buildNumber: number; onBuildOpen: () => void; onRestart: () => void; restarting: boolean } = $props();
 
-	// The way back to the list while a file is open, at the row's far right, drawn as the report's
+	// The way back to the list while a file is open, between the hamburger and the section, drawn as the report's
 	// close button: a round white button holding the cross, the same path the delete question's
 	// keep button draws, since 15 September 2026.
 
@@ -215,6 +215,21 @@
 		</div>
 
 	{:else}
+		<!-- The host's open buttons, first, next to the hamburger since 15 September 2026, as one
+		     segmented control since 17 September 2026: one segment per button, each opening one file
+		     in the editor, the file named by its key in the configuration. A segment fills under the
+		     cursor and answers a press; none is ever current, since opening a file picks nothing. The
+		     press says which button, so the steppers walk the open buttons while the file is open. -->
+		{#if customizations.open_buttons.length > 0}
+			<div class='segments'>
+				{#each customizations.open_buttons as open, at (open.key)}
+					<button class='segment'
+						use:hit_target={{ id: `controls.open.${open.title}`, onpress: () => open_button(at), tip: `open ${name_of(open.key) ?? open.key}` }}>
+						{open.title}
+					</button>
+				{/each}
+			</div>
+		{/if}
 		<span class='spacer'></span>
 		<!-- While it is starting over it answers nothing, so it hands the manager no press and no
 		     words — the same as being disabled, said the one way a target can say it. -->
@@ -227,14 +242,6 @@
 			use:hit_target={{ id: 'controls.build', onpress: onBuildOpen, tip: 'show build notes' }}>
 			build {buildNumber}
 		</button>
-		<!-- The host's open buttons, last, at the row's far right past the build number: each opens
-		     one file in the editor, the file named by its key in the configuration. -->
-		{#each customizations.open_buttons as open (open.key)}
-			<button class='build-button'
-				use:hit_target={{ id: `controls.open.${open.title}`, onpress: () => { debug.log(`Open button "${open.title}" pressed: opening ${open.key}.`); open_view(open.key); }, tip: `open ${open.title}` }}>
-				{open.title}
-			</button>
-		{/each}
 	{/if}
 </div>
 
@@ -252,9 +259,10 @@
 		flex        : 1 1 auto;
 	}
 
-	/* While a file is open, the row pulls left by a big gap, so the way back and the steppers
-	   sit closer to the hamburger, since 15 September 2026. */
-	.controls-row.editing {
+	/* The row pulls left by a big gap, so its first button sits closer to the hamburger, since
+	   15 September 2026: the open buttons while browsing, the way back while a file is open,
+	   the two left edges the same. */
+	.controls-row {
 		margin-left : calc(var(--gap-big) * -1);
 	}
 
@@ -298,6 +306,38 @@
 
 	/* Takes up whatever is left, so the hamburger stays at the left and the two
 	   named buttons stay together at the right. */
+	/* The open buttons' segmented control, drawn as the rules' and the kinds row's: one box, the
+	   segments divided by lines, a segment filling under the cursor. No segment is ever current. */
+	.segments {
+		border        : var(--thick) solid var(--black);
+		border-radius : var(--radius-pill);
+		height        : var(--height);
+		background    : var(--white);
+		box-sizing    : border-box;
+		overflow      : hidden;
+		display       : flex;
+		flex-shrink   : 0;
+	}
+
+	.segment {
+		padding     : var(--pad-control);
+		font-size   : var(--font-tiny);
+		background  : transparent;
+		font-family : inherit;
+		white-space : nowrap;
+		color       : var(--text);
+		cursor      : pointer;
+		border      : none;
+	}
+
+	.segment:not(:last-child) {
+		border-right : var(--thick) solid var(--black);
+	}
+
+	.segment:global([data-hit]) {
+		background : var(--hover);
+	}
+
 	.spacer {
 		flex : 1;
 	}

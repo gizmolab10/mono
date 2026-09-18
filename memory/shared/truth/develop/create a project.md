@@ -17,7 +17,7 @@ memory/<name>/
     log.md         the diary, empty but for the day it was brought up; the app's own logs come to sit beside it
 ```
 
-- **index.md** — frontmatter with only `description:`. Then the name as a heading, a line or two saying what the project is, a **Current state:** paragraph, and a `## Truths` heading reading "None yet."
+- **index.md** — frontmatter with only `description:`. Then the name as a heading, a line or two saying what the project is, and a `## Truths` heading reading "None yet." The **Current state:** paragraph goes in `zone/drive.md`, since 16 September 2026.
 - **logs/log.md** — the usual frontmatter (`kind: analyze`, title `<name> log`, `tags: [journal, now]`, today's date), the heading, then `<!-- consolidated: never -->`, then today's day heading with a `S:` line saying it was brought up. What is still unknown goes into `logs/questions.md`, not the log.
 - **truth/** — left empty. A truth on day one is a guess.
 - **zone/** — `questions.md`, and one file named for what will gather there: `ideas.md` for a project about building something, `observations.md` for one about watching something. Frontmatter and a heading, nothing else.
@@ -36,7 +36,7 @@ Copy ov's structure, and no more of it than the project uses:
 - `src/lib/svelte/main/App.svelte` — the whole app on day one.
 - `CLAUDE.md` — a few lines: what it is, and a pointer at `memory/<name>/`.
 
-Every app takes core, so the new project takes a library on day one: the alias, the bridge and the test, per [libraries](../zone/architecture/libraries.md).
+Every app takes core, so the new project takes a library on day one: the alias, the bridge and the test, per [libraries](libraries.md).
 
 Then three registrations, all easy to forget:
 

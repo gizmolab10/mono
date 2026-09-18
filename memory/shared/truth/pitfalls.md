@@ -241,6 +241,24 @@ A randomly assigned ordering of points will probably create a corner with right 
 
 **Required:** Take the found branch. Where the fit is wrong, say what is wrong with it and wait.
 
+---
+
+## 22. A file with a row moves through the dispatcher
+
+A memory file the db holds a row for is moved by the dispatcher's move route, never by git mv, and is left alone for one look of the dispatcher, three seconds, before it is edited. The dispatcher pairs a gone path with a new one by the file's bytes; a rename and an edit in one script leave the row missing, its hand labels with it.
+
+---
+
+## 23. A headless press acts on the file the page has open
+
+Before any headless press that writes, read the page's own log line naming the file on screen, and press on a throwaway file. A row click or a drag lands on another row when the list scrolls; the log's Opened or Picked up line says which.
+
+---
+
+## 24. A fault seen in a browser is found in a browser
+
+When python and curl make the same request and it works, the page's own browser holds the fault: run the page headless and read what it did.
+
 do not write or edit below this line
 
 ---

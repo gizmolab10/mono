@@ -135,7 +135,7 @@ Seven, each holding one kind of guidance.
 - [skills](collaborate/skills.md) — the words typed with a leading slash, and what each does.
 - [tags hierarchy](develop/tags%20hierarchy.md) — the seven areas the tags are read in.
 - [voice](collaborate/voice.md) — how prose written into files reads: first person, warm, punchy.
-- [workflow](collaborate/workflow.md) — the turn-taking cadence and the propose-before-acting discipline.
+- [workflow](workflow.md) — the turn-taking cadence and the propose-before-acting discipline.
 - [write a journal](collaborate/write%20a%20journal.md) — the formatting rules for a running journal.
 
 ### develop — how to write the code, and how to write about it

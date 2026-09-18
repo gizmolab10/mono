@@ -1,4 +1,4 @@
-# Constants & subtypes
+# Constants
 
 ## constants ladder
 
