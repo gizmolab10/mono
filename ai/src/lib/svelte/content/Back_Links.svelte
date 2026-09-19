@@ -99,10 +99,11 @@
 	<!-- Folded, it is a band of accent at the very foot of the view, a faint gap more than the
 	     usual folded height, reaching a fat gap down over the gap the region holds below the view,
 	     so no page color shows under it, its hairline at its middle. Its line is the heavy one
-	     while the pills show and the thin one while they are folded away. -->
+	     while the pills show, and none while they are folded away, since 18 September 2026: the
+	     foot line alone bounds the folded band. -->
 	<div class='foot' class:folded={!$w_show_backlinks}>
 		<Section id='editor.backlinks' gap_at_foot={0}
-			edge={$w_show_backlinks ? T_Edge.thick : T_Edge.thin}
+			edge={$w_show_backlinks ? T_Edge.thick : T_Edge.view}
 			extra_when_folded={k.gap.faint}
 			folded={!$w_show_backlinks}
 			gap={k.gap.normal + k.thickness.huge / 2}>

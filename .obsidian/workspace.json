@@ -36,35 +36,35 @@
             }
           },
           {
-            "id": "7bcee433b4b2fde0",
+            "id": "ff1f0f5fd2919861",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/workflow.md",
+                "file": "memory/shared/logs/log.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "workflow"
+              "title": "log"
             }
           },
           {
-            "id": "01e13ad53224a919",
+            "id": "15dcb1ac77387862",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/decisions.md",
+                "file": "memory/shared/zone/proposals.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "decisions"
+              "title": "proposals"
             }
           },
           {
-            "id": "a23e66c1348db838",
+            "id": "48fa04a721a90731",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -78,21 +78,21 @@
             }
           },
           {
-            "id": "4ee2bd59e8f37830",
+            "id": "01e13ad53224a919",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/drafted guide rules.md",
+                "file": "memory/shared/truth/develop/write the code debt.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "drafted guide rules"
+              "title": "write the code debt"
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -229,7 +229,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/zone/drafted guide rules.md",
+                "file": "memory/shared/zone/proposals.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -253,7 +253,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 225.09375
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -267,54 +267,54 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "4ee2bd59e8f37830",
+  "active": "15dcb1ac77387862",
   "lastOpenFiles": [
-    "memory/shared/logs/corrections.md",
-    "memory/shared/zone/drafted guide rules.md",
-    "memory/shared/logs/learn.md",
-    "corrections.md",
-    "memory/shared/zone/original drafted guide rules.md",
-    "memory/shared/truth/map of shared files.md",
-    "memory/shared/zone/dead links.md",
-    "memory/shared/zone/code debt.md",
-    "memory/shared/logs/finished.md",
-    "memory/shared/zone/finished.md",
+    "memory/shared/logs/log.md",
+    "memory/shared/truth/artwork/cadence.svg",
     "memory/shared/zone/drive.md",
+    "memory/shared/zone/proposals.md",
+    "tools/hub/ov.restored.db-journal",
+    "memory/panel/zone/proposals.md",
+    "tools/hub/ai.db-journal",
+    "memory/ai/zone/proposals.md",
+    "memory/shared/zone/per-guide fates.md",
+    "memory/shared/logs/journal.md",
+    "memory/di/zone/learn.md",
+    "memory/ov/zone/learn.md",
+    "memory/shared/zone/learn.md",
+    "memory/ov/zone/proposals.md",
+    "memory/lv/zone/proposals.md",
+    "memory/gallery/zone/proposals.md",
+    "memory/core/zone/proposals.md",
+    "memory/ws/zone/questions.md",
+    "memory/shared/zone/questions.md",
+    "memory/panel/zone/questions.md",
+    "memory/mu/zone/questions.md",
+    "memory/mj/zone/questions.md",
+    "memory/me/zone/questions.md",
+    "memory/lv/zone/questions.md",
+    "memory/gallery/zone/questions.md",
+    "memory/ai/zone/questions.md",
+    "memory/shared/logs/decisions.md",
+    "memory/panel/logs/decisions.md",
+    "memory/lv/logs/decisions.md",
+    "ai/src/lib/ts/tests/drawings.test.ts",
+    "ai/src/lib/ts/utilities/Drawings.ts",
+    "memory/shared/truth/artwork/workflow.svg",
+    "memory/shared/zone/artwork/cadence.svg",
+    "memory/shared/truth/artwork",
+    "memory/shared/zone/artwork/workflow.svg",
+    "memory/shared/zone/diagrams.svg",
+    "memory/shared/zone/artwork",
+    "memory/shared/zone/untitled folder",
     "ai/dist/index.html",
     "ai/dist/assets/index-D__9UGQu.css",
     "ai/dist/assets/index-BSWOLbnv.js",
-    "ai/dist/assets",
-    "tools/hub/ai.db-journal",
-    "memory/shared/zone/development states.md",
-    "ai/dist/assets/index-W6oTWUEP.js",
-    "ai/dist/assets/index-qDI3ILdM.js",
-    "tools/__pycache__/process_finished.cpython-310.pyc",
-    "memory/shared/zone/corrections.md",
-    "memory/shared/truth/shorthand.md",
-    "memory/shared/truth/workflow.md",
-    "memory/shared/truth/philosophy/use ai.md",
-    "memory/shared/truth/develop/constants.md",
-    "memory/shared/truth/decisions.md",
-    "memory/ai/logs/questions.md",
-    "memory/shared/truth/develop/write the code debt.md",
-    "memory/shared/truth/tools/hub-app.md",
-    "memory/shared/truth/lexicon.md",
-    "memory/shared/truth/handbook.md",
-    "memory/ws/zone/drive.md",
-    "memory/panel/zone/drive.md",
-    "memory/ov/zone/drive.md",
-    "memory/ov/zone",
-    "ai/dist/assets/index-DcVcGGVb.js",
     "lv/dist/assets/lcv.label-CyYn_a6Q.png",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "lv/dist/assets/Vyd_2014_0321_Haley-29NNKbHz.jpg",
     "lv/dist/assets/Versaison_20190803-f07nYPOF.jpg",
     "lv/dist/assets/TrellisOutrigger-Fbc2IL9A.jpg",
-    "lv/dist/assets/LittleCloudSoil_CrossSectionProfile-D6tZJ54g.jpg",
-    "lv/dist/assets/LittleCloudLabel_v1-DfRZKwGU.jpg",
-    "lv/dist/assets/LCV_Label_v3B-CMKhxvFI.jpg",
-    "lv/dist/assets/LCV sketch 0-DSRnJIx4.jpg",
-    "lv/dist/assets/LCV sketch 1-C-xW9c4I.jpg",
     "Untitled.canvas",
     "ws/notes/work/Untitled.canvas"
   ]

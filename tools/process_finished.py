@@ -6,7 +6,7 @@ items, decided 15 September 2026.
 
 Every checked box in the project's memory files, with the lines indented under it, becomes part
 of one journal entry per file and leaves the file. Every settled proposal section, one with
-"Decided" or "dead" in it, does the same. Every file in a done folder moves whole to the project's
+"Decided" or "culled" in it, does the same. Every file in a done folder moves whole to the project's
 logs folder, index.md files staying where they are, and the links it holds or that name it are
 re-pointed. The logs folder itself is never read for boxes: it holds records. finished.md is
 written again at the end. Prints what moved."""
@@ -74,7 +74,7 @@ def take_settled(text):
     """The text of proposals.md without its settled sections, and those sections."""
     parts = re.split(r'(?m)^(?=## )', text)
     head, sections = parts[0], parts[1:]
-    settled = [s for s in sections if 'Decided' in s or 'dead' in s.lower()]
+    settled = [s for s in sections if 'Decided' in s or 'culled' in s.lower()]
     kept = [s for s in sections if s not in settled]
     return head + ''.join(kept), settled
 

@@ -1,37 +1,41 @@
-# Code debt (1087)
+# Code debt (1084)
 
-85 files hold unfinished work, as of 2026-09-15.
+99 files hold unfinished work, as of 2026-09-19.
 
-## ai (165)
+## ai (174)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-| t | [decisions.md](../../ai/truth/decisions.md) | decide 6 pacs |
 | t | [design/action type.md](../../ai/truth/design/action%20type.md) | 1 open truth |
 | t | [design/ov - goals.md](../../ai/truth/design/ov%20-%20goals.md) | 9 open truths |
 | z | [drive.md](../../ai/zone/drive.md) | 2 open and dissolve the drive |
 | z | [ideas.md](../../ai/zone/ideas.md) | 85 open |
+| z | [proposals.md](../../ai/zone/proposals.md) | decide 6 proposals |
+| z | [questions.md](../../ai/zone/questions.md) | answer 10 questions |
 | z | [work/adopting the ai memory design.md](../../ai/zone/work/adopting%20the%20ai%20memory%20design.md) | 1 open |
 | z | [work/inception into the new design.md](../../ai/zone/work/inception%20into%20the%20new%20design.md) | 5 open |
-| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 54 open |
+| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 53 open |
 | z | [work/soon/tag drift.md](../../ai/zone/work/soon/tag%20drift.md) | 1 open |
 
-## core (29)
+## core (31)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../core/logs/log.md) | settle 4 lines |
-| t | [decisions.md](../../core/truth/decisions.md) | decide 2 pacs |
 | t | [design/ov - goals.md](../../core/truth/design/ov%20-%20goals.md) | 9 open truths |
+| z | [drive.md](../../core/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../core/zone/ideas.md) | 7 open |
+| z | [proposals.md](../../core/zone/proposals.md) | decide 3 proposals |
 | z | [work/soon/hits manager.md](../../core/zone/work/soon/hits%20manager.md) | 7 open |
 
-## di (198)
+## di (216)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 | t | [always.md](../../di/truth/always.md) | 9 open truths |
 | t | [development/early di spec.md](../../di/truth/development/early%20di%20spec.md) | 16 open truths |
+| z | [drive.md](../../di/zone/drive.md) | dissolve the drive |
+| z | [learn.md](../../di/zone/learn.md) | 17 open |
 | z | [work/milestones/29.user.manual.md](../../di/zone/work/milestones/29.user.manual.md) | 3 open |
 | z | [work/milestones/31.marketing.md](../../di/zone/work/milestones/31.marketing.md) | 1 open |
 | z | [work/milestones/33.drag/handoff.md](../../di/zone/work/milestones/33.drag/handoff.md) | 1 open |
@@ -55,33 +59,38 @@
 | z | [work/phaser.start.md](../../ga/zone/work/phaser.start.md) | 32 open |
 | z | [work/revisit.ga.md](../../ga/zone/work/revisit.ga.md) | 3 open |
 
-## gallery (2)
+## gallery (3)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../gallery/logs/log.md) | settle 2 lines |
+| z | [drive.md](../../gallery/zone/drive.md) | dissolve the drive |
 
-## ji (77)
+## ji (78)
 
 | z/t | file | needs this |
 | --- | --- | --- |
+| z | [drive.md](../../ji/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../ji/zone/ideas.md) | 61 open |
 | z | [design/ji road map.md](../../ji/zone/design/ji%20road%20map.md) | 9 open |
 | z | [work/sideband storage proposal.md](../../ji/zone/work/sideband%20storage%20proposal.md) | 3 open |
 | z | [work/proposals/chat history proposal.md](../../ji/zone/work/proposals/chat%20history%20proposal.md) | 4 open |
 
-## kb (3)
+## kb (4)
 
 | z/t | file | needs this |
 | --- | --- | --- |
+| z | [drive.md](../../kb/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../kb/zone/ideas.md) | 3 open |
 
-## lv (2)
+## lv (4)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-|  | [questions.md](../../lv/logs/questions.md) | answer 1 question |
+| z | [drive.md](../../lv/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../lv/zone/ideas.md) | 1 open |
+| z | [proposals.md](../../lv/zone/proposals.md) | decide 1 proposal |
+| z | [questions.md](../../lv/zone/questions.md) | answer 1 question |
 
 ## ma (14)
 
@@ -89,72 +98,75 @@
 | --- | --- | --- |
 | z | [work/plan.md](../../ma/zone/work/plan.md) | 14 open |
 
-## me (9)
+## me (10)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-|  | [questions.md](../../me/logs/questions.md) | answer 1 question |
+| z | [drive.md](../../me/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../me/zone/ideas.md) | 3 open |
+| z | [questions.md](../../me/zone/questions.md) | answer 1 question |
 | z | [work/jonathan.md](../../me/zone/work/jonathan.md) | 3 open |
 | z | [work/revisit.me.md](../../me/zone/work/revisit.me.md) | 2 open |
 
-## mj (2)
+## mj (3)
 
 | z/t | file | needs this |
 | --- | --- | --- |
+| z | [drive.md](../../mj/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../mj/zone/ideas.md) | 2 open |
 
-## mu (23)
+## mu (24)
 
 | z/t | file | needs this |
 | --- | --- | --- |
+| z | [drive.md](../../mu/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../mu/zone/ideas.md) | 6 open |
 | z | [project goal.md](../../mu/zone/project%20goal.md) | 17 open |
 
-## ov (19)
+## ov (22)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../ov/logs/log.md) | settle 16 lines |
-|  | [proposals.md](../../ov/logs/proposals.md) | decide 3 proposals |
+| z | [drive.md](../../ov/zone/drive.md) | dissolve the drive |
+| z | [proposals.md](../../ov/zone/proposals.md) | decide 5 proposals |
 
-## panel (2)
+## panel (3)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../panel/logs/log.md) | settle 1 line |
-|  | [questions.md](../../panel/logs/questions.md) | answer 1 question |
+| z | [drive.md](../../panel/zone/drive.md) | dissolve the drive |
+| z | [questions.md](../../panel/zone/questions.md) | answer 1 question |
 
-## shared (340)
+## shared (295)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [collisions.md](../../shared/logs/collisions.md) | rewrite 5 collisions |
-|  | [learn.md](../../shared/logs/learn.md) | 8 open and distill 34 entries |
-|  | [log.md](../../shared/logs/log.md) | settle 13 lines |
-|  | [proposals.md](../../shared/logs/proposals.md) | decide 2 proposals |
-|  | [questions.md](../../shared/logs/questions.md) | 20 open and answer 20 questions |
-| t | [decisions.md](../../shared/truth/decisions.md) | decide 34 pacs |
+|  | [journal.md](../../shared/logs/journal.md) | 8 open |
+|  | [log.md](../../shared/logs/log.md) | settle 23 lines |
 | t | [collaborate/composition.md](../../shared/truth/collaborate/composition.md) | 15 open truths |
-| t | [collaborate/workflow.md](workflow.md) | 2 open truths |
 | t | [develop/migrate.md](../../shared/truth/develop/migrate.md) | 1 open truth |
 | t | [philosophy/logic driven design.md](../../shared/truth/philosophy/logic%20driven%20design.md) | 100 open truths |
 | t | [test/debugging.md](../../shared/truth/test/debugging.md) | 10 open truths |
 | z | [drive.md](../../shared/zone/drive.md) | dissolve the drive |
-| z | [ideas.md](../../shared/zone/ideas.md) | 16 open |
-| z | [architecture/library projects.md](../../shared/zone/architecture/library%20projects.md) | 11 open |
+| z | [ideas.md](../../shared/zone/ideas.md) | 15 open |
+| z | [learn.md](../../shared/zone/learn.md) | 2 open |
+| z | [proposals.md](../../shared/zone/proposals.md) | decide 36 proposals |
+| z | [questions.md](../../shared/zone/questions.md) | 10 open and answer 10 questions |
 | z | [now/co.md](../../shared/zone/now/co.md) | 17 open |
+| z | [now/library projects.md](../../shared/zone/now/library%20projects.md) | 11 open |
 | z | [work/articles/accidental.programmer.md](../../shared/zone/work/articles/accidental.programmer.md) | 10 open |
 | z | [work/articles/how.to.build.it.md](../../shared/zone/work/articles/how.to.build.it.md) | 3 open |
 | z | [work/articles/write.article.md](../../shared/zone/work/articles/write.article.md) | 4 open |
 | z | [work/next/commoditize.md](../../shared/zone/work/next/commoditize.md) | 11 open |
 | z | [work/next/curiosity.md](../../shared/zone/work/next/curiosity.md) | 3 open |
 
-## ws (164)
+## ws (165)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-|  | [questions.md](../../ws/logs/questions.md) | 2 open and answer 2 questions |
 | t | [architecture/core/hits.md](../../ws/truth/architecture/core/hits.md) | 4 open truths |
 | t | [architecture/core/styles.md](../../ws/truth/architecture/core/styles.md) | 1 open truth |
 | t | [architecture/internals/debounce.md](../../ws/truth/architecture/internals/debounce.md) | 4 open truths |
@@ -163,6 +175,8 @@
 | t | [architecture/platforms/svelte.md](../../ws/truth/architecture/platforms/svelte.md) | 47 open truths |
 | t | [architecture/ux/breadcrumbs.md](../../ws/truth/architecture/ux/breadcrumbs.md) | 39 open truths |
 | t | [architecture/ux/components.md](../../ws/truth/architecture/ux/components.md) | 10 open truths |
+| z | [drive.md](../../ws/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../ws/zone/ideas.md) | 3 open |
+| z | [questions.md](../../ws/zone/questions.md) | 2 open and answer 2 questions |
 | z | [work/deliverables.md](../../ws/zone/work/deliverables.md) | 13 open |
 | z | [work/next/crazy/book.md](../../ws/zone/work/next/crazy/book.md) | 6 open |

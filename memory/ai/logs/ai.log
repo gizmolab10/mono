@@ -326,3 +326,19 @@ $ vite
 2:23:57 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte
 6:29:48 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Operations.ts
 6:29:48 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte
+4:23:27 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/utilities/Saving.ts
+4:23:27 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:23:27 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte, /src/lib/svelte/content/Edit_Fields.svelte
+4:23:27 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+4:44:05 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte, /src/lib/svelte/content/Edit_Fields.svelte
+4:44:05 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte, /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+4:46:18 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte, /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+4:48:07 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
+4:53:50 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+4:55:40 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/utilities/Saving.ts
+4:55:40 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
+4:55:40 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/D_Repair.svelte
+4:55:41 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
+5:01:02 PM [vite] (client) hmr update /src/lib/svelte/content/Back_Links.svelte
+5:03:22 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte, /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+5:03:37 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css

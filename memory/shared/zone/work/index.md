@@ -8,7 +8,7 @@
 - [Agent Skills](claude%20agent%20skills.md)
 - [Co](co.md)
 - [Journal](../../logs/journal.md)
-- [Learn](memory/di/logs/learn.md)
+- [Learn](memory/di/zone/learn.md)
 - [Faster](../../logs/remember.md)
 - [Worktrees](worktrees.md)
 - [AI on my mac](memory/shared/zone/now/AI%20on%20my%20mac.md) — running models on this machine; ai's until 15 September 2026, as are the nine below.

@@ -3,8 +3,9 @@
 	import { hit_target } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
 
-	// Putting things right that nothing on screen would show as wrong. One button so far: the
-	// index files, since a move can only mend the two folders it touched.
+	// Putting things right that nothing on screen would show as wrong. Two buttons: the index
+	// files, since a move can only mend the two folders it touched, and the dead links and files,
+	// links that lead nowhere said and rows whose files are gone forgotten.
 
 	function handle_repair() {
 		debug.log('Repair: the index files were asked for.');
@@ -12,8 +13,8 @@
 	}
 
 	function handle_links() {
-		debug.log('Repair: the dead links were asked for.');
-		files.find_dead_links();
+		debug.log('Repair: the dead links and files were asked for.');
+		files.find_dead_links_and_files();
 	}
 </script>
 
@@ -22,7 +23,7 @@
 		use:hit_target={{ id: 'repair.indexes', onpress: handle_repair, tip: 'clean index files' }}>index files</button>
 	<button class='repair'
 		use:hit_target={{ id: 'repair.links', onpress: handle_links,
-			tip: 'look through every guide for links that lead nowhere' }}>dead links</button>
+			tip: 'look through every guide for links that lead nowhere, and forget every file the db holds and the disk does not' }}>dead links and files</button>
 </div>
 
 <style>

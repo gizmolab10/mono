@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { body_of, files, preferences, T_Preference, show_status, offer_status, save_file, read_file, file_path_of, path_of_address, follow_link, halt_stepping, leaving_file, left_at_of, w_command_down, key_of, today, code_link_of, is_code_link, type File } from '../../ts/common/Kb';
 	import { labels_for } from '../../ts/utilities/Labels';
+	import { is_drawing, with_view_box } from '../../ts/utilities/Drawings';
 	import { flipped_task, lines_between, markup_prefix, page_of, still_reads, with_lines_replaced, without_words_above_heading } from '../../ts/utilities/Markdown_Blocks';
 	import { HEAVY, SLANTED, STRUCK, partner_of, surround, toggle_emphasis } from '../../ts/utilities/Emphasis';
 	import { T_Hit_Target, Point, hit_target, hits, free_thumb, type Free_Thumb, svg_paths, Separator, Direction, debug, k, foldable_headings, hidden_pieces, top_headings } from '../../ts/common/Core';
@@ -39,6 +40,14 @@
 	// dashes into one long one. What is read is what is edited, so a piece never looks one way
 	// on screen and another in the box.
 	const reader = new MarkdownIt({ html: false, linkify: true, typographer: false });
+
+	// A drawing, an svg file since 18 September 2026, is the page itself: its text is the html,
+	// shown as the picture it is rather than read as markdown, given a viewBox so the view's
+	// width sizes it. Nothing in it is a piece to edit.
+	const drawing = $derived(is_drawing(guide.path));
+	function drawn_page(whole: string): string {
+		return drawing ? with_view_box(whole) : page_of(reader, whole);
+	}
 	// Only real web addresses become links on their own. Left to itself the reader turns any
 	// word with a dot in it into one, which made every file name in a guide a dead link.
 	reader.linkify.set({ fuzzyLink: false });
@@ -194,6 +203,8 @@
 	 * close cross, so nothing typed can be lost by a stray click.
 	 */
 	function on_page_click(event: MouseEvent) {
+		// A drawing has no pieces and no links: a click on it does nothing, since 18 September 2026.
+		if (drawing) { return; }
 		// Holding the option key turns the words into something to pick up rather than
 		// something to click: dragging selects them, and nothing here answers.
 		if ($w_command_down) { return; }
@@ -626,7 +637,7 @@
 		const was_at = page?.scrollTop ?? 0;
 		text  = whole;
 		set_text(whole);                     // the frame holds the words too, for the title's tools
-		words = page_of(reader, whole);
+		words = drawn_page(whole);
 		drawn_body = body_of(whole).body;
 		// An edit can write a link or take one away, so what points at what is worked out again.
 		// Only this file is read for it; every other guide's links were gathered at launch.
@@ -821,6 +832,9 @@
 	function fill_the_gaps() {
 		if (!page) { return; }
 		page.querySelectorAll('.blank-line').forEach((row) => row.remove());
+		// A drawing is one picture, not pieces of a file: none of its lines is covered by a piece,
+		// so every one would get a numbered row of its own below it. It gets none.
+		if (drawing) { return; }
 		const lines = text.split('\n').length;
 		// The words start below the labels, so that is where the rows begin — but the number on one
 		// counts the file itself from its very first line, the labels among them, the way Obsidian
@@ -932,14 +946,14 @@
 	async function label_it_if_bare(whole: string): Promise<string> {
 		if (guide.labeled) { return whole; }
 		const where = file_path_of(guide.bundle, guide.path);
-		const made = labels_for(whole, `${name}.md`, today(), guide.path);
+		const made = labels_for(whole, guide.path.split('/').pop() ?? `${name}.md`, today(), guide.path);
 		const in_db = await files.write_labels(guide, made.labels.kind, made.tags);
 		const fields = in_db.ok ? await files.write_fields(guide, made.labels) : in_db;
 		if (!fields.ok) {
 			debug.log(`Editing "${name}": the db holds no labels for it and could not be given any — ${fields.why}. It is shown as it is.`);
 			return whole;
 		}
-		debug.log(`Editing "${name}": opened for the first time with no labels, so they were composed from its own words and written to the db for ${where}. Its kind is the one every folder falls back to, and it is marked stale for a person to look at.`);
+		debug.log(`Editing "${name}": opened for the first time with no labels, so they were composed and written to the db for ${where}: kind ${made.labels.kind}, tags ${made.tags.join(', ')}.`);
 		files.relabel(guide, made.labels, made.tags);
 		return whole;
 	}
@@ -968,7 +982,7 @@
 		}
 		text  = cleared;
 		set_text(cleared);
-		words = page_of(reader, cleared);
+		words = drawn_page(cleared);
 		drawn_body = body_of(cleared).body;
 		files.links_changed(key_of(guide), cleared);
 		debug.log(`Editing "${name}": took out the ${whole.length - cleared.length} character(s) that sat between the labels and the top heading.`);
@@ -1008,7 +1022,7 @@
 				whole  = await label_it_if_bare(whole);
 				text   = whole;                      // what an edit slices its own words out of
 				set_text(whole);                     // and what the frame holds, for the title's tools, since 15 September 2026
-				words  = page_of(reader, whole);
+				words  = drawn_page(whole);
 				drawn_body = body_of(whole).body;
 				loaded = true;
 				debug.log(`Viewer: read ${whole.length} character(s) for "${name}" and turned them into a ${words.length}-character page, every piece carrying the lines it came from.`);
@@ -1072,10 +1086,13 @@
 			<div class='free-thumb' style:top='{free.top}px' style:height='{free.length}px'></div>
 		{/if}
 		<!-- The line under the title. It is a fixture of the page rather than an edge of the
-		     heading, so it stays put whether the title is shown, folded, or open for changing. -->
-		<div class='title-sep'>
-			<Separator thickness={k.thickness.normal}/>
-		</div>
+		     heading, so it stays put whether the title is shown, folded, or open for changing. A
+		     drawing has no title, so it has no line either, since 18 September 2026. -->
+		{#if !drawing}
+			<div class='title-sep'>
+				<Separator thickness={k.thickness.normal}/>
+			</div>
+		{/if}
 		<!-- A click on a link follows it; a click anywhere else on the words goes back to
 		     the list, the same as the close button — so getting out never means aiming at
 		     the small circle. Holding the command key suspends all of that, so the words can
@@ -1088,19 +1105,40 @@
 			tabindex='-1'
 			bind:this={page}
 			class='view-page'
+			class:drawing
 			onkeyup={() => {}}
 			onclick={on_page_click}
 			onscroll={words_scrolled}
 			class:selecting={$w_command_down}
 			onmousedown={watch_for_bar_press}
-			use:hit_target={{ id: 'page.words', type: T_Hit_Target.page,
-				tip: $w_command_down ? 'drag to select' : 'click a paragraph to edit it' }}>
+			use:hit_target={{ id: 'page.words', type: T_Hit_Target.page, dormant: drawing,
+				tip: drawing ? null : $w_command_down ? 'drag to select' : 'click a paragraph to edit it' }}>
 			{@html words}
 		</div>
 	</div>
 {/if}
 
 <style>
+	/* A drawing has no title, so no slot is held for one and no line closes it off: the picture
+	   begins one gap below the top of the view, and nothing sticks above it. Nothing in it answers
+	   the cursor either: its target is dormant, so no fill and no tip, and the cursor stays plain. */
+	.view-page.drawing {
+		padding-top : var(--gap);
+	}
+
+	.view-page.drawing,
+	.view-page.drawing :global(*) {
+		cursor : default;
+	}
+
+	/* A drawing is as wide as the view, shrunk or grown to fit as one piece, its height following
+	   from its viewBox. The svg's own width and height attributes say its shape and nothing more. */
+	.view-page.drawing :global(svg) {
+		display : block;
+		width   : 100%;
+		height  : auto;
+	}
+
 	/* The piece's own words while a box stands over them. They keep their place in the file and
 	   their place in the page; they simply are not drawn, and the soft pointer among them goes
 	   with them. */

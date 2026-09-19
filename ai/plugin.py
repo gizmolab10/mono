@@ -21,13 +21,17 @@ WORK_FOLDERS = ('next', 'milestones', 'now', 'soon', 'done', 'proposals')
 # and work notes are shared's.
 PROJECTS = ('', 'core', 'memory', 'panel', 'gallery', 'ai', 'di', 'ji', 'kb', 'lv', 'me', 'mj', 'mu', 'ov', 'ws')
 
+# The endings a listed file may have: markdown, and svg since 18 September 2026, a drawing the
+# page shows as it is and labels howto and journal when it is opened.
+LISTED_ENDINGS = ('.md', '.svg')
+
 
 def listed_files(root):
     """Every file the ai host lists under the root, the repo: each file's path counting from the
     root, sorted. Index files are left in, since the page decides what to skip. A project's work
     folder gives up what sits at its very top and what sits one folder down inside WORK_FOLDERS,
     the notes a guide links to. A project's CLAUDE file sits at its top, spelled CLAUDE.MD or
-    CLAUDE.md. Every markdown file in the memory system is listed, however deep, except a
+    CLAUDE.md. Every markdown and svg file in the memory system is listed, however deep, except a
     project's zone/work, which the work walk has already listed, depth-limited."""
     found = []
     for project in PROJECTS:
@@ -35,12 +39,12 @@ def listed_files(root):
         if os.path.isdir(work):
             for one in sorted(os.listdir(work)):
                 whole = os.path.join(work, one)
-                if one.endswith('.md') and os.path.isfile(whole):
+                if one.lower().endswith(LISTED_ENDINGS) and os.path.isfile(whole):
                     found.append(os.path.relpath(whole, root))
                 elif os.path.isdir(whole) and one.lower() in WORK_FOLDERS:
                     for deeper in sorted(os.listdir(whole)):
                         inside_one = os.path.join(whole, deeper)
-                        if deeper.endswith('.md') and os.path.isfile(inside_one):
+                        if deeper.lower().endswith(LISTED_ENDINGS) and os.path.isfile(inside_one):
                             found.append(os.path.relpath(inside_one, root))
         top_dir = os.path.join(root, project) if project else root
         if os.path.isdir(top_dir):
@@ -54,7 +58,7 @@ def listed_files(root):
             if os.path.basename(here) == 'zone' and os.path.dirname(os.path.dirname(here)) == memory:
                 folders[:] = [f for f in folders if f != 'work']
             for one in files:
-                if one.endswith('.md'):
+                if one.lower().endswith(LISTED_ENDINGS):
                     found.append(os.path.relpath(os.path.join(here, one), root))
     found.sort()
     return found
@@ -64,8 +68,9 @@ def is_listed(root, where):
     """Whether the ai host lists this path, counting from the root, so the dispatcher may read the
     file's words and write them back: the listing rule said of one path. A project's CLAUDE file
     at the repo's top or a project's; a work note at the very top of a zone/work folder or one
-    folder down inside WORK_FOLDERS; every other markdown file in the memory system at any depth."""
-    if not where.lower().endswith('.md'):
+    folder down inside WORK_FOLDERS; every other markdown or svg file in the memory system at any
+    depth."""
+    if not where.lower().endswith(LISTED_ENDINGS):
         return False
     parts = where.split('/')
     if parts[-1].lower() == 'claude.md':

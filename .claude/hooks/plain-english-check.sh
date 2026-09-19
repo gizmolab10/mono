@@ -26,6 +26,12 @@
 #
 # The two word files themselves are passed over — quoting banned words is their job.
 # Warn-only: the edit is already written; this says so as next-turn context.
+#
+# The flag: PLAIN_ENGLISH_CHECK. false, the hook does nothing at all, an experiment begun
+# 19 September 2026; true, every check runs. The test sets it true.
+ENABLED="${PLAIN_ENGLISH_CHECK:-false}"
+[ "$ENABLED" != "true" ] && exit 0
+
 INPUT=$(cat)
 FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_response.filePath // ""')
 NEW=$(echo "$INPUT" | jq -r '.tool_input.new_string // .tool_input.content // ""')

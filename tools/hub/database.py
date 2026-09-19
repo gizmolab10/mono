@@ -363,6 +363,19 @@ def delete_path(where, host=None):
     return gone
 
 
+def forget_missing(root, host=None):
+    """Every row whose path has no file on the disk goes, and every label and source on it with
+    it, whether or not a look had marked it missing. Answers the paths that went, sorted."""
+    db = open_db(place_of(host))
+    with db:
+        rows = db.execute('SELECT id, path FROM files').fetchall()
+        gone = sorted(row['path'] for row in rows if not os.path.isfile(os.path.join(root, row['path'])))
+        for where in gone:
+            db.execute('DELETE FROM files WHERE path = ?', (where,))
+    db.close()
+    return gone
+
+
 def labels_of(where, host=None):
     """Every label on a file, oldest first: name, value and who made it. Nothing for a file the
     db has no row for."""

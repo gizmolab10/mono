@@ -6,7 +6,6 @@ A library with no entry point, carved out of ov: what every mono app can share. 
 
 - [structure.md](truth/structure.md) — what core is and the rules that keep it core.
 - [adopting core.md](truth/adopting%20core.md) — how a host takes core: the three files that say where the alias points, the one file holding every adoption, what the host owes at startup, and the lessons each paid for. Read it before adopting anything.
-- [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
 - [lexicon.md](truth/lexicon.md) — core's terms.
 - [banned words.md](truth/banned%20words.md) — core's own word substitutions; the hooks read it.
 - [working features.md](truth/working%20features.md) — what the app can do, newest first; ov's, from the carve.
@@ -19,3 +18,7 @@ A library with no entry point, carved out of ov: what every mono app can share. 
 ## Zone
 
 - [drive.md](zone/drive.md) — the current undertaking, and the project's current state, moved here from this index 16 September 2026.
+
+## Logs
+
+- [decisions.md](logs/decisions.md) — every decision, dated, never deleted, and the pacs decided. In logs since 18 September 2026, the open pacs in zone/proposals.md.

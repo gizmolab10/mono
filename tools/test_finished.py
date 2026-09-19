@@ -22,8 +22,8 @@ def main():
     with tempfile.TemporaryDirectory() as memory:
         put(memory, 'zz/zone/ideas.md', '# Ideas\n\n- [ ] one\n- [x] done\n- [X] two\n')
         put(memory, 'zz/truth/rules.md', '# Rules\n\n- [x] a truth may hold this\n')
-        put(memory, 'zz/truth/decisions.md', '## Decisions made\n\n- x\n\n## Evaluations (pac)\n\n- 1 Jan; **a.** For. Decided 2 Jan: yes.\n- 2 Jan; **b.** For. Against.\n')
-        put(memory, 'zz/zone/proposals.md', '# P\n\n## one\n\nProposal.\n\n## two\n\nDecided and built.\n\n## three\n\nReading (3) is dead.\n')
+        put(memory, 'zz/logs/decisions.md', '## Decisions made\n\n- x\n\n## Evaluations (pac)\n\n- 1 Jan; **a.** For. Decided 2 Jan: yes.\n- 2 Jan; **b.** For. Against.\n')
+        put(memory, 'zz/zone/proposals.md', '# P\n\n## one\n\nProposal.\n\n## two\n\nDecided and built.\n\n## three\n\nReading (3) is culled.\n')
         put(memory, 'zz/logs/work journal.md', '# Work Journal\n\n## 2026-01-02 — b\n\ntext\n\n## 2026-01-01 — a\n\ntext\n')
         put(memory, 'zz/zone/work/done/old.md', '- [x] finished, counted though its folder is done\n')
         put(memory, 'zz/archive/retired.md', '- [x] retired, never counted\n')

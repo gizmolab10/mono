@@ -13,11 +13,9 @@ Eight, each a count by grep, never a reading, no judgment anywhere. A file gets 
 | file | what is counted | the clause |
 | --- | --- | --- |
 | any .md | lines opening with a dash and an empty checkbox | N open, or N open truths inside truth |
-| decisions.md | pac bullets under Evaluations without "Decided" | decide N pacs |
-| proposals.md | `##` sections without "Decided" or "dead" | decide N proposals |
+| proposals.md | `##` sections without "Decided" or "culled" | decide N proposals |
 | questions.md | list lines | answer N questions |
 | logs/log.md | dash lines after the consolidated marker and before any rule, S: and D: lines left out | settle N lines |
-| learn.md | raw-log entries, `- N.` | distill N entries |
 | collisions.md | `##` entries | rewrite N collisions |
 | drive.md | the file exists | dissolve the drive |
 
@@ -31,4 +29,4 @@ The file whole: every project's items added up in the H1, since 15 September 202
 
 ## The proof
 
-`tools/test_code_debt.py` feeds the script a made-up project folder and checks every pattern, 15 checks. The proposal that made it is the section big picture, 9 September 2026, of [proposals.md](memory/shared/logs/proposals.md), its name until 13 September 2026, and unfinished its name from then until 15 September 2026.
+`tools/test_code_debt.py` feeds the script a made-up project folder and checks every pattern, 15 checks. The proposal that made it is the section big picture, 9 September 2026, of [proposals.md](memory/shared/zone/proposals.md), its name until 13 September 2026, and unfinished its name from then until 15 September 2026.

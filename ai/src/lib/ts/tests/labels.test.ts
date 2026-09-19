@@ -1,4 +1,4 @@
-import { NEEDS_A_LOOK, kind_from_where, labels_for } from '../utilities/Labels';
+import { NEEDS_A_LOOK, is_drawing, kind_from_where, labels_for } from '../utilities/Labels';
 import { customizations } from '../common/Customizations';
 import { describe, expect, it } from 'vitest';
 
@@ -45,6 +45,23 @@ describe('labeling a file that has none', () => {
 		const { labels, tags } = labels_for('# a title\n\nwords.', 'x.md', TODAY);
 		expect(tags).toEqual([customizations.tag_when_new, NEEDS_A_LOOK]);
 		expect(labels.kind).toBe(customizations.kind_when_new);
+		expect(labels.date).toBe(TODAY);
+	});
+});
+
+describe('labeling a drawing', () => {
+	it('knows an svg file by its ending, either case', () => {
+		expect(is_drawing('cadence.svg')).toBe(true);
+		expect(is_drawing('APP.SVG')).toBe(true);
+		expect(is_drawing('cadence.md')).toBe(false);
+	});
+
+	it('is a howto, journaled, titled by its name, saying nothing, with no stale mark', () => {
+		const { labels, tags } = labels_for('<svg xmlns="http://www.w3.org/2000/svg"><text>open</text></svg>', 'cadence.svg', TODAY, 'shared/truth/artwork/cadence.svg');
+		expect(labels.kind).toBe('howto');
+		expect(tags).toEqual(['journal']);
+		expect(labels.title).toBe('Cadence');
+		expect(labels.description).toBe('');
 		expect(labels.date).toBe(TODAY);
 	});
 });

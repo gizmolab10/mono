@@ -1,5 +1,8 @@
 import { customizations } from '../common/Customizations';
+import { is_drawing } from './Drawings';
 import type { Labels } from '../common/Kb';
+
+export { is_drawing };
 
 // Composing labels, ai's since step 12 of the plan: the labels an unlabeled file, one the db
 // holds no row for, is given the first time it is opened for editing, read off its own words.
@@ -58,15 +61,23 @@ function first_words(text: string): string {
 
 /** A title from the file's own name: dashes and underscores become spaces, first letter up. */
 export function title_from_name(file_name: string): string {
-	const words = file_name.replace(/\.md$/i, '').replace(/[-_]+/g, ' ').trim();
+	const words = file_name.replace(/\.(md|svg)$/i, '').replace(/[-_]+/g, ' ').trim();
 	return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 /**
  * The labels to give an unlabeled file, read off the file's own words. `today` is handed in
- * rather than asked for, so the same file always composes the same labels in a test.
+ * rather than asked for, so the same file always composes the same labels in a test. A drawing
+ * has no words to read: its title is its name, it says nothing, and it is a howto, journaled,
+ * with no stale mark, since there is nothing in it for a person to check.
  */
 export function labels_for(text: string, file_name: string, today: string, where = ''): { labels: Labels; tags: string[] } {
+	if (is_drawing(file_name)) {
+		return {
+			labels: { kind: customizations.kind_when_drawn, title: title_from_name(file_name), description: '', use_when: [], date: today, labeled: true },
+			tags: [customizations.tag_when_drawn],
+		};
+	}
 	const heading = first_heading(text);
 	const title = heading === '' ? title_from_name(file_name) : heading;
 	return {

@@ -1,38 +1,6 @@
-# Learn
+# Distilled
 
-Co errors → distilled into guide updates. It's a step in our roadmap for improvement
-
----
-
-## Process
-
-as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop dead. clean house. takes time. need a better triage system. Let's start with:
-
-- [ ] list mistakes as they happen (oldest last)
-    - [ ] hyphen-N date title
-- [ ] distill: identify pattern, write rule, add to guide
-- [ ] research: better tools, clever ideas
-- [ ] track for escalating need:
-    - [ ] fed up
-    - [ ] stop dead
-    - [ ] clean house
-
-**To distill an entry:**
-
-1. Identify the pattern (what went wrong, repeatedly?)
-2. Write a rule (imperative, actionable)
-3. Write it as one checkbox line in `memory/shared/zone/corrections.md`, in co's words, replacing a line already saying something close; Jonathan rewrites it and ticks it, and record moves it into its guide
-4. Remove the raw entry from this file
-
----
-
-## Raw Log
-
-Everything else here has been distilled into a rule; the table below says where each went. What is di's own — its geometry and its pipeline — is in [di's learn](../../../di/notes/work/now/learn.md).
-
----
-
-## Distilled
+Every lesson that became a rule: the pattern of mistake and the guide its rule went to, oldest first. Record adds a row each time it places a ticked correction from learn.md, since 18 September 2026. Rows before that name guides since folded into conventions.md.
 
 | Pattern                                     | Rule added to                                                     |
 | ------------------------------------------- | ----------------------------------------------------------------- |

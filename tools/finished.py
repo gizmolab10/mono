@@ -27,7 +27,7 @@ def plural(n, one, many):
 def clauses_for(name, text, in_logs):
     """Every clause one file earns, from the patterns that hit it. No box inside a logs folder is
     counted: the journal there is where finished items end up, and a done file moved there holds
-    its boxes as a record. Nor is a decided pac: decisions.md is the rationale's home, and the
+    its boxes as a record. Nor is a decided pac: logs/decisions.md is the rationale's home, and the
     process leaves it alone."""
     lines = text.split('\n')
     found = []
@@ -36,7 +36,7 @@ def clauses_for(name, text, in_logs):
         found.append(f'{checked} done')
     if name == 'proposals.md':
         sections = re.split(r'^## ', text, flags=re.M)[1:]
-        settled = sum(1 for s in sections if 'Decided' in s or 'dead' in s.lower())
+        settled = sum(1 for s in sections if 'Decided' in s or 'culled' in s.lower())
         if settled:
             found.append(f'{plural(settled, "proposal", "proposals")} settled')
     return found

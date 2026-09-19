@@ -30,7 +30,7 @@ database.PLACE = os.path.join(FOLDER, 'ai.db')
 # The hosts ports.json would name, set by hand: ai, whose db is PLACE, and mu, whose db sits beside it.
 database.HOSTS = {'ai': 'ai.db', 'mu': 'mu.db'}
 
-NOTE = 'memory/ov/zone/work/current context.md'
+NOTE = 'memory/ov/zone/drive.md'
 FULL = os.path.join(REPO, NOTE)
 
 passed, failed = [], []
@@ -591,6 +591,23 @@ with open(os.path.join(FOLDER, 'mu.sql')) as f:
 code, said = tell('/restore', {'into': 'mu.restored.db'}, host='mu')
 check('mu\'s dump read back answers mu\'s rows', code, 200)
 check('the new db holds mu\'s collection', [row[0] for row in sqlite3.connect(os.path.join(FOLDER, 'mu.restored.db')).execute('SELECT name FROM collections')], ['live'])
+
+# --- forgetting the rows whose files are gone ---------------------------------
+
+LOST = 'memory/ov/truth/lost.md'
+with open(os.path.join(TEMP_REPO, LOST), 'w') as f:
+    f.write('# Lost\n')
+code, said = tell('/add-label', {'name': 'tag', 'value': 'now'}, where=LOST)
+check('a file labeled before it is lost has a row', code, 200)
+os.remove(os.path.join(TEMP_REPO, LOST))
+code, said = tell('/forget-missing', {})
+check('forgetting names the file whose row went, marked missing or not', (code, LOST in said.get('gone', []), QUIET in said.get('gone', [])), (200, True, False))
+code, said = ask('/labels', where=LOST)
+check('and its labels went with the row', said.get('labels'), [])
+code, said = tell('/forget-missing', {})
+check('a second forgetting finds nothing more to forget', LOST in said.get('gone', []), False)
+code, said = ask('/all-labels')
+check('the rows whose files are on the disk stay', QUIET in said.get('fields', {}), True)
 
 # --- say how it went ---------------------------------------------------------
 

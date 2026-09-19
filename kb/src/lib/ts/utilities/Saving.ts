@@ -28,11 +28,14 @@ function top_of(bundle: T_Bundle): string {
 	return bundle === T_Bundle.mono ? '' : bundle;
 }
 
+// The endings a listed file may have: markdown, and svg since 18 September 2026, a drawing.
+export const LISTED_ENDINGS = /\.(md|svg)$/i;
+
 // Where a file sits, counting from the top of the repo: its path below its collection's own
 // folder. The ending is added where the path has none, and kept as spelled where it has one, so
-// CLAUDE.MD stays CLAUDE.MD.
+// CLAUDE.MD stays CLAUDE.MD and a drawing stays .svg.
 export function file_path_of(bundle: T_Bundle, path: string): string {
-	const ending = path.toLowerCase().endsWith('.md') ? path : `${path}.md`;
+	const ending = LISTED_ENDINGS.test(path) ? path : `${path}.md`;
 	if (bundle === T_Bundle.memory) { return `${MEMORY}${ending}`; }
 	const top = top_of(bundle);
 	return top === '' ? ending : `${top}/${ending}`;
@@ -42,7 +45,7 @@ export function file_path_of(bundle: T_Bundle, path: string): string {
  * The other way round: which collection a file belongs to, and where it sits inside that
  * collection, read off where it stands in the repo. Which files exist is the dispatcher's
  * plugin's rule since step 6 of the plan, so a path here is one the listing gave. Anything that
- * is not markdown reads as nothing.
+ * is neither markdown nor svg reads as nothing.
  */
 export type File_Site = { bundle: T_Bundle; path: string; is_design: boolean };
 
@@ -56,7 +59,7 @@ export function site_of_file(where: string): File_Site | null {
 		if (steps.length === 2 && !!owner) { return { bundle: owner, path: steps[1], is_design: false }; }
 		return null;
 	}
-	if (!where.endsWith('.md')) { return null; }
+	if (!LISTED_ENDINGS.test(where)) { return null; }
 	if (where.startsWith(MEMORY)) { return { bundle: T_Bundle.memory, path: where.slice(MEMORY.length), is_design: false }; }
 	// Below a project's own folder, the project's; at the top of the repo, mono's.
 	const owner = steps.length > 1 ? Object.values(T_Bundle).find((one) => one === steps[0]) : undefined;
@@ -220,6 +223,22 @@ export async function set_fields(where: string, fields: Fields): Promise<Saved> 
 /** Put one label on a file, in the db and never in the file. Says whether it went on, and if not, why. */
 export async function add_label(where: string, name: string, value: string): Promise<Saved> {
 	return tell(route('/add-label', { where }), { name, value });
+}
+
+/**
+ * Forget every file the db holds a row for and the disk no longer does, labels and sources with
+ * it. Answers the paths forgotten, counting from the top of the repo, and why when nothing could
+ * be asked.
+ */
+export async function forget_missing(): Promise<{ ok: boolean; why: string; gone: string[] }> {
+	try {
+		const answer = await fetch(route('/forget-missing'), { method: 'POST' });
+		const said = await answer.json().catch(() => ({}));
+		if (answer.ok && said.success && Array.isArray(said.gone)) { return { ok: true, why: '', gone: said.gone as string[] }; }
+		return { ok: false, why: said.error ?? `the server answered ${answer.status}`, gone: [] };
+	} catch (e) {
+		return { ok: false, why: e instanceof Error ? e.message : String(e), gone: [] };
+	}
 }
 
 /** Take one label off a file, in the db. Says whether it came off, and if not, why. */

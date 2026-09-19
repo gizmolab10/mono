@@ -50,8 +50,15 @@ describe('reading a path in the repo back into a collection and a folder', () =>
 		}
 	});
 
-	it('reads anything that is not markdown as nothing', () => {
+	it('reads an svg file under memory as a drawing of the memory collection, its ending kept', () => {
+		expect(site_of_file('memory/shared/truth/artwork/cadence.svg'))
+			.toEqual({ bundle: T_Bundle.memory, path: 'shared/truth/artwork/cadence.svg', is_design: false });
+		expect(file_path_of(T_Bundle.memory, 'shared/truth/artwork/cadence.svg')).toBe('memory/shared/truth/artwork/cadence.svg');
+	});
+
+	it('reads anything that is neither markdown nor svg as nothing', () => {
 		expect(site_of_file('ov/src/lib/main.css')).toBe(null);
+		expect(site_of_file('memory/shared/zone/architecture/app.png')).toBe(null);
 		expect(site_of_file('memory/shared/zone/a folder')).toBe(null);
 		expect(site_of_file('')).toBe(null);
 	});

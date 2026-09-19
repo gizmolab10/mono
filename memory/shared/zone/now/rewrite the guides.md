@@ -63,7 +63,7 @@ Rules about working:
 
 14. [CLAUDE.md](CLAUDE.md) (mono) — principles, defaults, reading on load
 15. [handbook.md](../truth/handbook.md) (shared-t) — the memory system's rules
-16. [learn.md](memory/di/logs/learn.md) (mono-work) — past mistakes as rules-in-waiting
+16. [learn.md](memory/di/zone/learn.md) (mono-work) — past mistakes as rules-in-waiting
 
 at session start (CLAUDE.md names them):
 

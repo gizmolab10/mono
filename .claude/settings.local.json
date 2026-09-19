@@ -126,6 +126,11 @@
           },
           {
             "type": "command",
+            "command": "~/GitHub/mono/.claude/hooks/markdown-check.sh",
+            "timeout": 5
+          },
+          {
+            "type": "command",
             "command": ".claude/hooks/mark-ts-check-pending.sh"
           }
         ]

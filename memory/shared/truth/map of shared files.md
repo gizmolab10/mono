@@ -17,7 +17,7 @@ The files that belong to no one project: the tools, the hub, the scripts, the ho
 ## tools/hub/ — the dispatcher and the db
 
 - [dispatcher.py](../../../tools/hub/dispatcher.py) — the small server that reads and writes files on this machine and the db, for the pages and the hub page; imports each host's plugin.py.
-- [database.py](../../../tools/hub/database.py) — the db: one SQLite file per host beside the dispatcher, ai.db and mu.db, holding files, labels, sources, rules and collections.
+- [database.py](../../../tools/hub/database.py) — the db: one SQLite file per host beside the dispatcher, ai.db and mu.db, holding files, labels, sources, rules and collections; forget_missing drops every row whose file is gone, for the dispatcher's forget-missing route.
 - [ai.sql](../../../tools/hub/ai.sql) — every table of ai.db as plain text, which enters git though no db does.
 - [ports.json](../../../tools/hub/ports.json) — every server's port, and beside a host's port the name of its db.
 - [index.html](../../../tools/hub/index.html) — the hub page, with its dispatcher, build and project buttons.
@@ -34,7 +34,8 @@ The files that belong to no one project: the tools, the hub, the scripts, the ho
 
 - [inject-always.sh](../../../.claude/hooks/inject-always.sh) — before each message: the Always rules, and one of the in-turn guides in rotation, the banned words among them.
 - [bash-command-check.sh](../../../.claude/hooks/bash-command-check.sh) — before a Bash tool call: blocks commands that join actions with `;`, `&&` or `||`.
-- [plain-english-check.sh](../../../.claude/hooks/plain-english-check.sh) — after every edit: says when a banned word or a name that names nothing was written.
+- [plain-english-check.sh](../../../.claude/hooks/plain-english-check.sh) — after every edit: says when a banned word or a name that names nothing was written. Its flag PLAIN_ENGLISH_CHECK is false since 19 September 2026, an experiment, and false it does nothing.
+- [markdown-check.sh](../../../.claude/hooks/markdown-check.sh) — after every edit of a .md file: says when its markdown is malformed, a bare placeholder such as `<X>` outside backticks and code fences its first check. Made 19 September 2026.
 - [mark-ts-check-pending.sh](../../../.claude/hooks/mark-ts-check-pending.sh), [check-ts.sh](../../../.claude/hooks/check-ts.sh) — an edit to a .ts or .svelte file is noted, and each touched project is type-checked when the reply ends.
 - [snapshot-before-edit.sh](../../../.claude/hooks/snapshot-before-edit.sh) — before an edit, a snapshot of the file for undo.
 - [done-checklist.sh](../../../.claude/hooks/done-checklist.sh) — when a message says done, the done checklist.
@@ -42,7 +43,7 @@ The files that belong to no one project: the tools, the hub, the scripts, the ho
 - [murk-count.sh](../../../.claude/hooks/murk-count.sh) — when a reply ends: counts the times Jonathan said a reply did not read, into murk.jsonl.
 - [display-fix.sh](../../../.claude/hooks/display-fix.sh) — on display: shows a hard-banned word as its replacement, the file untouched.
 - [test-always-tag.sh](../../../.claude/hooks/test-always-tag.sh) — proves the guides arriving with every message wear the always tag in the db.
-- the `.test.sh` files beside banned-words-check, hook-answer-check, murk-count, plain-english-check and relevance-check — each hook's own tests.
+- the `.test.sh` files beside banned-words-check, hook-answer-check, markdown-check, murk-count, plain-english-check and relevance-check — each hook's own tests.
 
 ## .claude/commands/ — the skills typed with a slash
 

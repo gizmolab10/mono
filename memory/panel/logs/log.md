@@ -2,6 +2,9 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 18 September 2026
+
+- D: decisions.md to logs, its open pac to zone/proposals.md; questions.md to the zone, through the dispatcher: logs hold the past, zone the present, truth the concrete. Jonathan's decision in memory/shared/logs/decisions.md
 ## 13 September 2026
 
 - D: the controls row's right end is a flex box that takes the whole row past the hamburger, its contents at the right end unless they grow, in place of a spacer sharing the width with the host's snippet: kb's row, which grows, started halfway across, its way back a gigantic gap from the hamburger. Now one gap off it, as ov's was

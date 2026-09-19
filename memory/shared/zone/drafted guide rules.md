@@ -1,12 +1,12 @@
 # Draft guide rules
 
-Proposed 15 September 2026. Undecided. A pac and a proposal to delete it, 17 September 2026, at the end.
+Proposed 15 September 2026. Decided 18 September 2026: the section below is merged into truth/collaborate/cadence.md, headed Draft guide rules, beside a table of what cadence moves. The 23 drafts stay where they are. A pac and a proposal to delete this file, 17 September 2026, at the end.
 
 goal: add a section to [workflow](../truth/workflow.md), describing where to park draft guide rules (written by co) and bringing them gently to Jonathan's attention so he can make them permanent.
 
 ## What we have, what we need
 
-1. corrections.md in shared's zone: a correction captured in co's words, rewritten by Jonathan, placed by record. Built 17 September 2026 as the correction item in workflow, the learn task, the record step, the learn and record shorthand rows, the lexicon's correction entry and learn.md's step 3.
+1. [[corrections]] in shared's zone: a correction captured in co's words, rewritten by Jonathan, placed by record. Built 17 September 2026 as the correction item in workflow, the learn task, the record step, the learn and record shorthand rows, the lexicon's correction entry and [[learn]]'s step 3.
 2. The 23 drafts of 15 September 2026, still prose in three truth files      <- undecided
 
 ## The section, as it would read in workflow, headed Draft guide rules
@@ -15,7 +15,7 @@ A draft guide rule is born from a correction Jonathan made —> a checkbox item 
 
 Jonathan reads it, working through each new entry, rewriting until it can become a truth. He checks it off.
 
-During the next `calibrate` call. co will process all the checked off items, moving them according to the same logic that created the table below, into truth and journal files.
+During the next `record` call. co will process all the checked off items, moving them according to the same logic that created the table below, into truth and journal files.
 
 this will happen during the next `done` call.
 
@@ -30,7 +30,7 @@ this will happen during the next `done` call.
 
 | Rule | Synopsis | Where it sits |
 | --- | --- | --- |
-| A why is one sentence naming the cause | "The search for workflow got in the way." Mechanism and proof wait to be asked for. | conventions.md, Response 10 |
+| A why is one sentence naming the cause | "In the search input field, 'workflow' got in the way." Mechanism and proof wait to be asked for. | conventions.md, Response 10 |
 | One word when one settles it | "Do I need to restart?" gets yes or no. | conventions.md, Response 10 |
 | A part-answer covers its part | The rest of the question stays open and unmentioned. | conventions.md, Response 10 |
 | No evidence beside the answer | "I can prove this," nothing more. | conventions.md, Response 10 |

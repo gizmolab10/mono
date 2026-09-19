@@ -22,11 +22,10 @@ def main():
     with tempfile.TemporaryDirectory() as memory:
         put(memory, 'zz/zone/ideas.md', '# Ideas\n\n- [ ] one\n- [x] done\n- [ ] two\n')
         put(memory, 'zz/truth/rules.md', '# Rules\n\n- [ ] a truth should not hold this\n')
-        put(memory, 'zz/truth/decisions.md', '## Decisions made\n\n- x\n\n## Evaluations (pac)\n\n- 1 Jan; **a.** For. Decided 2 Jan: yes.\n- 2 Jan; **b.** For. Against.\n')
-        put(memory, 'zz/zone/proposals.md', '# P\n\n## one\n\nProposal.\n\n## two\n\nDecided and built.\n\n## three\n\nReading (3) is dead.\n')
+        put(memory, 'zz/zone/proposals.md', '# P\n\n## one\n\nProposal.\n\n## two\n\nDecided and built.\n\n## three\n\nReading (3) is culled.\n')
         put(memory, 'zz/zone/questions.md', '# q\n\n- why\n- how\n- when\n')
         put(memory, 'zz/logs/log.md', '# log\n\n<!-- consolidated: never -->\n\n## day\n\n- S: settled, not counted\n- D: a, not counted\n- I: b\n- I: c\n\n---\n\n## old list, below the rule\n\n- never counted\n- never counted\n')
-        put(memory, 'zz/zone/learn.md', '## Raw Log\n\n- 2. 2026-01-02 **b.**\n- 1. 2026-01-01 **a.**\n\n## Distilled\n')
+        put(memory, 'zz/zone/learn.md', '# Learn\n\n## Corrections\n\n- [ ] a\n- [x] b, ticked and waiting for record\n')
         put(memory, 'zz/zone/collisions.md', '# c\n\n## first\n\ntext\n\n## second\n\ntext\n')
         put(memory, 'zz/zone/drive.md', '# Drive\n')
         put(memory, 'zz/zone/clean.md', '# nothing to do here\n')
@@ -48,19 +47,18 @@ def main():
                 print(f'FAIL: {name} — wanted "{want}"\n{body}'); failed += 1
 
         check('count printed', '')
-        if count == '10':
-            print('PASS: ten lines counted'); passed += 1
+        if count == '9':
+            print('PASS: nine lines counted'); passed += 1
         else:
-            print(f'FAIL: ten lines counted — got {count}'); failed += 1
-        check('the H1 carries every project\'s items added up', '# Code debt (16)')
-        check('a table per project, its heading counting the items', '## zz (16)\n\n| z/t | file | needs this |')
+            print(f'FAIL: nine lines counted — got {count}'); failed += 1
+        check('the H1 carries every project\'s items added up', '# Code debt (14)')
+        check('a table per project, its heading counting the items', '## zz (14)\n\n| z/t | file | needs this |')
         check('unchecked in zone',         '| z | [ideas.md](../../zz/zone/ideas.md) | 2 open |')
         check('unchecked in truth',        '| t | [rules.md](../../zz/truth/rules.md) | 1 open truth |')
-        check('open pacs',                 '| t | [decisions.md](../../zz/truth/decisions.md) | decide 1 pac |')
         check('open proposals',            '| z | [proposals.md](../../zz/zone/proposals.md) | decide 1 proposal |')
         check('questions',                 '| z | [questions.md](../../zz/zone/questions.md) | answer 3 questions |')
         check('log lines, no letter',      '|  | [log.md](../../zz/logs/log.md) | settle 2 lines |')
-        check('learn under work',          '| z | [learn.md](../../zz/zone/learn.md) | distill 2 entries |')
+        check('learn, its open checkboxes', '| z | [learn.md](../../zz/zone/learn.md) | 1 open |')
         check('collisions',                '| z | [collisions.md](../../zz/zone/collisions.md) | rewrite 2 collisions |')
         check('drive',                     '| z | [drive.md](../../zz/zone/drive.md) | dissolve the drive |')
         check('a space in a name is encoded', '| z | [two words.md](../../zz/zone/two%20words.md) | 1 open |')

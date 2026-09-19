@@ -4,8 +4,11 @@ Brought up 7 September 2026 as an empty version of ov's three regions, on core. 
 
 ## Truths
 
-- [decisions.md](truth/decisions.md) — the pacs weighing panel's coming choices.
 
 ## Zone
 
 - [drive.md](zone/drive.md) — the current undertaking, and the project's current state, moved here from this index 16 September 2026.
+
+## Logs
+
+- [decisions.md](logs/decisions.md) — every decision, dated, never deleted, and the pacs decided. In logs since 18 September 2026, no pac open today, one would sit in zone/proposals.md.

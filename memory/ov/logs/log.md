@@ -2,6 +2,9 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 18 September 2026
+
+- D: proposals.md and learn.md to the zone, through the dispatcher: logs hold the past, zone the present, truth the concrete. Jonathan's decision in memory/shared/logs/decisions.md
 ## 15 September 2026
 
 - D: ov's decisions, design folder and zone moved to memory/ai, 31 files, rows following; ov's lexicon, banned words, working features and ideas merged into ai's; 28 links and 56 mentions re-pointed. Jonathan's decision in memory/ai/truth/decisions.md

@@ -10,4 +10,5 @@ One registration is deliberately missing: the dispatcher's two collection lists,
 
 ## Zone
 
+- [proposals.md](zone/proposals.md) — the proposals being weighed, one section each, the open pacs among them. In the zone since 18 September 2026.
 - [drive.md](zone/drive.md) — the current undertaking, and the project's current state, moved here from this index 16 September 2026.

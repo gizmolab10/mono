@@ -16,12 +16,9 @@
 
 Where that content and the files disagree:
 
-- [ ] Pros and cons still says pacs go to `zone/decisions.md`; they live in `truth/decisions.md` — the four-doors question, unresolved.
-- [ ] Design churn says `decisions.md` holds one-line rationales, \~10, deleted when final; shared's holds multi-paragraph pacs, decided ones kept, well past the cap.
 - [ ] Inception says "keep `truth/inception.md` current"; the file lives in shared/zone under another name.
 - [ ] Hooks — the enforcement the handbook describes still reads the old notes, and does not run in a Cowork session at all.
 - [ ] The truth cap: the moved maps break \~100 lines (ov's at 146) — the promised settle-cuts have not begun, and the map-upkeep step has never yet run at a settle.
-- [ ] Zone names `zone/ref/` for visual references; no project has one. And `drive.md` existed nowhere while a drive was in flight — this file is the first.
 
 ## fine-tuning the control surface: pac vs propose
 
@@ -33,7 +30,3 @@ Where that content and the files disagree:
 
    1. pac is research and assessment
    2. propose happens later
-
-## a better term than 'control surface'
-
-27 August 2026 — settled: **toolkit** (d). The hunt ran control surface → verbs → actions → commands → shorthand → set of available actions; ops was pac'd and passed over.

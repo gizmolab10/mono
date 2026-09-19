@@ -10,4 +10,4 @@ The file map is `memory/kb/truth/map of kb files.md`. Read it instead of discove
 
 kb is a library, as `memory/shared/zone/architecture/libraries.md` says: it names nothing of any host's, it checks and tests alone, and it reaches core through `common/Core.ts` and panel through `common/Panel.ts`, nothing else reaching through an alias.
 
-Past mistakes never to repeat, this project's own, are in `memory/kb/logs/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/logs/learn.md`.
+Past mistakes never to repeat, this project's own, are in `memory/kb/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.

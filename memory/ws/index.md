@@ -6,7 +6,7 @@ Webseriously, a graph visualization. Brought into the memory system 4 September 
 
 - [drive.md](zone/drive.md) — the current undertaking, and the project's current state, moved here from this index 16 September 2026.
 - [ideas.md](memory/ws/zone/ideas.md) — ws ideas, appended freely; every settle triages each one.
-- [questions.md](memory/ws/logs/questions.md) — what is unanswered, one line each.
+- [questions.md](zone/questions.md) — what is unanswered, one line each.
 
 ## Truths
 

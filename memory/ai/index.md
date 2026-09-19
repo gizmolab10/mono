@@ -17,7 +17,6 @@ The host that brings the ai specialty to kb: a browser and editor for every mark
 - [using rules.md](using%20rules.md) — how to use the rules section of the details column: what a rule reads, the regex, the label it gives, and when the dispatcher runs it.
 - [working features.md](truth/working%20features.md) — ov's table with a done column, made at step 19: a row is ticked the day its feature is tried by hand here and works; ov is retired the day the last is.
 - [map of ai files.md](truth/map%20of%20ai%20files.md) — every source file in ai; read it instead of discovering files using regex and wildcards, and update it when files move.
-- [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices. ov's until 15 September 2026, as is everything below.
 - [banned words.md](truth/banned%20words.md) — ov's word substitutions, merged; the hooks read it.
 - `design/` — what the app is for and how it got here; moved whole from `notes/guides/design/`, unsorted.
 - [controls.md](truth/design/controls.md) — how the list's filters and the editor's controls behave.
@@ -27,6 +26,7 @@ The host that brings the ai specialty to kb: a browser and editor for every mark
 
 ## Logs
 
+- [decisions.md](logs/decisions.md) — every decision, dated, never deleted, and the pacs decided. In logs since 18 September 2026, the open pacs in zone/proposals.md. ov's until 15 September 2026.
 - [work journal.md](logs/work%20journal.md) — finished work, newest first; ov's whole, taken 15 September 2026.
 - [log.md](logs/log.md) — what happened, by day, newest first.
 

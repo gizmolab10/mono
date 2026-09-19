@@ -1,5 +1,10 @@
 # kb log
 
+## 18 September 2026
+
+- D: the dead links button is dead links and files: D_Repair.svelte names it so, Files.ts's find_dead_links_and_files asks the dispatcher's forget-missing route after the link check and takes each forgotten guide out of the list, Saving.ts's forget_missing asks it. Proved headless on a throwaway file with a row and no file: forgotten, its row gone. kb's 177 tests pass. Jonathan's decision in memory/ai/truth/decisions.md
+- D: Saving.ts places an svg path: LISTED_ENDINGS, markdown or svg, gates site_of_file and keeps the ending in file_path_of; saving.test.ts proves a drawing placed and a png refused. Jonathan's decision in memory/ai/truth/decisions.md
+
 ## 17 September 2026
 
 - D: the open buttons' tips name the file, name_of exported from Operations.ts and read by Controls.svelte and the steppers' tips. Jonathan's decision in memory/ai/truth/decisions.md
@@ -28,7 +33,7 @@
 ## 14 September 2026
 
 - D: open_buttons, a configuration fact, each a title and the key of a file: Controls.svelte draws them first in the browse row, next to the hamburger, and opens the file with open_view on a press. The lexicon has open button, adopt kb the row. Jonathan's decision in memory/ai/truth/decisions.md
-- D: a file dropped onto a project's top row moves to memory/<project>/<name>: Files.ts's move sends the dispatcher that path and rehangs the record with the memory bundle, Hierarchy.rehang taking the bundle as a fifth argument, and rename keeps the guide's own bundle. Before, the drop asked for <project>/<name>, the code folder, refused as not a guide. Headless: a drag onto the ai row moved a file to memory/ai, the status line saying so, and the index mended. Check clean at 515 files, 181 tests
+- D: a file dropped onto a project's top row moves to `memory/<project>/<name>`: Files.ts's move sends the dispatcher that path and rehangs the record with the memory bundle, Hierarchy.rehang taking the bundle as a fifth argument, and rename keeps the guide's own bundle. Before, the drop asked for <project>/<name>, the code folder, refused as not a guide. Headless: a drag onto the ai row moved a file to memory/ai, the status line saying so, and the index mended. Check clean at 515 files, 181 tests
 - D: T_Bundle keeps its name, Jonathan's decision over five others weighed; bundle is in the lexicon, and File.ts's comments say what the value holds, the folder a path counts from, not the collection
 - D: Saving.ts's three path functions drop the notes layout: every collection's path counts from its own folder at the top of the repo, memory's under memory, mono's the repo itself, a project's its folder. A drop onto the mo folder now asks the dispatcher for the repo top, which it refuses as not a guide, in place of a notes folder that no longer exists. The saving test's cases say the new layout. Check clean at 515 files, 181 tests
 - D: step 12: composing labels left Labels.ts for ai with its cases; the label block code, called by nothing since 10 September, went with its five test groups; KIND_UNTIL_TOLD and TAG_WHEN_NEW became the facts kind_when_new and tag_when_new, empty by default, Files.ts reading them for a new file; customizations.test proves the two. Check clean at 515 files, 190 tests

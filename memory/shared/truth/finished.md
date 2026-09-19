@@ -13,7 +13,7 @@ Two, each a count by grep, never a reading, no judgment anywhere. A file gets on
 | file | what is counted | the clause |
 | --- | --- | --- |
 | any .md | lines opening with a dash and a checked box | N done |
-| proposals.md | `##` sections with "Decided" or "dead" | N proposals settled |
+| proposals.md | `##` sections with "Decided" or "culled" | N proposals settled |
 
 No box inside a logs folder is counted: the work journal there is where finished items end up, and a done file moved there holds its boxes as a record; a logs folder's proposals.md still counts its settled sections. Nor are decided pacs: decisions.md is the rationale's home, and the process leaves it alone.
 

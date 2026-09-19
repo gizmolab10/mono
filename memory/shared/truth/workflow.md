@@ -12,11 +12,11 @@ What we are doing, in order, and the tasks that run at any time. What each item 
 | --- | --- | --- | --- | --- |
 | start | co | orients: root index, handbook, project index, lexicon, the truths that match, questions read and never reported | start | none |
 | debt | Jonathan | selects something from code debt.md | debt | none |
-| cadence | both | pac, where, propose, decide: Jonathan frames and decides, co reads and proposes | pac, where, propose, d | proposal open → decided or dead; pac open → decided; decision made |
+| cadence | both | pac, where, propose, decide: Jonathan frames and decides, co reads and proposes | pac, where, propose, d, drive | proposal open → decided or culled; pac open → decided; decision made; drive present → implemented → a feature or journaled |
 | go | co | builds what was decided, tests before saying done | go | plan step open → built; checkbox item open → done; question asked → answered |
 | v | Jonathan | looks at the screen: good, perfect or done is a sign-off, anything else a criticism | v | working feature row untried → tried |
-| record | co | moves done items to the work journal, rewritten corrections to their truths, done files to logs | record | checkbox item and plan step done → journaled; correction rewritten → placed; done folder file → in logs; proposal decided → journaled |
-| consolidate | co | settles every log line since the marker into its home, the marker moved; no commit | consolidate | log line new → settled; question answered → gone; idea kept → promoted or culled; decision live → final |
+| record | co | moves done items to the work journal, rewritten corrections to their truths with a row in distilled.md, done files to logs | record | checkbox item and plan step done → journaled; correction rewritten → placed; done folder file → in logs; proposal decided → journaled |
+| consolidate | co | settles every log line since the marker into its home, the marker moved, nothing deleted; no commit | consolidate | log line new → settled; question answered → logged; idea kept → promoted or culled; decision live → final |
 | commit | Jonathan | commits memory | none | none |
 
 ### at any time
@@ -24,10 +24,10 @@ What we are doing, in order, and the tasks that run at any time. What each item 
 | task | who | what happens | items that change state |
 | --- | --- | --- | --- |
 | learn | co | a mistake captured as a correction, in co's words | correction → captured |
-| distill | co | raw lessons rewritten as corrections | lesson raw → distilled |
 | finished | co | finished.md written, one line per file holding done items | none |
 | check | co | the memory system audited; findings reported, nothing fixed | none |
 | cleanup | co | after files move: links, CLAUDE files, hooks, shorthand, maps and indexes put right | none |
+| full log | co | when a log has lost lines: log.md re-assembled from every committed version, every line under its day once | none |
 | define | co | a lexicon entry and its D: line | lexicon entry → defined |
 | pause, mothball | co | the current context written down, to pick up later | none |
 
@@ -37,17 +37,16 @@ What we are doing, in order, and the tasks that run at any time. What each item 
 | --- | --- | --- | --- |
 | checkbox item | ideas.md, a work note | open, done, journaled | `- [ ]`, `- [x]`, moved into the work journal |
 | plan step | the plan | open, built, journaled | `- [ ]`, `- [x]` with a Built note, moved into the work journal |
-| correction | corrections.md | captured, rewritten, placed | `- [ ]` in co's words, `- [x]` in Jonathan's words, moved into its truth |
-| proposal | proposals.md, or a zone file of its own | open, decided or dead, journaled | its section; the word Decided or dead; moved into the work journal |
-| pac | decisions.md | open, decided | its bullet; the word Decided |
-| decision | decisions.md | live, final | its line; the line gone |
-| question | questions.md | asked, answered | its line; a D: line and the line gone |
-| log line | logs/log.md | new, settled | above the consolidated marker; gone |
-| lesson | learn.md | raw, distilled | its numbered entry; a correction made from it |
-| idea | ideas.md | kept, promoted or culled | its line; a truth or a proposal made from it, or the line gone |
+| correction | zone/learn.md | captured, rewritten, placed | `- [ ]` in co's words, `- [x]` in Jonathan's words, moved into its truth with a row in logs/distilled.md |
+| proposal | proposals.md, or a zone file of its own | open, decided or culled, journaled | its section; the word Decided, or a dated D: line saying culled and why; moved into the work journal |
+| pac | zone/proposals.md, then logs/decisions.md | open, decided | its section; a dated line in decisions.md |
+| decision | logs/decisions.md | live, final | its line; the line stays, dated |
+| question | questions.md | asked, answered | its line; a dated D: line holding the question and its answer, the line gone from questions.md |
+| log line | logs/log.md | new, settled | above the consolidated marker; below it, kept |
+| idea | ideas.md | kept, promoted or culled | its line; a truth or a proposal made from it, or a dated I: line saying culled and why |
 | done folder file | zone/work/done | done, in logs | the file; moved into logs |
 | working feature row | working features.md | untried, tried | `[ ]`, `[x]` in the done column |
-| drive | zone/drive.md | present, dissolved | the file; its proposal in truth and the file gone |
+| drive | zone/drive.md | present, implemented, a feature or journaled | the file; its plan built by `drive` or `go drive`; the proposal rewritten as a working features row when it is an app feature, or else a work journal entry saying what changed and why |
 | truth | truth/ | current, archived, dead | the file; in archive/; deleted, git remembering |
 
 ## Cadence
@@ -70,9 +69,9 @@ Guides encode decisions, grouped by topic. CLAUDE.md is the entry point, the lar
 
 One project, three folders under `memory/<project>/`:
 
-1. `truth/` — the decided design, one concept per file; the lexicon, the map of source files, working features, decisions.
-2. `zone/` — live thinking: `drive.md`, opening with the project's current state; `ideas.md`; work notes in `work/`, one folder down in `next/` or `soon/`.
-3. `logs/` — what happened and what waits on it: `log.md`, `work journal.md`, `questions.md`, `proposals.md`, `learn.md`.
+1. `truth/` — the concrete: the decided design, one concept per file; the lexicon, the map of source files, working features.
+2. `zone/` — the present: `drive.md`, opening with the project's current state; `ideas.md`; `proposals.md`, the open pacs among them; `questions.md`; `learn.md`; work notes in `work/`, one folder down in `next/` or `soon/`.
+3. `logs/` — the past, only ever added to: `log.md`, `work journal.md`, `decisions.md`, `distilled.md`, `collisions.md`.
 
 Three files are written by tools, never by hand: code debt and dead links in shared's zone, finished in shared's logs.
 

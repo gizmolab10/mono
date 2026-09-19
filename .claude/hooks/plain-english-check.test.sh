@@ -14,7 +14,7 @@ PASS=0; FAIL=0
 # fire FILE CONTENT -> the hook's additionalContext, or an empty string.
 fire() {
 	jq -cn --arg f "$1" --arg c "$2" '{tool_input:{file_path:$f,content:$c}}' \
-		| bash "$HOOK" 2>/dev/null | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null
+		| PLAIN_ENGLISH_CHECK=true bash "$HOOK" 2>/dev/null | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null
 }
 
 # check NAME CONTENT EXPECT
@@ -53,6 +53,11 @@ check "a store the code has"                 'the `$w_tip` store'               
 
 check "a banned word"                        'keep a copy of the file'                           'BANNED WORD WRITTEN INTO A FILE: copy'
 check "both at once"                         'keep a copy of one `Zorp`'                         'NAME THAT NAMES NOTHING: `Zorp`'
+
+# The flag off: the hook says nothing whatever the edit holds.
+said="$(jq -cn --arg f 'memory/shared/zone/test.md' --arg c 'keep a copy of one `Zorp`' '{tool_input:{file_path:$f,content:$c}}' | PLAIN_ENGLISH_CHECK=false bash "$HOOK" 2>/dev/null | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
+if [ -z "$said" ]; then echo "PASS: the flag off, nothing said"; PASS=$((PASS+1))
+else echo "FAIL: the flag off — hook said: $said"; FAIL=$((FAIL+1)); fi
 
 # A .ts file: only comment lines are read, and no name check runs there.
 said="$(fire "ov/src/lib/ts/x.ts" 'const a = `Zorp`; // fine')"

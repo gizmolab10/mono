@@ -7,7 +7,6 @@ Its whole code was copied on 1 September 2026 into [gallery](../gallery/index.md
 ## Truths
 
 - [structure.md](truth/structure.md) — what lv takes from core and from gallery, what is lv's alone, and how its files are named.
-- [decisions.md](truth/decisions.md) — live rationales, and the pac responses weighing coming choices.
 - [gallery.md](truth/gallery.md) — how pictures and captions currently work.
 - [lexicon.md](truth/lexicon.md) — lv's terms, defined once.
 - [working features.md](truth/working%20features.md) — what the site does today, and what each thing cannot do.
@@ -16,3 +15,7 @@ Its whole code was copied on 1 September 2026 into [gallery](../gallery/index.md
 ## Zone
 
 - [drive.md](zone/drive.md) — the current undertaking, and the project's current state, moved here from this index 16 September 2026.
+
+## Logs
+
+- [decisions.md](logs/decisions.md) — every decision, dated, never deleted, and the pacs decided. In logs since 18 September 2026, no pac open today, one would sit in zone/proposals.md.

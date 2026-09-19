@@ -1,4 +1,4 @@
-import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, labels_on_disk, move_file, moved_into, path_of_address, remove_label, set_fields, set_sources, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved, type Source } from '../utilities/Saving';
+import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, forget_missing, labels_on_disk, move_file, moved_into, path_of_address, remove_label, set_fields, set_sources, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved, type Source } from '../utilities/Saving';
 import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { blank_file, free_name, label_changes, today, NAME_UNTIL_TOLD } from '../utilities/Labels';
@@ -618,11 +618,12 @@ class Files {
 	}
 
 	/**
-	 * Look through every guide's own words for links that lead nowhere. Nothing is changed —
-	 * this only says what it found, the first few on screen and all of them in the log. A link
-	 * to the web is left alone, since nothing here can judge it.
+	 * Look through every guide's own words for links that lead nowhere, and forget every file the
+	 * db holds a row for and the disk no longer does. The links are only said, the first few on
+	 * screen and all of them in the log; a link to the web is left alone, since nothing here can
+	 * judge it. The rows go, in the db and out of the list, since 18 September 2026.
 	 */
-	async find_dead_links(): Promise<void> {
+	async find_dead_links_and_files(): Promise<void> {
 		const files = this.files;
 		const dead: Finding[] = [];
 		let looked = 0, followed = 0, unreadable = 0, deeper = 0;
@@ -670,10 +671,21 @@ class Files {
 			}
 		}
 
-		const counted = `${looked} file(s) read, ${followed} link(s) followed, ${dead.length} leading nowhere${unreadable > 0 ? `, ${unreadable} file(s) unreadable` : ''}${deeper > 0 ? `, ${deeper} pointing at files this app cannot find` : ''}`;
+		// The rows whose files are gone: the dispatcher forgets them, and each guide hung for one,
+		// struck through in the list, is taken out of it.
+		const forgotten = await forget_missing();
+		for (const where of forgotten.gone) {
+			const guide = files.find((one) => file_path_of(one.bundle, one.path) === where);
+			if (!guide) { continue; }
+			this.forget_links(key_of(guide));
+			this.hierarchy.forget(guide);
+		}
+		if (forgotten.gone.length > 0) { this.renarrow(); }
+		const rows = forgotten.ok ? `${forgotten.gone.length} file(s) gone from the disk forgotten` : `the db could not be asked to forget — ${forgotten.why}`;
+		const counted = `${looked} file(s) read, ${followed} link(s) followed, ${dead.length} leading nowhere${unreadable > 0 ? `, ${unreadable} file(s) unreadable` : ''}${deeper > 0 ? `, ${deeper} pointing at files this app cannot find` : ''}, ${rows}`;
 		// Every one of them, each its own row in the report, so any can be opened where it sits.
-		show_status(`dead links: ${counted}`, dead);
-		debug.log(`Dead links: ${counted}.${dead.length > 0 ? ` They are: ${dead.map((d) => d.words).join(' | ')}` : ''}`);
+		show_status(`dead links and files: ${counted}`, dead);
+		debug.log(`Dead links and files: ${counted}.${dead.length > 0 ? ` They are: ${dead.map((d) => d.words).join(' | ')}` : ''}${forgotten.gone.length > 0 ? ` Forgotten: ${forgotten.gone.join(' | ')}` : ''}`);
 	}
 
 	/**

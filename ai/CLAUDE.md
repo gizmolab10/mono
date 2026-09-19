@@ -8,4 +8,4 @@ Read `memory/ai/truth/lexicon.md` at session start, and kb's beside it, `memory/
 
 The file map is `memory/ai/truth/map of ai files.md`. Read it instead of discovering files using regex and wildcards, and update it when files are added, moved, or removed.
 
-Past mistakes never to repeat, this project's own, are in `memory/ai/logs/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/logs/learn.md`.
+Past mistakes never to repeat, this project's own, are in `memory/ai/zone/learn.md`, made the day the first one is written. Those that apply everywhere are in `memory/shared/zone/learn.md`.

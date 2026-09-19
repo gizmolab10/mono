@@ -2,6 +2,9 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 18 September 2026
+
+- D: decisions.md to logs, its open pac to zone/proposals.md; questions.md and proposals.md to the zone, through the dispatcher: logs hold the past, zone the present, truth the concrete. Jonathan's decision in memory/shared/logs/decisions.md
 ## 9 September 2026
 
 - D: Persistence.ts reads and writes through core's Preferences under the lv. prefix. Its keys and named pairs stay. Stored forms unchanged

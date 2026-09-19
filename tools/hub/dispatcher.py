@@ -1317,6 +1317,20 @@ class APIHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._send_response(500, {'success': False, 'error': str(e)})
 
+        elif urllib.parse.urlparse(self.path).path == '/forget-missing':
+            # Forget every file the db holds a row for and the disk no longer does, for the
+            # overview app: /forget-missing. Each row goes with its labels and sources, whether
+            # or not a look had marked it missing. Answers the paths forgotten.
+            try:
+                self._drain_body()
+                host = self._host()
+                if host is False:
+                    return
+                gone = database.forget_missing(os.path.realpath(GITHUB_DIR), host=host)
+                self._send_response(200, {'success': True, 'gone': gone})
+            except Exception as e:
+                self._send_response(500, {'success': False, 'error': str(e)})
+
         elif self.path == '/rescan':
             # Bring the db into line with the disk now, rather than at the watcher's next look:
             # /rescan. Answers how many rows changed, moved, went missing or were found again,

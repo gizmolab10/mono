@@ -2,6 +2,9 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 18 September 2026
+
+- D: decisions.md to logs, its open pacs to zone/proposals.md; proposals.md to the zone, through the dispatcher: logs hold the past, zone the present, truth the concrete. Jonathan's decision in memory/shared/logs/decisions.md
 ## 15 September 2026
 
 - D: the area's name on a big pill sits a micro gap lower, Big_Pill.svelte. Jonathan's decision in memory/ai/truth/decisions.md

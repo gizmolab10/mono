@@ -34,15 +34,9 @@ def clauses_for(path, name, in_truth, text):
             found.append(plural(unchecked, 'open truth', 'open truths'))
         else:
             found.append(f'{unchecked} open')
-    if name == 'decisions.md':
-        at = text.find('## Evaluations')
-        pacs = [l for l in text[at:].split('\n') if l.startswith('- ')] if at >= 0 else []
-        open_pacs = sum(1 for l in pacs if 'Decided' not in l)
-        if open_pacs:
-            found.append(f'decide {plural(open_pacs, "pac", "pacs")}')
     if name == 'proposals.md':
         sections = re.split(r'^## ', text, flags=re.M)[1:]
-        open_props = sum(1 for s in sections if 'Decided' not in s and 'dead' not in s.lower())
+        open_props = sum(1 for s in sections if 'Decided' not in s and 'culled' not in s.lower())
         if open_props:
             found.append(f'decide {plural(open_props, "proposal", "proposals")}')
     if name == 'questions.md':
@@ -60,10 +54,6 @@ def clauses_for(path, name, in_truth, text):
         entries = sum(1 for l in tail.split('\n') if l.startswith('- ') and not l.startswith('- S:') and not l.startswith('- D:'))
         if entries:
             found.append(f'settle {plural(entries, "line", "lines")}')
-    if name == 'learn.md':
-        raw = sum(1 for l in lines if re.match(r'^- \d+\.', l))
-        if raw:
-            found.append(f'distill {plural(raw, "entry", "entries")}')
     if name == 'collisions.md':
         entries = sum(1 for l in lines if l.startswith('## '))
         if entries:

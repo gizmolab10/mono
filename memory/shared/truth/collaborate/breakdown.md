@@ -49,4 +49,4 @@ If nothing would prove it wrong, it is not an approach — go back to step 3.
 
 It is not an apology, and it is not a post-mortem. No tally of what went wrong, no self-criticism. Four steps, four short pieces of writing, then back to work.
 
-The [learn](memory/shared/logs/learn.md) log is where the lesson goes, afterwards, once there is one.
+The [learn](memory/shared/zone/learn.md) log is where the lesson goes, afterwards, once there is one.

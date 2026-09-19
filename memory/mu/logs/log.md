@@ -2,6 +2,9 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 18 September 2026
+
+- D: questions.md to the zone, through the dispatcher: logs hold the past, zone the present, truth the concrete. Jonathan's decision in memory/shared/logs/decisions.md
 ## 13 September 2026
 
 - D: the kind of a file is one of four, music, images, text and video, by its ending, in truth/design.md, in place of music for every file

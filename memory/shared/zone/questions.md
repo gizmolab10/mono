@@ -8,7 +8,6 @@
 
 ## Inconsistencies and duplications
 
-- [ ] `decisions.md` rigid enforcement vs practice — "one line of why, delete when final, ~10 items" vs multi-paragraph pacs kept after deciding; which yields?
 - [ ] the handbook names the inception file `truth/inception.md`; it lives at shared/zone/`inception into the new design.md`; re-point or move?
 - [ ] ov↔core memory twins from the carve — truth: action type, claude-files, scope, lexicon; zone: ideas, handoff (code debt near-twin); merge or trim core's?
 - [ ] ov↔core code twins — ov's Debug.ts and Dirty.ts are core's verbatim; two instances run, Dirty's stores can diverge; same changes as with Extensions?

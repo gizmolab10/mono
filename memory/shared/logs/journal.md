@@ -7,6 +7,62 @@
 
 ---
 
+## 2026-09-18 — logs/learn.md: its Process, before the merge with corrections.md
+
+Kept here as history when learn.md became a file of checkboxes alone. Its Distilled table lives on in logs/distilled.md, where record adds a row for every correction it places.
+
+## Process
+
+as we roll along, we hit a lot of bumps. i've noticed that i get fed up and stop dead. clean house. takes time. need a better triage system. Let's start with:
+
+- [ ] list mistakes as they happen (oldest last)
+    - [ ] hyphen-N date title
+- [ ] distill: identify pattern, write rule, add to guide
+- [ ] research: better tools, clever ideas
+- [ ] track for escalating need:
+    - [ ] fed up
+    - [ ] stop dead
+    - [ ] clean house
+
+**To distill an entry:**
+
+1. Identify the pattern (what went wrong, repeatedly?)
+2. Write a rule (imperative, actionable)
+3. Write it as one checkbox line in `memory/shared/zone/corrections.md`, in co's words, replacing a line already saying something close; Jonathan rewrites it and ticks it, and record moves it into its guide
+4. Remove the raw entry from this file
+
+## 2026-09-18 — drive: a shorthand that makes a proposal the drive
+
+**Why.** Jonathan wanted one command that moves a proposal into drive.md and replaces what is there, and one that builds the drive and puts the proposal where finished work goes. Before it, a proposal became the drive by hand, and the handbook had the drive dissolve into truth on his instruction.
+
+**What changed.** Two shorthand rows: `drive <X>` makes proposal X the drive, open or decided, replacing everything below drive.md's Current state and journaling the plan it replaced; `drive` or `go drive` implements drive.md and moves the proposal to working features as a feature description when it is an app feature, or else to the work journal as what was changed and why. Workflow's cadence row lists drive among its tasks and its drive row has the states present, implemented, a feature or journaled. cadence.md's table and cadence.svg's drive lane say the same, `drive X` on the arrow from a decided proposal. The handbook's drive line and the lexicon's drive entry say it; dissolving into truth is gone.
+
+**The proposal, as written.**
+
+## drive (18 September 2026)
+
+Proposal, a shorthand that makes a proposal the drive.
+
+we will rely on some stuff we have
+
+1. drive.md, opening with the Current state paragraph, the plan below it
+2. proposals, `##` sections in proposals.md or a zone file of its own
+3. the work journal
+4. the shorthand `drive <X>`      <- we need this one
+
+**What it does.** X names a proposal, open or decided. Nothing is required of its words and nothing is refused.
+
+1. drive.md keeps its Current state paragraph. Everything below it is replaced by the proposal's text under the proposal's heading, plus one present-tense line saying where it stands.
+2. The proposal's section leaves proposals.md, or its zone file is deleted through the dispatcher. Its index line goes with it.
+3. The plan it replaced goes into the work journal as one entry under the old heading. The reply names what was replaced.
+4. One D: line in the project's log.
+
+**What else changes.** Workflow's cadence row lists `drive` among its tasks, and its drive row says `drive <X>` makes the drive present. cadence.md's table and cadence.svg's arrow say `drive <X>` in place of "work starts".
+
+**Success.** After `drive <X>`, the proposal is in drive.md and nowhere else, the old plan is in the journal, and code debt lists drive.md with the new plan's open boxes.
+
+**Current status:** run by hand for this proposal on 18 September 2026, before the shorthand row exists. Workflow's two rows, cadence.md's table and cadence.svg's arrow say `drive X` since the same day's decision on `drive` and `go drive`. The shorthand row `drive <X>` is still to write.
+
 ## 2026-09-17 — logs/proposals.md: 11 proposals settled
 
 ## libraries resolve through the workspace, not through aliases (10 September 2026)
