@@ -1,4 +1,4 @@
-# Code debt (1084)
+# Code debt (1119)
 
 99 files hold unfinished work, as of 2026-09-19.
 
@@ -139,22 +139,22 @@
 | z | [drive.md](../../panel/zone/drive.md) | dissolve the drive |
 | z | [questions.md](../../panel/zone/questions.md) | answer 1 question |
 
-## shared (295)
+## shared (330)
 
 | z/t | file | needs this |
 | --- | --- | --- |
-|  | [collisions.md](../../shared/logs/collisions.md) | rewrite 5 collisions |
-|  | [journal.md](../../shared/logs/journal.md) | 8 open |
 |  | [log.md](../../shared/logs/log.md) | settle 23 lines |
+|  | [work journal.md](../../shared/logs/work%20journal.md) | 48 open |
 | t | [collaborate/composition.md](../../shared/truth/collaborate/composition.md) | 15 open truths |
 | t | [develop/migrate.md](../../shared/truth/develop/migrate.md) | 1 open truth |
 | t | [philosophy/logic driven design.md](../../shared/truth/philosophy/logic%20driven%20design.md) | 100 open truths |
 | t | [test/debugging.md](../../shared/truth/test/debugging.md) | 10 open truths |
+| z | [collisions.md](../../shared/zone/collisions.md) | rewrite 5 collisions |
 | z | [drive.md](../../shared/zone/drive.md) | dissolve the drive |
-| z | [ideas.md](../../shared/zone/ideas.md) | 15 open |
+| z | [ideas.md](../../shared/zone/ideas.md) | 12 open |
 | z | [learn.md](../../shared/zone/learn.md) | 2 open |
 | z | [proposals.md](../../shared/zone/proposals.md) | decide 36 proposals |
-| z | [questions.md](../../shared/zone/questions.md) | 10 open and answer 10 questions |
+| z | [questions.md](../../shared/zone/questions.md) | 9 open and answer 9 questions |
 | z | [now/co.md](../../shared/zone/now/co.md) | 17 open |
 | z | [now/library projects.md](../../shared/zone/now/library%20projects.md) | 11 open |
 | z | [work/articles/accidental.programmer.md](../../shared/zone/work/articles/accidental.programmer.md) | 10 open |

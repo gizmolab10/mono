@@ -70,8 +70,8 @@ Guides encode decisions, grouped by topic. CLAUDE.md is the entry point, the lar
 One project, three folders under `memory/<project>/`:
 
 1. `truth/` — the concrete: the decided design, one concept per file; the lexicon, the map of source files, working features.
-2. `zone/` — the present: `drive.md`, opening with the project's current state; `ideas.md`; `proposals.md`, the open pacs among them; `questions.md`; `learn.md`; work notes in `work/`, one folder down in `next/` or `soon/`.
-3. `logs/` — the past, only ever added to: `log.md`, `work journal.md`, `decisions.md`, `distilled.md`, `collisions.md`.
+2. `zone/` — the present: `drive.md`, opening with the project's current state; `ideas.md`; `proposals.md`, the open pacs among them; `questions.md`; `learn.md`; `collisions.md`; work notes in `work/`, one folder down in `next/` or `soon/`.
+3. `logs/` — the past, only ever added to: `log.md`, `work journal.md`, `decisions.md`, `distilled.md`, `finished.md`.
 
 Three files are written by tools, never by hand: code debt and dead links in shared's zone, finished in shared's logs.
 

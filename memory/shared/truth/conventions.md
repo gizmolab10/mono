@@ -116,6 +116,10 @@ While writing, before sending:
 7. A file's name says what the reader does with it. A heading read alone says its subject.
 8. A banned-words row applies to a sense, never to a word: room to spare stays.
 
+### 12. A placeholder sits in backticks
+
+A placeholder such as `<X>` is always inside backticks; bare, markdown reads it as a tag and the page drops it.
+
 ## Conduct
 
 - **Never** "believed." A truth is "incorporated."

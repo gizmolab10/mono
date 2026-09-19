@@ -1,6 +1,6 @@
 # Drive
 
-**Current state:** logs hold the past, zone the present, truth the concrete, since 18 September 2026, and a log only grows; shared's log was rebuilt whole from git on 19 September, 229 lines from 22 August. cadence.md and cadence.svg draw the cadence step, built work with v, proposal, drive, pac, decision, idea and draft guide rule, sent back at v for Jonathan's writing. The drive is empty. learn.md in the zone holds three corrections unticked; 35 pacs are open sections in zone/proposals.md beside two proposals, past present and concrete decided among them; the 23 drafts of 15 September are still prose in three truth files.
+**Current state:** logs hold the past, zone the present, truth the concrete, since 18 September 2026, and a log only grows; shared's log was rebuilt whole from git on 19 September, and its logs folder holds five files, log, work journal, decisions, distilled and finished, the history notes folded into the work journal as dated entries. cadence.md and cadence.svg draw the cadence step, built work with v, proposal, drive, pac, decision, idea and draft guide rule, sent back at v for Jonathan's writing. The drive is empty. learn.md in the zone holds two corrections unticked; collisions.md is in the zone; 35 pacs are open sections in zone/proposals.md beside two proposals; the 23 drafts of 15 September are still prose in three truth files.
 
 I asked for a report and got --
 

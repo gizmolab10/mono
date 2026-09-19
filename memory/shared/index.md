@@ -33,6 +33,7 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [learn.md](zone/learn.md) — lessons Jonathan gave co that apply across every project, one checkbox each in co's words until he rewrites and ticks it; record moves a ticked one into its truth. Each project keeps its own at the same place. In the zone since 18 September 2026.
 - [questions.md](zone/questions.md) — what is unanswered, one line each. In the zone since 18 September 2026.
 - [ideas.md](memory/shared/zone/ideas.md) — live thinking about the collaboration itself.
+- [collisions.md](zone/collisions.md) — pairs of rules that cannot both be obeyed, each met in real work, with the rewrite that would end it. In the zone since 19 September 2026, being open work.
 - [proposals.md](zone/proposals.md) — the proposals being weighed; one leaves when it becomes the drive, dissolves into truth, or is culled. In the zone since 18 September 2026, in logs before.
 - [incorporating a project.md](zone/architecture/incorporating%20a%20project.md) — the steps a host follows to take panel in, as mu and mj did.
 - [libraries.md](zone/architecture/libraries.md) — what a library is, and how a host takes one on: one alias and one bridge per library per host, nothing built on its own.
@@ -50,8 +51,5 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [finished.md](logs/finished.md) — one line per memory file holding finished work, across every project. Written by tools/finished.py, never by hand; the shorthand `finished` runs it. In logs since 17 September 2026.
 - [log.md](logs/log.md) — the shared log, one line per entry, tagged D, I or S.
 - [distilled.md](logs/distilled.md) — every lesson that became a rule, the pattern and the guide it went to, oldest first; record adds a row for each correction it places. learn.md's Distilled table until 18 September 2026, its own file since.
-- [collisions.md](logs/collisions.md) — pairs of rules that cannot both be obeyed, each met in real work, with the rewrite that would end it.
-- [journal.md](logs/journal.md) — the collaboration's journal, from webseriously and di on, finished work newest first.
-- [remember.md](logs/remember.md) — faster session starts, research begun 1 February 2026.
-- [big rewrite log.md](logs/big%20rewrite%20log.md) — the running report of the unsupervised sweep on branch sweep/unmurk, which rewrite the guides planned.
+- [work journal.md](logs/work%20journal.md) — the collaboration's work journal, journal.md until 19 September 2026, from webseriously and di on, finished work newest first. Six history notes folded in as dated entries 19 September 2026: the big rewrite log, january.2026, remember, the fix-links tools, single project, the old repo notes.
 - `ai/` — the eight files about working with an AI moved to [memory/ai/zone/ai](../ai/zone/ai/) on 14 September 2026.

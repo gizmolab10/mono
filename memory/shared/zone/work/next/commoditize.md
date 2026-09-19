@@ -22,13 +22,6 @@ Not files — a methodology:
 ## Phases
 
 ### Phase 1: Template Repo
-- [x] Create `enhanced` repo ✅
-- [x] Minimal CLAUDE.MD with instructions ✅
-- [x] Starter notes/guides/ structure (voice.md, workflow.md, style.md stubs) ✅
-- [x] Starter notes/work/ structure ✅
-- [x] README explaining the system ✅
-- [x] Initialize git repo ✅
-- [x] Push to GitHub ✅
 
 #### Git Setup Steps
 

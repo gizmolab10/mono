@@ -8,8 +8,9 @@ Every checked box in the project's memory files, with the lines indented under i
 of one journal entry per file and leaves the file. Every settled proposal section, one with
 "Decided" or "culled" in it, does the same. Every file in a done folder moves whole to the project's
 logs folder, index.md files staying where they are, and the links it holds or that name it are
-re-pointed. The logs folder itself is never read for boxes: it holds records. finished.md is
-written again at the end. Prints what moved."""
+re-pointed. The logs folder itself is never read for boxes: it holds records. Nor is learn.md,
+whose ticked boxes are corrections, placed into their truths by hand at record with a row in
+distilled.md, never journaled. finished.md is written again at the end. Prints what moved."""
 import datetime
 import json
 import os
@@ -193,6 +194,8 @@ def main():
             path = os.path.join(folder, name)
             if not name.endswith('.md') or os.path.realpath(path) == os.path.realpath(FINISHED):
                 continue
+            if name == 'learn.md':
+                continue   # its ticked boxes are corrections, placed by hand, never journaled
             with open(path, encoding='utf-8') as f:
                 text = f.read()
             kept, blocks = take_checked(text)

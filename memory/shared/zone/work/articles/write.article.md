@@ -23,10 +23,6 @@ Not "here's a cool prompt." Instead: "here's a system that compounds."
 ---
 
 ## Phase 1: Outline
-- [x] Identify the hook (what grabs attention) ✅
-- [x] List the key concepts to cover ✅
-- [x] Decide on structure ✅
-- [x] Draft outline with section headers ✅
 
 ### Outline
 
@@ -43,10 +39,6 @@ Not "here's a cool prompt." Instead: "here's a system that compounds."
 7. **Try It Yourself** — practical takeaway
 
 ## Phase 2: Draft
-- [x] Write intro/hook ✅
-- [x] Write body sections ✅
-- [x] Write conclusion/call-to-action ✅
-- [x] Include code/file examples where useful ✅
 
 **Drafts:**
 - [accidental.programmer.md](accidental.programmer.md) — journey/emotion (Part 1)

@@ -155,14 +155,6 @@ If a phase breaks the app temporarily, add a clear warning:
 ```markdown
 ### Phase 3: Refactor Parent
 
-- [x] **Import Breadcrumb_Separator** ✅
-  - Added: `import Breadcrumb_Separator from './Breadcrumb_Separator.svelte';`
-
-- [x] **Replace inline separator with component** ✅
-  - Replaced `<div class='between-breadcrumbs'>` with `<Breadcrumb_Separator {color} {left} />`
-  - Kept all other code unchanged
-  - No breaking changes
-
 #### Work Performed
 
 **Tasks completed:**

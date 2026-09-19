@@ -1,6 +1,6 @@
-# Finished (2023)
+# Finished (1874)
 
-74 files hold finished work, as of 2026-09-17.
+64 files hold finished work, as of 2026-09-19.
 
 ## ai (2)
 
@@ -8,11 +8,10 @@
 | --- | --- | --- |
 | z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 2 done |
 
-## core (111)
+## core (110)
 
 | z/t | file | finished |
 | --- | --- | --- |
-|  | [proposals.md](../../core/logs/proposals.md) | 1 proposal settled |
 | t | [action type.md](../../core/truth/action%20type.md) | 19 done |
 | t | [adopting core.md](../../core/truth/adopting%20core.md) | 49 done |
 | t | [design/ov - goals.md](../../core/truth/design/ov%20-%20goals.md) | 27 done |
@@ -68,8 +67,8 @@
 
 | z/t | file | finished |
 | --- | --- | --- |
-|  | [proposals.md](../../gallery/logs/proposals.md) | 2 proposals settled |
 | z | [ideas.md](../../gallery/zone/ideas.md) | 2 done |
+| z | [proposals.md](../../gallery/zone/proposals.md) | 2 proposals settled |
 
 ## ji (26)
 
@@ -79,30 +78,11 @@
 | z | [work/done/db handoff.md](../../ji/zone/work/done/db%20handoff.md) | 10 done |
 | z | [work/proposals/chat history proposal.md](../../ji/zone/work/proposals/chat%20history%20proposal.md) | 14 done |
 
-## lv (1)
+## ov (1)
 
 | z/t | file | finished |
 | --- | --- | --- |
-|  | [proposals.md](../../lv/logs/proposals.md) | 1 proposal settled |
-
-## ov (3)
-
-| z/t | file | finished |
-| --- | --- | --- |
-|  | [proposals.md](../../ov/logs/proposals.md) | 3 proposals settled |
-
-## shared (145)
-
-| z/t | file | finished |
-| --- | --- | --- |
-| t | [develop/migrate.md](../../shared/truth/develop/migrate.md) | 2 done |
-| z | [work/articles/write.article.md](../../shared/zone/work/articles/write.article.md) | 8 done |
-| z | [work/done/dead links.md](../../shared/zone/work/done/dead%20links.md) | 7 done |
-| z | [work/done/january.2026.md](../../shared/zone/work/done/january.2026.md) | 97 done |
-| z | [work/done/docs/combined-docs.md](../../shared/zone/work/done/docs/combined-docs.md) | 11 done |
-| z | [work/done/docs/docs.md](../../shared/zone/work/done/docs/docs.md) | 10 done |
-| z | [work/done/docs/history/CLAUDE-MD-UPDATED.md](../../shared/zone/work/done/docs/history/CLAUDE-MD-UPDATED.md) | 3 done |
-| z | [work/next/commoditize.md](../../shared/zone/work/next/commoditize.md) | 7 done |
+| z | [proposals.md](../../ov/zone/proposals.md) | 1 proposal settled |
 
 ## ws (333)
 

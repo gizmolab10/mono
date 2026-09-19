@@ -22,6 +22,7 @@ def main():
     with tempfile.TemporaryDirectory() as memory:
         put(memory, 'zz/zone/ideas.md', '# Ideas\n\n- [ ] one\n- [x] done\n- [X] two\n')
         put(memory, 'zz/truth/rules.md', '# Rules\n\n- [x] a truth may hold this\n')
+        put(memory, 'zz/zone/learn.md', '# Learn\n\n- [x] a correction ticked, waiting for record, never counted\n')
         put(memory, 'zz/logs/decisions.md', '## Decisions made\n\n- x\n\n## Evaluations (pac)\n\n- 1 Jan; **a.** For. Decided 2 Jan: yes.\n- 2 Jan; **b.** For. Against.\n')
         put(memory, 'zz/zone/proposals.md', '# P\n\n## one\n\nProposal.\n\n## two\n\nDecided and built.\n\n## three\n\nReading (3) is culled.\n')
         put(memory, 'zz/logs/work journal.md', '# Work Journal\n\n## 2026-01-02 — b\n\ntext\n\n## 2026-01-01 — a\n\ntext\n')
@@ -55,8 +56,8 @@ def main():
         check('settled proposals',               '| z | [proposals.md](../../zz/zone/proposals.md) | 2 proposals settled |')
         check('a done folder is walked',         '| z | [work/done/old.md](../../zz/zone/work/done/old.md) | 1 done |')
         check('a space in a name is encoded',    '| z | [two words.md](../../zz/zone/two%20words.md) | 1 done |')
-        if not any(w in l for l in lines for w in ('work journal', 'moved.md', 'decisions.md', 'retired.md', 'clean.md', 'placeholder')):
-            print('PASS: logs, decided pacs, archive and quiet files left out'); passed += 1
+        if not any(w in l for l in lines for w in ('work journal', 'moved.md', 'decisions.md', 'retired.md', 'clean.md', 'placeholder', 'learn.md')):
+            print('PASS: logs, decided pacs, learn, archive and quiet files left out'); passed += 1
         else:
             print('FAIL: logs, decided pacs, archive and quiet files left out'); failed += 1
         again = subprocess.run([sys.executable, SCRIPT, memory, out], capture_output=True, text=True).stdout.strip()

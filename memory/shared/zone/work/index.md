@@ -7,7 +7,7 @@
 - [Next](./next/)
 - [Agent Skills](claude%20agent%20skills.md)
 - [Co](co.md)
-- [Journal](../../logs/journal.md)
+- [Journal](../../logs/work%20journal.md)
 - [Learn](memory/di/zone/learn.md)
 - [Faster](../../logs/remember.md)
 - [Worktrees](worktrees.md)

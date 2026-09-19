@@ -21,7 +21,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **host** — a project that imports a library: every app, and a library that imports a library, as gallery imports core. A host holds the state, the library the behavior.
 - **drive** — the current undertaking: the one proposal being implemented, held in `zone/drive.md` until `drive` or `go drive` builds it and moves the proposal to working features or the work journal. The file opens with the project's **Current state:** paragraph, moved there from index.md 16 September 2026.
 - **zone** — the folder holding a project's live thinking: active plans, research, considerations, bright ideas, visual references. Named for the state of mind that fills it and the zoning-in that empties it. Not: truth, not a waiting room for belief.
-- **logs** — the third folder of a project's memory, beside truth and zone, holding what happened, only ever added to: the log, the journal, decisions, distilled, collisions, and the app's own log files. Decided 14 September 2026; questions, proposals and learn left for the zone 18 September 2026. Not: truth, which states the current design; not zone, which holds live thinking.
+- **logs** — the third folder of a project's memory, beside truth and zone, holding what happened, only ever added to: the log, the journal, decisions, distilled, finished, and the app's own log files. Decided 14 September 2026; questions, proposals and learn left for the zone 18 September 2026, collisions 19 September. Not: truth, which states the current design; not zone, which holds live thinking.
 
 ## Who
 

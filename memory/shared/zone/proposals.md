@@ -1,17 +1,5 @@
 # Proposals
 
-## past, present and concrete (18 September 2026)
-
-Logs hold the past, zone the present, truth the concrete. Five steps.
-
-1. decisions.md: the dated decisions go to logs/decisions.md. The Evaluations section, the pacs waiting, goes to zone/proposals.md, one section each, since a pac waiting is a proposal waiting.
-2. questions.md goes to the zone.
-3. learn.md goes to the zone.
-4. working features.md stays in truth: the rows describe the design, and the done column is Jonathan's sign-off, not work.
-5. proposals.md goes to the zone in every project. Every rule that names the old folders is edited to name the new ones: workflow, the handbook, the shorthand's d and pac rows, CLAUDE.md and the three tools with their tests.
-
-**Current status:** Decided and built 18 September 2026. The moves went through the dispatcher, 21 files; the open pacs are sections in each project's zone/proposals.md, the decided ones dated lines in logs/decisions.md; every pointer names the new folders.
-
 ## fewer words, same facts (8 September 2026)
 
 Proposal — one rule for Always, and a hook that counts.

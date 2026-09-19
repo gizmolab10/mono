@@ -38,6 +38,7 @@ def main():
     with tempfile.TemporaryDirectory() as memory:
         put(memory, 'zz/zone/ideas.md', '# Ideas\n\n- [ ] open one\n- [x] done one\n    - a child line\n    - [ ] a child box\n- [X] done two\n\n## later\n\n- [ ] open two\n')
         put(memory, 'zz/truth/rules.md', '# Rules\n\n- [x] a rule kept\n')
+        put(memory, 'zz/zone/learn.md', '# Learn\n\n## Corrections\n\n- [x] a correction Jonathan ticked, placed by hand at record\n- [ ] one waiting\n')
         put(memory, 'zz/zone/proposals.md', '# Proposals\n\n## one\n\nStill open.\n\n## two\n\nDecided 1 January: yes.\n\n## three\n\nThis one is culled.\n')
         put(memory, 'zz/zone/work/done/old.md', '# Old\n\n- [x] finished long ago\n\nSee [ideas](../../ideas.md).\n')
         put(memory, 'zz/zone/work/done/index.md', '# Done\n\n- [old](old.md)\n')
@@ -58,6 +59,7 @@ def main():
         check('new entries come before the old one, after Current', journal.index('**Current**') < journal.index(f'## {TODAY}') < journal.index('## 2026-01-01'))
         check('the ideas file keeps its open boxes and headings only', ideas == '# Ideas\n\n- [ ] open one\n\n## later\n\n- [ ] open two\n')
         check('the rules file lost its box', read(memory, 'zz/truth/rules.md') == '# Rules\n')
+        check('learn.md is left alone, its ticked correction placed by hand', read(memory, 'zz/zone/learn.md') == '# Learn\n\n## Corrections\n\n- [x] a correction Jonathan ticked, placed by hand at record\n- [ ] one waiting\n' and 'learn.md' not in journal)
         check('proposals.md keeps the open section only', read(memory, 'zz/zone/proposals.md') == '# Proposals\n\n## one\n\nStill open.\n\n')
         check('the done file moved whole to logs', os.path.exists(os.path.join(memory, 'zz/logs/old.md')) and not os.path.exists(os.path.join(memory, 'zz/zone/work/done/old.md')))
         check('its box stayed in it', '- [x] finished long ago' in read(memory, 'zz/logs/old.md'))

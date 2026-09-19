@@ -28,10 +28,11 @@ def clauses_for(name, text, in_logs):
     """Every clause one file earns, from the patterns that hit it. No box inside a logs folder is
     counted: the journal there is where finished items end up, and a done file moved there holds
     its boxes as a record. Nor is a decided pac: logs/decisions.md is the rationale's home, and the
-    process leaves it alone."""
+    process leaves it alone. Nor is a box in learn.md: a ticked one is a correction waiting for
+    record's hand, not finished work."""
     lines = text.split('\n')
     found = []
-    checked = 0 if in_logs else sum(1 for l in lines if re.match(r'^\s*- \[x\]', l, flags=re.I))
+    checked = 0 if in_logs or name == 'learn.md' else sum(1 for l in lines if re.match(r'^\s*- \[x\]', l, flags=re.I))
     if checked:
         found.append(f'{checked} done')
     if name == 'proposals.md':

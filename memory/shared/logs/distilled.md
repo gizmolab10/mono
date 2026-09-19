@@ -63,3 +63,5 @@ Every lesson that became a rule: the pattern of mistake and the guide its rule w
 | Said stand and land after being told | `banned words` in `conventions.md` — already covered |
 | Drawer for the renderer | `memory/ai/truth/banned words.md` and ai's lexicon |
 | A true premise carrying an untested conclusion | `pitfalls.md` #1 — already covered |
+| A placeholder written bare, `<X>` outside backticks | `conventions.md` Response 12 — "A placeholder sits in backticks", 19 September 2026 |
+| A big done folder moved whole into logs, unannounced | `shorthand.md`, the `record` row — a merge step or a sub-folder first, and say what is about to move, 19 September 2026 |
