@@ -62,7 +62,7 @@ A rule in three files is three wordings, and no reader can tell whether they dif
 
 - [exclude](collaborate/exclude%20from%20maps.md) (8 lines of body) — three folder names and one sentence. Missing: why each is skipped, and what breaks when one is not.
 - [port](develop/port.md) — the three steps and a template. Missing: a worked example from a real port, what went wrong in it, and how to tell the port matches the original.
-- [limitations](philosophy/limitations.md) — names three failure modes and says outright, in its own last section, that naming is not enough to catch one in the act. Missing: the symptom each one shows on the surface.
+- [limitations](limitations.md) — names three failure modes and says outright, in its own last section, that naming is not enough to catch one in the act. Missing: the symptom each one shows on the surface.
 - [constants](develop/constants%20and%20subtypes.md) and [conceptual composition](develop/conceptual%20composition.md) — both carry an empty brief, so neither says what it is for before it is opened.
 
 ### Partial — substance present, an obvious gap on first use
@@ -111,7 +111,7 @@ A reader following [migrate](develop/migrate.md) reaches line 84 and has nothing
 
 ### Medium — the same mistakes come round again
 
-Naming a failure mode is not enough to spot one happening. [limitations](philosophy/limitations.md) says so itself.
+Naming a failure mode is not enough to spot one happening. [limitations](limitations.md) says so itself.
 
 ### Lower — porting reinvents its own process
 
@@ -160,7 +160,7 @@ Seven, each holding one kind of guidance.
 
 ### philosophy — why the work is shaped this way
 
-- [limitations](philosophy/limitations.md) — the failure modes co falls into, named so they can be spotted early.
+- [limitations](limitations.md) — the failure modes co falls into, named so they can be spotted early.
 - [logic driven design](philosophy/logic%20driven%20design.md) — rules, tests and code in lock-step, so drift is caught by the build.
 - [use ai](philosophy/use%20ai.md) — let structure emerge, keep work files raw, distill guides out of them.
 

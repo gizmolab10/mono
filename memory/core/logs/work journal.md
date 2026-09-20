@@ -106,7 +106,7 @@ A stack owns the gaps between its sections and draws a line centred in each one.
 
 **A word lent to a line was never given back.** A caller builds its fold word out of sight and the line takes it. When that line went, the word was taken off the page and left there — so the hits manager let its target go for good, and the word sat on screen answering nothing. It goes back to where it was built now.
 
-[sections](../../shared/truth/develop/sections.md) holds the design. [sections spec](../../shared/truth/develop/sections%20spec.md) holds the instructions for putting it into di, ji and ws.
+[sections](../truth/sections.md) holds the design. [sections spec](../truth/sections%20spec.md) holds the instructions for putting it into di, ji and ws.
 
 ## 2026-08-17 — five words for how soon
 

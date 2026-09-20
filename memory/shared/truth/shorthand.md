@@ -78,8 +78,6 @@ Short commands and abbreviations for working with co. URLs relative to the mono 
 | Letter    | Meaning                                                                                                                                                                                                            |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `g`       | go                                                                                                                                                                                                                 |
-| `q`       | quit — stop the current thing, recording nothing more                                                                                                                                                              |
 | `r`       | refreshed — Jonathan has reloaded the app so the case is reproduced; read the diagnostic log myself and report the finding (never ask him to read it)                                                              |
-| `S`       | skip — leave the thing under discussion alone and stop working on it. Nothing is written, nothing is asked; the next request begins where it begins                                                                |
 | `v`, `v:` | visual report. The user just looked at the app; if what follows is "good" or "perfect" or "done" interpret this as a sign off. anything else is a criticism. "egads" indicates extreme disappointment and distrust |
 

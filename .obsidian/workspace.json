@@ -8,31 +8,17 @@
         "type": "tabs",
         "children": [
           {
-            "id": "b5161f9a05d80776",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "memory/shared/zone/drafted guide rules.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "drafted guide rules"
-            }
-          },
-          {
             "id": "4b01382c2908e087",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/truth/shorthand.md",
+                "file": "memory/shared/logs/work journal.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "shorthand"
+              "title": "work journal"
             }
           },
           {
@@ -41,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/logs/decisions.md",
+                "file": "memory/shared/truth/workflow.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "decisions"
+              "title": "workflow"
             }
           },
           {
@@ -55,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/drive.md",
+                "file": "memory/shared/truth/finished.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "drive"
+              "title": "finished"
             }
           },
           {
@@ -76,9 +62,37 @@
               "icon": "lucide-file",
               "title": "write the code debt"
             }
+          },
+          {
+            "id": "a68197d23f746209",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/truth/agency.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "agency"
+            }
+          },
+          {
+            "id": "8da70a26c6a84f16",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/truth/conventions.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "conventions"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -215,7 +229,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/logs/decisions.md",
+                "file": "memory/shared/truth/conventions.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -253,49 +267,48 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e2e95c836e3c79e6",
+  "active": "8da70a26c6a84f16",
   "lastOpenFiles": [
-    "memory/shared/logs/distilled.md",
-    "memory/shared/logs/finished.md",
-    "memory/shared/logs/decisions.md",
-    "memory/shared/logs/remember.md",
-    "memory/shared/zone/collisions.md",
-    "memory/shared/logs/january.2026.md",
-    "memory/shared/zone/learn.md",
-    "memory/shared/logs/log.md",
-    "memory/shared/logs/README.md",
     "tools/hub/ai.db-journal",
-    "memory/shared/logs/old repo notes.md",
-    "memory/shared/logs/fix-links tools.md",
-    "memory/shared/logs/REORGANIZATION.md",
-    "memory/shared/logs/PHASE2-MINIMIZED.md",
-    "memory/shared/logs/PHASE2-FINAL.md",
-    "memory/shared/logs/PHASE2-COMPLETE.md",
-    "memory/shared/logs/PHASE1-RESULTS.md",
-    "memory/shared/logs/PHASE1-FINAL.md",
-    "memory/shared/logs/PHASE1-COMPLETE.md",
-    "memory/shared/logs/FIXTURES-RELOCATED.md",
-    "memory/shared/logs/FINAL-ORGANIZATION.md",
-    "memory/shared/logs/CLAUDE-MD-UPDATED.md",
-    "memory/shared/logs/test-links.md",
-    "memory/shared/logs/file-b.md",
-    "memory/shared/logs/file-a.md",
-    "memory/shared/logs/test-moved.md",
-    "memory/shared/logs/HOW-TO-TEST.md",
+    "memory/shared/truth/agency.md",
+    "memory/shared/zone/drive.md",
+    "memory/shared/zone/garolous truths.md",
+    "memory/shared/truth/finished.md",
+    "ws/src/manual/plugin/index.md",
+    "ws/src/manual/plugin/bubble.plugin.md",
+    "ws/src/manual/user/index.md",
+    "ws/src/manual/user/8.preferences.md",
+    "ws/src/manual/user/7.import.export.md",
+    "ws/src/manual/user/6.search.md",
+    "ws/src/manual/user/5.details.panel.md",
+    "ws/src/manual/user/4.working.with.items.md",
+    "ws/src/manual/user/3.the.graph.md",
+    "ws/src/manual/user/2.getting.started.md",
+    "ws/src/manual/user/1.what.is.webseriously.md",
+    "ws/src/manual/plugin",
+    "ws/src/manual/user",
+    "ws/src/manual/index.md",
+    "ws/src/manual",
+    "memory/di/truth/project/philosophy/logic driven design.md",
+    "memory/ji/truth/setup/manually install AnythingLLM.md",
+    "memory/core/truth/hits system.md",
+    "memory/core/truth/sections spec.md",
+    "memory/core/truth/sections.md",
+    "memory/di/archive/research/index.md",
+    "memory/di/archive/research/library versioning.md",
+    "memory/di/archive/research/dimensionals research.md",
+    "memory/di/archive/research/occlusion performance.md",
+    "memory/di/archive/research",
+    "memory/di/archive",
+    "memory/shared/truth/artwork/workflow.svg",
     "memory/shared/truth/artwork/cadence.svg",
     "tools/hub/ov.restored.db-journal",
     "ai/src/lib/ts/tests/drawings.test.ts",
     "ai/src/lib/ts/utilities/Drawings.ts",
-    "memory/shared/truth/artwork/workflow.svg",
     "memory/shared/zone/artwork/cadence.svg",
     "memory/shared/truth/artwork",
     "memory/shared/zone/artwork/workflow.svg",
     "memory/shared/zone/diagrams.svg",
-    "memory/shared/zone/artwork",
-    "memory/shared/zone/untitled folder",
-    "ai/dist/index.html",
-    "ai/dist/assets/index-D__9UGQu.css",
-    "ai/dist/assets/index-BSWOLbnv.js",
     "lv/dist/assets/lcv.label-CyYn_a6Q.png",
     "lv/dist/assets/icon-DQ-Yu_V3.png",
     "lv/dist/assets/Vyd_2014_0321_Haley-29NNKbHz.jpg",

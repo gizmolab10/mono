@@ -59,7 +59,7 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **propose** — describe the plan and stop. A question is not an order.
 - **go** — the word that turns a proposal into work. So do solve, impl, proceed, create, rewrite.
 - **think mode** — the default: read, search, describe, propose. Nothing is changed.
-- **the gate** — what co shows before acting, so a skipped check is visible.
+- **required** — a statement that must be true before co acts, shown in the reply so a skipped check is visible. Also *check*. Not: gate, gated.
 
 ## Saying what is true
 

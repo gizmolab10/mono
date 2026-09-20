@@ -12,6 +12,9 @@ A library with no entry point, carved out of ov: what every mono app can share. 
 - [scope.md](truth/scope.md) — what belongs in core and what deliberately does not.
 - [claude-files.md](memory/core/truth/claude-files.md) — how CLAUDE files are listed, placed, read, and written.
 - [action type.md](memory/core/truth/action%20type.md) — the type that hands Separator more than one title, each with its handler and its position.
+- [sections.md](truth/sections.md) — the sections stack, core's design; from shared's truth/develop, 19 September 2026.
+- [sections spec.md](truth/sections%20spec.md) — the same design written as porting steps for di, ji and ws; from shared's truth/develop, 19 September 2026, to merge into sections.md.
+- [hits system.md](truth/hits%20system.md) — the hits manager; from shared's truth/develop, 19 September 2026.
 - `design/` — the format, the goals, and how the editing works; moved whole from `notes/guides/design/`, unsorted.
 - `project/` — the file map and what the app can do; moved whole from `notes/guides/project/`, unsorted.
 

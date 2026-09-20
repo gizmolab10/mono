@@ -5,5 +5,4 @@ Hey. For my own sanity and to save immense time composing queries for AI, I aske
 ## Contents
 
 - [Gotchas](./gotchas.md)
-- [Style](./style.md)
 

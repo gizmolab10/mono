@@ -1,6 +1,6 @@
 # Finished
 
-One place that says where finished work sits, across every project, without reading every file. `tools/finished.py` writes it: [finished.md](../logs/finished.md), one line per memory file that holds finished work. The shorthand `finished` runs the script and replies with the count of lines it prints and the file's path. A twin of [write the code debt](write%20the%20code%20debt.md), decided 15 September 2026 from [proposal for finished](../zone/proposal%20for%20finished.md).
+One place that says where finished work sits, across every project, without reading every file. `tools/finished.py` writes this file, one line per memory file that holds finished work. The shorthand `finished` runs the script and replies with the count of lines it prints and the file's path. A twin of [write the code debt](write%20the%20code%20debt.md), decided 15 September 2026 from [proposal for finished](../zone/proposal%20for%20finished.md).
 
 ## The row
 

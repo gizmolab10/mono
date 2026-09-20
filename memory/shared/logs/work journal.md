@@ -7,6 +7,113 @@
 
 ---
 
+## 2026-09-19 — zone/proposals.md regrouped: two big sections, the shape of a pac, file names and truth names
+
+Jonathan's asks, built the same afternoon. Two big sections: proposed and not implemented, the 2 proposals, and investigations, every pac, each item one heading level down and newest first. Each pac took the shape he gave the first: the date out of the heading onto a **pac** line, one paragraph each for what exists, For, Against and the deciding question, the labels bold. Every file name in body prose in backticks, two-word names whole; a truth file with one home written as a wikilink, names with more than one home left in backticks. Two of his edits that changed meaning were reported and left: hub-app.md as [[hub-app]], and the file name add a file.md read as the words add a markdown file. The three tools that count proposal sections split on the second-level heading and now see two sections in shared's file, unchanged; the drive shorthand row still says a `##` section.
+
+## 2026-09-19 — the sorting of the 142 guides leaves the drive, batch B decided, merge 1 at v
+
+The drive from the afternoon of 19 September 2026 until the four words took its place. Batch A built; batch B ticked by Jonathan, its first merge, chat into conventions and agency, written and waiting at v; the rest unbuilt. Kept whole below, ticks and all.
+
+## sort the 142 guides now sitting unsorted in truth/
+
+**pac** 7 September 2026
+
+The move is done — all 19 `notes/guides/` sub-folders are in their project's `truth/`, links re-pointed, tests green — but every guide entered whole, none merged, archived or deleted. What remains is the sorting, weighed folder by folder in [ov's zone/consolidate.md](../zone/per-guide%20fates.md): of 142, 91 stay in truth as they are, 17 merge into a truth that already holds their topic and are deleted, 22 move to archive, 6 to zone, ws's 9 manuals leave memory for `ws/src/manual/`, 6 die. Each fate lands a D: line in its project's log; the handbook's test decides a doubtful one — a truth states one current design and is its only home, history goes to archive, what the memory system replaced dies.
+
+**For**: the guides are the last of the old notes, and an unsorted truth/ with 142 files in it hides the truths that matter among plans carried out and things since replaced; the sorting is a reading task, no code, the folder-by-folder call already drafted.
+
+**Against**: 17 hand-merges and 6 deletions are judgment that a second reading can move a file across a line, so each wants Jonathan's visual feedback before it is irreversible; nothing is broken while they sit unsorted, so the cost of waiting is only clutter.
+
+**Answers** (to the two questions that [[consolidate]] leaves open)
+    1. YES: the 17 merges happen when each guide is moved into truth/, each a hand merge.
+    2. YES: shortened when moved into truth/ (62 of the 91 truths are over the ~100-line limit — [[style guide]] 595, ws's `components.md` 926)
+
+**Current status:** decided 19 September 2026, both answers YES: each guide is merged or shortened at the moment it is moved. 
+
+Batch A done the same day, the reversible fates: 31 files moved through the dispatcher, 11 of shared's truths to shared/archive, ws's four to its archive and four to its zone, style to ws's truth, di's early spec and research folder to a new di/archive, sections, sections spec and hits system to core's truth, manually install AnythingLLM to ji's, logic driven design to di's; ws's twelve manual files out of memory into ws/src/manual; links re-pointed in 17 files, the source indexes' lines dropped, one D: line in each of five logs. 
+
+Batch B has Jonathan's word, each irreversible: 
+- [x] 7 merges
+    - [x] chat -> conventions and agency
+    - [x] expectations, context filters and jonathan -> conventions
+    - [x] taste -> a new section in aesthetics
+    - [x] sections spec -> sections
+    - [x] unit testing and running e2e tests -> test/testing
+    - [x] pitfalls, limitations and ws's gotchas -> lessons, which stays in truth/develop (decided 19 September 2026)
+    - [x] ov - goals -> ai's scope then archive
+- [x] 5 deletions
+    - [x] keep shop
+    - [x] di's update guides
+    - [x] core's three byte-identical copies of ai's okf
+    - [x] editing and compose an email
+    - [x] written as [[garolous truths]] — the shortening of the truths over 100 lines
+- [x] Two fates are dead
+    - [x] workflow.md is the live workflow since cadence merged into it today
+    - [x] cadence.md is gone.
+
+## 2026-09-19 — zone/drive.md: the report kept below its current state, replaced by the drive
+
+Written 19 September 2026 in Jonathan's words after he asked for a report; below the Current state paragraph until the sorting of the 142 guides became the drive.
+
+I asked for a report and got --
+
+1. **Where we are.** At v on the cadence work. Your verdict is a criticism, so it is sent back, and go waits on what you write.
+2. **What cadence.md holds.** The rhythm, who does what, propose-first, asking versus telling, the v sentence, a table of seven items, built work, proposal, drive, pac, decision, idea, draft guide rule, and the draft guide rules section. cadence.svg draws the turn-taking and those seven as lanes.
+3. **What workflow holds that cadence does not.** The cycle's eight steps, start, debt, cadence, go, v, record, consolidate, commit. The any-time tasks, learn, finished, check, cleanup, define, pause. Seven items cadence never draws: checkbox item, plan step, question, log line, done folder file, working feature row, truth.
+4. **What waits.** Record: three built proposals to journal, past present and concrete, drive, and v. Two corrections in zone/learn.md, unticked. Consolidate: shared's log has every line since the 17 September marker. The 23 drafts, still prose in three truth files. The 35 open pacs now sections in shared's proposals.md.
+5. **What is gone.** The 67 log lines the morning's consolidate deleted, in git only.
+
+I then asked that the log be reassembled from git.
+
+## 2026-09-19 — Always rule 10: "huh?" suspends the rules
+
+Jonathan rewrote conventions.md section 10 in his own words, then asked for a pac on letting "huh?" override Always, since its rule 4 said ignore ALL the guide rules. Decided and built: Always gets rule 10, on "huh?" the reply is rewritten under a few rules only, and section 10's rule 4 goes. Jonathan rewrote rule 10, then took three fixes from a chime: Standard technical English first stays on, five rules; every other rule of this file is suspended, agency's rules stay on; Mechanism, not story with its comma. Approved at v: good. The pac is a dated line under Evaluations in decisions.md.
+
+## 2026-09-19 — cadence.md merged into workflow.md, workflow.svg approved
+
+Proposed after the svg was renamed: workflow.md takes cadence.md whole after its opening line, its own short Cadence section going as a twin; cadence.md deleted through the dispatcher; the two pointers, the shared index and the collaborate index, say workflow.md. Built on Jonathan's go: three links moved one folder up, the opening line points at the sections below and at workflow.svg, drive.md's current state says so, one decision line. workflow.svg, the cycle drawn vertical that morning, one turn back and forth, the eight steps a column, was approved at v: excellent. workflow.md stays at v, waiting on Jonathan's writing.
+
+## 2026-09-19 — zone/drafted guide rules.md deleted, its table of the 23 drafts kept here
+
+Proposed 15 September 2026, decided 18 September: its section is the Draft guide rules section of workflow.md, since cadence.md merged in today. The rest of the file, kept here before the file went: the 23 drafts of 15 September, still co's prose in three truth files, and the breakdown of 16 September with its one undecided approach. Of the four changes the proposal named, one was done, the learn row, and three were not: the lexicon's guide rule and draft guide rule, the 23 drafts as checkbox lines, and the debt check. Their fate is a question in zone/questions.md.
+
+### The 23 drafts
+
+| Rule                                           | Synopsis                                                                                                       | Where it sits                  |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| A why is one sentence naming the cause         | "In the search input field, 'increment' got in the way." Mechanism and proof wait to be asked for.             | conventions.md, Response 10    |
+| One word when one settles it                   | "Do I need to restart?" gets yes or no.                                                                        | conventions.md, Response 10    |
+| A part-answer covers its part                  | The rest of the question stays open and unmentioned.                                                           | conventions.md, Response 10    |
+| No evidence beside the answer                  | "I can prove this," nothing more.                                                                              | conventions.md, Response 10    |
+| On "huh?", cut                                 | Never add an example, a mechanism or a guard.                                                                  | conventions.md, Response 10    |
+| Statement first, then the how                  | Two branches of one rule take the same grammar.                                                                | conventions.md, Response 11    |
+| Name what a wording does to the reader         | "Distracts and dilutes," never "adds no fact."                                                                 | conventions.md, Response 11    |
+| A dead thing is said to be dead                | One word, "an abandoned older rule," so nobody hunts for it.                                                   | conventions.md, Response 11    |
+| Name a part by what it does                    | Never flag, branch or if for the thing itself; where two pieces of code meet, say api and table the functions. | conventions.md, Response 11    |
+| Configuration, choice or option, never switch  | Build-time values are configuration; a runtime pick is a choice or an option. Error, never slip.               | conventions.md, Response 11    |
+| The code's word wins                           | Label stayed over nine words that felt better.                                                                 | conventions.md, Response 11    |
+| A name says what the reader does               | adopt kb, not hand-over; a heading read alone says its subject.                                                | conventions.md, Response 11    |
+| A banned row applies to a sense                | Room to spare stays; gap replaces room only for empty space.                                                   | conventions.md, Response 11    |
+| One list, numbered through                     | The next step is the line below; steps and substeps, never lists naming each other.                            | collaborate/write a plan.md, 1 |
+| A question is a substep before the work        | Bold question; its answer goes where the question was, and the question goes.                                  | write a plan.md, 2             |
+| Gather, then remove the redundant              | Scattered steps and questions into one section, the leftovers cut.                                             | write a plan.md, 3             |
+| One idea per bullet                            | Nested under the thing it details.                                                                             | write a plan.md, 4             |
+| Issue, fix, what the fix makes                 | The order a step opens with.                                                                                   | write a plan.md, 5             |
+| A risk is what the step avoids                 | Never a level the step wears; a risk not yet present names its when.                                           | write a plan.md, 6             |
+| What is, never what would have been            | The road not taken lives in decisions.md.                                                                      | write a plan.md, 7             |
+| A file with a row moves through the dispatcher | Never git mv; left alone three seconds before an edit, or the row goes missing with its labels.                | pitfalls.md, 22                |
+| A headless press acts on the file on screen    | Read the page's log line naming it first; press on a throwaway file.                                           | pitfalls.md, 23                |
+| A browser fault is found in a browser          | When python and curl work, run the page headless and read what it did.                                         | pitfalls.md, 24                |
+
+### The breakdown, declared 16 September 2026
+
+1. **What was being attempted.** Distill the learn log's 35 entries into rules in the guides.
+2. **The objective, in Jonathan's words.** "Can't add stuff to truth." The lessons become guide lines he has made his; nothing co wrote sits in truth undecided.
+3. **The guess it rested on.** That learn.md's Process, write a rule and add it to the guide, outranks the workflow's growth rule, one line in Jonathan's words replacing a close one, and the handbook's definition of a truth, the decided design. Co did not look for a close line to replace.
+4. **What that made.** A violation of the growth rule and of what a truth is, and a collision between learn.md's Process and the workflow. Resolved 17 September 2026: learn.md's step 3 writes corrections.md now.
+5. **One approach, undecided.** Take the 23 lines back out of the three truth files, delete write a plan.md, and keep them as the table above, where Jonathan rewrites each into its guide when he chooses. Proved wrong if any of the 23 was already his, or if a guide line he had accepted goes with them.
+
 ## 2026-09-19 — logs/handoff.md folded in, the resume point of an old chat
 
 ### Handoff — from handoff.md, merged 19 September 2026

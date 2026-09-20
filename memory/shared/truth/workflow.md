@@ -1,12 +1,52 @@
 # Workflow
 
-See [motive.md](use%20ai.md) for the origin story and philosophy behind this system. See [[development states]] for details about how work (ahem) flows.
+See [motive.md](../archive/use%20ai.md) for the origin story and philosophy behind this system. How work (ahem) flows, step by step, is below, drawn in [workflow.svg](artwork/workflow.svg): one turn, back and forth, the eight steps a column, each step a row with the command, the act and the items it moves. cadence.md merged in here 19 September 2026.
 
-## development states
+## The rhythm
 
-What we are doing, in order, and the tasks that run at any time. What each item is, with its states and the mark of each, is the third table.
+**Turn-taking**. Jonathan moves, co responds, Jonathan reads, Jonathan decides, co acts. Baby steps. Forward progress made out of small, careful, deliberate moves — not sweeping leaps. Each move is well-considered before it happens. **BAD**: Reconsidering afterwards is slow and prone to going in circles.
 
-### the cycle, in order
+i think cadence is much simpler -> just back and forth. each receives and then gives. co receives commands and acts and then gives results. jonathan gives commands and receives the results. simple.
+
+the commands vary among a set described in [[shorthand]], a file that also describes co's action. Jonathan chooses a command that moves the project forward carefully.
+
+**v** is the look at what co built, after co acts and before record: good, perfect or done approves it, and anything else is a criticism that sends it back to go.
+
+## One turn, back and forth
+
+Each step is the same shape: Jonathan gives a command, co acts, co gives the result. The command is a word from [shorthand](shorthand.md).
+
+1. **start.** The command: `/p`, or the first words of the session. Co orients: the indexes, the handbook, the lexicon, the truths that match. Co gives back two lines, the current state and the truths loaded.
+2. **debt.** The command: `debt`, or `/cd`. Co writes code debt.md. Jonathan picks one thing from it.
+3. **cadence.** The commands: `pac`, `proposal`, `where`, `d`, `drive X`. Co reads and proposes, one line per thing that changes; a pac is a section in zone/proposals.md. Jonathan decides: `d` writes a dated line in logs/decisions.md and a D: line in the log. Nothing is built yet.
+4. **go.** The command: `go`, or `drive`. Co builds what was decided, tests it, and says done only when it works. A plan step, a checkbox item or a question moves. Co gives back what changed and what was measured.
+5. **v.** The command: `v`, then one word. good, perfect or done approves. Anything else is a criticism, and the work goes back to go.
+6. **record.** The command: `record`. Co moves ticked items and decided proposals into the work journal, ticked corrections into their truths with a row in distilled.md, and done files into logs. Co gives back what moved.
+7. **consolidate.** The command: `consolidate`. Co settles every log line since the marker into its home and moves the marker, deleting nothing. Co gives back the manifest.
+8. **commit.** Jonathan's, in git.
+
+At any time: `learn` captures a correction in zone/learn.md; `finished`, `check`, `cleanup`, `define`, `pause` and `full log` run when asked.
+
+## What each of us wants
+
+- Jonathan: small moves; one word to approve; the picture before the prose; no explanation until asked; every twist and turn kept in the logs.
+- Co: one clear ask per turn; a go before anything changes; a criticism that names the fault, not the fix; the word the code or the lexicon already has.
+
+## Who does what
+
+Jonathan is the visual observer and the decider. He frames the question, judges the result, and directs the next move. He trusts his eyes over the code.
+
+Co is the researcher, the investigator, the proposer, and — on explicit green light — the builder. Co's capabilities include reading widely, searching, proposing, explaining, and making code changes. Co **NEVER** uses these capabilities without being asked.
+
+## Propose-first
+
+"Propose" means describe a plan and do **nothing** else. It is not a soft go-ahead. The only exception is actions Jonathan has already asked for in the same turn — a skill argument like "and update handoff" is an explicit ask, so it runs immediately alongside the proposal. Code changes still wait for a **go**.
+
+## Asking versus telling
+
+Questions about method — "how will you do X?" — are questions, not orders. The literal answer is a description, not the action. Co should describe and wait.
+
+## The cycle, in order
 
 | step | who | what happens | tasks run | items that change state |
 | --- | --- | --- | --- | --- |
@@ -14,12 +54,12 @@ What we are doing, in order, and the tasks that run at any time. What each item 
 | debt | Jonathan | selects something from code debt.md | debt | none |
 | cadence | both | pac, where, propose, decide: Jonathan frames and decides, co reads and proposes | pac, where, propose, d, drive | proposal open → decided or culled; pac open → decided; decision made; drive present → implemented → a feature or journaled |
 | go | co | builds what was decided, tests before saying done | go | plan step open → built; checkbox item open → done; question asked → answered |
-| v | Jonathan | looks at the screen: good, perfect or done is a sign-off, anything else a criticism | v | working feature row untried → tried |
+| v | Jonathan | looks at the screen: good, perfect or done is a sign-off, anything else a criticism | v | built work built → approved or sent back; working feature row untried → tried |
 | record | co | moves done items to the work journal, rewritten corrections to their truths with a row in distilled.md, done files to logs | record | checkbox item and plan step done → journaled; correction rewritten → placed; done folder file → in logs; proposal decided → journaled |
 | consolidate | co | settles every log line since the marker into its home, the marker moved, nothing deleted; no commit | consolidate | log line new → settled; question answered → logged; idea kept → promoted or culled; decision live → final |
 | commit | Jonathan | commits memory | none | none |
 
-### at any time
+## At any time
 
 | task | who | what happens | items that change state |
 | --- | --- | --- | --- |
@@ -31,10 +71,11 @@ What we are doing, in order, and the tasks that run at any time. What each item 
 | define | co | a lexicon entry and its D: line | lexicon entry → defined |
 | pause, mothball | co | the current context written down, to pick up later | none |
 
-### items and their states
+## The items and their states
 
 | item | where it lives | states | marks |
 | --- | --- | --- | --- |
+| built work | on screen, or in its file | built, approved or sent back | go builds it; v approves it, and record journals it, or sends it back, and go builds it again |
 | checkbox item | ideas.md, a work note | open, done, journaled | `- [ ]`, `- [x]`, moved into the work journal |
 | plan step | the plan | open, built, journaled | `- [ ]`, `- [x]` with a Built note, moved into the work journal |
 | correction | zone/learn.md | captured, rewritten, placed | `- [ ]` in co's words, `- [x]` in Jonathan's words, moved into its truth with a row in logs/distilled.md |
@@ -49,17 +90,13 @@ What we are doing, in order, and the tasks that run at any time. What each item 
 | drive | zone/drive.md | present, implemented, a feature or journaled | the file; its plan built by `drive` or `go drive`; the proposal rewritten as a working features row when it is an app feature, or else a work journal entry saying what changed and why |
 | truth | truth/ | current, archived, dead | the file; in archive/; deleted, git remembering |
 
-## Cadence
+## Draft guide rules
 
-Turn-taking. Jonathan moves, co responds, Jonathan reads, Jonathan decides, co acts. Forward progress made out of small, careful, deliberate moves — not sweeping leaps.
+A draft guide rule is born from a correction Jonathan made —> a checkbox item describing what co does or should do goes into [learn](../zone/learn.md), shared's or the project's own.
 
-**Roles**
-    Jonathan frames the question and decides about proposals and visual feedback.
-    Co researches, analyzes, proposes. In small increments. Tests, code, request visual feedback.
+Jonathan reads it, working through each new entry, rewriting until it can become a truth. He checks it off.
 
-Co's query-response is best for Jonathan if it is precise, concise, and easy to comprehend. Long responses are wasted on him. Explanations irrelevant until asked for.
-
-Living notes at [[cadence]].
+During the next `record` call, co will process all the checked off items, moving each into its truth and the work journal.
 
 ## One truth, one place
 

@@ -1,36 +1,162 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="680" height="600" viewBox="0 0 680 600">
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="840" viewBox="0 0 1400 840">
 <defs><marker id="head" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 z" fill="#5f5e5a"/></marker></defs>
-<g font-family="system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="500">
-<line x1="403.5" y1="116.3" x2="424.9" y2="125.2" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<line x1="502.0" y1="184.1" x2="536.5" y2="267.5" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<line x1="536.5" y1="332.5" x2="502.0" y2="415.9" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<line x1="424.9" y1="474.8" x2="403.5" y2="483.7" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<line x1="276.5" y1="483.7" x2="255.1" y2="474.8" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<line x1="178.0" y1="415.9" x2="143.5" y2="332.5" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<line x1="143.5" y1="267.5" x2="178.0" y2="184.1" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<line x1="255.1" y1="125.2" x2="276.5" y2="116.3" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
-<rect x="282.0" y="63.0" width="116" height="54" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
-<text x="340.0" y="86.0" text-anchor="middle" dominant-baseline="central" fill="#3c3489">start</text>
-<text x="340.0" y="105.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#3c3489">co</text>
-<rect x="430.5" y="124.5" width="116" height="54" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
-<text x="488.5" y="147.5" text-anchor="middle" dominant-baseline="central" fill="#085041">debt</text>
-<text x="488.5" y="166.5" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#085041">Jonathan</text>
-<rect x="492.0" y="273.0" width="116" height="54" rx="12" fill="#fbeede" stroke="#b45f06" stroke-width=".5"/>
-<text x="550.0" y="296.0" text-anchor="middle" dominant-baseline="central" fill="#7a3f02">cadence</text>
-<text x="550.0" y="315.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#7a3f02">both</text>
-<rect x="430.5" y="421.5" width="116" height="54" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
-<text x="488.5" y="444.5" text-anchor="middle" dominant-baseline="central" fill="#3c3489">go</text>
-<text x="488.5" y="463.5" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#3c3489">co</text>
-<rect x="282.0" y="483.0" width="116" height="54" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
-<text x="340.0" y="506.0" text-anchor="middle" dominant-baseline="central" fill="#085041">v</text>
-<text x="340.0" y="525.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#085041">Jonathan</text>
-<rect x="133.5" y="421.5" width="116" height="54" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
-<text x="191.5" y="444.5" text-anchor="middle" dominant-baseline="central" fill="#3c3489">record</text>
-<text x="191.5" y="463.5" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#3c3489">co</text>
-<rect x="72.0" y="273.0" width="116" height="54" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
-<text x="130.0" y="296.0" text-anchor="middle" dominant-baseline="central" fill="#3c3489">consolidate</text>
-<text x="130.0" y="315.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#3c3489">co</text>
-<rect x="133.5" y="124.5" width="116" height="54" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
-<text x="191.5" y="147.5" text-anchor="middle" dominant-baseline="central" fill="#085041">commit</text>
-<text x="191.5" y="166.5" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#085041">Jonathan</text>
+<g font-family="system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="500">
+<text x="150" y="28.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#085041">Jonathan gives</text>
+<text x="340" y="28.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#3c3489">co acts, gives back</text>
+<text x="540" y="28.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#5f5e5a">what moves</text>
+<rect x="66.0" y="51.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="66.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">start</text>
+<text x="150" y="89.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">/p, or the first words</text>
+<rect x="256.0" y="51.0" width="168" height="58" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="340" y="74.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">orients: indexes, handbook,</text>
+<text x="340" y="86.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">lexicon, the truths that match</text>
+<line x1="240.0" y1="80.0" x2="250.0" y2="80.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<line x1="150.0" y1="115.0" x2="150.0" y2="127.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="66.0" y="133.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="148.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">debt</text>
+<text x="150" y="171.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">debt, /cd</text>
+<rect x="256.0" y="133.0" width="168" height="58" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="340" y="156.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">writes code debt.md;</text>
+<text x="340" y="168.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">Jonathan picks one thing</text>
+<line x1="240.0" y1="162.0" x2="250.0" y2="162.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<line x1="150.0" y1="197.0" x2="150.0" y2="209.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="66.0" y="215.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="230.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">cadence</text>
+<text x="150" y="247.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">pac, proposal, where,</text>
+<text x="150" y="258.8" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">d, drive X</text>
+<rect x="256.0" y="215.0" width="168" height="58" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="340" y="238.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">reads and proposes;</text>
+<text x="340" y="250.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">d decides</text>
+<line x1="240.0" y1="244.0" x2="250.0" y2="244.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<line x1="150.0" y1="279.0" x2="150.0" y2="291.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="456.0" y="224.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="540" y="239.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">proposal</text>
+<text x="540" y="253.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">open → decided, culled</text>
+<rect x="634.0" y="224.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="718" y="239.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">pac</text>
+<text x="718" y="253.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">open → decided</text>
+<rect x="812.0" y="224.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="896" y="239.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">decision</text>
+<text x="896" y="253.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">made, dated</text>
+<rect x="990.0" y="224.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="1074" y="239.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">drive</text>
+<text x="1074" y="253.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">present</text>
+<line x1="430.0" y1="244.0" x2="450.0" y2="244.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="66.0" y="297.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="312.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">go</text>
+<text x="150" y="335.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">go, drive</text>
+<rect x="256.0" y="297.0" width="168" height="58" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="340" y="320.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">builds what was decided,</text>
+<text x="340" y="332.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">tests before done</text>
+<line x1="240.0" y1="326.0" x2="250.0" y2="326.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<line x1="150.0" y1="361.0" x2="150.0" y2="373.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="456.0" y="306.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="540" y="321.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">plan step</text>
+<text x="540" y="335.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">open → built</text>
+<rect x="634.0" y="306.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="718" y="321.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">checkbox item</text>
+<text x="718" y="335.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">open → done</text>
+<rect x="812.0" y="306.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="896" y="321.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">question</text>
+<text x="896" y="335.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">asked → answered</text>
+<rect x="990.0" y="306.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="1074" y="321.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">drive</text>
+<text x="1074" y="335.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">present → implemented</text>
+<line x1="430.0" y1="326.0" x2="450.0" y2="326.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="66.0" y="379.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="394.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">v</text>
+<text x="150" y="417.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">v, then one word</text>
+<rect x="256.0" y="379.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="340" y="402.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#085041">good, perfect, done</text>
+<text x="340" y="414.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#085041">approves; else a criticism</text>
+<line x1="240.0" y1="408.0" x2="250.0" y2="408.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<line x1="150.0" y1="443.0" x2="150.0" y2="455.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="456.0" y="388.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="540" y="403.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">built work</text>
+<text x="540" y="417.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">built → approved, sent back</text>
+<rect x="634.0" y="388.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="718" y="403.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">working feature row</text>
+<text x="718" y="417.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">untried → tried</text>
+<line x1="430.0" y1="408.0" x2="450.0" y2="408.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="66.0" y="461.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="476.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">record</text>
+<text x="150" y="499.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">record</text>
+<rect x="256.0" y="461.0" width="168" height="58" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="340" y="484.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">journals, places,</text>
+<text x="340" y="496.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">moves done files</text>
+<line x1="240.0" y1="490.0" x2="250.0" y2="490.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<line x1="150.0" y1="525.0" x2="150.0" y2="537.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="456.0" y="470.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="540" y="485.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">checkbox item, plan step</text>
+<text x="540" y="499.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">done → journaled</text>
+<rect x="634.0" y="470.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="718" y="485.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">proposal</text>
+<text x="718" y="499.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">decided → journaled</text>
+<rect x="812.0" y="470.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="896" y="485.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">correction</text>
+<text x="896" y="499.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">rewritten → placed</text>
+<rect x="990.0" y="470.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="1074" y="485.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">done folder file</text>
+<text x="1074" y="499.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">done → in logs</text>
+<rect x="1168.0" y="470.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="1252" y="485.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">drive</text>
+<text x="1252" y="499.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">implemented → feature, journaled</text>
+<line x1="430.0" y1="490.0" x2="450.0" y2="490.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="66.0" y="543.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="558.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">consolidate</text>
+<text x="150" y="581.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">consolidate</text>
+<rect x="256.0" y="543.0" width="168" height="58" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="340" y="566.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">settles every log line,</text>
+<text x="340" y="578.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#3c3489">moves the marker, deletes nothing</text>
+<line x1="240.0" y1="572.0" x2="250.0" y2="572.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<line x1="150.0" y1="607.0" x2="150.0" y2="619.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="456.0" y="552.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="540" y="567.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">log line</text>
+<text x="540" y="581.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">new → settled</text>
+<rect x="634.0" y="552.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="718" y="567.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">question</text>
+<text x="718" y="581.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">answered → logged</text>
+<rect x="812.0" y="552.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="896" y="567.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">idea</text>
+<text x="896" y="581.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">kept → promoted, culled</text>
+<rect x="990.0" y="552.0" width="168" height="40" rx="12" fill="#f1efe8" stroke="#5f5e5a" stroke-width=".5"/>
+<text x="1074" y="567.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="#444441">decision</text>
+<text x="1074" y="581.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#444441">live → final</text>
+<line x1="430.0" y1="572.0" x2="450.0" y2="572.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<rect x="66.0" y="625.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="150" y="640.0" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="600" fill="#085041">commit</text>
+<text x="150" y="663.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#085041">git</text>
+<rect x="256.0" y="625.0" width="168" height="58" rx="12" fill="#e1f5ee" stroke="#0f6e56" stroke-width=".5"/>
+<text x="340" y="654.0" text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="400" fill="#085041">commits memory</text>
+<line x1="240.0" y1="654.0" x2="250.0" y2="654.0" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<polyline points="60.0,654 38.0,654 38.0,80 60.0,80" fill="none" stroke="#5f5e5a" stroke-width="1" marker-end="url(#head)"/>
+<text transform="translate(30.0,367.0) rotate(-90)" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#5f5e5a">the next turn: back and forth, each receives and then gives</text>
+<text x="150" y="719.0" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="400" fill="#5f5e5a">at any time</text>
+<rect x="66.0" y="735.0" width="168" height="48" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="150" y="750.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3c3489">learn</text>
+<text x="150" y="762.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">a correction captured</text>
+<text x="150" y="773.8" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">in zone/learn.md</text>
+<rect x="244.0" y="735.0" width="168" height="48" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="328" y="750.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3c3489">finished</text>
+<text x="328" y="768.0" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">finished.md written</text>
+<rect x="422.0" y="735.0" width="168" height="48" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="506" y="750.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3c3489">check</text>
+<text x="506" y="762.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">the memory system</text>
+<text x="506" y="773.8" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">audited, nothing fixed</text>
+<rect x="600.0" y="735.0" width="168" height="48" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="684" y="750.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3c3489">cleanup</text>
+<text x="684" y="762.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">after files move,</text>
+<text x="684" y="773.8" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">pointers put right</text>
+<rect x="778.0" y="735.0" width="168" height="48" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="862" y="750.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3c3489">define</text>
+<text x="862" y="762.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">a lexicon entry</text>
+<text x="862" y="773.8" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">and its D: line</text>
+<rect x="956.0" y="735.0" width="168" height="48" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="1040" y="750.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3c3489">pause</text>
+<text x="1040" y="762.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">the context</text>
+<text x="1040" y="773.8" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">written down</text>
+<rect x="1134.0" y="735.0" width="168" height="48" rx="12" fill="#eeedfe" stroke="#534ab7" stroke-width=".5"/>
+<text x="1218" y="750.0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="600" fill="#3c3489">full log</text>
+<text x="1218" y="762.2" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">log.md re-assembled</text>
+<text x="1218" y="773.8" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="400" fill="#3c3489">from git</text>
 </g></svg>

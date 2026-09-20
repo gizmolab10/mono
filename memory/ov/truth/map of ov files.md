@@ -99,7 +99,7 @@ Nothing new is written here; what lives on has entered `truth/` (the lexicon, ac
 - [work/AI memory redesign.md](../../ai/zone/work/AI%20memory%20redesign.md) — the rationale behind the memory system; [handbook.md](../../shared/truth/handbook.md) is its law.
 - [hits manager](../../core/zone/work/soon/hits%20manager.md) — the reckoning behind the one manager that answers the cursor.
 - [mouse ux](../../core/zone/work/soon/mouse%20ux.md) — what a press means when the thing under the cursor changes between pressing and letting go: three faults with one cause, and the two ways out weighed.
-- [sections](../../shared/truth/develop/sections.md) — everything about sections: a stack owns the gaps between them, a separator stands centred in each one, and eleven props become five.
+- [sections](../../core/truth/sections.md) — everything about sections: a stack owns the gaps between them, a separator stands centred in each one, and eleven props become five.
 - [murk journal](../../shared/zone/work/murk%20journal.md) — the running count of replies Jonathan could not read, and the case behind the nine strategies.
 - [assessment of our guides](../../shared/zone/work/assessment%20of%20our%20guides.md), [stale guides](../../ai/zone/work/soon/stale%20guides.md), `work/soon/repair staleness of files.md`, `work/soon/tag drift.md`, `work/soon/organize.md` — the state of the collection itself.
 - Every folder carries its own `index.md` saying what it holds.

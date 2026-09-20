@@ -1,6 +1,6 @@
-# Finished (1874)
+# Finished (1869)
 
-64 files hold finished work, as of 2026-09-19.
+62 files hold finished work, as of 2026-09-19.
 
 ## ai (2)
 
@@ -17,11 +17,10 @@
 | t | [design/ov - goals.md](../../core/truth/design/ov%20-%20goals.md) | 27 done |
 | z | [work/soon/repair staleness of files.md](../../core/zone/work/soon/repair%20staleness%20of%20files.md) | 15 done |
 
-## di (1370)
+## di (1366)
 
 | z/t | file | finished |
 | --- | --- | --- |
-| t | [project/research/occlusion performance.md](../../di/truth/project/research/occlusion%20performance.md) | 4 done |
 | z | [work/done/article.first.draft.md](../../di/zone/work/done/article.first.draft.md) | 2 done |
 | z | [work/done/quaternions.md](../../di/zone/work/done/quaternions.md) | 7 done |
 | z | [work/done/rotation.md](../../di/zone/work/done/rotation.md) | 13 done |
@@ -84,16 +83,15 @@
 | --- | --- | --- |
 | z | [proposals.md](../../ov/zone/proposals.md) | 1 proposal settled |
 
-## ws (333)
+## ws (332)
 
 | z/t | file | finished |
 | --- | --- | --- |
 | t | [architecture/core/hits.md](../../ws/truth/architecture/core/hits.md) | 9 done |
 | t | [architecture/core/styles.md](../../ws/truth/architecture/core/styles.md) | 6 done |
-| t | [architecture/internals/layout.md](../../ws/truth/architecture/internals/layout.md) | 9 done |
 | t | [architecture/internals/timers.md](../../ws/truth/architecture/internals/timers.md) | 7 done |
-| t | [architecture/platforms/svelte.5.md](../../ws/truth/architecture/platforms/svelte.5.md) | 1 done |
 | t | [architecture/ux/breadcrumbs.md](../../ws/truth/architecture/ux/breadcrumbs.md) | 41 done |
+| z | [layout.md](../../ws/zone/layout.md) | 9 done |
 | z | [work/done/ai/claude.write.md](../../ws/zone/work/done/ai/claude.write.md) | 9 done |
 | z | [work/done/deliverables/february.4.2026.md](../../ws/zone/work/done/deliverables/february.4.2026.md) | 13 done |
 | z | [work/done/deliverables/january.27.2026.md](../../ws/zone/work/done/deliverables/january.27.2026.md) | 26 done |

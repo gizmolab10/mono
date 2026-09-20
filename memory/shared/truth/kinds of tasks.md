@@ -13,5 +13,5 @@ Task types and which guides to read before starting. Co will declare one or more
 | prose | voice.md | first person, casual, punchy | docs wants structure; prose wants flow — favor flow, add structure only if needed |
 | journal | journals.md | chronological, bold dates | tidy removes clutter; journal preserves history — don't tidy the journal |
 | tidy | workflow.md#tidying-up | reduce duplication, find homes | |
-| implement | chat.md#implementation-discipline | quote plan, one change at a time | |
-| multi-file | chat.md | search ALL files first, list scope | |
+| implement | agency.md rules 7, 12 and 24 | quote plan, one change at a time | |
+| multi-file | develop/refactor.md | search ALL files first, list scope | |

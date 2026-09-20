@@ -17,7 +17,7 @@ One folder down:
 
 Elsewhere:
 
-- [Sections spec](../../../../shared/truth/develop/sections%20spec.md) — everything needed to build the stack in another project, in the order it has to be done. **mono**
+- [Sections spec](../../../../core/truth/sections%20spec.md) — everything needed to build the stack in another project, in the order it has to be done. **mono**
 - [Map of ov files](../guides/project/map%20of%20ov%20files.md) — read it instead of discovering files using regex and wildcards.
 
 

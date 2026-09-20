@@ -6,7 +6,4 @@ Webseriously is versatile enough to be embedded. `Bubble` and `Vitepress` are go
 
 - [Bubble](./bubble.md)
 - [Plugin](./plugin.md)
-- [Svelte.5](./svelte.5.md)
-- [Svelte](./svelte.md)
-- [Vitepress](./vitepress.md)
 

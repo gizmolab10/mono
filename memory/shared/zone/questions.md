@@ -4,6 +4,7 @@
 
 ## Open
 
+- [ ] the 23 drafts of 15 September 2026 are still co's prose in three truth files, 13 in conventions.md Response 10 and 11, 7 in write a plan.md and 3 in pitfalls.md 22 to 24; their table is in the work journal under 19 September 2026. Rewrite each in place, take them back out, or make them checkbox lines?
 - [ ] working features row 65 is broken: command on a folder row, or command with option on a file's row, is meant to show the folder in the Finder, but the dispatcher's show-folder route accepts only a path holding `notes/guides`, `notes/designs` or `notes/work`, folders gone since 7 September 2026, so every such click is refused. Fix the route to accept any folder inside memory, or drop the feature?
 
 ## Inconsistencies and duplications

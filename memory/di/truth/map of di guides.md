@@ -59,17 +59,12 @@ truth/
     ├── overview/
     │   ├── index.md ..................... overview table of contents
     │   └── project.md ................... entry flow and core loop
-    ├── philosophy/
-    │   ├── index.md ..................... philosophy table of contents
-    │   ├── best.practices.md ............ Svelte patterns and what to avoid
-    │   ├── unit testing.md .............. which tests cover which rules, and how each names its rule
-    │   └── update guides.md ............. instructions for guide updates
-    └── research/
-        ├── index.md ..................... research table of contents
-        ├── 3D.primer.md ................. quaternions, projection, perspective basics
-        ├── dimensionals research.md ..... whether an existing constraint library beats the custom search
-        ├── library versioning.md ........ what happens to placed instances when the saved original changes
-        └── occlusion performance.md ..... ways to speed up working out what hides what
+    └── philosophy/
+        ├── index.md ..................... philosophy table of contents
+        ├── best.practices.md ............ Svelte patterns and what to avoid
+        ├── logic driven design.md ....... rules, tests and code in lock-step; from shared's truth, 19 September 2026
+        ├── unit testing.md .............. which tests cover which rules, and how each names its rule
+        └── update guides.md ............. instructions for guide updates
 ```
 
-The user-manual markdown files no longer live under `notes/guides/project/`. They are now in `src/manual/` (the in-app help component imports them directly). See the file map for the full listing. The three folders drawn above sit under `truth/` since 7 September 2026, not under `notes/guides/`.
+The user-manual markdown files no longer live under `notes/guides/project/`. They are now in `src/manual/` (the in-app help component imports them directly). See the file map for the full listing. The three folders drawn above sit under `truth/` since 7 September 2026, not under `notes/guides/`. The research folder, its index and four files, and development's early di spec moved to `archive/` on 19 September 2026; archive is never mapped.

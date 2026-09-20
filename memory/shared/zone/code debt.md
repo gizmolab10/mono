@@ -33,7 +33,7 @@
 | z/t | file | needs this |
 | --- | --- | --- |
 | t | [always.md](../../di/truth/always.md) | 9 open truths |
-| t | [development/early di spec.md](../../di/truth/development/early%20di%20spec.md) | 16 open truths |
+| t | [development/early di spec.md](../../di/archive/early%20di%20spec.md) | 16 open truths |
 | z | [drive.md](../../di/zone/drive.md) | dissolve the drive |
 | z | [learn.md](../../di/zone/learn.md) | 17 open |
 | z | [work/milestones/29.user.manual.md](../../di/zone/work/milestones/29.user.manual.md) | 3 open |
@@ -145,9 +145,9 @@
 | --- | --- | --- |
 |  | [log.md](../../shared/logs/log.md) | settle 23 lines |
 |  | [work journal.md](../../shared/logs/work%20journal.md) | 48 open |
-| t | [collaborate/composition.md](../../shared/truth/collaborate/composition.md) | 15 open truths |
+| t | [collaborate/composition.md](../archive/composition.md) | 15 open truths |
 | t | [develop/migrate.md](../../shared/truth/develop/migrate.md) | 1 open truth |
-| t | [philosophy/logic driven design.md](../../shared/truth/philosophy/logic%20driven%20design.md) | 100 open truths |
+| t | [philosophy/logic driven design.md](../../di/truth/project/philosophy/logic%20driven%20design.md) | 100 open truths |
 | t | [test/debugging.md](../../shared/truth/test/debugging.md) | 10 open truths |
 | z | [collisions.md](../../shared/zone/collisions.md) | rewrite 5 collisions |
 | z | [drive.md](../../shared/zone/drive.md) | dissolve the drive |
@@ -169,12 +169,12 @@
 | --- | --- | --- |
 | t | [architecture/core/hits.md](../../ws/truth/architecture/core/hits.md) | 4 open truths |
 | t | [architecture/core/styles.md](../../ws/truth/architecture/core/styles.md) | 1 open truth |
-| t | [architecture/internals/debounce.md](../../ws/truth/architecture/internals/debounce.md) | 4 open truths |
+| t | [architecture/internals/debounce.md](../../ws/zone/debounce.md) | 4 open truths |
 | t | [architecture/internals/timers.md](../../ws/truth/architecture/internals/timers.md) | 16 open truths |
-| t | [architecture/platforms/svelte.5.md](../../ws/truth/architecture/platforms/svelte.5.md) | 17 open truths |
-| t | [architecture/platforms/svelte.md](../../ws/truth/architecture/platforms/svelte.md) | 47 open truths |
+| t | [architecture/platforms/svelte.5.md](../../ws/archive/svelte.5.md) | 17 open truths |
+| t | [architecture/platforms/svelte.md](../../ws/zone/svelte.md) | 47 open truths |
 | t | [architecture/ux/breadcrumbs.md](../../ws/truth/architecture/ux/breadcrumbs.md) | 39 open truths |
-| t | [architecture/ux/components.md](../../ws/truth/architecture/ux/components.md) | 10 open truths |
+| t | [architecture/ux/components.md](../../ws/zone/components.md) | 10 open truths |
 | z | [drive.md](../../ws/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../ws/zone/ideas.md) | 3 open |
 | z | [questions.md](../../ws/zone/questions.md) | 2 open and answer 2 questions |

@@ -9,4 +9,4 @@ Everything about the project itself — how it is built, how it is organized, ho
 - [Map of di notes](./map%20of%20di%20notes.md)
 - [Overview](./overview/)
 - [Philosophy](./philosophy/)
-- [Research](./research/)
+- Research — archived 19 September 2026, its index and four files in `../../archive/research/`
