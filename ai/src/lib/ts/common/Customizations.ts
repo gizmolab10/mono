@@ -15,7 +15,7 @@ export const customizations = {
 
 	// The closed tag list, alphabetized, nothing invented on the spot.
 	tags : [
-		'always', 'born', 'build', 'data', 'debug', 'deploy', 'faster', 'geometry', 'incorporated',
+		'always', 'born', 'build', 'data', 'debug', 'deploy', 'edit', 'faster', 'geometry', 'incorporated',
 		'journal', 'keep', 'later', 'maybe', 'migrate', 'next', 'notes', 'now', 'plans', 'platform',
 		'port', 'program', 'proposal', 'prose', 'refactor', 'research', 'session', 'setup', 'soon',
 		'stale', 'style', 'tabled', 'team', 'test', 'tools', 'UX', 'vision', 'visual', 'waiting',
@@ -29,7 +29,7 @@ export const customizations = {
 	tag_areas : [
 		{ name: 'ai',        tags: ['always', 'prose', 'session', 'style', 'team'] },
 		{ name: 'code',      tags: ['data', 'migrate', 'port', 'program', 'refactor'] },
-		{ name: 'fix',       tags: ['debug', 'faster', 'test'] },
+		{ name: 'fix',       tags: ['debug', 'edit', 'faster', 'test'] },
 		{ name: 'fate',      tags: ['keep', 'maybe', 'stale'] },
 		{ name: 'bedrock',   tags: ['build', 'deploy', 'platform', 'setup', 'tools'] },
 		{ name: 'progress',  tags: ['proposal', 'journal'] },
@@ -56,7 +56,7 @@ export const customizations = {
 		{ title: 'wf', key: 'memory/shared/truth/workflow.md' },
 		{ title: 'hb', key: 'memory/shared/truth/handbook.md' },
 		{ title: 'sh', key: 'memory/shared/truth/shorthand.md' },
-		{ title: 'ca', key: 'memory/shared/truth/artwork/cadence.svg' },
+		{ title: 'ca', key: 'memory/shared/truth/artwork/workflow.svg' },
 		{ title: 'co', key: 'memory/shared/truth/develop/constants.md' }
 	],
 };

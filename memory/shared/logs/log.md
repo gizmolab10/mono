@@ -1,6 +1,18 @@
 # shared log
 
-<!-- consolidated: 19 September 2026 -->
+<!-- consolidated: 20 September 2026 -->
+
+## 20 September 2026
+
+- D: the tag edit added to ai's closed tag list and to the tagset fix, 40 tags, the tag areas test passing; the pac decided and moved from proposals.md to decisions.md. Jonathan's add it
+- S: consolidated 20 September 2026, the first of the day: 7 lines since the fourth of 19 September settled, none deleted, the marker moved to 20 September 2026. Every D: names its home, written with it: the lexicon, zone/system failure.md and the index, zone/garolous truths.md and the index, zone/drive.md, zone/proposals.md, the work journal; no question answered; every idea kept, none promoted or culled; no shared code file changed since the marker, so the map stands; drive.md's current state rewritten; the manifest in the chat
+- D: record for shared: one work journal entry, system failure.md; nothing ticked in ideas, drive, code debt or learn, so nothing placed and no row in distilled.md; finished.md rewritten, 62 files; zone/work/done/docs left in place until Jonathan says. Jonathan's ras
+- D: zone/system failure.md grew: the sampling area, nine places corrections live with counts; six patterns across the whole sample; a proposal per pattern; the shut-it-all-off switch in Jonathan's words with disableAllHooks, verified in the Claude Code settings reference, its knowledge-only position, the CLAUDE.md rewrite, and five risks. Jonathan's asks
+- D: a pac written and paused, move SOT from the lexicon to the shorthand, at the top of investigations in zone/proposals.md; the shorthand already held a sot row, so the word sits in two truths. Jonathan's pac, then paus
+- D: zone/garolous truths.md made, 19 September: the proposal for the shortening of the truths over 100 lines, three lines, and the table of the 62 files largest first; listed in the index. Jonathan's ask
+- D: the markdown protocol proposed in zone/drive.md, 19 September: the cause of the bare file names first laid at the compaction, then measured false in the transcript, 934 bare names in every segment since 3 September; the proposal, co reads less per turn, a rule to read a saved hook output, a SessionStart hook on compact verified in the hooks guide; the division by size measured, Response 7.5KB, the banned words 6.2KB. Jonathan's asks, his rewrites
+- D: zone/system failure.md made: the ten corrections in learn.md analyzed, eight of them prose co wrote from its own side, the mechanism, where Jonathan wants the reader's side, the fact, the goal, the rule, the name; four groups; listed in the index. Jonathan's ask
+- D: SOT, source of truth, coined in the shared lexicon after truth: the one file that holds a fact, which every other mention points at. Jonathan's word, used in drive.md
 
 ## 19 September 2026
 

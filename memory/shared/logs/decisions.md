@@ -2,6 +2,7 @@
 
 ## Decisions made during 2026
 
+- 20 September 2026, **the tag edit joins the tagset fix** in ai's closed tag list, 40 tags: a file whose prose needs work, beside debug, faster and test
 - 19 September 2026, **"huh?" suspends the rules**, Always rule 10: the reply is rewritten under Brief, Withhold the evidence, Mechanism not story and the banned words only; section 10's rule 4, ignore ALL the guide rules, gone
 - 19 September 2026, **zone/drafted guide rules.md deleted**, its decided part in workflow.md, its table of the 23 drafts and its breakdown a dated work journal entry, the drafts' fate a question in zone/questions.md
 - 19 September 2026, **cadence.md merged into workflow.md**, one file for how work moves, one picture beside it, workflow.svg; workflow's own short Cadence section gone as a twin, cadence.md deleted through the dispatcher
@@ -33,6 +34,15 @@
 
 Open pacs live in zone/proposals.md, one section each, since 18 September 2026. A pac decided there comes here as its dated line.
 
+- 20 September 2026 — **add a tag edit to the tagset fix.** **pac** 20 September 2026
+
+**What exists**: ai's tags are a closed, alphabetized list of 39 in `ai/src/lib/ts/common/Customizations.ts`, gathered into ten tagsets, every tag in exactly one, the tag areas test proving the two lists agree. fix holds debug, faster and test: a fault to find, speed to gain, proof to write, each the work a piece of code needs. No file in ai's db wears a tag named edit. In kb's lexicon edit is the app's own word for the editor view, and ai's design folder holds editing.md.
+
+**For**: a file whose prose needs work has no tag today; stale, in the fate tagset, says out of date, not needs rewriting. edit names the work the file needs, the way debug names the work code needs, so fix is its tagset, and the 62 truths over 100 lines and the 23 drafts would wear it. One line in the tag list, one in the tagset, the test's count.
+
+**Against**: fix's three tags are about code and edit is about prose, so the tagset's meaning widens. edit is already the editor's name in kb, so a tag edit reads as opened in the editor, or about the editor, which is a subject and would sit in ux. Who puts it on and takes it off is unsaid: 62 files by hand today, and nothing removes it when the file is shortened.
+
+**Deciding question**: does edit mean the file needs its prose worked, which is fix, or is about the editor, which is ux, and if the first, does it come off by hand or when the file drops under the cap? Decided: added, edit meaning the file's prose needs work.
 - 19 September 2026 — **consolidate the subsection on sorting the 142 guides**, culled the day it was written: Jonathan answered the subsection's two questions, YES to merging and YES to shortening each guide as it is moved, and made it the drive.
 - 19 September 2026 — **sort the 142 guides now sitting unsorted in truth/**, the pac of 7 September, decided: both open questions YES, each guide merged into the truth that already covers its topic, or shortened, at the moment it is moved into truth/. Made the drive the same day.
 - 19 September 2026 — **allow "huh?" to override Always.** What exists: conventions.md section 10, rewritten by Jonathan today, rule 4: on "huh?", ignore ALL the guide rules and rewrite the response. Always says its nine rules govern every reply and are the highest priority, and its rule 9 says when two rules collide one must go. No shorthand row and no lexicon entry define "huh?"; section 10 is the one place it is written. For: "huh?" means the reply failed Jonathan as a reader, so the rules that shaped it are the suspects, and a rewrite under the same rules gives the same reply; the override names the one case, and Always keeps the rest. Against: ALL includes Brief, the banned words, no story and no evidence, so the rewrite can be long, told as a story and wear a banned word, which "huh?" never asked for; Always says highest priority, so a rule below it that overrides it makes Always's own claim false unless Always says so too, in one line; which rule the reply broke stays unknown, the override turning every rule off where one was at fault. Decided: Always rule 10, "huh?" suspends every rule but Brief, Withhold the evidence, Mechanism not story and the banned words; section 10's rule 4 gone.

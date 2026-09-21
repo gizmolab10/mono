@@ -1,8 +1,8 @@
 yarn run v1.22.19
 $ vite
 
-  VITE v6.4.2  ready in 701 ms
+  VITE v6.4.2  ready in 2500 ms
 
   ➜  Local:   http://localhost:5182/
   ➜  Network: use --host to expose
-6:28:00 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:41:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+5:44:39 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:41:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.

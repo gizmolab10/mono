@@ -2,6 +2,10 @@
 
 <!-- consolidated: 15 September 2026 -->
 
+## 20 September 2026
+
+- D: the tag edit joins the closed tag list and the tagset fix in Customizations.ts, a file whose prose needs work; the tag areas test passes. Jonathan's decision, the pac in shared's decisions.md
+
 ## 18 September 2026
 
 - D: decisions.md to logs, its open pacs to zone/proposals.md; questions.md to the zone, through the dispatcher: logs hold the past, zone the present, truth the concrete. Jonathan's decision in memory/shared/logs/decisions.md

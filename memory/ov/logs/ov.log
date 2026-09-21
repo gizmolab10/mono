@@ -2,43 +2,7 @@ yarn run v1.22.19
 warning package.json: No license field
 $ vite
 
-  VITE v6.4.2  ready in 756 ms
+  VITE v6.4.2  ready in 2391 ms
 
   ➜  Local:   http://localhost:5183/
   ➜  Network: use --host to expose
-10:12:20 AM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/utilities/Preferences.ts
-10:37:08 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-10:37:08 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-10:47:12 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-10:47:35 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-10:50:58 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:01:02 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:01:24 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:01:26 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:01:45 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:01:48 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:01:55 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:01:58 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-11:04:55 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-11:05:15 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-11:05:17 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-11:06:43 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-11:07:25 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-11:07:32 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-11:07:43 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-11:07:47 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Stack.svelte?svelte&type=style&lang.css
-2:24:45 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
-2:25:05 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
-2:25:19 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
-2:25:25 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
-2:25:47 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
-2:27:08 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-2:27:25 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Section.svelte?svelte&type=style&lang.css
-1:10:37 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/events/Hits.ts
-3:35:22 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
-3:36:02 PM [vite] (client) hmr update /src/lib/svelte/filter/Edit_Filters.svelte
-3:52:23 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
-3:52:23 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
-3:52:23 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Big_Pill.svelte?svelte&type=style&lang.css
-7:52:35 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Big_Pill.svelte?svelte&type=style&lang.css
-7:56:55 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Big_Pill.svelte?svelte&type=style&lang.css

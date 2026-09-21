@@ -1,8 +1,11 @@
+# Svg flow diagrams
+
 chat log — 2026-09-10
 topic: curved-line graphics with AI, then a structural diagram of app/core/panel/gallery
 
-jonathan:
-**what curved line drawing graphic stuff works great with ai?**
+- [ ] rewrite this file as how to instructions
+
+## what curved line drawing graphic stuff works great with ai?
 
 claude:
 SVG path strings. That's the format AI writes most reliably, and you already use it in SVG_Paths.ts.
@@ -62,7 +65,8 @@ beats generating an image and tracing it.
 sources searched: openart.ai vector generators roundup, design-rise 2026 vector creators,
 clearly.sh ai art generator comparison, loova.ai line art roundup.
 
-jonathan:
+## first use case
+
 **starting simple, a data logic diagram with rounded rectangles next to and inside each other,**
 **labeled. so i can visualize the architecture of core and panel and gallery and ...**
 
@@ -86,7 +90,8 @@ an overview plus a second diagram per part.
 
 Once the shape is right I can write it to an .svg file in mono instead of leaving it in the chat.
 
-jonathan:
+## convert to svg
+
 **can you write that svg to a file 'app.svg'?**
 
 claude:

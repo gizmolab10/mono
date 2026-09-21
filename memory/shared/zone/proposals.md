@@ -49,6 +49,18 @@ Open question: is [[conventions]] folded into `always.md` (one file, injected wh
 
 ## investigations
 
+### move SOT from the lexicon to the shorthand
+
+**pac** 20 September 2026
+
+**What exists**: the shorthand's Abbreviations table already holds a row `sot`, source of truth, three words. The lexicon's entry, added 20 September 2026 after truth, says what one is in this system: the one file that holds a fact, which every other mention points at, with conventions.md as the example and what it is not. The word now sits in two truths.
+
+**For**: the shorthand's opening line says short commands and abbreviations, and SOT is an abbreviation Jonathan types, like `pac` and `loc`, whose rows sit in the same table. One place for it, the place it already had, and the lexicon entry goes.
+
+**Against**: the shorthand row expands the letters and stops; the lexicon says what the thing is, and the lexicon's own opening line says it holds the words used across every project, exactly, with what each is not. A reader who asks "which file is the SOT?" finds the answer in the lexicon entry, not in the row. `pac` shows the pattern: its shorthand row says pros and cons and points at the handbook for the rest.
+
+**Deciding question**: is SOT letters that stand for three words, which the shorthand expands, or a name for a thing in the memory system, which the lexicon defines, with the shorthand row pointing at it as `pac`'s row points at the handbook?
+
 ### move servers.sh and start-hub.sh from tools/hub to tools/scripts
 
 **pac** 12 September 2026

@@ -7,6 +7,10 @@
 
 ---
 
+## 2026-09-20 — zone/system failure.md: the corrections analyzed, the sampling area, six patterns, the switch proposals
+
+Jonathan asked whether the ten corrections in learn.md had a pattern, then where the answer belonged, then for the whole sample: every place a correction lives, nine of them, counted; then for patterns across it all, read from the distilled rows, the pitfalls, di's learn, the murk complaints and 136 correcting messages of this session's transcript with the reply each corrected; then proposals to address the six patterns, a shut-it-all-off switch, its knowledge-only position, a rewrite of CLAUDE.md, and the risks of the switch. He rewrote the switch proposal in his words: hooks off, the rules files ignored, the shorthand, the commands, kinds of tasks and keywords kept, each project's knowledge kept, `disableAllHooks` true in the settings. An agent co sent verified the flag in the Claude Code settings reference: any settings file, the local one outranking, picked up by a file watcher in the running session.
+
 ## 2026-09-19 — zone/proposals.md regrouped: two big sections, the shape of a pac, file names and truth names
 
 Jonathan's asks, built the same afternoon. Two big sections: proposed and not implemented, the 2 proposals, and investigations, every pac, each item one heading level down and newest first. Each pac took the shape he gave the first: the date out of the heading onto a **pac** line, one paragraph each for what exists, For, Against and the deciding question, the labels bold. Every file name in body prose in backticks, two-word names whole; a truth file with one home written as a wikilink, names with more than one home left in backticks. Two of his edits that changed meaning were reported and left: hub-app.md as [[hub-app]], and the file name add a file.md read as the words add a markdown file. The three tools that count proposal sections split on the second-level heading and now see two sections in shared's file, unchanged; the drive shorthand row still says a `##` section.
