@@ -46,7 +46,7 @@ Then three registrations, all easy to forget:
 
 Finally, `yarn install` at mono's top, on the Mac. Nothing runs until that links the new folder.
 
-**Adding a workspace can move what yarn hoists.** ws pins svelte 4 and every other project wants 5; adding two projects on 1 September 2026 was enough for yarn to lift ws's 4 to the root, where the checker found it and refused svelte 5's own syntax in core, lv and gallery. Mono's workspaces hold a `nohoist` for `webseriously/svelte` to keep it down in ws alone. The pattern names the **package**, never the folder — `ws/svelte` does nothing at all. After bringing up a project, run `yarn run check` in one project to prove nothing moved — `run` is needed: `yarn check` alone is yarn's own integrity check, not the script.
+**Adding a workspace can move what yarn hoists.** ws pins svelte 4 and every other project wants 5; adding two projects on 1 September 2026 was enough for yarn to lift ws's 4 to the root, where `yarn run check` found it and refused svelte 5's own syntax in core, lv and gallery. Mono's workspaces hold a `nohoist` for `webseriously/svelte` to keep it down in ws alone. The pattern names the **package**, never the folder — `ws/svelte` does nothing at all. After bringing up a project, run `yarn run check` in one project to prove nothing moved — `run` is needed: `yarn check` alone is yarn's own integrity check, not the script.
 
 ## In the hub
 

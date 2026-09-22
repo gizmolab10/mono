@@ -60,7 +60,11 @@ Each project keeps its own lexicon for its own things — [core](../../core/trut
 - **propose** — describe the plan and stop. A question is not an order.
 - **go** — the word that turns a proposal into work. So do solve, impl, proceed, create, rewrite.
 - **think mode** — the default: read, search, describe, propose. Nothing is changed.
-- **required** — a statement that must be true before co acts, shown in the reply so a skipped check is visible. Also *check*. Not: gate, gated.
+- **check** — when co looks at a thing and compares it with what should be.
+- **required** — a feature, library or facility that if missing blocks work.
+- **gate** — a statement or condition that must be true before the work can be performed or described. [[gates]] lists them by task.
+- **detect** — a check that runs by itself, in code or a hook, and reports what it finds. Every hook detects.
+- **do** — action co must perform. Not a condition: check, required, gate and detect are conditions that must hold.
 
 ## Saying what is true
 

@@ -144,11 +144,18 @@ export function numbers_out_of_code(html: string): string {
 // land on. Each heading is given a name made from its own words — lowercased, with anything
 // that isn't a letter or a number becoming a dash — which is how the writing tools make
 // them, so the links already in the files line up.
+//
+// A heading is drawn as a flex row, its fold mark then its words, and a flex row makes each
+// child an item of its own: the words before a link, the link, the words after. The space at
+// the end of an item is not drawn, so "see [[a file]]" lost the space before its link. The
+// words are held in one span, so the row holds two items, the mark and the span, and inside
+// the span every space is drawn as it is in a paragraph. Measured 21 September 2026.
 export function name_the_headings(html: string): string {
-	return html.replace(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/g, (whole, level, already, inside) => {
+	return html.replace(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/g, (_whole, level, already, inside) => {
 		const words = inside.replace(/<[^>]*>/g, '');
 		const named = words.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-		return named === '' ? whole : `<h${level} id="${named}"${already}>${inside}</h${level}>`;
+		const id = named === '' ? '' : ` id="${named}"`;
+		return `<h${level}${id}${already}><span class="heading-words">${inside}</span></h${level}>`;
 	});
 }
 

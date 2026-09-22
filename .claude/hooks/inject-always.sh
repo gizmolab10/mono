@@ -34,7 +34,7 @@ rest_part()   { awk '/^## Always/{skip=1; next} skip && /^## /{skip=0} !skip' "$
 # The shared lexicon holds the slot the shared banned-word table used to. Both say
 # the same thing about the same words — one as a wall, one as a word to reach for —
 # and only the second is any use while a sentence is being written. The table, now
-# inside conventions.md, is still read by the two scripts that check a finished reply.
+# inside conventions.md, is still read by the two scripts that detect faults in a finished reply.
 IN_TURN=("$CONVENTIONS" "$AGENCY")
 [ -f "$LEXICON" ] && IN_TURN+=("$LEXICON")
 [ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && IN_TURN+=("$BANNED_PROJECT")

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "memory/shared/zone/drive.md",
+                "file": "memory/shared/truth/shorthand.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "drive"
+              "title": "shorthand"
             }
           },
           {
@@ -122,8 +122,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 451.73798751831055,
-    "collapsed": true
+    "width": 451.73798751831055
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -225,7 +224,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 225.09375
+    "width": 225.09375,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -241,11 +241,16 @@
   },
   "active": "f778517968b65f1b",
   "lastOpenFiles": [
-    "memory/shared/zone/system failure.md",
-    "memory/shared/zone/drive.md",
-    "memory/shared/zone/svg flow diagrams.md",
     "memory/shared/truth/shorthand.md",
+    "memory/shared/zone/drive.md",
+    "memory/shared/zone/dead links.md",
+    "memory/shared/truth/hook rotation.md",
     "tools/hub/ai.db-journal",
+    "ai/src/lib/ts/tests/scratch_wikilink.test.ts",
+    "memory/shared/zone/ideas.md",
+    "memory/shared/truth/pitfalls.md",
+    "memory/shared/zone/svg flow diagrams.md",
+    "memory/shared/zone/system failure.md",
     "mj/src/assets/mj/IMG_0412.jpeg",
     "memory/shared/truth/gates.md",
     "ws/vite.config.js.timestamp-1789865067225-748b5a7424efa.mjs",
@@ -268,18 +273,13 @@
     "ws/src/manual/user/1.what.is.webseriously.md",
     "ws/src/manual/plugin",
     "ws/src/manual/user",
-    "ws/src/manual/index.md",
     "ws/src/manual",
-    "memory/di/truth/project/philosophy/logic driven design.md",
-    "memory/ji/truth/setup/manually install AnythingLLM.md",
-    "memory/core/truth/hits system.md",
     "memory/di/archive/research",
     "memory/di/archive",
     "memory/shared/truth/artwork/workflow.svg",
     "memory/shared/truth/artwork/cadence.svg",
     "tools/hub/ov.restored.db-journal",
     "ai/src/lib/ts/tests/drawings.test.ts",
-    "ai/src/lib/ts/utilities/Drawings.ts",
     "memory/shared/zone/artwork/cadence.svg",
     "memory/shared/zone/artwork/workflow.svg",
     "memory/shared/zone/diagrams.svg",

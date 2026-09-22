@@ -91,6 +91,10 @@
           {
             "type": "command",
             "command": ".claude/hooks/inject-always.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/saved-output-count.sh report"
           }
         ]
       }
@@ -180,6 +184,10 @@
             "type": "command",
             "command": ".claude/hooks/relevance-check.sh",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/saved-output-count.sh"
           }
         ]
       }

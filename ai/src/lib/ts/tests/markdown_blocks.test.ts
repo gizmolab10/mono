@@ -460,3 +460,16 @@ describe('flipping a thing to be done', () => {
 		expect(flipped_task('')).toBe(null);
 	});
 });
+
+describe('the words of a heading', () => {
+	it('sit in one span, so the flex row keeps the space before a link', () => {
+		const html = page_of(reader, '## The rhythm (see [[workflow.svg]])');
+		expect(html).toContain('<span class="heading-words">The rhythm (see <a ');
+		expect(html).toMatch(/<\/a>\)<\/span><\/h2>/);
+	});
+
+	it('is still named after its words', () => {
+		expect(page_of(reader, '## The rhythm (see [[workflow.svg]])')).toContain('id="the-rhythm-see-workflow-svg"');
+	});
+});
+

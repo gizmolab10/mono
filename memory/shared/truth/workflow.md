@@ -1,10 +1,10 @@
 # Workflow
 
-See [motive.md](../archive/use%20ai.md) for the origin story and philosophy behind this system. How work (ahem) flows, step by step, is below, drawn in [workflow.svg](artwork/workflow.svg): one turn, back and forth, the eight steps a column, each step a row with the command, the act and the items it moves. cadence.md merged in here 19 September 2026.
+See [motive.md](../archive/use%20ai.md) for the origin story and philosophy behind this system. How work (ahem) flows, step by step, is below, cadence.md merged in here 19 September 2026.
 
-## The rhythm
+## The rhythm (see [workflow.svg](artwork/workflow.svg))
 
-**Turn-taking**. Jonathan moves, co responds, Jonathan reads, Jonathan decides, co acts. Baby steps. Forward progress made out of small, careful, deliberate moves — not sweeping leaps. Each move is well-considered before it happens. **BAD**: Reconsidering afterwards is slow and prone to going in circles.
+**Turn-taking**. Jonathan moves, co responds, Jonathan reads, Jonathan decides, co acts. Baby steps. Forward progress made out of small, careful, deliberate moves — not sweeping leaps. Each move is well-considered before it happens. **BAD**: Reconsidering afterwards is slow and prone to going in circles. This is drawn in [workflow.svg](artwork/workflow.svg): one turn, back and forth, the eight steps a column, each step a row with the command, the act and the items it moves.
 
 i think cadence is much simpler -> just back and forth. each receives and then gives. co receives commands and acts and then gives results. jonathan gives commands and receives the results. simple.
 
@@ -12,7 +12,7 @@ the commands vary among a set described in [[shorthand]], a file that also descr
 
 **v** is the look at what co built, after co acts and before record: good, perfect or done approves it, and anything else is a criticism that sends it back to go.
 
-## One turn, back and forth
+## Each turn goes back and forth
 
 Each step is the same shape: Jonathan gives a command, co acts, co gives the result. The command is a word from [shorthand](shorthand.md).
 
@@ -163,7 +163,7 @@ When updating a work doc — milestones, notes, plans — keep its content intac
 
 ## Fixing friction before the work
 
-Sometimes the real task stalls not on the problem but on how co and Jonathan work together. The usual causes: words co uses with no agreed meaning, over-confident wrong reads that fight what Jonathan plainly sees, or a check that fires on the wrong thing. When the same friction derails turn after turn, pause the task and fix it at its source — that friction taxes every later turn, the task included, so the fix is an investment, not a digression.
+Sometimes the real task stalls not on the problem but on how co and Jonathan work together. The usual causes: words co uses with no agreed meaning, over-confident wrong reads that fight what Jonathan plainly sees, or a hook that detects the wrong thing. When the same friction derails turn after turn, pause the task and fix it at its source — that friction taxes every later turn, the task included, so the fix is an investment, not a digression.
 
 How to run such a pause:
 

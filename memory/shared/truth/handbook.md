@@ -28,7 +28,7 @@ Never summarize prose into vaguer prose. Settling copies facts to their one home
 ## Concurrent sessions and recovery
 
 - One project, one active session. Different projects are naturally safe.
-- If two sessions must share a project: log appends merge; truth edits require having read the file since the other session's last commit. Only one session may consolidate.
+- If two sessions must share a project: log appends merge; a truth edit's gate is the file read since the other session's last commit. Only one session may consolidate.
 - Recovery: a bad settle is one `git revert` of its labeled commit, then settle again.
 
 ## Design churn
@@ -114,7 +114,7 @@ One skill per procedure; the skill is a trigger, not a copy. Write skills (`d`, 
 
 ## Hooks
 
-Hooks only read, check, and remind — they never write truths, settle, coin, or delete. A hook can suggest; only I decide.
+Hooks only read, detect, and remind — they never write truths, settle, coin, or delete. A hook can suggest; only I decide.
 
 - Session start → run `start`.
 - Commit touching `memory/` → structural `check`; violations block.

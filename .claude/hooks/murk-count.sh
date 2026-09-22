@@ -52,7 +52,7 @@ count_words() {
 }
 
 # One row of the record. Both tails are the last 400 characters, which is what the
-# banned-word checker keeps and is long enough to hold the sentence that failed.
+# banned-word hook keeps and is long enough to hold the sentence that failed.
 #
 # `words` is the length of the reply the row is about: on a reply row the one just
 # sent, on a complaint row the one he could not read. `plain_words` is the length of

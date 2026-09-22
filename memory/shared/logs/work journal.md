@@ -7,6 +7,45 @@
 
 ---
 
+## 2026-09-21 — the saves counted: saved-output-count.sh and hook rotation.md
+
+Jonathan decided the hook's rotation goes from three pieces to seven, and that the Claude harness's limit is measured first, not guessed. Built the same day: saved-output-count.sh, at Stop, reads the transcript's last inject-always attachment, whose stdout is the whole output and whose content is the harness's notice when saved, and appends one row per turn to saves.jsonl, the division, the size in KB, saved or shown; with `report`, before each prompt, it hands co the tally on every tenth save, which division and how often, with the smallest saved and largest shown sizes that bound the limit. Ten checks pass. hook rotation.md, a howto in shared's truth, says what the rotation is, how to measure what reaches co, and how to divide it again, whole files today and pieces when the cut is built. The seven-piece cut waits on a week of counts.
+
+## 2026-09-21 — the four words drive, done: gate, check, required, detect and do
+
+What changed and why. Jonathan said on 19 September that gate, check, require and detect all mean a condition that must hold, each in its own context, and that co used them in the wrong context. He wrote the meanings; do, the action co must perform, joined them on 21 September after fix and remedy were weighed. The five are in the shared lexicon in his words. Every use of the four words in the shared truths, CLAUDE.md and the hooks was read against its context, v per file at first, then all at once: the map of shared files, hooks.md, pitfalls.md, workflow.md, agency.md, conventions.md, the shorthand, the handbook, CLAUDE.md, the lexicon, gates.md, finished.md, kinds of tasks and every develop, test, setup, tools, collaborate and philosophy truth, and the 18 hook scripts' comments. Rewritten: a hook's act is detect, in the map, hooks.md three times, pitfalls' pitfall 1 three times, workflow, the handbook, inject-always.sh and murk-count.sh; a condition before work is a gate, in the handbook and agency rule 24, Show the gate again; the five Required labels in pitfalls are Do; require in the ordinary sense became its words as they are, needs, or the tool's name; gates.md keeps its name, the hook scripts keep their -check names, and requirements, checkboxes, ticking off, co's own checks, tests' checks and code's checks stay as they are. chat.md was not read, waiting at v to be deleted; keep shop.md not rewritten, on batch B's deletion list.
+
+The plan as it ended, with Jonathan's ticks:
+
+## 1. gate, check, require, detect
+
+Jonathan, 19 September 2026: gate, check, require and detect all mean the same thing, a condition that must hold, in four different contexts, and co uses them in the wrong context.
+
+1. **Before** — taken from {CLAUDE, hooks, shared-t}, on 19 September 2026: 
+    1. **check** in 51 files — 35 in map of shared files.md and 27 in hooks.md, the hook scripts named -check; 
+    2. **require** in 15 files, 9 in pitfalls.md; 
+    3. **gate** in 9 files, 6 in gates.md; 
+    4. **detect** in 2 files, refactor.md and unit testing.md.
+2. **After** — One context per word:
+    - **check** — when co looks at a thing and compares it with what should be.
+    - **required** — a feature, library or facility that blocks work if it is missing.
+    - **gate** — a statement or condition that must be true before the work can be performed or described. [[gates]] lists them by task.
+    - **detect** — a check that runs by itself, in code or a hook, and reports what it finds. Every hook detects.
+    - **do** — action co must perform.
+3. **The wrong uses**, found by reading each use against its context, listed here with the file and line and the word it should be.
+4. **The fix**, one file per turn: the lexicon holds the four entries, the wrong uses are rewritten, gates.md keeps or loses its name, agency 24 and the hook comments say the right word.
+
+### planned steps
+
+- [x] 1. Add to lexicon —> the four words in Jonathan's meanings above: check, required, gate and detect, one entry each, and the entry required rewritten from what it says today. Done 21 September 2026; do, the fifth, added the same day.
+- [x] 2. For each use of any of the four words (in the shared truths, CLAUDE.md and the hooks) —> co reads the sentence containing it to categorize it as one of the four contexts described in After. if the word matches its context, ignore it, otherwise replace the word with its category.
+- [x] 3. [[gates]] keeps its name (its rows are statements that must be true before a task).
+- [x] 4. Reword agency rule 24 —> Show the gate (since what co shows before the first edit is a statement that must be true, and its closing words say the output is the gate).
+- [x] 5. [[hooks]] and their comments —> categorize 'check' as 'detect' (every hook runs by itself); every hook script keeps its -check name (being code)
+- [x] 6. [[pitfalls]]'s nine instances is reworded by first determining if it is a —> (1) feature, (2) library or facility that blocks work when missing, or (3) gate.
+- [x] 7. Files corrected in this order —> (1) map of shared [[files]], (2) [[hooks]], (3) [[pitfalls]], (4) the rest of the table, each with one D: line.
+- [x] 8. Success determined by returning to step 2 —> if it finds NO mis-categorized words, then move this proposal to the work journal and stop.
+
 ## 2026-09-20 — zone/system failure.md: the corrections analyzed, the sampling area, six patterns, the switch proposals
 
 Jonathan asked whether the ten corrections in learn.md had a pattern, then where the answer belonged, then for the whole sample: every place a correction lives, nine of them, counted; then for patterns across it all, read from the distilled rows, the pitfalls, di's learn, the murk complaints and 136 correcting messages of this session's transcript with the reply each corrected; then proposals to address the six patterns, a shut-it-all-off switch, its knowledge-only position, a rewrite of CLAUDE.md, and the risks of the switch. He rewrote the switch proposal in his words: hooks off, the rules files ignored, the shorthand, the commands, kinds of tasks and keywords kept, each project's knowledge kept, `disableAllHooks` true in the settings. An agent co sent verified the flag in the Claude Code settings reference: any settings file, the local one outranking, picked up by a file watcher in the running session.

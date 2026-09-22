@@ -2561,3 +2561,58 @@
 {"timestamp":"2026-09-20T20:57:43Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"163","plain_words":""}
 {"timestamp":"2026-09-20T21:05:34Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"70","plain_words":""}
 {"timestamp":"2026-09-20T21:47:46Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"86","plain_words":""}
+{"timestamp":"2026-09-21T01:07:40Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"50","plain_words":""}
+{"timestamp":"2026-09-21T01:11:45Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"128","plain_words":""}
+{"timestamp":"2026-09-21T01:27:31Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"54","plain_words":""}
+{"timestamp":"2026-09-21T01:44:41Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"143","plain_words":""}
+{"timestamp":"2026-09-21T02:03:33Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"185","plain_words":""}
+{"timestamp":"2026-09-21T21:16:33Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"141","plain_words":""}
+{"timestamp":"2026-09-21T21:38:29Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"159","plain_words":""}
+{"timestamp":"2026-09-21T21:41:52Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"38","plain_words":""}
+{"timestamp":"2026-09-21T21:43:04Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"56","plain_words":""}
+{"timestamp":"2026-09-21T21:43:09Z","action":"complaint","word":"t","murky":"The definition is at [lexicon.md:65](memory/shared/truth/lexicon.md#L65) (shared-t), since this morning: a statement or condition that must be true before the work can be performed or described; gates.md lists them by task. Its source is your line in [drive.md:15](memory/shared/zone/drive.md#L15) (shared-z).","plain":"In pitfalls.md, five rules end with a line labeled **Required:** followed by what co must do. By your meaning, what co must do before the work is a gate, so the label would become **Gate:**, or another word you prefer. The word \"requirements\", meaning what you ask for, is the standard word for that and stays.","rule":"any-line","words":"38","plain_words":"56"}
+{"timestamp":"2026-09-21T21:45:06Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"182","plain_words":""}
+{"timestamp":"2026-09-21T21:48:55Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"65","plain_words":""}
+{"timestamp":"2026-09-21T21:49:00Z","action":"complaint","word":"t","murky":"air and reads as a place. The five lines are acts, take the found branch, stop and produce the analysis, not conditions to test, so gate stretches too. A plainer pair fits without a lexicon word: **Wrong:** and **Right:**, or **Do:**.\n\n**Deciding question.** Is the line after the label a condition that must hold before co acts, a gate, or the right act itself, which wants a plain label such as Do?","plain":"Each of the five lines says what co does when the case comes up. Two readings: it is a rule co must obey before acting, and then the label is Gate; or it is the right way to act, the opposite of the Anti-pattern line above it, and then the label is a plain word such as Do or Right. Which reading do you want?","rule":"any-line","words":"182","plain_words":"65"}
+{"timestamp":"2026-09-21T21:51:42Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"53","plain_words":""}
+{"timestamp":"2026-09-21T21:52:16Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"39","plain_words":""}
+{"timestamp":"2026-09-21T21:53:38Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"94","plain_words":""}
+{"timestamp":"2026-09-21T21:56:58Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"62","plain_words":""}
+{"timestamp":"2026-09-21T22:01:00Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"120","plain_words":""}
+{"timestamp":"2026-09-21T22:04:51Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"128","plain_words":""}
+{"timestamp":"2026-09-21T22:05:32Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"46","plain_words":""}
+{"timestamp":"2026-09-21T22:07:12Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"157","plain_words":""}
+{"timestamp":"2026-09-21T22:11:12Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"33","plain_words":""}
+{"timestamp":"2026-09-21T22:14:08Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"108","plain_words":""}
+{"timestamp":"2026-09-21T22:16:40Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"132","plain_words":""}
+{"timestamp":"2026-09-21T22:24:27Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"139","plain_words":""}
+{"timestamp":"2026-09-21T22:25:03Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"12","plain_words":""}
+{"timestamp":"2026-09-21T22:25:08Z","action":"complaint","word":"t","murky":"tion is the one word that sets do apart, which is the entry's job.\n\n**Against.** Every agency rule is an action co must perform, so the entry alone does not say which action do is; only the label's place after Anti-pattern does. Perform is do's twin at the lexicon's line 84.\n\n**Deciding question.** Is the entry's job to say what kind of thing do is, or also when it applies?\n\nThis one I would take.","plain":"Of the three wordings, I recommend this one: \"action co must perform.\"","rule":"any-line","words":"139","plain_words":"12"}
+{"timestamp":"2026-09-21T22:26:13Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"132","plain_words":""}
+{"timestamp":"2026-09-21T22:27:01Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"78","plain_words":""}
+{"timestamp":"2026-09-21T22:27:07Z","action":"complaint","word":"t","murky":"orning.\n2. **Next on v:** hooks.md. Then pitfalls.md: its five Required labels become Do, and \"the check\" in pitfall 1 becomes the hook, twice.\n3. **Behind:** 5 log lines since the consolidate of 20 September; 34 pacs open; 10 corrections unticked in learn.md; chat.md at v since 19 September; batch B's other six merges and five deletions decided and unbuilt; 10 paths uncommitted, the commit yours.","plain":"e drive:\n\n- 5 lines in the log have not been consolidated since 20 September.\n- 34 pacs are open in proposals.md.\n- 10 corrections in learn.md are not ticked.\n- chat.md was merged into conventions and agency on 19 September and waits for your v before it is deleted.\n- Batch B's other six merges and five deletions are decided and not built.\n- 10 changed files are not committed. The commit is yours.","rule":"any-line","words":"132","plain_words":"78"}
+{"timestamp":"2026-09-21T22:28:20Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"110","plain_words":""}
+{"timestamp":"2026-09-21T22:30:11Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"86","plain_words":""}
+{"timestamp":"2026-09-21T22:31:26Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"123","plain_words":""}
+{"timestamp":"2026-09-21T23:54:47Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"137","plain_words":""}
+{"timestamp":"2026-09-21T23:56:50Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"92","plain_words":""}
+{"timestamp":"2026-09-21T23:56:56Z","action":"complaint","word":"t","murky":"the link is drawn 0px wide, where the same space in a paragraph is 3.4px. I can prove this. Nothing in the text pipeline consumes it; the html holds the space at every stage.\n\nThe fix, waiting on go: name_the_headings wraps a heading's words in one span, so the flex row holds two items, the mark and the words, and the words keep their spaces. One line in Markdown_Blocks.ts, no test pins that html.","plain":"nother text node, and the flex layout treats each as a separate box, dropping the space at the end of the first. The fix puts all of a heading's words inside one span. The flex layout then sees two boxes, the fold mark and the span, and inside the span the spaces are drawn as in any paragraph. It is one line changed in the function that names headings, and no test compares that html word for word.","rule":"any-line","words":"137","plain_words":"92"}
+{"timestamp":"2026-09-21T23:59:56Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"175","plain_words":""}
+{"timestamp":"2026-09-22T00:01:50Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"59","plain_words":""}
+{"timestamp":"2026-09-22T00:07:04Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"131","plain_words":""}
+{"timestamp":"2026-09-22T00:08:35Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"138","plain_words":""}
+{"timestamp":"2026-09-22T01:05:53Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"181","plain_words":""}
+{"timestamp":"2026-09-22T01:51:26Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"71","plain_words":""}
+{"timestamp":"2026-09-22T02:05:15Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"86","plain_words":""}
+{"timestamp":"2026-09-22T02:19:49Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"130","plain_words":""}
+{"timestamp":"2026-09-22T02:25:21Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"184","plain_words":""}
+{"timestamp":"2026-09-22T02:31:39Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"135","plain_words":""}
+{"timestamp":"2026-09-22T02:39:30Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"217","plain_words":""}
+{"timestamp":"2026-09-22T02:52:19Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"118","plain_words":""}
+{"timestamp":"2026-09-22T03:11:24Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"140","plain_words":""}
+{"timestamp":"2026-09-22T03:13:35Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"183","plain_words":""}
+{"timestamp":"2026-09-22T03:18:02Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"284","plain_words":""}
+{"timestamp":"2026-09-22T03:25:40Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"93","plain_words":""}
+{"timestamp":"2026-09-22T03:29:20Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"23","plain_words":""}
+{"timestamp":"2026-09-22T03:39:37Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"34","plain_words":""}
+{"timestamp":"2026-09-22T03:40:37Z","action":"reply","word":"","murky":"","plain":"","rule":"any-line","words":"77","plain_words":""}

@@ -1,6 +1,29 @@
 # shared log
 
-<!-- consolidated: 20 September 2026 -->
+<!-- consolidated: 21 September 2026 -->
+
+## 21 September 2026
+
+- S: consolidated 21 September 2026, the first of the day: 29 lines since 20 September settled, none deleted, the marker moved to 21 September 2026. Every D: names its home, written with it: the lexicon, decisions.md, drive.md, the work journal, proposals.md, learn.md, the shorthand, conventions.md, agency.md, pitfalls.md, workflow.md, the handbook, the map, hooks.md, hook rotation.md, the index, ai's Customizations.ts and Markdown_Blocks.ts with their tests and ai's log, the hooks and the settings; no question answered; every idea kept, none promoted or culled; the map lists the new hook and its test; drive.md has no current state paragraph since Jonathan's edit of 21 September, so the state is here: the drive is empty, the markdown issue below it with its count running; the manifest in the chat
+- D: record for shared: one work journal entry, the saves counted; two in ai's, the heading fix and the tag edit; nothing ticked in ideas, drive, code debt or learn, so nothing placed and no row in distilled.md; finished.md rewritten, 62 files; zone/work/done/docs left in place until Jonathan says. Jonathan's rac, read as ras
+- D: truth/hook rotation.md made, a howto: what the rotation is, how to measure what reaches co, how to divide it again by whole files today and by pieces when the cut is built; listed in the index. Jonathan's ask
+- D: saved-output-count.sh made and wired, at Stop to count each save of inject-always's output with its division and size into saves.jsonl, and at UserPromptSubmit with report to hand co the tally every tenth save; ten checks pass; hooks.md and the map say so; the first row written. Jonathan's go
+- D: the hook's rotation goes to seven pieces, and the saves are measured first: a Stop hook counts each save of a hook's output with its division and size into saves.jsonl, every tenth waking co to report which division and how often; the pac moved from proposals.md to decisions.md, the plan in drive.md; the build waits for go. Jonathan's decision
+- D: the rule drawn from a markdown hr on ai's page is 2px thick; the change waits for go. Jonathan's decision
+- D: the four words drive done: the remaining truths, CLAUDE.md and the hook scripts read all at once on Jonathan's go, four rewritten, limitations.md needs, create a project.md yarn run check, inject-always.sh detect, murk-count.sh the banned-word hook; every other use fits; steps 2, 3, 5, 6, 7 and 8 ticked; section 1 of drive.md moved to the work journal as what changed and why; the drive is empty. Jonathan's go
+- D: the four words drive: shorthand.md passed at v; handbook.md read, 5 uses, two rewritten: a truth edit's gate is the file read since the other session's last commit, and hooks only read, detect and remind; the three others name the check command. Jonathan's go, v per file
+- D: every t leaves a checkbox line in zone/learn.md, the murky words, the plain words and what to say next time; the shorthand's t row and conventions.md Response 7 say so. Jonathan's decision
+- D: the space before a wikilink in a heading is drawn again on ai's page: the heading's words in one span, since a flex row dropped the space at the end of each child; the cause measured headless, not reasoned; ai's log has the detail. Jonathan's d and go
+- D: the four words drive: agency.md passed at v; conventions.md read, 10 uses, all fit, no change; shorthand.md read, 6 uses, one rewritten, the drive row's nothing required of its words is its words as they are. Jonathan's go, v per file
+- D: when ai turns a wikilink into html it must not consume the whitespace before it; the fix waits for go. Jonathan's decision
+- D: the four words drive: workflow.md passed at v; agency.md read, 4 uses: rule 24 is Show the gate again and its closing words say the output is the gate, step 4 ticked; requirements and svelte-check fit. Jonathan's go, v per file
+- D: the four words drive: pitfalls.md passed at v; workflow.md read, 11 uses, one rewritten, a check that fires on the wrong thing is a hook that detects the wrong thing; the ten others are checkbox, the check command, ticked off and co's own look. Jonathan's go, v per file
+- D: the four words drive: hooks.md passed at v; pitfalls.md read, 18 uses: the five Required labels are Do, pitfall 1's three the check are the hook, the ten others fit, checkbox, co's own checks and Jonathan's requirements. Jonathan's go, v per file
+- D: the lexicon's do reads action co must perform, Jonathan's third wording; drive.md's list the same; the three wording pacs moved from proposals.md to decisions.md. Jonathan's decision
+- D: the fifth word is do, after fix and remedy were weighed the same morning: fix already names the shorthand command and ai's tagset, remedy says a fault came first; drive.md's list says do, the remedy pac moved from proposals.md to decisions.md. Jonathan's decision
+- D: do, the fifth word of the drive: the act a rule tells co to take, not a condition; in the shared lexicon after detect, in drive.md's After list, step 1 ticked. Jonathan's decision
+- D: the four words drive: map of shared files.md approved at v, one change; collaborate/hooks.md read, 27 uses, 24 names of hook scripts or co's own acts kept, 3 rewritten to detect: the name detection, a hook that stays silent detects nothing, grep detects keywords. Jonathan's go, v per file
+- D: the four words drive, step 1: the shared lexicon holds check, required, gate and detect in Jonathan's meanings, the entry required of 19 September rewritten; the pac on not waiting decided, go with v per file at first, moved from proposals.md to decisions.md. Jonathan's go
 
 ## 20 September 2026
 

@@ -37,7 +37,7 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 
 | Hook | What it does |
 | ---- | ---- |
-| plain-english-check.sh | Says when a banned word, a lexicon-settled word, or a name that names nothing goes into a file. The name check looks each backticked span up in every project's src, the tools, every lexicon and on disk, and reports one found nowhere. Tested by plain-english-check.test.sh. Checks the whole edit of an .md, the comment and log lines of a .ts or .svelte. Reads the banned-words tables' mechanical rows and the lexicon's never-words; di's twenty identifiers kept (lives in `.claude/hooks/`) |
+| plain-english-check.sh | Says when a banned word, a lexicon-settled word, or a name that names nothing goes into a file. The name detection looks each backticked span up in every project's src, the tools, every lexicon and on disk, and reports one found nowhere. Tested by plain-english-check.test.sh. Checks the whole edit of an .md, the comment and log lines of a .ts or .svelte. Reads the banned-words tables' mechanical rows and the lexicon's never-words; di's twenty identifiers kept (lives in `.claude/hooks/`) |
 | mark-ts-check-pending.sh | If a .ts/.svelte changed, drops a marker so the end-of-turn type check runs |
 
 ### Stop — fires when co finishes (all warn-only now)
@@ -53,6 +53,7 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 | hook-answer-check.sh | Catches a reply talking to a hook instead of Jonathan: a turn opened by a hook's complaint whose reply mentions the hook or verifies, or verifying words Jonathan never asked for (response #8). Log-only, read the same way |
 | relevance-check.sh | The one hook with judgment: hands haiku the last 8 spoken lines and the reply, asking which sentences answer nothing (always #1) and which words Jonathan would have to ask about (response #6). Skips hook-opened turns and replies under 120 characters. Costs a fraction of a cent per reply. Log-only, read the same way. The call runs detached so the turn never waits: a start row always gets an ending row (clean, warn, no-judgment, or killed at 90 seconds), and each run flags any earlier start left unpaired |
 | murk-count.sh | Writes one row per reply, and a second row when any line of Jonathan's message begins with t, translate, rewrite, plain, simplify or murky. Each row carries the rule that counted it (`any-line` from 1 September 2026, `first-word` before) and the length of the reply it is about |
+| saved-output-count.sh | Counts each time the Claude harness saves inject-always's output to a file instead of showing it whole, with the division that caused it and its size, into saves.jsonl; run again with `report` at UserPromptSubmit, every tenth save it hands co the tally to report in the chat: which division and how often, and the sizes that bound the limit. Made 21 September 2026 |
 | check-ts.sh | If a .ts/.svelte changed, runs svelte-check; injects any errors as next-turn context |
 
 **The one with no word list.** Every other judgment hook here matches phrases, so anything phrased differently walks past — `diagnostic-citation-check` caught none of the seven wrong statements of 1 September 2026, since none of them said "the cause is". `read-this-turn-check` compares two sets of paths instead: the files a reply names, and the files a tool touched since Jonathan last spoke. There is nothing to phrase around.
@@ -76,7 +77,7 @@ Every file that arrives, in either part, wears the `always` tag. Since 10 Septem
 1. A file arrives without the tag — its labels lie.
 2. A file wears the tag and never arrives — they lie the other way.
 
-`/always` proves the complaint works, by breaking each half in turn and putting it back. A check that stays silent when something is broken is not a check.
+`/always` proves the complaint works, by breaking each half in turn and putting it back. A hook that stays silent when something is broken detects nothing.
 
 ## Why hooks
 
@@ -232,7 +233,7 @@ When the user's message contains a debugging keyword, inject a reminder into co'
 }
 ```
 
-**How it works:** `jq` extracts the user's message. `grep -q` checks for keywords silently. If found, echo the JSON that injects context. The `|| true` ensures non-matching messages don't cause an error.
+**How it works:** `jq` extracts the user's message. `grep -q` detects keywords silently. If found, echo the JSON that injects context. The `|| true` ensures non-matching messages don't cause an error.
 
 ## Gotchas
 

@@ -2,6 +2,10 @@
 
 <!-- consolidated: 15 September 2026 -->
 
+## 21 September 2026
+
+- D: a heading's words sit in one span, heading-words, from name_the_headings in Markdown_Blocks.ts: a heading is a flex row and each child was an item of its own, so the space before a link in a heading was drawn 0px wide, measured headless on workflow.md's line 5; 3.5px now. Two test cases, 145 pass, svelte-check clean; working features row 99. Jonathan's d and go
+
 ## 20 September 2026
 
 - D: the tag edit joins the closed tag list and the tagset fix in Customizations.ts, a file whose prose needs work; the tag areas test passes. Jonathan's decision, the pac in shared's decisions.md

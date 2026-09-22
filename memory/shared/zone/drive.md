@@ -1,44 +1,58 @@
 # Drive
 
-## 1. gate, check, require, detect
+see also [[system failure]] and [[memory/shared/logs/work journal|work journal]].
 
-Jonathan, 19 September 2026: gate, check, require and detect all mean the same thing, a condition that must hold, in four different contexts, and co uses them in the wrong context.
+---
 
-1. **Before** — taken from {CLAUDE, hooks, shared-t}, on 19 September 2026: 
-    1. **check** in 51 files — 35 in map of shared files.md and 27 in hooks.md, the hook scripts named -check; 
-    2. **require** in 15 files, 9 in pitfalls.md; 
-    3. **gate** in 9 files, 6 in gates.md; 
-    4. **detect** in 2 files, refactor.md and unit testing.md.
-2. **After** — One context per word:
-    - **check** — when co looks at a thing and compares it with what should be.
-    - **required** — a feature, library or facility that if missing blocks work.
-    - **gate** — a statement or condition that must be true before the work can be performed or described. [[gates]] lists them by task.
-    - **detect** — a check that runs by itself, in code or a hook, and reports what it finds. Every hook detects.
-3. **The wrong uses**, found by reading each use against its context, listed here with the file and line and the word it should be.
-4. **The fix**, one file per turn: the lexicon holds the four entries, the wrong uses are rewritten, gates.md keeps or loses its name, agency 24 and the hook comments say the right word.
-
-**Current status:** the inventory scanned. The four meanings above are rewritten.
-
-## 2. markdown issue
+## hook rotation issue
 
 Proposed 19 September 2026
 
 ### Plan
 
-Restrict the hook's **output** to well under co's (unmeasured) estimate of 10KB. This avoids causing the Claude harness to save anything to a file.
+1. A rule in [[agency]]: when a hook's **output** is saved to a file, co reads that file the same turn. the file's contents will otherwise be **ignored**.
+2. Avoid this using a better distribution
 
-#### Proposal
+Avoid triggering the Claude harness to save anything to a file. Restrict every hook's **output** to well under co's (unmeasured) estimate of 10KB.
 
-1. A rule in [[agency]]: when a hook's **output** is saved to a file, co reads that file the same turn.
-2. A SessionStart hook runs when a session starts. With the key word compact in its settings it runs only at the start that follows a compaction, and not at a fresh start or a resume. It writes CLAUDE.md's reading-on-load list to standard output, which the Claude harness adds to co's context. Then co reads conventions.md and the rest again. Verified 19 September 2026 -> [Claude Code hooks guide](https://code.claude.com/docs/en/hooks-guide) shows this very use (re-adding context after compaction).
-3. Co must read less per turn: Always, and a better division system (next) for the rotating reads.
+#### Proposal — divide by size
 
-### A better division — by size
+The rotated content adds up to 37.5K, measured 21 September 2026, every piece the hook goes round, bytes rounded to a tenth of a KB, the total from the bytes:
 
-Reading [[always]] takes 3.1K, leaving about 7K for the rotated content. That content adds up to about 27K. That's 4 divisions.
-A division by section must leave Always pluwith Response at 10.6KB, over the size where the Claude harness saves to a file, about 10KB by co's guess. A division by size does better: the hook cuts each file it goes round into pieces of at most 5KB, cut only at a heading, and goes round the pieces.
+| piece                              | KB   |
+| ---------------------------------- | ---- |
+| conventions.md, Response           | 7.7  |
+| conventions.md, Banned words       | 6.2  |
+| conventions.md, Conduct            | 4.4  |
+| conventions.md, need translation   | 0.4  |
+| agency.md, whole                   | 5.3  |
+| lexicon.md, What we keep           | 4.1  |
+| lexicon.md, Verbs to use carefully | 3.3  |
+| lexicon.md, The memory system      | 3.0  |
+| lexicon.md, Saying what is true    | 1.1  |
+| lexicon.md, A turn                 | 0.9  |
+| lexicon.md, its opening            | 0.8  |
+| lexicon.md, Who                    | 0.4  |
+| total, the whole rotation          | 37.5 |
 
----
+Reading [[always]] takes 3.1K, leaving slightly less than 7K for each division. That's 6 divisions. 
+
+#### Seven divisions
+
+1. Six divisions forces rewriting the files. Jonathan says this is not necessary.
+2. Seven pieces, each under 6.9K, cut at section headings, Response at its rule 7:
+
+| division | what is in it                                                              | KB  |
+| -------- | -------------------------------------------------------------------------- | --- |
+| 1        | conventions.md, Banned words and need translation                          | 6.6 |
+| 2        | agency.md, and the lexicon's Saying what is true                           | 6.4 |
+| 3        | conventions.md, Conduct, and the lexicon's A turn, opening and Who         | 6.5 |
+| 4        | conventions.md, Response rules 1 to 6, and the lexicon's The memory system | 6.8 |
+| 5        | conventions.md, Response rules 7 to 12                                     | 4.0 |
+| 6        | the lexicon's What we keep                                                 | 4.1 |
+| 7        | the lexicon's Verbs to use carefully                                       | 3.3 |
+
+3. The hook goes round the **seven**, one per turn after Always, so a full round is seven turns; today it is **three**.
 
 ### Analysis
 
@@ -56,17 +70,10 @@ When a hook's **output** on a turn is large, the Claude harness saves it to a fi
 
 While editing files this afternoon, co has written file names as they appear on disk, such as `chat.md`, violating [[conventions]] (Response 4 says a file name is written as a clickable link, including the folder it lives in). Seems to me that the violations were happening BEFORE the compaction, so that cannot be the cause. What is the cause? This is a very interesting question because it assesses the reliability of this new memory system.
 
-#### current division by size
+#### Measuring the saves
 
-Current sizes measured 19 September 2026, Always at 3.1KB read every turn:
+Decided 21 September 2026. The transcript records the Claude harness's notice each time it saves a hook's output, "Output too large (N KB). Full output saved to: <path>", 668 times in this session so far; the smallest saved was 10KB, and Always with agency, 8.4KB, was shown whole, so the limit lies between.
 
-| piece | KB |
-| --- | --- |
-| Response | 7.5 |
-| Banned words | 6.2 |
-| agency.md | 5.3 |
-| Conduct | 4.4 |
-| lexicon, largest section | 4.1 |
-| lexicon, smallest section | 0.4 |
-
-see also [[system failure]].
+1. Built 21 September 2026: a Stop hook, saved-output-count.sh, reads the transcript's last inject-always attachment, whose stdout is the whole output and whose content is the harness's notice when saved, and appends one row to saves.jsonl: the date, the division from the ONE PART IN TURN line, the size, saved or shown. Ten checks pass.
+2. Built the same day: the same script with `report`, run before each prompt, hands co the tally on every tenth save, and co reports in the chat which division caused the saves and how often, with the sizes that bound the limit. The first row is written: the lexicon, 16.2KB, saved.
+3. The seven pieces are cut after the count has run a week, the limit known.

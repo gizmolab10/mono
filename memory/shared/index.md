@@ -8,6 +8,7 @@ Cross-project bundle: the subject of this project is the collaboration itself �
 - [workflow.md](truth/workflow.md) — how work moves between Jonathan and co: one turn, back and forth, step by step, in Jonathan's words and the commands he types; what each of us wants; the cycle, the any-time tasks and every item with its states; where work lives, how it moves, proposals, tidying, friction, review. cadence.md merged in 19 September 2026.
 - [artwork/workflow.svg](truth/artwork/workflow.svg) — one turn, back and forth: the cycle's eight steps as a column, each step a row, Jonathan's command at the left, co's act beside it, the items that step moves in a row to the right, the any-time tasks the last row. Drawn anew 19 September 2026 by a scratch script, workflow.svg folded into it.
 - [handbook.md](truth/handbook.md) — the operating rules of the memory system; the authority every session loads.
+- [hook rotation.md](truth/hook%20rotation.md) — how co reads the rules each turn, part A and part B in turn; how to measure what reaches it, saves.jsonl and the limit; how to divide the rotation again, whole files today, pieces when built. Made 21 September 2026.
 - [lexicon.md](truth/lexicon.md) — the terms every project says, the memory system's and the collaboration's, defined once.
 - [taste.md](truth/taste.md) — Jonathan's visual/design principles, in his own words.
 - [conventions.md](truth/conventions.md) — how Jonathan wants Claude to work and speak: the Always rules, how a reply is written, the conduct rules, the banned words.

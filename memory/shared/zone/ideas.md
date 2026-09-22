@@ -1,5 +1,12 @@
 # Ideas
 
+- [ ] from earlier
+    - [ ] 5 lines in the log have not been consolidated since 20 September.
+    - [ ] 34 pacs are open in proposals.md.
+    - [ ] 10 corrections in learn.md are not ticked.
+    - [ ] chat.md was merged into conventions and agency on 19 September and waits for your v before it is deleted.
+    - [ ] Batch B's other six merges and five deletions are decided and not built.
+    - [ ] 10 changed files are not committed. The commit is yours.
 - [ ] view ai from my ipad?
 - [ ] ai-derived svg drawings
     - [ ] architecture

@@ -13,7 +13,7 @@ When it does, collaboration spins in circles struggling and failing to resolve a
 
 ## Diagnosis Without Prescription
 
-Co can trace code paths, identify bugs, and explain why they fail. But when the fix requires **restructuring logic** (not just patching a value), co often punts:
+Co can trace code paths, identify bugs, and explain why they fail. But when the fix needs **restructuring logic** (not just patching a value), co often punts:
 
 * Suggests "add logging" instead of proposing the fix
 * Stops at diagnosis when the solution is within reach

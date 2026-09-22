@@ -14,11 +14,11 @@ This governs behavior as much as contents — what a tool does, what a setting c
 
 **Why the trigger is a noun and not an intention.** Every earlier version of this rule began "before claiming X, re-read" — and could not fire when co did not notice it was claiming. "Does this sentence name a file, a tool or a number?" is answerable by looking at the sentence.
 
-**The one exception: a name inside quoted output.** Where a filename appears within text quoted from a tool — a check's error, a hook's warning, a command's answer — it is evidence of what that tool said, never an assertion about the file. Nothing needs reading, because nothing is being claimed. The quoting itself is the citation.
+**The one exception: a name inside quoted output.** Where a filename appears within text quoted from a tool — a hook's error or warning, a command's answer — it is evidence of what that tool said, never an assertion about the file. Nothing needs reading, because nothing is being claimed. The quoting itself is the citation.
 
 The exception is exactly this narrow. A name in co's own words is a claim, however it is punctuated: a link, backticks, or a path all count. Only text co is showing rather than saying is let off, and where the two sit in one sentence, the sentence is a claim.
 
-This was written the first time the check fired — on a reply quoting the check's own output, which named a file co had not read that turn. The check was right on its own terms, and the rule was one case too wide.
+This was written the first time the hook fired — on a reply quoting the hook's own output, which named a file co had not read that turn. The hook was right on its own terms, and the rule was one case too wide.
 
 **What it caught, on the day it was written.** Seven wrong statements in one session, six of them a true fact spent on an untested conclusion: `core.ignorecase` really is true, so a rename "must" need a temporary name; the collection tuple really is at line 514, so gallery's files "will not" be listed. Both premises checked, both conclusions never.
 
@@ -151,7 +151,7 @@ When asked about an image or visible output, read what's there first. Verify cla
 
 **Anti-pattern:** User shows screenshot with contradictory title and data → co guesses server restart, sort order bug, missing records.
 
-**Required:** State what's visible, spot the contradiction, then explain.
+**Do:** State what's visible, spot the contradiction, then explain.
 
 ---
 
@@ -173,7 +173,7 @@ When user says "here," "that table," or "the output above," they mean content in
 
 **Anti-pattern:** User says "the table here has Lines for the second column" → co interprets "Lines" as a column header and invents data.
 
-**Required:** Look at the chat output, find the table, copy the actual content.
+**Do:** Look at the chat output, find the table, copy the actual content.
 
 ---
 
@@ -207,7 +207,7 @@ When user rejects an approach, throw it away. Don't trim it, rename it, or retyp
 
 **Anti-pattern:** User says "no snapshot." Co removes the type name but keeps the pattern. User says it again. Co removes the methods but keeps an untyped bag. Three corrections to kill one idea.
 
-**Required:** On rejection, stop. Ask: "what does the user actually want?" If unsure, say so — "co is not sure how you want this to work. Here's the tension co sees: ___." One honest question beats three wrong iterations.
+**Do:** On rejection, stop. Ask: "what does the user actually want?" If unsure, say so — "co is not sure how you want this to work. Here's the tension co sees: ___." One honest question beats three wrong iterations.
 
 **Root cause to watch for:** Treating corrections as surface objections (naming, typing) instead of design direction. Prioritizing output over understanding.
 
@@ -215,13 +215,13 @@ When user rejects an approach, throw it away. Don't trim it, rename it, or retyp
 
 ---
 
-## 19. Analysis shorthands are not action requests
+## 19. [[shorthand]]'s analysis words are not action requests
 
 `pac`, `explain`, `describe` = produce analysis. Don't touch code.
 
 **Anti-pattern:** User says "pac rename FormulaError -> AlgebraError." Co executes the rename. The user wanted pros and cons, not a code change.
 
-**Required:** When the command is an analysis shorthand, STOP. Produce the analysis. Wait for a decision. The arguments after the shorthand are the *subject* of analysis, not instructions to execute.
+**Do:** When the command is an analysis, STOP. Produce the analysis. Wait for a decision. The arguments after the command are the *subject* of analysis, not instructions to execute.
 
 ---
 
@@ -239,7 +239,7 @@ A randomly assigned ordering of points will probably create a corner with right 
 
 **Anti-pattern:** Jonathan asked whether a file existed. Co found it, said so in the reply, called the match "partial", and made the new file anyway.
 
-**Required:** Take the found branch. Where the fit is wrong, say what is wrong with it and wait.
+**Do:** Take the found branch. Where the fit is wrong, say what is wrong with it and wait.
 
 ---
 

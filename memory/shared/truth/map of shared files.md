@@ -35,15 +35,16 @@ The files that belong to no one project: the tools, the hub, the scripts, the ho
 - [inject-always.sh](../../../.claude/hooks/inject-always.sh) — before each message: the Always rules, and one of the in-turn guides in rotation, the banned words among them.
 - [bash-command-check.sh](../../../.claude/hooks/bash-command-check.sh) — before a Bash tool call: blocks commands that join actions with `;`, `&&` or `||`.
 - [plain-english-check.sh](../../../.claude/hooks/plain-english-check.sh) — after every edit: says when a banned word or a name that names nothing was written. Its flag PLAIN_ENGLISH_CHECK is false since 19 September 2026, an experiment, and false it does nothing.
-- [markdown-check.sh](../../../.claude/hooks/markdown-check.sh) — after every edit of a .md file: says when its markdown is malformed, a bare placeholder such as `<X>` outside backticks and code fences its first check. Made 19 September 2026.
+- [markdown-check.sh](../../../.claude/hooks/markdown-check.sh) — after every edit of a .md file: says when its markdown is malformed; a bare placeholder such as `<X>` outside backticks and code fences is the first thing it detects. Made 19 September 2026.
 - [mark-ts-check-pending.sh](../../../.claude/hooks/mark-ts-check-pending.sh), [check-ts.sh](../../../.claude/hooks/check-ts.sh) — an edit to a .ts or .svelte file is noted, and each touched project is type-checked when the reply ends.
 - [snapshot-before-edit.sh](../../../.claude/hooks/snapshot-before-edit.sh) — before an edit, a snapshot of the file for undo.
 - [done-checklist.sh](../../../.claude/hooks/done-checklist.sh) — when a message says done, the done checklist.
 - [banned-words-check.sh](../../../.claude/hooks/banned-words-check.sh), [phrase-check.sh](../../../.claude/hooks/phrase-check.sh), [conciseness-check.sh](../../../.claude/hooks/conciseness-check.sh), [relevance-check.sh](../../../.claude/hooks/relevance-check.sh), [read-this-turn-check.sh](../../../.claude/hooks/read-this-turn-check.sh), [required-disclaimer-check.sh](../../../.claude/hooks/required-disclaimer-check.sh), [diagnostic-citation-check.sh](../../../.claude/hooks/diagnostic-citation-check.sh), [hook-answer-check.sh](../../../.claude/hooks/hook-answer-check.sh) — when a reply ends: the banned words, three habit patterns, filler, relevance, reads this turn, the disclaimer, a diagnostic cited, a hook answered on screen; each warns, none blocks.
 - [murk-count.sh](../../../.claude/hooks/murk-count.sh) — when a reply ends: counts the times Jonathan said a reply did not read, into murk.jsonl.
+- [saved-output-count.sh](../../../.claude/hooks/saved-output-count.sh) — when a reply ends: counts each save of inject-always's output to a file, with its division and size, into saves.jsonl; before a prompt, with `report`, every tenth save hands co the tally to report. Made 21 September 2026.
 - [display-fix.sh](../../../.claude/hooks/display-fix.sh) — on display: shows a hard-banned word as its replacement, the file untouched.
 - [test-always-tag.sh](../../../.claude/hooks/test-always-tag.sh) — proves the guides arriving with every message wear the always tag in the db.
-- the `.test.sh` files beside banned-words-check, hook-answer-check, markdown-check, murk-count, plain-english-check and relevance-check — each hook's own tests.
+- the `.test.sh` files beside banned-words-check, hook-answer-check, markdown-check, murk-count, plain-english-check, relevance-check and saved-output-count — each hook's own tests.
 
 ## .claude/commands/ — the skills typed with a slash
 

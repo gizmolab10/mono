@@ -2,6 +2,13 @@
 
 ## Decisions made during 2026
 
+- 21 September 2026, **the hook's rotation is seven pieces**, each under 6.9K, cut at headings, and **the saves are counted**: each time the Claude harness saves a hook's output to a file, a hook records which division and how large, and every tenth count co reports which division and how often in the chat
+- 21 September 2026, **the rule drawn from a markdown hr is 2px thick** on ai's page, where today it is the faint thickness
+- 21 September 2026, **every t leaves a lesson in zone/learn.md**: one checkbox line, the murky words, the plain words, and what to say next time; the shorthand's t row and Response 7 say so
+- 21 September 2026, **a wikilink turned into html keeps the whitespace before it**; today the conversion consumes it
+- 21 September 2026, **do reads: action co must perform**, in the shared lexicon and drive.md; the wordings when the situation needs it and to unblock work weighed and passed over
+- 21 September 2026, **do is the fifth word**: the act a rule tells co to take when its case comes up, not a condition; the label before it in pitfalls, Required today, becomes Do. In the shared lexicon beside the four
+- 21 September 2026, **the four words are in the shared lexicon in Jonathan's meanings**: check, co looks and compares; required, a feature, library or facility that blocks work when missing; gate, a statement that must be true before the work; detect, a check that runs by itself, every hook detects. The drive rewrites each wrong use, v per file at first
 - 20 September 2026, **the tag edit joins the tagset fix** in ai's closed tag list, 40 tags: a file whose prose needs work, beside debug, faster and test
 - 19 September 2026, **"huh?" suspends the rules**, Always rule 10: the reply is rewritten under Brief, Withhold the evidence, Mechanism not story and the banned words only; section 10's rule 4, ignore ALL the guide rules, gone
 - 19 September 2026, **zone/drafted guide rules.md deleted**, its decided part in workflow.md, its table of the 23 drafts and its breakdown a dated work journal entry, the drafts' fate a question in zone/questions.md
@@ -34,6 +41,60 @@
 
 Open pacs live in zone/proposals.md, one section each, since 18 September 2026. A pac decided there comes here as its dated line.
 
+- 21 September 2026 — **the hook's rotation from three pieces to seven.** **pac** 21 September 2026
+
+**What exists**: on every turn co reads Always, 3.1K, and one of three pieces in turn: the rest of conventions.md, 18.7K, agency.md, 5.3K, the lexicon, 13.6K. When Always and the piece pass about 10K, co's guess, the Claude harness saves the whole to a file and co reads its first 2KB, rules 1 to 5 of Always. So two turns in three co reads nothing past Always, and the rest of conventions.md reaches co on no turn at all. The seven pieces of the proposal in zone/drive.md are each under 6.9K.
+
+**For**: every piece is read whole, every turn, so every rule reaches co again; the rest of conventions.md, with Response and its rule 4 on file names, is read for the first time since the hook was written; a rule sits in the same piece each time, so a reader knows when it comes.
+
+**Against**: a full round takes seven turns where it took three, so any one rule comes round less than half as often, agency every seventh turn instead of every third; the pieces cut across files, a lexicon section beside Conduct, so what co reads on a turn is no one truth; the cut points are headings and change when a file is edited, so the hook cuts by reading, and a heading added between two pieces moves every piece after it; and the 10K is a guess, so the pieces may be smaller than they need to be, or one may still be saved.
+
+**Deciding question**: is reading every rule whole once in seven turns better than reading a third of them whole every third turn and the rest never, and does the 10K get measured before the cut? Decided: seven, and the saves measured first: a hook counts each time the Claude harness saves a hook's output to a file, with the division that caused it, and reports which and how often in the chat on every tenth count.
+- 21 September 2026 — **the wording of do: action co must perform.** **pac** 21 September 2026
+
+**What exists**: the third wording of the morning, after when the situation needs it and to unblock work, both weighed below. Four words, no condition.
+
+**For**: nothing in it can be wrong about when, since it says nothing about when; the pitfall the label sits in says when. Must carries the rule: an obligation is what a rule gives. It fits all five pitfall lines, the ones that stop as well as the ones that go on. The four other words are conditions, and action is the one word that sets do apart from them, which is the entry's job.
+
+**Against**: every agency rule is an action co must perform, so the entry alone does not say which action do is; only the label's place, after Anti-pattern, does. Perform is do's twin at line 84 of the lexicon.
+
+**Deciding question**: is the entry's job to say what kind of thing do is, an action against four conditions, or also when it applies, which needs the rule in the sentence? Decided: this one, 21 September 2026.
+- 21 September 2026 — **the wording of do: action co must perform to unblock work.** **pac** 21 September 2026
+
+**What exists**: the second wording Jonathan offered the same morning, after action co must perform when the situation needs it, weighed in the pac below. The lexicon's required is a feature, library or facility that blocks work if it is missing, and its gate is what must be true before the work.
+
+**For**: it joins the family: required and gate name what blocks work, do names what removes the block, and the five words then read as one idea, work and what holds it. Unblock is a word every programmer knows. Six words.
+
+**Against**: two of the five pitfall lines it would label stop work rather than unblock it: pitfall 19, stop, produce the analysis, wait for a decision, and pitfall 16, on rejection stop and ask. The lines say the right act whether or not work is blocked, so unblock names three of five. And the rule is still gone from the sentence, the open point of the pac below.
+
+**Deciding question**: is do the action that removes a block on work, or the right action a rule names, blocked or not? Decided: not this one; action co must perform, 21 September 2026.
+- 21 September 2026 — **the wording of do: action co must perform when the situation needs it.** **pac** 21 September 2026
+
+**What exists**: the lexicon's entry, co's words: the act a rule tells co to take when the situation the rule describes happens. Jonathan's: action co must perform when the situation needs it. Line 84 of the lexicon already pairs do with perform under Verbs to use carefully.
+
+**For**: nine words against fifteen. Must perform says the obligation outright, where tells co to take only implies it. Needs it is plain.
+
+**Against**: the rule is gone from the sentence, and without it do names any action a situation needs, which is every action co takes; the five pitfall lines are what a rule prescribes, and that is what makes Do a label beside Anti-pattern. Who says the situation needs it is left open, where the rule says it. Perform is do's twin at line 84, so the entry defines do with do.
+
+**Deciding question**: does do name any action a situation needs, or the action a rule prescribes for a situation? Decided: not this one; action co must perform, 21 September 2026.
+- 21 September 2026 — **remedy as the fifth word.** **pac** 21 September 2026
+
+**What exists**: the fifth word of the drive names the act a rule tells co to take when its case comes up, the line after Anti-pattern in five pitfalls, labeled Required today. do was decided this morning and is in the lexicon; Jonathan wrote fix into drive.md after, and fix already means the shorthand command and ai's tagset. remedy is in no truth, no lexicon, no tagset and no code.
+
+**For**: one meaning, nothing to collide with. The pair Anti-pattern and Remedy reads as the fault and its cure, which is what the five pitfalls are. A noun, so the label reads as a heading beside Anti-pattern, where Do reads as an order.
+
+**Against**: a rarer word than do, and Always 2 puts the everyday word first. It says a fault came first, while some of the five lines are the normal case, pitfall 19's stop and produce the analysis, with no fault yet. Two syllables against one, and the lexicon entry written this morning says do.
+
+**Deciding question**: is the fifth word the cure for the anti-pattern above it, remedy, or the act in the normal case, do? Decided: do, the everyday word, fitting the normal case as well as the cure.
+- 21 September 2026 — **the four words: co rewrites each wrong use without waiting for a decision.** **pac** 20 September 2026
+
+**What exists**: the drive's plan in zone/drive.md, section 1: for every use of check, required, gate and detect in the shared truths, CLAUDE.md and the hooks, co reads the sentence around it, and where the word does not fit its meaning, replaces it. The counts of 19 September: check in 51 files, require in 15, gate in 9, detect in 2. Agency 8 says co changes nothing until Jonathan says go; agency 20 says guide prose co writes is a draft he rewrites within minutes.
+
+**For**: the four meanings are Jonathan's, so each call is a reading against his words, not co's taste; a decision on every use would be about a hundred turns; one D: line per file and git make every replacement reversible; v after each file catches a wrong call while it is one file old.
+
+**Against**: words are co's biggest fault, 79 of 136 corrections in this session's transcript, and a wrong word in a truth is the very fault the drive is fixing; agency 20 means Jonathan reads every rewrite anyway, after instead of before; a blanket go on the plan is a go on a hundred edits Jonathan has not seen.
+
+**Deciding question**: is the go on the plan a go on every replacement, with v after each file, or does each replacement need Jonathan's eye before it is written? Decided: go, with Jonathan's v after each file at first.
 - 20 September 2026 — **add a tag edit to the tagset fix.** **pac** 20 September 2026
 
 **What exists**: ai's tags are a closed, alphabetized list of 39 in `ai/src/lib/ts/common/Customizations.ts`, gathered into ten tagsets, every tag in exactly one, the tag areas test proving the two lists agree. fix holds debug, faster and test: a fault to find, speed to gain, proof to write, each the work a piece of code needs. No file in ai's db wears a tag named edit. In kb's lexicon edit is the app's own word for the editor view, and ai's design folder holds editing.md.

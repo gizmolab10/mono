@@ -6,7 +6,7 @@ Lessons Jonathan gave co, one checkbox each, in co's words. Jonathan rewrites ea
 
 - [ ] a pac goes under the decisions file's Evaluations section, never under Decisions made; the two sections are undecided and decided
 - [ ] a proposal is one line per thing that changes, in plain words: no list of every file touched, no mechanism, no test; the reader asks for the detail he wants
- 
+
 - [ ] a claim that a file does not exist needs a search of the whole folder tree, not a listing of one folder: co said ai has no okf.md after listing ai/truth alone, and it sits in ai/truth/design (19 September 2026)
 - [ ] a file name in a reply or a zone file is a clickable link with its folder, Response 4 of conventions.md; co wrote bare names with .md all afternoon because it runs the ten Always rules on each reply and not the Response rules (19 September 2026)
 - [ ] when the fact is what co takes in, co is the subject and the verb is reads: "on every turn co reads two parts from the hook", never the hook sends, prints or puts text in front of co, which say what the tool does; three t rounds on one sentence before reads (19 September 2026)
@@ -15,3 +15,13 @@ Lessons Jonathan gave co, one checkbox each, in co's words. Jonathan rewrites ea
 - [ ] a proposal paragraph states the goal, then the one rule that meets it: "Goal: avoid causing the Claude harness to save a hook output to a file, easy — keep each turn under 10KB"; co wrote a measurement, a comparison of two divisions and a mechanism instead, when the table above already held the numbers (19 September 2026)
 - [ ] the rule carries its own open point at its end, in parentheses, "(needs measurement)", and says "this is easy" when the fix is easy; co put the open point in a separate chime item and left the ease unsaid. The goal-then-rule paragraph of 19 September 2026 is the model, kept in drive.md under division by size
 - [ ] measure before naming a cause: co said the bare file names began at the compaction; the transcript, measured, shows them in every segment since 3 September and tripling from 15 September. When the record can be counted, count it, then name the cause (20 September 2026)
+- [ ] t: "name_the_headings wraps a heading's words in one span, so the flex row holds two items" → "today a heading holds its words loose ... the fix puts all of a heading's words inside one span": say what is wrong today before the fix, and say what a flex layout does in plain words (21 September 2026)
+- [ ] t: "This one I would take" → "Of the three wordings, I recommend this one": say recommend, and name what is chosen among (21 September 2026)
+- [ ] t: "Is the line after the label a condition that must hold before co acts, a gate, or the right act itself" → "Each of the five lines says what co does when the case comes up. Two readings": open with what the thing is, then the two readings, one sentence each (21 September 2026)
+- [ ] t: "Nowhere do you see the list before co rewrites" → "The plan has no step where you look at the changes before co makes them": say the plan, not you, is what lacks the step (21 September 2026)
+- [ ] t: "renamed through the settings, decided here" → "renaming the script file and the line in settings.local.json that names it; this step is where that choice is made": name the two things a rename touches (21 September 2026)
+- [ ] t: "before what co must do, which by your meanings is a gate, so those would say Gate" → "five rules end with a line labeled Required followed by what co must do. By your meaning ... the label would become Gate": count the places, name the label, then the change (21 September 2026)
+- [ ] t: "3 log lines since the third consolidate, two D: lines owed, 3 corrections unticked, 114 paths uncommitted" → four sentences, one fact each, each with its verb: a list of counts with no verbs reads as nothing (21 September 2026)
+- [ ] t: a suggested commit message of a subject and a five-line body, then "five words defined and applied, saves counted, heading spaces kept" → Jonathan's "check, detect, require, do, gate": a summary commit message names the one thing the work was about, here the five words themselves, and nothing else; the rest of the commit is in the diff (21 September 2026)
+
+- [ ] a table is one measurement: co added a total row measuring the whole rotation, 37.5KB, under rows that were pieces of it summing to 27.9, from another day; every row and the total come from one count on one day, or the table says which is which (21 September 2026)

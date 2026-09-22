@@ -66,7 +66,7 @@ Compress by naming, not polishing: name the parts ("logs have two purposes, mini
 
 ### 7. A translation replaces the original
 
-`t` asks for a plain version. Write it into the file the murky words came from, not only into the reply — the translation is the text (the original words are gone).
+`t` asks for a plain version. Write it into the file the murky words came from, not only into the reply — the translation is the text (the original words are gone). Every `t` also leaves one checkbox line in zone/learn.md: the murky words, the plain words, and what to say next time, so the lesson is kept whether the words came from a file or from a reply.
 
 ### 8. Never answer a hook on screen
 
