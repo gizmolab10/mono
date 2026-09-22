@@ -51,6 +51,7 @@ class Configuration {
 		root.setProperty('--height-big',         `${k.height.big}px`);
 		root.setProperty('--height-fat',         `${k.height.fat}px`);
 		root.setProperty('--width-tiny',         `${k.width.tiny}px`);
+		root.setProperty('--size-tiny',          `${k.size.tiny}px`);
 		root.setProperty('--size-small',         `${k.size.small}px`);
 		root.setProperty('--size',               `${k.size.normal}px`);
 		root.setProperty('--size-big',           `${k.size.big}px`);

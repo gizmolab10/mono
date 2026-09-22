@@ -88,9 +88,9 @@
 	}
 
 	.step path {
+		stroke-width : var(--thick-micro);
 		stroke       : var(--accent);
 		fill         : var(--white);
-		stroke-width : 1;
 	}
 
 	.step:global([data-hit]) path {

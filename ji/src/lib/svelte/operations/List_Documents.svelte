@@ -452,7 +452,7 @@
 						<button class='row-danger' use:tip={'delete for good'} onclick={() => delete_byID(row.id)}>delete</button>
 						<button class='row-danger row-x' aria-label='keep' use:tip={'cancel'} onclick={() => confirming = null}>
 							<svg class='row-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-								<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+								<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 							</svg>
 						</button>
 					{:else}

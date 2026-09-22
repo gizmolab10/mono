@@ -22,7 +22,7 @@
 	// The upright cross the three add buttons draw. It is x_cross — two diagonals — turned a
 	// quarter turn where it is drawn, so one path serves both marks.
 	const CROSS = k.height.font.reset;
-	const cross_path = svg_paths.x_cross(CROSS, CROSS / 6);
+	const cross_path = svg_paths.x_cross(CROSS, k.thickness.micro);
 
 	const SEPARATOR = k.thickness.separator.details;
 	const th_sep = k.thickness.separator.main;
@@ -169,7 +169,7 @@
 		use:hit_target={{ id: 'new-scene', onpress: () => engine.load_scene(scenes.new_scene()) }}>
 		<svg class='cross' viewBox='0 0 {CROSS} {CROSS}'>
 			<path d={cross_path} fill='none' stroke='currentColor'
-				stroke-width={CROSS / 6} stroke-linecap='round' />
+				stroke-width={k.thickness.micro} stroke-linecap='round' />
 		</svg></button>
 
 	<button class='action-button' bind:this={parts_left}
@@ -185,7 +185,7 @@
 		use:hit_target={{ id: 'add-child', onpress: add_child_and_show_parts }}>
 		<svg class='cross' viewBox='0 0 {CROSS} {CROSS}'>
 			<path d={cross_path} fill='none' stroke='currentColor'
-				stroke-width={CROSS / 6} stroke-linecap='round' />
+				stroke-width={k.thickness.micro} stroke-linecap='round' />
 		</svg></button>
 
 	<span class='word' bind:this={givens_word}
@@ -194,7 +194,7 @@
 		use:hit_target={{ id: 'add-given', onpress: add_given_and_show_givens }}>
 		<svg class='cross' viewBox='0 0 {CROSS} {CROSS}'>
 			<path d={cross_path} fill='none' stroke='currentColor'
-				stroke-width={CROSS / 6} stroke-linecap='round' />
+				stroke-width={k.thickness.micro} stroke-linecap='round' />
 		</svg></button>
 </div>
 

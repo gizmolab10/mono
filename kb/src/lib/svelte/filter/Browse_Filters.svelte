@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_projects, toggle_project, w_kind, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_search_text } from '../../ts/managers/Filters';
+	import { w_projects, toggle_project, w_kind, w_folder, w_folder_depth, w_show_filters, w_filters_folded, w_tags, w_tag_picking, w_search_text } from '../../ts/managers/Filters';
 	import { inverted, T_Picking } from '../../ts/managers/Filters';
 	import { toggle_all_areas, toggle_area, UNLABELED, w_areas_open } from '../../ts/managers/Filters';
 	import { T_Bundle } from '../../ts/types/File';
@@ -53,18 +53,21 @@
 	const w_ready = files.w_ready;
 	const w_listed = files.w_listed;
 	const w_showing = files.w_showing;
-	let kinds = $derived.by(() => { $w_projects; $w_tags; $w_search_text; $w_showing; return $w_listed ? files.kinds_present() : []; });
-	let bare = $derived.by(() => { $w_projects; $w_tags; $w_search_text; $w_showing; return $w_listed ? files.unlabeled_within_reach() : 0; });
+	let kinds = $derived.by(() => { $w_projects; $w_folder; $w_tags; $w_search_text; $w_showing; return $w_listed ? files.kinds_present() : []; });
+	let bare = $derived.by(() => { $w_projects; $w_folder; $w_tags; $w_search_text; $w_showing; return $w_listed ? files.unlabeled_within_reach() : 0; });
+	// The folders row: the names of the folders the files still within reach answer to, down to the
+	// depth that fits the row, worked out with its own pick set aside, like the kinds.
+	let folders = $derived.by(() => { $w_projects; $w_kind; $w_tags; $w_search_text; $w_showing; $w_folder_depth; return $w_listed ? files.folders_present($w_folder_depth) : []; });
 	// The tags row names the picked tags and which way they pick, unlike the other two rows: with
 	// every picked tag required, it cannot set its own filter aside, so what it offers changes as
 	// the picks do.
-	let tags_in_use = $derived.by(() => { $w_projects; $w_kind; $w_search_text; $w_tags; $w_tag_picking; $w_showing; return $w_listed ? files.tags_present() : []; });
+	let tags_in_use = $derived.by(() => { $w_projects; $w_kind; $w_folder; $w_search_text; $w_tags; $w_tag_picking; $w_showing; return $w_listed ? files.tags_present() : []; });
 	const projects = Object.values(T_Bundle);
 	// The projects control is two seg controls, a gap apart. These four lead, in this order;
 	// every other project follows in the second.
 	const LEADING = [T_Bundle.core, T_Bundle.panel, T_Bundle.gallery, T_Bundle.shared, T_Bundle.memory];
 	let counts = $derived.by(() => {
-		$w_kind; $w_tags; $w_search_text; $w_showing;
+		$w_kind; $w_folder; $w_tags; $w_search_text; $w_showing;
 		return $w_listed ? new Map(projects.map((p) => [p, files.files_in(p)])) : new Map();
 	});
 
@@ -79,6 +82,7 @@
 	$effect(() => {
 		if (!$w_ready) { return; }
 		if ($w_kind === UNLABELED ? bare === 0 : $w_kind !== '' && !kinds.includes($w_kind)) { w_kind.set(''); }
+		if ($w_folder !== '' && !folders.includes($w_folder)) { w_folder.set(''); }
 	});
 	let shown_projects = $derived(test === 'a' ? projects
 		: projects.filter((p) => (counts.get(p) ?? 0) > 0 || $w_projects.includes(p)));
@@ -100,6 +104,40 @@
 	function choose_kind(kind: string) {
 		w_kind.set($w_kind === kind ? '' : kind);
 	}
+
+	// One folder at a time, like a kind: pressing the picked one shows every folder again.
+	function choose_folder(folder: string) {
+		w_folder.set($w_folder === folder ? '' : folder);
+	}
+
+	// Whether the grandchildren fit: a hidden copy of the control at full depth, the gauge, is
+	// measured against its row; too wide, the depth drops to the children alone, and the visible
+	// control is drawn once, at the depth that fits. Measured again whenever the set at full depth
+	// or the row's width changes, so a window grown wide enough brings the grandchildren back. The
+	// gauge's width is its content's, the row's is what the browser gives it, so the two are read
+	// rather than reasoned about.
+	let folders_row_width = $state(0);
+	let folders_gauge = $state<HTMLElement | null>(null);
+	let folders_at_full_depth = $derived.by(() => { $w_projects; $w_kind; $w_tags; $w_search_text; $w_showing; return $w_listed ? files.folders_present(2) : []; });
+	// As one string, so the measuring runs again only when a name comes or goes, never each time
+	// the list is worked out again — which the measuring itself causes by setting the depth.
+	let folders_full_key = $derived(folders_at_full_depth.join('|'));
+	// The gauge is a copy of the control at full depth, drawn in the row but hidden and out of the
+	// flow, so its width is the full control's without the full control ever being seen. It is
+	// there by the time this runs, the browser having made it in the same update; reading its
+	// width makes the browser lay it out. The depth starts at the children and is raised here
+	// before the browser paints, so the visible control is first seen at the depth that fits.
+	$effect(() => {
+		folders_full_key; folders_row_width;
+		const gauge = folders_gauge;
+		if (!$w_ready || !gauge || folders_row_width === 0) {
+			debug.log(`Filters: the folders gauge is not measured yet — ready ${$w_ready}, gauge ${gauge ? 'there' : 'not there'}, row ${folders_row_width}px wide.`);
+			return;
+		}
+		const fits = gauge.offsetWidth <= folders_row_width;
+		w_folder_depth.set(fits ? 2 : 1);
+		debug.log(`Filters: the folders control at full depth is ${gauge.offsetWidth}px in a row ${folders_row_width}px wide — ${fits ? 'the grandchildren stay' : 'the grandchildren leave, the children alone are offered'}.`);
+	});
 
 	// A plain press turns one tag on or off. With the option key held, the press means
 	// "only this one within its own tagset": the area's other picked tags are dropped,
@@ -139,12 +177,14 @@
 	// rather than numbered so adding a row later cannot shift the meaning of what was saved.
 	let show_search = $derived(!$w_filters_folded.includes('search'));
 	let show_projects = $derived(!$w_filters_folded.includes('projects'));
+	let show_folders_row = $derived(!$w_filters_folded.includes('folders'));
 	let show_kinds = $derived(!$w_filters_folded.includes('kinds'));
 	let show_tags = $derived(!$w_filters_folded.includes('tags'));
 
 	let search_word = $derived(show_search ? 'search'
 		: `search${$w_search_text === '' ? '' : ` ➜ ${$w_search_text}`}`);
 	let project_word = $derived($w_projects.length === 0 ? 'all' : $w_projects.join(', '));
+	let folder_word = $derived($w_folder === '' ? 'all' : $w_folder);
 	let kind_word = $derived($w_kind === '' ? 'all' : $w_kind);
 	let tags_word = $derived($w_tags.length === 0 ? 'all' : $w_tags.join(', '));
 
@@ -160,13 +200,14 @@
 	// sizes it as a fold and folding it moves nothing below. Its line carries a plain word in place
 	// of the centered control — read, never pressed — folded or open, so the line never shifts.
 	let projects_starved = $derived($w_search_text !== '' && shown_projects.length === 0);
+	let folders_starved  = $derived($w_search_text !== '' && folders.length === 0);
 	let kinds_starved    = $derived($w_search_text !== '' && kinds_offered === 0);
 	let tags_starved     = $derived($w_search_text !== '' && showing_areas.length === 0);
 
 	// Said whenever any of the three changes, with every value that decides them, so a row that
 	// looks starved but is not counted so can be read in the log rather than guessed at.
 	$effect(() => {
-		debug.log(`Filters: starved — projects ${projects_starved}, kinds ${kinds_starved}, tags ${tags_starved}; search "${$w_search_text}", ${shown_projects.length} project(s) shown, ${kinds_offered} kind(s) offered, ${showing_areas.length} area(s) showing, ${$w_tags.length} tag(s) picked.`);
+		debug.log(`Filters: starved — projects ${projects_starved}, folders ${folders_starved}, kinds ${kinds_starved}, tags ${tags_starved}; search "${$w_search_text}", ${shown_projects.length} project(s) shown, ${kinds_offered} kind(s) offered, ${showing_areas.length} area(s) showing, ${$w_tags.length} tag(s) picked.`);
 	});
 
 	// What the clickable on the bar says: just the name while the row is there, the name and what
@@ -183,7 +224,7 @@
 	// One clickable above them all, saying what every picking row holds — in the order they appear,
 	// and leaving out any row narrowing nothing, since "all" says nothing worth the room.
 	// Pressing it folds the whole set away or brings it back.
-	let all_picked = $derived([$w_search_text, project_word, kind_word, tags_word]
+	let all_picked = $derived([$w_search_text, project_word, folder_word, kind_word, tags_word]
 		.filter((one) => one !== 'all' && one !== '').join(', '));
 	let all_word = $derived($w_show_filters ? '✂ filters'
 		: `✂ filters ➜ ${all_picked === '' ? 'all' : all_picked}`);
@@ -195,6 +236,7 @@
 	let all_button      = $state<HTMLElement | null>(null);
 	let search_button = $state<HTMLElement | null>(null);
 	let projects_button = $state<HTMLElement | null>(null);
+	let folders_button  = $state<HTMLElement | null>(null);
 	let kinds_button    = $state<HTMLElement | null>(null);
 	let tags_button     = $state<HTMLElement | null>(null);
 
@@ -208,11 +250,13 @@
 	// the line is given none.
 	let search_clear = $state<HTMLElement | null>(null);
 	let projects_clear = $state<HTMLElement | null>(null);
+	let folders_clear  = $state<HTMLElement | null>(null);
 	let kinds_clear    = $state<HTMLElement | null>(null);
 
 	const all_action      = $derived(Object.assign(new Action(), { element: all_button,      position: T_Position.left }));
 	const search_action   = $derived(Object.assign(new Action(), { element: search_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const projects_action = $derived(Object.assign(new Action(), { element: projects_button, position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
+	const folders_action  = $derived(Object.assign(new Action(), { element: folders_button,  position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const kinds_action    = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const tags_action     = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }))
 	const picking_action  = $derived(Object.assign(new Action(), { element: picking_control, position: T_Position.center }));
@@ -220,13 +264,16 @@
 	// The word a starved row's line carries. Built only while the row is starved, so the line
 	// holds it then and nothing otherwise.
 	let projects_none = $state<HTMLElement | null>(null);
+	let folders_none  = $state<HTMLElement | null>(null);
 	let kinds_none    = $state<HTMLElement | null>(null);
 	let tags_none     = $state<HTMLElement | null>(null);
 	const projects_none_action = $derived(Object.assign(new Action(), { element: projects_none, position: T_Position.center }));
+	const folders_none_action  = $derived(Object.assign(new Action(), { element: folders_none,  position: T_Position.center }));
 	const kinds_none_action    = $derived(Object.assign(new Action(), { element: kinds_none,    position: T_Position.center }));
 	const tags_none_action     = $derived(Object.assign(new Action(), { element: tags_none,     position: T_Position.center }));
 	const search_clearer   = $derived(Object.assign(new Action(), { element: search_clear,   position: T_Position.center }));
 	const projects_clearer = $derived(Object.assign(new Action(), { element: projects_clear, position: T_Position.center }));
+	const folders_clearer  = $derived(Object.assign(new Action(), { element: folders_clear,  position: T_Position.center }));
 	const kinds_clearer    = $derived(Object.assign(new Action(), { element: kinds_clear,    position: T_Position.center }));
 </script>
 
@@ -240,6 +287,8 @@
 		use:hit_target={{ id: 'list.fold.search', onpress: () => fold('search', show_search) }}>{search_word}</button>
 	<button type='button' class='clickable' bind:this={projects_button}
 		use:hit_target={{ id: 'list.fold.projects', onpress: () => fold('projects', show_projects) }}>{heading('projects', show_projects, project_word)}</button>
+	<button type='button' class='clickable' bind:this={folders_button}
+		use:hit_target={{ id: 'list.fold.folders', onpress: () => fold('folders', show_folders_row) }}>{heading('folders', show_folders_row, folder_word)}</button>
 	<button type='button' class='clickable' bind:this={kinds_button}
 		use:hit_target={{ id: 'list.fold.kinds', onpress: () => fold('kinds', show_kinds) }}>{heading('kinds', show_kinds, kind_word)}</button>
 	<button type='button' class='clickable' bind:this={tags_button}
@@ -265,12 +314,18 @@
 			use:hit_target={{ id: 'list.clear.projects', onpress: () => w_projects.set([]),
 				tip: 'show every project\'s guides' }}>clear</button>
 	{/if}
+	{#if $w_folder !== '' && folders.length > 1}
+		<button class='clear' bind:this={folders_clear}
+			use:hit_target={{ id: 'list.clear.folders', onpress: () => w_folder.set(''),
+				tip: 'show every folder' }}>clear</button>
+	{/if}
 	{#if $w_kind !== '' && kinds_offered > 1}
 		<button class='clear' bind:this={kinds_clear}
 			use:hit_target={{ id: 'list.clear.kinds', onpress: () => w_kind.set(''),
 				tip: 'show every kind of guide' }}>clear</button>
 	{/if}
 	{#if projects_starved}<span class='no-options' bind:this={projects_none}>no options for current search</span>{/if}
+	{#if folders_starved}<span class='no-options' bind:this={folders_none}>no options for current search</span>{/if}
 	{#if kinds_starved}<span class='no-options' bind:this={kinds_none}>no options for current search</span>{/if}
 	{#if tags_starved}<span class='no-options' bind:this={tags_none}>no options for current search</span>{/if}
 	<!-- Folded with no tag picked, the control has nothing to say, so it is not built. -->
@@ -343,6 +398,35 @@
 					onpress: in_reach ? () => choose_kind(kind) : undefined }}>{kind}</button>
 		{/each}
 	</div>
+	</div>
+	{/if}
+{/snippet}
+
+<!-- The folders section: one seg control, one segment per folder name still within reach of the
+     other filters, in alphabetical order, the children and grandchildren of a project's folder.
+     A file answers to its nearest folder within that depth, so truth, artwork and work are three
+     segments and a pick finds the files in every project's folder of that name. When the control
+     would not fit the row's width, the grandchildren leave and the children alone are offered;
+     the row measures itself again whenever the set or the width changes. -->
+{#snippet folders_picker()}
+	{#if folders_at_full_depth.length > 0}
+	<div class='paired-rows' bind:clientWidth={folders_row_width}>
+	<!-- The gauge: every name at full depth, drawn hidden and out of the flow, measured, never pressed. -->
+	<div class='kinds gauge' bind:this={folders_gauge} aria-hidden='true'>
+		{#each folders_at_full_depth as folder}
+			<span class='segment'>{folder}</span>
+		{/each}
+	</div>
+	{#if folders.length > 0}
+	<div class='kinds' use:tip={'show the files sitting in one folder, by its name'}>
+		{#each folders as folder}
+			<button class='segment' class:current={$w_folder === folder}
+				use:hit_target={{ id: `list.folder.${folder}`,
+					tip: $w_folder === folder ? 'show every folder' : `show only the files in folders named "${folder}"`,
+					onpress: () => choose_folder(folder) }}>{folder}</button>
+		{/each}
+	</div>
+	{/if}
 	</div>
 	{/if}
 {/snippet}
@@ -428,6 +512,7 @@
 			leads={[search_action, search_clearer]} sections={[
 			{ subsection: search_rows, folded: !show_search },
 			{ subsection: projects_row, rides: [projects_action, projects_clearer, projects_none_action], folded: !show_projects, empty: projects_starved },
+			{ subsection: folders_picker, rides: [folders_action, folders_clearer, folders_none_action], folded: !show_folders_row, empty: folders_starved },
 			{ subsection: kinds_picker, rides: [kinds_action, kinds_clearer, kinds_none_action], folded: !show_kinds, empty: kinds_starved },
 			// The bare space beside the tag pills answers a press by shutting every area at once, so
 			// getting back to six words never means pressing six crosses. The slot answers, not the
@@ -504,7 +589,18 @@
 		gap             : var(--gap);
 		justify-content : center;
 		align-items     : center;
+		position        : relative;
 		display         : flex;
+	}
+
+	/* The folders gauge: the full control's width, taken without showing it. Out of the flow, so
+	   it takes no gap and moves nothing; hidden, so it is never seen; its width is its content's. */
+	.kinds.gauge {
+		position       : absolute;
+		visibility     : hidden;
+		pointer-events : none;
+		left           : 0;
+		top            : 0;
 	}
 
 	/* One pill with a segment per kind; the chosen one fills with the accent. */

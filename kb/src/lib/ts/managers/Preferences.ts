@@ -30,6 +30,7 @@ export enum T_Preference {
 	// Filters on the guide list
 	filter_project  = 'filter_project',
 	filter_kind     = 'filter_kind',
+	filter_folder   = 'filter_folder',
 	filter_tags     = 'filter_tags',
 	tag_picking     = 'tag_picking',
 	filter_text     = 'filter_text',

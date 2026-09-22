@@ -104,7 +104,7 @@
             <svg
                 viewBox='-2.2 -3.2 20 20'
                 class='svg-glow-button-path'>
-                <path d={icon_path} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width='0.75'/>
+                <path d={icon_path} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width={k.thickness.micro}/>
             </svg>
         {:else}
             {title}

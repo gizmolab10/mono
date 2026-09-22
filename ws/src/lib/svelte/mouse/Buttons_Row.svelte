@@ -141,7 +141,7 @@
 								stroke='black'
 								width={svg_size}
 								height={svg_size}
-								stroke-width='0.6'
+								stroke-width={k.thickness.micro}
 								class='svg-arrow-path-for-{title}'
 								viewBox='0 0 {svg_size} {svg_size}'>
 								<path d={svgPaths.arrow_forTitle(svg_size, 3, title)}/>

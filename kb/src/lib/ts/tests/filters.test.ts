@@ -1,4 +1,6 @@
 import { T_Picking, foot_is_all_folds, inverted, kept_from, tags_match, words_match, ordered_tags } from '../managers/Filters';
+import { folder_matches } from '../managers/Filters';
+import { folder_of, T_Bundle, type File } from '../types/File';
 import { describe, expect, it } from 'vitest';
 
 describe('the foot of a stack of rows', () => {
@@ -142,5 +144,46 @@ describe('trailing the picked tags', () => {
 
 	it('leaves a row alone when nothing is picked', () => {
 		expect(ordered_tags(['prose', 'team'], [])).toEqual(['prose', 'team']);
+	});
+});
+
+// The folders seg control beside the kinds: a file's folder is the one directly holding it, by
+// name, and one folder at a time is picked.
+
+describe('the folder a file sits in', () => {
+	const at = (bundle: T_Bundle, path: string) => folder_of({ bundle, path } as unknown as File);
+
+	it('is the folder directly holding the file, down to the grandchildren of the project\'s folder', () => {
+		expect(at(T_Bundle.memory, 'shared/truth/conventions.md')).toBe('truth');
+		expect(at(T_Bundle.memory, 'shared/truth/artwork/workflow.svg')).toBe('artwork');
+	});
+
+	it('is the nearest folder within the depth for a file deeper than that', () => {
+		expect(at(T_Bundle.memory, 'shared/zone/work/done/docs.md')).toBe('work');
+	});
+
+	it('is the child alone at depth 1, when the grandchildren do not fit the row', () => {
+		const shallow = (path: string) => folder_of({ bundle: T_Bundle.memory, path } as unknown as File, 1);
+		expect(shallow('shared/truth/artwork/workflow.svg')).toBe('truth');
+		expect(shallow('shared/zone/work/done/docs.md')).toBe('zone');
+		expect(shallow('shared/truth/conventions.md')).toBe('truth');
+	});
+
+	it('is none for a file at a project\'s top, or at memory\'s', () => {
+		expect(at(T_Bundle.memory, 'shared/index.md')).toBe('');
+		expect(at(T_Bundle.memory, 'index.md')).toBe('');
+	});
+});
+
+describe('the folder picked', () => {
+	it('lets everything through when none is picked', () => {
+		expect(folder_matches('', 'truth')).toBe(true);
+		expect(folder_matches('', '')).toBe(true);
+	});
+
+	it('keeps only the files in a folder of that name', () => {
+		expect(folder_matches('truth', 'truth')).toBe(true);
+		expect(folder_matches('truth', 'artwork')).toBe(false);
+		expect(folder_matches('truth', '')).toBe(false);
 	});
 });

@@ -344,12 +344,12 @@
 	   how big it draws); follows the text color. */
 	.gear {
 		animation        : gear-spin 1.4s linear infinite;
+		stroke-width     : var(--thick-micro);
 		width            : var(--size-svg);
 		height           : var(--size-svg);
 		fill             : var(--accent);
 		stroke           : var(--black);
 		transform-origin : center;
-		stroke-width     : 0.7px;
 		flex-shrink      : 0;
 	}
 

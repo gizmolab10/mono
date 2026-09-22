@@ -5,3 +5,6 @@ $ vite
 
   ➜  Local:   http://localhost:5175/
   ➜  Network: use --host to expose
+3:44:17 PM [vite] (client) hmr update /src/lib/svelte/mouse/Steppers.svelte, /src/lib/svelte/mouse/Steppers.svelte?svelte&type=style&lang.css
+4:05:24 PM [vite] (client) hmr update /src/lib/svelte/details/Details.svelte
+4:13:11 PM [vite] (client) hmr update /src/lib/svelte/mouse/Close_Button.svelte

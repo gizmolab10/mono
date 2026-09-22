@@ -85,7 +85,7 @@
 		<!-- Top-left, a --gap in from the dashed edge: leaves the drop box and shows the file list. -->
 		<button class='close' onclick={show_files} aria-label='show the file list' use:tip={'show files'}>
 			<svg class='cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 			</svg>
 		</button>
 	{/if}

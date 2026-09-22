@@ -11,3 +11,336 @@ $ vite
 2:04:27 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
 4:57:26 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte
 11:22:12 PM [vite] (client) page reload src/lib/ts/common/Customizations.ts
+2:31:14 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Preferences.ts
+2:31:14 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
+2:31:14 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts
+2:31:14 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Hierarchy.ts
+2:31:14 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
+2:31:14 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+2:33:16 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+2:46:59 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
+2:46:59 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts
+2:46:59 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Hierarchy.ts
+2:47:29 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
+2:47:29 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts
+2:47:29 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Hierarchy.ts
+2:47:29 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Files.ts
+2:47:29 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] Internal server error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+      at failureErrorWithLog (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:1467:15)
+      at /Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:736:50
+      at responseCallbacks.<computed> (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:603:9)
+      at handleIncomingPacket (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:658:12)
+      at Socket.readFromStdout (/Users/sand/GitHub/mono/node_modules/esbuild/lib/main.js:581:7)
+      at Socket.emit (node:events:524:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:30 PM [vite] (client) Pre-transform error: Transform failed with 2 errors:
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: Multiple exports with the same name "w_folder_depth"
+/Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13: ERROR: The symbol "w_folder_depth" has already been declared
+  Plugin: vite:esbuild
+  File: /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts:58:13
+  
+  Multiple exports with the same name "w_folder_depth"
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+  The symbol "w_folder_depth" has already been declared
+  56 |  // until the seg control would not fit the row's width on screen, then 1, the children alone.
+  57 |  // Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+  58 |  export const w_folder_depth = writable<number>(2);
+     |               ^
+  59 |  
+  60 |  /** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+  
+2:47:47 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts
+3:03:53 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+3:08:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
+3:11:40 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/types/File.ts
+3:15:23 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte?svelte&type=style&lang.css
+3:15:33 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+3:19:21 PM [vite] (client) page reload /Users/sand/GitHub/mono/kb/src/lib/ts/managers/Filters.ts
+3:19:21 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/filter/Browse_Filters.svelte
+3:20:38 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:23:16 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:24:07 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:25:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:28:05 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte, /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:33:38 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:33:45 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:34:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:34:26 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:35:36 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:35:43 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:36:41 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
+3:37:05 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:37:16 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:37:16 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:37:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:38:34 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:38:59 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:39:12 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:40:26 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Steppers.svelte?svelte&type=style&lang.css
+3:41:44 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:42:03 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+3:44:48 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/BuildNotes.svelte?svelte&type=style&lang.css
+3:45:41 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte
+3:47:04 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+3:47:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+3:47:32 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+4:05:52 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+4:11:36 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+4:12:33 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+4:19:04 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte
+4:19:04 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/Report.svelte
+4:22:03 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/List_Files.svelte?svelte&type=style&lang.css
+4:22:16 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/content/List_Files.svelte?svelte&type=style&lang.css
+4:22:42 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/kb/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+4:24:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css

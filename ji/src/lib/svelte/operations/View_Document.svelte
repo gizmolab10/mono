@@ -154,7 +154,7 @@
 		<span class='view-name'>{doc?.name ?? ''}</span>
 		<button class='view-close' aria-label='close' use:tip={'close'} onclick={onclose}>
 			<svg class='view-cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 			</svg>
 		</button>
 	</div>
@@ -215,27 +215,27 @@
 	/* The two step triangles, pinned together at the top-far-left. */
 	.view-steps {
 		justify-self : start;
-		gap         : var(--gap);
-		align-items : center;
-		display     : flex;
+		gap          : var(--gap);
+		align-items  : center;
+		display      : flex;
 	}
 
 	/* A step triangle: page-colored inside with an accent outline, filling to the
 	   hover color under the cursor — the same look as the folder triangles. */
 	.step {
-		border          : none;
 		background      : transparent;
-		padding         : 0;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
+		border          : none;
+		padding         : 0;
 	}
 
 	.step path {
-		fill         : var(--white);
+		stroke-width : var(--thick.micro);;
 		stroke       : var(--accent);
-		stroke-width : 1;
+		fill         : var(--white);
 	}
 
 	.step:hover path {
@@ -249,14 +249,14 @@
 		width           : var(--height-control);
 		box-sizing      : border-box;
 		background      : var(--white);
+		position        : absolute;   /* pinned to the viewer's top-right, never moves */
 		cursor          : pointer;
-		padding         : 0;
 		align-items     : center;
 		justify-content : center;
-		position        : absolute;   /* pinned to the viewer's top-right, never moves */
-		top             : 0;
-		right           : 0;
 		display         : flex;
+		padding         : 0;
+		right           : 0;
+		top             : 0;
 	}
 
 	.view-close:hover {
@@ -275,9 +275,9 @@
 
 	.view-image {
 		object-fit : contain;
+		align-self : center;
 		max-height : 100%;
 		max-width  : 100%;
-		align-self : center;
 	}
 
 	.view-frame {
@@ -298,8 +298,8 @@
 	.view-text {
 		font-size   : var(--font-label);
 		color       : var(--text);
-		white-space : pre-wrap;
 		word-break  : break-word;
+		white-space : pre-wrap;
 		overflow-y  : auto;
 		margin      : 0;
 		flex        : 1;

@@ -203,9 +203,9 @@
 	}
 
 	.stepper path {
+		stroke-width : var(--thick-micro);
 		stroke       : var(--accent);
 		fill         : var(--white);
-		stroke-width : 1;
 	}
 
 	.stepper:global([data-hit]) path {

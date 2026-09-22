@@ -22,6 +22,20 @@
             }
           },
           {
+            "id": "a6268e9d08925caf",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/shared/zone/learn.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "learn"
+            }
+          },
+          {
             "id": "46a8811df0b19abb",
             "type": "leaf",
             "state": {
@@ -102,7 +116,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -161,8 +175,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 451.73798751831055,
-    "collapsed": true
+    "width": 451.73798751831055
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -240,7 +253,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/truth/shorthand.md",
+                "file": "memory/shared/zone/learn.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -279,10 +292,16 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "246638af58a8a4c8",
+  "active": "a6268e9d08925caf",
   "lastOpenFiles": [
-    "memory/shared/zone/drive.md",
+    "kb/src/lib/svelte/main/Controls.svelte copy",
     "tools/hub/ai.db-journal",
+    "memory/di/truth/design/index.md",
+    "memory/di/truth/design/di road map.md",
+    "memory/di/truth/design",
+    "memory/shared/zone/drive.md",
+    "memory/shared/truth/shorthand.md",
+    "memory/shared/zone/ideas.md",
     "memory/shared/truth/onload.md",
     "memory/shared/truth/on load.md",
     "memory/shared/truth/agency.md",
@@ -293,8 +312,6 @@
     "pre-flight",
     "memory/shared/zone/gate too verbose.md",
     "memory/shared/zone/hook rotation issue.md",
-    "memory/shared/truth/shorthand.md",
-    "memory/shared/zone/ideas.md",
     "memory/shared/zone/dead links.md",
     "ai/src/lib/ts/tests/scratch_wikilink.test.ts",
     "memory/shared/truth/pitfalls.md",
@@ -309,8 +326,6 @@
     "memory/shared/zone/garolous truths.md",
     "ws/src/manual/plugin/index.md",
     "ws/src/manual/plugin/bubble.plugin.md",
-    "ws/src/manual/user/index.md",
-    "ws/src/manual/user/8.preferences.md",
     "ws/src/manual/plugin",
     "ws/src/manual/user",
     "ws/src/manual",
@@ -318,7 +333,6 @@
     "memory/di/archive",
     "memory/shared/truth/artwork/workflow.svg",
     "memory/shared/truth/artwork/cadence.svg",
-    "tools/hub/ov.restored.db-journal",
     "memory/shared/zone/artwork/cadence.svg",
     "memory/shared/zone/artwork/workflow.svg",
     "memory/shared/zone/diagrams.svg",

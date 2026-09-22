@@ -19,7 +19,7 @@ WORK_FOLDERS = ('next', 'milestones', 'now', 'soon', 'done', 'proposals')
 # Every project whose CLAUDE file and work notes are listed: the memory folder under memory, and
 # the folder at the repo's top, of each. The empty name is the repo's own top, whose CLAUDE file
 # and work notes are shared's.
-PROJECTS = ('', 'core', 'memory', 'panel', 'gallery', 'ai', 'di', 'ji', 'kb', 'lv', 'me', 'mj', 'mu', 'ov', 'ws')
+PROJECTS = ('', 'core', 'memory', 'panel', 'gallery', 'ai', 'di', 'ga', 'ji', 'kb', 'lv', 'me', 'mj', 'mu', 'ov', 'ws')
 
 # The endings a listed file may have: markdown, and svg since 18 September 2026, a drawing the
 # page shows as it is and labels howto and journal when it is opened.

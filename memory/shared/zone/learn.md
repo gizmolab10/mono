@@ -4,9 +4,8 @@ Lessons Jonathan gave co, one checkbox each, in co's words. Jonathan rewrites ea
 
 ## Corrections
 
-- [ ] a pac goes under the decisions file's Evaluations section, never under Decisions made; the two sections are undecided and decided
-- [ ] a proposal is one line per thing that changes, in plain words: no list of every file touched, no mechanism, no test; the reader asks for the detail he wants
-
+- [x] a new pac gets added to the Evaluations section (aka undecided) of the decisions file, never to Decisions made (aka decided)
+- [x] DELETE THIS: a proposal is one line per thing that changes, in plain words: no list of every file touched, no mechanism, no test; the reader asks for the detail he wants
 - [ ] a claim that a file does not exist needs a search of the whole folder tree, not a listing of one folder: co said ai has no okf.md after listing ai/truth alone, and it sits in ai/truth/design (19 September 2026)
 - [ ] a file name in a reply or a zone file is a clickable link with its folder, Response 4 of conventions.md; co wrote bare names with .md all afternoon because it runs the ten Always rules on each reply and not the Response rules (19 September 2026)
 - [ ] when the fact is what co takes in, co is the subject and the verb is reads: "on every turn co reads two parts from the hook", never the hook sends, prints or puts text in front of co, which say what the tool does; three t rounds on one sentence before reads (19 September 2026)
@@ -24,5 +23,5 @@ Lessons Jonathan gave co, one checkbox each, in co's words. Jonathan rewrites ea
 - [ ] t: "3 log lines since the third consolidate, two D: lines owed, 3 corrections unticked, 114 paths uncommitted" → four sentences, one fact each, each with its verb: a list of counts with no verbs reads as nothing (21 September 2026)
 - [ ] t: a suggested commit message of a subject and a five-line body, then "five words defined and applied, saves counted, heading spaces kept" → Jonathan's "check, detect, require, do, gate": a summary commit message names the one thing the work was about, here the five words themselves, and nothing else; the rest of the commit is in the diff (21 September 2026)
 - [ ] t: "the merge of Always Guess with agency 7's unread label, since it rewrites agency's words, which are yours" → "Always 2 and agency 7 say the same thing with two labels, I AM GUESSING and unread:. Making them one label changes agency's words, which are yours": say what the two things are and what they share before saying what was not done; merge and label name nothing on their own (22 September 2026)
-
+- [ ] t: "The count of what is present and the hiding come from the same reach the kinds use, with the folder filter set aside for its own row" → "Which folder segments show, and which hide, is decided the way the kinds row decides it: from the files the other filters leave, with the folder pick itself ignored": reach and set aside are code words from Files.ts; say what is decided, then how, in everyday words (22 September 2026)
 - [ ] a table is one measurement: co added a total row measuring the whole rotation, 37.5KB, under rows that were pieces of it summing to 27.9, from another day; every row and the total come from one count on one day, or the table says which is which (21 September 2026)

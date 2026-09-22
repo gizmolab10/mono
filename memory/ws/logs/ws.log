@@ -32,3 +32,6 @@ DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be
 More info: https://sass-lang.com/d/legacy-js-api
 
 5:44:49 PM [vite-plugin-svelte] /Users/sand/GitHub/mono/ws/src/lib/svelte/text/Curved_Text.svelte:7:11 Curved_Text has unused export property 'center_ofArc'. If it is for external reference only, please consider using `export const center_ofArc`
+4:24:59 PM [vite] hmr update /src/lib/svelte/controls/Primary_Controls.svelte
+4:25:52 PM [vite] hmr update /src/lib/svelte/mouse/Glow_Button.svelte
+4:26:13 PM [vite] hmr update /src/lib/svelte/mouse/Buttons_Row.svelte

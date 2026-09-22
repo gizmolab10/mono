@@ -31,7 +31,7 @@
 		<button class='report-close' aria-label='dismiss'
 			use:hit_target={{ id: 'report.close', onpress: hide_status, tip: 'dismiss this report' }}>
 			<svg class='report-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 			</svg>
 		</button>
 		<!-- Its own word, and when it was made. A report is kept across a reload, so without the

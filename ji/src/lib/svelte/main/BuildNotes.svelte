@@ -128,7 +128,7 @@
 	</div>
 	<button class='close' aria-label='close' use:tip={'close'} onclick={onclose}>
 		<svg class='cross' width={k.svg.cross} height={k.svg.cross} viewBox='0 0 {k.size.cross} {k.size.cross}'>
-			<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+			<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 		</svg>
 	</button>
 	<div class='header'>
@@ -204,9 +204,9 @@
 	}
 
 	.stepper path {
+		stroke-width : var(--thick-micro);
 		stroke       : var(--accent);
 		fill         : var(--white);
-		stroke-width : 1;
 	}
 
 	.stepper:hover path {

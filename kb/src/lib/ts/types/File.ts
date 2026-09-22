@@ -21,21 +21,23 @@ export function in_order(one: string, two: string): number {
 // file's project is read off its path by project_at, not off this. The name is from ov's first
 // build, when each collection's guides were a Vite glob bundle; kept 14 September 2026.
 export enum T_Bundle {
-	mono    = 'mo',
+	core    = 'core',
+	gallery = 'gallery',
 	memory  = 'memory',
 	panel   = 'panel',
 	shared  = 'shared',
-	gallery = 'gallery',
-	core    = 'core',
-	ws      = 'ws',
-	me      = 'me',
+	ai      = 'ai',
 	di      = 'di',
+	ga      = 'ga',
 	ji      = 'ji',
+	kb      = 'kb',
 	lv      = 'lv',
-	ov      = 'ov',
+	me      = 'me',
+	mono    = 'mo',
 	mu      = 'mu',
 	mj      = 'mj',
-	ai      = 'ai',
+	ov      = 'ov',
+	ws      = 'ws',
 }
 
 /**
@@ -53,6 +55,23 @@ export function project_at(bundle: T_Bundle, path: string): T_Bundle {
 	if (bundle !== T_Bundle.memory) { return bundle; }
 	const first = path.split('/')[0];
 	return (Object.values(T_Bundle) as string[]).includes(first) ? first as T_Bundle : T_Bundle.memory;
+}
+
+/**
+ * The folder a file answers to, by name, among the folders down to a depth under its project's
+ * folder: depth 1 is the children, truth, zone, logs; depth 2 the grandchildren too, artwork,
+ * collaborate, work. A file deeper than that answers to its nearest folder within the depth,
+ * so at depth 2 a file in zone/work/done answers to work, and at depth 1 to zone. A memory
+ * file's project folder is the project, not a folder in this sense, so a file at a project's
+ * top, shared/x.md, has none — and neither has a CLAUDE file at the top of a project's own
+ * folder.
+ */
+export function folder_of(file: File, depth: number = 2): string {
+	const parts = file.path.split('/');
+	if (file.bundle === T_Bundle.memory && project_at(file.bundle, file.path) !== T_Bundle.memory) { parts.shift(); }
+	const folders = parts.slice(0, -1);
+	if (folders.length === 0) { return ''; }
+	return folders[Math.min(depth, folders.length) - 1];
 }
 
 // The labels off a file's top. A folder carries none of them.

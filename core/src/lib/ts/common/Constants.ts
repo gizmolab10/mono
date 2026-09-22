@@ -130,14 +130,14 @@ export default class Constants {
 	// Smallest first, the same as the widths.
 	height = {
 		tiny 		 : common_thickness / 2,	// 2.19  — 
-		small        : control_height * 0.8,	// 17.5  — folded section height; below this the
-												//         details' own half gaps no longer fit inside it
+		small        : control_height * 0.8,	// 17.5  — folded section height; smaller than this the details' own half gaps no longer fit inside it
 		normal		 : control_height,			// 21.88 — one control
 		big			 : control_height * 1.3,	// 28.44 — a row that can be hidden
 		fat			 : common_size	  * 1.2,	// 42    — the banner
 	};
 
 	size = {
+		tiny		 : control_height * 0.8,	// 
 		small		 : control_height * 0.945,	// 20.67 — the soft pointer beside a heading
 		normal		 : control_height,			// 21.88 — one control
 		big			 : common_size * 0.7,		// 24.5  — the hamburger

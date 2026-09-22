@@ -806,9 +806,9 @@
 	}
 
 	.head-mark path {
+		stroke-width : var(--thickness-micro);
 		stroke       : var(--accent);
 		fill         : var(--white);
-		stroke-width : 1;
 	}
 
 	.head-mark:global([data-hit]) path {
@@ -985,9 +985,9 @@
 	/* White inside an accent outline whichever way it points. It shows nothing under the cursor:
 	   the row it sits in fills, and that is enough. The header's own pointer still fills. */
 	.tri path {
+		stroke-width : var(--thickness-micro);
 		stroke       : var(--accent);
 		fill         : var(--white);
-		stroke-width : 1;
 	}
 
 	/* The name is capped by its column. Clipping lives on this inner block, not the cell

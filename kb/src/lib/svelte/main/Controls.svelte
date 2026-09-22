@@ -6,7 +6,7 @@
 	import { customizations } from '../../ts/common/Customizations';
 	import { files } from '../../ts/managers/Files';
 	import { hit_target } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/common/Core';
+	import { svg_paths, back_direction } from '../../ts/common/Core';
 	import { Steppers } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
 	import { hits } from '../../ts/common/Core';
@@ -60,6 +60,10 @@
 	// gives way to a cross, and the question sits there until it is answered.
 	let asking_to_delete = $state(false);
 	const crossPath = svg_paths.x_cross(k.size.normal, k.size.normal / 6);
+	// The resume-browsing mark: the steppers' back mark, their lines as they are in Steppers.svelte.
+	const SIZE = k.size.normal * 1.1;
+	const back_path   = svg_paths.fat_polygon(SIZE, back_direction(false));
+	const back_bounds = svg_paths.fat_polygon_bounds(SIZE, back_direction(false));
 	const binPath   = svg_paths.trashcan(k.size.normal);
 
 	// Stepping to another file takes the question with it — it belonged to the one being left.
@@ -143,8 +147,12 @@
 		     15 September 2026. -->
 		<button class='back-button' aria-label='resume browsing'
 			use:hit_target={{ id: 'controls.back', onpress: close_view, tip: 'resume browsing' }}>
+			<!-- The steppers' back mark, drawn as Steppers.svelte draws it, since 22 September 2026; a
+			     circle before. The cross it always had lies over the mark, centered. -->
+			<svg class='back-mark' overflow='visible' width={back_bounds.width} height={back_bounds.height}
+				viewBox='{back_bounds.minX} {back_bounds.minY} {back_bounds.width} {back_bounds.height}'><path d={back_path} /></svg>
 			<svg class='back-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 			</svg>
 		</button>
 		<!-- The file's section. Its bare space answers nothing. -->
@@ -189,7 +197,7 @@
 				<button class='row-button' aria-label='keep it'
 					use:hit_target={{ id: 'editor.delete.no', onpress: () => { asking_to_delete = false; }, tip: 'keep this file' }}>
 					<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-						<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
+						<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 					</svg>
 				</button>
 			{:else}
@@ -207,7 +215,7 @@
 					<button class='row-button' aria-label='delete'
 						use:hit_target={{ id: 'editor.delete', onpress: () => { asking_to_delete = true; }, tip: 'throw this file away' }}>
 						<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-							<path d={binPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' stroke-linejoin='round' />
+							<path d={binPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' stroke-linejoin='round' />
 						</svg>
 					</button>
 				</span>
@@ -272,32 +280,40 @@
 		padding-left : 0;
 	}
 
-	/* Between the hamburger and the file's section, the report's close button's look: round, white, a thick black edge,
-	   the cross inside, --height tall and wide. */
+	/* Between the hamburger and the file's section: the steppers' back mark, its styles as in
+	   Steppers.svelte — white inside with an accent outline, filling to the hover color under the
+	   cursor — with the cross laid over it. */
 	.back-button {
-		border          : var(--thick) solid var(--black);
-		border-radius   : var(--radius-percent);
-		height          : var(--height);
-		width           : var(--height);
-		box-sizing      : border-box;
-		background      : var(--white);
-		cursor          : pointer;
-		align-items     : center;
-		justify-content : center;
-		display         : flex;
-		padding         : 0;
+		background      : transparent;
+		position        : relative;
 		flex            : 0 0 auto;
+		cursor          : pointer;
+		justify-content : center;
+		align-items     : center;
+		display         : flex;
+		border          : none;
+		padding         : 0;
 	}
 
-	/* Under the cursor it fills — the stamp comes from the manager, like every other control's. */
-	.back-button:global([data-hit]) {
-		background : var(--hover);
+	.back-button .back-mark path {
+		stroke-width : var(--thick-micro);
+		stroke       : var(--black);
+		fill         : var(--white);
 	}
 
+	.back-button:global([data-hit]) .back-mark path {
+		fill : var(--hover);
+	}
+
+	/* The cross sits over the mark, centered on it, out of the flow so the mark alone sizes the button. */
 	.back-cross {
-		width   : var(--size-small);
-		height  : var(--size-small);
-		display : block;
+		transform : translate(-40%, -50%);
+		width     : var(--size-tiny);
+		height    : var(--size-tiny);
+		position  : absolute;
+		display   : block;
+		left      : 50%;
+		top       : 50%;
 	}
 
 	.back-cross path {
@@ -390,8 +406,8 @@
 	/* On the accent, core's accent stroke would vanish, so the triangles are edged in black here,
 	   the faint thickness, since 15 September 2026. */
 	.file-section :global(.steppers .step path) {
+		stroke-width : var(--thick-micro);
 		stroke       : var(--black);
-		stroke-width : var(--thick-faint);
 	}
 
 	/* The empty run either side of the name. */
@@ -403,8 +419,8 @@
 	   says, so it sits at the section's left edge; the step marks move as the count's digits do. */
 	.file-count {
 		opacity     : var(--opacity-header);
-		font-size   : var(--font-tiny);
 		color       : var(--text-on-accent);
+		font-size   : var(--font-tiny);
 		flex        : 0 0 auto;
 		white-space : nowrap;
 	}

@@ -164,13 +164,13 @@
 
 	/* A small pill to stop the drop; matches the OK button below. */
 	.drop-cancel {
-		border        : var(--thickness-normal) solid var(--black);
-		border-radius : var(--radius-pill);
+		border        : var(--thickness-micro) solid var(--black);
 		height        : var(--height-control);
+		border-radius : var(--radius-pill);
 		font-size     : var(--font-label);
+		padding       : 0 var(--gap);
 		background    : transparent;
 		cursor        : pointer;
-		padding       : 0 var(--gap);
 	}
 
 	.drop-cancel:hover {
@@ -178,9 +178,9 @@
 	}
 
 	.ring-track {
-		fill         : var(--white);
+		stroke-width : var(--thickness-micro);
 		stroke       : var(--accent);
-		stroke-width : 1;
+		fill         : var(--white);
 	}
 
 	.ring-done {
@@ -188,18 +188,18 @@
 	}
 
 	.drop-divider {
-		border     : none;
-		border-top : var(--thickness-normal) solid var(--accent);
+		border-top : var(--thickness-micro) solid var(--accent);
 		margin     : var(--gap) 0 0;
+		border     : none;
 		width      : 100%;
 	}
 
 	.drop-dialog {
-		flex-direction : column;
-		align-items    : center;
 		font-size      : var(--font-label);
 		margin-top     : var(--gap);
 		gap            : var(--gap);
+		flex-direction : column;
+		align-items    : center;
 		display        : flex;
 	}
 
@@ -208,19 +208,19 @@
 	}
 
 	.dialog-choice {
-		align-items : center;
-		cursor      : pointer;
 		gap         : var(--gap);
+		cursor      : pointer;
+		align-items : center;
 		display     : flex;
 	}
 
 	.dialog-ok {
 		border        : var(--thickness-normal) solid var(--black);
-		border-radius : var(--radius-pill);
 		height        : var(--height-control);
+		border-radius : var(--radius-pill);
+		padding       : 0 var(--gap);
 		background    : transparent;
 		cursor        : pointer;
-		padding       : 0 var(--gap);
 	}
 
 	.dialog-ok:hover:enabled {

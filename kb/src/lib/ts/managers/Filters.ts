@@ -1,6 +1,6 @@
 import { preferences, T_Preference } from './Preferences';
 import { customizations } from '../common/Customizations';
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 /**
  * Filters — the four things that decide which files show.
@@ -40,6 +40,21 @@ export function kind_matches(kind: string, its_kind: string, labeled: boolean): 
 	if (kind === '')          { return true; }
 	if (kind === UNLABELED)   { return !labeled || its_kind === ''; }
 	return its_kind === kind;
+}
+
+// One folder at a time; empty means every folder. A file's folder is the one directly holding
+// it, by name, folder_of in File.ts — so truth, artwork and work are three different picks, and a
+// pick finds files in every project's folder of that name.
+export const w_folder = preferences.persistent<string>(T_Preference.filter_folder, '');
+
+// How deep the folders offered go under a project's folder: 1, the children alone, until the row
+// has measured that the seg control with the grandchildren fits its width on screen, then 2.
+// Measured by the row and set here, so the narrowing and the row read one depth. Not remembered.
+export const w_folder_depth = writable<number>(1);
+
+/** Does a file survive the folder that is picked? Nothing picked lets everything through. */
+export function folder_matches(folder: string, its_folder: string): boolean {
+	return folder === '' || its_folder === folder;
 }
 
 // Any number of tags; empty means every tag.
@@ -193,6 +208,7 @@ export const w_sorts = preferences.persistent<Sort[]>(T_Preference.sorts, []);
 export type Narrowing = {
 	project : string;
 	kind    : string;
+	folder  : string;
 	tags    : string[];
 	words   : string;
 	shut    : string[];

@@ -26,14 +26,14 @@
 	<svg width={size} height={size} viewBox="0 0 {size} {size}">
 		<path
 			d={circlePath}
-			stroke-width="0.75"
+			stroke-width=k.thickness.micro}
 			stroke={colors.default}
 			fill={isHovering ? 'var(--hover)' : 'white'}
 		/>
 		<path
 			fill="none"
 			d={crossPath}
-			stroke-width={size / 12}
+			stroke-width={k.thickness.micro}
 			stroke={isHovering ? 'white' : colors.default}
 		/>
 	</svg>

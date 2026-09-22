@@ -121,7 +121,7 @@
 		<span class='spacer'></span>
 		<button class='close' onclick={onclose} aria-label='close help' use:tip={'close help'}>
 			<svg class='cross' viewBox='0 0 {k.size.cross} {k.size.cross}'>
-				<path d={crossPath} fill='none' stroke-width={k.size.cross / 12} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 			</svg>
 		</button>
 	</div>

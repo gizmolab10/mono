@@ -6,3 +6,21 @@ $ vite
 
   ➜  Local:   http://localhost:5183/
   ➜  Network: use --host to expose
+3:36:41 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
+3:37:05 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:37:16 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:37:16 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:37:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:38:34 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:39:12 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
+3:40:26 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Steppers.svelte?svelte&type=style&lang.css
+3:44:48 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/BuildNotes.svelte?svelte&type=style&lang.css
+3:45:41 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte
+3:47:04 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+3:47:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+3:47:32 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+4:05:52 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
+4:19:04 PM [vite] (client) hmr update /src/lib/svelte/content/Report.svelte
+4:19:04 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte
+4:23:35 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+4:23:41 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css

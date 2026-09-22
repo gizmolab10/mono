@@ -1,8 +1,8 @@
 import { add_label, address_of_file, delete_file, file_path_of, folder_path_of, files_on_disk, forget_missing, labels_on_disk, move_file, moved_into, path_of_address, remove_label, set_fields, set_sources, site_of_file, read_file, renamed_path, save_file, type Fields, type Label, type Saved, type Source } from '../utilities/Saving';
-import { kind_matches, tags_match, words_match, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
+import { kind_matches, tags_match, words_match, folder_matches, T_Picking, UNLABELED, w_projects, project_matches, w_kind, w_folder, w_folder_depth, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts } from './Filters';
 import { fresh_index, line_for, relative_address, renamed_address, repaired_index, with_line_added, without_line_for } from '../utilities/Index_Files';
 import { blank_file, free_name, label_changes, today, NAME_UNTIL_TOLD } from '../utilities/Labels';
-import { T_Bundle, in_order, key_of, project_of, project_at, type File, type Labels, type Filtered_File } from '../types/File';
+import { T_Bundle, in_order, key_of, project_of, project_at, folder_of, type File, type Labels, type Filtered_File } from '../types/File';
 import { customizations } from '../common/Customizations';
 import { links_in, plain_links } from '../utilities/Links';
 import { show_status, type Finding } from './Status';
@@ -239,14 +239,14 @@ class Files {
 	constructor() {
 		// Any of the four moves, the list is worked out again — once, here, rather than
 		// in each of the places that shows it.
-		for (const w of [w_projects, w_kind, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts]) {
+		for (const w of [w_projects, w_kind, w_folder, w_folder_depth, w_tags, w_tag_picking, w_search_text, w_shut, w_show_folders, w_sorts]) {
 			w.subscribe(() => this.renarrow());
 		}
 	}
 
 	/** Work the list out again from what the filters say right now. */
 	renarrow(): void {
-		this.hierarchy.narrow(get(w_projects), get(w_kind), get(w_tags), get(w_search_text), get(w_shut), get(w_show_folders), get(w_sorts), get(w_tag_picking));
+		this.hierarchy.narrow(get(w_projects), get(w_kind), get(w_tags), get(w_search_text), get(w_shut), get(w_show_folders), get(w_sorts), get(w_tag_picking), get(w_folder), get(w_folder_depth));
 		this.w_showing.set(this.hierarchy.filtered_files);
 	}
 
@@ -983,9 +983,11 @@ class Files {
 	 * row asks this question with its own filter left out, and the answer says which of its
 	 * words would still find something.
 	 */
-	private within_reach(without: 'project' | 'kind' | 'tags'): File[] {
+	private within_reach(without: 'project' | 'kind' | 'folder' | 'tags'): File[] {
 		const projects = get(w_projects);
 		const kind     = get(w_kind);
+		const folder   = get(w_folder);
+		const depth    = get(w_folder_depth);
 		const tags     = get(w_tags);
 		const picking  = get(w_tag_picking);
 		const words    = get(w_search_text);
@@ -996,6 +998,7 @@ class Files {
 		return this.files.filter((guide) => {
 			if (without !== 'project' && !project_matches(projects, project_of(guide))) { return false; }
 			if (without !== 'kind' && !kind_matches(kind, guide.kind, guide.labeled)) { return false; }
+			if (without !== 'folder' && !folder_matches(folder, folder_of(guide, depth))) { return false; }
 			if (!set_aside && !tags_match(picking, tags, this.hierarchy.tag_names_of(guide.id))) { return false; }
 			if (!words_match(words, guide.name, guide.title, guide.description)) { return false; }
 			return true;
@@ -1012,6 +1015,16 @@ class Files {
 		const seen: string[] = [];
 		for (const guide of this.within_reach('kind')) {
 			if (guide.kind && !seen.includes(guide.kind)) { seen.push(guide.kind); }
+		}
+		return seen.sort(in_order);
+	}
+
+	/** Every folder name down to a depth still within reach of the other filters, in alphabetical order; a file at a project's top has none. */
+	folders_present(depth: number): string[] {
+		const seen: string[] = [];
+		for (const guide of this.within_reach('folder')) {
+			const folder = folder_of(guide, depth);
+			if (folder !== '' && !seen.includes(folder)) { seen.push(folder); }
 		}
 		return seen.sort(in_order);
 	}

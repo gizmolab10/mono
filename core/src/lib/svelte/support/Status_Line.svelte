@@ -69,7 +69,7 @@
 		use:hit_target={{ id: 'status.close', onpress: onhide,
 			tip: offer ? 'leave it as it is' : 'dismiss this' }}>
 		<svg class='status-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-			<path d={crossPath} fill='none' stroke-width={k.size.normal / 12} stroke-linecap='round' />
+			<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
 		</svg>
 	</button>
 </div>
@@ -77,16 +77,16 @@
 <style>
 	/* The whole width, the words centered in it, the cross pinned to the top left corner so
 	   it stays put however many lines the words run to. The room it needs is held back on
-	   both sides, so the words stay centered on the line rather than the space left over. */
+	   both sides, so the words stay centered on the line rather than the space left over.
+	   Tall enough that the cross, sitting a gap down from the top, keeps a gap below it. */
 	.status {
-		background    : var(--bg);
-		border-radius : var(--radius-tiny);
 		padding       : var(--gap-tiny) calc(var(--size-small) + var(--gap) * 2);
-		/* Tall enough that the cross, sitting a gap down from the top, keeps a gap below it. */
 		min-height    : calc(var(--height) + var(--gap) * 2);
+		border-radius : var(--radius-tiny);
 		box-sizing    : border-box;
-		align-items   : center;
+		background    : var(--bg);
 		position      : relative;
+		align-items   : center;
 		display       : flex;
 		width         : 100%;
 	}
@@ -94,8 +94,8 @@
 	.status-words {
 		font-size  : var(--font-tiny);
 		color      : var(--text);
-		text-align : center;
 		flex       : 1 1 auto;
+		text-align : center;
 		min-width  : 0;
 	}
 
@@ -109,11 +109,11 @@
 		background    : var(--white);
 		color         : var(--text);
 		box-sizing    : border-box;
+		margin-left   : var(--gap);
+		flex          : 0 0 auto;
+		cursor        : pointer;
 		font-family   : inherit;
 		white-space   : nowrap;
-		margin-left   : var(--gap);
-		cursor        : pointer;
-		flex          : 0 0 auto;
 	}
 
 	.status-offer:global([data-hit]) {
@@ -125,16 +125,16 @@
 		border-radius   : var(--radius-percent);
 		height          : var(--height);
 		width           : var(--height);
-		box-sizing      : border-box;
 		background      : transparent;
+		box-sizing      : border-box;
+		left            : var(--gap);
+		top             : var(--gap);
+		position        : absolute;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
-		position        : absolute;
 		display         : flex;
 		padding         : 0;
-		left            : var(--gap);
-		top             : var(--gap);
 	}
 
 	.status-close:global([data-hit]) {

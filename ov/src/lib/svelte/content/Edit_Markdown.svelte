@@ -1561,9 +1561,9 @@
 	/* Done: a filled square inside a hairline. It keeps an outline of its own so the drawn shape
 	   covers the same ground either way. */
 	.view-page :global(li.task .task-box.done .square) {
+		stroke-width : var(--thick-micro);
 		fill         : var(--faintgray);
 		stroke       : var(--gray);
-		stroke-width : 0.5;
 	}
 
 	/* The check is drawn into every box and shows only on a finished one: one green stroke with
@@ -1573,10 +1573,10 @@
 	}
 
 	.view-page :global(li.task .task-box.done .check) {
-		stroke-linejoin : round;
-		stroke-linecap  : round;
 		stroke-width    : var(--thick-big);
 		stroke          : var(--green);
+		stroke-linejoin : round;
+		stroke-linecap  : round;
 		display         : block;
 		fill            : none;
 	}

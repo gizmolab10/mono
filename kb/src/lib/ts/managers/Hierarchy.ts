@@ -1,9 +1,9 @@
 import type { Tag, Tagging, Relationship, Predicate } from '../types/DB_Records';
 import type { File, Labels, Filtered_File } from '../types/File';
 import type { Sort } from './Filters';
-import { kind_matches, tags_match, words_match, project_matches } from './Filters';
+import { kind_matches, tags_match, words_match, project_matches, folder_matches } from './Filters';
 import { Indexes } from '../database/Indexes';
-import { project_of, T_Bundle, in_order, key_of } from '../types/File';
+import { project_of, folder_of, T_Bundle, in_order, key_of } from '../types/File';
 import { likeliest, link_agrees, parts_of_link, resolved_from } from '../utilities/Following_Links';
 import { file_path_of } from '../utilities/Saving';
 
@@ -411,10 +411,11 @@ export class Hierarchy {
 	 * Does one row survive the three filters? Folders never match on their own — they
 	 * come back only by holding something that did.
 	 */
-	private matches(row: Filtered_File, projects: string[], kind: string, tags: string[], words: string, picking: string): boolean {
+	private matches(row: Filtered_File, projects: string[], kind: string, tags: string[], words: string, picking: string, folder: string, depth: number): boolean {
 		if (row.file.is_folder) { return false; }
 		if (!project_matches(projects, project_of(row.file))) { return false; }
 		if (!kind_matches(kind, row.file.kind, row.file.labeled)) { return false; }
+		if (!folder_matches(folder, folder_of(row.file, depth))) { return false; }
 		if (!tags_match(picking, tags, row.tag_names)) { return false; }
 		if (!words_match(words, row.file.name, row.file.title, row.file.description)) { return false; }
 		return true;
@@ -443,7 +444,7 @@ export class Hierarchy {
 		return row.tag_names.join(', ');
 	}
 
-	narrow(projects: string[], kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = ''): void {
+	narrow(projects: string[], kind: string, tags: string[], words: string, shut: string[], show_folders: boolean = true, sorts: Sort[] = [], picking: string = '', folder: string = '', depth: number = 2): void {
 		const all = this.list_files();
 		this.all_files = new Map(all.map((r) => [r.key, r]));
 		// Logs are mined, never read — they neither show nor count in browse.
@@ -456,7 +457,7 @@ export class Hierarchy {
 			? readable.filter((r) => !r.ancestor_keys.some((a) => closed.has(a)))
 			: readable;
 
-		const matched = readable.filter((r) => this.matches(r, projects, kind, tags, words, picking));
+		const matched = readable.filter((r) => this.matches(r, projects, kind, tags, words, picking, folder, depth));
 		this.matched_count = matched.length;
 		this.matched_files = matched;
 		const keep = new Set(matched.map((r) => r.key));
@@ -505,7 +506,7 @@ export class Hierarchy {
 		}
 
 		const folders_shown = this.filtered_files.filter((r) => r.file.is_folder).length;
-		debug.log(`Narrowed: project(s) "${projects.join(', ') || 'all'}", kind "${kind || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_files.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
+		debug.log(`Narrowed: project(s) "${projects.join(', ') || 'all'}", kind "${kind || 'all'}", folder "${folder || 'all'}", ${picking || 'any of'} the tags [${tags.join(', ') || 'any'}], words "${words || 'none'}", ${shut.length} folder(s) shut (${show_folders ? 'hiding what they hold' : 'set aside, since the folders are off screen'}), folders ${show_folders ? 'shown' : 'hidden'} — ${matched.length} of ${all.length} rows match; showing ${this.filtered_files.length}, of which ${folders_shown} are folders. ${this.folder_counts.size} folder(s) hold at least one match.`);
 	}
 
 	/** The files wearing one tag. */

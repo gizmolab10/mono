@@ -2,6 +2,12 @@
 
 <!-- consolidated: 15 September 2026 -->
 
+## 22 September 2026
+
+- D: ga joins PROJECTS in plugin.py, the dispatcher's listing, beside kb; the dispatcher's 47 pass; the running dispatcher reads the list at launch, so ga's files list after a restart. Jonathan's go
+- D: working features row 100 rewritten: the folders section between projects and kinds, children and grandchildren, the grandchildren dropped when the control would not fit; controls.md says five sections and describes the folders one; kb's log has the detail. Jonathan's go
+- D: working features row 100, the folders seg control in the kinds section of the browse filters, built in kb and drawn here; kb's log has the detail. Jonathan's go on shared's drive
+
 ## 21 September 2026
 
 - D: the tags drive and park join the closed tag list, 42 tags, and the tag area progress in Customizations.ts, beside proposal and journal: drive for the file that is the drive, park for a drive moved whole to a zone file of its own; the tag areas test passes, 10. Jonathan's go, the decision in shared's decisions.md

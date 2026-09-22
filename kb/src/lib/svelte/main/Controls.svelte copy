@@ -1,32 +1,29 @@
 <script lang='ts'>
-	import { w_operation, T_Operation, close_view, open_view, step_view } from '../../ts/managers/Operations';
+	import { w_operation, T_Operation, close_view, open_view, open_button, name_of, step_view } from '../../ts/managers/Operations';
 	import { w_viewed, w_can_back, w_can_forward, w_file_back, w_file_forward, w_file_site } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, read_file, VAULT } from '../../ts/utilities/Saving';
 	import { T_Bundle, key_of } from '../../ts/types/File';
+	import { customizations } from '../../ts/common/Customizations';
 	import { files } from '../../ts/managers/Files';
 	import { hit_target } from '../../ts/common/Core';
-	import { Hamburger } from '../../ts/common/Core';
-	import { svg_paths } from '../../ts/common/Core';
-	import { Direction } from '../../ts/common/Core';
+	import { svg_paths, back_direction } from '../../ts/common/Core';
 	import { Steppers } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
 	import { hits } from '../../ts/common/Core';
 	import { k } from '../../ts/common/Core';
 
-	// The controls row: always visible, full width, sitting on the accent. The hamburger at its
-	// left shows or hides details. Browsing, the dispatcher at its right starts over, and the
-	// build number beyond it opens the notes. Editing, the way back to the list follows the
-	// hamburger, and the rest of the row is a section of its own — the count, the steppers, the
-	// folders, the file's name, and the four buttons.
-	let { onclick, detailsShown, buildNumber, onBuildOpen, onRestart, restarting }:
-		{ onclick: () => void; detailsShown: boolean; buildNumber: number; onBuildOpen: () => void;
-		  onRestart: () => void; restarting: boolean } = $props();
+	// The controls row's right end, handed to panel, which draws the hamburger at the row's left
+	// and the host's name in its middle. Browsing, the host's open buttons come first, next to the
+	// hamburger, each opening one file in the editor; the dispatcher at the right starts over and
+	// the build number beyond it opens the notes. Editing, the row is a section of its own — the
+	// steppers, the count, the folders, the file's name, and the four buttons — with the way back to
+	// the list first, between the hamburger and the section, since 15 September 2026.
+	let { buildNumber, onBuildOpen, onRestart, restarting }:
+		{ buildNumber: number; onBuildOpen: () => void; onRestart: () => void; restarting: boolean } = $props();
 
-	// The way back to the list while a file is open, drawn as the fat triangle the steppers
-	// use, pointing left — the direction the list lies in. Two pixels smaller than the steppers',
-	// and held to the hamburger's height, so the hamburger sets the row's.
-	const BACK = k.size.fat - 2;
-	const backPath = svg_paths.fat_polygon(BACK, Direction.left);
+	// The way back to the list while a file is open, between the hamburger and the section, drawn as the report's
+	// close button: a round white button holding the cross, the same path the delete question's
+	// keep button draws, since 15 September 2026.
 
 	// The file being read, and what it is called. Nothing while browsing.
 	const guide   = $derived($w_viewed?.file ?? null);
@@ -63,6 +60,10 @@
 	// gives way to a cross, and the question sits there until it is answered.
 	let asking_to_delete = $state(false);
 	const crossPath = svg_paths.x_cross(k.size.normal, k.size.normal / 6);
+	// The resume-browsing triangle: the steppers' own fat mark, turned back, the cross inside it.
+	const BACK_SIZE = k.size.normal * 1.4;
+	const backPath = svg_paths.fat_polygon(BACK_SIZE, back_direction(false));
+	const backBounds = svg_paths.fat_polygon_bounds(BACK_SIZE, back_direction(false));
 	const binPath   = svg_paths.trashcan(k.size.normal);
 
 	// Stepping to another file takes the question with it — it belonged to the one being left.
@@ -140,30 +141,34 @@
 	}
 </script>
 
-<div class='controls-row layer-controls'>
-	<Hamburger id='controls.hamburger' label='show or hide details' onpress={onclick}
-		tip={`${detailsShown ? 'hide' : 'show'} details`} />
+<div class='controls-row layer-controls' class:editing={editing && !!guide}>
 	{#if editing && guide}
+		<!-- The way back, between the hamburger and the file's section, a gap off each, since
+		     15 September 2026. -->
 		<button class='back-button' aria-label='resume browsing'
 			use:hit_target={{ id: 'controls.back', onpress: close_view, tip: 'resume browsing' }}>
-			<svg class='back-icon' viewBox='0 0 {BACK} {BACK}' width={BACK} height={BACK}>
-				<path d={backPath} />
+			<!-- The steppers' fat triangle, pointing left, drawn as they draw theirs, with the cross
+			     inside it toward the wide side, since 22 September 2026; a circle before. Under the
+			     cursor the triangle fills, as the circle did. -->
+			<svg class='back-triangle' overflow='visible' width={backBounds.width} height={backBounds.height}
+				viewBox='{backBounds.minX} {backBounds.minY} {backBounds.width} {backBounds.height}'>
+				<path class='triangle' d={backPath} />
+				<g transform='translate({BACK_SIZE * 0.36} {BACK_SIZE * 0.31}) scale(0.38)'>
+					<path d={crossPath} fill='none' stroke-width={k.size.normal / 6} stroke-linecap='round' />
+				</g>
 			</svg>
 		</button>
-		<!-- The heavy line between the way back and the file's section: the accent's own width,
-		     with no hairline. -->
-		<div class='upright-line'></div>
-		<!-- The file's section. Its bare space answers nothing: the way back is the button beside it. -->
+		<!-- The file's section. Its bare space answers nothing. -->
 		<div class='file-section'>
-			<!-- Which of the files the filters leave is being read, and how many there are. Nothing
-			     while reading off the list, on a run of files reached by links. -->
-			{#if $w_file_site}
-				<span class='file-count'>{$w_file_site.at} of {$w_file_site.of}</span>
-			{/if}
 			<Steppers id='editor.step' can_back={$w_can_back} can_forward={$w_can_forward}
 				onprev={(repeated) => step_view(-1, repeated)} onnext={(repeated) => step_view(1, repeated)}
 				back_says={$w_file_back ?? 'previous file'} forward_says={$w_file_forward ?? 'next file'} />
-			<!-- The folders above the file follow the steppers at the left. -->
+			<!-- Which of the files the filters leave is being read, and how many there are, after the
+			     steppers. Nothing while reading off the list, on a run of files reached by links. -->
+			{#if $w_file_site}
+				<span class='file-count'>{$w_file_site.at} of {$w_file_site.of}</span>
+			{/if}
+			<!-- The folders above the file follow the count at the left. -->
 			<span class='view-ancestry'>{sits_at}</span>
 			<!-- An empty run on either side, so the name sits at the middle of whatever the folders
 			     leave over rather than at the middle of the whole row. -->
@@ -219,7 +224,23 @@
 				</span>
 			{/if}
 		</div>
+
 	{:else}
+		<!-- The host's open buttons, first, next to the hamburger since 15 September 2026, as one
+		     segmented control since 17 September 2026: one segment per button, each opening one file
+		     in the editor, the file named by its key in the configuration. A segment fills under the
+		     cursor and answers a press; none is ever current, since opening a file picks nothing. The
+		     press says which button, so the steppers walk the open buttons while the file is open. -->
+		{#if customizations.open_buttons.length > 0}
+			<div class='segments'>
+				{#each customizations.open_buttons as open, at (open.key)}
+					<button class='segment'
+						use:hit_target={{ id: `controls.open.${open.title}`, onpress: () => open_button(at), tip: `open ${name_of(open.key) ?? open.key}` }}>
+						{open.title}
+					</button>
+				{/each}
+			</div>
+		{/if}
 		<span class='spacer'></span>
 		<!-- While it is starting over it answers nothing, so it hands the manager no press and no
 		     words — the same as being disabled, said the one way a target can say it. -->
@@ -237,69 +258,100 @@
 
 <style>
 	.controls-row {
-		/* A normal top row: items centered, full width, no vertical gap — the row
-		   is just as tall as its controls. The frame stacks the two boxes below it. */
+		/* The right end of panel's row, taking whatever the hamburger leaves: items centered, no
+		   vertical gap — the row is just as tall as its controls. */
 		background  : var(--accent);
 		gap         : var(--gap);
 		box-sizing  : border-box;
 		position    : relative;
 		align-items : center;
 		display     : flex;
-		width       : 100%;
+		min-width   : 0;
+		flex        : 1 1 auto;
 	}
 
-	/* One gap off the hamburger, drawn the way the list draws its pointers — an outline, not a
-	   fill. Held to the hamburger's height, its triangle allowed to spill, so it never sets the
-	   row's height. */
-	.back-button {
+	/* The row pulls left by a big gap, so its first button sits closer to the hamburger, since
+	   15 September 2026: the open buttons while browsing, the way back while a file is open,
+	   the two left edges the same. */
+	.controls-row {
 		margin-left : calc(var(--gap-big) * -1);
-		height      : var(--size-big);
-		background  : transparent;
-		overflow    : visible;
-		cursor      : pointer;
-		align-items : center;
-		display     : flex;
-		border      : none;
-		padding     : 0;
 	}
 
-	.back-icon path {
-		stroke       : var(--black);
+	/* The section holds no padding at its left, so the steppers begin a gap after the way back,
+	   the row's own gap, since 15 September 2026. */
+	.controls-row.editing .file-section {
+		padding-left : 0;
+	}
+
+	/* Between the hamburger and the file's section: a fat triangle pointing left, white with a
+	   thick black edge, the cross inside, --height tall and wide. The button itself draws nothing;
+	   the drawing is the svg's. */
+	.back-button {
+		border          : none;
+		box-sizing      : border-box;
+		background      : none;
+		cursor          : pointer;
+		align-items     : center;
+		justify-content : center;
+		display         : flex;
+		padding         : 0;
+		flex            : 0 0 auto;
+	}
+
+	.back-triangle {
+		display : block;
+	}
+
+	/* White inside with an accent outline, the steppers' look. */
+	.back-triangle .triangle {
 		fill         : var(--white);
-		stroke-width : 0.7px;
+		stroke       : var(--accent);
+		stroke-width : 1;
 	}
 
-	/* Under the cursor the triangle's own body takes the hover color — the stamp comes from the
-	   manager, like every other control's. */
-	.back-button:global([data-hit]) .back-icon path {
+	/* Under the cursor the triangle fills — the stamp comes from the manager, like every other control's. */
+	.back-button:global([data-hit]) .triangle {
 		fill : var(--hover);
 	}
 
-	:global(.hamburger-button) {
-		color         : var(--text-on-accent);
-		border-radius : var(--radius-tiny);
-		background    : transparent;
-		position      : relative;
-		cursor        : pointer;
-		display       : flex;
-		border        : none;
-		left          : -4px;
-	}
-
-	:global(.hamburger-button .hamburger-icon path) {
-		stroke-width : var(--thick-faint);
-		stroke       : var(--black);
-		fill         : currentColor;
-	}
-
-	/* The cursor is on it — the stamp comes from the manager, which is the only thing that knows.
-	   It is put on the element from outside this file, so it is named as reaching outside. */
-	:global(.hamburger-button[data-hit] .hamburger-icon path) {
-		fill : var(--hover);
+	.back-triangle path {
+		stroke : var(--black);
 	}
 
 	/* Takes up whatever is left, so the hamburger stays at the left and the two
 	   named buttons stay together at the right. */
+	/* The open buttons' segmented control, drawn as the rules' and the kinds row's: one box, the
+	   segments divided by lines, a segment filling under the cursor. No segment is ever current. */
+	.segments {
+		border        : var(--thick) solid var(--black);
+		border-radius : var(--radius-pill);
+		height        : var(--height);
+		background    : var(--white);
+		box-sizing    : border-box;
+		overflow      : hidden;
+		display       : flex;
+		flex-shrink   : 0;
+	}
+
+	.segment {
+		padding     : var(--pad-control);
+		font-size   : var(--font-tiny);
+		background  : transparent;
+		font-family : inherit;
+		white-space : nowrap;
+		color       : var(--text);
+		cursor      : pointer;
+		border      : none;
+	}
+
+	.segment:not(:last-child) {
+		border-right : var(--thick) solid var(--black);
+	}
+
+	.segment:global([data-hit]) {
+		background : var(--hover);
+	}
+
 	.spacer {
 		flex : 1;
 	}
@@ -328,22 +380,12 @@
 		cursor     : default;
 	}
 
-	/* The heavy line: as wide as the stack's heavy lines are thick, the row's height, the accent
-	   showing through, no hairline. It sits flush against the section, as a heavy line sits on a
-	   section's top edge, and a tiny gap off the back button rather than the row's own gap. */
-	.upright-line {
-		margin-right : calc(var(--gap) * -1);
-		margin-left  : calc(var(--gap-tiny) - var(--gap));
-		width        : var(--thick-huge);
-		align-self   : stretch;
-		flex         : 0 0 auto;
-	}
-
-	/* The file's section: on the page color, its corners rounded as the content box below it,
-	   as tall as the row the hamburger sets. */
+	/* The file's section: on the accent since 15 September 2026, its words in the accent's own
+	   text color, its corners rounded as the content box below it, as tall as the row the
+	   hamburger sets. */
 	.file-section {
 		border-radius : var(--radius);
-		background    : var(--bg);
+		background    : var(--accent);
 		padding       : 0 var(--gap);
 		gap           : var(--gap);
 		align-self    : stretch;
@@ -359,6 +401,13 @@
 		height : var(--height);
 	}
 
+	/* On the accent, core's accent stroke would vanish, so the triangles are edged in black here,
+	   the faint thickness, since 15 September 2026. */
+	.file-section :global(.steppers .step path) {
+		stroke       : var(--black);
+		stroke-width : var(--thick-faint);
+	}
+
 	/* The empty run either side of the name. */
 	.view-spacer {
 		flex : 1 1 auto;
@@ -369,7 +418,7 @@
 	.file-count {
 		opacity     : var(--opacity-header);
 		font-size   : var(--font-tiny);
-		color       : var(--text);
+		color       : var(--text-on-accent);
 		flex        : 0 0 auto;
 		white-space : nowrap;
 	}
@@ -379,7 +428,7 @@
 		opacity      : var(--opacity-header);
 		font-size    : var(--font-tiny);
 		margin-left  : var(--gap-tiny);
-		color        : var(--text);
+		color        : var(--text-on-accent);
 		position     : relative;
 		flex         : 0 1 auto;
 		overflow     : hidden;
@@ -464,7 +513,7 @@
 		padding       : 0 var(--gap-tiny);
 		font-size     : var(--font-fat);
 		background    : transparent;
-		color         : var(--text);
+		color         : var(--text-on-accent);
 		box-sizing    : border-box;
 		flex          : 0 1 auto;
 		font-family   : inherit;

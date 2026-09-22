@@ -75,7 +75,7 @@
 	}
 
 	:global(.hamburger-button .hamburger-icon path) {
-		stroke-width : var(--thick-faint);
+		stroke-width : var(--thick-micro);
 		stroke       : var(--black);
 		fill         : currentColor;
 	}

@@ -202,7 +202,7 @@
 	}
 
 	.hamburger-button .hamburger-icon path {
-		stroke-width : var(--thickness-faint);
+		stroke-width : var(--thickness-micro);
 		stroke       : var(--black);
 		fill         : currentColor;
 	}

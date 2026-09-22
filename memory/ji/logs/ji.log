@@ -6,3 +6,16 @@ $ vite
   ➜  Local:   http://localhost:5182/
   ➜  Network: use --host to expose
 5:44:39 PM [vite-plugin-svelte] src/lib/svelte/main/App.svelte:41:1 No scopable elements found in template. If you're using global styles in the style tag, you should move it into an external stylesheet file and import it in JS. See https://github.com/sveltejs/vite-plugin-svelte/blob/main/docs/faq.md#where-should-i-put-my-global-styles.
+4:06:55 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
+4:07:21 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte?svelte&type=style&lang.css
+4:07:44 PM [vite] (client) hmr update /src/lib/svelte/operations/Chat.svelte?svelte&type=style&lang.css
+4:09:53 PM [vite] (client) hmr update /src/lib/svelte/main/Help.svelte
+4:09:53 PM [vite] (client) hmr update /src/lib/svelte/operations/List_Documents.svelte
+4:09:54 PM [vite] (client) hmr update /src/lib/svelte/main/BuildNotes.svelte
+4:09:54 PM [vite] (client) hmr update /src/lib/svelte/operations/View_Document.svelte
+4:10:10 PM [vite] (client) hmr update /src/lib/svelte/operations/Drop_Documents.svelte
+4:16:12 PM [vite] (client) hmr update /src/lib/svelte/operations/View_Document.svelte, /src/lib/svelte/operations/View_Document.svelte?svelte&type=style&lang.css
+4:16:33 PM [vite] (client) hmr update /src/lib/svelte/operations/View_Document.svelte?svelte&type=style&lang.css
+4:17:09 PM [vite] (client) hmr update /src/lib/svelte/support/Drop_Status.svelte?svelte&type=style&lang.css
+4:17:50 PM [vite] (client) hmr update /src/lib/svelte/support/Drop_Status.svelte?svelte&type=style&lang.css
+4:21:54 PM [vite] (client) hmr update /src/lib/svelte/support/Drop_Status.svelte?svelte&type=style&lang.css

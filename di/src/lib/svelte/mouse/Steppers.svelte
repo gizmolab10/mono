@@ -27,11 +27,11 @@
 		hit_closure: (pointsUp: boolean) => void;
 	} = $props();
 
-	const strokeWidth = 0.75;
 	const { w_s_hover } = hits;
 	const { w_hover_color } = colors;
 	const uid = Identifiable.newID();
 	const buttonSize = $derived(size);
+	const strokeWidth = k.thickness.micro;
 	const direction_A = $derived(horizontal ? Direction.left : Direction.up);
 	const direction_B = $derived(horizontal ? Direction.right : Direction.down);
 	const path_A = $derived(svg_paths.fat_polygon(buttonSize, direction_A));

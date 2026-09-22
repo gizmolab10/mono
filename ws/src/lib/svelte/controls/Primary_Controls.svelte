@@ -96,8 +96,8 @@
 						viewBox='-1 -1 19 19'>
 						<path
 							d={hamburger_path}
-							stroke-width='0.75'
 							class='hamburger-path'
+							stroke-width={k.thickness.micro}
 							fill={s_hamburger.isHovering ? 'white' : 'black'}
 							stroke={s_hamburger.isHovering ? 'darkgray' : 'transparent'}/>
 					</svg>
