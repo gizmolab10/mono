@@ -1,5 +1,8 @@
 # Ideas
 
+- [ ] add new seg control {truth, zone, log, artwork}
+    - [ ] the set of all subfolders's names
+- [ ] see also [[system failure]] and [[memory/shared/logs/work journal|work journal]].
 - [ ] from earlier
     - [ ] 5 lines in the log have not been consolidated since 20 September.
     - [ ] 34 pacs are open in proposals.md.

@@ -15,16 +15,17 @@ export const customizations = {
 
 	// The closed tag list, alphabetized, nothing invented on the spot.
 	tags : [
-		'always', 'born', 'build', 'data', 'debug', 'deploy', 'edit', 'faster', 'geometry', 'incorporated',
-		'journal', 'keep', 'later', 'maybe', 'migrate', 'next', 'notes', 'now', 'plans', 'platform',
-		'port', 'program', 'proposal', 'prose', 'refactor', 'research', 'session', 'setup', 'soon',
-		'stale', 'style', 'tabled', 'team', 'test', 'tools', 'UX', 'vision', 'visual', 'waiting',
-		'weighed',
+		'always', 'born', 'build', 'data', 'debug', 'deploy', 'drive', 'edit', 'faster', 'geometry',
+		'incorporated', 'journal', 'keep', 'later', 'maybe', 'migrate', 'next', 'notes', 'now', 'park',
+		'plans', 'platform', 'port', 'program', 'proposal', 'prose', 'refactor', 'research', 'session', 'setup',
+		'soon', 'stale', 'style', 'tabled', 'team', 'test', 'tools', 'UX', 'vision', 'visual',
+		'waiting', 'weighed',
 	],
 
 	// The tags gathered into ten areas, each folding its tags away behind its own name. Six gather
-	// by what a file is about. progress gathers by where a file stands in its own life, put forward
-	// or written up. active gathers by how soon it is wanted: now, next, soon, later, or set aside.
+	// by what a file is about. progress gathers by where a file stands in its own life: put forward,
+	// the drive, parked, or written up. active gathers by how soon it is wanted: now, next, soon,
+	// later, or set aside.
 	// Every tag belongs to exactly one area, and the tag areas test proves the two lists agree.
 	tag_areas : [
 		{ name: 'ai',        tags: ['always', 'prose', 'session', 'style', 'team'] },
@@ -32,7 +33,7 @@ export const customizations = {
 		{ name: 'fix',       tags: ['debug', 'edit', 'faster', 'test'] },
 		{ name: 'fate',      tags: ['keep', 'maybe', 'stale'] },
 		{ name: 'bedrock',   tags: ['build', 'deploy', 'platform', 'setup', 'tools'] },
-		{ name: 'progress',  tags: ['proposal', 'journal'] },
+		{ name: 'progress',  tags: ['proposal', 'drive', 'park', 'journal'] },
 		{ name: 'active',    tags: ['now', 'next', 'soon', 'later', 'tabled'] },
 		{ name: 'lifecycle', tags: ['born', 'weighed', 'waiting', 'incorporated'] },
 		{ name: 'think',     tags: ['notes', 'plans', 'research', 'vision'] },

@@ -26,6 +26,5 @@ Elsewhere:
 ## More
 
 - [AI on my mac](./AI%20on%20my%20mac.md)
-- [Assessment of our guides](../../../shared/notes/guides/assessment%20of%20our%20guides.md)
 - [Md audit 1](./md%20audit%201.md)
 - [Memory-system-design](memory/core/notes/work/AI%20memory%20redesign.md)

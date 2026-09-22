@@ -24,7 +24,7 @@ Sixteen hook commands run today. Scripts live in `di/.claude/hooks/`, invoked fr
 | log-present *(inline)* | When Jonathan pastes log markers, injects "read the log yourself, don't ask me to" |
 | geometric-mode *(inline)* | Toggles a flag on "geometric"; while on, injects geometry-caution and log-naming rules |
 | done-checklist.sh | On a "done" command, injects the done checklist from shorthand.md |
-| inject-always.sh | Injects part A whole, then one part of B in turn; complains first if any file's labels disagree with what is sent (lives in `.claude/hooks/`) |
+| inject-always.sh | Injects part A whole, then one of seven pieces of B in turn, since 22 September 2026: a piece is heading ranges of one file, sized so that with Always it stays under what the Claude harness saves; complains first if any file's labels disagree with what is sent (lives in `.claude/hooks/`) |
 
 ### PreToolUse — fires before a tool runs
 

@@ -4,7 +4,7 @@ The files that belong to no one project: the tools, the hub, the scripts, the ho
 
 ## root
 
-- [CLAUDE.md](../../../CLAUDE.md) — the shared context every session reads first: the projects, the principles, who is who, what to read on load, the defaults.
+- [CLAUDE.md](../../../CLAUDE.md) — one import line since 22 September 2026, `@memory/shared/truth/onload.md`, and one plain line naming the file; what it held is [onload.md](onload.md): the projects, the principles, who is who, what to read on load, the defaults.
 
 ## tools/ — the memory system's tools
 
@@ -45,6 +45,7 @@ The files that belong to no one project: the tools, the hub, the scripts, the ho
 - [display-fix.sh](../../../.claude/hooks/display-fix.sh) — on display: shows a hard-banned word as its replacement, the file untouched.
 - [test-always-tag.sh](../../../.claude/hooks/test-always-tag.sh) — proves the guides arriving with every message wear the always tag in the db.
 - the `.test.sh` files beside banned-words-check, hook-answer-check, markdown-check, murk-count, plain-english-check, relevance-check and saved-output-count — each hook's own tests.
+- [test-pieces.sh](../../../.claude/hooks/test-pieces.sh) — proves inject-always's seven pieces: every line of the three rotated files comes out once, and no output with Always passes 8.4KB. Made 22 September 2026.
 
 ## .claude/commands/ — the skills typed with a slash
 

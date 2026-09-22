@@ -4,6 +4,7 @@
 
 ## 21 September 2026
 
+- D: the tags drive and park join the closed tag list, 42 tags, and the tag area progress in Customizations.ts, beside proposal and journal: drive for the file that is the drive, park for a drive moved whole to a zone file of its own; the tag areas test passes, 10. Jonathan's go, the decision in shared's decisions.md
 - D: a heading's words sit in one span, heading-words, from name_the_headings in Markdown_Blocks.ts: a heading is a flex row and each child was an item of its own, so the space before a link in a heading was drawn 0px wide, measured headless on workflow.md's line 5; 3.5px now. Two test cases, 145 pass, svelte-check clean; working features row 99. Jonathan's d and go
 
 ## 20 September 2026

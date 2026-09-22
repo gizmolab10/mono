@@ -49,6 +49,18 @@ Open question: is [[conventions]] folded into `always.md` (one file, injected wh
 
 ## investigations
 
+### the gate reports only when it blocks
+
+**pac** 22 September 2026
+
+**What exists**: [[agency]] 23, Show the gate: on a go, the reply begins with what was checked before the first edit, and its closing words say the output is the gate, missing or thin means the step was skipped. `gates.md`'s protocol says the same for a gated task: announce, read, quote, then act. Always 3, Withhold the evidence, cuts evidence Jonathan did not ask for and says I can prove this in its place. The go of 21 September on the drive tag began with the route's inputs and where it writes, and Jonathan asked why that was reported.
+
+**For**: a gate that passes says nothing the work does not say; only a gate that stops the work needs words, what it found and what waits. Always 3 and agency 23 then stop colliding on every go. A small go's reply is its result and nothing else.
+
+**Against**: rule 23's own reason is that a skipped gate is unseen: the sentence is the proof that the step ran, and silence reads the same whether the gate passed or was skipped, so the check moves to trust, or to Jonathan asking. `gates.md` says the gate exists because skipping it caused failures and massive time wastage. A middle: one line, and only on a go that edits code or a truth, never on a tag, a log line or a decision line.
+
+**Deciding question**: is the gate sentence proof that the step ran, which silence cannot give, or evidence Jonathan did not ask for, which Always 3 cuts?
+
 ### move SOT from the lexicon to the shorthand
 
 **pac** 20 September 2026

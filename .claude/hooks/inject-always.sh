@@ -2,15 +2,19 @@
 # UserPromptSubmit hook. Two parts, because what arrives is cut off at about 2000
 # characters and everything past that is lost without a word.
 #
-#   A — the Always section of conventions.md, every single turn. It holds the nine
+#   A — the Always section of conventions.md, every single turn. It holds the four
 #       rules that must never be out of sight, and it is short enough to survive the
 #       cut whole.
-#   B — everything else: the rest of conventions.md (how a reply is written, the conduct
-#       rules, the banned words), how the work is done, the shared lexicon, and the
-#       project's own banned words. One of them per turn, in rotation, so each gets the
-#       leftover room to itself rather than being crowded out.
+#   B — everything else, cut into seven pieces since 22 September 2026: the rest of
+#       conventions.md (how a reply is written, the conduct rules, the banned words), how
+#       the work is done, the shared lexicon, and the project's own banned words when it
+#       has one. One piece per turn, in rotation. A piece is one or more ranges of one
+#       file, from a heading up to another heading, sized so that with Always it stays
+#       under the size the Claude harness saves to a file: agency with Always, 6.5KB, was
+#       shown whole and the lexicon with Always, 14.4KB, was saved, measured 22 September
+#       2026 in saves.jsonl. The largest piece with Always is 7.4KB.
 #
-# Which one B sends is decided by a count kept in a file, since a hook remembers
+# Which piece B sends is decided by a count kept in a file, since a hook remembers
 # nothing between turns.
 #
 # Run .claude/hooks/test-always-tag.sh to prove the labels and the sending agree.
@@ -21,12 +25,13 @@ AGENCY="$TRUTH/agency.md"
 LEXICON="$TRUTH/lexicon.md"
 PROJECT=$(cat "$REPO/.working_project" 2>/dev/null | tr -d '[:space:]')
 BANNED_PROJECT="$REPO/memory/$PROJECT/truth/banned words.md"
-COUNT_FILE="$REPO/.claude/hooks/.turn-count"
+COUNT_FILE="${INJECT_COUNT_FILE:-$REPO/.claude/hooks/.turn-count}"   # a test sets its own, so the real count stands
 
 # The Always section runs from its "## Always" heading to the next heading of the same
-# depth; the rest of the file is everything else.
+# depth. A range of a file runs from the line that starts with FROM up to the line that
+# starts with TO; an empty FROM starts at the top, an empty TO runs to the end.
 always_part() { awk '/^## Always/{on=1} on && /^## / && !/^## Always/{exit} on' "$CONVENTIONS"; }
-rest_part()   { awk '/^## Always/{skip=1; next} skip && /^## /{skip=0} !skip' "$CONVENTIONS"; }
+cut_range()   { awk -v from="$2" -v to="$3" 'from == "" {on=1} from != "" && index($0, from) == 1 {on=1} on && to != "" && index($0, to) == 1 {exit} on' "$1"; }
 
 # What goes round in part B, in order. A project with no list of its own simply
 # contributes nothing and the rotation is one shorter that day.
@@ -38,6 +43,32 @@ rest_part()   { awk '/^## Always/{skip=1; next} skip && /^## /{skip=0} !skip' "$
 IN_TURN=("$CONVENTIONS" "$AGENCY")
 [ -f "$LEXICON" ] && IN_TURN+=("$LEXICON")
 [ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && IN_TURN+=("$BANNED_PROJECT")
+
+# The pieces, in order. Each is a name with no spaces, which saved-output-count.sh reads
+# off the ONE PART IN TURN line, then "@" and its ranges, each "file|from|to", "@" between.
+# Sizes in bytes, measured 22 September 2026: 4172, 5676, 6095, 6151, 5315, 4869, 6307.
+PIECES=(
+  "conventions.md:Response-1-7@$CONVENTIONS|## Response|### 8. "
+  "conventions.md:Response-8-14+lexicon.md:Who+A-turn@$CONVENTIONS|### 8. |## Conduct@$LEXICON|## Who|## What we keep@$LEXICON|## A turn|## Saying what is true"
+  "conventions.md:Conduct+need-translation+lexicon.md:Saying-what-is-true@$CONVENTIONS|## Conduct|## Banned words@$LEXICON|## Saying what is true|## Verbs to use carefully"
+  "conventions.md:Banned-words@$CONVENTIONS|## Banned words|"
+  "agency.md@$AGENCY||"
+  "lexicon.md:opening+What-we-keep@$LEXICON||## The memory system@$LEXICON|## What we keep|## A turn"
+  "lexicon.md:The-memory-system+Verbs-to-use-carefully@$LEXICON|## The memory system|## Who@$LEXICON|## Verbs to use carefully|"
+)
+[ -n "$PROJECT" ] && [ -f "$BANNED_PROJECT" ] && PIECES+=("$PROJECT:banned-words@$BANNED_PROJECT||")
+
+# One piece, printed: each of its ranges in order, a blank line after each.
+send_piece() {
+  local ranges="${1#*@}" range file from to
+  while [ -n "$ranges" ]; do
+    range="${ranges%%@*}"
+    [ "$range" = "$ranges" ] && ranges="" || ranges="${ranges#*@}"
+    IFS='|' read -r file from to <<< "$range"
+    cut_range "$file" "$from" "$to"
+    echo ""
+  done
+}
 
 # Which files wear the "always" tag, read from the db beside the dispatcher through the
 # dispatcher's own module — since 10 September 2026 a file's kind and tags live there, not
@@ -104,15 +135,15 @@ fi
 # Part A, whole, every turn.
 [ -f "$CONVENTIONS" ] && always_part && echo ""
 
-# Part B: one file, whichever the count lands on. The count only ever grows, so the
-# remainder walks the list evenly. Conventions arrives without its Always section,
-# which part A has just sent.
-if [ ${#IN_TURN[@]} -gt 0 ]; then
+# Part B: one piece, whichever the count lands on. The count only ever grows, so the
+# remainder walks the list evenly. Conventions' Always section is in no piece, since part
+# A has just sent it.
+if [ ${#PIECES[@]} -gt 0 ]; then
   TURN=$(cat "$COUNT_FILE" 2>/dev/null | tr -cd '0-9')
   [ -z "$TURN" ] && TURN=0
   echo $(( TURN + 1 )) > "$COUNT_FILE"
-  PICKED="${IN_TURN[$(( TURN % ${#IN_TURN[@]} ))]}"
-  echo "--- ONE PART IN TURN: ${PICKED#$REPO/} (turn $TURN of ${#IN_TURN[@]}; the others arrive on the turns after this) ---"
-  if [ "$PICKED" = "$CONVENTIONS" ]; then rest_part; else cat "$PICKED"; fi
+  PICKED="${PIECES[$(( TURN % ${#PIECES[@]} ))]}"
+  echo "--- ONE PART IN TURN: ${PICKED%%@*} (turn $TURN of ${#PIECES[@]}; the others arrive on the turns after this) ---"
+  send_piece "$PICKED"
 fi
 exit 0

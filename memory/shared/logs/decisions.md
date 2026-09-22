@@ -2,6 +2,12 @@
 
 ## Decisions made during 2026
 
+- 22 September 2026, **the rotation's seven pieces are built**, before the week of counts: eight rows after the erase showed three sizes only, so the wait would have measured nothing new; the largest piece with Always is 7.5KB, under the 8.4KB seen shown whole
+- 22 September 2026, **CLAUDE.md's text is the truth onload.md**, in shared's truth, imported by CLAUDE.md's one `@` line, with a plain line naming the file; named on load.md for an hour, until /context in a new session showed the import does not take a path with a space; not session, not beginning a chat
+- 22 September 2026, **Always is four rules**, Brief, Guess, Withhold the evidence, Mechanism not story, 1.2KB, inside the 2KB co reads on a saved turn: Standard technical English and Name both sides are Response 13 and 14, Interpret first is in agency 7, A reply exists is agency 24, the collision rule is in Conduct, huh? is a shorthand row; not done: Always 2 and agency 7 say the same thing with two labels, I AM GUESSING and unread:; making them one label changes agency's words, which are Jonathan's; he removed agency 7 the same day, so Always 2 alone says it, and agency has 24 rules
+- 21 September 2026, **every file named drive.md wears the tag drive**, the 14 in the projects' zone folders, through the dispatcher's add-label route; built the same day
+- 21 September 2026, **the tags park and drive join the tag area progress** in ai's closed tag list, beside proposal and journal: drive for the file that is the drive, park for a drive moved whole to a zone file of its own; built the same day
+- 21 September 2026, **parked is a state of the drive**: `park` moves the drive whole to a zone file named after its first H2 and erases drive.md, and `drive <X>` brings it back; workflow.md's drive row says so
 - 21 September 2026, **the hook's rotation is seven pieces**, each under 6.9K, cut at headings, and **the saves are counted**: each time the Claude harness saves a hook's output to a file, a hook records which division and how large, and every tenth count co reports which division and how often in the chat
 - 21 September 2026, **the rule drawn from a markdown hr is 2px thick** on ai's page, where today it is the faint thickness
 - 21 September 2026, **every t leaves a lesson in zone/learn.md**: one checkbox line, the murky words, the plain words, and what to say next time; the shorthand's t row and Response 7 say so
@@ -41,6 +47,24 @@
 
 Open pacs live in zone/proposals.md, one section each, since 18 September 2026. A pac decided there comes here as its dated line.
 
+- 22 September 2026 — **CLAUDE.md's contents to a truth, imported by CLAUDE.md.** **pac** 22 September 2026
+
+**What exists**: `CLAUDE.md` at the repo's top, 54 lines: the project list, the principles, who, reading on load, the canary and the defaults. Claude Code reads it at the start of every session and again when it changes; a subfolder's CLAUDE file loads only when co reads files in that folder; a bare line `@path`, outside backticks, imports that file into CLAUDE.md, the path relative to CLAUDE.md, four hops deep. Verified in the Claude Code docs, 22 September 2026. No CLAUDE file in the repo imports today. The truths CLAUDE.md points at already sit in `memory/shared/truth`: [[conventions]], [[agency]], the lexicon, the shorthand, keywords, gates, kinds of tasks, pitfalls. The `start` shorthand names a Session protocol section of the handbook that is not there. [[system failure]]'s proposal to rewrite CLAUDE.md splits it into Knowledge and Rules under a switch line at its top.
+
+**For**: the text becomes a truth like the others: in the memory system, in the index and the map, tagged, opened in the app, listed by the dispatcher, counted by the tools. CLAUDE.md is one line, `@memory/shared/truth/session.md`, and the Claude harness loads the truth at session start and on change; nothing depends on co following an instruction to read it. The system failure rewrite then edits a truth, not a file outside memory.
+
+**Against**: the name says when the file is read, not what it holds, and it sits beside the handbook's dead Session protocol and ai's tag session. The switch proposal wants CLAUDE.md to open with a line that reads `disableAllHooks` before anything else; an import line cannot branch, so the switch line stays in CLAUDE.md above the import, or the whole switch moves into the truth. Reading on load lists files to read; moved into an imported truth it reads the same, nothing gained there. Cost, counted: one new truth, one line in CLAUDE.md, the index and the map, and the shorthand's `claude` row, which says reread CLAUDE.md.
+
+**Deciding question**: is CLAUDE.md's text a truth, to live with the others under a name that says what it holds, or the Claude harness's own entry point, to stay where the harness reads it and import nothing? Decided 22 September 2026: yes; the truth is onload.md, and CLAUDE.md holds one `@` line and one plain line naming it
+- 22 September 2026 — **the name beginning a chat.** **pac** 22 September 2026, on the name for the truth in the pac above; co had said on load.md
+
+**What exists**: the truth would hold CLAUDE.md's text: the project list, the principles, who, reading on load, the canary and the defaults, yarn, no preview, tone, docs. Response 11 says a file's name says what the reader does with it. The lexicon has session, one conversation start to end, and turn; it has no entry for chat, the word the shorthand's `summary` and `murky` rows use. Two truths are already named for what the reader does: `create a project.md` and `keep shop.md`. Claude Code's own word is session, as in its SessionStart hook.
+
+**For**: it says what the reader does with the file, begin a chat, the way create a project and keep shop do; three plain words Jonathan uses; no collision with ai's tag session, the shorthand `start`, or the handbook's dead Session protocol.
+
+**Against**: the file holds more than the beginning: the principles, who and the defaults hold for the whole chat, and a reader looking for never npm or no preview would not open beginning a chat. chat is not in the lexicon where session is, so the name uses the word the system does not define for the thing it defines as session. A name that reads as a howto, do this to begin, on a file whose kind is rules.
+
+**Deciding question**: is the file what co does when a chat begins, read once and set aside, or the rules that hold for the whole chat, which the name would understate? Decided 22 September 2026: no; on load, CLAUDE.md's own heading for the part that matters, spelled onload.md since the import stops at a space
 - 21 September 2026 — **the hook's rotation from three pieces to seven.** **pac** 21 September 2026
 
 **What exists**: on every turn co reads Always, 3.1K, and one of three pieces in turn: the rest of conventions.md, 18.7K, agency.md, 5.3K, the lexicon, 13.6K. When Always and the piece pass about 10K, co's guess, the Claude harness saves the whole to a file and co reads its first 2KB, rules 1 to 5 of Always. So two turns in three co reads nothing past Always, and the rest of conventions.md reaches co on no turn at all. The seven pieces of the proposal in zone/drive.md are each under 6.9K.

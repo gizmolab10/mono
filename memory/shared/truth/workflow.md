@@ -87,7 +87,7 @@ Questions about method — "how will you do X?" — are questions, not orders. T
 | idea | ideas.md | kept, promoted or culled | its line; a truth or a proposal made from it, or a dated I: line saying culled and why |
 | done folder file | zone/work/done | done, in logs | the file; moved into logs |
 | working feature row | working features.md | untried, tried | `[ ]`, `[x]` in the done column |
-| drive | zone/drive.md | present, implemented, a feature or journaled | the file; its plan built by `drive` or `go drive`; the proposal rewritten as a working features row when it is an app feature, or else a work journal entry saying what changed and why |
+| drive | zone/drive.md | present, parked, implemented, a feature or journaled | the file; `park` moves it whole to a zone file named after its first H2, and `drive <X>` brings it back; its plan built by `drive` or `go drive`; the proposal rewritten as a working features row when it is an app feature, or else a work journal entry saying what changed and why |
 | truth | truth/ | current, archived, dead | the file; in archive/; deleted, git remembering |
 
 ## Draft guide rules

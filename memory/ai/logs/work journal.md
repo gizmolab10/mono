@@ -4,6 +4,10 @@ What's been finished, newest first. ai's own since 15 September 2026, taken whol
 
 **Current** The plan in [music and ai](../zone/work/music%20and%20ai.md), ov's strip down into kb and ai: step 14 built and step 19 begun 15 September 2026, its working features table ticked a row at a time as each feature is tried by hand on ai. Steps 15 to 18 next: following a link and walking the link stack; making, renaming, moving and throwing away a markdown file; mending index files; handing a file to Obsidian, a code file to VSCode, and a file into a message.
 
+## 2026-09-21 — the tags drive and park join the tag area progress
+
+Jonathan's d and go: the closed tag list gains drive and park, 42 tags, in the tag area progress between proposal and journal, drive for the file that is the drive, park for a drive moved whole to a zone file of its own; the tag areas test passes, 10. The same day every file named drive.md, 14, was given the tag drive through the dispatcher's add-label route.
+
 ## 2026-09-21 — a heading keeps the space before its link
 
 Jonathan saw the space before a wikilink in a heading gone on screen, workflow.md's line 5. Measured headless: the html held the space at every stage, and on the page the space was drawn 0px wide, since a heading is a flex row and each of its children, the words before the link, the link, the words after, was an item of its own, and the space at the end of an item is not drawn. name_the_headings now holds a heading's words in one span, so the row holds the fold mark and the span; the space is 3.5px wide. Two test cases, working features row 99.
