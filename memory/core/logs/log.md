@@ -2,6 +2,16 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 23 September 2026
+
+- D: T_Position.align drawn: Separator.svelte's horizontal line measures its left edge with a ResizeObserver and the window's resize, sets --line-x on itself, and a placed thing with align sits at calc(50vw - --line-x), translated back by half; sections.md says so; core's 100 pass. Jonathan's go
+- D: Action's right is gone, Jonathan's edit, and T_Position gains align; Separator.svelte's line that read right dropped, its comment and sections.md's sentence with it; align's drawing waits for go. Jonathan's d
+- D: Action gains right, px from the right end for a right-placed thing, 0 leaving the separator's own gap; Separator.svelte applies it as it applies top; sections.md says so; core's 100 pass. Jonathan's word
+- D: Action gains top, px below the line's middle, negative above, 0 by default; Separator.svelte puts a placed thing at 50% plus its top, mask and all; sections.md's Element placement algorithm says so; core's 100 pass. Jonathan's go on shared's drive
+## 22 September 2026
+
+- D: SVG_Paths.ts gains t_cross, a plus of two strokes held in by a margin, ws's five lines beside x_cross, ws keeping its own; core's 100 pass. Jonathan's go, for kb's add button
+
 ## 19 September 2026
 
 - D: drive, batch A, the fates of 7 September: sections, sections spec and hits system arrive from shared's truth/develop; design/okf, editing and compose an email are byte for byte ai's, their deletion waiting on Jonathan's word; design/ov - goals differs from ai's at line 3

@@ -55,7 +55,6 @@ class Configuration {
 		root.setProperty('--size-small',         `${k.size.small}px`);
 		root.setProperty('--size',               `${k.size.normal}px`);
 		root.setProperty('--size-big',           `${k.size.big}px`);
-		root.setProperty('--size-big',           `${k.size.big}px`);
 		root.setProperty('--size-fat',           `${k.size.fat}px`);
 		root.setProperty('--font-micro',         `${k.font.micro}px`);
 		root.setProperty('--font-faint',         `${k.font.faint}px`);

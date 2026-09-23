@@ -1,13 +1,23 @@
 Diagnostic log: on — this page is served from "localhost", which is this machine. Anywhere else, every logged line gives up at once.
 Renamed the saved settings: 0 moved to a new name, 0 kept aside because the new name was already taken, 0 of them from the old "ji:" start to "ji_". All zeros means every name was already spelled the one way.
-Swept the saved settings: 9 of ours found, 0 removed (0 character(s) reclaimed), 9 kept; 37 name(s) count as valid.
+Swept the saved settings: 11 of ours found, 0 removed (0 character(s) reclaimed), 11 kept; 37 name(s) count as valid.
 Filters for the "mine" storage: 0 tag(s) [all], name text "", families []. Saved changes from here on go to "mine" only.
 Shut folders for the "mine" storage: filled in for the first time with 0 from what was saved.
 Hierarchy: derived flags for 0 document(s); recomputed the family of 0 file(s) from its kind.
-Search: nothing picked — all 0 row(s) shown.
-List: no filter — searched open 0 row(s); 0 match(es); showing 0 open row(s) (a shut folder keeps its matches hidden until opened).
-Press at 17,20 found nothing at all among 0 overlapping target(s).
-Stack of 2: 0 open, 1 folded. Gap 7.78, spacings [9.33, 17.89], leading line none, closing separator not drawn. Folds: 0 open; 1 folded 0.00 tall, its separator at -8.94 and the next 24.11 below it.
-Stack of 2: 0 open, 1 open. Gap 5.19, spacings [12.96, 12.96], leading line 24.11 down under a 0.00-thick one, closing separator drawn below it. Folds: 0 open; 1 open.
-Details sections open: [preferences, data].
-Press at 19,15 found nothing at all among 0 overlapping target(s).
+Dropped 1 top-level item(s); 1 thing(s) in all, folders and skips included.
+Stored bytes for "mine/blob/48638411-3d53-4fd1-be78-2c3c2a91cbdd" (2439347 raw byte(s)) in IndexedDB.
+Added document "IMG_0412.jpeg" (jpeg), dated 2026-09-20T06:19:53.685Z, 2439347 bytes, reported as "image/jpeg" -> family image, user can view, words need a heavy pull first (picture read or speech transcribed).
+Saved file "IMG_0412.jpeg" as a jpeg document, with 0 tag(s).
+Press at 44,75 found nothing at all among 0 overlapping target(s).
+Search: nothing picked — all 1 row(s) shown.
+List: no filter — searched open 1 row(s); 1 match(es); showing 1 open row(s) (a shut folder keeps its matches hidden until opened).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [7.00, 22.56, 5.44], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+List timing: 14ms from start to rows on screen for 1 row(s) of 1 in the store — walking and building 0ms, narrowing 1ms, folder counts 0ms, drawing 13ms.
+Press at 128,156 found nothing at all among 0 overlapping target(s).
+Viewer: read 2439347 raw byte(s) for document 48638411-3d53-4fd1-be78-2c3c2a91cbdd.
+Viewer: made a temporary link for 2439347 raw byte(s), type "image/jpeg".
+Press at 753,61 found nothing at all among 0 overlapping target(s).
+Search: nothing picked — all 1 row(s) shown.
+List: no filter — searched open 1 row(s); 1 match(es); showing 1 open row(s) (a shut folder keeps its matches hidden until opened).
+Stack of 3: 0 open, 1 open, 2 open. Gap 3.89, spacings [7.00, 22.56, 5.44], leading line none, closing separator not drawn. Folds: 0 open; 1 open; 2 open.
+List timing: 9ms from start to rows on screen for 1 row(s) of 1 in the store — walking and building 0ms, narrowing 0ms, folder counts 0ms, drawing 8ms.

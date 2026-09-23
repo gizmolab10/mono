@@ -24,3 +24,18 @@ $ vite
 4:19:04 PM [vite] (client) hmr update /src/lib/svelte/main/Controls.svelte
 4:23:35 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
 4:23:41 PM [vite] (client) hmr update /src/lib/svelte/content/Edit_Markdown.svelte?svelte&type=style&lang.css
+5:25:19 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/events/Hits.ts
+5:25:35 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/events/Hits.ts
+5:57:40 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
+5:59:22 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/utilities/SVG_Paths.ts
+1:20:44 AM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
+1:20:44 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+6:04:35 AM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
+6:04:35 AM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+12:38:31 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
+12:39:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
+12:41:07 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte
+12:41:31 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+12:42:45 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
+12:47:54 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
+2:53:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css

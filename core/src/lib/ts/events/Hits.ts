@@ -379,7 +379,8 @@ export default class Hits {
 			// Off by less than the thin line's thickness, a pixel and a tenth, answers the same presses,
 			// so it raises nothing: the alert is for a strip a press could miss.
 			if (!held || !drawn || !held.differs_from(drawn, k.thickness.normal)) { return; }
-			this.say_it_drifted(target, held, drawn);
+			this.defer_recalibrate();
+			// this.say_it_drifted(target, held, drawn);
 		}, k.timeout.drift);
 	}
 
@@ -389,39 +390,39 @@ export default class Hits {
 	 * where it is held, where it is drawn, how far off that is, and what the element is called on
 	 * the page. Said once — the check stops rather than saying the same thing every second.
 	 */
-	private say_it_drifted(target: S_Hit_Target, held: Rect, drawn: Rect) {
-		if (this.drift_check !== null) {
-			clearInterval(this.drift_check);
-			this.drift_check = null;
-		}
-		const element = target.html_element;
-		const named = !element ? 'nothing' : `<${element.tagName.toLowerCase()} class="${element.className}">`;
-		const words = [
-			`A hit target has gone stale — it answers for a strip of the page it no longer stands on.`,
-			``,
-			`    what     ${target.id}`,
-			`    kind     ${T_Hit_Target[target.type]}`,
-			`    element  ${named}`,
-			`    held at  ${held.description}`,
-			`    drawn at ${drawn.description}`,
-			`    off by   ${Math.round(drawn.x - held.x)} across, ${Math.round(drawn.y - held.y)} down,`
-				+ ` ${Math.round(drawn.width - held.width)} wider, ${Math.round(drawn.height - held.height)} taller`,
-			``,
-			`Something moved it and nothing told the hits manager. Whatever does the moving must say`,
-			`so — hits.recalibrate() for a change of shape, hits.shift_inside() for a scroll, or`,
-			`hits.defer_recalibrate() to wait for the drawing first.`,
-		];
-		// Every box above the element, its height, its top and how far it is scrolled, said in the
-		// log alone: the mover is one of these, and a strip off by a fraction means a box above it
-		// changed height or scrolled by that fraction.
-		const above: string[] = [];
-		for (let up = element?.parentElement ?? null; up; up = up.parentElement) {
-			const box = up.getBoundingClientRect();
-			above.push(`    above    <${up.tagName.toLowerCase()} class="${up.className}"> ${box.height.toFixed(2)} tall at ${box.top.toFixed(2)}, scrolled ${up.scrollTop.toFixed(2)}`);
-		}
-		debug.log([...words, '', ...above].join('\n'));
-		alert(words.join('\n'));
-	}
+	// private say_it_drifted(target: S_Hit_Target, held: Rect, drawn: Rect) {
+	// 	if (this.drift_check !== null) {
+	// 		clearInterval(this.drift_check);
+	// 		this.drift_check = null;
+	// 	}
+	// 	const element = target.html_element;
+	// 	const named = !element ? 'nothing' : `<${element.tagName.toLowerCase()} class="${element.className}">`;
+	// 	const words = [
+	// 		`A hit target has gone stale — it answers for a strip of the page it no longer stands on.`,
+	// 		``,
+	// 		`    what     ${target.id}`,
+	// 		`    kind     ${T_Hit_Target[target.type]}`,
+	// 		`    element  ${named}`,
+	// 		`    held at  ${held.description}`,
+	// 		`    drawn at ${drawn.description}`,
+	// 		`    off by   ${Math.round(drawn.x - held.x)} across, ${Math.round(drawn.y - held.y)} down,`
+	// 			+ ` ${Math.round(drawn.width - held.width)} wider, ${Math.round(drawn.height - held.height)} taller`,
+	// 		``,
+	// 		`Something moved it and nothing told the hits manager. Whatever does the moving must say`,
+	// 		`so — hits.recalibrate() for a change of shape, hits.shift_inside() for a scroll, or`,
+	// 		`hits.defer_recalibrate() to wait for the drawing first.`,
+	// 	];
+	// 	// Every box above the element, its height, its top and how far it is scrolled, said in the
+	// 	// log alone: the mover is one of these, and a strip off by a fraction means a box above it
+	// 	// changed height or scrolled by that fraction.
+	// 	const above: string[] = [];
+	// 	for (let up = element?.parentElement ?? null; up; up = up.parentElement) {
+	// 		const box = up.getBoundingClientRect();
+	// 		above.push(`    above    <${up.tagName.toLowerCase()} class="${up.className}"> ${box.height.toFixed(2)} tall at ${box.top.toFixed(2)}, scrolled ${up.scrollTop.toFixed(2)}`);
+	// 	}
+	// 	debug.log([...words, '', ...above].join('\n'));
+	// 	alert(words.join('\n'));
+	// }
 
 	private insert_into_rbush(target: S_Hit_Target, into_rbush: RBush<Target_RBRect>) {
 		const rect = target.rect;

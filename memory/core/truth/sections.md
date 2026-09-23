@@ -103,7 +103,7 @@ function vanishes(at: number): boolean {
 }
 ```
 
-### Variants
+## Variants
 
 Three ways the space above a section's content is arrived at, and two below. Every one of them is half of some pair's spacing, except where a caller adds its own.
 
@@ -132,11 +132,14 @@ separator with a thing at its middle    --gap-fat + thickness
 
 On top of all that, a caller can hold its own space inside the section's own markup. Two do: the editor's first section holds `--gap-small` above its content, and its tags section holds the same below — neither is the stack's.
 
+The area near and on the bottom separator is also available by using css tricks...
+
 ## Element placement algorithm
 
 - The separator is hung off its section's top edge and pulled back half its own height, which puts its middle where it was told to stand whatever it is drawn at.
 - That pulling back is a transform, and a transform makes a layer of its own — so whatever the separator sets inside it cannot rise above anything outside. The layer is said on the wrapper that stands among the bands.
 - Three layers, all from the ladder: the accent band at the bottom, its hairline above that, the separator and its word on top.
+- A thing placed on the separator sits on the line's middle, or below it by its Action's top, px, negative above; the mask moves with it. Placed with align, its center is on the window's center: the horizontal separator measures its own left edge, again when its size or the window's changes, and the thing sits at half the window's width less that. Since 23 September 2026.
 - Nothing is set on the run itself. How far one section stands from the one above it is that pair's own.
 
 ## Active background of sections

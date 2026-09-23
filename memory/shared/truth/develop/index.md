@@ -18,9 +18,12 @@ Code style, patterns, and development practices.
 - [Best practices](./best%20practices.md)
 - [Constants](./constants.md)
 - [Creating A Design](./create a design.md)
+- [Create a project](./create%20a%20project.md)
 - [Creating A Proposal](./create a proposal.md)
 - [Css](./css.md)
 - [Early di spec](../../../di/archive/early%20di%20spec.md)
+- [Incorporating a project](./incorporating%20a%20project.md)
+- [Libraries](./libraries.md)
 - [Markdown](./markdown%20structure.md)
 - [Migration](./migrate.md)
 - [Port](./port.md)
@@ -32,4 +35,5 @@ Code style, patterns, and development practices.
 - [Style](./style%20guide.md)
 - [Testing](../../../../di/notes/guides/project/philosophy/unit%20testing.md)
 - [Unit testing](./unit%20testing.md)
+- [Write the code debt](./write%20the%20code%20debt.md)
 

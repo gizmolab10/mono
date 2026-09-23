@@ -14,7 +14,7 @@ Active non-milestone work. The files in this folder are the current working docu
 - [27.selection.algorithm](./27.selection.algorithm.md)
 - [30.licensing](./30.licensing.md)
 - [Handoff](./handoff.md)
-- [Learn](./learn.md) — mistakes in di's own workings, never to be repeated.
+- [Learn](../../learn.md) — mistakes in di's own workings, never to be repeated.
 - [Open Items](./open items.md)
 - [Our Process](./our process.md)
 - [Steve Melville](./steve melville.md)

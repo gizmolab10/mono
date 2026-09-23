@@ -80,7 +80,7 @@ Questions about method — "how will you do X?" — are questions, not orders. T
 | plan step | the plan | open, built, journaled | `- [ ]`, `- [x]` with a Built note, moved into the work journal |
 | correction | zone/learn.md | captured, rewritten, placed | `- [ ]` in co's words, `- [x]` in Jonathan's words, moved into its truth with a row in logs/distilled.md |
 | proposal | proposals.md, or a zone file of its own | open, decided or culled, journaled | its section; the word Decided, or a dated D: line saying culled and why; moved into the work journal |
-| pac | zone/proposals.md, then logs/decisions.md | open, decided | its section; a dated line in decisions.md |
+| pac | zone/proposals.md, then logs/decisions.md | open, decided | its section; a dated line in decisions.md under Evaluations, never under Decisions made |
 | decision | logs/decisions.md | live, final | its line; the line stays, dated |
 | question | questions.md | asked, answered | its line; a dated D: line holding the question and its answer, the line gone from questions.md |
 | log line | logs/log.md | new, settled | above the consolidated marker; below it, kept |

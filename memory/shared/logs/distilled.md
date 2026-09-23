@@ -65,3 +65,5 @@ Every lesson that became a rule: the pattern of mistake and the guide its rule w
 | A true premise carrying an untested conclusion | `pitfalls.md` #1 — already covered |
 | A placeholder written bare, `<X>` outside backticks | `conventions.md` Response 12 — "A placeholder sits in backticks", 19 September 2026 |
 | A big done folder moved whole into logs, unannounced | `shorthand.md`, the `record` row — a merge step or a sub-folder first, and say what is about to move, 19 September 2026 |
+| A pac written under Decisions made | `workflow.md`, the pac row — under Evaluations, never under Decisions made, 23 September 2026 |
+| A proposal padded with file lists, mechanism and tests | culled by Jonathan 23 September 2026, DELETE THIS; the rule lives in learn.md's history only |

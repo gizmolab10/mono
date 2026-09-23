@@ -4,6 +4,10 @@ What's been finished, newest first. ai's own since 15 September 2026, taken whol
 
 **Current** The plan in [music and ai](../zone/work/music%20and%20ai.md), ov's strip down into kb and ai: step 14 built and step 19 begun 15 September 2026, its working features table ticked a row at a time as each feature is tried by hand on ai. Steps 15 to 18 next: following a link and walking the link stack; making, renaming, moving and throwing away a markdown file; mending index files; handing a file to Obsidian, a code file to VSCode, and a file into a message.
 
+## 2026-09-23 — step 17 of the plan, mend index files: kb keeps it
+
+Step 17 of the plan in [music and ai](../zone/work/music%20and%20ai.md), rewritten as 15 and 16 were: nothing moves. Index_Files.ts, repair_indexes and mend_indexes in Files.ts and the index files button in D_Repair.svelte are called from kb's own create, rename, move and delete, which step 16 kept, so they are kb's with them; a music file's folder has no index. Proof: the index_files test, 38, among kb's; the repair button pressed headless with the page's log read after: 116 folders looked at, 33 already right, 16 mended, 51 index files made, 16 refused as not guides, 33 links put right, 7 taken out, 27 added. The press changed memory on disk, 51 new index.md files and 16 mended, git counting 67; whether they stay is Jonathan's.
+
 ## 2026-09-21 — the tags drive and park join the tag area progress
 
 Jonathan's d and go: the closed tag list gains drive and park, 42 tags, in the tag area progress between proposal and journal, drive for the file that is the drive, park for a drive moved whole to a zone file of its own; the tag areas test passes, 10. The same day every file named drive.md, 14, was given the tag drive through the dispatcher's add-label route.

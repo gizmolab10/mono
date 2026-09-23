@@ -2,7 +2,7 @@
 	import { w_operation, T_Operation, close_view, open_view, open_button, name_of, step_view } from '../../ts/managers/Operations';
 	import { w_viewed, w_can_back, w_can_forward, w_file_back, w_file_forward, w_file_site } from '../../ts/managers/Operations';
 	import { obsidian_link, file_path_of, read_file, VAULT } from '../../ts/utilities/Saving';
-	import { T_Bundle, key_of } from '../../ts/types/File';
+	import { key_of } from '../../ts/types/File';
 	import { customizations } from '../../ts/common/Customizations';
 	import { files } from '../../ts/managers/Files';
 	import { hit_target } from '../../ts/common/Core';
@@ -30,21 +30,26 @@
 	const name    = $derived(guide?.name ?? '');
 	const editing = $derived($w_operation === T_Operation.edit && guide !== null);
 
-	// Where the file sits as well as what it is called: every folder above it, from the top down.
-	// A file in a project starts with that project; one belonging to no project starts with the
-	// repo's own name instead. A file in the memory system starts with its project's folder
-	// there — the memory folder itself is left off, since every one of them sits in it.
-	const sits_at = $derived.by(() => {
-		if (!guide) { return ''; }
-		const folders = guide.path.split('/').slice(0, -1);
-		const top = guide.bundle === T_Bundle.mono ? ['mono'] : guide.bundle === T_Bundle.memory ? [] : [guide.bundle];
-		return [...top, ...folders].join(' / ');
-	});
-
 	// The file's name is a field that reads as plain words until the cursor is over it. Typing in
 	// it changes nothing until the field is left or Return is pressed; either gives the file
 	// itself the name typed.
 	let typed_name = $state('');
+
+	// The name sits at the middle of the window, not of its own section, since 23 September 2026.
+	// The section reads where its left edge is, again whenever its size changes or the window's, and
+	// the name is placed at half the window's width less that, so the number is read, not reasoned.
+	let file_section = $state<HTMLElement | null>(null);
+	let section_x = $state(0);
+	$effect(() => {
+		const section = file_section;
+		if (!section) { return; }
+		const read = () => { section_x = section.getBoundingClientRect().left; };
+		read();
+		const watcher = new ResizeObserver(read);
+		watcher.observe(section);
+		window.addEventListener('resize', read);
+		return () => { watcher.disconnect(); window.removeEventListener('resize', read); };
+	});
 
 	// Whenever another file comes on screen, the field starts from that file's own name.
 	$effect(() => { typed_name = name; });
@@ -60,11 +65,12 @@
 	// gives way to a cross, and the question sits there until it is answered.
 	let asking_to_delete = $state(false);
 	const crossPath = svg_paths.x_cross(k.size.normal, k.size.normal / 6);
+	const plusPath  = svg_paths.t_cross(k.size.normal, k.size.normal / 6);
 	// The resume-browsing mark: the steppers' back mark, their lines as they are in Steppers.svelte.
 	const SIZE = k.size.normal * 1.1;
-	const back_path   = svg_paths.fat_polygon(SIZE, back_direction(false));
-	const back_bounds = svg_paths.fat_polygon_bounds(SIZE, back_direction(false));
-	const binPath   = svg_paths.trashcan(k.size.normal);
+	const trashCanPath = svg_paths.trashcan(k.size.normal);
+	const back_path    = svg_paths.fat_polygon(SIZE, back_direction(false));
+	const back_bounds  = svg_paths.fat_polygon_bounds(SIZE, back_direction(false));
 
 	// Stepping to another file takes the question with it — it belonged to the one being left.
 	$effect(() => { guide?.address; asking_to_delete = false; });
@@ -152,11 +158,11 @@
 			<svg class='back-mark' overflow='visible' width={back_bounds.width} height={back_bounds.height}
 				viewBox='{back_bounds.minX} {back_bounds.minY} {back_bounds.width} {back_bounds.height}'><path d={back_path} /></svg>
 			<svg class='back-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-				<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.big} stroke-linecap='round' />
 			</svg>
 		</button>
 		<!-- The file's section. Its bare space answers nothing. -->
-		<div class='file-section'>
+		<div class='file-section' bind:this={file_section} style:--section-x={`${section_x}px`}>
 			<Steppers id='editor.step' can_back={$w_can_back} can_forward={$w_can_forward}
 				onprev={(repeated) => step_view(-1, repeated)} onnext={(repeated) => step_view(1, repeated)}
 				back_says={$w_file_back ?? 'previous file'} forward_says={$w_file_forward ?? 'next file'} />
@@ -165,10 +171,8 @@
 			{#if $w_file_site}
 				<span class='file-count'>{$w_file_site.at} of {$w_file_site.of}</span>
 			{/if}
-			<!-- The folders above the file follow the count at the left. -->
-			<span class='view-ancestry'>{sits_at}</span>
-			<!-- An empty run on either side, so the name sits at the middle of whatever the folders
-			     leave over rather than at the middle of the whole row. -->
+			<!-- The folders above the file are on the editor's leading line since 23 September 2026. An
+			     empty run on either side, so the name sits at the middle of the row. -->
 			<span class='view-spacer'></span>
 			<!-- The name is a field that reads as plain words until the cursor is over it. Leaving
 			     it, or pressing Return, gives the file itself whatever was typed. While the
@@ -197,7 +201,7 @@
 				<button class='row-button' aria-label='keep it'
 					use:hit_target={{ id: 'editor.delete.no', onpress: () => { asking_to_delete = false; }, tip: 'keep this file' }}>
 					<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-						<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
+						<path d={crossPath} fill='none' stroke-width={k.thickness.big} stroke-linecap='round' />
 					</svg>
 				</button>
 			{:else}
@@ -207,15 +211,19 @@
 				     one taken most often. -->
 				<span class='row-pair'>
 					<button class='row-button' aria-label='new'
-						use:hit_target={{ id: 'editor.new', onpress: handle_create, tip: 'make a new file in this folder' }}>+</button>
+						use:hit_target={{ id: 'editor.new', onpress: handle_create, tip: 'make a new file in this folder' }}>
+						<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
+							<path d={plusPath} fill='none' stroke-width={k.thickness.normal} stroke-linecap='round' />
+						</svg>
+					</button>
 					<button class='row-button lifted' aria-label='obsidian'
-						use:hit_target={{ id: 'editor.obsidian', onpress: handle_obsidian, tip: 'open this file in Obsidian' }}>o</button>
+						use:hit_target={{ id: 'editor.obsidian', onpress: handle_obsidian, tip: 'open this file in Obsidian' }}><span class='lowered'>o</span></button>
 					<button class='row-button' aria-label='send'
 						use:hit_target={{ id: 'editor.send', onpress: handle_send, tip: 'compose an email containing this file' }}>⤴</button>
 					<button class='row-button' aria-label='delete'
 						use:hit_target={{ id: 'editor.delete', onpress: () => { asking_to_delete = true; }, tip: 'throw this file away' }}>
 						<svg class='row-mark' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-							<path d={binPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' stroke-linejoin='round' />
+							<path d={trashCanPath} fill='none' stroke-width={k.thickness.normal} stroke-linecap='round' stroke-linejoin='round' />
 						</svg>
 					</button>
 				</span>
@@ -258,13 +266,13 @@
 		/* The right end of panel's row, taking whatever the hamburger leaves: items centered, no
 		   vertical gap — the row is just as tall as its controls. */
 		background  : var(--accent);
-		gap         : var(--gap);
 		box-sizing  : border-box;
+		gap         : var(--gap);
+		flex        : 1 1 auto;
 		position    : relative;
 		align-items : center;
 		display     : flex;
 		min-width   : 0;
-		flex        : 1 1 auto;
 	}
 
 	/* The row pulls left by a big gap, so its first button sits closer to the hamburger, since
@@ -325,7 +333,7 @@
 	/* The open buttons' segmented control, drawn as the rules' and the kinds row's: one box, the
 	   segments divided by lines, a segment filling under the cursor. No segment is ever current. */
 	.segments {
-		border        : var(--thick) solid var(--black);
+		border        : var(-micro) solid var(--black);
 		border-radius : var(--radius-pill);
 		height        : var(--height);
 		background    : var(--white);
@@ -339,15 +347,15 @@
 		padding     : var(--pad-control);
 		font-size   : var(--font-tiny);
 		background  : transparent;
+		color       : var(--text);
 		font-family : inherit;
 		white-space : nowrap;
-		color       : var(--text);
 		cursor      : pointer;
 		border      : none;
 	}
 
 	.segment:not(:last-child) {
-		border-right : var(--thick) solid var(--black);
+		border-right : var(--thick-micro) solid var(--black);
 	}
 
 	.segment:global([data-hit]) {
@@ -359,12 +367,12 @@
 	}
 
 	.build-button {
-		border        : var(--thick) solid var(--black);
-		height        : var(--height);
+		border        : var(--thick-micro) solid var(--black);
 		padding       : var(--pad-control);
 		border-radius : var(--radius-pill);
-		font-size     : var(--font);
+		height        : var(--height);
 		background    : var(--white);
+		font-size     : var(--font);
 		color         : var(--gray);
 		box-sizing    : border-box;
 		cursor        : pointer;
@@ -387,13 +395,14 @@
 	   hamburger sets. */
 	.file-section {
 		border-radius : var(--radius);
+		position      : relative;
 		background    : var(--accent);
 		padding       : 0 var(--gap);
 		gap           : var(--gap);
+		flex          : 1 1 auto;
 		align-self    : stretch;
 		align-items   : center;
 		display       : flex;
-		flex          : 1 1 auto;
 		min-width     : 0;
 	}
 
@@ -425,19 +434,6 @@
 		white-space : nowrap;
 	}
 
-	/* The folders above the file, just right of the steppers. */
-	.view-ancestry {
-		opacity      : var(--opacity-header);
-		font-size    : var(--font-tiny);
-		margin-left  : var(--gap-tiny);
-		color        : var(--text-on-accent);
-		position     : relative;
-		flex         : 0 1 auto;
-		overflow     : hidden;
-		white-space  : nowrap;
-		min-width    : 0;
-	}
-
 	/* The four at the end of the row sit one gap apart. */
 	.row-pair {
 		gap         : var(--gap);
@@ -449,7 +445,7 @@
 	/* A round button at the end of the row: white inside a hairline edge, filling under the
 	   cursor — the same look every other small button in the app wears. */
 	.row-button {
-		border          : var(--thick-small) solid var(--black);
+		border          : var(--thick-micro) solid var(--black);
 		border-radius   : var(--radius-percent);
 		background      : var(--white);
 		height          : var(--size);
@@ -477,6 +473,12 @@
 		padding-bottom : var(--gap-small);
 	}
 
+	/* The o alone, 3px lower in its button, Jonathan's eye, 22 September 2026; the button is unchanged. */
+	.row-button .lowered {
+		transform : translateY(1px);
+		display   : inline-block;
+	}
+
 	.row-mark {
 		width   : var(--size-small);
 		height  : var(--size-small);
@@ -488,7 +490,7 @@
 	/* The question itself is the button that answers it, sitting where the row's other words
 	   sit and reading as an ordinary control. */
 	.asking-yes {
-		border        : var(--thick) solid var(--black);
+		border        : var(--thick-micro) solid var(--black);
 		border-radius : var(--radius-pill);
 		padding       : var(--pad-control);
 		font-size     : var(--font-tiny);
@@ -509,13 +511,19 @@
 	/* The file's own name, in the middle of what the folders leave over. It is a field, but
 	   reads as plain words: no edge, no fill, and only as wide as the name itself. The edge is
 	   held see-through rather than absent, so nothing shifts when it appears. */
+	/* At the middle of the window: out of the section's flow, its left half the window's width less
+	   the section's own left edge, which the section measures. */
 	.view-name {
-		border        : var(--thick-faint) solid transparent;
+		position      : absolute;
+		left          : calc(50vw - var(--section-x, 0px));
+		top           : 50%;
+		transform     : translate(-50%, -50%);
+		border        : var(--thick-micro) solid transparent;
+		color         : var(--text-on-accent);
 		border-radius : var(--radius-pill);
 		padding       : 0 var(--gap-tiny);
 		font-size     : var(--font-fat);
 		background    : transparent;
-		color         : var(--text-on-accent);
 		box-sizing    : border-box;
 		flex          : 0 1 auto;
 		font-family   : inherit;

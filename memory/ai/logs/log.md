@@ -2,6 +2,11 @@
 
 <!-- consolidated: 15 September 2026 -->
 
+## 23 September 2026
+
+- D: step 17 of the plan ticked, mend index files, kb keeps it, rewritten as 15 and 16 were; the index_files test 38; the repair button pressed headless, 116 folders, 16 mended, 51 index files made, 16 refused; the journal has the numbers. The press wrote 67 index files into memory for real, kept or reverted on Jonathan's word. Jonathan's go 17
+- D: working features row 102, the file name at the window's middle; kb's log has the detail. Jonathan's go
+- D: working features row 101, the ancestry on the editor's leading line; kb's and core's logs have the detail. Jonathan's go
 ## 22 September 2026
 
 - D: ga joins PROJECTS in plugin.py, the dispatcher's listing, beside kb; the dispatcher's 47 pass; the running dispatcher reads the list at launch, so ga's files list after a restart. Jonathan's go

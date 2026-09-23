@@ -58,6 +58,22 @@
 		};
 	}
 
+	// Where the line's left edge is on the page, for a thing placed with align: its center goes on
+	// the window's center, which is half the window's width less this. Read from the browser, again
+	// whenever the line's size or the window's changes, so the number is measured, not reasoned.
+	let line = $state<HTMLElement | null>(null);
+	let line_x = $state(0);
+	$effect(() => {
+		const element = line;
+		if (!element) { return; }
+		const read = () => { line_x = element.getBoundingClientRect().left; };
+		read();
+		const watcher = new ResizeObserver(read);
+		watcher.observe(element);
+		window.addEventListener('resize', read);
+		return () => { watcher.disconnect(); window.removeEventListener('resize', read); };
+	});
+
 	const r         = $derived(radius);
 	const fillet_tr = $derived(`M ${r} 0 A ${r} ${r} 0 0 0 0 ${r} L 0 0 Z`);
 	const fillet_tl = $derived(`M ${-r} 0 A ${r} ${r} 0 0 1 0 ${r} L 0 0 Z`);
@@ -66,15 +82,17 @@
 </script>
 
 <!-- Whatever the caller built, each standing where it asked to: hard against the left end,
-     centered, or hard against the right. Its own background masks the line behind it, the same
-     way a word on the line does. -->
+     centered, hard against the right, or aligned, its center on the window's. Its own background
+     masks the line behind it, the same way a word on the line does. -->
 {#snippet given_things()}
 	{#each placed as one, i (i)}
 		<span class='placed' class:left={one.position === T_Position.left}
 			class:transparent={one.transparent}
 			style:left={one.position === T_Position.left && one.inset ? one.inset : undefined}
+			style:top={one.top === 0 ? undefined : `calc(50% + ${one.top}px)`}
 			class:center={one.position === T_Position.center}
 			class:right={one.position === T_Position.right}
+			class:align={one.position === T_Position.align}
 			use:holds_element={one.element as HTMLElement}></span>
 	{/each}
 {/snippet}
@@ -108,6 +126,8 @@
 {:else}
 	<div
 		class='separator horizontal'
+		bind:this={line}
+		style:--line-x={`${line_x}px`}
 		style:z-index={z_layer}
 		style:height='{thickness}px'
 		style:margin='0 calc(-1 * {reach})'
@@ -151,7 +171,8 @@
 	   whoever built it. The left inset matches a word's, so a word and a given thing at the
 	   same end line up. */
 	/* The mask is a pill, the same shape as whatever stands in it — a square one leaves the line's
-	   cut ends showing past the curve at top and bottom, or stops short of it in the middle. */
+	   cut ends showing past the curve at top and bottom, or stops short of it in the middle. A thing
+	   with a top sits that many px below the line's middle, or above it when negative, mask and all. */
 	.placed {
 		background    : var(--section-bg, var(--bg));
 		border-radius : var(--radius-pill);
@@ -167,6 +188,8 @@
 	.placed.left   { left      : var(--gap-fat); }
 	.placed.center { left      : 50%; transform : translate(-50%, -50%); }
 	.placed.right  { right     : var(--gap); }
+	/* Aligned: its center on the window's, half the window's width less the line's own left edge. */
+	.placed.align  { left      : calc(50vw - var(--line-x, 0px)); transform : translate(-50%, -50%); }
 
 	/* A clear strip of the page color running along both sides of the line, one --gap
 	   thick, the same length as the line itself. It carries past the box's inner edge

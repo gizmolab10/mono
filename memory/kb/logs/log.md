@@ -1,7 +1,17 @@
 # kb log
 
+## 23 September 2026
+
+- D: the ancestry is placed with align, top -11 by Jonathan's edit, in darkgray by his word; its comment says so. Measured headless at 1400px and 1000px: the ancestry's center, the name's and the window's are one number; svelte-check clean. Jonathan's go
+- D: the file name sits at the window's middle: Controls.svelte's file section measures its left edge with a ResizeObserver and the window's resize, sets --section-x on itself, and the name is absolute at calc(50vw - --section-x), translated back by half; measured headless at 1400px and 1000px, name center 700 and 500, the window's; svelte-check clean. Jonathan's go
+- D: the ancestry's top is -8, from -3; svelte-check clean. Jonathan's eye
+- D: the ancestry's Action is transparent, so its holder on the line draws no page-colored mask behind the words; svelte-check clean. Jonathan's word
+- D: the ancestry moved from the filter stack's leading line, which folds with the form, to the section's own line carrying less or more, which stays: Edit_More.svelte's section actions take ancestry_action, the stack's leads give it up. Measured headless: at the right of the line, open and folded alike, beside less and then more ➜ howto. Jonathan's v, it vanished when the form folded
+- D: the file's ancestry is an Action on the editor's filter stack's leading line, Edit_More.svelte, at the right with top -3, a tiny span in the page's text color; Controls.svelte drops sits_at, the view-ancestry span and its style, and the scratch under-row; svelte-check clean; seen headless at the right end of the line, above it. Jonathan's go
 ## 22 September 2026
 
+- D: a row reading foo under the editor's controls row in Controls.svelte, .under-row, absolute at one gap below the row's bottom, so the section keeps its 26.5px; measured headless at y 40.8 and painted over by the separator below, which shares the controls layer, z 2, and comes later in the page, so its preferences clickable and page-colored fill lie over foo. Not shown until the row wins the stacking; svelte-check clean. Jonathan's go
+- D: the editor's add button draws core's t_cross as an svg of class row-mark at --size-small, the micro thickness, as the keep-it button draws x_cross, in place of a typed +; seen headless beside the o, the send arrow and the bin; svelte-check clean. Jonathan's go
 - D: the resume-browsing button draws the steppers' back mark with their lines copied from Steppers.svelte, SIZE, fat_polygon, fat_polygon_bounds, the svg and the path styles, and the same back-cross svg it had laid over the mark, centered and out of the flow; seen headless. Jonathan's v after reverting the fat_polygon at 1.4
 - D: the resume-browsing button is the steppers' own fat triangle, svg_paths.fat_polygon turned by back_direction at 1.4 times the normal size, the accent outline and white fill the steppers use, the cross inside at 0.38 toward the base; the button takes the triangle's size; seen headless. Jonathan's v, the first triangle was a plain one
 - D: the resume-browsing button in Controls.svelte is a fat triangle pointing left, one svg: the triangle path inset by its own edge, rounded by the stroke's join, white, filling under the cursor, and the cross inside it toward the base at half size; the button draws nothing itself; seen headless. Jonathan's go

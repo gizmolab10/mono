@@ -1,13 +1,12 @@
-# Code debt (1119)
+# Code debt (1066)
 
-99 files hold unfinished work, as of 2026-09-19.
+97 files hold unfinished work, as of 2026-09-23.
 
-## ai (174)
+## ai (165)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 | t | [design/action type.md](../../ai/truth/design/action%20type.md) | 1 open truth |
-| t | [design/ov - goals.md](../../ai/truth/design/ov%20-%20goals.md) | 9 open truths |
 | z | [drive.md](../../ai/zone/drive.md) | 2 open and dissolve the drive |
 | z | [ideas.md](../../ai/zone/ideas.md) | 85 open |
 | z | [proposals.md](../../ai/zone/proposals.md) | decide 6 proposals |
@@ -28,12 +27,12 @@
 | z | [proposals.md](../../core/zone/proposals.md) | decide 3 proposals |
 | z | [work/soon/hits manager.md](../../core/zone/work/soon/hits%20manager.md) | 7 open |
 
-## di (216)
+## di (300)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 | t | [always.md](../../di/truth/always.md) | 9 open truths |
-| t | [development/early di spec.md](../../di/archive/early%20di%20spec.md) | 16 open truths |
+| t | [project/philosophy/logic driven design.md](../../di/truth/project/philosophy/logic%20driven%20design.md) | 100 open truths |
 | z | [drive.md](../../di/zone/drive.md) | dissolve the drive |
 | z | [learn.md](../../di/zone/learn.md) | 17 open |
 | z | [work/milestones/29.user.manual.md](../../di/zone/work/milestones/29.user.manual.md) | 3 open |
@@ -139,22 +138,22 @@
 | z | [drive.md](../../panel/zone/drive.md) | dissolve the drive |
 | z | [questions.md](../../panel/zone/questions.md) | answer 1 question |
 
-## shared (330)
+## shared (219)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../shared/logs/log.md) | settle 23 lines |
-|  | [work journal.md](../../shared/logs/work%20journal.md) | 48 open |
-| t | [collaborate/composition.md](../archive/composition.md) | 15 open truths |
+|  | [work journal.md](../../shared/logs/work%20journal.md) | 53 open |
 | t | [develop/migrate.md](../../shared/truth/develop/migrate.md) | 1 open truth |
-| t | [philosophy/logic driven design.md](../../di/truth/project/philosophy/logic%20driven%20design.md) | 100 open truths |
 | t | [test/debugging.md](../../shared/truth/test/debugging.md) | 10 open truths |
 | z | [collisions.md](../../shared/zone/collisions.md) | rewrite 5 collisions |
 | z | [drive.md](../../shared/zone/drive.md) | dissolve the drive |
-| z | [ideas.md](../../shared/zone/ideas.md) | 12 open |
-| z | [learn.md](../../shared/zone/learn.md) | 2 open |
-| z | [proposals.md](../../shared/zone/proposals.md) | decide 36 proposals |
-| z | [questions.md](../../shared/zone/questions.md) | 9 open and answer 9 questions |
+| z | [gate too verbose.md](../../shared/zone/gate%20too%20verbose.md) | 1 open |
+| z | [ideas.md](../../shared/zone/ideas.md) | 20 open |
+| z | [learn.md](../../shared/zone/learn.md) | 23 open |
+| z | [proposals.md](../../shared/zone/proposals.md) | decide 2 proposals |
+| z | [questions.md](../../shared/zone/questions.md) | 10 open and answer 10 questions |
+| z | [svg flow diagrams.md](../../shared/zone/svg%20flow%20diagrams.md) | 1 open |
 | z | [now/co.md](../../shared/zone/now/co.md) | 17 open |
 | z | [now/library projects.md](../../shared/zone/now/library%20projects.md) | 11 open |
 | z | [work/articles/accidental.programmer.md](../../shared/zone/work/articles/accidental.programmer.md) | 10 open |
@@ -163,20 +162,19 @@
 | z | [work/next/commoditize.md](../../shared/zone/work/next/commoditize.md) | 11 open |
 | z | [work/next/curiosity.md](../../shared/zone/work/next/curiosity.md) | 3 open |
 
-## ws (165)
+## ws (148)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 | t | [architecture/core/hits.md](../../ws/truth/architecture/core/hits.md) | 4 open truths |
 | t | [architecture/core/styles.md](../../ws/truth/architecture/core/styles.md) | 1 open truth |
-| t | [architecture/internals/debounce.md](../../ws/zone/debounce.md) | 4 open truths |
 | t | [architecture/internals/timers.md](../../ws/truth/architecture/internals/timers.md) | 16 open truths |
-| t | [architecture/platforms/svelte.5.md](../../ws/archive/svelte.5.md) | 17 open truths |
-| t | [architecture/platforms/svelte.md](../../ws/zone/svelte.md) | 47 open truths |
 | t | [architecture/ux/breadcrumbs.md](../../ws/truth/architecture/ux/breadcrumbs.md) | 39 open truths |
-| t | [architecture/ux/components.md](../../ws/zone/components.md) | 10 open truths |
+| z | [components.md](../../ws/zone/components.md) | 10 open |
+| z | [debounce.md](../../ws/zone/debounce.md) | 4 open |
 | z | [drive.md](../../ws/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../ws/zone/ideas.md) | 3 open |
 | z | [questions.md](../../ws/zone/questions.md) | 2 open and answer 2 questions |
+| z | [svelte.md](../../ws/zone/svelte.md) | 47 open |
 | z | [work/deliverables.md](../../ws/zone/work/deliverables.md) | 13 open |
 | z | [work/next/crazy/book.md](../../ws/zone/work/next/crazy/book.md) | 6 open |

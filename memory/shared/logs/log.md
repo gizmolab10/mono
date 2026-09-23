@@ -1,9 +1,29 @@
 # shared log
 
-<!-- consolidated: 22 September 2026 -->
+<!-- consolidated: 23 September 2026 -->
+
+## 23 September 2026
+
+- D: step 17 of ai's plan done, kb keeps the index mending; ai's journal has the proof; the headless press of the repair button made 51 index files and mended 16 in memory, 67 in git, waiting on Jonathan to keep or revert. Jonathan's go 17
+- S: consolidated 23 September 2026: 28 lines settled, 17 of 22 September after its consolidate and 11 of today, none deleted, the marker moved to 23 September 2026. Every D: names its home, written with it: kb's Browse_Filters, Filters, File, Hierarchy, Files, Controls and Edit_More, core's Action, Separator, SVG_Paths and sections.md, ai's Customizations, plugin.py and working features rows 100 to 102, decisions.md, the drive and the work journal, the logs of core, kb and ai. Loose ends: a file named Controls.svelte copy sits in kb's main folder, not co's; the saves.jsonl row order, kb before division, waits for go; the resume-browsing button as the steppers' mark waits on v; drive.md has no current state paragraph, so the state is here: the drive is empty, the seven pieces in the rotation with the count running, the gate pac waiting on a d; the manifest in the chat
+- D: v perfect on the ancestry and the centered name, working features rows 101 and 102 ticked. Jonathan's v
+- D: record for shared: two ticked corrections, the pac one placed in workflow.md's pac row, never under Decisions made, the other culled at Jonathan's DELETE THIS, two rows in distilled.md; nothing ticked in ideas, drive or code debt; finished.md rewritten, 62 files, unchanged. Jonathan's rac, read as ras
+- D: align built in core and the ancestry placed with it in kb, 11px up, darkgray; the decision line says built; working features row 101 and core's sections.md say so. Jonathan's go and word
+- D: T_Position.align decided again with a meaning: the element's center on the window's center, the separator measuring its own left edge; the ancestry to be placed with it; a line in decisions.md; the build waits for go. Jonathan's d
+- D: the file name centered on the window's width, built in kb, ai's working features row 102; the decision line says built. Jonathan's go
+- D: align aborted, nothing built, T_Position.align left in core's enum unread; the file name is to be centered on the window's width; a line in decisions.md; the build waits for go. Jonathan's d
+- D: T_Position.align decided, the ancestry's center on the file name's; right gone from core's Action and its readers; a line in decisions.md; the build waits for go with one open point, how the separator learns the name's center. Jonathan's d
+- D: core's Action gains right beside top; core's log has the detail; kb's svelte-check clean. Jonathan's word
+- D: the ancestry sits 8px above the editor's line, from 3; working features row 101 and the decision line say so. Jonathan's eye
+- D: the ancestry on the editor's line has a transparent holder; kb's log has the line. Jonathan's word
+- D: the ancestry rides the editor's less-or-more line, not the stack's leading line that folds; kb's log has the detail; working features row 101 and the journal say so. Jonathan's v
+- D: the drive built: the ancestry on the editor's line at the right, 3px up, through a top on core's Action; the proposal is ai's working features row 101, the drive's text in the work journal, drive.md its H1; core's, kb's and ai's logs have the detail; the decision line says built. Jonathan's go
+- D: the ancestry label goes on the separator at the top of the stack below the controls, centered, an Action with a span and a new vertical offset; the drive's pac says so and its subsection a label on a sep; a line in decisions.md; the build waits for go. Jonathan's d
 
 ## 22 September 2026
 
+- D: the foo row built under the editor's controls row in kb, out of the flow, and found painted over by the separator on the same layer; kb's log has the measurement; the stacking waits on Jonathan. Jonathan's go
+- D: t_cross in core beside x_cross, drawn in kb's add button at --size-small; core's and kb's logs have the detail. Jonathan's go
 - D: the resume-browsing button is the steppers' mark with the cross over it, after Jonathan reverted the last drawing; kb's log has the detail; waits on v. Jonathan's word
 - D: a saves.jsonl row says kb before division; a line in decisions.md; the change waits for go. Jonathan's d
 - D: the resume-browsing button redrawn as the steppers' fat triangle after v; kb's log has the detail. Jonathan's v

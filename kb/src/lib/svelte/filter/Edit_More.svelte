@@ -1,22 +1,22 @@
 <script lang='ts'>
 	import { foot_is_all_folds, inverted, toggle_all_areas, w_areas_open, w_form_folded, w_search_text } from '../../ts/managers/Filters';
-	import { in_order, type File } from '../../ts/types/File';
-	import { customizations } from '../../ts/common/Customizations';
 	import { preferences, T_Preference } from '../../ts/managers/Preferences';
-	import { file_path_of } from '../../ts/utilities/Saving';
+	import { customizations } from '../../ts/common/Customizations';
+	import { in_order, T_Bundle, type File } from '../../ts/types/File';
 	import { Action, T_Position } from '../../ts/common/Core';
+	import { file_path_of } from '../../ts/utilities/Saving';
 	import { T_Hit_Target } from '../../ts/common/Core';
 	import { hit_target } from '../../ts/common/Core';
-	import { T_Edge } from '../../ts/common/Core';
-	import { WAY_OUT } from '../../ts/common/Core';
 	import { Separator } from '../../ts/common/Core';
 	import { files } from '../../ts/managers/Files';
 	import { Section } from '../../ts/common/Core';
-	import { k } from '../../ts/common/Core';
+	import { WAY_OUT } from '../../ts/common/Core';
+	import { T_Edge } from '../../ts/common/Core';
 	import { debug } from '../../ts/common/Core';
-	import { hits } from '../../ts/common/Core';
 	import { Stack } from '../../ts/common/Core';
+	import { hits } from '../../ts/common/Core';
 	import Kinds_Row from './Kinds_Row.svelte';
+	import { k } from '../../ts/common/Core';
 	import Tag_Rows from './Tag_Rows.svelte';
 	import type { Snippet } from 'svelte';
 
@@ -114,6 +114,7 @@
 	// holds nothing on the first drawing and the made button on the next — which is itself a
 	// change, so the line it stands on is told at once.
 	let filters_button   = $state<HTMLElement | null>(null);
+	let ancestry_word    = $state<HTMLElement | null>(null);
 	let search_button    = $state<HTMLElement | null>(null);
 	let search_clear     = $state<HTMLElement | null>(null);
 	let kinds_button     = $state<HTMLElement | null>(null);
@@ -150,11 +151,22 @@
 	const search_clearer     = $derived(Object.assign(new Action(), { element: search_clear,    position: T_Position.center }));
 	const kinds_clearer      = $derived(Object.assign(new Action(), { element: kinds_clear,     position: T_Position.center }));
 	const filters_action     = $derived(Object.assign(new Action(), { element: filters_button,  position: T_Position.left }));
+	// Where the file sits, every folder above it from the top down, its center on the window's, under
+	// the name, on the section's own line, the one carrying less or more, which stays when the form
+	// folds, 11px above its middle, since 23 September 2026; the controls row before. A
+	// file in a project starts with that project; one belonging to no project starts with the repo's
+	// own name; a file in the memory system starts with its project's folder there.
+	const ancestry = $derived.by(() => {
+		const folders = guide.path.split('/').slice(0, -1);
+		const top = guide.bundle === T_Bundle.mono ? ['mono'] : guide.bundle === T_Bundle.memory ? [] : [guide.bundle];
+		return [...top, ...folders].join(' / ');
+	});
+	const ancestry_action    = $derived(Object.assign(new Action(), { element: ancestry_word,   position: T_Position.align, top: -11, transparent: true }));
 	const search_action      = $derived(Object.assign(new Action(), { element: search_button,   position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const info_action        = $derived(Object.assign(new Action(), { element: info_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
-	const host_tools_action  = $derived(Object.assign(new Action(), { element: $w_show_filters ? host_tools : null, position: T_Position.center, transparent: true }));
 	const kinds_action       = $derived(Object.assign(new Action(), { element: kinds_button,    position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
 	const tags_action        = $derived(Object.assign(new Action(), { element: tags_button,     position: T_Position.left, inset: 'calc(var(--gap-fat) + var(--gap-big))' }));
+	const host_tools_action  = $derived(Object.assign(new Action(), { element: $w_show_filters ? host_tools : null, position: T_Position.center, transparent: true }));
 
 	/** Put the whole form away, or bring it back. */
 	function toggle_filters() {
@@ -253,6 +265,7 @@
 <div class='out_of_sight'>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={filters_button}
 		use:hit_target={{ id: 'editor.fold.filters', onpress: toggle_filters }}>{filter_rows_word}</button>
+	<span class='ancestry' bind:this={ancestry_word}>{ancestry}</span>
 	<button type='button' class='clickable' class:forced={way_out_lit} bind:this={search_button}
 		use:hit_target={{ id: 'editor.fold.search', onpress: toggle_search, tip: 'search this file' }}>{search_word}</button>
 	<!-- Drawn only with something to clear: an empty field offers nothing to press for.
@@ -333,7 +346,7 @@
 		id='editor.filters'
 		edge={T_Edge.thick}
 		folded={!$w_show_filters}
-		actions={[filters_action]}>
+		actions={[filters_action, ancestry_action]}>
 		{#snippet contents()}
 			<!-- The form is one stack of four subsections: looking through the file, the host's rows, its one kind,
 				and its tags. The heavy line carrying the clickable that folds the whole form away
@@ -367,6 +380,15 @@
 <style>
 	/* Where the four clickables are written before their lines take them. Each is taken out of
 	   here on the very next drawing, so nothing is ever seen in this spot. */
+	/* The folders above the file, on the stack's leading line at its right end: tiny words in the
+	   page's text color, one line, a small gap each side so the mask clears the line. */
+	.ancestry {
+		padding     : 0 var(--gap-small);
+		font-size   : var(--font-faint);
+		color       : var(--darkgray);
+		white-space : nowrap;
+	}
+
 	.out_of_sight {
 		display : none;
 	}
@@ -383,11 +405,11 @@
 	   background masks the line behind it. The edge is held see-through and counted inside the
 	   word's own space, so the hover edge adds no width and the word never shifts. */
 	.clickable {
-		background    : var(--white);
-		border        : var(--thick-faint) solid var(--black);
+		border        : var(--thick-micro) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		color         : var(--darkgray);
+		background    : var(--white);
 		padding       : 0 var(--gap);
 		box-sizing    : border-box;
 		font-family   : inherit;
@@ -437,8 +459,8 @@
 	   plus a faint one below. Together they are the one gap every label row holds below, so the
 	   section is no taller. */
 	.label-rows.search-rows {
-		padding-top    : var(--gap-faint);
 		padding-bottom : calc(var(--gap-tiny) + var(--gap-faint));
+		padding-top    : var(--gap-faint);
 	}
 
 	/* The host's rows hold a small gap below, less than the other label rows. */
@@ -450,14 +472,14 @@
 	   that word's size — the same text and the same edge thickness, which makes both boxes the
 	   same height. Their height is whatever that text needs; nothing is fixed. */
 	.picking {
-		border        : var(--thick-small) solid var(--black);
+		border        : var(--thick-micro) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		background    : var(--white);
+		display       : inline-flex;
 		box-sizing    : border-box;
 		align-items   : stretch;
 		overflow      : hidden;
-		display       : inline-flex;
 		flex-shrink   : 0;
 	}
 
@@ -474,7 +496,7 @@
 	}
 
 	.picking .segment:not(:last-child) {
-		border-right : var(--thick) solid var(--black);
+		border-right : var(--thick-micro) solid var(--black);
 	}
 
 	/* Neither is a state, so each takes the fill only under the cursor. The stronger fill it wore
@@ -487,7 +509,7 @@
 
 	/* The clear on the search line, matching the list's. */
 	.clear {
-		border        : var(--thick-small) solid var(--black);
+		border        : var(--thick-micro) solid var(--black);
 		border-radius : var(--radius-pill);
 		font-size     : var(--font-faint);
 		background    : var(--white);

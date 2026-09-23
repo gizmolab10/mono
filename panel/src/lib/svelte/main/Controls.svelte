@@ -45,11 +45,11 @@
 	/* What the host hands over: the whole of the row past the hamburger, its contents at the right
 	   end unless they grow to fill it. */
 	.right {
+		flex            : 1 1 auto;
 		justify-content : flex-end;
 		align-items     : center;
 		display         : flex;
 		min-width       : 0;
-		flex            : 1 1 auto;
 	}
 
 	.name {
@@ -64,9 +64,9 @@
 	/* How the hamburger looks is the host's: core draws it and it is reached by the class it
 	   wears. Named as reaching outside, since core's own file is where the class is. */
 	:global(.hamburger-button) {
-		color         : var(--text);
 		border-radius : var(--radius-tiny);
 		background    : transparent;
+		color         : var(--text);
 		position      : relative;
 		cursor        : pointer;
 		display       : flex;

@@ -49,6 +49,18 @@ Open question: is [[conventions]] folded into `always.md` (one file, injected wh
 
 ## investigations
 
+### the foo span on the separator's layer
+
+**pac** 22 September 2026
+
+**What exists**: measured headless, the foo span sits at z 1 inside kb's controls row, which sits at z 2 on the controls layer; panel's row around it is at z 2 too, and the bottom separator's wrapper, at z 2 and later in the page, paints over both, foo with them. A z-index orders an element among its brothers inside one stacking context: the controls row, z 2 and positioned, is a context of its own, so a z-index on foo, 2 or 200, moves it among the row's children only and never above the separator. core's sections.md, Element placement algorithm, says the separator's layer is set on purpose, the separator and its word on top of the ladder.
+
+**For**: one line if the section gives up its own context, its z-index to auto; then foo's z 2 is judged against the separator's in the page's context, and coming later would still lose, so foo needs 3, one above the ladder's top. Or foo is drawn outside the section, beside the separator in the page, at the separator's z: the same layer in truth, one element moved.
+
+**Against**: the controls row's z 2 is the controls layer of core's stylesheet, layer-controls, shared with panel's row and every host; taking it off kb's row changes what else sits over or under it. A z of 3 on foo puts it above the ladder sections.md reserves for the separator, so the truth changes with it. Drawing foo outside the section moves it out of the file that owns it, and the row it belongs under. Cost, counted: one rule in kb's Controls.svelte either way, plus the truth's line for the z-3 way, plus a new home for foo the outside way.
+
+**Deciding question**: is foo the section's, kept inside it and lifted above the separator with the truth's ladder changed, or the page's, drawn beside the separator on the separator's own layer?
+
 ### the gate reports only when it blocks
 
 **pac** 22 September 2026

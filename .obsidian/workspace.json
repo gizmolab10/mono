@@ -36,6 +36,20 @@
             }
           },
           {
+            "id": "5570d82cc37e3a2a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "memory/ai/zone/work/music and ai.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "music and ai"
+            }
+          },
+          {
             "id": "46a8811df0b19abb",
             "type": "leaf",
             "state": {
@@ -116,7 +130,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -175,7 +189,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 451.73798751831055
+    "width": 451.73798751831055,
+    "collapsed": true
   },
   "right": {
     "id": "d9854c86a0d31055",
@@ -253,7 +268,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "memory/shared/zone/learn.md",
+                "file": "memory/ai/zone/work/music and ai.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
@@ -277,8 +292,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 225.09375,
-    "collapsed": true
+    "width": 225.09375
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -292,45 +306,45 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a6268e9d08925caf",
+  "active": "5570d82cc37e3a2a",
   "lastOpenFiles": [
-    "kb/src/lib/svelte/main/Controls.svelte copy",
+    "memory/ws/zone/index.md",
+    "memory/ws/truth/index.md",
+    "memory/ws/logs/index.md",
+    "memory/ws/archive/experiments/simulate bubble/index.md",
+    "memory/ws/archive/experiments/index.md",
+    "memory/ws/archive/bubble/2/index.md",
+    "memory/ws/archive/bubble/index.md",
+    "memory/ws/archive/index.md",
+    "memory/shared/zone/now/index.md",
+    "memory/shared/zone/index.md",
+    "memory/shared/truth/artwork/index.md",
+    "memory/shared/truth/index.md",
+    "memory/shared/logs/index.md",
+    "memory/shared/archive/index.md",
+    "memory/panel/zone/index.md",
+    "memory/panel/logs/index.md",
+    "memory/ov/zone/index.md",
+    "memory/ov/truth/index.md",
+    "memory/ov/logs/index.md",
+    "memory/mu/zone/index.md",
+    "memory/mu/truth/index.md",
+    "memory/mu/logs/index.md",
+    "memory/mj/zone/index.md",
+    "memory/mj/logs/index.md",
+    "memory/me/zone/work/index.md",
+    "memory/me/zone/research/index.md",
     "tools/hub/ai.db-journal",
-    "memory/di/truth/design/index.md",
-    "memory/di/truth/design/di road map.md",
+    "kb/src/lib/svelte/main/Controls.svelte copy",
     "memory/di/truth/design",
-    "memory/shared/zone/drive.md",
-    "memory/shared/truth/shorthand.md",
-    "memory/shared/zone/ideas.md",
-    "memory/shared/truth/onload.md",
-    "memory/shared/truth/on load.md",
-    "memory/shared/truth/agency.md",
-    "memory/shared/truth/how to rotate the hook.md",
-    "memory/shared/truth/conventions.md",
-    "pre-flight/always.md",
-    "memory/shared/zone/collisions.md",
     "pre-flight",
-    "memory/shared/zone/gate too verbose.md",
-    "memory/shared/zone/hook rotation issue.md",
-    "memory/shared/zone/dead links.md",
     "ai/src/lib/ts/tests/scratch_wikilink.test.ts",
-    "memory/shared/truth/pitfalls.md",
-    "memory/shared/zone/svg flow diagrams.md",
-    "memory/shared/zone/system failure.md",
     "mj/src/assets/mj/IMG_0412.jpeg",
-    "memory/shared/truth/gates.md",
     "ws/vite.config.js.timestamp-1789865067225-748b5a7424efa.mjs",
-    "memory/shared/truth/develop/write the code debt.md",
-    "memory/shared/truth/finished.md",
-    "memory/shared/truth/workflow.md",
-    "memory/shared/zone/garolous truths.md",
-    "ws/src/manual/plugin/index.md",
-    "ws/src/manual/plugin/bubble.plugin.md",
     "ws/src/manual/plugin",
     "ws/src/manual/user",
     "ws/src/manual",
     "memory/di/archive/research",
-    "memory/di/archive",
     "memory/shared/truth/artwork/workflow.svg",
     "memory/shared/truth/artwork/cadence.svg",
     "memory/shared/zone/artwork/cadence.svg",

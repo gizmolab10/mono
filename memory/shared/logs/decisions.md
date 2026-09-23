@@ -2,6 +2,10 @@
 
 ## Decisions made during 2026
 
+- 23 September 2026, **T_Position.align puts a placed thing's center on the window's center**, the separator measuring its own left edge the way the file section does for the name; the ancestry is placed that way, so it sits under the name; built the same day, measured headless at 1400px and 1000px, the ancestry's center, the name's and the window's one number
+- 23 September 2026, **the file name in the controls row is centered on the window's width**, not on its own row's leftover; built the same day, measured headless at 1400px and 1000px, the name's center at the window's
+- 23 September 2026, **T_Position gains align**: a thing placed with it has its center on the file name's center, the name in the controls row above; right, added to Action the same day, is gone, a constant drifting with the window and the file; aborted the same hour, before any build; T_Position.align is in the enum with no reader
+- 23 September 2026, **the ancestry text is a label on the separator at the top of the stack below the controls**, centered, handed as an Action with a span, the way the starved no-options span is; Action gains one property, top; the two drive proposals, extend below and its own section, passed over; built the same day on the editor's less-or-more line, at the right, top -8 after -3, transparent, Jonathan's rewrite of the drive and his eye
 - 22 September 2026, **a row of saves.jsonl says its size before its division**: timestamp, kb, division, saved; today division comes before kb; the change waits for go
 - 22 September 2026, **the resume-browsing button is a fat triangle pointing left, with the same cross**, in place of the circle with a cross, the back button in kb's Controls.svelte; built the same day, seen headless
 - 22 September 2026, **ga and kb join T_Bundle**, kb's list of projects, so memory/ga and memory/kb answer to their own projects in the browse filters rather than to memory; built the same day, ga added to the dispatcher's list in ai/plugin.py beside kb, which was there

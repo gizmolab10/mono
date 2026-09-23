@@ -7,6 +7,44 @@
 
 ---
 
+## 2026-09-23 — label on a sep, done: the ancestry on the editor's line
+
+What changed: Action in core gains top, px below the line's middle, negative above, 0 for every placed thing until now; the separator moves a placed thing and its mask by it; kb's editor hands the file's ancestry to the line of the section that folds the form, the one carrying less or more, as an Action at the right with top -3; on the stack's leading line inside the section for an hour first, where it folded away with the form, and the controls row no longer shows the ancestry; the scratch under-row of 22 September is gone; core's sections.md says a placed thing may sit off the line by its top. Why: the controls row was full and the line under it had empty space; Jonathan decided the ancestry is a label on a separator, the editor's, at the right, 3px up. Measured headless: shared / truth at the right end of the line, its box 12px tall with its middle above the line. The drive's text as it was:
+
+### label on a sep
+
+take advantage of the large unused space on the sep to the right of the clickable
+
+#### use case
+
+- [ ] center the ancestry text 
+- [ ] use the layer above the sep
+
+### proposal
+
+Decided 23 September 2026: the ancestry text is a label on the separator at the top of the stack below the controls, centered.
+
+**What the separator takes today:** a list of Actions, each an element, a position, left, center or right, an inset for a left one, and whether it masks the line. The element is any element: the clickables are buttons, and the starved "no options for current search" is a plain span placed the same way, so a label that is not pressed needs no new property. 
+
+**What is new:** a vertical offset on the Action, how far above or below the line's middle the element sits, none today, every placed thing centered on the line.
+
+#### add top to Action
+
+So: one property added to Action, a top; the ancestry passed to that separator as a centered Action with a span and a top; core's [[sections]], Element placement algorithm, says an Action may sit off the line by its top.
+
+Proposed 23 September 2026
+
+1. Action gains one property, top: how far below the line's middle the element's middle sits, in px, positive down as CSS top is, 0 today for every placed thing.
+2. The separator draws each placed thing offset down by its top, the line's mask moving with it.
+3. kb's details column, which builds the stack below the controls and places the preferences clickable on its top separator, hands the ancestry to that separator as a centered Action with a span and a top, the number provided by Jonathan's visual guidance.
+4. The ancestry leaves the controls row.
+5. core's [[sections]], Element placement algorithm, gains the line: a placed thing sits on the line's middle, or below it by its top (can be negative).
+
+#### pass ancestry
+
+- [ ] edit knows the ancestry
+- [ ] remove it from the controls row
+- [ ] simply pass it to the filter stack with T_Position.right and -3 for top
 ## 2026-09-22 — the hook rotation issue, done: seven pieces
 
 What changed: inject-always.sh's part B goes round seven pieces in place of three whole files, each piece one or more heading ranges of one file, named without spaces on the ONE PART IN TURN line so saves.jsonl records the piece; a count file of its own for tests; test-pieces.sh proves every line of the three files comes out once and the largest output with Always is 7.5KB. Why: the count, erased and run again after Always's cut to four rules, showed the same three sizes on every turn, conventions 20.5KB and the lexicon 14.4KB saved, agency 6.5KB shown, so waiting a week would have added nothing, and Jonathan said cut. Not built and not decided: the plan's first item, a rule in agency that co reads the saved file the same turn. The pieces:

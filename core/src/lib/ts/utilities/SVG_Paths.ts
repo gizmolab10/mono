@@ -79,6 +79,14 @@ export class SVG_Paths {
 		return `M ${start} ${start} L ${end} ${end} M ${start} ${end} L ${end} ${start}`;
 	}
 
+	/** A plus: two strokes through the middle, held in from the edge by the margin. ws's, since 22 September 2026. */
+	t_cross(diameter: number, margin: number): string {
+		const radius = diameter / 2;
+		const start = margin + 2;
+		const end = diameter - margin - 2;
+		return `M ${start} ${radius} L ${end} ${radius} M ${radius} ${start} L ${radius} ${end}`;
+	}
+
 	/**
 	 * The shut mark: two upright strokes of the given height, standing side by side with the
 	 * given space between them, the pair centered across the same width it is tall. Drawn as
