@@ -5,7 +5,7 @@
 - [ ] [[memory/kb/zone/ideas]] kb
 - [ ] [[adopt kb]]
 - [ ] [[ov as knowledge bases]]
-- [ ] [[music and ai]]
+- [ ] [[how ai hosts kb]]
 - [ ] [[using rules]]
 - [ ] better markdown editing
 - [ ] better rule editing

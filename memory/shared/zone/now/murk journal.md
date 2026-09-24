@@ -4,9 +4,9 @@ Murk is bad news. We may have conquered it — see [murk.md](../../../../shared/
 
 ## afternote ...
 
-the mixture of prose in all our guides is not to Jonathan's liking. our next goal ought to include tracking how Jonathan rewrites my material. keep a separate journal of rewrites. eg, line 10 above was rewritten by Jonathan. propose a record that captures the 'how to write it Jonathan's way'. write it here.
+the mixture of prose in all our guides is not to Jonathan's liking. our next goal ought to include tracking how Jonathan rewrites co's material. keep a separate journal of rewrites. eg, line 10 above was rewritten by Jonathan. propose a record that captures the 'how to write it Jonathan's way'. write it here.
 
-hint. rules that currently are in our guides are just best guesses by Jonathan. consider them unsalvageable, if they're in the way.
+hint. rules that currently are in our guides are just best guesses by Jonathan. removing them is allowed by Jonathan, if they're in the way.
 
 ### The rewrites are the record
 

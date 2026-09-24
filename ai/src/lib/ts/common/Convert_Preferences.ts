@@ -9,6 +9,9 @@ import { customizations } from './Customizations';
 import { debug, Preferences } from './Core';
 import buildsRaw from '../../md/builds.md?raw';
 
+// ai's page log is its own, memory/ai/logs/ai.debug.log, named before the first line is logged.
+debug.file = 'ai.debug';
+
 // kb draws ai, and reads ai's facts only when asked: what the controls row calls the host, what
 // every remembered value is saved under, the host whose db the dispatcher answers from, the
 // hierarchies the list offers, the build notes table, since step 7 of the plan the kinds, the

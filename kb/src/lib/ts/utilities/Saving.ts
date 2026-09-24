@@ -368,9 +368,10 @@ export async function read_file(where: string): Promise<{ text: string | null; w
 export const VAULT = 'mono';
 
 // The address that hands a file to Obsidian. The repo is itself a vault, so a guide's path
-// counting from the top of the repo is also its path inside the vault.
-export function obsidian_link(vault: string, where: string): string {
-	return `obsidian://open?vault=${encodeURIComponent(vault)}&file=${encodeURIComponent(where)}`;
+// counting from the top of the repo is also its path inside the vault. Asked for a new tab, the
+// open action's paneType=tab says so; without it Obsidian replaces its last active tab.
+export function obsidian_link(vault: string, where: string, new_tab: boolean = false): string {
+	return `obsidian://open?vault=${encodeURIComponent(vault)}&file=${encodeURIComponent(where)}${new_tab ? '&paneType=tab' : ''}`;
 }
 
 // Write a changed guide. Says whether it was written, and if not, why in plain words.

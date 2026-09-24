@@ -20,3 +20,4 @@ How co works with Jonathan and maintains shared context.
 - [Voice](./voice.md)
 - [Workflow](../workflow.md)
 - [Plans](./write%20a%20plan.md)
+- [Design references](./write%20a%20design%20reference.md)

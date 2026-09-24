@@ -2,11 +2,15 @@
 
 What's been finished, newest first. ai's own since 15 September 2026, taken whole from ov's, Jonathan's decision; ov's stays as it is.
 
-**Current** The plan in [music and ai](../zone/work/music%20and%20ai.md), ov's strip down into kb and ai: step 14 built and step 19 begun 15 September 2026, its working features table ticked a row at a time as each feature is tried by hand on ai. Steps 15 to 18 next: following a link and walking the link stack; making, renaming, moving and throwing away a markdown file; mending index files; handing a file to Obsidian, a code file to VSCode, and a file into a message.
+**Current** The plan in [how ai hosts kb](../truth/design/how%20ai%20hosts%20kb.md), ov's strip down into kb and ai, steps 1 to 19, is done, 23 September 2026: ov is retired, working features row 104, and the table is numbered bullets, 1 to 104 less 20. Steps 20 to 32 wait, music's first.
+
+## 2026-09-23 — step 18 of the plan, the three hand-offs: kb keeps them, and command opens a new tab in Obsidian
+
+Step 18 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md), rewritten as 15 to 17 were: nothing moves. obsidian_link in Saving.ts, Opening_Code.ts and the o, send and code buttons in Controls.svelte are pressed in kb's controls row and read kb's file record. Built: obsidian_link takes a third argument, new_tab, and adds paneType=tab to the open action when it is true, which Obsidian's URI help says opens a new tab; the o button's press reads the command key off the mouse state the hits manager hands it and passes that on; the tip says so. Proof: the saving test's new case and the opening_code test, 41 between them; svelte-check clean. The visual report of the three hand-offs waits on Jonathan, a headless browser being unable to hand a file to Obsidian, VSCode or Mail.
 
 ## 2026-09-23 — step 17 of the plan, mend index files: kb keeps it
 
-Step 17 of the plan in [music and ai](../zone/work/music%20and%20ai.md), rewritten as 15 and 16 were: nothing moves. Index_Files.ts, repair_indexes and mend_indexes in Files.ts and the index files button in D_Repair.svelte are called from kb's own create, rename, move and delete, which step 16 kept, so they are kb's with them; a music file's folder has no index. Proof: the index_files test, 38, among kb's; the repair button pressed headless with the page's log read after: 116 folders looked at, 33 already right, 16 mended, 51 index files made, 16 refused as not guides, 33 links put right, 7 taken out, 27 added. The press changed memory on disk, 51 new index.md files and 16 mended, git counting 67; whether they stay is Jonathan's.
+Step 17 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md), rewritten as 15 and 16 were: nothing moves. Index_Files.ts, repair_indexes and mend_indexes in Files.ts and the index files button in D_Repair.svelte are called from kb's own create, rename, move and delete, which step 16 kept, so they are kb's with them; a music file's folder has no index. Proof: the index_files test, 38, among kb's; the repair button pressed headless with the page's log read after: 116 folders looked at, 33 already right, 16 mended, 51 index files made, 16 refused as not guides, 33 links put right, 7 taken out, 27 added. The press changed memory on disk, 51 new index.md files and 16 mended, git counting 67; whether they stay is Jonathan's.
 
 ## 2026-09-21 — the tags drive and park join the tag area progress
 
@@ -124,7 +128,7 @@ Jonathan's pac and add it: the closed tag list gains edit, 40 tags, in the tagse
     - The facts as configuration: one object kb declares in its common folder, which the host's main.ts fills before anything mounts, the way lv and mj fill gallery's customizations, and every kb module reads when asked, holding the name the controls row shows, the host's name, which ports.json pairs with its db, the keys, the hierarchies, the preferences prefix and the build notes table, `ov/src/lib/md/builds.md` today, the table of builds that the build button in the controls row opens, one per host. 
     - The drawing as snippets: the host's App.svelte draws kb's page, Main.svelte, the component that draws panel and hands it kb's own snippets, and hands it snippets, two for its filter sections, browse and edit, one for its details section, and one for its operation view, which kb renders with the clicked file, the way gallery's Main.svelte hands panel its snippets. 
     - Where a host hands no snippet, kb draws nothing there, once the piece has moved: until the step that moves a piece, kb draws it as today, so the editor's words stay on screen from here to step 11. 
-    - Its design comes before any code, proposed in [adopt kb.md](../../kb/zone/adopt%20kb.md), decided 11 September 2026 to be written now, moving to memory/kb at step 4: the type kb declares, one field per fact, the four snippets with their arguments, the browse filter section and the details section taking nothing, the edit filter section taking the clicked file, the operation view taking the clicked file, the width and the height, and the panel region each renders in. 
+    - Its design comes before any code, proposed in [adopt kb.md](../../kb/truth/adopt%20kb.md), decided 11 September 2026 to be written now, moving to memory/kb at step 4: the type kb declares, one field per fact, the four snippets with their arguments, the browse filter section and the details section taking nothing, the edit filter section taking the clicked file, the operation view taking the clicked file, the width and the height, and the panel region each renders in. 
     - The step ends when the ai host compiles against it. 
     - Every step below moves a piece into one or the other. Proof: kb's check clean with the ai host's specialty in.
     - **kb's second bridge.** `common/Panel.ts`, the panel alias in kb's tsconfig.json and vitest.config.ts, and core_alias.test proving two bridges, Core.ts and Panel.ts.
@@ -271,7 +275,7 @@ Jonathan's pac and add it: the closed tag list gains edit, 40 tags, in the tagse
 
 ## 2026-09-15 — step 16: kb keeps the four file operations, proved
 
-Step 16 of the plan in [music and ai](../zone/work/music%20and%20ai.md), rewritten today so nothing moves: making, renaming, moving and throwing away a file stay kb's, and so does mending what pointed at a renamed or moved file, since the mending reads the link map kb builds at launch and follows each link with kb's own explore. Index files are step 17's.
+Step 16 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md), rewritten today so nothing moves: making, renaming, moving and throwing away a file stay kb's, and so does mending what pointed at a renamed or moved file, since the mending reads the link map kb builds at launch and follows each link with kb's own explore. Index files are step 17's.
 
 ### Verification
 
@@ -282,7 +286,7 @@ Step 16 of the plan in [music and ai](../zone/work/music%20and%20ai.md), rewritt
 
 ## 2026-09-15 — step 15: kb keeps link following, proved
 
-Step 15 of the plan in [music and ai](../zone/work/music%20and%20ai.md), rewritten today so nothing moves: link following, the dead link report and the link stack stay kb's, Operations.ts whole, since only follow_link fills the stack and the host's renderer calls it through the bridge.
+Step 15 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md), rewritten today so nothing moves: link following, the dead link report and the link stack stay kb's, Operations.ts whole, since only follow_link fills the stack and the host's renderer calls it through the bridge.
 
 ### Verification
 
@@ -319,7 +323,7 @@ Jonathan's decision in [decisions](../truth/decisions.md). decisions.md, the des
 
 ## 2026-09-15 — the editor's controls row and its edges
 
-Jonathan's decisions of the day, each in [decisions](../truth/decisions.md), built after step 14 of the plan in [music and ai](../zone/work/music%20and%20ai.md). The way back sits at the far right of the controls row while a file is open, drawn as the report's close button, the round white one holding the svg cross; the file's section is on the accent, its text in the accent's text color, no gap between the hamburger and the steppers, the steppers edged black and faint. The open buttons sit at the far right while browsing, past the dispatcher and build buttons; ai's one is code debt, so the idea "button to open 'unfinished'" is done. The back links word rides the thin line at the section's foot, a gap below the pills, and keeps its place when they fold, so kb's idea "put the clickable on the bottom sep" is done. Every information element's edge and every clickable's edge is --thick-faint. The area's name on a big pill wears a micro edge, a new rung on core's thickness ladder, --thick-micro.
+Jonathan's decisions of the day, each in [decisions](../truth/decisions.md), built after step 14 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md). The way back sits at the far right of the controls row while a file is open, drawn as the report's close button, the round white one holding the svg cross; the file's section is on the accent, its text in the accent's text color, no gap between the hamburger and the steppers, the steppers edged black and faint. The open buttons sit at the far right while browsing, past the dispatcher and build buttons; ai's one is code debt, so the idea "button to open 'unfinished'" is done. The back links word rides the thin line at the section's foot, a gap below the pills, and keeps its place when they fold, so kb's idea "put the clickable on the bottom sep" is done. Every information element's edge and every clickable's edge is --thick-faint. The area's name on a big pill wears a micro edge, a new rung on core's thickness ladder, --thick-micro.
 
 ### Verification
 
@@ -329,7 +333,7 @@ Jonathan's decisions of the day, each in [decisions](../truth/decisions.md), bui
 
 ## 2026-09-15 — the back links are ai's
 
-Step 14 of the plan in [music and ai](../zone/work/music%20and%20ai.md). Back_Links.svelte left kb for ai, its bare prop and the form it hid gone. App.svelte hands it as the sixth snippet, given the file's key and its name, and Edit.svelte renders it at the foot, nothing there where no host hands one. The gathering stays kb's in Files.ts, the map of who points at whom read through Kb.ts, which also hands open_view; ai's Core.ts hands Section, Action, T_Position and T_Edge.
+Step 14 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md). Back_Links.svelte left kb for ai, its bare prop and the form it hid gone. App.svelte hands it as the sixth snippet, given the file's key and its name, and Edit.svelte renders it at the foot, nothing there where no host hands one. The gathering stays kb's in Files.ts, the map of who points at whom read through Kb.ts, which also hands open_view; ai's Core.ts hands Section, Action, T_Position and T_Edge.
 
 ### Verification
 
@@ -339,7 +343,7 @@ Step 14 of the plan in [music and ai](../zone/work/music%20and%20ai.md). Back_Li
 
 ## 2026-09-15 — the search row is ai's
 
-Step 13 of the plan in [music and ai](../zone/work/music%20and%20ai.md). Search.svelte, Searching.ts and searching.test left kb for ai. App.svelte hands the search row as the fifth snippet, given the file's name, which Edit_More renders first in the label form's stack where a host hands one, and wires its drawer to its search: the html handed up, forget and light_hit on drawn and redrawn, a dead link's words from the report first. Edit.svelte holds neither the search nor the html, and the operation view snippet narrowed to the file, the width and the height, the words, the call that sets them and the note. Edit_More's clear button empties the store alone, and ai's Search answers the store going empty with the three things an empty field asked for. Kb.ts hands the three search stores, ai's Core.ts Steppers and gap_below_line. The bare prop had left Search.svelte the same day, with the section of its own it hid.
+Step 13 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md). Search.svelte, Searching.ts and searching.test left kb for ai. App.svelte hands the search row as the fifth snippet, given the file's name, which Edit_More renders first in the label form's stack where a host hands one, and wires its drawer to its search: the html handed up, forget and light_hit on drawn and redrawn, a dead link's words from the report first. Edit.svelte holds neither the search nor the html, and the operation view snippet narrowed to the file, the width and the height, the words, the call that sets them and the note. Edit_More's clear button empties the store alone, and ai's Search answers the store going empty with the three things an empty field asked for. Kb.ts hands the three search stores, ai's Core.ts Steppers and gap_below_line. The bare prop had left Search.svelte the same day, with the section of its own it hid.
 
 ### Verification
 
@@ -349,7 +353,7 @@ Step 13 of the plan in [music and ai](../zone/work/music%20and%20ai.md). Search.
 
 ## 2026-09-14 — composing labels is ai's
 
-Step 12 of the plan in [music and ai](../zone/work/music%20and%20ai.md), which moved to kb's zone today and back the next day. labels_for left kb's Labels.ts for ai's ts/utilities/Labels.ts with first_heading, first_words, kind_from_where, NEEDS_A_LOOK and title_from_name, and its test cases with it; Edit_Markdown and Edit_Fields import from there. kb's Labels.ts keeps label_changes, today, blank_file, free_name, NAME_UNTIL_TOLD and moment_written_out, and the label block code, called by nothing since 10 September, is deleted with its five test groups. KIND_UNTIL_TOLD and TAG_WHEN_NEW became the facts kind_when_new and tag_when_new, empty in kb, analyze and now in ai, filled by Convert_Preferences and read by Files.ts for a new file. Kb.ts hands today alone of the three. The lexicons gained unlabeled file and composing labels.
+Step 12 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md), which moved to kb's zone today and back the next day. labels_for left kb's Labels.ts for ai's ts/utilities/Labels.ts with first_heading, first_words, kind_from_where, NEEDS_A_LOOK and title_from_name, and its test cases with it; Edit_Markdown and Edit_Fields import from there. kb's Labels.ts keeps label_changes, today, blank_file, free_name, NAME_UNTIL_TOLD and moment_written_out, and the label block code, called by nothing since 10 September, is deleted with its five test groups. KIND_UNTIL_TOLD and TAG_WHEN_NEW became the facts kind_when_new and tag_when_new, empty in kb, analyze and now in ai, filled by Convert_Preferences and read by Files.ts for a new file. Kb.ts hands today alone of the three. The lexicons gained unlabeled file and composing labels.
 
 ### Verification
 
@@ -359,7 +363,7 @@ Step 12 of the plan in [music and ai](../zone/work/music%20and%20ai.md), which m
 
 ## 2026-09-14 — the words are ai's
 
-Step 11 of the plan in [music and ai](../zone/work/music%20and%20ai.md). Edit_Markdown.svelte and Emphasis.ts left kb whole for ai, and Markdown_Blocks.ts was cut: the drawing went with them, the link readers stayed kb's in utilities/Links.ts, since Files.ts reads every guide with them at launch and a library never imports a host. The three tests went with their code, the readers' cases joining kb's wiki_links.test. App.svelte hands the drawer as the operation view snippet, given the file, the width and the height, the words and a call that sets them, a call handing the html back for the search, and calls for drawn, redrawn and a note; Edit.svelte draws it where Edit_Markdown was and draws nothing there when no host hands one. Kb.ts hands the drawer's fourteen reaches into kb and ai's Core.ts its ten into core; ai's package.json declares markdown-it. kb's lexicon gained link readers.
+Step 11 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md). Edit_Markdown.svelte and Emphasis.ts left kb whole for ai, and Markdown_Blocks.ts was cut: the drawing went with them, the link readers stayed kb's in utilities/Links.ts, since Files.ts reads every guide with them at launch and a library never imports a host. The three tests went with their code, the readers' cases joining kb's wiki_links.test. App.svelte hands the drawer as the operation view snippet, given the file, the width and the height, the words and a call that sets them, a call handing the html back for the search, and calls for drawn, redrawn and a note; Edit.svelte draws it where Edit_Markdown was and draws nothing there when no host hands one. Kb.ts hands the drawer's fourteen reaches into kb and ai's Core.ts its ten into core; ai's package.json declares markdown-it. kb's lexicon gained link readers.
 
 ### Verification
 
@@ -369,7 +373,7 @@ Step 11 of the plan in [music and ai](../zone/work/music%20and%20ai.md). Edit_Ma
 
 ## 2026-09-14 — the information rows are ai's
 
-Step 10 of the plan in [music and ai](../zone/work/music%20and%20ai.md). The label form's four information rows and the title's two tools left kb's Edit_More.svelte for ai's Edit_Fields.svelte, handed back as the edit filter section, given the file, its words and a call that sets them, and drawn above the kinds row under the information fold. Edit_More keeps the kind and the tags and draws two kb components of their own, Kinds_Row.svelte and Tag_Rows.svelte. Kb.ts hands show_status, save_file, file_path_of, title_from_name and three types; ai's Core.ts hands hit_target. A refusal is said on the status line. kb's lexicon gained label form, kinds row and tag rows.
+Step 10 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md). The label form's four information rows and the title's two tools left kb's Edit_More.svelte for ai's Edit_Fields.svelte, handed back as the edit filter section, given the file, its words and a call that sets them, and drawn above the kinds row under the information fold. Edit_More keeps the kind and the tags and draws two kb components of their own, Kinds_Row.svelte and Tag_Rows.svelte. Kb.ts hands show_status, save_file, file_path_of, title_from_name and three types; ai's Core.ts hands hit_target. A refusal is said on the status line. kb's lexicon gained label form, kinds row and tag rows.
 
 ### Verification
 
@@ -388,7 +392,7 @@ The back links left the label form's stack for the bottom of the edit view, a se
 
 ## 2026-09-14 — every remembered value is ai's
 
-Step 9 of the plan in [music and ai](../zone/work/music%20and%20ai.md). kb's Preferences.ts reads the host's prefix off the customizations when asked, and core's Preferences takes a prefix or a function answering it and gains adopt, which moves every value saved under another prefix and drops the old keys. ai's Convert_Preferences.ts, imported by main.ts ahead of kb, sets kb's nine facts, the fill moved out of main.ts, then moves everything saved under ov_ under ai_: the second file reaching kb through its alias, for the customizations alone, which libraries.md's rule 2 and core_alias.test now allow by name.
+Step 9 of the plan in [how ai hosts kb](how%20ai%20hosts%20kb.md). kb's Preferences.ts reads the host's prefix off the customizations when asked, and core's Preferences takes a prefix or a function answering it and gains adopt, which moves every value saved under another prefix and drops the old keys. ai's Convert_Preferences.ts, imported by main.ts ahead of kb, sets kb's nine facts, the fill moved out of main.ts, then moves everything saved under ov_ under ai_: the second file reaching kb through its alias, for the customizations alone, which libraries.md's rule 2 and core_alias.test now allow by name.
 
 ### Verification
 

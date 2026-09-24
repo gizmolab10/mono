@@ -82,11 +82,13 @@
 	 * Hand this file to Obsidian. The repo is itself a vault, so where the file sits counting
 	 * from the top of the repo is also where it sits in the vault.
 	 */
-	function handle_obsidian() {
+	// A plain press hands the file to Obsidian, which shows it in its last active tab; with the
+	// command key held, in a new tab, since 23 September 2026.
+	function handle_obsidian(new_tab: boolean) {
 		if (!guide) { return; }
 		const where = file_path_of(guide.bundle, guide.path);
-		debug.log(`Editing "${name}": handing it to Obsidian at ${where}.`);
-		window.location.href = obsidian_link(VAULT, where);
+		debug.log(`Editing "${name}": handing it to Obsidian at ${where}${new_tab ? ', in a new tab' : ''}.`);
+		window.location.href = obsidian_link(VAULT, where, new_tab);
 	}
 
 	/**
@@ -158,7 +160,7 @@
 			<svg class='back-mark' overflow='visible' width={back_bounds.width} height={back_bounds.height}
 				viewBox='{back_bounds.minX} {back_bounds.minY} {back_bounds.width} {back_bounds.height}'><path d={back_path} /></svg>
 			<svg class='back-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-				<path d={crossPath} fill='none' stroke-width={k.thickness.big} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.normal} stroke-linecap='round' />
 			</svg>
 		</button>
 		<!-- The file's section. Its bare space answers nothing. -->
@@ -217,7 +219,7 @@
 						</svg>
 					</button>
 					<button class='row-button lifted' aria-label='obsidian'
-						use:hit_target={{ id: 'editor.obsidian', onpress: handle_obsidian, tip: 'open this file in Obsidian' }}><span class='lowered'>o</span></button>
+						use:hit_target={{ id: 'editor.obsidian', onpress: (m) => handle_obsidian(m?.event?.metaKey ?? false), tip: 'open this file in Obsidian; with command, in a new tab' }}><span class='lowered'>o</span></button>
 					<button class='row-button' aria-label='send'
 						use:hit_target={{ id: 'editor.send', onpress: handle_send, tip: 'compose an email containing this file' }}>⤴</button>
 					<button class='row-button' aria-label='delete'

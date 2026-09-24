@@ -1,5 +1,5 @@
 // What is true of ai and of no other host: the facts main.ts hands kb before anything mounts, as
-// memory/kb/zone/adopt kb.md's table lays them out. core and kb know none of it, and nothing here
+// memory/kb/truth/adopt kb.md's table lays them out. core and kb know none of it, and nothing here
 // is remembered between visits.
 
 export const customizations = {

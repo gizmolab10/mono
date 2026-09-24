@@ -377,6 +377,12 @@ class Files {
 				odd.push(`${where} holds nothing at all`);
 			}
 
+			// The repo's top and each project's code folder are listed for their CLAUDE file alone,
+			// or for nothing, and the listing refuses an index there as not a guide. Nothing to
+			// repair, nothing to say: passed without a line, since 23 September 2026. Every other
+			// refusal is still said.
+			if (folder.path === '' && beside.every((name) => name.toLowerCase() === 'claude.md')) { continue; }
+
 			const index_at = `${where}/index.md`;
 			const text = await this.content_of(`${root}${index_at}`);
 			if (text === null) {
@@ -402,9 +408,9 @@ class Files {
 
 		const parts = [
 			`${folders.length} folder(s) looked at`,
-			`${untouched} already right`,
+			`${untouched} indices are correct`,
 			`${mended} mended`,
-			`${made} index file(s) made`,
+			`${made} indices made`,
 		];
 		if (refused > 0) { parts.push(`${refused} refused`); }
 		// Anything odd is said on the way out, each on its own line — several lines are read

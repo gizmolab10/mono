@@ -1,7 +1,7 @@
 // What a host hands kb as facts, set before anything mounts: the host's main.ts fills these the
 // way lv's Main.ts fills gallery's, and every kb module reads them when asked, never at import.
 // The defaults name no host, libraries.md's rule. What each holds, who fills it and at which step
-// of the plan is memory/kb/zone/adopt kb.md's table.
+// of the plan is memory/kb/truth/adopt kb.md's table.
 
 import type { Tag_Area } from '../types/Tag_Areas';
 

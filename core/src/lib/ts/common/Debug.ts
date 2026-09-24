@@ -18,6 +18,11 @@ const GATHERING = 50;
 
 export class Debug {
 
+	// The log file a line goes to when the caller names none: the host sets its own, ai.debug
+	// for ai, before its first line, so its page log sits in its own memory folder; the
+	// dispatcher puts a name that is no memory project's under mono/logs.
+	file = 'debug';
+
 	// Per log file: true once we've sent its first (erasing) line this session.
 	logs_erased = new Map<string, boolean>();
 
@@ -29,7 +34,7 @@ export class Debug {
 	// A line worth having only while something is being worked on: written the same way
 	// as any other, but says nothing for now. Change this one body to `this.log(...)`
 	// and every such line speaks again.
-	log_soon(_text: string, _filename: string = 'ov.debug', _erases: boolean = true): void {
+	log_soon(_text: string, _filename: string = this.file, _erases: boolean = true): void {
 	}
 
 	// Append one extra line to the stated log file. `erases` (the default) lets the
@@ -39,7 +44,7 @@ export class Debug {
 	// this machine — nothing built, nothing sent, nothing to fail. The line waits a
 	// few milliseconds for company and goes with every other line for its file in one
 	// request.
-	log(text: string, filename: string = 'ov.debug', erases: boolean = true): void {
+	log(text: string, filename: string = this.file, erases: boolean = true): void {
 		if (!served_from_here) { return; }
 		const erasing = erases && !this.logs_erased.get(filename);
 		if (erases) { this.logs_erased.set(filename, true); }

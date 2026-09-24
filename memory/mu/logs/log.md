@@ -2,6 +2,10 @@
 
 <!-- consolidated: 9 September 2026 -->
 
+## 23 September 2026
+
+- D: zone/hosting kb.md moved here from kb's zone through the dispatcher, what both hosts need of kb; its link to kb hosted by music re-based; the zone index and mu's index list it. Jonathan's word
+- D: zone/kb hosted by music.md moved here from ai's zone/work through the dispatcher, music's part of the plan, 84 lines: the music specialty, its schema and rules, steps 20 to 24 and 29 to 31; its four links re-based; the zone index and mu's index list it. Jonathan's word
 ## 18 September 2026
 
 - D: questions.md to the zone, through the dispatcher: logs hold the past, zone the present, truth the concrete. Jonathan's decision in memory/shared/logs/decisions.md

@@ -1,5 +1,9 @@
 # Ideas
 
+- [ ] run [[write a design reference]] on each of these files:
+    - [ ] [[svg flow diagrams]] — stopped: a chat log; app.svg, its one product, is not on disk and its structure was a guess
+    - [ ] [[claude agent skills]] — stopped: an unreviewed overview of an outside standard, no design of ours
+    - [ ] [[library projects]] — stopped: gallery, lv and mj still import core directly, the proposal half built
 - [ ] see also [[system failure]] and [[memory/shared/logs/work journal|work journal]].
 - [ ] from earlier
     - [ ] 5 lines in the log have not been consolidated since 20 September.

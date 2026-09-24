@@ -69,7 +69,7 @@
 		use:hit_target={{ id: 'status.close', onpress: onhide,
 			tip: offer ? 'leave it as it is' : 'dismiss this' }}>
 		<svg class='status-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-			<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
+			<path d={crossPath} fill='none' stroke-width={k.thickness.normal} stroke-linecap='round' />
 		</svg>
 	</button>
 </div>

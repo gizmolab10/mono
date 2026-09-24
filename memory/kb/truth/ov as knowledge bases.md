@@ -8,7 +8,7 @@ Every company ends up with knowledge nobody can find. i asked how they organize 
 
 Each phase ending with something to look at:
 
-- 7. read the music files: moved to [music and ai](music%20and%20ai.md), 10 September 2026, with the three decisions it needs first.
+- 7. read the music files: moved to [how ai hosts kb](../../ai/truth/design/how%20ai%20hosts%20kb.md), 10 September 2026, with the three decisions it needs first.
 
 ### Success
 
@@ -25,8 +25,8 @@ Each phase ending with something to look at:
 
 ### Design
 
-1. **One db, on disk.** A SQLite file next to the dispatcher (a whole database in one file, read by a standard library). Only the dispatcher's own module, `database.py`, reads and writes it: the dispatcher through its routes, and the three tools that import that module, `inject-always.sh`, `test-always-tag.sh` and `big-picture.py`, since 10 September 2026. Not the browser's local storage, which is tied to one browser, capped at a few megabytes, and erased with the browser's data. The file is git-ignored and has no backup yet: a saved file before every change to it and a plain-text dump in git are planned in [music and ai](music%20and%20ai.md), step 3a.
-2. **Four tables**, and a fifth, collections, planned in [music and ai](music%20and%20ai.md): a name, the specialty's name, the host's folder, and a root folder on the disk, every path relative to that root.
+1. **One db, on disk.** A SQLite file next to the dispatcher (a whole database in one file, read by a standard library). Only the dispatcher's own module, `database.py`, reads and writes it: the dispatcher through its routes, and the three tools that import that module, `inject-always.sh`, `test-always-tag.sh` and `big-picture.py`, since 10 September 2026. Not the browser's local storage, which is tied to one browser, capped at a few megabytes, and erased with the browser's data. The file is git-ignored and has no backup yet: a saved file before every change to it and a plain-text dump in git are planned in [how ai hosts kb](../../ai/truth/design/how%20ai%20hosts%20kb.md), step 3a.
+2. **Four tables**, and a fifth, collections, planned in [how ai hosts kb](../../ai/truth/design/how%20ai%20hosts%20kb.md): a name, the specialty's name, the host's folder, and a root folder on the disk, every path relative to that root.
     - files:
         - collection
         - path

@@ -15,7 +15,7 @@ When part A and part B together pass the Claude harness's limit, the harness sav
 
 ## How to measure what reaches co
 
-1. `.claude/hooks/saves.jsonl` holds one row per turn since 21 September 2026: the division, its size in KB, and saved or shown. saved-output-count.sh writes it at every reply's end, and on every tenth save it hands co the tally, which co reports in the chat.
+1. `.claude/hooks/saves.jsonl` holds one row per turn since 21 September 2026: its size in KB, the division, and saved or shown. saved-output-count.sh writes it at every reply's end, and on every tenth save it hands co the tally, which co reports in the chat.
 2. The limit: the smallest saved size and the largest shown size in saves.jsonl bound it. A division must sit under the smallest saved size, Always included.
 3. A file's sections, in bytes:
 

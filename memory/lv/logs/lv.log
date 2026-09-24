@@ -34,3 +34,8 @@ $ vite
 12:42:45 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
 12:47:54 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
 2:53:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Separator.svelte?svelte&type=style&lang.css
+3:54:18 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte
+3:55:34 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte
+7:40:30 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Debug.ts
+7:40:31 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Debug.ts
+7:40:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Debug.ts

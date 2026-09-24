@@ -31,7 +31,7 @@
 		<button class='report-close' aria-label='dismiss'
 			use:hit_target={{ id: 'report.close', onpress: hide_status, tip: 'dismiss this report' }}>
 			<svg class='report-cross' viewBox='0 0 {k.size.normal} {k.size.normal}'>
-				<path d={crossPath} fill='none' stroke-width={k.thickness.micro} stroke-linecap='round' />
+				<path d={crossPath} fill='none' stroke-width={k.thickness.normal} stroke-linecap='round' />
 			</svg>
 		</button>
 		<!-- Its own word, and when it was made. A report is kept across a reload, so without the
@@ -68,16 +68,16 @@
 	/* The cross at the far left, the word beside it. */
 	.report-head {
 		padding-bottom : var(--gap);
-		align-items    : center;
-		display        : flex;
 		gap            : var(--gap);
 		flex           : 0 0 auto;
+		align-items    : center;
+		display        : flex;
 	}
 
 	.report-title {
+		opacity   : var(--opacity-header);
 		font-size : var(--font-tiny);
 		color     : var(--text);
-		opacity   : var(--opacity-header);
 		position  : relative;
 		top       : 1px;
 	}
@@ -87,14 +87,14 @@
 		border-radius   : var(--radius-percent);
 		height          : var(--height);
 		width           : var(--height);
-		box-sizing      : border-box;
 		background      : var(--white);
+		box-sizing      : border-box;
+		flex            : 0 0 auto;
 		cursor          : pointer;
 		align-items     : center;
 		justify-content : center;
 		display         : flex;
 		padding         : 0;
-		flex            : 0 0 auto;
 	}
 
 	.report-close:global([data-hit]) {
@@ -114,23 +114,23 @@
 	/* One row per thing found. A row that names a guide answers to a click; one that doesn't
 	   simply reads. */
 	.findings {
-		flex-direction : column;
-		padding-top    : var(--gap);
-		display        : flex;
 		gap            : var(--gap-tiny);
+		padding-top    : var(--gap);
+		flex-direction : column;
+		display        : flex;
 	}
 
 	.finding {
-		border-radius : var(--radius-tiny);
 		padding       : var(--gap-tiny) var(--gap);
+		border-radius : var(--radius-tiny);
 		font-size     : var(--font-tiny);
-		font-family   : inherit;
 		background    : transparent;
 		color         : var(--text);
-		text-align    : left;
-		white-space   : normal;
-		border        : none;
+		font-family   : inherit;
 		cursor        : pointer;
+		white-space   : normal;
+		text-align    : left;
+		border        : none;
 		width         : 100%;
 	}
 
@@ -149,8 +149,8 @@
 	.report-words {
 		font-size   : var(--font);
 		color       : var(--text);
-		white-space : pre-wrap;
 		word-break  : break-word;
+		white-space : pre-wrap;
 		overflow-y  : auto;
 		flex        : 1;
 	}

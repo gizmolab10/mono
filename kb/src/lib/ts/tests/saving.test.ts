@@ -188,4 +188,9 @@ describe('handing a file to obsidian', () => {
 	it('spells out a vault name with a space in it', () => {
 		expect(obsidian_link('my vault', 'a.md')).toContain('vault=my%20vault');
 	});
+
+	it('asks for a new tab only when told to', () => {
+		expect(obsidian_link('mono', 'a.md', true)).toBe('obsidian://open?vault=mono&file=a.md&paneType=tab');
+		expect(obsidian_link('mono', 'a.md')).not.toContain('paneType');
+	});
 });

@@ -1,12 +1,12 @@
-# Finished (1869)
+# Finished (1867)
 
-62 files hold finished work, as of 2026-09-23.
+61 files hold finished work, as of 2026-09-23.
 
-## ai (2)
+## ai (1)
 
 | z/t | file | finished |
 | --- | --- | --- |
-| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 2 done |
+| z | [proposals.md](../../ai/zone/proposals.md) | 1 proposal settled |
 
 ## core (110)
 
@@ -76,12 +76,6 @@
 | z | [ideas.md](../../ji/zone/ideas.md) | 2 done |
 | z | [work/done/db handoff.md](../../ji/zone/work/done/db%20handoff.md) | 10 done |
 | z | [work/proposals/chat history proposal.md](../../ji/zone/work/proposals/chat%20history%20proposal.md) | 14 done |
-
-## ov (1)
-
-| z/t | file | finished |
-| --- | --- | --- |
-| z | [proposals.md](../../ov/zone/proposals.md) | 1 proposal settled |
 
 ## ws (332)
 

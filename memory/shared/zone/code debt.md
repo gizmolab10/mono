@@ -1,19 +1,19 @@
-# Code debt (1066)
+# Code debt (1084)
 
-97 files hold unfinished work, as of 2026-09-23.
+99 files hold unfinished work, as of 2026-09-23.
 
-## ai (165)
+## ai (133)
 
 | z/t | file | needs this |
 | --- | --- | --- |
+|  | [log.md](../../ai/logs/log.md) | settle 16 lines |
 | t | [design/action type.md](../../ai/truth/design/action%20type.md) | 1 open truth |
 | z | [drive.md](../../ai/zone/drive.md) | 2 open and dissolve the drive |
 | z | [ideas.md](../../ai/zone/ideas.md) | 85 open |
-| z | [proposals.md](../../ai/zone/proposals.md) | decide 6 proposals |
+| z | [proposals.md](../../ai/zone/proposals.md) | decide 11 proposals |
 | z | [questions.md](../../ai/zone/questions.md) | answer 10 questions |
 | z | [work/adopting the ai memory design.md](../../ai/zone/work/adopting%20the%20ai%20memory%20design.md) | 1 open |
 | z | [work/inception into the new design.md](../../ai/zone/work/inception%20into%20the%20new%20design.md) | 5 open |
-| z | [work/music and ai.md](../../ai/zone/work/music%20and%20ai.md) | 53 open |
 | z | [work/soon/tag drift.md](../../ai/zone/work/soon/tag%20drift.md) | 1 open |
 
 ## core (31)
@@ -75,12 +75,13 @@
 | z | [work/sideband storage proposal.md](../../ji/zone/work/sideband%20storage%20proposal.md) | 3 open |
 | z | [work/proposals/chat history proposal.md](../../ji/zone/work/proposals/chat%20history%20proposal.md) | 4 open |
 
-## kb (4)
+## kb (5)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 | z | [drive.md](../../kb/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../kb/zone/ideas.md) | 3 open |
+| z | [proposals.md](../../kb/zone/proposals.md) | decide 1 proposal |
 
 ## lv (4)
 
@@ -114,21 +115,22 @@
 | z | [drive.md](../../mj/zone/drive.md) | dissolve the drive |
 | z | [ideas.md](../../mj/zone/ideas.md) | 2 open |
 
-## mu (24)
+## mu (74)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 | z | [drive.md](../../mu/zone/drive.md) | dissolve the drive |
+| z | [hosting kb.md](../../mu/zone/hosting%20kb.md) | 21 open |
 | z | [ideas.md](../../mu/zone/ideas.md) | 6 open |
+| z | [kb hosted by music.md](../../mu/zone/kb%20hosted%20by%20music.md) | 29 open |
 | z | [project goal.md](../../mu/zone/project%20goal.md) | 17 open |
 
-## ov (22)
+## ov (17)
 
 | z/t | file | needs this |
 | --- | --- | --- |
 |  | [log.md](../../ov/logs/log.md) | settle 16 lines |
 | z | [drive.md](../../ov/zone/drive.md) | dissolve the drive |
-| z | [proposals.md](../../ov/zone/proposals.md) | decide 5 proposals |
 
 ## panel (3)
 
@@ -138,7 +140,7 @@
 | z | [drive.md](../../panel/zone/drive.md) | dissolve the drive |
 | z | [questions.md](../../panel/zone/questions.md) | answer 1 question |
 
-## shared (219)
+## shared (223)
 
 | z/t | file | needs this |
 | --- | --- | --- |
@@ -149,7 +151,7 @@
 | z | [collisions.md](../../shared/zone/collisions.md) | rewrite 5 collisions |
 | z | [drive.md](../../shared/zone/drive.md) | dissolve the drive |
 | z | [gate too verbose.md](../../shared/zone/gate%20too%20verbose.md) | 1 open |
-| z | [ideas.md](../../shared/zone/ideas.md) | 20 open |
+| z | [ideas.md](../../shared/zone/ideas.md) | 24 open |
 | z | [learn.md](../../shared/zone/learn.md) | 23 open |
 | z | [proposals.md](../../shared/zone/proposals.md) | decide 2 proposals |
 | z | [questions.md](../../shared/zone/questions.md) | 10 open and answer 10 questions |

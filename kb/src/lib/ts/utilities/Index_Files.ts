@@ -120,9 +120,11 @@ export function repaired_index(
 	for (const line of text.split('\n')) {
 		const hit = LINK.exec(line);
 		const name = file_named_by(line);
-		// Not a bulleted link to a markdown file — a heading, prose, a folder, the web. Left be.
-		// An index file of its own is left be too: the app never lists those, so it cannot judge them.
-		if (!hit || !name.endsWith('.md') || name === 'index.md') { kept.push(line); continue; }
+		// Not a bulleted link to a markdown file or a drawing — a heading, prose, a folder, the web.
+		// Left be. An index file of its own is left be too: the app never lists those, so it cannot
+		// judge them. A drawing, an svg, is listed since 18 September 2026 and judged like a markdown
+		// file since 23 September, when one already named was added again on every repair.
+		if (!hit || !/\.(md|svg)$/i.test(name) || name === 'index.md') { kept.push(line); continue; }
 
 		const address = hit[1];
 		const here = !address.replace(/^\.\//, '').includes('/');   // names a file in this folder

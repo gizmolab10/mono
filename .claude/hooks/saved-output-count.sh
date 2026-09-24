@@ -9,7 +9,7 @@
 #            stdout whole, and its content as co read it — the whole text when shown, or the
 #            harness's notice, "Output too large (N KB). Full output saved to: ...", when saved.
 #            The last inject-always attachment is read and one row goes to saves.jsonl: the
-#            date, the division named on its ONE PART IN TURN line, the size in KB, and
+#            date, the size in KB, the division named on its ONE PART IN TURN line, and
 #            saved or shown. Never counts the same attachment twice.
 #
 #   report   UserPromptSubmit hook. When the saves counted since the last report reach ten,
@@ -73,5 +73,5 @@ ID=$(printf '%s' "$ROW" | jq -r '.id')
 [ "$(cat "$STATE" 2>/dev/null)" = "$ID" ] && exit 0
 printf '%s' "$ID" > "$STATE"
 
-printf '%s' "$ROW" | jq -c --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '{timestamp: $ts, division: .division, kb: .kb, saved: .saved}' >> "$SAVES_FILE" 2>/dev/null
+printf '%s' "$ROW" | jq -c --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '{timestamp: $ts, kb: .kb, division: .division, saved: .saved}' >> "$SAVES_FILE" 2>/dev/null
 exit 0
