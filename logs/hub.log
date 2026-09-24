@@ -1,10 +1,4 @@
-::1 - - [19/Sep/2026 17:44:32] "GET / HTTP/1.1" 200 -
-::1 - - [19/Sep/2026 17:44:52] "GET / HTTP/1.1" 304 -
-::1 - - [19/Sep/2026 17:44:53] "GET /ports.json?v=1789865093150 HTTP/1.1" 200 -
-::1 - - [19/Sep/2026 17:44:53] code 404, message File not found
-::1 - - [19/Sep/2026 17:44:53] "GET /favicon.ico HTTP/1.1" 404 -
-::1 - - [19/Sep/2026 23:21:02] "GET /ports.json?v=1789885262046 HTTP/1.1" 200 -
-::1 - - [21/Sep/2026 14:04:30] "GET /ports.json?v=1790024670434 HTTP/1.1" 200 -
-::1 - - [22/Sep/2026 16:09:26] "GET /ports.json?v=1790118566510 HTTP/1.1" 200 -
-::1 - - [22/Sep/2026 17:17:12] "GET / HTTP/1.1" 200 -
-::1 - - [22/Sep/2026 17:17:13] "GET /ports.json?v=1790122633118 HTTP/1.1" 200 -
+::1 - - [23/Sep/2026 22:55:50] "GET / HTTP/1.1" 304 -
+::1 - - [23/Sep/2026 22:55:50] "GET /ports.json?v=1790229350338 HTTP/1.1" 200 -
+::1 - - [23/Sep/2026 22:56:13] "GET / HTTP/1.1" 200 -
+/Users/sand/GitHub/mono/tools/hub/servers.sh: line 141:  6732 Terminated: 15          python3 -m http.server 5170

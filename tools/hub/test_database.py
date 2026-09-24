@@ -30,7 +30,7 @@ database.PLACE = os.path.join(FOLDER, 'ai.db')
 # The hosts ports.json would name, set by hand: ai, whose db is PLACE, and mu, whose db sits beside it.
 database.HOSTS = {'ai': 'ai.db', 'mu': 'mu.db'}
 
-NOTE = 'memory/ov/zone/drive.md'
+NOTE = 'memory/ai/zone/drive.md'
 FULL = os.path.join(REPO, NOTE)
 
 passed, failed = [], []
@@ -73,12 +73,14 @@ except ValueError:
 db = database.open_db()
 row = db.execute('SELECT collection, size, fingerprint FROM files WHERE path = ?', (NOTE,)).fetchone()
 db.close()
-check('the file row holds the collection', row['collection'], 'ov')
+check('the file row holds the collection', row['collection'], 'ai')
 check('the file row holds the size on disk', row['size'], os.path.getsize(FULL))
 check('the file row holds the fingerprint of the bytes', row['fingerprint'], database.fingerprint_of(FULL))
 
 check('a memory file belongs to its memory folder', database.collection_of('memory/lv/truth/lexicon.md'), 'lv')
-check('a CLAUDE file belongs to its project', database.collection_of('lv/CLAUDE.md'), 'lv')
+check('a CLAUDE file belongs to its project', database.collection_of('projects/lv/CLAUDE.md'), 'lv')
+check('a library\'s CLAUDE file belongs to the library', database.collection_of('projects/libraries/kb/CLAUDE.md'), 'kb')
+check('a CLAUDE file at the repo\'s top is shared\'s', database.collection_of('CLAUDE.md'), 'shared')
 check('the repo\'s own CLAUDE file is shared', database.collection_of('CLAUDE.md'), 'shared')
 
 # --- one name's labels made exactly these -------------------------------------
@@ -110,10 +112,10 @@ check('a file with a row and no labels is left out', database.all_labels(), {})
 
 database.set_fields(NOTE, FULL, title='T', use_when=['a', 'b'])
 check('the fields handed in go on the row, use_when as a list again', database.all_fields()[NOTE],
-      {'collection': 'ov', 'title': 'T', 'description': '', 'use_when': ['a', 'b'], 'date': '', 'missing': False})
+      {'collection': 'ai', 'title': 'T', 'description': '', 'use_when': ['a', 'b'], 'date': '', 'missing': False})
 database.record_file(NOTE, FULL, None, None, description='D', date='1')
 check('a field not handed in is left as it is', database.all_fields()[NOTE],
-      {'collection': 'ov', 'title': 'T', 'description': 'D', 'use_when': ['a', 'b'], 'date': '1', 'missing': False})
+      {'collection': 'ai', 'title': 'T', 'description': 'D', 'use_when': ['a', 'b'], 'date': '1', 'missing': False})
 database.set_fields(NOTE, FULL, title='', description='', use_when=[], date='')
 
 # --- what a file's own block says ---------------------------------------------
@@ -462,7 +464,7 @@ code, said = ask('/collections')
 check('the row is named for it, ai its specialty, the repo looked at its root',
       [(one['name'], one['specialty'], one['root']) for one in said.get('collections', []) if one['name'] == 'nowhere'],
       [('nowhere', 'ai', os.path.realpath(TEMP_REPO))])
-check('a collection seen again keeps its row', [one['root'] for one in said.get('collections', []) if one['name'] == 'ov'], [REPO])
+check('a collection seen again keeps its row', [one['root'] for one in said.get('collections', []) if one['name'] == 'ai'], [REPO])
 code, said = tell('/rescan', {})
 check('a second look makes no row', said.get('collections'), 0)
 code, said = ask('/collections', host='mu')
@@ -574,9 +576,9 @@ check('a name that is not a .db is refused', code, 400)
 code, said = tell('/restore', {})
 check('a restore with nothing named is refused', code, 400)
 
-code, said = tell('/restore', {'into': 'ov.restored.db'})
+code, said = tell('/restore', {'into': 'ai.restored.db'})
 check('a dump read back into a new db answers', code, 200)
-restored = os.path.join(FOLDER, 'ov.restored.db')
+restored = os.path.join(FOLDER, 'ai.restored.db')
 check('the new db sits beside the db', said.get('restored'), restored)
 check('the new db answers every label the same as the db', labels_in(restored), labels_in(database.PLACE))
 check('the new db holds the same tables',

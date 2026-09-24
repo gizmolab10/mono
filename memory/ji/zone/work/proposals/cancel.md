@@ -6,7 +6,7 @@ Cancel today waits. It should not.
 
 Pressing cancel during a drop sets a state, and the saving reads that state only between files. On my store a file is saved in a moment, so the wait is invisible. On the AI store each file goes out over the internet — its content, then its words, then the record list — so cancel does nothing until the file in flight is finished. Nothing on screen says a stop was asked for.
 
-Where the state is read, between one file and the next: [Drop.ts:217](../../../../../ji/src/lib/ts/managers/Drop.ts)
+Where the state is read, between one file and the next: [Drop.ts:217](../../../../../projects/ji/src/lib/ts/managers/Drop.ts)
 
 ## What it should do
 

@@ -19,7 +19,7 @@
     "bubble": "https://bubble.io/home/plugins",
     "docsPublic": "https://docs.webseriously.org",
     "netlify": "https://webseriously.netlify.app",
-    "repo": "https://github.com/gizmolab10/mono/tree/main/ws",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/ws",
     "docsNetlify": "https://webseriously-documentation.netlify.app",
     "deploy": "https://app.netlify.com/projects/webseriously/deploys",
     "docsDeploy": "https://app.netlify.com/projects/webseriously-documentation/deploys"
@@ -28,7 +28,7 @@
     "port": 5175,
     "docs": 5176,
     "public": "https://designintuition.app",
-    "repo": "https://github.com/gizmolab10/mono/tree/main/di",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/di",
     "docsPublic": "https://docs.designintuition.app",
     "netlify": "https://designintuition.netlify.app",
     "docsNetlify": "https://designintuition-documentation.netlify.app",
@@ -39,51 +39,47 @@
     "port": 5177,
     "docs": 5178,
     "public": "https://mg.civilization2.org",
-    "repo": "https://github.com/gizmolab10/mono/tree/main/ma",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/ma",
     "docsPublic": "https://mgdocs.civilization2.org"
   },
   "lv": {
     "port": 5179,
     "public": "https://littlecloudvineyard.com",
     "netlify": "https://littlecloudvineyard.netlify.app",
-    "repo": "https://github.com/gizmolab10/mono/tree/main/lv",
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/lv",
     "deploy": "https://app.netlify.com/projects/littlecloudvineyard/deploys"
   },
   "ga": {
     "port": 5180,
     "docs": 5181,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/ga"
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/ga"
   },
   "ji": {
     "port": 5182,
     "public": "https://intersection.lol",
     "netlify": "https://jeff-intersection.netlify.app",
     "deploy": "https://app.netlify.com/projects/jeff-intersection/deploys",
-    "repo": "https://github.com/gizmolab10/mono/tree/main/ji"
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/ji"
   },
   "mj": {
-    "port": 5185,
+    "port": 5183,
     "public": "https://mj.jonathansand.me",
     "netlify": "https://mj.jonathansand.me",
-    "repo": "https://github.com/gizmolab10/mono/tree/main/mj"
-  },
-  "ov": {
-    "port": 5183,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/ov"
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/mj"
   },
   "ai": {
     "db": "ai.db",
-    "port": 5187,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/ai"
+    "port": 5184,
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/ai"
   },
   "mu": {
     "db": "mu.db",
-    "port": 5184,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/mu"
+    "port": 5185,
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/mu"
   },
   "panel": {
     "port": 5186,
-    "repo": "https://github.com/gizmolab10/mono/tree/main/panel"
+    "repo": "https://github.com/gizmolab10/mono/tree/main/projects/libraries/panel"
   },
   "me": {
     "public": "https://jonathansand.me",

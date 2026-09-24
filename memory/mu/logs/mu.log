@@ -2,36 +2,7 @@ yarn run v1.22.19
 warning package.json: No license field
 $ vite
 
-  VITE v6.4.2  ready in 1844 ms
+  VITE v6.4.2  ready in 603 ms
 
-  ➜  Local:   http://localhost:5184/
+  ➜  Local:   http://localhost:5185/
   ➜  Network: use --host to expose
-3:36:41 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
-3:37:05 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
-3:37:16 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
-3:37:16 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
-3:37:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
-3:38:34 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
-3:39:12 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Constants.ts
-3:45:42 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte
-3:47:04 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte, /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
-3:47:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
-3:47:32 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
-4:05:52 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte?svelte&type=style&lang.css
-4:24:10 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
-4:30:19 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/panel/src/lib/svelte/main/Controls.svelte?svelte&type=style&lang.css
-5:25:19 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/events/Hits.ts
-5:25:35 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/events/Hits.ts
-5:57:40 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Configuration.ts
-5:59:22 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/utilities/SVG_Paths.ts
-1:20:44 AM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
-6:04:35 AM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
-12:38:31 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
-12:39:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
-12:42:45 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
-12:47:54 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/types/Action.ts
-3:54:18 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte
-3:55:34 PM [vite] (client) hmr update /@fs/Users/sand/GitHub/mono/core/src/lib/svelte/support/Status_Line.svelte
-7:40:30 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Debug.ts
-7:40:31 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Debug.ts
-7:40:33 PM [vite] (client) page reload /Users/sand/GitHub/mono/core/src/lib/ts/common/Debug.ts

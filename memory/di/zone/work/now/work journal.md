@@ -675,13 +675,13 @@ Two new behavior-guard hooks. After two wrong diagnoses in one session, two new 
 
 Rule list grew by two. Rule 16 (every drawn label sits on or outside the silhouette outline) was added as a postcondition Rule 9 implies but doesn't assert. Rule 17 (clicking a dimension number begins inline editing) was added because the click-to-edit behavior had no rule even though the rectangle pipeline already supports it.
 
-Files. [R_Dimensions.ts](../../../../../di/src/lib/ts/render/R_Dimensions.ts) (spring off, floater drop, more measurement exports). [Debug.ts](../../../../../di/src/lib/ts/common/Debug.ts) (new measurement hooks, hide-all-by-name fix). [dimensions-settles.spec.ts](../../../../../di/e2e/tests/dimensions-settles.spec.ts), [dimensions-duplicates.spec.ts](../../../../../di/e2e/tests/dimensions-duplicates.spec.ts), [dimensions-witness-cap.spec.ts](../../../../../di/e2e/tests/dimensions-witness-cap.spec.ts), [dimensions-outside-silhouette.spec.ts](../../../../../di/e2e/tests/dimensions-outside-silhouette.spec.ts), [dimensions-floaters.spec.ts](../../../../../di/e2e/tests/dimensions-floaters.spec.ts), [dimensions-parallel.spec.ts](../../../../../di/e2e/tests/dimensions-parallel.spec.ts), [dimensions-silhouette-membership.spec.ts](../../../../../di/e2e/tests/dimensions-silhouette-membership.spec.ts), [dimensions-direction-choice.spec.ts](../../../../../di/e2e/tests/dimensions-direction-choice.spec.ts) (new specs). [dimensionals.md](di/notes/work/now/dimensionals.md) (Rules 16, 17). [required-disclaimer-check.sh](../../../../../di/.claude/hooks/required-disclaimer-check.sh), [diagnostic-citation-check.sh](../../../../../di/.claude/hooks/diagnostic-citation-check.sh) (new hooks). [settings.local.json](../../../../../.claude/settings.local.json) (hooks wired into Stop chain).
+Files. [R_Dimensions.ts](../../../../../projects/di/src/lib/ts/render/R_Dimensions.ts) (spring off, floater drop, more measurement exports). [Debug.ts](../../../../../projects/di/src/lib/ts/common/Debug.ts) (new measurement hooks, hide-all-by-name fix). [dimensions-settles.spec.ts](../../../../../projects/di/e2e/tests/dimensions-settles.spec.ts), [dimensions-duplicates.spec.ts](../../../../../projects/di/e2e/tests/dimensions-duplicates.spec.ts), [dimensions-witness-cap.spec.ts](../../../../../projects/di/e2e/tests/dimensions-witness-cap.spec.ts), [dimensions-outside-silhouette.spec.ts](../../../../../projects/di/e2e/tests/dimensions-outside-silhouette.spec.ts), [dimensions-floaters.spec.ts](../../../../../projects/di/e2e/tests/dimensions-floaters.spec.ts), [dimensions-parallel.spec.ts](../../../../../projects/di/e2e/tests/dimensions-parallel.spec.ts), [dimensions-silhouette-membership.spec.ts](../../../../../projects/di/e2e/tests/dimensions-silhouette-membership.spec.ts), [dimensions-direction-choice.spec.ts](../../../../../projects/di/e2e/tests/dimensions-direction-choice.spec.ts) (new specs). [dimensionals.md](di/notes/work/now/dimensionals.md) (Rules 16, 17). [required-disclaimer-check.sh](../../../../../projects/di/.claude/hooks/required-disclaimer-check.sh), [diagnostic-citation-check.sh](../../../../../projects/di/.claude/hooks/diagnostic-citation-check.sh) (new hooks). [settings.local.json](../../../../../.claude/settings.local.json) (hooks wired into Stop chain).
 
 ## Session — 2026-05-18 — orientation numbers live in the status strip
 
 The thin strip at the bottom of the window used to sit empty whenever there was no message queued and no dimension labels had been dropped. It now always carries the camera's four orientation numbers, formatted to two decimals each and wrapped in square brackets. When the dropped-label count is on screen too, the numbers sit on the same line after a middle-dot separator and the word "tumble" at the end (Jonathan's hand-tune — the strip reads as an invitation to grab the drawing and spin it). A queued message still wins outright. The numbers update live as the camera tumbles, so the strip is a live readout while turning and a still readout when the user lets go. The strip's text is also selectable now — clicking into it picks up characters the same way any other text would.
 
-Files. [Status_Strip.svelte](../../../../../di/src/lib/svelte/main/Status_Strip.svelte) (orientation formatter, third fallback rung, selectable text and pointer-events on).
+Files. [Status_Strip.svelte](../../../../../projects/di/src/lib/svelte/main/Status_Strip.svelte) (orientation formatter, third fallback rung, selectable text and pointer-events on).
 
 ## Session — 2026-05-18 — browser-driven tests for the three behavior-rich dimensional rules
 
@@ -693,7 +693,7 @@ The real lift was the test-side hooks, not the assertions. A small bundle of new
 
 Two pre-existing bugs surfaced while running the full e2e suite for the first time in a while. The print canvas was 74 pixels short of the expected printable area — the slider bands at the top and bottom of the window were not in the print hide list, so they kept eating vertical space during print. They are hidden now. And a click on the canvas while the editing-lock was on still changed the selected part: the mouseup handler's "click on background → deselect" branch and a 3D-fallback selection path in the hit-routing layer both bypassed the lock check. Both paths respect the lock now. Full e2e suite is green again.
 
-Files. [Debug.ts](../../../../../di/src/lib/ts/common/Debug.ts) (new hooks, tick fix). [dim-helpers.ts](../../../../../di/e2e/tests/dim-helpers.ts) (new shared helpers). [dimensions-off-canvas.spec.ts](../../../../../di/e2e/tests/dimensions-off-canvas.spec.ts), [dimensions-xray.spec.ts](../../../../../di/e2e/tests/dimensions-xray.spec.ts), [dimensions-force-layout.spec.ts](../../../../../di/e2e/tests/dimensions-force-layout.spec.ts) (new specs). [App.svelte](../../../../../di/src/App.svelte) (print hide list). [Events_3D.ts](../../../../../di/src/lib/ts/events/Events_3D.ts), [Hits.ts](../../../../../di/src/lib/ts/events/Hits.ts) (lock guards). [editing-lock.spec.ts](../../../../../di/e2e/tests/editing-lock.spec.ts) (assertion measures click-effect, not absolute null, since the default scene restores a saved selection on load).
+Files. [Debug.ts](../../../../../projects/di/src/lib/ts/common/Debug.ts) (new hooks, tick fix). [dim-helpers.ts](../../../../../projects/di/e2e/tests/dim-helpers.ts) (new shared helpers). [dimensions-off-canvas.spec.ts](../../../../../projects/di/e2e/tests/dimensions-off-canvas.spec.ts), [dimensions-xray.spec.ts](../../../../../projects/di/e2e/tests/dimensions-xray.spec.ts), [dimensions-force-layout.spec.ts](../../../../../projects/di/e2e/tests/dimensions-force-layout.spec.ts) (new specs). [App.svelte](../../../../../projects/di/src/App.svelte) (print hide list). [Events_3D.ts](../../../../../projects/di/src/lib/ts/events/Events_3D.ts), [Hits.ts](../../../../../projects/di/src/lib/ts/events/Hits.ts) (lock guards). [editing-lock.spec.ts](../../../../../projects/di/e2e/tests/editing-lock.spec.ts) (assertion measures click-effect, not absolute null, since the default scene restores a saved selection on load).
 
 ## Session — 2026-05-18 — OPTION key now x-rays: shows ONLY invisible parts plus their dimensions
 
@@ -705,7 +705,7 @@ The canvas paint pass now gates the visible-parts edge loop, the face-fill pass,
 
 The dimension layout learned a parallel rule. A new "painted" check decides whether a part's dimensions should be drawn: in x-ray mode, painted means invisible; otherwise it means visible. The silhouette outline that pushes dimension labels outside the drawing is built from the same painted set, so labels sit outside the wireframe in x-ray mode rather than outside where the (now-hidden) visible drawing used to be.
 
-Files. [Render.ts](../../../../../di/src/lib/ts/render/Render.ts) (x-ray flag computed early; four loops gated). [R_Dimensions.ts](../../../../../di/src/lib/ts/render/R_Dimensions.ts) (new painted-check; dimension filter and silhouette outline both flip in x-ray mode).
+Files. [Render.ts](../../../../../projects/di/src/lib/ts/render/Render.ts) (x-ray flag computed early; four loops gated). [R_Dimensions.ts](../../../../../projects/di/src/lib/ts/render/R_Dimensions.ts) (new painted-check; dimension filter and silhouette outline both flip in x-ray mode).
 
 ## Session — 2026-05-18 — suggested-tests menu written for the last ten sessions
 
@@ -721,7 +721,7 @@ The labels also changed shape entirely. They used to print the actual underlying
 
 Iteration shape: the user walked the labels through three forms in quick succession — first multiplying by ten (so "0.1" through "100000"), then by a hundred (so "1" through "1000000"), then dropping the actual-value formatting entirely and showing just the power-of-ten integers. The final state is the clean single-digit version.
 
-Files. [Slider.svelte](../../../../../di/src/lib/svelte/mouse/Slider.svelte) (the tick-collection helper dropped its thinning rule and its edge-clipping skip; the label formatting now prints the step exponent plus three).
+Files. [Slider.svelte](../../../../../projects/di/src/lib/svelte/mouse/Slider.svelte) (the tick-collection helper dropped its thinning rule and its edge-clipping skip; the label formatting now prints the step exponent plus three).
 
 ## Session — 2026-05-18 — primary controls rearranged: loose buttons left, segmented sets clustered right
 
@@ -733,7 +733,7 @@ On the wider window the whole arrangement fits on one row: corner cluster, loose
 
 On narrower windows the row splits in two: the loose buttons share the top row with the corner cluster and the help button, while the two grouped sets share the bottom row. On phone-narrow widths the user split it again across three rows by hand — the corner cluster plus fit and straighten on row one, the 3D toggle, solid/x-ray, and the names/dimensions/angles set on row two, the magnet and the six-face set on row three — so everything fits at the smallest width without crowding.
 
-Files. [Primary_Controls.svelte](../../../../../di/src/lib/svelte/main/Primary_Controls.svelte) (two new snippets, three layouts rewritten).
+Files. [Primary_Controls.svelte](../../../../../projects/di/src/lib/svelte/main/Primary_Controls.svelte) (two new snippets, three layouts rewritten).
 
 ## Session — 2026-05-18 — drawing area auto-fills the space; flicker at the wrap threshold gone
 
@@ -743,7 +743,7 @@ Root cause: the drawing area's height was computed in code as window-height minu
 
 Fix: stop measuring. The panel became a top-to-bottom flex column. Primary controls takes its natural height. Secondary controls takes its natural height. The drawing area gets the rest via `flex: 1; min-height: 0`. No code-side height math, no size-watcher, no one-frame lag. The empty-stripe bug is fixed and the threshold flicker is fixed by the same change.
 
-Files. [Main.svelte](../../../../../di/src/lib/svelte/main/Main.svelte) (removed the drawing-area height derive and the size-watcher binding; the panel is now a flex column; the drawing-area wrapper gets `flex: 1; min-height: 0`; the inline pixel-heights on the drawing-area wrapper, the details column, and the graph are gone).
+Files. [Main.svelte](../../../../../projects/di/src/lib/svelte/main/Main.svelte) (removed the drawing-area height derive and the size-watcher binding; the panel is now a flex column; the drawing-area wrapper gets `flex: 1; min-height: 0`; the inline pixel-heights on the drawing-area wrapper, the details column, and the graph are gone).
 
 ## Session — 2026-05-18 — breadcrumb chip row removed from the drawing area
 
@@ -751,7 +751,7 @@ The row of chips that used to appear along the top-left of the drawing — one c
 
 Pulled the chip row template block, the small helper that walked from the selected part up to the root building the chip list, the click handler that picked a part from a chip, the CSS rules that styled the row and the individual chips, and the print-stylesheet rule that hid the row on paper. Three local imports became unused after the removals (the selection-store import, the scene manager import, and a 3D hit-type enum import) and were also pulled out.
 
-Files. [Graph.svelte](../../../../../di/src/lib/svelte/main/Graph.svelte) (chip row, list helper, click handler, CSS, three unused imports). [App.svelte](../../../../../di/src/App.svelte) (print-stylesheet line that hid the row).
+Files. [Graph.svelte](../../../../../projects/di/src/lib/svelte/main/Graph.svelte) (chip row, list helper, click handler, CSS, three unused imports). [App.svelte](../../../../../projects/di/src/App.svelte) (print-stylesheet line that hid the row).
 
 ## Session — 2026-05-17 — stud / joist / stair templates: attempted, mothballed
 
@@ -759,7 +759,7 @@ Took a first cut at replacing the single "add template" button with a three-way 
 
 Pulled back to the original single "add template" button. Wrote a mothball note that captures what was attempted, what each kind was supposed to produce, and the six concrete things that need more thought before resuming. See [repeaters.mothball.md](repeaters.mothball.md).
 
-Files. [Smart_Object.ts](../../../../../di/src/lib/ts/runtime/Smart_Object.ts), [Engine.ts](../../../../../di/src/lib/ts/render/Engine.ts), [P_Repeat.svelte](../../../../../di/src/lib/svelte/details/P_Repeat.svelte) all touched then reverted; [repeaters.mothball.md](repeaters.mothball.md) written.
+Files. [Smart_Object.ts](../../../../../projects/di/src/lib/ts/runtime/Smart_Object.ts), [Engine.ts](../../../../../projects/di/src/lib/ts/render/Engine.ts), [P_Repeat.svelte](../../../../../projects/di/src/lib/svelte/details/P_Repeat.svelte) all touched then reverted; [repeaters.mothball.md](repeaters.mothball.md) written.
 
 ## Session — 2026-05-17 — undo and redo arrow buttons added to the top toolbar
 
@@ -771,7 +771,7 @@ A small layout tweak: the arrow pair sits 1.5 pixels lower than the buttons arou
 
 A separate cosmetic tweak in the same session: the fit button (which only shows when the drawing has grown past the visible area) became a perfect circle. The other toolbar buttons stay pill-shaped — the circle is just for fit, to give it a distinct shape since it appears only sometimes.
 
-Files touched. [Steppers.svelte](../../../../../di/src/lib/svelte/mouse/Steppers.svelte) (two new fade flags, plus a faded-state style and a click guard for each arrow). [Primary_Controls.svelte](../../../../../di/src/lib/svelte/main/Primary_Controls.svelte) (history manager imported; two derived "can step backward" and "can step forward" flags reactive on the existing refresh signal; click router; arrow pair inserted into the corner-buttons snippet at size 42, with a 1.5-pixel-down inline-block wrapper; the fit button picked up a new "fit-button" class and a circular style rule).
+Files touched. [Steppers.svelte](../../../../../projects/di/src/lib/svelte/mouse/Steppers.svelte) (two new fade flags, plus a faded-state style and a click guard for each arrow). [Primary_Controls.svelte](../../../../../projects/di/src/lib/svelte/main/Primary_Controls.svelte) (history manager imported; two derived "can step backward" and "can step forward" flags reactive on the existing refresh signal; click router; arrow pair inserted into the corner-buttons snippet at size 42, with a 1.5-pixel-down inline-block wrapper; the fit button picked up a new "fit-button" class and a circular style rule).
 
 ## Session — 2026-05-17 — slider thumb back to always white; thumb border now solid 1px black
 
@@ -781,7 +781,7 @@ The change is one line removed inside the accent watcher in the color module. Th
 
 While we were in the slider, a follow-on tweak to the knob's outline: the hairline outline used to be black at 40% transparency, which read as a soft gray edge. Bumped to solid black at the same hairline thickness. Five thumb-border lines were touched — three for the standard sliders and two for the unused two-knob range mode, all kept consistent.
 
-Files touched. [Colors.ts](../../../../../di/src/lib/ts/utilities/Colors.ts) (removed the knob's brightness-flip line; kept the line and glow lines). [Slider.svelte](../../../../../di/src/lib/svelte/mouse/Slider.svelte) (five knob-border lines changed from translucent black to solid black).
+Files touched. [Colors.ts](../../../../../projects/di/src/lib/ts/utilities/Colors.ts) (removed the knob's brightness-flip line; kept the line and glow lines). [Slider.svelte](../../../../../projects/di/src/lib/svelte/mouse/Slider.svelte) (five knob-border lines changed from translucent black to solid black).
 
 ## Session — 2026-05-17 — top toolbar renamed Primary; both bands moved into a sibling Secondary
 
@@ -791,7 +791,7 @@ The main layout file got noticeably shorter. The two zoom handler functions, the
 
 Side benefit: the build button now actually opens the build-notes overlay. It was previously wired to an empty default callback at the top of the main layout — the slot for a real handler was never filled by the app shell, so clicking the button did nothing. The new component fires a callback up to the main layout, which sets the local state directly, and the overlay opens as expected.
 
-Files touched. [Primary_Controls.svelte](../../../../../di/src/lib/svelte/main/Primary_Controls.svelte) (renamed from Controls.svelte, contents unchanged). [Secondary_Controls.svelte](../../../../../di/src/lib/svelte/main/Secondary_Controls.svelte) (new — holds both bands, their helpers, and their CSS). [Main.svelte](../../../../../di/src/lib/svelte/main/Main.svelte) (import and tag updated for the rename; bands, helpers, two store reads, the broken build-notes prop, and the band CSS all removed; one tag for the new component inserted; build-notes callback wired to local state).
+Files touched. [Primary_Controls.svelte](../../../../../projects/di/src/lib/svelte/main/Primary_Controls.svelte) (renamed from Controls.svelte, contents unchanged). [Secondary_Controls.svelte](../../../../../projects/di/src/lib/svelte/main/Secondary_Controls.svelte) (new — holds both bands, their helpers, and their CSS). [Main.svelte](../../../../../projects/di/src/lib/svelte/main/Main.svelte) (import and tag updated for the rename; bands, helpers, two store reads, the broken build-notes prop, and the band CSS all removed; one tag for the new component inserted; build-notes callback wired to local state).
 
 ## Session — 2026-05-17 — sliders, scale numbers, and the guides label adapt to accent brightness
 
@@ -801,7 +801,7 @@ Two pieces. First, the color module gained three new color names — one for the
 
 Second, the slider hooked up to the new names. The outer track and the three browser-specific track styles previously had a hard-coded translucent black; they now read the new track color. The slider's number readout, the inline label, the tick numbers along the scale, the range-label, and the "guides" label in the bottom band all switched to read the new track color too. The thumb and focus halo were already reading their respective named colors, so they picked up the change automatically.
 
-Files touched. [Colors.ts](../../../../../di/src/lib/ts/utilities/Colors.ts) (three new color stores plus accent-brightness logic in the accent watcher). [Configuration.ts](../../../../../di/src/lib/ts/common/Configuration.ts) (pushes the three new colors onto the document root). [App.svelte](../../../../../di/src/App.svelte) (subscribes to the three new stores and forwards them). [Slider.svelte](../../../../../di/src/lib/svelte/mouse/Slider.svelte) (track styles and four label styles read the new track color). [Main.svelte](../../../../../di/src/lib/svelte/main/Main.svelte) (guides label reads the new track color).
+Files touched. [Colors.ts](../../../../../projects/di/src/lib/ts/utilities/Colors.ts) (three new color stores plus accent-brightness logic in the accent watcher). [Configuration.ts](../../../../../projects/di/src/lib/ts/common/Configuration.ts) (pushes the three new colors onto the document root). [App.svelte](../../../../../projects/di/src/App.svelte) (subscribes to the three new stores and forwards them). [Slider.svelte](../../../../../projects/di/src/lib/svelte/mouse/Slider.svelte) (track styles and four label styles read the new track color). [Main.svelte](../../../../../projects/di/src/lib/svelte/main/Main.svelte) (guides label reads the new track color).
 
 ## Session — 2026-05-17 — OPTION key reveals invisible smart objects as wireframe
 
@@ -815,7 +815,7 @@ Three pieces:
 
 The OPTION signal that gates all three pieces is the same one wired during the rule-10 rewrite — it already fires on key-down, key-up, and window-blur, and it already marks the canvas out-of-date so the wireframe appears and disappears in real time as the key is pressed.
 
-Files touched. [Render.ts](../../../../../di/src/lib/ts/render/Render.ts) (wireframe paint opacity and root-edge filter both respond to the OPTION signal). [Hits_3D.ts](../../../../../di/src/lib/ts/events/Hits_3D.ts) (hit-test accepts an OPTION-down argument; passes invisible objects through when held). [Events_3D.ts](../../../../../di/src/lib/ts/events/Events_3D.ts) (mousemove and mousedown pass the live alt-key state to the hit-test).
+Files touched. [Render.ts](../../../../../projects/di/src/lib/ts/render/Render.ts) (wireframe paint opacity and root-edge filter both respond to the OPTION signal). [Hits_3D.ts](../../../../../projects/di/src/lib/ts/events/Hits_3D.ts) (hit-test accepts an OPTION-down argument; passes invisible objects through when held). [Events_3D.ts](../../../../../projects/di/src/lib/ts/events/Events_3D.ts) (mousemove and mousedown pass the live alt-key state to the hit-test).
 
 Also fixed three pre-existing errors from the slider-band move work (engine import missing in Main, obsolete onshowbuildnotes prop on Graph, unused stores in Graph's destructure).
 
@@ -827,7 +827,7 @@ First part: dimensions for invisible smart objects now appear while the OPTION k
 
 Second part: the hover popup format for a dimension on a root smart object used to read `.width (x)` — with a stray leading period — because the popup glued the ancestry path and the semantic axis name with a dot, and the root's ancestry path came out empty. The popup template now reads the ancestry path once and inserts the dot only when the path is non-empty. So the popup reads `width (x)` on the root and `front.moose.well post.width (x)` elsewhere.
 
-Files touched. [Events.ts](../../../../../di/src/lib/ts/events/Events.ts) (new OPTION-down signal that marks the canvas dirty on change; key-down, key-up, and window-blur handlers update it). [R_Dimensions.ts](../../../../../di/src/lib/ts/render/R_Dimensions.ts) (helper around the visibility check; reads the OPTION signal at the top of the dimension pass). [dimensionals.md](di/notes/work/now/dimensionals.md) (rule 10 rewritten). [Graph.svelte](../../../../../di/src/lib/svelte/main/Graph.svelte) (popup template computes ancestry path once and prefixes the dot only when non-empty).
+Files touched. [Events.ts](../../../../../projects/di/src/lib/ts/events/Events.ts) (new OPTION-down signal that marks the canvas dirty on change; key-down, key-up, and window-blur handlers update it). [R_Dimensions.ts](../../../../../projects/di/src/lib/ts/render/R_Dimensions.ts) (helper around the visibility check; reads the OPTION signal at the top of the dimension pass). [dimensionals.md](di/notes/work/now/dimensionals.md) (rule 10 rewritten). [Graph.svelte](../../../../../projects/di/src/lib/svelte/main/Graph.svelte) (popup template computes ancestry path once and prefixes the dot only when non-empty).
 
 ## Session — 2026-05-17 — parts row hover highlights the matching object in the drawing
 
@@ -837,7 +837,7 @@ Each row in the parts list now reacts to the cursor entering or leaving. On entr
 
 The reverse link (drawing-hover highlights the row) keeps working because both directions watch the same signal.
 
-Files touched. [D_Parts.svelte](../../../../../di/src/lib/svelte/details/D_Parts.svelte) (mouse-enter and mouse-leave handlers added to each row; two small helper functions to set and clear the hover signal).
+Files touched. [D_Parts.svelte](../../../../../projects/di/src/lib/svelte/details/D_Parts.svelte) (mouse-enter and mouse-leave handlers added to each row; two small helper functions to set and clear the hover signal).
 
 ## Session — 2026-05-17 — hover color derived from accent
 
@@ -849,7 +849,7 @@ A guardrail handles the pitch-black edge case: when the lightener returns the li
 
 The styling pipeline that pushes colors onto the page now accepts five colors instead of four; the new hover color takes over the hover slot that previously was bound to the accent.
 
-Files touched. [Colors.ts](../../../../../di/src/lib/ts/utilities/Colors.ts) (new live hover color value; accent subscription updates it). [App.svelte](../../../../../di/src/App.svelte) (passes the new value through). [Configuration.ts](../../../../../di/src/lib/ts/common/Configuration.ts) (accepts the new parameter; uses it for the hover slot instead of the accent).
+Files touched. [Colors.ts](../../../../../projects/di/src/lib/ts/utilities/Colors.ts) (new live hover color value; accent subscription updates it). [App.svelte](../../../../../projects/di/src/App.svelte) (passes the new value through). [Configuration.ts](../../../../../projects/di/src/lib/ts/common/Configuration.ts) (accepts the new parameter; uses it for the hover slot instead of the accent).
 
 ## Session — 2026-05-16 — parts row highlights on drawing hover
 
@@ -857,7 +857,7 @@ Hovering an object in the drawing already highlighted the object itself and show
 
 The parts list component now reads the drawing's hovered-object signal. Each row checks if its own object matches that signal, and if so applies a class that paints the row with the same hovered color, including matching rounded corners on the leftmost and rightmost cells. No new color was introduced — the existing hovered color is reused — so the two trigger paths look identical.
 
-Files touched. [D_Parts.svelte](../../../../../di/src/lib/svelte/details/D_Parts.svelte) (added an import of the drawing's hovered-object signal, added a reactive class on each row, and three CSS rules that mirror the existing mouse-over-row paint).
+Files touched. [D_Parts.svelte](../../../../../projects/di/src/lib/svelte/details/D_Parts.svelte) (added an import of the drawing's hovered-object signal, added a reactive class on each row, and three CSS rules that mirror the existing mouse-over-row paint).
 
 ## Session — 2026-05-16 — done-checklist hook
 
@@ -873,7 +873,7 @@ Rules 1 and 2 cover the common bare-command and visual-confirmation patterns the
 
 When any rule fires, the hook prints the checklist wrapped in the standard JSON envelope (`hookSpecificOutput.additionalContext`), the same structure the other user-prompt-submit hooks in this project use.
 
-Files added or changed. New hook script at [di/.claude/hooks/done-checklist.sh](../../../../../di/.claude/hooks/done-checklist.sh). Wiring added to the workspace's `.claude/settings.local.json` under `hooks.UserPromptSubmit`, after the existing `inject-always.sh` entry.
+Files added or changed. New hook script at [di/.claude/hooks/done-checklist.sh](../../../../../projects/di/.claude/hooks/done-checklist.sh). Wiring added to the workspace's `.claude/settings.local.json` under `hooks.UserPromptSubmit`, after the existing `inject-always.sh` entry.
 
 Tested with eight example inputs — the four that should fire all did, and the four false-positive cases all stayed silent.
 
@@ -881,7 +881,7 @@ Tested with eight example inputs — the four that should fire all did, and the 
 
 The selection panel was already gated on whether a smart object was selected. The givens panel was not — it stayed open whether or not a smart object was selected. One-line scope: extend the existing `{#if $w_selection_name}` block that wraps the selection panel to also wrap the givens panel. Now both appear and disappear together. Parts panel still always shows.
 
-Files touched. [Details.svelte](../../../../../di/src/lib/svelte/details/Details.svelte) (one block wraps both the selection and givens panels in a single visibility guard).
+Files touched. [Details.svelte](../../../../../projects/di/src/lib/svelte/details/Details.svelte) (one block wraps both the selection and givens panels in a single visibility guard).
 
 ## Session — 2026-05-16 — status line moved into the bottom bar
 
@@ -891,7 +891,7 @@ Text color switched from semi-transparent black (legible only on the white canva
 
 When there's nothing to show, an empty strip still holds the middle space so the build button stays anchored to the left edge of the bar and the guides slider stays anchored to the right.
 
-Files touched. [Status_Strip.svelte](../../../../../di/src/lib/svelte/main/Status_Strip.svelte) (styles rewritten: flex:1, white default, light red on error; no more absolute positioning); [Graph.svelte](../../../../../di/src/lib/svelte/main/Graph.svelte) (Status_Strip moved out of the canvas card and into the bottom band between the build button and the guides control).
+Files touched. [Status_Strip.svelte](../../../../../projects/di/src/lib/svelte/main/Status_Strip.svelte) (styles rewritten: flex:1, white default, light red on error; no more absolute positioning); [Graph.svelte](../../../../../projects/di/src/lib/svelte/main/Graph.svelte) (Status_Strip moved out of the canvas card and into the bottom band between the build button and the guides control).
 
 ## Session — 2026-05-15 to 2026-05-16 — crowded dimensionals (25 rules, force-directed placement)
 
@@ -917,7 +917,7 @@ Diagnostic stats. A module-level stats object tracks running averages of collect
 
 Vocabulary corrections during the session: tick → witness line, drawer → renderer, knob → value, ray → arrow (or "witness line" when it is one), home → outside-the-silhouette position. All saved to memory.
 
-Files touched. [R_Dimensions.ts](../../../../../di/src/lib/ts/render/R_Dimensions.ts) (the entire algorithm — several hundred lines added), [Hits_3D.ts](../../../../../di/src/lib/ts/events/Hits_3D.ts) (hovered dimension store, smart object highlight on dimension hover), [Events_3D.ts](../../../../../di/src/lib/ts/events/Events_3D.ts) (mouse-move sets the hovered dimension), [Graph.svelte](../../../../../di/src/lib/svelte/main/Graph.svelte) (name popup format), [Status_Strip.svelte](../../../../../di/src/lib/svelte/main/Status_Strip.svelte) (dropped-count readout).
+Files touched. [R_Dimensions.ts](../../../../../projects/di/src/lib/ts/render/R_Dimensions.ts) (the entire algorithm — several hundred lines added), [Hits_3D.ts](../../../../../projects/di/src/lib/ts/events/Hits_3D.ts) (hovered dimension store, smart object highlight on dimension hover), [Events_3D.ts](../../../../../projects/di/src/lib/ts/events/Events_3D.ts) (mouse-move sets the hovered dimension), [Graph.svelte](../../../../../projects/di/src/lib/svelte/main/Graph.svelte) (name popup format), [Status_Strip.svelte](../../../../../projects/di/src/lib/svelte/main/Status_Strip.svelte) (dropped-count readout).
 
 ## Session — 2026-05-14 — hover-name popup in the drawing area
 
@@ -929,7 +929,7 @@ The popup uses fixed positioning with the cursor's viewport coordinates plus a s
 
 Two refinements after first visual review. First, the popup did not appear when hovering over the already-selected part — the hover store had been deliberately nullified on the selected face. The mouse-move handler was changed to set the hover store unconditionally; the renderer already had its own guards against drawing hover highlights on the selected face, so the visual selection-vs-hover separation continued to work. Second, the code-debt entry had asked for the popup to be suppressed when the names-on-faces decoration was active, but on visual review Jonathan reversed that — the popup should appear regardless. The names-gating logic and its imports were removed.
 
-Files: [Graph.svelte](../../../../../di/src/lib/svelte/main/Graph.svelte) — imported the events module, destructured the hover store and the cursor-location store, added the conditional popup element, added one CSS rule for the pill. [Events_3D.ts](../../../../../di/src/lib/ts/events/Events_3D.ts) — changed one line in the mouse-move handler so the hover store gets set even when the hovered face is the selected one.
+Files: [Graph.svelte](../../../../../projects/di/src/lib/svelte/main/Graph.svelte) — imported the events module, destructured the hover store and the cursor-location store, added the conditional popup element, added one CSS rule for the pill. [Events_3D.ts](../../../../../projects/di/src/lib/ts/events/Events_3D.ts) — changed one line in the mouse-move handler so the hover store gets set even when the hovered face is the selected one.
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: popup appears on any hovered part, follows the cursor, disappears on un-hover, also shows on the selected part, shows regardless of whether names-on-faces is active.
 
@@ -945,7 +945,7 @@ A small gap, matching the standard layout-separator thickness, sits between each
 
 The scaling slider moved out of the main controls bar entirely — its snippet, three responsive render sites, the related state and handlers, the unused import, and the leftover CSS rule are all gone there. The slider's state and handlers moved into the drawing-area component. The resize observer that drives canvas sizing now watches the inner canvas card instead of the whole region.
 
-Files: [Graph.svelte](../../../../../di/src/lib/svelte/main/Graph.svelte) — restructured the template into a flex column with three rows; added scaling-slider state and handlers; observer rewired; new styles for the bands and the canvas card; the guides slider switched from vertical to horizontal; the build button and guides slider moved out of the canvas overlay. [Controls.svelte](../../../../../di/src/lib/svelte/main/Controls.svelte) — removed the scaling-slider snippet, all three render sites, scale-related state and handlers, the Slider import, and the leftover styling.
+Files: [Graph.svelte](../../../../../projects/di/src/lib/svelte/main/Graph.svelte) — restructured the template into a flex column with three rows; added scaling-slider state and handlers; observer rewired; new styles for the bands and the canvas card; the guides slider switched from vertical to horizontal; the build button and guides slider moved out of the canvas overlay. [Controls.svelte](../../../../../projects/di/src/lib/svelte/main/Controls.svelte) — removed the scaling-slider snippet, all three render sites, scale-related state and handlers, the Slider import, and the leftover styling.
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: three bands as designed, all four canvas corners visibly rounded, scaling slider on top, build button + horizontal guides slider on bottom.
 
@@ -959,7 +959,7 @@ Confirming with the checkbox flipped saves a persistent preference; future delet
 
 The dialog is mounted at the top level of the main layout, sitting above everything else with a semi-transparent backdrop that intercepts clicks behind it.
 
-Files: new manager [Confirm.ts](../../../../../di/src/lib/ts/managers/Confirm.ts) holding the request store and the ask/commit/cancel helpers. New component [Confirm.svelte](../../../../../di/src/lib/svelte/main/Confirm.svelte) rendering the dialog. [Preferences.ts](../../../../../di/src/lib/ts/managers/Preferences.ts) — added the skip-confirm preference key. [managers/index.ts](../../../../../di/src/lib/ts/managers/index.ts) — exported the new helper. [Main.svelte](../../../../../di/src/lib/svelte/main/Main.svelte) — mounted the dialog. [D_Parts.svelte](../../../../../di/src/lib/svelte/details/D_Parts.svelte), [D_Givens.svelte](../../../../../di/src/lib/svelte/details/D_Givens.svelte), and [Events.ts](../../../../../di/src/lib/ts/events/Events.ts) — three call sites now route through the helper.
+Files: new manager [Confirm.ts](../../../../../projects/di/src/lib/ts/managers/Confirm.ts) holding the request store and the ask/commit/cancel helpers. New component [Confirm.svelte](../../../../../projects/di/src/lib/svelte/main/Confirm.svelte) rendering the dialog. [Preferences.ts](../../../../../projects/di/src/lib/ts/managers/Preferences.ts) — added the skip-confirm preference key. [managers/index.ts](../../../../../projects/di/src/lib/ts/managers/index.ts) — exported the new helper. [Main.svelte](../../../../../projects/di/src/lib/svelte/main/Main.svelte) — mounted the dialog. [D_Parts.svelte](../../../../../projects/di/src/lib/svelte/details/D_Parts.svelte), [D_Givens.svelte](../../../../../projects/di/src/lib/svelte/details/D_Givens.svelte), and [Events.ts](../../../../../projects/di/src/lib/ts/events/Events.ts) — three call sites now route through the helper.
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: all eight scenarios (parts trash, givens trash, keyboard delete, Escape, Enter, backdrop click, "don't ask again" path, and reload persistence) confirmed.
 
@@ -973,7 +973,7 @@ The trick is that table rows themselves do not respect border-radius, but indivi
 
 The code-debt entry asked only for the selected state; Jonathan extended the work to the hover state on visual confirmation.
 
-Files: [D_Parts.svelte](../../../../../di/src/lib/svelte/details/D_Parts.svelte) only — three new rules for the selection state, three new rules for the hover state. Existing flat-rectangle backgrounds were removed.
+Files: [D_Parts.svelte](../../../../../projects/di/src/lib/svelte/details/D_Parts.svelte) only — three new rules for the selection state, three new rules for the hover state. Existing flat-rectangle backgrounds were removed.
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: selection highlight is a rounded pill, hover highlight is a rounded pill, both share the common-radius token used by the rounded banners in the same column.
 
@@ -987,7 +987,7 @@ Two parts to the change. First, the disabled-state machinery on the Hideable wid
 
 Net effect: no special states. The banner either exists (something selected) or it doesn't (nothing selected). Simpler than the disabled approach.
 
-Files: [Hideable.svelte](../../../../../di/src/lib/svelte/details/Hideable.svelte) — removed the `disabled` prop, the early-return in `toggle`, the `class:disabled` flag, the slot-render guard, and the two `.banner.disabled` CSS rules. [Details.svelte](../../../../../di/src/lib/svelte/details/Details.svelte) — removed the `disabled` attribute from the selection Hideable usage and wrapped it in `{#if $w_selection_name}`.
+Files: [Hideable.svelte](../../../../../projects/di/src/lib/svelte/details/Hideable.svelte) — removed the `disabled` prop, the early-return in `toggle`, the `class:disabled` flag, the slot-render guard, and the two `.banner.disabled` CSS rules. [Details.svelte](../../../../../projects/di/src/lib/svelte/details/Details.svelte) — removed the `disabled` attribute from the selection Hideable usage and wrapped it in `{#if $w_selection_name}`.
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: banner vanishes when nothing is selected and reappears when a part is selected.
 
@@ -1005,7 +1005,7 @@ The disabled state on the banner is a new prop on the hideable widget. When set,
 
 A pre-existing use-before-declaration error in the details column was fixed along the way — the parts-leaf-count derived now sits above the parts-title derived that references it.
 
-Files: [Parts.ts](../../../../../di/src/lib/ts/managers/Parts.ts) — added `live_rename` helper. [Hideable.svelte](../../../../../di/src/lib/svelte/details/Hideable.svelte) — added `disabled` prop with three gated behaviors plus CSS override. [Details.svelte](../../../../../di/src/lib/svelte/details/Details.svelte) — passed `disabled` to the selection hideable, fixed the pre-existing parts-leaf-count ordering. [D_Parts.svelte](../../../../../di/src/lib/svelte/details/D_Parts.svelte) and [D_Selection.svelte](../../../../../di/src/lib/svelte/details/D_Selection.svelte) — added one-line on-input handlers that call the live-rename helper.
+Files: [Parts.ts](../../../../../projects/di/src/lib/ts/managers/Parts.ts) — added `live_rename` helper. [Hideable.svelte](../../../../../projects/di/src/lib/svelte/details/Hideable.svelte) — added `disabled` prop with three gated behaviors plus CSS override. [Details.svelte](../../../../../projects/di/src/lib/svelte/details/Details.svelte) — passed `disabled` to the selection hideable, fixed the pre-existing parts-leaf-count ordering. [D_Parts.svelte](../../../../../projects/di/src/lib/svelte/details/D_Parts.svelte) and [D_Selection.svelte](../../../../../projects/di/src/lib/svelte/details/D_Selection.svelte) — added one-line on-input handlers that call the live-rename helper.
 
 Second, hook infrastructure got a major overhaul. The di project's settings file at `di/.claude/settings.json` had been silently inactive — the Claude Code extension only reads hooks from the workspace root, not from subdirectories. Evidence: the snapshot-before-edit hook had been writing to a directory that did not exist (it would have been created on first invocation). All five di hook entries (inject-always, snapshot-before-edit, check-ts, plus two new ones added today: bash-command-check for blocking npx and git-worktree, and banned-words-check plus phrase-check for catching vernacular and habit-pattern violations in assistant output) were moved into the mono root settings file. The di settings file was deleted to remove the duplicate registration. After a VSCode window reload, all the di hooks are now actually firing.
 
@@ -1023,7 +1023,7 @@ The constants-merge proposal from yesterday's session became stale: the code-deb
 
 Jonathan's own in-progress edits added a dynamic title to the selection banner (showing the selected part's name, or "nothing selected" when nothing is). The remaining sub-items under the selection-banner work — making the title react live during name editing, ignoring click and hover when nothing is selected, and auto-hiding the panel when nothing is selected — are the subject of today's proposal in the handoff.
 
-Files: [Details.svelte](../../../../../di/src/lib/svelte/details/Details.svelte) — one-character fix (semicolon removed).
+Files: [Details.svelte](../../../../../projects/di/src/lib/svelte/details/Details.svelte) — one-character fix (semicolon removed).
 
 ---
 
@@ -1041,7 +1041,7 @@ Round two: flip the "which end of the face's edge" pick so it lands closer to th
 
 Round three: drop the "front-facing only" filter and rank candidate faces by the absolute value of the forward-pointing component of their normal. A back-facing face is now eligible when it's more face-on than any front-facing candidate. Initial cut anchored at the corner closest to the box's front-most corner, which for a back-facing face placed the arrow on the FAR side of the box (the corner directly under the box's front-most corner sits at the back of a back-facing face). Final cut: for each picked face, walk the four corners, rotate each by the tumble orientation, and anchor at the corner whose rotated forward-component is largest — i.e., the face's own corner closest to the camera. For front-facing faces this is the same corner as before; for back-facing faces it is now the visible corner of that face, not the hidden one.
 
-Files: [R_Axes.ts](../../../../../di/src/lib/ts/render/R_Axes.ts) only.
+Files: [R_Axes.ts](../../../../../projects/di/src/lib/ts/render/R_Axes.ts) only.
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: arrows land on the most face-on plane for each axis and anchor at that plane's front-most corner across tumble.
 
@@ -1055,7 +1055,7 @@ The code-debt item asked for banners to reverse their appearance (including hove
 
 After visual review, Jonathan decided the reversal was not an improvement — it removed the at-rest visual cue and made open banners look less anchored. Reverted the change.
 
-Files: [Hideable.svelte](../../../../../di/src/lib/svelte/details/Hideable.svelte) — reverted to the original stylesheet (no functional change).
+Files: [Hideable.svelte](../../../../../projects/di/src/lib/svelte/details/Hideable.svelte) — reverted to the original stylesheet (no functional change).
 
 Decision logged in [code debt paid.md](code%20debt%20paid.md) so the item does not resurface.
 
@@ -1071,7 +1071,7 @@ How. The user-guide overlay imports the reusable close-button widget and places 
 
 Jonathan tuned the widget's size to match the hamburger height (using the same shared button-height value) and pulled it tight to the corner — one pixel in from the top and right — so it visually balances against the hamburger.
 
-Files: [UserGuide.svelte](../../../../../di/src/lib/svelte/main/UserGuide.svelte) only — imported the widget, swapped the text button for it, restored symmetric bar padding, added "position: relative" to the bar, dropped the unused text-button stylesheet rules.
+Files: [UserGuide.svelte](../../../../../projects/di/src/lib/svelte/main/UserGuide.svelte) only — imported the widget, swapped the text button for it, restored symmetric bar padding, added "position: relative" to the bar, dropped the unused text-button stylesheet rules.
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: circular X at the right end of the top bar, vertically centered, hover inverts colors, clicking closes the overlay.
 
@@ -1087,7 +1087,7 @@ To make this work, a new optional vertical mode was added to the shared slider c
 
 Two gotchas worth keeping. First attempt used the browser's built-in vertical-writing setting on the range input. That produced the wrong look: the styled thin track and small round thumb were lost, the browser fell back to its default vertical-slider chrome. Switched to a CSS rotation of the input element instead — the rotation preserves the original styling exactly, just flips orientation. Second issue surfaced after that: the slider had height zero in vertical mode. Cause: the input element carried an inline style attribute setting "flex grow" and "position relative" — inline styles win over stylesheet rules, so the vertical mode's "position absolute" never took effect, and the input collapsed. Fix: the input's inline style is now conditional on the vertical flag — vertical mode emits a minimal style that does not fight the stylesheet's positioning.
 
-Files: [Slider.svelte](../../../../../di/src/lib/svelte/mouse/Slider.svelte) (new vertical mode for single-thumb sliders via CSS rotation; input's inline style is conditional on vertical so the rotation's absolute positioning is not overridden); [Graph.svelte](../../../../../di/src/lib/svelte/main/Graph.svelte) (vertical guides slider with horizontal "guides" label, anchored bottom-right); [Controls.svelte](../../../../../di/src/lib/svelte/main/Controls.svelte) (guides slider snippet, three render calls, handler, store import, and related CSS removed).
+Files: [Slider.svelte](../../../../../projects/di/src/lib/svelte/mouse/Slider.svelte) (new vertical mode for single-thumb sliders via CSS rotation; input's inline style is conditional on vertical so the rotation's absolute positioning is not overridden); [Graph.svelte](../../../../../projects/di/src/lib/svelte/main/Graph.svelte) (vertical guides slider with horizontal "guides" label, anchored bottom-right); [Controls.svelte](../../../../../projects/di/src/lib/svelte/main/Controls.svelte) (guides slider snippet, three render calls, handler, store import, and related CSS removed).
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: slider sits in the bottom-right of the drawing area, runs vertically, drags update the background grid opacity, label reads horizontally below the slider, main controls bar no longer carries the slider at the top.
 
@@ -1103,7 +1103,7 @@ Second item: face buttons at launch. None of the six face buttons (bottom, top, 
 
 Friction during the second item. The proposal walked through three framings before settling on the right one. First framing imagined an order swap in the tick loop so the front-most-face routine ran AFTER the paint instead of before. The user redirected to the simpler approach: don't read the cache at all, derive the answer from the orientation directly. Second framing then over-described the math as "rotate each of the six fixed face arrows by the orientation and pick the largest Z". The user pushed back — the math is trivial, no loop, just dot products. The final form is what was written: one library call to transform the camera-forward direction by the inverse orientation, then a max-of-three with a sign check. Five lines.
 
-Files: [Controls.svelte](../../../../../di/src/lib/svelte/main/Controls.svelte) (help button moved to the right end of all three layouts); [UserGuide.svelte](../../../../../di/src/lib/svelte/main/UserGuide.svelte) (return button anchored at the right edge, bar's right padding removed, leftward button offset stripped); [Hits_3D.ts](../../../../../di/src/lib/ts/events/Hits_3D.ts) (new pure helper `front_most_face_from_orientation` alongside the existing front-most-face routine); [Engine.ts](../../../../../di/src/lib/ts/render/Engine.ts) (one-shot call in setup, right before the animation loop starts).
+Files: [Controls.svelte](../../../../../projects/di/src/lib/svelte/main/Controls.svelte) (help button moved to the right end of all three layouts); [UserGuide.svelte](../../../../../projects/di/src/lib/svelte/main/UserGuide.svelte) (return button anchored at the right edge, bar's right padding removed, leftward button offset stripped); [Hits_3D.ts](../../../../../projects/di/src/lib/ts/events/Hits_3D.ts) (new pure helper `front_most_face_from_orientation` alongside the existing front-most-face routine); [Engine.ts](../../../../../projects/di/src/lib/ts/render/Engine.ts) (one-shot call in setup, right before the animation loop starts).
 
 Verification. svelte-check: 0 errors, 0 warnings. Visual: both button moves confirmed; face buttons highlight from the very first paint and match the loaded view.
 
@@ -1123,7 +1123,7 @@ With the runner invoked correctly, the six rewrites still failed for real reason
 
 A real-browser visual pass turned up three more issues. First, hover and selection dots showed up on the printed sheet even after the gates were added. The cause: the print event fires before the print media query flips on, so the canvas the print handler read still had the on-screen render with helpers on it. Fix: the print handler now asks the renderer for a fresh, synchronous, helper-suppressed paint before reading the canvas. Second, the colour and bolded thickness applied to the part the cursor was on (or that was selected) also showed up on the printed sheet — the edge-drawing code styles selected and hovered parts with bold strokes and a hover colour, and that path was not gated on print. Fix: edges drawn under print mode use the regular stroke colour and the regular line width regardless of selection or hover. Third — and this took the longest to find — after a series of source-file saves during the session, clicks on a part were running the click-on-background deselect branch on mouse-up. The probe showed mousedown finding the part correctly but mouseup seeing no drag target. The cause: every hot reload during the session ran the canvas setup again, and the setup attached a fresh mouseup listener without removing the previous one. On mouseup, all the accumulated listeners ran end_drag in turn — the first run cleared the drag target, the next runs found no target and triggered the deselect-by-root branch. Fix: the setup now keeps a reference to each listener it attaches, removes the previous one before attaching a new one, and does the same for the print-media subscription the renderer added.
 
-Files: [Render.ts](../../../../../di/src/lib/ts/render/Render.ts) (grid, axes, and root-bottom helper gated on print media; selection and hover dots gated on print media; edge stroke colour and width ignore selection and hover under print media; renderer subscribes to print-media flips and flags itself out of date — and now removes the previous subscriber before adding a new one; a new method paints synchronously under a print-mode override flag so the print handler reads clean canvas pixels; the three is_print declarations collapsed to one); [App.svelte](../../../../../di/src/App.svelte) (print handler asks the renderer for a synchronous print-mode paint before reading the canvas, and clears the CSS transform when no silhouette is found); [Events_3D.ts](../../../../../di/src/lib/ts/events/Events_3D.ts) (the canvas setup now records each mouse listener and removes the previous one before attaching a new one, so hot reloads and scene switches don't accumulate duplicates that would otherwise cause mouseup to deselect through the click-on-background branch); [Debug.ts](../../../../../di/src/lib/ts/common/Debug.ts) (test write hook now wires scene reference before bounds, attaches faces alongside edges, and exposes set_orientation, set_scale, set_decorations); [print-notifications.spec.ts](../../../../../di/e2e/tests/print-notifications.spec.ts) (setup_print_page resets orientation, scale, and decorations; setup_for_pixel_silhouette waits long enough for the renderer to redraw under print media and re-fires the print event so the handler reads the settled canvas; tests two, four, and five now use an invisible ROOT container; three new helpers; one diagnostic test deleted; two old corner-projection helpers removed); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 66 broadened to cover every UI helper, including hover and selection dots, and to mention the renderer's repaint on media flip); [handoff.md](di/notes/work/now/handoff.md) (the seven-test proposal removed, no new open items).
+Files: [Render.ts](../../../../../projects/di/src/lib/ts/render/Render.ts) (grid, axes, and root-bottom helper gated on print media; selection and hover dots gated on print media; edge stroke colour and width ignore selection and hover under print media; renderer subscribes to print-media flips and flags itself out of date — and now removes the previous subscriber before adding a new one; a new method paints synchronously under a print-mode override flag so the print handler reads clean canvas pixels; the three is_print declarations collapsed to one); [App.svelte](../../../../../projects/di/src/App.svelte) (print handler asks the renderer for a synchronous print-mode paint before reading the canvas, and clears the CSS transform when no silhouette is found); [Events_3D.ts](../../../../../projects/di/src/lib/ts/events/Events_3D.ts) (the canvas setup now records each mouse listener and removes the previous one before attaching a new one, so hot reloads and scene switches don't accumulate duplicates that would otherwise cause mouseup to deselect through the click-on-background branch); [Debug.ts](../../../../../projects/di/src/lib/ts/common/Debug.ts) (test write hook now wires scene reference before bounds, attaches faces alongside edges, and exposes set_orientation, set_scale, set_decorations); [print-notifications.spec.ts](../../../../../projects/di/e2e/tests/print-notifications.spec.ts) (setup_print_page resets orientation, scale, and decorations; setup_for_pixel_silhouette waits long enough for the renderer to redraw under print media and re-fires the print event so the handler reads the settled canvas; tests two, four, and five now use an invisible ROOT container; three new helpers; one diagnostic test deleted; two old corner-projection helpers removed); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 66 broadened to cover every UI helper, including hover and selection dots, and to mention the renderer's repaint on media flip); [handoff.md](di/notes/work/now/handoff.md) (the seven-test proposal removed, no new open items).
 
 Verification. svelte-check: 0 errors, 0 warnings. Unit tests: 680 pass. E2e: 23 of 23 pass — every test in every spec file. Visual confirmation: the printed sheet shows just the picture, hover and selection feedback do not appear on it, and clicking parts in the editor selects them and keeps them selected through mouseup.
 
@@ -1145,7 +1145,7 @@ Details column reshaped. Two code-debt items addressed. First: the empty area be
 
 Handoff trim. The handoff went from 101 lines to roughly 50. Removed two superseded proposals (the older "accent below the last hideable" proposal and the older pill proposal with three open questions), the duplicated print-rule-39 open-items bullet, the "bundled work" paragraph from the test proposal, the no-cons line, and the test-plan sentence on the pill proposal. The remaining content: open items plus the rewrite-the-seven-red-tests proposal plus the simple pill proposal.
 
-Files: [App.svelte](../../../../../di/src/App.svelte) (body-padding margin, dashed-wireframe suppression, no diagnostic logs); [Render.ts](../../../../../di/src/lib/ts/render/Render.ts) (willReadFrequently on the 2D context, print-mode skip on the dashed-wireframe phase); [Details.svelte](../../../../../di/src/lib/svelte/details/Details.svelte) (banner-zone is a flex column with 5-pixel gap, accent background on the column, pseudo-element fillet gone); [Hideable.svelte](../../../../../di/src/lib/svelte/details/Hideable.svelte) (hideable is a flex column with 5-pixel gap, banner and slot margins both zero); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 65 added, rule 63 prose refined); [vernacular.md](../../guides/development/learn/vernacular.md) (three new banned-substitution rows plus a working-discipline section); [learn.md](di/notes/work/ai/learn.md) (entries four and five); [handoff.md](di/notes/work/now/handoff.md) (trimmed); [mono CLAUDE.md](../../../../../CLAUDE.md) and [di CLAUDE.md](../../../../../di/CLAUDE.md) (global learn paths spelled out).
+Files: [App.svelte](../../../../../projects/di/src/App.svelte) (body-padding margin, dashed-wireframe suppression, no diagnostic logs); [Render.ts](../../../../../projects/di/src/lib/ts/render/Render.ts) (willReadFrequently on the 2D context, print-mode skip on the dashed-wireframe phase); [Details.svelte](../../../../../projects/di/src/lib/svelte/details/Details.svelte) (banner-zone is a flex column with 5-pixel gap, accent background on the column, pseudo-element fillet gone); [Hideable.svelte](../../../../../projects/di/src/lib/svelte/details/Hideable.svelte) (hideable is a flex column with 5-pixel gap, banner and slot margins both zero); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 65 added, rule 63 prose refined); [vernacular.md](../../guides/development/learn/vernacular.md) (three new banned-substitution rows plus a working-discipline section); [learn.md](di/notes/work/ai/learn.md) (entries four and five); [handoff.md](di/notes/work/now/handoff.md) (trimmed); [mono CLAUDE.md](../../../../../CLAUDE.md) and [di CLAUDE.md](../../../../../projects/di/CLAUDE.md) (global learn paths spelled out).
 
 Verification. Tests: 20-of-23 e2e green; six rule-39 corner-projection tests still red (tracked as the open follow-up in the handoff). Visual: print preview shows the picture filling the page along the limiting side, centred on the other, with a half-inch white border. Details column visually unchanged from before the pill restructure — same look, simpler innards.
 
@@ -1177,13 +1177,13 @@ Production code now. The compute-silhouette function does a getImageData call ag
 
 Open follow-ups. Six of the existing browser-driven tests for rule 39 were written against the corner-projection contract and now fail against the painted-pixel rule. They need to be rewritten to read canvas pixels and compute expected silhouette from those, or replaced with sanity-checks that pin the new contract. Not done in this session; the production code and the catalog are correct and the visual confirmation is in hand, so the test debt is logged here for the next pass.
 
-Files: [App.svelte](../../../../../di/src/App.svelte) (compute_silhouette rewritten as pixel scan, diagnostic logs removed, html/body/#app height anchor added to print stylesheet); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 39 prose rewritten; rules 63 and 64 added); [working features.md](../../../truth/working%20features.md) (adherence row updated to 64 rules total).
+Files: [App.svelte](../../../../../projects/di/src/App.svelte) (compute_silhouette rewritten as pixel scan, diagnostic logs removed, html/body/#app height anchor added to print stylesheet); [stipulations.md](di/notes/guides/development/rules/stipulations.md) (rule 39 prose rewritten; rules 63 and 64 added); [working features.md](../../../truth/working%20features.md) (adherence row updated to 64 rules total).
 
 Verification. Visual: the print preview in real Chrome shows the picture filling the page along its limiting side, centred on the other. Tests: the structural tests (rules 61, 63, 64, the centring rule, the diagnostic) all pass; six rule-39 tests need rewriting against the painted-pixel contract and are tracked as follow-up.
 
 Post-print cleanup. After the print work was done, three meta-changes followed in the same session. First, two new entries went into the di project's learn file capturing the lessons of the print arc: entry four says to wire diagnostics and read them before writing more code, especially for fixes that need real-browser confirmation; entry five says confidence levels are set too high and the bar for writing code should be real data plus a short verifiable reasoning chain. Second, the vernacular file got a new banned-substitution entry: never use the verb "ship" in either sense; write "done" or "complete" for finished work and "write code" for the act of producing or submitting code. The corresponding memory file was extended to cover both senses. Third, the mono root CLAUDE file and the di project CLAUDE file were both updated to spell out two learn files at session start — one at the mono root for global mistakes, one at the di project's `notes/work/now/learn.md` for project-specific mistakes — and the mono CLAUDE file's old path that pointed at the wrong location was corrected.
 
-Files (post-print): [learn.md](di/notes/work/ai/learn.md) (two new entries about evidence and confidence); [vernacular.md](../../guides/development/learn/vernacular.md) (new "write code" verb entry and banned-substitution row); [mono CLAUDE.md](../../../../../CLAUDE.md) (global learn path added, di learn path corrected); [di CLAUDE.md](../../../../../di/CLAUDE.md) (new LEARN: line pointing at both files).
+Files (post-print): [learn.md](di/notes/work/ai/learn.md) (two new entries about evidence and confidence); [vernacular.md](../../guides/development/learn/vernacular.md) (new "write code" verb entry and banned-substitution row); [mono CLAUDE.md](../../../../../CLAUDE.md) (global learn path added, di learn path corrected); [di CLAUDE.md](../../../../../projects/di/CLAUDE.md) (new LEARN: line pointing at both files).
 
 ---
 
@@ -1201,7 +1201,7 @@ The print stylesheet was also told to crop anything that extends outside the pag
 
 A separate patch was needed for an initial print-blank issue. The first cut of the silhouette work used auto-sized dimensions on the drawing surface during print, which collapsed it to nothing in some browsers and produced a blank page. The patch pinned the drawing surface to its own pixel dimensions before applying the scale-and-translate transform, and computed the transform from those pixel dimensions rather than from the surrounding region.
 
-Files: [App.svelte](../../../../../di/src/App.svelte) (silhouette handler and print-event listeners added to the script; canvas pinned to native pixel size in the print stylesheet).
+Files: [App.svelte](../../../../../projects/di/src/App.svelte) (silhouette handler and print-event listeners added to the script; canvas pinned to native pixel size in the print stylesheet).
 
 I AM GUESSING that this two-step approach (silhouette fills drawing surface, drawing surface fits page) leaves a small margin around the silhouette when the page aspect differs from the drawing-surface aspect, since the drawing surface is letterboxed inside the page. The follow-up that fixed that and several other bugs is described in the 2026-05-10 session entry.
 
@@ -1217,7 +1217,7 @@ The path chosen was the print stylesheet. Smallest change, does the feature toda
 
 What was done. A print-only block of styles at the top of the app's global styles. When the browser is printing (or the user is "saving as PDF" through the print dialog), the top strip with the menu and buttons is hidden, the side column with the detail panels is hidden, the small overlays inside the drawing area (the build button, the breadcrumbs trail, the status strip at the bottom) are hidden, the outer page frame loses its fixed positioning and padding so it can flow into a normal page, and the drawing area expands to fill the entire printable region of the chosen paper. The drawing surface inside the drawing area is told to scale to fit while preserving its aspect ratio, so the picture is not stretched out of shape — if the paper is a different shape than the drawing surface, the surface fits inside with a thin band of white on the long sides rather than warping. The page margins are pulled to zero in the same block so the drawing fills edge to edge.
 
-Files: [App.svelte](../../../../../di/src/App.svelte) (print-only block added to the styles section).
+Files: [App.svelte](../../../../../projects/di/src/App.svelte) (print-only block added to the styles section).
 
 I AM GUESSING that the printed lines may look softer than the on-screen lines because the drawing surface keeps its on-screen pixel resolution and scales up — this is the documented drawback of the simple option chosen here. If the softness bites, the follow-up path (a separate print action that re-renders the scene at print resolution into a fresh off-screen surface) was described in the proposal above and remains untouched by this work.
 
@@ -1306,7 +1306,7 @@ The dashboard is now a headline plus a single list. When nothing needs attention
 
 A new save-and-load test was added along the way. It puts a formula on a child cell that reads the parent's width, saves the scene, loads it back, slides the parent sideways, and checks that the child holds its absolute position because width does not move when the parent slides. The first draft of the test failed for the wrong reason — it was reading a stored offset that always matched, regardless of whether the formula actually re-evaluated. Once the assertion was rewritten in absolute terms, the test passes and verifies that the formula network really does come back to life after a round trip.
 
-Files: [extract-adherence.mjs](extract-adherence.mjs) (new headline-and-action-list layout, removed depth and per-section blocks), [adherence dashboard.md](adherence%20dashboard.md) (regenerated), [Save_Load.test.ts](../../../../../di/src/lib/ts/tests/Save_Load.test.ts) (new formula round-trip test).
+Files: [extract-adherence.mjs](extract-adherence.mjs) (new headline-and-action-list layout, removed depth and per-section blocks), [adherence dashboard.md](adherence%20dashboard.md) (regenerated), [Save_Load.test.ts](../../../../../projects/di/src/lib/ts/tests/Save_Load.test.ts) (new formula round-trip test).
 
 ### The parts list trim
 
@@ -2244,7 +2244,7 @@ A couple of small clean-ups along the way: removed an unused separator import fr
 - Face label font: [Render.ts](di/src/lib/ts/render/Render.ts).
 - Undo/redo fix: [Engine.ts](di/src/lib/ts/render/Engine.ts). New test: [History.test.ts](di/src/lib/ts/tests/History.test.ts).
 - Cross thickness: [P_Attributes.svelte](di/src/lib/svelte/details/P_Attributes.svelte). Unused import removed in the same file.
-- Build notes: [builds.md](../../../../../di/src/lib/md/builds.md).
+- Build notes: [builds.md](../../../../../projects/di/src/lib/md/builds.md).
 - Constants and root variables: [Constants.ts](di/src/lib/ts/common/Constants.ts), [App.svelte](di/src/App.svelte).
 - Code-debt list: [code debt.md](di/notes/work/now/code%20debt.md).
 

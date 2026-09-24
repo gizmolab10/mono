@@ -14,7 +14,7 @@ Code style, patterns, and development practices.
 - [(newer than SDD) methodology](./(newer%20than%20SDD)%20methodology.md)
 - [Adding a guide](add%20a%20file.md)
 - [Aesthetics](./aesthetics.md)
-- [Best.practices](../../../../di/notes/guides/project/philosophy/best%20practices.md)
+- [Best.practices](../../../../projects/di/notes/guides/project/philosophy/best%20practices.md)
 - [Best practices](./best%20practices.md)
 - [Constants](./constants.md)
 - [Creating A Design](./create a design.md)
@@ -33,7 +33,7 @@ Code style, patterns, and development practices.
 - [Running E2e Tests](../running%20e2e%20tests.md)
 - [Running e2e tests](./running%20e2e%20tests.md)
 - [Style](./style%20guide.md)
-- [Testing](../../../../di/notes/guides/project/philosophy/unit%20testing.md)
+- [Testing](../../../../projects/di/notes/guides/project/philosophy/unit%20testing.md)
 - [Unit testing](./unit%20testing.md)
 - [Write the code debt](./write%20the%20code%20debt.md)
 

@@ -4,6 +4,8 @@
 
 ## 23 September 2026
 
+- D: ai's dev server allowed itself one folder up, the repo before the move and the projects folder after, so every memory file answered 403 and the page read only the 15 files inside projects/: vite.config.ts now allows the repo's top, resolved from __dirname. Measured: two files that answered 403 answer 200 after the restart. Jonathan's report
+- D: ai's code moved to projects/ai; plugin.py finds a project's code folder under projects/ or projects/libraries/ and lists a CLAUDE file one folder down; the dispatcher's 47 and the db's 175 pass, ai's 145 pass, check clean at 546 files. Jonathan's go
 - D: zone/learn.md is here, ov's moved through the dispatcher, its heading and intro and no correction yet; the zone index and ai's index list it. Jonathan's word
 - D: zone/proposals.md holds ov's six proposals among its own, twelve sections in date order, newest first, the two undated ones from ov's handoff last; ov's journal was whole in this project's already, 67 entries, checked with link targets ignored, so nothing came from it. Jonathan's word
 - D: ov's log merged whole at the end of this one, 293 lines under ov's own day headings, its unsettled lines of 10 to 18 September with it; Convert_Preferences.ts names ai's page log ai.debug before the first line, so it is memory/ai/logs/ai.debug.log; svelte-check clean. Jonathan's go

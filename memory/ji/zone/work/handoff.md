@@ -6,7 +6,7 @@ My resume point for ji: the one thing to do next, and the context you can't read
 
 The first unchecked item in [code debt](ji/notes/work/code%20debt.md). The spec is [sections spec](../guides/specifications/sections%20spec.md), and its first three steps are a check of what the project already has. ji fails three of them, so the port cannot start where the spec says to start.
 
-**ji has** — [Separator.svelte](../../../../ji/src/lib/svelte/support/Separator.svelte), [Constants.ts](../../../../ji/src/lib/ts/common/Constants.ts), [Debug.ts](../../../../ji/src/lib/ts/common/Debug.ts), and all six page variables the styling reads (`--gap`, `--accent`, `--black`, `--z-controls`, `--z-common`, `--z-frontmost`).
+**ji has** — [Separator.svelte](../../../../projects/ji/src/lib/svelte/support/Separator.svelte), [Constants.ts](../../../../projects/ji/src/lib/ts/common/Constants.ts), [Debug.ts](../../../../projects/ji/src/lib/ts/common/Debug.ts), and all six page variables the styling reads (`--gap`, `--accent`, `--black`, `--z-controls`, `--z-common`, `--z-frontmost`).
 
 **ji is missing:**
 

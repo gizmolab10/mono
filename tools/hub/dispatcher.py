@@ -17,28 +17,43 @@ import urllib.error
 import urllib.parse
 import importlib.util
 
-import database   # the db beside this file: the labels on ov's files, and what else they do not say
+import database   # the db beside this file: the labels on a host's files, and what else they do not say
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEV_SERVERS = os.path.join(SCRIPT_DIR, 'servers.sh')
 GITHUB_DIR = os.path.expanduser('~/GitHub/mono')
 UPDATE_DOCS = os.path.join(GITHUB_DIR, 'tools/docs/update-project-docs.sh')
 
+# Every code folder sits under projects/ since 23 September 2026, a library's under
+# projects/libraries/; mono's own is the repo itself.
+CODE_PARENTS = ('projects', os.path.join('projects', 'libraries'))
+
+def folder_of_project(key):
+    """Where a project's code sits, by its name in ports.json."""
+    if key == 'mono':
+        return GITHUB_DIR
+    for parent in CODE_PARENTS:
+        whole = os.path.join(GITHUB_DIR, parent, key)
+        if os.path.isdir(whole):
+            return whole
+    return os.path.join(GITHUB_DIR, key)
+
+
 # --- the plugins ------------------------------------------------------------------------------------
-# One plugin.py per host, imported from the host's folder, mono/<host>, for each host the host list
+# One plugin.py per host, imported from the host's code folder, mono/projects/<host>, for each host the host list
 # names, database.HOSTS: the specialty's code, as memory/ai/zone/music and ai.md's plugin api table
 # lays it out. Its listing rule says which files under the root are listed, is listed says it of one
 # path, and labels gives a file its labels inside the rules pass. The import and every call are
 # wrapped: a fault is said in the log and fails that file or that request, never the server. A host
 # with no plugin of its own uses the plugin of a host sharing its db. A request naming no host is
-# ai's, so ov's frozen page, which names none, asks ai's db and ai's plugin.
+# ai's, so a request naming none asks ai's db and ai's plugin.
 PLUGINS = {}
 
 def load_plugins():
     """Import each host's plugin.py, where the host's folder holds one. A plugin that fails to
     import is said in the log and left out, so its host lists nothing and the server stays up."""
     for host in database.HOSTS:
-        place = os.path.join(GITHUB_DIR, host, 'plugin.py')
+        place = os.path.join(folder_of_project(host), 'plugin.py')
         if not os.path.isfile(place):
             continue
         try:
@@ -113,12 +128,12 @@ def load_env_file():
 
 load_env_file()
 
-# Derive project paths from ports.json (projects with docs port = buildable docs)
+# Derive project paths from ports.json (projects with docs port = buildable docs).
 PROJECT_PATHS = {}
 for _key, _val in PORTS.items():
     if isinstance(_val, dict) and 'docs' in _val:
         _name = 'mono' if _key == 'mono' else _key
-        PROJECT_PATHS[_name] = GITHUB_DIR if _key == 'mono' else os.path.join(GITHUB_DIR, _key)
+        PROJECT_PATHS[_name] = folder_of_project(_key)
 
 # Status file for rebuild progress (single file, Option C)
 REBUILD_STATUS_FILE = os.path.join(GITHUB_DIR, 'logs', 'rebuild-status.txt')
@@ -343,7 +358,7 @@ def run_tests_async():
         with open(TESTS_STATUS_FILE, 'w') as f:
             f.write('Running ws tests...')
 
-        ws_dir = os.path.join(GITHUB_DIR, 'ws')
+        ws_dir = folder_of_project('ws')
         result = subprocess.run(
             ['yarn', 'test:run'],
             cwd=ws_dir,
@@ -359,7 +374,7 @@ def run_tests_async():
         with open(TESTS_STATUS_FILE, 'w') as f:
             f.write(f'ws: {ws_passed} passed. Running di tests...')
 
-        di_dir = os.path.join(GITHUB_DIR, 'di')
+        di_dir = folder_of_project('di')
         result = subprocess.run(
             ['yarn', 'test:run'],
             cwd=di_dir,
@@ -664,7 +679,7 @@ class APIHandler(BaseHTTPRequestHandler):
 
     def _host(self):
         """Whose db a route opens: the host query value, which ports.json pairs with a db, and ai
-        when none is sent, so ov's frozen page, which names none, answers ai's db. A
+        when none is sent, so a request naming none answers ai's db. A
         host ports.json gives no db is refused with a 400 sent from here, and False comes back so
         the route returns. None is ai, never a refusal."""
         params = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
@@ -1088,7 +1103,7 @@ class APIHandler(BaseHTTPRequestHandler):
                 self._send_response(500, {'success': False, 'error': str(e)})
 
         elif urllib.parse.urlparse(self.path).path == '/restart-server':
-            # Restart one dev server, for the overview app: /restart-server?which=ov
+            # Restart one dev server, for the hub page: /restart-server?which=ai
             #
             # Overview settles its list of guide files when its code is prepared, so a file
             # that moved or was renamed only shows in its new place once the server has been

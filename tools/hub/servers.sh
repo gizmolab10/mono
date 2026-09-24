@@ -59,7 +59,6 @@ PORT_DI_DOCS=$(get_port "['di']['docs']")
 PORT_GA=$(get_port "['ga']['port']")
 PORT_LV=$(get_port "['lv']['port']")
 PORT_JI=$(get_port "['ji']['port']")
-PORT_OV=$(get_port "['ov']['port']")
 PORT_MA=$(get_port "['ma']['port']")
 PORT_MJ=$(get_port "['mj']['port']")
 PORT_MU=$(get_port "['mu']['port']")
@@ -70,21 +69,20 @@ PORT_MA_DOCS=$(get_port "['ma']['docs']")
 # Site definitions: name|port|dir|command
 SITES=(
   "hub|$PORT_DISPATCH|tools/hub|python3 -m http.server $PORT_DISPATCH"
-  "ws|$PORT_WS|ws|yarn dev"
-  "ws-docs|$PORT_WS_DOCS|ws|VITE_PORT=$PORT_WS_DOCS yarn docs:dev"
-  "di|$PORT_DI|di|yarn dev"
-  "di-docs|$PORT_DI_DOCS|di|VITE_PORT=$PORT_DI_DOCS yarn docs:dev"
+  "ws|$PORT_WS|projects/ws|yarn dev"
+  "ws-docs|$PORT_WS_DOCS|projects/ws|VITE_PORT=$PORT_WS_DOCS yarn docs:dev"
+  "di|$PORT_DI|projects/di|yarn dev"
+  "di-docs|$PORT_DI_DOCS|projects/di|VITE_PORT=$PORT_DI_DOCS yarn docs:dev"
   "mono-docs|$PORT_MONO_DOCS|.|yarn docs:dev"
-  "ga|$PORT_GA|ga|yarn dev"
-  "lv|$PORT_LV|lv|yarn dev"
-  "ji|$PORT_JI|ji|yarn dev"
-  "ov|$PORT_OV|ov|yarn dev"
-  "mj|$PORT_MJ|mj|yarn dev"
-  "mu|$PORT_MU|mu|yarn dev"
-  "panel|$PORT_PANEL|panel|yarn dev"
-  "ai|$PORT_AI|ai|yarn dev"
-  "ma|$PORT_MA|ma|yarn dev"
-  "ma-docs|$PORT_MA_DOCS|ma|VITE_PORT=$PORT_MA_DOCS yarn docs:dev"
+  "ga|$PORT_GA|projects/ga|yarn dev"
+  "lv|$PORT_LV|projects/lv|yarn dev"
+  "ji|$PORT_JI|projects/ji|yarn dev"
+  "mj|$PORT_MJ|projects/mj|yarn dev"
+  "mu|$PORT_MU|projects/mu|yarn dev"
+  "panel|$PORT_PANEL|projects/libraries/panel|yarn dev"
+  "ai|$PORT_AI|projects/ai|yarn dev"
+  "ma|$PORT_MA|projects/ma|yarn dev"
+  "ma-docs|$PORT_MA_DOCS|projects/ma|VITE_PORT=$PORT_MA_DOCS yarn docs:dev"
 )
 
 kill_port() {
@@ -130,11 +128,12 @@ start_site() {
   local dir=$3
   local cmd=$4
 
-  # A site whose dir is a memory project writes into that project's own logs/; one with no
-  # project of its own (hub, mono-docs) keeps writing to the shared logs/ folder at the top.
+  # A site whose dir is a memory project writes into that project's own logs/, a library's dir
+  # under libraries/ naming the project by its last folder; one with no project of its own (hub,
+  # mono-docs) keeps writing to the shared logs/ folder at the top.
   local log_home="$LOG_DIR"
   if [ "$dir" != "." ] && [[ "$dir" != tools* ]]; then
-    log_home="$GITHUB_DIR/memory/$dir/logs"
+    log_home="$GITHUB_DIR/memory/${dir##*/}/logs"
     mkdir -p "$log_home"
   fi
   local logfile="$log_home/$name.log"
@@ -165,7 +164,7 @@ for arg in "$@"; do
     --kill-only) KILL_ONLY=true ;;
     --no-verify) NO_VERIFY=true ;;
     --verify-only) VERIFY_ONLY=true ;;
-    ws|ws-docs|di|di-docs|mono-docs|hub|ga|ma|ma-docs|ji|ov|mj|ai) TARGET=$arg ;;
+    ws|ws-docs|di|di-docs|mono-docs|hub|ga|ma|ma-docs|ji|mj|ai) TARGET=$arg ;;
   esac
 done
 

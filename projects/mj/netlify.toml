@@ -1,0 +1,8 @@
+# Netlify reads this beside the site it builds, from mj as the base directory. Only one
+# rule is here: build when something mj is drawn from has changed since the last deploy,
+# mj itself, gallery or core, and skip the build otherwise. The command runs from the base
+# directory, so the two libraries are named from there. How the site itself is built stays
+# in Netlify's own settings.
+
+[build]
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ../libraries/gallery ../libraries/core"

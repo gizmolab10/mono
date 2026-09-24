@@ -4,6 +4,7 @@
 
 ## 23 September 2026
 
+- D: mu's code moved to projects/mu, its two aliases unchanged since the libraries moved with it; check clean at 418 files. Jonathan's go
 - D: zone/hosting kb.md moved here from kb's zone through the dispatcher, what both hosts need of kb; its link to kb hosted by music re-based; the zone index and mu's index list it. Jonathan's word
 - D: zone/kb hosted by music.md moved here from ai's zone/work through the dispatcher, music's part of the plan, 84 lines: the music specialty, its schema and rules, steps 20 to 24 and 29 to 31; its four links re-based; the zone index and mu's index list it. Jonathan's word
 ## 18 September 2026

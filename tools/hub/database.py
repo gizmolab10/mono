@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-The db: one SQLite file per host beside the dispatcher, ov.db and mu.db, each holding what a
+The db: one SQLite file per host beside the dispatcher, ai.db and mu.db, each holding what a
 host knows about its files that the files themselves do not say. Only the dispatcher reads and
 writes them, through the calls here. Every call takes a host, and a call told none opens PLACE,
-ov's db. ports.json names each host's db beside its port.
+ai's db. ports.json names each host's db beside its port.
 
 Five tables, as memory/ai/zone/music and ai.md lays them out:
   files   -- one row per file: its collection, its path from the top of the repo, its size,
@@ -135,14 +135,20 @@ def fingerprint_of(full):
         return hashlib.sha256(f.read()).hexdigest()[:16]
 
 
+# Where a project's code folder sits: under projects/ since 23 September 2026, a library's one
+# folder deeper under projects/libraries/.
+CODE_PARENTS = ('projects', 'projects/libraries')
+
+
 def collection_of(where):
     """Which collection a path from the top of the repo belongs to: the memory folder it sits
-    in, or the project whose CLAUDE file it is. shared for anything at the repo's own top."""
+    in, or the project whose CLAUDE file it is, that file sitting at the top of the project's own
+    code folder. shared for anything at the repo's own top."""
     parts = where.split('/')
     if parts[0] == 'memory' and len(parts) > 2:
         return parts[1]
-    if len(parts) == 2 and parts[1].lower() == 'claude.md':
-        return parts[0]
+    if len(parts) > 2 and parts[-1].lower() == 'claude.md' and '/'.join(parts[:-2]) in CODE_PARENTS:
+        return parts[-2]
     return 'shared'
 
 
@@ -426,6 +432,8 @@ def reconcile(root, paths, host=None):
     counting from the top of the repo, and root where the repo sits on this machine.
       same path, new size or time      -> the fingerprint is computed again and the row brought
                                           up to date: changed
+      same path, a collection the path
+      no longer gives                  -> the collection is read off the path again: changed
       path gone, a file at a path with no row whose bytes give the same fingerprint
                                        -> the row moves to that path, labels and fields with
                                           it: moved
@@ -437,7 +445,7 @@ def reconcile(root, paths, host=None):
     changed = moved = missing = found = 0
     db = open_db(place_of(host))
     with db:
-        rows = db.execute('SELECT id, path, size, modified, fingerprint, missing FROM files').fetchall()
+        rows = db.execute('SELECT id, path, collection, size, modified, fingerprint, missing FROM files').fetchall()
         with_rows = {row['path'] for row in rows}
         gone = []
         for row in rows:
@@ -449,6 +457,10 @@ def reconcile(root, paths, host=None):
             if size != row['size'] or modified != row['modified']:
                 db.execute('UPDATE files SET size = ?, modified = ?, fingerprint = ? WHERE id = ?',
                            (size, modified, fingerprint_of(full), row['id']))
+                changed += 1
+            whose = collection_of(row['path'])
+            if whose != row['collection']:
+                db.execute('UPDATE files SET collection = ? WHERE id = ?', (whose, row['id']))
                 changed += 1
             if row['missing']:
                 db.execute('UPDATE files SET missing = 0 WHERE id = ?', (row['id'],))

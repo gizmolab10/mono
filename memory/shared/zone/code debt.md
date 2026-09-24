@@ -1,6 +1,6 @@
-# Code debt (1084)
+# Code debt (1067)
 
-99 files hold unfinished work, as of 2026-09-23.
+97 files hold unfinished work, as of 2026-09-23.
 
 ## ai (133)
 
@@ -124,13 +124,6 @@
 | z | [ideas.md](../../mu/zone/ideas.md) | 6 open |
 | z | [kb hosted by music.md](../../mu/zone/kb%20hosted%20by%20music.md) | 29 open |
 | z | [project goal.md](../../mu/zone/project%20goal.md) | 17 open |
-
-## ov (17)
-
-| z/t | file | needs this |
-| --- | --- | --- |
-|  | [log.md](../../ov/logs/log.md) | settle 16 lines |
-| z | [drive.md](../../ov/zone/drive.md) | dissolve the drive |
 
 ## panel (3)
 

@@ -73,7 +73,7 @@ check('listing the guides succeeds', said.get('success'), True)
 # by a tenth and not by three times.
 
 listed = said.get('paths', [])
-check('the top of a work folder is listed', 'memory/ai/zone/work/music and ai.md' in listed, True)
+check('the top of a work folder is listed', 'memory/ai/zone/work/simplify gaps.md' in listed, True)
 check('the shared collection\'s work is listed too', 'memory/shared/zone/work/index.md' in listed, True)
 deeper = [one for one in listed if '/notes/work/' in f'/{one}' and one.count('/') > 5]
 check('nothing deeper than the top of a work folder is listed', deeper, [])
@@ -83,10 +83,10 @@ check('nothing deeper than the top of a work folder is listed', deeper, [])
 # Each collection's entry point sits at its very top, spelled CLAUDE.MD or CLAUDE.md.
 
 check('the repo\'s own CLAUDE file is listed', 'CLAUDE.md' in listed, True)
-check('lv\'s CLAUDE file is listed', 'lv/CLAUDE.md' in listed, True)
-check('ov\'s lowercase CLAUDE.md is listed', 'ov/CLAUDE.md' in listed, True)
+check('lv\'s CLAUDE file is listed', 'projects/lv/CLAUDE.md' in listed, True)
+check('a library\'s CLAUDE file is listed', 'projects/libraries/kb/CLAUDE.md' in listed, True)
 
-code, said = ask('/read-guide?where=lv/CLAUDE.md')
+code, said = ask('/read-guide?where=projects/lv/CLAUDE.md')
 check('a CLAUDE file can be read', code, 200)
 code, said = ask('/read-guide?where=CLAUDE.md')
 check('the repo\'s own CLAUDE file can be read', code, 200)
@@ -100,7 +100,7 @@ check('no CLAUDE file below a collection\'s top is readable', code, 409)
 
 check('the memory system is listed', 'memory/index.md' in listed, True)
 check('a memory file three folders down is listed', 'memory/shared/truth/handbook.md' in listed, True)
-check('the two new projects\' CLAUDE files are listed', 'ai/CLAUDE.md' in listed and 'kb/CLAUDE.md' in listed, True)
+check('the two new projects\' CLAUDE files are listed', 'projects/ai/CLAUDE.md' in listed and 'projects/libraries/kb/CLAUDE.md' in listed, True)
 code, said = ask('/all-labels')
 check('the fields answer carries each file\'s collection', said.get('fields', {}).get('memory/index.md', {}).get('collection'), 'shared')
 
@@ -140,10 +140,10 @@ check('reading by its full place on this machine', said.get('success'), True)
 code, said = ask('/read-guide')
 check('naming no file is refused', code, 400)
 
-code, said = ask('/read-guide', where='ov/src/lib/main.css')
+code, said = ask('/read-guide', where='projects/libraries/kb/src/lib/main.css')
 check('anything that is not a guide is refused', code, 409)
 
-code, said = ask('/read-guide', where='memory/ai/zone/work/music and ai.md')
+code, said = ask('/read-guide', where='memory/ai/zone/work/simplify gaps.md')
 check('a work note at the top of a work folder is read', said.get('success'), True)
 
 code, said = ask('/read-guide', where='memory/di/zone/work/milestones/33.drag/handoff.md')
@@ -159,10 +159,10 @@ check('a guide that is not there is refused', code, 404)
 # the guard. "the file changed since it was opened" proves the guard let a work note through.
 
 code, said = tell('/save-guide', {'text': 'x', 'as_opened': 'not what is on disk'},
-                  where='memory/ai/zone/work/music and ai.md')
+                  where='memory/ai/zone/work/simplify gaps.md')
 check('a work note passes the writing guard', said.get('error'), 'the file changed since it was opened')
 
-code, said = tell('/save-guide', {'text': 'x', 'as_opened': ''}, where='ov/src/lib/main.css')
+code, said = tell('/save-guide', {'text': 'x', 'as_opened': ''}, where='projects/libraries/kb/src/lib/main.css')
 check('anything that is not a note is refused a write', code, 409)
 
 # --- renaming and throwing away a work note -----------------------------------
@@ -203,13 +203,13 @@ check('the dump holds every label', said.get('labels'), sum(len(rows) for rows i
 
 code, said = tell('/restore', {'into': 'ai.db'})
 check('the live db is never written over', code, 400)
-code, said = tell('/restore', {'into': 'ov.restored.db'})
-check('a dump read back into ov.restored.db holds every label', said.get('labels'), sum(len(rows) for rows in ask('/all-labels')[1]['labels'].values()))
+code, said = tell('/restore', {'into': 'ai.restored.db'})
+check('a dump read back into ai.restored.db holds every label', said.get('labels'), sum(len(rows) for rows in ask('/all-labels')[1]['labels'].values()))
 
 # --- one db per host, and the collections ---------------------------------------
 
 code, said = ask('/collections')
-check('ov\'s collections are listed', code, 200)
+check('the collections are listed', code, 200)
 check('one per project the listing names, ov, shared and the rest', {'ov', 'shared'} <= {one['name'] for one in said.get('collections', [])}, True)
 check('every one of ai\'s specialty, the repo its root', {(one['specialty'], one['root']) for one in said.get('collections', [])}, {('ai', REPO)})
 code, said = ask('/collections', host='mu')

@@ -1,10 +1,7 @@
 yarn run v1.22.19
 $ vite
 
-  VITE v6.4.2  ready in 2267 ms
+  VITE v6.4.2  ready in 709 ms
 
   ➜  Local:   http://localhost:5175/
   ➜  Network: use --host to expose
-3:44:17 PM [vite] (client) hmr update /src/lib/svelte/mouse/Steppers.svelte, /src/lib/svelte/mouse/Steppers.svelte?svelte&type=style&lang.css
-4:05:24 PM [vite] (client) hmr update /src/lib/svelte/details/Details.svelte
-4:13:11 PM [vite] (client) hmr update /src/lib/svelte/mouse/Close_Button.svelte

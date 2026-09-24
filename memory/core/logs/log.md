@@ -4,6 +4,7 @@
 
 ## 23 September 2026
 
+- D: core's code moved to projects/libraries/core; nothing inside it changed, its check clean at 471 files and its 100 tests pass. Jonathan's go
 - D: Debug.ts's default log file is a field, file, 'debug' until a host sets its own, ai setting ai.debug; the two defaults 'ov.debug' are gone, so a host that sets none writes mono/logs/debug.log; core's svelte-check clean. Jonathan's go on shared's pac
 - D: Status_Line.svelte's cross is drawn at k.thickness.big, from micro, the thickness Jonathan gave the report's and the controls row's crosses in kb the same evening; core's 100 pass. Jonathan's word
 - D: T_Position.align drawn: Separator.svelte's horizontal line measures its left edge with a ResizeObserver and the window's resize, sets --line-x on itself, and a placed thing with align sits at calc(50vw - --line-x), translated back by half; sections.md says so; core's 100 pass. Jonathan's go

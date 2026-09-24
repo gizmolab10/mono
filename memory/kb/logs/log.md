@@ -2,6 +2,7 @@
 
 ## 23 September 2026
 
+- D: kb's code moved to projects/libraries/kb; Saving.ts works out a collection's code folder from one place, top_of, projects/<name> or projects/libraries/<name>, and site_of_file reads a path back through it; saving.test says so, 185 pass, check clean at 512 files. Jonathan's go
 - D: zone/proposals.md holds no proposal again: ov's two open ones went on to ai's proposals.md with the other four, Jonathan's word; the file keeps its headings
 - D: zone/proposals.md holds ov's two open proposals, the guide to file rename and gather the utilities, under proposed and not implemented; kb's index holds ov's adoption paragraph under a dated lead-in. Jonathan's go
 - D: hosting kb.md moved to mu's zone through the dispatcher; kb's index says so and the zone index no longer lists it; the links at it in using rules and adopt kb re-pointed. Jonathan's word

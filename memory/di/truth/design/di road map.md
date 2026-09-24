@@ -24,8 +24,8 @@ Phased task list with dependencies, effort guesses, and per-task risks at [dimen
 
 ### Recent infrastructure (since 2026-04-11)
 
-- Notes tree reorganised: rules now live under [guides/development/rules/](../../../../di/guides/development/rules/); long-form research under [guides/project/research/](../../../../di/guides/project/research/); learning material under [guides/development/learn/](../../../../di/guides/development/learn/); adherence material under [guides/development/adhere/](../../../../di/guides/development/adhere/).
-- Architecture guide for the running placement code at [guides/architecture/graph/dimensionals.md](../../../../di/guides/architecture/graph/dimensionals.md). It carries a "Status — redesign decided, not yet built" header pointing at the new spec.
+- Notes tree reorganised: rules now live under [guides/development/rules/](../../../../projects/di/guides/development/rules/); long-form research under [guides/project/research/](../../../../projects/di/guides/project/research/); learning material under [guides/development/learn/](../../../../projects/di/guides/development/learn/); adherence material under [guides/development/adhere/](../../../../projects/di/guides/development/adhere/).
+- Architecture guide for the running placement code at [guides/architecture/graph/dimensionals.md](../../../../projects/di/guides/architecture/graph/dimensionals.md). It carries a "Status — redesign decided, not yet built" header pointing at the new spec.
 - The toolbar component file has been split in the source: `Primary_Controls.svelte` and `Secondary_Controls.svelte`. The single [Controls.md](di/notes/guides/architecture/components/Controls.md) guide now describes both.
 
 ## What's next

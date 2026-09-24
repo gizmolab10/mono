@@ -43,4 +43,4 @@ One judgment call, written down so it isn't re-litigated: **csv is deliberately 
 
 ## Where this lives
 
-The whole of it is one file — the document type ([Document.ts](../../../../../ji/src/lib/ts/types/Document.ts)): the families, the endings, the five lists, and the deciding. Nothing else needs to know how a file is classed; the list, the drop box, the viewer and the store all ask it.
+The whole of it is one file — the document type ([Document.ts](../../../../../projects/ji/src/lib/ts/types/Document.ts)): the families, the endings, the five lists, and the deciding. Nothing else needs to know how a file is classed; the list, the drop box, the viewer and the store all ask it.

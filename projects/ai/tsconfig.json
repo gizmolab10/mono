@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noFallthroughCasesInSwitch": true,
+    "useDefineForClassFields": true,
+    "moduleResolution": "bundler",
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "noEmit": true,
+    "strict": true,
+    "lib": [
+      "DOM.Iterable",
+      "ES2020",
+      "DOM"
+    ],
+    "paths": {
+      "core/*": [
+        "../libraries/core/src/lib/*"
+      ],
+      "panel/*": [
+        "../libraries/panel/src/lib/*"
+      ],
+      "kb/*": [
+        "../libraries/kb/src/lib/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.svelte",
+    "src/**/*.ts"
+  ]
+}
